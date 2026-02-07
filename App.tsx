@@ -26,6 +26,13 @@ import SecureGate from './pages/SecureGate';
 import Login from './pages/Login';
 import Landing from './pages/Landing';
 
+// Verified Deep Dives
+import RegulatoryMap from './pages/deep-dives/RegulatoryMap';
+import ClinicPerformance from './pages/deep-dives/ClinicPerformance';
+import PatientConstellationPage from './pages/deep-dives/PatientConstellation';
+import MolecularPharmacology from './pages/deep-dives/MolecularPharmacology';
+import ProtocolEfficiency from './pages/deep-dives/ProtocolEfficiency';
+
 /**
  * ScrollToTop Component
  * Resets the scroll position of the main research viewport whenever the location changes.
@@ -195,6 +202,14 @@ const App: React.FC = () => {
           <Route path="/help" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
+
+          {/* Deep Dives */}
+          <Route path="/deep-dives/regulatory-map" element={<RegulatoryMap />} />
+          <Route path="/deep-dives/clinic-performance" element={<ClinicPerformance />} />
+          <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
+          <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacology />} />
+          <Route path="/deep-dives/protocol-efficiency" element={<ProtocolEfficiency />} />
+
           <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Logout</h2><button onClick={handleLogout} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out of Node</button></div>} />
         </Route>
 

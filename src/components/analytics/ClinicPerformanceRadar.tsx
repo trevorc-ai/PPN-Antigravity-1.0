@@ -1,42 +1,61 @@
-import React from 'react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip } from 'recharts';
-import { Activity, Database, Server } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+    ResponsiveContainer, Tooltip, Legend
+} from 'recharts';
+import {
+    Download, Calendar, TrendingUp, AlertCircle,
+    CheckCircle2, FileText, Share2
+} from 'lucide-react';
 
-const data = [
-    {
-        subject: 'Efficacy',
-        A: 120, // My Clinic
-        B: 90,  // Network Avg
-        fullMark: 150,
-    },
-    {
-        subject: 'Protocol Adherence',
-        A: 98,
-        B: 85,
-        fullMark: 150,
-    },
-    {
-        subject: 'Safety',
-        A: 130,
-        B: 100,
-        fullMark: 150,
-    },
-    {
-        subject: 'Patient Retention',
-        A: 95,
-        B: 70,
-        fullMark: 150,
-    },
+// --- MOCK DATA ---
+const DATA_QUARTER = [
+    { subject: 'Efficacy', A: 120, B: 110, fullMark: 150 },
+    { subject: 'Safety', A: 98, B: 130, fullMark: 150 },
+    { subject: 'Retention', A: 86, B: 130, fullMark: 150 },
+    { subject: 'Speed', A: 99, B: 100, fullMark: 150 },
+    { subject: 'Revenue', A: 85, B: 90, fullMark: 150 },
+    { subject: 'Compliance', A: 65, B: 85, fullMark: 150 },
 ];
+
+const DATA_YEAR = [
+    { subject: 'Efficacy', A: 110, B: 115, fullMark: 150 },
+    { subject: 'Safety', A: 125, B: 125, fullMark: 150 },
+    { subject: 'Retention', A: 110, B: 120, fullMark: 150 },
+    { subject: 'Speed', A: 105, B: 100, fullMark: 150 },
+    { subject: 'Revenue', A: 100, B: 95, fullMark: 150 },
+    { subject: 'Compliance', A: 95, B: 90, fullMark: 150 },
+];
+
+const METRIC_INSIGHTS = {
+    quarter: [
+        { label: 'Safety Score', value: '98/150', status: 'warning', text: 'Below network average due to 2 adverse events in Jan.' },
+        { label: 'Efficacy Yield', value: '120/150', status: 'success', text: 'Outperforming network in Depression outcomes (+12%).' },
+        { label: 'Compliance', value: '65/150', status: 'danger', text: 'Missing documentation for 3 recent sessions.' }
+    ],
+    year: [
+        { label: 'Safety Score', value: '125/150', status: 'success', text: 'Consistent safety record over 12 months.' },
+        { label: 'Efficacy Yield', value: '110/150', status: 'neutral', text: 'Matches national benchmarks.' },
+        { label: 'Compliance', value: '95/150', status: 'success', text: 'Audit readiness remains high.' }
+    ]
+};
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#0f172a] border border-slate-700 rounded p-2 text-[10px] shadow-xl">
-                <p className="font-bold text-slate-200 mb-1">{label}</p>
-                <div className="flex flex-col gap-0.5">
-                    <span className="text-emerald-400">My Clinic: {payload[0].value}</span>
-                    <span className="text-slate-400">Network Avg: {payload[1].value}</span>
+            <div className="bg-slate-900/95 backdrop-blur-sm p-3 border border-slate-700 rounded-lg shadow-xl">
+                <h4 className="text-slate-200 font-bold mb-2 text-xs uppercase tracking-wider">{label}</h4>
+                <div className="flex flex-col gap-1.5">
+                    {payload.map((entry: any, index: number) => (
+                        <div key={index} className="flex items-center gap-2 text-xs">
+                            <div
+                                className="w-2 h-2 rounded-full"
+                                style={{ backgroundColor: entry.color }}
+                            />
+                            <span className="text-slate-400 font-medium">{entry.name}:</span>
+                            <span className="text-slate-200 font-bold font-mono">{entry.dataKey === 'A' ? entry.payload.A : entry.payload.B}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
         );
@@ -45,66 +64,122 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function ClinicPerformanceRadar() {
+    const [timeRange, setTimeRange] = useState<'quarter' | 'year'>('quarter');
+    const currentData = timeRange === 'quarter' ? DATA_QUARTER : DATA_YEAR;
+    const insights = METRIC_INSIGHTS[timeRange];
+
+    const handleExport = () => {
+        window.print();
+    };
+
     return (
-        <div className="bg-[#0f1218] border border-slate-800 rounded-3xl p-6 flex flex-col h-full">
-            {/* Header */}
-            <div className="flex items-center gap-2 mb-4">
-                <Activity className="w-5 h-5 text-emerald-500" />
-                <h3 className="text-sm font-black text-slate-200 uppercase tracking-widest">
-                    Clinic Performance vs. Network Benchmarks
-                </h3>
-            </div>
-
-            {/* Insight Panel */}
-            <div className="mb-4 bg-slate-800/20 border border-slate-800 rounded-xl p-3">
-                <p className="text-[11px] text-slate-300 font-medium leading-relaxed">
-                    <strong className="text-emerald-400">Insight:</strong> Benchmarking reveals operational gaps. Is the higher efficacy due to 'Inhaled' vs 'IV' intake?
-                </p>
-            </div>
-
-            {/* Chart */}
-            <div className="flex-1 w-full min-h-[250px] relative">
-                <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-                        <PolarGrid stroke="#334155" strokeDasharray="3 3" />
-                        <PolarAngleAxis
-                            dataKey="subject"
-                            tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 600 }}
-                        />
-                        <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
-
-                        <Radar
-                            name="My Clinic"
-                            dataKey="A"
-                            stroke="#10b981"
-                            strokeWidth={2}
-                            fill="#10b981"
-                            fillOpacity={0.6}
-                        />
-                        <Radar
-                            name="Network Avg"
-                            dataKey="B"
-                            stroke="#475569"
-                            strokeWidth={2}
-                            fill="#475569"
-                            fillOpacity={0.2}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={false} />
-                    </RadarChart>
-                </ResponsiveContainer>
-            </div>
-
-            {/* SQL Context Footer */}
-            <div className="mt-4 pt-3 border-t border-slate-800/50 flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                    <Database className="w-3 h-3 text-slate-500" />
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Aggregation Logic</span>
+        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl space-y-6">
+            {/* Header Controls */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2 print:text-black">
+                        <TrendingUp className="text-indigo-500" />
+                        Performance Radar
+                    </h2>
+                    <p className="text-xs text-slate-400 font-medium mt-1 print:text-slate-600">
+                        Comparative analysis against N=14,200 Network Nodes
+                    </p>
                 </div>
-                <div className="bg-[#0a0c10] rounded-lg p-2 border border-slate-800 flex items-center gap-2">
-                    <Server className="w-3 h-3 text-indigo-500/50" />
-                    <code className="font-mono text-[9px] text-slate-400">
-                        GROUP BY Site_ID vs. SELECT AVG(Score) FROM All_Sites
-                    </code>
+                <div className="flex items-center gap-2 print:hidden">
+                    <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
+                        <button
+                            onClick={() => setTimeRange('quarter')}
+                            className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${timeRange === 'quarter' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                                }`}
+                        >
+                            Q1 2026
+                        </button>
+                        <button
+                            onClick={() => setTimeRange('year')}
+                            className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${timeRange === 'year' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                                }`}
+                        >
+                            Last 12 Mo
+                        </button>
+                    </div>
+                    <button
+                        onClick={handleExport}
+                        className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition-colors"
+                        title="Export Report"
+                    >
+                        <Download className="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Radar Chart Section */}
+                <div className="lg:col-span-2 h-[350px] relative">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={currentData}>
+                            <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
+                            <PolarAngleAxis
+                                dataKey="subject"
+                                tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                            />
+                            <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
+
+                            <Radar
+                                name="My Clinic"
+                                dataKey="A"
+                                stroke="#6366f1"
+                                strokeWidth={3}
+                                fill="#6366f1"
+                                fillOpacity={0.4}
+                            />
+                            <Radar
+                                name="Network Avg"
+                                dataKey="B"
+                                stroke="#475569"
+                                strokeWidth={2}
+                                fill="#475569"
+                                fillOpacity={0.1}
+                                strokeDasharray="4 4"
+                            />
+                            <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '20px' }} />
+                            <Tooltip content={<CustomTooltip />} />
+                        </RadarChart>
+                    </ResponsiveContainer>
+
+                    {/* Watermark for Print */}
+                    <div className="hidden print:block absolute bottom-0 right-0 text-slate-200 text-4xl font-black opacity-10 uppercase transform -rotate-12">
+                        Confidential
+                    </div>
+                </div>
+                {/* Insights Panel */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-2 mb-2">
+                        <FileText className="w-4 h-4 text-slate-400" />
+                        <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest">
+                            {timeRange === 'quarter' ? 'Quarterly' : 'Annual'} Analysis
+                        </h3>
+                    </div>
+                    {insights.map((insight, idx) => (
+                        <div key={idx} className="p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors group">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{insight.label}</span>
+                                {insight.status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+                                {insight.status === 'warning' && <AlertCircle className="w-4 h-4 text-amber-500" />}
+                                {insight.status === 'danger' && <AlertCircle className="w-4 h-4 text-red-500" />}
+                            </div>
+                            <div className="flex items-end gap-2 mb-1">
+                                <span className="text-xl font-mono font-bold text-slate-200">{insight.value}</span>
+                            </div>
+                            <p className="text-[11px] text-slate-400 leading-snug group-hover:text-slate-300 transition-colors">
+                                {insight.text}
+                            </p>
+                        </div>
+                    ))}
+
+                    <div className="mt-auto pt-4 border-t border-slate-800 text-center">
+                        <p className="text-[9px] text-slate-600 font-mono">
+                            Generated: {new Date().toLocaleDateString()} • Node ID: 8821-X
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

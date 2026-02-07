@@ -45,6 +45,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
 
   const activeProtocolsCount = PATIENTS.filter(p => p.status === 'Active').length;
 
+  const [openSection, setOpenSection] = useState<string | null>('Core Research');
+
+  const toggleSection = (label: string) => setOpenSection(prev => prev === label ? null : label);
+
   const sections = [
     {
       title: 'Core Research',
@@ -55,6 +59,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
         { label: 'News', icon: 'newspaper', path: '/news' },
         { label: 'Practitioners', icon: 'groups', path: '/clinicians' },
         { label: 'Substances', icon: 'biotech', path: '/catalog' },
+      ]
+    },
+    {
+      title: 'Intelligence',
+      items: [
+        { label: "Regulatory Map", icon: "public", path: "/deep-dives/regulatory-map" },
+        { label: "Clinical Radar", icon: "radar", path: "/deep-dives/clinic-performance" },
+        { label: "Patient Galaxy", icon: "hub", path: "/deep-dives/patient-constellation" },
+        { label: "Molecular DB", icon: "science", path: "/deep-dives/molecular-pharmacology" },
+        { label: "Protocol ROI", icon: "savings", path: "/deep-dives/protocol-efficiency" }
       ]
     },
     {
@@ -196,36 +210,47 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
         <div className="flex-1 px-3 py-1 space-y-3 overflow-y-auto custom-scrollbar">
           {sections.map((section) => (
             <nav key={section.title} className="space-y-0.5" aria-label={section.title}>
-              <h3 className="px-3 text-[11px] font-black text-slate-400 tracking-tight mb-1 opacity-80">
-                {section.title}
-              </h3>
-              <ul className="space-y-0.5">
-                {section.items.map((item) => {
-                  const isActive = location.pathname === item.path;
-                  return (
-                    <li key={item.path} id={item.id}>
-                      <Link
-                        to={item.path}
-                        onClick={() => { if (window.innerWidth < 1024) onClose(); }}
-                        className={`group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
-                          ? 'bg-primary/20 text-white ring-1 ring-primary/40 shadow-[0_0_15px_rgba(43,116,243,0.2)]'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
-                          }`}
-                        aria-current={isActive ? 'page' : undefined}
-                      >
-                        {isActive && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3]"></div>
-                        )}
-                        <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'
-                          }`} aria-hidden="true">
-                          {item.icon}
-                        </span>
-                        <span className="text-[14px] font-bold uppercase tracking-wide">{item.label}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+              <button
+                onClick={() => toggleSection(section.title)}
+                className="w-full flex items-center justify-between px-3 py-1 group focus-visible:outline-none"
+              >
+                <h3 className="text-[11px] font-black text-slate-400 tracking-tight opacity-80 group-hover:text-white transition-colors">
+                  {section.title}
+                </h3>
+                <span className={`material-symbols-outlined text-[16px] text-slate-500 transition-transform duration-300 ${openSection === section.title ? 'rotate-180' : ''}`}>
+                  expand_more
+                </span>
+              </button>
+
+              <div className={`overflow-hidden transition-all duration-300 ${openSection === section.title ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                <ul className="space-y-0.5">
+                  {section.items.map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <li key={item.path} id={item.id}>
+                        <Link
+                          to={item.path}
+                          onClick={() => { if (window.innerWidth < 1024) onClose(); }}
+                          className={`group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
+                            ? 'bg-primary/20 text-white ring-1 ring-primary/40 shadow-[0_0_15px_rgba(43,116,243,0.2)]'
+                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
+                            }`}
+                          aria-current={isActive ? 'page' : undefined}
+                        >
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3]"></div>
+                          )}
+                          <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'
+                            }`} aria-hidden="true">
+                            {item.icon}
+                          </span>
+                          <span className="text-[14px] font-bold uppercase tracking-wide">{item.label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </nav>
           ))}
         </div>
