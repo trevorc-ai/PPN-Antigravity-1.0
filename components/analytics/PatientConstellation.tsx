@@ -1,151 +1,326 @@
-import React from 'react';
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Users, Search, Lightbulb, Snowflake } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+    ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
+    ResponsiveContainer, Cell, ReferenceArea, ReferenceLine
+} from 'recharts';
+import {
+    Users, Search, Lightbulb, X, Activity,
+    Calendar, Pill, ArrowRight, BrainCircuit, Info, FileText
+} from 'lucide-react';
 
-const cohortData = [
-    { x: 20, y: 10, id: 'ANON-101', outcome: 'No Change', protocol: 'Oral Psilocybin', type: 'cohort' },
-    { x: 30, y: 15, id: 'ANON-102', outcome: 'Partial', protocol: 'MDMA-AT', type: 'cohort' },
-    { x: 45, y: 22, id: 'ANON-103', outcome: 'Relapse', protocol: 'Ketamine Lozenges', type: 'cohort' },
-    { x: 50, y: 12, id: 'ANON-104', outcome: 'No Change', protocol: 'Oral Psilocybin', type: 'cohort' },
-    { x: 10, y: 5, id: 'ANON-105', outcome: 'Remission', protocol: 'IFS Only', type: 'cohort' },
-    { x: 80, y: 25, id: 'ANON-106', outcome: 'Partial', protocol: 'Unknown', type: 'cohort' },
-    { x: 60, y: 18, id: 'ANON-107', outcome: 'No Change', protocol: 'CBT', type: 'cohort' },
-    { x: 55, y: 24, id: 'ANON-108', outcome: 'Relapse', protocol: 'SSRIs', type: 'cohort' },
-    { x: 25, y: 8, id: 'ANON-109', outcome: 'Remission', protocol: 'MDMA-AT', type: 'cohort' },
-    { x: 35, y: 20, id: 'ANON-110', outcome: 'Partial', protocol: 'Ketamine Lozenges', type: 'cohort' },
-    { x: 90, y: 26, id: 'ANON-111', outcome: 'No Change', protocol: 'TMS', type: 'cohort' },
-    { x: 15, y: 4, id: 'ANON-112', outcome: 'Remission', protocol: 'Psilocybin Micro', type: 'cohort' },
+// --- SCHEMA-READY MOCK DATA ---
+// This structure mimics the future Supabase response interface
+interface PatientNode {
+    x: number; // Resistance Score (0-100)
+    y: number; // Symptom Severity (PHQ-9)
+    id: string;
+    outcome: string;
+    protocol: string;
+    cluster: 'cohort' | 'responder' | 'current';
+    details: {
+        age: number;
+        sex: string;
+        diagnosis: string;
+        medications: string[];
+        sessions: number;
+        timeline: { week: number; score: number }[];
+        clinician_notes: string;
+    };
+}
+
+const MOCK_DATA: PatientNode[] = [
+    // Current Patient (The Anchor)
+    {
+        x: 75,
+        y: 18,
+        id: 'PT-8832 (Current)',
+        outcome: 'Active',
+        protocol: 'Pending',
+        cluster: 'current',
+        details: {
+            age: 34,
+            sex: 'M',
+            diagnosis: 'TRD',
+            medications: ['Lexapro'],
+            sessions: 0,
+            timeline: [],
+            clinician_notes: 'High resistance profile. Evaluating options.'
+        }
+    },
+    // The "Responders" (Success Stories)
+    {
+        x: 72,
+        y: 16,
+        id: 'ANON-9921',
+        outcome: 'Remission',
+        protocol: 'IM Ketamine (60mg)',
+        cluster: 'responder',
+        details: {
+            age: 31,
+            sex: 'F',
+            diagnosis: 'TRD',
+            medications: ['Prozac', 'Wellbutrin'],
+            sessions: 6,
+            timeline: [{ week: 0, score: 22 }, { week: 2, score: 14 }, { week: 4, score: 9 }, { week: 6, score: 6 }],
+            clinician_notes: 'Rapid response after Session 2. Maintenance scheduled.'
+        }
+    },
+    {
+        x: 78,
+        y: 19,
+        id: 'ANON-9922',
+        outcome: 'Remission',
+        protocol: 'IM Ketamine + IFS',
+        cluster: 'responder',
+        details: {
+            age: 40,
+            sex: 'M',
+            diagnosis: 'C-PTSD',
+            medications: ['Lamictal'],
+            sessions: 8,
+            timeline: [{ week: 0, score: 24 }, { week: 4, score: 15 }, { week: 8, score: 5 }],
+            clinician_notes: 'IFS integration was key to unlocking trauma blocks.'
+        }
+    },
+    // The "Cohort" (Context)
+    {
+        x: 45,
+        y: 22,
+        id: 'ANON-103',
+        outcome: 'Non-Responder',
+        protocol: 'Oral Ketamine',
+        cluster: 'cohort',
+        details: {
+            age: 29,
+            sex: 'F',
+            diagnosis: 'PTSD',
+            medications: [],
+            sessions: 6,
+            timeline: [{ week: 0, score: 24 }, { week: 6, score: 22 }],
+            clinician_notes: 'Dissociation limited therapeutic depth.'
+        }
+    },
+    {
+        x: 20,
+        y: 10,
+        id: 'ANON-101',
+        outcome: 'Partial',
+        protocol: 'Psilocybin (25mg)',
+        cluster: 'cohort',
+        details: {
+            age: 55,
+            sex: 'M',
+            diagnosis: 'MDD',
+            medications: ['Zoloft'],
+            sessions: 2,
+            timeline: [{ week: 0, score: 18 }, { week: 4, score: 12 }],
+            clinician_notes: 'Moderate improvement. Considering dose increase.'
+        }
+    },
+    // Add more dots for density
+    {
+        x: 68,
+        y: 17,
+        id: 'ANON-9924',
+        outcome: 'Remission',
+        protocol: 'IM Ketamine',
+        cluster: 'responder',
+        details: { age: 35, sex: 'F', diagnosis: 'TRD', medications: [], sessions: 6, timeline: [], clinician_notes: '' }
+    },
+    {
+        x: 82,
+        y: 20,
+        id: 'ANON-9926',
+        outcome: 'Significant Drop',
+        protocol: 'IM Ketamine + EMDR',
+        cluster: 'responder',
+        details: { age: 39, sex: 'M', diagnosis: 'PTSD', medications: [], sessions: 6, timeline: [], clinician_notes: '' }
+    },
+    {
+        x: 30,
+        y: 15,
+        id: 'ANON-102',
+        outcome: 'Partial',
+        protocol: 'MDMA-AT',
+        cluster: 'cohort',
+        details: { age: 28, sex: 'F', diagnosis: 'PTSD', medications: [], sessions: 3, timeline: [], clinician_notes: '' }
+    },
 ];
 
-const responderData = [
-    { x: 72, y: 16, id: 'ANON-9921', outcome: 'Remission (-14 pts)', protocol: 'IM Ketamine + IFS', type: 'responder' },
-    { x: 78, y: 19, id: 'ANON-9922', outcome: 'Remission (-12 pts)', protocol: 'IM Ketamine + IFS', type: 'responder' },
-    { x: 74, y: 15, id: 'ANON-9923', outcome: 'Remission (-15 pts)', protocol: 'IM Ketamine + Somatic', type: 'responder' },
-    { x: 68, y: 17, id: 'ANON-9924', outcome: 'Remission (-10 pts)', protocol: 'IM Ketamine', type: 'responder' },
-    { x: 76, y: 18, id: 'ANON-9925', outcome: 'Remission (-13 pts)', protocol: 'Spravato + IFS', type: 'responder' },
-    { x: 82, y: 20, id: 'ANON-9926', outcome: 'Significant Drop', protocol: 'IM Ketamine + EMDR', type: 'responder' },
-];
+const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () => void }) => (
+    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+        <div className="bg-[#0f1218] border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative">
+            <button
+                onClick={onClose}
+                className="absolute top-4 right-4 p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-colors z-10"
+            >
+                <X className="w-5 h-5" />
+            </button>
 
-const currentPatientData = [
-    { x: 75, y: 18, id: 'PT-8832', outcome: 'Active Treatment', protocol: 'Pending', type: 'current' },
-];
-
-const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-        const data = payload[0].payload;
-        return (
-            <div className="bg-[#0f172a] border border-slate-700 rounded-lg p-3 shadow-2xl z-50">
-                <div className="flex items-center gap-2 mb-1">
-                    <Users className="w-3 h-3 text-slate-400" />
-                    <span className="text-[10px] font-mono font-bold text-slate-200">{data.id}</span>
-                </div>
-                <div className="space-y-1">
-                    <div className="flex justify-between gap-4">
-                        <span className="text-[10px] text-slate-500">Outcome:</span>
-                        <span className={`text-[10px] font-bold ${data.type === 'responder' ? 'text-emerald-400' : 'text-slate-300'}`}>{data.outcome}</span>
-                    </div>
-                    {data.protocol !== 'Pending' && (
-                        <div className="flex justify-between gap-4">
-                            <span className="text-[10px] text-slate-500">Protocol:</span>
-                            <span className="text-[10px] font-mono text-indigo-400">{data.protocol}</span>
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    }
-    return null;
-};
-
-const PulsingDot = (props: any) => {
-    const { cx, cy } = props;
-    return (
-        <svg x={cx - 10} y={cy - 10} width={20} height={20} overflow="visible">
-            <circle cx="10" cy="10" r="6" fill="#06b6d4" className="animate-ping opacity-75" />
-            <circle cx="10" cy="10" r="6" fill="#22d3ee" stroke="white" strokeWidth="2" />
-        </svg>
-    );
-};
-
-export default function PatientConstellation() {
-    return (
-        <div className="bg-[#0f1218] border border-slate-800 rounded-3xl p-6 flex flex-col h-full relative overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                    <Search className="w-5 h-5 text-indigo-500" />
-                    <h3 className="text-sm font-black text-slate-200 uppercase tracking-widest">Patient Constellation</h3>
-                </div>
-                <div className="flex items-center gap-3 text-[9px] font-mono uppercase tracking-wider">
-                    <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-slate-600 opacity-50"></span>
-                        <span className="text-slate-500">Cohort</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span className="text-emerald-400">Responders</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-cyan-400 border border-white"></span>
-                        <span className="text-cyan-400 font-bold">PT-8832</span>
-                    </div>
-                </div>
-            </div>
-
-            <p className="text-xs text-slate-500 font-medium mb-4 max-w-lg">
-                Visualizing nearest neighbors based on Resistance Score (<span className="font-mono">x</span>) and Symptom Severity (<span className="font-mono">y</span>).
-            </p>
-
-            {/* Chart */}
-            <div className="flex-1 w-full min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis
-                            type="number"
-                            dataKey="x"
-                            name="Resistance Score"
-                            domain={[0, 100]}
-                            tick={{ fill: '#64748b', fontSize: 10 }}
-                            tickLine={false}
-                            axisLine={{ stroke: '#334155' }}
-                        />
-                        <YAxis
-                            type="number"
-                            dataKey="y"
-                            name="PHQ-9 Severity"
-                            domain={[0, 30]}
-                            tick={{ fill: '#64748b', fontSize: 10 }}
-                            tickLine={false}
-                            axisLine={{ stroke: '#334155' }}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3', stroke: '#cbd5e1' }} />
-
-                        {/* Network Cohort */}
-                        <Scatter name="Cohort" data={cohortData} fill="#64748b" fillOpacity={0.4} />
-
-                        {/* Responders */}
-                        <Scatter name="Responders" data={responderData} fill="#10b981" />
-
-                        {/* Current Patient */}
-                        <Scatter name="Current Patient" data={currentPatientData} shape={<PulsingDot />} />
-
-                    </ScatterChart>
-                </ResponsiveContainer>
-            </div>
-
-            {/* Insight Panel */}
-            <div className="mt-4 pt-4 border-t border-slate-800/50 flex items-start gap-3">
-                <Lightbulb className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                    <strong className="text-emerald-400">Clinical Insight:</strong> 74% of nearest neighbors with this resistance profile responded to <span className="font-mono text-indigo-400 bg-indigo-500/10 px-1 py-0.5 rounded border border-indigo-500/20 text-[10px]">IM Ketamine</span>.
+            {/* Modal Content Wrapper */}
+            <div className="px-6 pt-6 pb-2">
+                <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+                    {patient.id}
+                </h3>
+                <p className="text-xs text-slate-400 font-mono mt-1">
+                    {patient.details.age}y {patient.details.sex} • {patient.details.diagnosis}
                 </p>
             </div>
 
-            {/* Background Data Decoration */}
-            <div className="absolute bottom-4 right-4 pointer-events-none opacity-20">
-                <Snowflake className="w-24 h-24 text-slate-700" />
+            {/* Modal Body */}
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left Column: Protocol */}
+                <div className="space-y-6">
+                    <div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Protocol Used</span>
+                        <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
+                            <div className="flex items-center gap-2 mb-1">
+                                <BrainCircuit className="w-4 h-4 text-indigo-400" />
+                                <span className="font-bold text-indigo-300">{patient.protocol}</span>
+                            </div>
+                            <p className="text-xs text-indigo-200/60 mt-1">{patient.details.sessions} Sessions Completed</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinical Outcome</span>
+                        <div className="flex items-center gap-4">
+                            <div className="text-3xl font-black text-white">{patient.outcome}</div>
+                            {patient.details.timeline.length > 0 && (
+                                <div className="text-xs font-mono text-emerald-400">
+                                    {patient.details.timeline[0].score} &rarr; {patient.details.timeline[patient.details.timeline.length - 1].score} (PHQ-9)
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                {/* Right Column: Context */}
+                <div className="space-y-6">
+                    <div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Concomitant Meds</span>
+                        <div className="flex flex-wrap gap-2">
+                            {patient.details.medications.length > 0 ? (
+                                patient.details.medications.map(med => (
+                                    <span key={med} className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-[10px] font-medium text-slate-300">
+                                        {med}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="text-xs text-slate-600">None reported</span>
+                            )}
+                        </div>
+                    </div>
+                    <div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinician Notes</span>
+                        <p className="text-xs text-slate-400 italic leading-relaxed border-l-2 border-slate-700 pl-3">
+                            "{patient.details.clinician_notes}"
+                        </p>
+                    </div>
+                </div>
             </div>
+
+            <div className="p-4 bg-slate-900/30 border-t border-slate-800 text-center">
+                <button className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest flex items-center justify-center gap-2 group">
+                    View Full Clinical Logs
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                </button>
+            </div>
+        </div>
+    </div>
+);
+
+export default function PatientConstellation() {
+    const [selectedPatient, setSelectedPatient] = useState<PatientNode | null>(null);
+    const [showGuide, setShowGuide] = useState(false);
+
+    return (
+        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl relative h-[500px] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 z-10 relative shrink-0">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-indigo-500/10 rounded-lg">
+                        <Search className="w-5 h-5 text-indigo-500" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-black text-white uppercase tracking-tight">Patient Galaxy</h3>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Similarity Clustering • N=14,200</p>
+                    </div>
+                </div>
+
+                <button
+                    onClick={() => setShowGuide(!showGuide)}
+                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-white transition-colors"
+                    title="How to read this chart"
+                >
+                    <Info className="w-5 h-5" />
+                </button>
+            </div>
+
+            {/* Educational Guide Popover */}
+            {showGuide && (
+                <div className="absolute top-16 right-6 w-72 bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-2xl z-20 animate-in fade-in slide-in-from-top-2">
+                    <h4 className="text-xs font-black text-white uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <Lightbulb className="w-3 h-3 text-amber-400" /> Interpreting the Galaxy
+                    </h4>
+                    <ul className="space-y-3 text-[11px] text-slate-400 leading-relaxed">
+                        <li><strong className="text-slate-200">X-Axis (Resistance):</strong> How many prior treatments failed? (Right = More difficult case).</li>
+                        <li><strong className="text-slate-200">Y-Axis (Severity):</strong> Current PHQ-9 Score. (Top = Severe Depression).</li>
+                        <li><strong className="text-emerald-400">Green Dots:</strong> Patients similar to yours who achieved remission. Click them to see <em>how</em>.</li>
+                    </ul>
+                </div>
+            )}
+
+            {/* Chart Area */}
+            <div className="flex-1 w-full min-h-0 relative z-0">
+                <ResponsiveContainer width="100%" height="100%">
+                    <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.5} />
+                        <XAxis
+                            type="number" dataKey="x" name="Resistance" domain={[0, 100]}
+                            tick={{ fill: '#64748b', fontSize: 10 }}
+                            label={{ value: 'Treatment Resistance Score', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 10, fontWeight: 700 }}
+                        />
+                        <YAxis
+                            type="number" dataKey="y" name="Severity" domain={[0, 30]}
+                            tick={{ fill: '#64748b', fontSize: 10 }}
+                            label={{ value: 'Symptom Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 10, fontWeight: 700 }}
+                        />
+                        <Tooltip cursor={{ strokeDasharray: '3 3' }} content={() => null} />
+
+                        {/* Reference Zones */}
+                        <ReferenceArea x1={60} x2={100} y1={15} y2={30} fill="#6366f1" fillOpacity={0.05} />
+                        <Scatter
+                            name="Patients"
+                            data={MOCK_DATA}
+                            onClick={(node) => setSelectedPatient(node.payload)}
+                            className="cursor-pointer"
+                        >
+                            {MOCK_DATA.map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={entry.cluster === 'responder' ? '#10b981' : entry.cluster === 'current' ? '#06b6d4' : '#475569'}
+                                    fillOpacity={entry.cluster === 'cohort' ? 0.3 : 1}
+                                />
+                            ))}
+                        </Scatter>
+                    </ScatterChart>
+                </ResponsiveContainer>
+                {/* Overlay Pulse for Current Patient */}
+                <div className="absolute pointer-events-none inset-0 flex items-center justify-center">
+                    {/* Maps to where x=75, y=18 roughly is, purely visual for now if needed, but the cell is already there */}
+                </div>
+            </div>
+
+            {/* Footer Insight */}
+            <div className="mt-auto p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl flex items-start gap-3 shrink-0">
+                <Activity className="w-4 h-4 text-emerald-500 mt-0.5" />
+                <p className="text-[11px] text-emerald-100/70 leading-relaxed">
+                    <strong className="text-emerald-400">Analysis:</strong> 74% of nearest neighbors (high resistance / high severity) achieved remission using <strong className="text-emerald-400">IM Ketamine + IFS</strong>.
+                </p>
+            </div>
+
+            {/* Modal Render */}
+            {selectedPatient && <DossierModal patient={selectedPatient} onClose={() => setSelectedPatient(null)} />}
         </div>
     );
 }
