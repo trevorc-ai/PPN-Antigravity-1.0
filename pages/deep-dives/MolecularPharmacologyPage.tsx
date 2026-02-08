@@ -1,13 +1,13 @@
 import React from 'react';
-// CRITICAL: Import the interactive engine from components folder
-import InteractiveComponent from '../../components/analytics/MolecularPharmacology';
+// Import the Engine (Component)
+import MolecularPharmacology from '../../components/analytics/MolecularPharmacology';
 
 const MolecularPharmacologyPage = () => {
     return (
         <div className="p-8 min-h-screen bg-[#05070a] text-white">
             <h1 className="text-3xl font-black tracking-tighter uppercase mb-2">Molecular Pharmacology</h1>
             <div className="max-w-6xl mx-auto mt-10">
-                <InteractiveComponent />
+                <MolecularPharmacology />
             </div>
         </div>
     );
