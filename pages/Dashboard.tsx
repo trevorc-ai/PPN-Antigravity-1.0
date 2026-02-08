@@ -1,94 +1,177 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PATIENTS } from '../constants';
-import RegulatoryMosaic from '../components/analytics/RegulatoryMosaic';
-import SafetyBenchmark from '../components/analytics/SafetyBenchmark';
+import {
+  Activity, AlertTriangle, TrendingUp, Users,
+  Map, Zap, BrainCircuit, ArrowRight, Plus, ShieldCheck
+} from 'lucide-react';
 
-const TelemetryItem: React.FC<{ label: string; value: string | number; trend?: string; color: string; onClick?: () => void }> = ({ label, value, trend, color, onClick }) => (
-  <div role={onClick ? "button" : undefined} onClick={onClick} className={`flex flex-col gap-1 px-3 py-3 sm:px-6 sm:py-4 border border-slate-800/60 bg-[#0f1218] rounded-2xl hover:bg-slate-800/40 transition-all w-full shadow-lg ${onClick ? 'cursor-pointer' : ''}`}>
-    <div className="flex items-center gap-2.5">
-      <span className={`size-2 rounded-full ${color} shadow-[0_0_8px_currentColor]`}></span>
-      <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">{label}</span>
-    </div>
-    <div className="flex items-end gap-3 mt-1">
-      <span className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tighter leading-none font-mono">{value}</span>
-      {trend && <span className="text-[10px] font-bold text-emerald-500/80 mb-1">{trend}</span>}
-    </div>
-  </div>
-);
-
-const Dashboard: React.FC = () => {
+// --- COMPONENT: CLEAN INSIGHT CARD ---
+const InsightCard = ({ title, value, subtext, icon: Icon, color, link, delay }: any) => {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ active: 0, sessions: 0, outcomes: 0, safety: 0 });
-
-  useEffect(() => {
-    setStats({
-      active: PATIENTS.filter(p => p.status === 'Active').length,
-      sessions: 142,
-      outcomes: 68,
-      safety: PATIENTS.filter(p => p.status === 'Review').length
-    });
-  }, []);
-
   return (
-    <div className="p-4 sm:p-8 space-y-8 animate-in fade-in duration-500 pb-24">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tighter uppercase mb-1">Command <span className="text-indigo-500">Center</span></h1>
-          <div className="flex items-center gap-3">
-            <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-500 uppercase tracking-wider">System Nominal</span>
-            <span className="text-[10px] font-medium text-slate-500">Node ID: 0x8842-Alpha</span>
-          </div>
-        </div>
-        <button onClick={() => navigate('/protocol-builder')} className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary/20">
-          <span className="material-symbols-outlined text-lg">add</span> New Protocol
-        </button>
+    <div
+      onClick={() => navigate(link)}
+      className={`group relative overflow-hidden rounded-3xl border border-slate-800 bg-[#0f1218] p-6 hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between h-[200px] animate-in fade-in slide-in-from-bottom-4 duration-700`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {/* Hover Gradient Effect */}
+      <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-[50px] opacity-10 group-hover:opacity-30 transition-opacity duration-500`}
+        style={{ backgroundColor: color.replace('bg-', '').replace('-500', '') }}>
       </div>
 
-      {/* Telemetry */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <TelemetryItem label="Active Cohort" value={stats.active} trend="+12%" color="bg-blue-500" onClick={() => navigate('/advanced-search')} />
-        <TelemetryItem label="Total Sessions" value={stats.sessions} trend="98% Adherence" color="bg-purple-500" />
-        <TelemetryItem label="Network Index" value={stats.outcomes} trend="Top 15%" color="bg-emerald-500" />
-        <TelemetryItem label="Safety Events" value={stats.safety} color="bg-amber-500" />
+      <div className="flex justify-between items-start relative z-10">
+        <div className={`p-3 rounded-2xl ${color} bg-opacity-10`}>
+          <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
+        </div>
+        <div className="p-2 rounded-full bg-slate-900 border border-slate-800 group-hover:bg-slate-800 transition-colors">
+          <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-white" />
+        </div>
       </div>
 
-      {/* Operational Signals (New Layout) */}
-      <div className="space-y-4 pt-6 border-t border-slate-800/50">
-        <h3 className="text-xl font-black text-white tracking-tighter uppercase flex items-center gap-3">
-          <span className="material-symbols-outlined text-indigo-500">radar</span> Operational Signals
-        </h3>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[320px]">
-          <RegulatoryMosaic />
-          <SafetyBenchmark />
-
-          {/* Quick Actions Card */}
-          <div className="bg-[#0f1218] border border-slate-800/60 rounded-3xl p-5 flex flex-col justify-between">
-            <div>
-              <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <button className="w-full p-3 bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 text-indigo-400 rounded-xl text-[11px] font-bold uppercase tracking-wider text-left transition-all">
-                  New Protocol
-                </button>
-                <button className="w-full p-3 bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 text-amber-500 rounded-xl text-[11px] font-bold uppercase tracking-wider text-left transition-all">
-                  Urgent Review
-                </button>
-                <button className="w-full p-3 bg-slate-800/50 border border-slate-700 hover:bg-slate-700 text-slate-300 rounded-xl text-[11px] font-bold uppercase tracking-wider text-left transition-all">
-                  Export Log
-                </button>
-              </div>
-            </div>
-            <div className="p-3 bg-slate-900 rounded-xl border border-slate-800">
-              <p className="text-[9px] text-slate-500 leading-relaxed">
-                <strong className="text-slate-400">Note:</strong> Weekly data sync is scheduled for Sunday 02:00 UTC.
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="relative z-10">
+        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">{title}</h3>
+        <div className="text-3xl font-black text-white tracking-tight mb-2">{value}</div>
+        <p className="text-sm font-medium text-slate-500 leading-snug group-hover:text-slate-300 transition-colors">
+          {subtext}
+        </p>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+// --- COMPONENT: METRIC PILL ---
+const MetricPill = ({ icon: Icon, label, value, color }: any) => (
+  <div className="flex items-center gap-4 p-4 rounded-2xl border border-slate-800 bg-[#0f1218]">
+    <div className={`p-2 rounded-xl bg-${color}-500/10`}>
+      <Icon className={`w-5 h-5 text-${color}-500`} />
+    </div>
+    <div>
+      <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</div>
+      <div className="text-xl font-black text-white">{value}</div>
+    </div>
+  </div>
+);
+
+export default function Dashboard() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="p-8 min-h-screen bg-[#05070a] text-white flex flex-col gap-8 max-w-7xl mx-auto">
+
+      {/* HEADER SECTION */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
+            </span>
+            <span className="text-xs font-medium text-slate-500 font-mono">ID: 8842-ALPHA</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">
+            Morning <span className="text-indigo-500">Briefing</span>
+          </h1>
+        </div>
+        {/* Primary Action Button */}
+        <button
+          onClick={() => navigate('/builder')}
+          className="group flex items-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl transition-all shadow-xl shadow-indigo-900/20 hover:shadow-indigo-500/30 hover:-translate-y-0.5"
+        >
+          <div className="p-1 bg-white/20 rounded-lg group-hover:rotate-90 transition-transform">
+            <Plus className="w-5 h-5 text-white" />
+          </div>
+          <div className="text-left">
+            <div className="text-xs font-bold text-indigo-200 uppercase tracking-wider">Action</div>
+            <div className="text-sm font-black uppercase tracking-widest">New Protocol</div>
+          </div>
+        </button>
+      </div>
+
+      {/* TELEMETRY ROW */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MetricPill icon={Users} label="Active Cohort" value="42" color="blue" />
+        <MetricPill icon={ShieldCheck} label="Safety Score" value="98/100" color="emerald" />
+        <MetricPill icon={Zap} label="Efficiency" value="+18%" color="amber" />
+        <MetricPill icon={AlertTriangle} label="Open Alerts" value="3" color="rose" />
+      </div>
+
+      {/* DEEP DIVE LAUNCHPAD */}
+      <div className="flex-1">
+        <div className="flex items-center gap-3 mb-6">
+          <Activity className="w-5 h-5 text-indigo-500" />
+          <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">Intelligence Feeds</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <InsightCard
+            title="Regulatory Map"
+            value="Oregon Update"
+            subtext="Measure 109 license cap adjusted. Click to review impact."
+            icon={Map}
+            color="bg-amber-500"
+            link="/deep-dives/regulatory-map"
+            delay={100}
+          />
+
+          <InsightCard
+            title="Protocol Efficiency"
+            value="Ketamine + IFS"
+            subtext="Currently trending as your highest margin protocol (+42%)."
+            icon={TrendingUp}
+            color="bg-emerald-500"
+            link="/deep-dives/protocol-efficiency"
+            delay={200}
+          />
+          <InsightCard
+            title="Patient Constellation"
+            value="2 New Matches"
+            subtext="High-resistance patients matched with successful remission profiles."
+            icon={BrainCircuit}
+            color="bg-blue-500"
+            link="/deep-dives/patient-constellation"
+            delay={300}
+          />
+          <InsightCard
+            title="Pharmacology Lab"
+            value="Safety Alert"
+            subtext="New Adrenergic binding data for MDMA. Review cardiac risks."
+            icon={Activity}
+            color="bg-rose-500"
+            link="/deep-dives/molecular-pharmacology"
+            delay={400}
+          />
+          <InsightCard
+            title="Clinic Radar"
+            value="Retention: 85%"
+            subtext="Your clinic is outperforming the network average by 12%."
+            icon={Users}
+            color="bg-indigo-500"
+            link="/deep-dives/clinic-performance"
+            delay={500}
+          />
+
+          {/* Quick Draft Card */}
+          <div
+            onClick={() => navigate('/builder')}
+            className="
+              group rounded-3xl border-2 border-dashed border-slate-800 bg-slate-900/20 p-6
+              hover:border-slate-600 hover:bg-slate-900/50 cursor-pointer transition-all
+              flex flex-col items-center justify-center gap-4 h-[200px]
+            "
+          >
+            <div className="p-4 rounded-full bg-slate-800 group-hover:bg-indigo-600 group-hover:scale-110 transition-all">
+              <Plus className="w-8 h-8 text-slate-400 group-hover:text-white" />
+            </div>
+            <span className="text-sm font-bold text-slate-500 uppercase tracking-widest group-hover:text-white transition-colors">Draft Quick Protocol</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center pt-10 border-t border-slate-900 mt-auto">
+        <p className="text-xs text-slate-600 font-mono">
+          Antigravity Clinical OS • v1.2.4 • Encrypted
+        </p>
+      </div>
+    </div>
+  );
+}
