@@ -1,41 +1,57 @@
-import React from 'react';
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, LabelList } from 'recharts';
-import { Clock, TrendingUp, DollarSign, BrainCircuit } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import {
+    ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
+    ResponsiveContainer, ReferenceLine, Cell
+} from 'recharts';
+import {
+    DollarSign, Clock, TrendingUp, AlertCircle,
+    Calculator, PieChart, ArrowUpRight, Filter
+} from 'lucide-react';
 
-const data = [
-    { x: 90, y: 12, name: 'IM Ketamine', color: '#06b6d4', outcome: '-12 pts' }, // Cyan
-    { x: 120, y: 8, name: 'Spravato', color: '#3b82f6', outcome: '-8 pts' }, // Blue
-    { x: 360, y: 22, name: 'Psilocybin (25mg)', color: '#8b5cf6', outcome: '-22 pts' }, // Purple
-    { x: 480, y: 24, name: 'MDMA-AT', color: '#ec4899', outcome: '-24 pts' }, // Pink
+// --- MOCK DATA ---
+interface ProtocolData {
+    id: string;
+    name: string;
+    revenue: number; // Total billing
+    hours: number;   // Staff hours required
+    satisfaction: number; // 1-10
+    type: 'Ketamine' | 'Psilocybin' | 'MDMA' | 'Integration';
+}
+
+const PROTOCOLS: ProtocolData[] = [
+    { id: 'K-IM-6', name: 'IM Ketamine (6-Pack)', revenue: 3200, hours: 9, satisfaction: 8.5, type: 'Ketamine' },
+    { id: 'K-IV-6', name: 'IV Ketamine (6-Pack)', revenue: 4500, hours: 12, satisfaction: 8.2, type: 'Ketamine' },
+    { id: 'K-KAP', name: 'KAP + Psychotherapy', revenue: 5800, hours: 18, satisfaction: 9.4, type: 'Ketamine' },
+    { id: 'PSI-GRP', name: 'Psilocybin Group', revenue: 1500, hours: 6, satisfaction: 9.1, type: 'Psilocybin' },
+    { id: 'PSI-IND', name: 'Psilocybin Individual', revenue: 2800, hours: 8, satisfaction: 9.6, type: 'Psilocybin' },
+    { id: 'MDMA-PT', name: 'MDMA-AT (Full)', revenue: 12000, hours: 42, satisfaction: 9.8, type: 'MDMA' },
+    { id: 'INT-COACH', name: 'Integration Coaching', revenue: 150, hours: 1, satisfaction: 7.5, type: 'Integration' },
 ];
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload, overhead }: any) => {
     if (active && payload && payload.length) {
-        const d = payload[0].payload;
-        const efficiency = (d.y / d.x).toFixed(3);
-        const hours = (d.x / 60).toFixed(1);
+        const data = payload[0].payload;
+        const cost = data.hours * overhead;
+        const profit = data.revenue - cost;
+        const margin = ((profit / data.revenue) * 100).toFixed(1);
 
         return (
-            <div className="bg-[#0f172a] border border-slate-700 rounded-lg p-3 shadow-2xl z-50">
-                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }}></span>
-                    <span className="text-xs font-black text-slate-200 uppercase tracking-wider">{d.name}</span>
-                </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                    <div>
-                        <span className="text-[9px] font-mono text-slate-500 uppercase block">Yield (PHQ-9)</span>
-                        <span className="text-sm font-bold text-emerald-400">{d.outcome}</span>
+            <div className="bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-2xl z-50 min-w-[200px]">
+                <h4 className="font-black text-white text-sm mb-2">{data.name}</h4>
+                <div className="space-y-2 text-xs">
+                    <div className="flex justify-between">
+                        <span className="text-slate-400">Revenue:</span>
+                        <span className="font-mono text-emerald-400">${data.revenue.toLocaleString()}</span>
                     </div>
-                    <div>
-                        <span className="text-[9px] font-mono text-slate-500 uppercase block">Duration</span>
-                        <span className="text-sm font-bold text-slate-300">{hours} hrs</span>
+                    <div className="flex justify-between">
+                        <span className="text-slate-400">Cost (@${overhead}/hr):</span>
+                        <span className="font-mono text-rose-400">-${cost.toLocaleString()}</span>
                     </div>
-                    <div className="col-span-2 pt-1 mt-1 border-t border-slate-700/50">
-                        <span className="text-[9px] font-mono text-slate-500 uppercase block mb-0.5">Efficiency Score</span>
-                        <div className="flex items-center gap-1">
-                            <TrendingUp className="w-3 h-3 text-indigo-400" />
-                            <span className="text-xs font-mono font-bold text-indigo-400">{efficiency} pts/min</span>
-                        </div>
+                    <div className="pt-2 border-t border-slate-800 flex justify-between font-bold">
+                        <span className="text-slate-300">Net Profit:</span>
+                        <span className={`font-mono ${profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
+                            ${profit.toLocaleString()} ({margin}%)
+                        </span>
                     </div>
                 </div>
             </div>
@@ -44,86 +60,130 @@ const CustomTooltip = ({ active, payload }: any) => {
     return null;
 };
 
-const CustomizedLabel = (props: any) => {
-    const { x, y, value } = props;
-    return (
-        <text x={x} y={y} dy={-10} dx={0} fill="#94a3b8" fontSize={9} fontWeight={700} textAnchor="middle">
-            {value}
-        </text>
-    );
-};
-
 export default function ProtocolEfficiency() {
+    const [overhead, setOverhead] = useState(150); // Hourly cost
+
+    // Dynamic Calculations
+    const processedData = useMemo(() => {
+        return PROTOCOLS.map(p => ({
+            ...p,
+            cost: p.hours * overhead,
+            profit: p.revenue - (p.hours * overhead),
+            roi: ((p.revenue - (p.hours * overhead)) / (p.hours * overhead)) * 100
+        })).sort((a, b) => b.profit - a.profit);
+    }, [overhead]);
+
+    const totalPotentialProfit = processedData.reduce((acc, curr) => acc + (curr.profit > 0 ? curr.profit : 0), 0);
+
     return (
-        <div className="bg-[#0f1218] border border-slate-800 rounded-3xl p-6 flex flex-col h-full">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                    <BrainCircuit className="w-5 h-5 text-indigo-500" />
-                    <h3 className="text-sm font-black text-slate-200 uppercase tracking-widest">Protocol Efficiency</h3>
+        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-8 h-full">
+            {/* HEADER */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
+                        <Calculator className="text-indigo-500" />
+                        Protocol ROI Engine
+                    </h2>
+                    <p className="text-xs text-slate-400 font-medium mt-1">
+                        Financial Efficiency & Margin Analysis
+                    </p>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-800/50 rounded border border-slate-700/50">
-                    <DollarSign className="w-3 h-3 text-emerald-500" />
-                    <span className="text-[9px] font-mono text-emerald-500 font-bold uppercase">ROI Analysis</span>
+                {/* CONTROLS */}
+                <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 flex items-center gap-4 w-full md:w-auto">
+                    <div className="p-2 bg-indigo-500/20 rounded-lg">
+                        <DollarSign className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    <div className="flex-1">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">
+                            Est. Hourly Overhead: <span className="text-white">${overhead}</span>
+                        </label>
+                        <input
+                            type="range"
+                            min="50" max="300" step="10"
+                            value={overhead}
+                            onChange={(e) => setOverhead(Number(e.target.value))}
+                            className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                        />
+                    </div>
                 </div>
             </div>
 
-            <p className="text-xs text-slate-500 font-medium mb-6 max-w-lg">
-                Correlating <span className="text-emerald-400">Therapeutic Yield (Y)</span> with <span className="text-purple-400">Chair Time (X)</span>.
-            </p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1">
 
-            {/* Chart */}
-            <div className="flex-1 w-full min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis
-                            type="number"
-                            dataKey="x"
-                            name="Duration"
-                            unit=" min"
-                            domain={[0, 600]}
-                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
-                            tickLine={false}
-                            axisLine={{ stroke: '#334155' }}
-                        />
-                        <YAxis
-                            type="number"
-                            dataKey="y"
-                            name="Outcome Delta"
-                            domain={[0, 30]}
-                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
-                            tickLine={false}
-                            axisLine={{ stroke: '#334155' }}
-                            label={{ value: 'Improvement (pts)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 9, fontWeight: 700 }}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3', stroke: '#cbd5e1' }} />
+                {/* CHART AREA */}
+                <div className="lg:col-span-2 bg-slate-900/30 border border-slate-800/50 rounded-2xl p-6 relative min-h-[350px] flex flex-col">
+                    <div className="flex-1 w-full h-full min-h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+                                <XAxis
+                                    type="number" dataKey="hours" name="Time" unit="hr"
+                                    tick={{ fill: '#94a3b8', fontSize: 10 }}
+                                    label={{ value: 'Staff Hours Required', position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 10 }}
+                                />
+                                <YAxis
+                                    type="number" dataKey="revenue" name="Revenue" unit="$"
+                                    tick={{ fill: '#94a3b8', fontSize: 10 }}
+                                    label={{ value: 'Revenue per Unit', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 10 }}
+                                />
+                                <Tooltip content={<CustomTooltip overhead={overhead} />} />
 
-                        {/* Efficiency Baseline Reference */}
-                        <ReferenceLine
-                            segment={[{ x: 0, y: 0 }, { x: 600, y: 30 }]}
-                            stroke="#475569"
-                            strokeDasharray="4 4"
-                            strokeOpacity={0.5}
-                            label={{ value: 'Efficiency Baseline', position: 'insideTopRight', fill: '#475569', fontSize: 9, dy: 10 }}
-                        />
+                                <Scatter name="Protocols" data={processedData}>
+                                    {processedData.map((entry, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.profit > 0 ? '#10b981' : '#f43f5e'}
+                                            fillOpacity={0.6}
+                                            stroke={entry.profit > 0 ? '#10b981' : '#f43f5e'}
+                                            strokeWidth={2}
+                                        />
+                                    ))}
+                                </Scatter>
+                            </ScatterChart>
+                        </ResponsiveContainer>
+                    </div>
+                    {/* Legend Overlay */}
+                    <div className="absolute top-6 right-6 flex flex-col gap-2 text-[10px] font-bold uppercase tracking-widest bg-slate-900/80 p-2 rounded-lg border border-slate-800 z-10">
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Profitable
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-rose-500"></span> Loss / At Risk
+                        </div>
+                    </div>
+                </div>
 
-                        <Scatter name="Protocols" data={data}>
-                            {data.map((entry, index) => (
-                                <cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                            <LabelList dataKey="name" content={<CustomizedLabel />} />
-                        </Scatter>
-                    </ScatterChart>
-                </ResponsiveContainer>
-            </div>
-
-            {/* Footer Insight */}
-            <div className="mt-4 pt-4 border-t border-slate-800/50 flex items-start gap-3">
-                <Clock className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                    <strong className="text-slate-300">Resource Optimization:</strong> Correlating therapeutic yield with chair time allows for smarter financial modeling and protocol selection.
-                </p>
+                {/* SIDEBAR: LEADERBOARD */}
+                <div className="flex flex-col gap-4">
+                    <div className="p-5 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl">
+                        <div className="flex items-center gap-2 mb-2">
+                            <TrendingUp className="w-4 h-4 text-indigo-400" />
+                            <h3 className="text-xs font-black text-indigo-300 uppercase tracking-widest">Efficiency Forecast</h3>
+                        </div>
+                        <p className="text-3xl font-black text-white tracking-tight">
+                            ${totalPotentialProfit.toLocaleString()}
+                        </p>
+                        <p className="text-[10px] text-indigo-400/60 font-medium mt-1">
+                            Total Net Profit (Single Run of All Protocols)
+                        </p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                        {processedData.map((p, i) => (
+                            <div key={p.id} className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl flex justify-between items-center group hover:border-slate-700 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className={`text-xs font-black w-4 text-slate-600`}>#{i + 1}</div>
+                                    <div>
+                                        <div className="text-xs font-bold text-slate-200">{p.name}</div>
+                                        <div className="text-[10px] text-slate-500">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
+                                    </div>
+                                </div>
+                                <div className={`text-xs font-mono font-bold ${p.profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
+                                    {p.profit > 0 ? '+' : ''}${p.profit.toLocaleString()}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     );
