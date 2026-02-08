@@ -89,7 +89,7 @@ export default function MolecularPharmacology() {
                         Molecular Bridge
                     </h2>
                     <p className="text-xs text-slate-400 font-medium mt-1">
-                        Receptor Affinity Profiling ($K_i$ Inverted)
+                        Receptor Binding Potential (Standardized $K_i$ Affinity)
                     </p>
                 </div>
                 <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800">
@@ -98,8 +98,8 @@ export default function MolecularPharmacology() {
                             key={key}
                             onClick={() => setActiveMol(key)}
                             className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${activeMol === key
-                                    ? 'bg-indigo-600 text-white shadow-lg'
-                                    : 'text-slate-500 hover:text-slate-300'
+                                ? 'bg-indigo-600 text-white shadow-lg'
+                                : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             {key}

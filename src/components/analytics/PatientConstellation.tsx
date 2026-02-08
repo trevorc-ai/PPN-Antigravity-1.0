@@ -172,7 +172,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 {/* Left Column: Protocol */}
                 <div className="space-y-6">
                     <div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Protocol Used</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Protocol Used</span>
                         <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                             <div className="flex items-center gap-2 mb-1">
                                 <BrainCircuit className="w-4 h-4 text-indigo-400" />
@@ -183,14 +183,17 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                     </div>
 
                     <div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinical Outcome</span>
-                        <div className="flex items-center gap-4">
-                            <div className="text-3xl font-black text-white">{patient.outcome}</div>
-                            {patient.details.timeline.length > 0 && (
-                                <div className="text-xs font-mono text-emerald-400">
-                                    {patient.details.timeline[0].score} &rarr; {patient.details.timeline[patient.details.timeline.length - 1].score} (PHQ-9)
-                                </div>
-                            )}
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinical Outcome</span>
+
+                        <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                            <div className="flex items-center gap-4">
+                                <div className="text-3xl font-black text-white">{patient.outcome}</div>
+                                {patient.details.timeline.length > 0 && (
+                                    <div className="text-xs font-mono text-emerald-400">
+                                        {patient.details.timeline[0].score} &rarr; {patient.details.timeline[patient.details.timeline.length - 1].score} (PHQ-9)
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -263,9 +266,9 @@ export default function PatientConstellation() {
                         <Lightbulb className="w-3 h-3 text-amber-400" /> Interpreting the Galaxy
                     </h4>
                     <ul className="space-y-3 text-[11px] text-slate-400 leading-relaxed">
-                        <li><strong className="text-slate-200">X-Axis (Resistance):</strong> How many prior treatments failed? (Right = More difficult case).</li>
-                        <li><strong className="text-slate-200">Y-Axis (Severity):</strong> Current PHQ-9 Score. (Top = Severe Depression).</li>
-                        <li><strong className="text-emerald-400">Green Dots:</strong> Patients similar to yours who achieved remission. Click them to see <em>how</em>.</li>
+                        <li><strong className="text-slate-200">X-Axis (Resistance):</strong> Treatment Resistance Score (Count of prior failed trials).</li>
+                        <li><strong className="text-slate-200">Y-Axis (Severity):</strong> Current Symptom Load (PHQ-9 / CAPS-5). Top = Severe.</li>
+                        <li><strong className="text-emerald-400">Green Nodes:</strong> "Responder" Cohort (Remission Achieved). Click to analyze protocol & duration.</li>
                     </ul>
                 </div>
             )}
@@ -298,7 +301,6 @@ export default function PatientConstellation() {
                             {MOCK_DATA.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
-                                    fill={entry.cluster === 'responder' ? '#10b981' : entry.cluster === 'current' ? '#06b6d4' : '#475569'}
                                     fillOpacity={entry.cluster === 'cohort' ? 0.3 : 1}
                                 />
                             ))}

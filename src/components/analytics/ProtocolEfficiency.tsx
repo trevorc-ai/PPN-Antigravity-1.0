@@ -44,6 +44,10 @@ const CustomTooltip = ({ active, payload, overhead }: any) => {
                         <span className="font-mono text-emerald-400">${data.revenue.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
+                        <span className="text-slate-400">Operational Load:</span>
+                        <span className="font-mono text-slate-200">{data.hours} Staff Hrs</span>
+                    </div>
+                    <div className="flex justify-between">
                         <span className="text-slate-400">Cost (@${overhead}/hr):</span>
                         <span className="font-mono text-rose-400">-${cost.toLocaleString()}</span>
                     </div>
@@ -94,19 +98,21 @@ export default function ProtocolEfficiency() {
                         <DollarSign className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div className="flex-1">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">
                             Est. Hourly Overhead: <span className="text-white">${overhead}</span>
                         </label>
                         <input
                             type="range"
                             min="50" max="300" step="10"
                             value={overhead}
-                            onChange={(e) => setOverhead(Number(e.target.value))}
-                            className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                            onChange={(e) => setOverhead(parseInt(e.target.value))}
+                            className="w-full accent-indigo-500 h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer"
                         />
                     </div>
                 </div>
+
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1">
 
@@ -185,6 +191,6 @@ export default function ProtocolEfficiency() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

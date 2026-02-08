@@ -40,24 +40,38 @@ const METRIC_INSIGHTS = {
     ]
 };
 
+const METRIC_DEFINITIONS: Record<string, string> = {
+    'Efficacy': 'Response Rate (≥50% PHQ-9 Reduction)',
+    'Safety': 'Inverse Risk Score (AEs per 1000 Sessions)',
+    'Retention': '% Patients Completing Full Protocol',
+    'Speed': 'Time to Remission (Weeks to <10 PHQ-9)',
+    'Revenue': 'Net Margin per Clinical Hour',
+    'Compliance': 'Documentation Completeness (Audit Score)'
+};
+
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-900/95 backdrop-blur-sm p-3 border border-slate-700 rounded-lg shadow-xl">
-                <h4 className="text-slate-200 font-bold mb-2 text-xs uppercase tracking-wider">{label}</h4>
-                <div className="flex flex-col gap-1.5">
+            <div className="bg-slate-900/95 backdrop-blur-sm p-4 border border-slate-700 rounded-lg shadow-xl max-w-[250px]">
+                <h4 className="text-slate-200 font-bold mb-1 text-xs uppercase tracking-wider">{label}</h4>
+                <p className="text-xs text-slate-500 mb-3 italic">
+                    {METRIC_DEFINITIONS[label] || 'Performance Metric'}
+                </p>
+                <div className="flex flex-col gap-2">
                     {payload.map((entry: any, index: number) => (
-                        <div key={index} className="flex items-center gap-2 text-xs">
-                            <div
-                                className="w-2 h-2 rounded-full"
-                                style={{ backgroundColor: entry.color }}
-                            />
-                            <span className="text-slate-400 font-medium">{entry.name}:</span>
-                            <span className="text-slate-200 font-bold font-mono">{entry.dataKey === 'A' ? entry.payload.A : entry.payload.B}</span>
+                        <div key={index} className="flex items-center justify-between gap-4 text-xs">
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className="w-2 h-2 rounded-full"
+                                    style={{ backgroundColor: entry.color }}
+                                />
+                                <span className="text-slate-300 font-medium">{entry.name}:</span>
+                            </div>
+                            <span className="text-white font-bold font-mono">{entry.dataKey === 'A' ? entry.payload.A : entry.payload.B}</span>
                         </div>
                     ))}
                 </div>
-            </div>
+            </div >
         );
     }
     return null;
@@ -89,14 +103,14 @@ export default function ClinicPerformanceRadar() {
                     <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
                         <button
                             onClick={() => setTimeRange('quarter')}
-                            className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${timeRange === 'quarter' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'quarter' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             Q1 2026
                         </button>
                         <button
                             onClick={() => setTimeRange('year')}
-                            className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${timeRange === 'year' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'year' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             Last 12 Mo
