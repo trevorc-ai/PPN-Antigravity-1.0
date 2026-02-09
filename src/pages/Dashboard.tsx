@@ -6,13 +6,16 @@ import {
 } from 'lucide-react';
 import ConnectFeedButton from '../components/ui/ConnectFeedButton';
 
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
+
 // --- COMPONENT: CLEAN INSIGHT CARD ---
 const InsightCard = ({ title, value, subtext, icon: Icon, color, link, delay }: any) => {
   const navigate = useNavigate();
   return (
     <div
       onClick={() => navigate(link)}
-      className={`group relative overflow-hidden rounded-3xl border border-slate-800 bg-[#0f1218] p-6 hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between h-[200px] animate-in fade-in slide-in-from-bottom-4 duration-700`}
+      className={`card-glass group relative overflow-hidden rounded-3xl p-6 hover:border-slate-500 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between h-[200px] animate-in fade-in slide-in-from-bottom-4 duration-700`}
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Hover Gradient Effect */}
@@ -42,7 +45,7 @@ const InsightCard = ({ title, value, subtext, icon: Icon, color, link, delay }: 
 
 // --- COMPONENT: METRIC PILL ---
 const MetricPill = ({ icon: Icon, label, value, color }: any) => (
-  <div className="flex items-center gap-4 p-4 rounded-2xl border border-slate-800 bg-[#0f1218]">
+  <div className="card-glass flex items-center gap-4 p-4 rounded-2xl h-full">
     <div className={`p-2 rounded-xl bg-${color}-500/10`}>
       <Icon className={`w-5 h-5 text-${color}-500`} />
     </div>
@@ -57,17 +60,17 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   return (
-    <div className="p-8 min-h-screen bg-[#05070a] text-white flex flex-col gap-8 max-w-7xl mx-auto">
+    <PageContainer className="min-h-screen bg-background-dark text-white flex flex-col gap-8">
 
       {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">
+      <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
+              <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
             </span>
-            <span className="text-xs font-medium text-slate-500 font-mono">ID: 8842-ALPHA</span>
+            <span className="text-[11px] font-medium text-slate-500 font-mono">ID: 8842-ALPHA</span>
           </div>
           <h1 className="text-5xl font-black tracking-tighter text-white">
             Dashboard
@@ -77,7 +80,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-4">
           <ConnectFeedButton />
         </div>
-      </div>
+      </Section>
 
       {/* TELEMETRY ROW */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -88,12 +91,7 @@ export default function Dashboard() {
       </div>
 
       {/* DEEP DIVE LAUNCHPAD */}
-      <div className="flex-1">
-        <div className="flex items-center gap-3 mb-6">
-          <Activity className="w-5 h-5 text-indigo-500" />
-          <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest">Intelligence Feeds</h2>
-        </div>
-
+      <Section className="flex-1 mt-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <InsightCard
             title="Regulatory Map"
@@ -148,40 +146,40 @@ export default function Dashboard() {
             <div
               onClick={() => navigate('/builder')}
               className="
-                group flex-1 rounded-3xl border-2 border-dashed border-indigo-800 bg-indigo-900/20 p-6
-                hover:border-indigo-600 hover:bg-indigo-900/50 cursor-pointer transition-all
+                card-glass group flex-1 rounded-3xl border-2 border-dashed border-indigo-500/30 p-6
+                hover:border-indigo-500 cursor-pointer transition-all
                 flex flex-col items-center justify-center gap-4
               "
             >
-              <div className="p-4 rounded-full bg-indigo-800 group-hover:bg-indigo-600 group-hover:scale-110 transition-all">
+              <div className="p-4 rounded-full bg-indigo-500/10 border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-all">
                 <Plus className="w-8 h-8 text-indigo-400 group-hover:text-white" />
               </div>
-              <span className="text-sm font-bold text-indigo-500 uppercase tracking-widest group-hover:text-white transition-colors">New Protocol</span>
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest group-hover:text-white transition-colors">New Protocol</span>
             </div>
 
             {/* Add/Update Profile Button */}
             <div
               onClick={() => navigate('/clinician/profile')}
               className="
-                group flex-1 rounded-3xl border-2 border-dashed border-emerald-800 bg-emerald-900/20 p-6
-                hover:border-emerald-600 hover:bg-emerald-900/50 cursor-pointer transition-all
+                card-glass group flex-1 rounded-3xl border-2 border-dashed border-emerald-500/30 p-6
+                hover:border-emerald-500 cursor-pointer transition-all
                 flex flex-col items-center justify-center gap-4
               "
             >
-              <div className="p-4 rounded-full bg-emerald-800 group-hover:bg-emerald-600 group-hover:scale-110 transition-all">
+              <div className="p-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-all">
                 <Users className="w-8 h-8 text-emerald-400 group-hover:text-white" />
               </div>
-              <span className="text-sm font-bold text-emerald-500 uppercase tracking-widest group-hover:text-white transition-colors text-center">Add/Update Profile</span>
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest group-hover:text-white transition-colors text-center">Add/Update Profile</span>
             </div>
           </div>
         </div>
-      </div>
+      </Section>
 
       <div className="text-center pt-10 border-t border-slate-900 mt-auto">
-        <p className="text-xs text-slate-600 font-mono">
+        <p className="text-[10px] text-slate-600 font-mono">
           Antigravity Clinical OS • v1.2.4 • Encrypted
         </p>
       </div>
-    </div>
+    </PageContainer>
   );
 }

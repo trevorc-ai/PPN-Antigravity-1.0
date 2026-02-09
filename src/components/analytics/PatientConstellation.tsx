@@ -200,11 +200,11 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 {/* Right Column: Context */}
                 <div className="space-y-6">
                     <div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Concomitant Meds</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Concomitant Meds</span>
                         <div className="flex flex-wrap gap-2">
                             {patient.details.medications.length > 0 ? (
                                 patient.details.medications.map(med => (
-                                    <span key={med} className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-[10px] font-medium text-slate-300">
+                                    <span key={med} className="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs font-medium text-slate-300">
                                         {med}
                                     </span>
                                 ))
@@ -214,7 +214,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                         </div>
                     </div>
                     <div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinician Notes</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinician Notes</span>
                         <p className="text-xs text-slate-400 italic leading-relaxed border-l-2 border-slate-700 pl-3">
                             "{patient.details.clinician_notes}"
                         </p>
@@ -223,7 +223,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
             </div>
 
             <div className="p-4 bg-slate-900/30 border-t border-slate-800 text-center">
-                <button className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest flex items-center justify-center gap-2 group">
+                <button className="text-xs font-bold text-indigo-400 hover:text-indigo-300 uppercase tracking-widest flex items-center justify-center gap-2 group">
                     View Full Clinical Logs
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -244,9 +244,9 @@ export default function PatientConstellation() {
                     <div className="p-2 bg-indigo-500/10 rounded-lg">
                         <Search className="w-5 h-5 text-indigo-500" />
                     </div>
-                    <div>
-                        <h3 className="text-lg font-black text-white uppercase tracking-tight">Patient Galaxy</h3>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Similarity Clustering • N=14,200</p>
+                    <div title="Scatter plot visualizing patient outcomes based on treatment resistance and symptom severity">
+                        <h3 className="text-lg font-black text-white tracking-tight">Patient Galaxy Analysis</h3>
+                        <p className="text-xs text-slate-400 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
                     </div>
                 </div>
 
@@ -280,28 +280,45 @@ export default function PatientConstellation() {
                         <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.5} />
                         <XAxis
                             type="number" dataKey="x" name="Resistance" domain={[0, 100]}
-                            tick={{ fill: '#64748b', fontSize: 10 }}
-                            label={{ value: 'Treatment Resistance Score', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 10, fontWeight: 700 }}
+                            tick={{ fill: '#64748b', fontSize: 11 }}
+                            label={{ value: 'Treatment Resistance Score', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 11, fontWeight: 700 }}
                         />
                         <YAxis
                             type="number" dataKey="y" name="Severity" domain={[0, 30]}
-                            tick={{ fill: '#64748b', fontSize: 10 }}
-                            label={{ value: 'Symptom Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 10, fontWeight: 700 }}
+                            tick={{ fill: '#64748b', fontSize: 11 }}
+                            label={{ value: 'Symptom Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 11, fontWeight: 700 }}
                         />
-                        <Tooltip cursor={{ strokeDasharray: '3 3' }} content={() => null} />
+                        <Tooltip
+                            cursor={{ strokeDasharray: '3 3' }}
+                            content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                    const data = payload[0].payload;
+                                    return (
+                                        <div className="bg-slate-900/95 backdrop-blur border border-slate-700 p-3 rounded-lg shadow-xl z-50">
+                                            <p className="text-white font-bold text-xs mb-1">{data.id}</p>
+                                            <p className="text-xs text-slate-400">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
+                                            <p className="text-xs text-slate-400">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            }}
+                        />
 
                         {/* Reference Zones */}
+                        {/* @ts-ignore */}
                         <ReferenceArea x1={60} x2={100} y1={15} y2={30} fill="#6366f1" fillOpacity={0.05} />
                         <Scatter
                             name="Patients"
                             data={MOCK_DATA}
                             onClick={(node) => setSelectedPatient(node.payload)}
                             className="cursor-pointer"
+                            fill="#818cf8"
                         >
                             {MOCK_DATA.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
-                                    fillOpacity={entry.cluster === 'cohort' ? 0.3 : 1}
+                                    fillOpacity={entry.cluster === 'cohort' ? 0.8 : 1}
                                 />
                             ))}
                         </Scatter>

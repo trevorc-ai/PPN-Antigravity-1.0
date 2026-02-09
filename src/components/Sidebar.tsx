@@ -26,7 +26,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
     };
 
     PATIENTS.forEach(p => {
-      const sub = p.protocol.substance;
+      // Guard against missing protocol data to prevent sidebar crash
+      const sub = p.protocol?.substance;
+      if (!sub) return;
+
       if (sub === 'Psilocybin') counts['Psilocybin']++;
       else if (sub === 'MDMA') counts['MDMA']++;
       else if (sub === 'Ketamine') counts['Ketamine']++;
@@ -45,16 +48,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
 
   const activeProtocolsCount = PATIENTS.filter(p => p.status === 'Active').length;
 
-  const [openSection, setOpenSection] = useState<string | null>('Core Research');
-
-  const toggleSection = (label: string) => setOpenSection(prev => prev === label ? null : label);
-
   const sections = [
     {
       title: 'Core Research',
       items: [
         { label: 'Research Portal', icon: 'search_insights', path: '/advanced-search' },
-        { label: 'Analytics', icon: 'query_stats', path: '/analytics' },
+        // { label: 'Analytics', icon: 'query_stats', path: '/analytics' },
         { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
         { label: 'News', icon: 'newspaper', path: '/news' },
         { label: 'Practitioners', icon: 'groups', path: '/clinicians' },
@@ -145,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
                 <span className="text-[11px] font-mono font-bold text-primary px-1 bg-primary/10 rounded">LIVE</span>
               </div>
             </div>
-            <div className="h-[70px] w-full mb-1">
+            <div className="h-[70px] w-full mb-1" style={{ height: 70 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
                   <XAxis dataKey="name" hide />
@@ -202,50 +201,42 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
           </div>
         </div>
 
-        <div className="flex-1 px-3 py-1 space-y-3 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 px-3 py-1 space-y-6 overflow-y-auto custom-scrollbar">
           {sections.map((section) => (
-            <nav key={section.title} className="space-y-0.5" aria-label={section.title}>
-              <button
-                onClick={() => toggleSection(section.title)}
-                className="w-full flex items-center justify-between px-3 py-1 group focus-visible:outline-none"
-              >
-                <h3 className="text-xs font-black text-slate-400 tracking-tight opacity-80 group-hover:text-white transition-colors">
+            <nav key={section.title} className="space-y-2" aria-label={section.title}>
+              <div className="px-3">
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest opacity-80">
                   {section.title}
                 </h3>
-                <span className={`material-symbols-outlined text-[16px] text-slate-500 transition-transform duration-300 ${openSection === section.title ? 'rotate-180' : ''}`}>
-                  expand_more
-                </span>
-              </button>
-
-              <div className={`overflow-hidden transition-all duration-300 ${openSection === section.title ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                <ul className="space-y-0.5">
-                  {section.items.map((item) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                      <li key={item.path} id={item.id}>
-                        <Link
-                          to={item.path}
-                          onClick={() => { if (window.innerWidth < 1024) onClose(); }}
-                          className={`group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
-                            ? 'bg-primary/20 text-white ring-1 ring-primary/40 shadow-[0_0_15px_rgba(43,116,243,0.2)]'
-                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
-                            }`}
-                          aria-current={isActive ? 'page' : undefined}
-                        >
-                          {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3]"></div>
-                          )}
-                          <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'
-                            }`} aria-hidden="true">
-                            {item.icon}
-                          </span>
-                          <span className="text-[14px] font-bold uppercase tracking-wide">{item.label}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
               </div>
+
+              <ul className="space-y-0.5">
+                {section.items.map((item) => {
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <li key={item.path} id={item.id ? item.id : undefined}>
+                      <Link
+                        to={item.path}
+                        onClick={() => { if (window.innerWidth < 1024) onClose(); }}
+                        className={`group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
+                          ? 'bg-primary/20 text-white ring-1 ring-primary/40 shadow-[0_0_15px_rgba(43,116,243,0.2)]'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
+                          }`}
+                        aria-current={isActive ? 'page' : undefined}
+                      >
+                        {isActive && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3]"></div>
+                        )}
+                        <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'
+                          }`} aria-hidden="true">
+                          {item.icon}
+                        </span>
+                        <span className="text-[14px] font-bold uppercase tracking-wide">{item.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             </nav>
           ))}
         </div>

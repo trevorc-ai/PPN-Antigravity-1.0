@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { PageContainer } from '../components/layouts/PageContainer';
 import { INTERACTION_RULES, MEDICATIONS_LIST } from '../constants';
 
 const PSYCHEDELICS = ['Psilocybin', 'MDMA', 'Ketamine', 'LSD-25', '5-MeO-DMT', 'Ibogaine', 'Mescaline'];
@@ -93,8 +94,8 @@ const InteractionChecker: React.FC = () => {
   const styles = analysisResult ? getSeverityStyles(analysisResult.riskLevel) : null;
 
   return (
-    <div className="p-4 sm:p-10 max-w-[1200px] mx-auto w-full space-y-8 animate-in fade-in duration-700">
-      
+    <PageContainer width="wide" className="p-4 sm:p-10 space-y-8 animate-in fade-in duration-700">
+
       {toast && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-4 duration-300">
           <div className="bg-[#0c0f14] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary/40 backdrop-blur-xl">
@@ -105,7 +106,7 @@ const InteractionChecker: React.FC = () => {
       )}
 
       {/* Back Button */}
-      <button 
+      <button
         onClick={() => navigate('/catalog')}
         className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-6 group"
       >
@@ -126,7 +127,7 @@ const InteractionChecker: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={handleClear}
             className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-500 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
           >
@@ -141,9 +142,9 @@ const InteractionChecker: React.FC = () => {
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
           <div className="relative group">
             <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 group-focus-within:text-primary transition-colors">
-               <span className="material-symbols-outlined text-xl">biotech</span>
+              <span className="material-symbols-outlined text-xl">biotech</span>
             </div>
-            <select 
+            <select
               value={selectedPsychedelic}
               onChange={(e) => setSelectedPsychedelic(e.target.value)}
               className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-white focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
@@ -152,12 +153,12 @@ const InteractionChecker: React.FC = () => {
               {PSYCHEDELICS.map(p => <option key={p} value={p}>{p.toUpperCase()}</option>)}
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
-               <span className="material-symbols-outlined">expand_more</span>
+              <span className="material-symbols-outlined">expand_more</span>
             </div>
           </div>
           <div className="flex items-center gap-2 px-2">
-             <span className="material-symbols-outlined text-xs text-slate-600">lock</span>
-             <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Validated Protocol List Only</span>
+            <span className="material-symbols-outlined text-xs text-slate-600">lock</span>
+            <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Validated Protocol List Only</span>
           </div>
         </section>
 
@@ -166,9 +167,9 @@ const InteractionChecker: React.FC = () => {
           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
           <div className="relative group">
             <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 group-focus-within:text-primary transition-colors">
-               <span className="material-symbols-outlined text-xl">dataset</span>
+              <span className="material-symbols-outlined text-xl">dataset</span>
             </div>
-            <select 
+            <select
               value={selectedMedication}
               onChange={(e) => setSelectedMedication(e.target.value)}
               className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-white focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
@@ -177,13 +178,13 @@ const InteractionChecker: React.FC = () => {
               {MEDICATIONS_LIST.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
-               <span className="material-symbols-outlined">expand_more</span>
+              <span className="material-symbols-outlined">expand_more</span>
             </div>
           </div>
-          
+
           {/* Missing Agent Workflow */}
           <div className="px-2">
-            <button 
+            <button
               onClick={handleRequestAgent}
               className="text-[9px] font-bold text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2 group"
             >
@@ -198,20 +199,20 @@ const InteractionChecker: React.FC = () => {
       <div className="min-h-[400px] flex flex-col">
         {!analysisResult ? (
           <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-[3rem] space-y-6 opacity-40">
-             <span className="material-symbols-outlined text-7xl text-slate-700">query_stats</span>
-             <p className="text-slate-500 font-black text-[11px] uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
+            <span className="material-symbols-outlined text-7xl text-slate-700">query_stats</span>
+            <p className="text-slate-500 font-black text-[11px] uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
           </div>
         ) : (
-          <div 
+          <div
             key={`${selectedPsychedelic}-${selectedMedication}`}
             className={`flex-1 ${styles?.bg} border-2 ${styles?.border} rounded-[3rem] p-10 sm:p-14 ${styles?.glow} animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all overflow-hidden relative group`}
           >
             <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
-               <span className="material-symbols-outlined text-[160px]">{styles?.icon}</span>
+              <span className="material-symbols-outlined text-[160px]">{styles?.icon}</span>
             </div>
 
             <div className="relative z-10 flex flex-col h-full">
-              
+
               {/* Combination Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/10 pb-8 mb-8">
                 <div>
@@ -221,7 +222,7 @@ const InteractionChecker: React.FC = () => {
                     {analysisResult.interactor}
                   </h2>
                 </div>
-                <button 
+                <button
                   onClick={handlePrint}
                   className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-200 text-[10px] font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
                 >
@@ -233,15 +234,15 @@ const InteractionChecker: React.FC = () => {
               {/* Status & Risk Badges */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                 <div className="flex items-center gap-4">
-                   <div className={`size-16 rounded-[1.5rem] bg-black/40 border ${styles?.border} flex items-center justify-center ${styles?.text}`}>
-                      <span className="material-symbols-outlined text-4xl">{styles?.icon}</span>
-                   </div>
-                   <div>
-                      <h3 className={`text-4xl font-black tracking-tighter ${styles?.text}`}>{styles?.label}</h3>
-                      <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest mt-1">
-                        Risk Level: {analysisResult.riskLevel} / 10 • Severity: {analysisResult.severity}
-                      </p>
-                   </div>
+                  <div className={`size-16 rounded-[1.5rem] bg-black/40 border ${styles?.border} flex items-center justify-center ${styles?.text}`}>
+                    <span className="material-symbols-outlined text-4xl">{styles?.icon}</span>
+                  </div>
+                  <div>
+                    <h3 className={`text-4xl font-black tracking-tighter ${styles?.text}`}>{styles?.label}</h3>
+                    <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest mt-1">
+                      Risk Level: {analysisResult.riskLevel} / 10 • Severity: {analysisResult.severity}
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -253,7 +254,7 @@ const InteractionChecker: React.FC = () => {
                       "{analysisResult.description}"
                     </p>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Mechanism of Interaction</h3>
                     <div className="p-6 bg-black/40 border border-white/5 rounded-2xl">
@@ -265,24 +266,24 @@ const InteractionChecker: React.FC = () => {
                 </div>
 
                 <div className="lg:col-span-5 flex flex-col justify-end">
-                   <div className="bg-black/60 border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
-                      <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol Sync Status</span>
-                         <span className="text-[10px] font-mono text-clinical-green font-black uppercase">Active</span>
+                  <div className="bg-black/60 border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol Sync Status</span>
+                      <span className="text-[10px] font-mono text-clinical-green font-black uppercase">Active</span>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
+                      <p className="text-base font-mono font-black text-slate-400">{analysisResult.id} // SECURE_NODE_0x7</p>
+                    </div>
+                    {analysisResult.sourceUrl && (
+                      <div className="flex items-center gap-2">
+                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] font-black text-primary hover:text-white uppercase tracking-widest flex items-center gap-1 transition-colors">
+                          Source: {analysisResult.source}
+                          <span className="material-symbols-outlined text-xs">open_in_new</span>
+                        </a>
                       </div>
-                      <div className="space-y-2">
-                         <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
-                         <p className="text-base font-mono font-black text-slate-400">{analysisResult.id} // SECURE_NODE_0x7</p>
-                      </div>
-                      {analysisResult.sourceUrl && (
-                        <div className="flex items-center gap-2">
-                          <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] font-black text-primary hover:text-white uppercase tracking-widest flex items-center gap-1 transition-colors">
-                            Source: {analysisResult.source}
-                            <span className="material-symbols-outlined text-xs">open_in_new</span>
-                          </a>
-                        </div>
-                      )}
-                   </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -296,29 +297,29 @@ const InteractionChecker: React.FC = () => {
       </div>
 
       <div className="bg-indigo-600/5 border border-indigo-500/20 rounded-[2.5rem] p-8 shadow-2xl group transition-all hover:bg-indigo-600/10">
-         <div className="flex items-start gap-6">
-            <div className="size-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0 border border-indigo-500/20 shadow-lg group-hover:scale-110 transition-transform">
-               <span className="material-symbols-outlined text-2xl">clinical_notes</span>
+        <div className="flex items-start gap-6">
+          <div className="size-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0 border border-indigo-500/20 shadow-lg group-hover:scale-110 transition-transform">
+            <span className="material-symbols-outlined text-2xl">clinical_notes</span>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xs font-black text-white uppercase tracking-widest">Registry Methodology</h3>
+            <p className="text-[12px] text-slate-500 leading-relaxed font-medium italic">
+              Interaction data is synthesized from peer-reviewed literature, clinical trial reports (2024-2025), and anonymized practitioner observations. All data points are validated by the institutional Lead Investigator node before ledger entry.
+            </p>
+            <div className="flex items-center gap-4 pt-2">
+              <div className="flex items-center gap-1.5">
+                <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
+                <span className="text-[8px] font-mono text-clinical-green font-black uppercase tracking-widest">Ledger Verified</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
+                <span className="text-[8px] font-mono text-primary font-black uppercase tracking-widest">Node Sync Complete</span>
+              </div>
             </div>
-            <div className="space-y-2">
-               <h3 className="text-xs font-black text-white uppercase tracking-widest">Registry Methodology</h3>
-               <p className="text-[12px] text-slate-500 leading-relaxed font-medium italic">
-                 Interaction data is synthesized from peer-reviewed literature, clinical trial reports (2024-2025), and anonymized practitioner observations. All data points are validated by the institutional Lead Investigator node before ledger entry.
-               </p>
-               <div className="flex items-center gap-4 pt-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                    <span className="text-[8px] font-mono text-clinical-green font-black uppercase tracking-widest">Ledger Verified</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
-                    <span className="text-[8px] font-mono text-primary font-black uppercase tracking-widest">Node Sync Complete</span>
-                  </div>
-               </div>
-            </div>
-         </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

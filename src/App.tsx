@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // Corrected imports for React Router v6
 import { HashRouter as Router, Routes, Route, useLocation, Navigate, useNavigate, Outlet } from 'react-router-dom';
+import About from './pages/About';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import SubstanceCatalog from './pages/SubstanceCatalog';
@@ -70,7 +71,7 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Layout Component for Protected Routes
+// Layout Component for Protected Routes - AUTH DISABLED PENDING SUPABASE INTEGRATION
 const ProtectedLayout: React.FC<{
   isAuthenticated: boolean;
   onLogout: () => void;
@@ -81,14 +82,14 @@ const ProtectedLayout: React.FC<{
 }> = ({ isAuthenticated, onLogout, isSidebarOpen, setIsSidebarOpen, showTour, setShowTour }) => {
   const navigate = useNavigate();
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, navigate]);
+  // DISABLED AUTH CHECK FOR VISUAL AUDIT (Supabase Deferred)
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     navigate('/login');
+  //   }
+  // }, [isAuthenticated, navigate]);
 
-  if (!isAuthenticated) return null;
+  // if (!isAuthenticated) return null;
 
   const completeTour = () => {
     setShowTour(false);
@@ -152,7 +153,10 @@ const AppContent: React.FC = () => {
       <ScrollToTop />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/secure-gate" element={<SecureGate />} />
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
 
         {/* Protected Routes */}

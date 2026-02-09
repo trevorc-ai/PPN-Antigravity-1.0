@@ -283,9 +283,10 @@ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica N
 
 ### Cards
 
-#### Standard Card
+#### Standard Glass Card (Accessible)
+Use the `card-glass` utility class for high-contrast, accessible glassmorphism.
 ```tsx
-className="bg-[#0f1218] border border-slate-800 rounded-3xl p-6 hover:border-slate-600 transition-all"
+className="card-glass rounded-3xl p-6 hover:border-slate-500 transition-all"
 ```
 
 **Variants:**
@@ -662,9 +663,12 @@ className="animate-in slide-in-from-bottom-4 duration-700"
 ## Accessibility Standards
 
 ### Focus States
-All interactive elements must have visible focus states:
-```tsx
-className="focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-900"
+Global focus styles are defined in `index.css`. All interactive elements automatically inherit this accessible ring.
+```css
+:focus-visible {
+  outline: 2px solid #2b74f3;
+  outline-offset: 2px;
+}
 ```
 
 ### Color Contrast

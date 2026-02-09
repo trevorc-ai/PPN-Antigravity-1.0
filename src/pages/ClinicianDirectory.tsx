@@ -6,91 +6,60 @@ import { GoogleGenAI } from "@google/genai";
 
 const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => void }> = ({ practitioner, onMessage }) => {
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false);
 
-  // Status mapping for professional demo
-  const getStatusLabel = (status: string) => {
-    const s = status.toLowerCase();
-    if (s.includes('active') || s.includes('available')) return 'LIVE';
-    if (s.includes('reviewing') || s.includes('session')) return 'IN-REVIEW';
-    return 'OFFLINE';
-  };
-
+  // Status mapping
   const getStatusColor = (status: string) => {
     const s = status.toLowerCase();
-    if (s.includes('active') || s.includes('available')) return 'text-clinical-green bg-clinical-green/10 border-clinical-green/20';
-    if (s.includes('reviewing') || s.includes('session')) return 'text-accent-amber bg-accent-amber/10 border-accent-amber/20';
-    return 'text-slate-500 bg-slate-500/10 border-slate-500/20';
-  };
-
-  const getDotColor = (status: string) => {
-    const s = status.toLowerCase();
-    if (s.includes('active') || s.includes('available')) return 'bg-clinical-green animate-pulse';
-    if (s.includes('reviewing') || s.includes('session')) return 'bg-accent-amber';
+    if (s.includes('active') || s.includes('available')) return 'bg-emerald-500';
+    if (s.includes('reviewing') || s.includes('session')) return 'bg-amber-500';
     return 'bg-slate-500';
   };
 
   return (
-    <div className={`group relative bg-[#1c222d]/30 border ${isExpanded ? 'border-primary shadow-2xl shadow-primary/10' : 'border-slate-800 hover:border-slate-700'} rounded-[2.5rem] transition-all duration-300 flex flex-col backdrop-blur-xl overflow-hidden`}>
-      <div className={`absolute top-0 left-0 w-full h-1 transition-opacity duration-500 ${isExpanded ? 'opacity-100 bg-primary' : 'opacity-0'}`}></div>
-
-      <div className="p-5 sm:p-8 pb-3 sm:pb-5">
-        <div className="flex items-start justify-between mb-4 sm:mb-6">
-          <div className="relative group/avatar cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)}>
-            <div className={`size-14 sm:size-20 rounded-2xl bg-slate-800 flex items-center justify-center border-2 ${isExpanded ? 'border-primary' : 'border-slate-700'} shadow-xl transition-all duration-300 group-hover/avatar:scale-105 overflow-hidden`}>
-              {practitioner.imageUrl ? (
-                <img src={practitioner.imageUrl} alt={practitioner.name} className="size-full object-cover" />
-              ) : (
-                <span className="material-symbols-outlined text-4xl text-slate-600">account_circle</span>
-              )}
-            </div>
-            {/* Standardized Status Badges */}
-            <div className={`absolute -top-1.5 -right-1.5 px-2 py-1 rounded-lg border text-[11px] font-black uppercase tracking-widest flex items-center gap-1 sm:gap-1.5 backdrop-blur-md ${getStatusColor(practitioner.status)}`}>
-              <span className={`size-1 sm:size-1.5 rounded-full ${getDotColor(practitioner.status)}`}></span>
-              {getStatusLabel(practitioner.status)}
-            </div>
+    <div className="group relative bg-[#1c222d]/40 border border-slate-800 hover:border-slate-600 rounded-2xl p-5 transition-all duration-300 flex flex-col gap-4 hover:shadow-xl hover:-translate-y-1">
+      {/* Header: Avatar + Info */}
+      <div className="flex items-start gap-4">
+        <div className="relative cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)}>
+          <div className="size-14 rounded-xl bg-slate-800 flex items-center justify-center border border-slate-700 overflow-hidden">
+            {practitioner.imageUrl ? (
+              <img src={practitioner.imageUrl} alt={practitioner.name} className="size-full object-cover" />
+            ) : (
+              <span className="material-symbols-outlined text-3xl text-slate-600">account_circle</span>
+            )}
           </div>
-
-          <div className="flex flex-col items-end">
-            <div className="text-right">
-              <span className="text-lg sm:text-2xl font-black text-primary leading-none">{practitioner.verificationLevel || 'L4'}</span>
-              <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest leading-none mt-1">Verification</p>
-            </div>
-          </div>
+          <div className={`absolute -bottom-1 -right-1 size-3.5 border-2 border-[#1c222d] rounded-full ${getStatusColor(practitioner.status)}`} title={practitioner.status}></div>
         </div>
 
-        <div className="space-y-1">
-          <h4 className="text-base sm:text-2xl font-black text-white leading-tight truncate hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)}>
-            {practitioner.name}
-          </h4>
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <p className="text-[11px] text-primary font-black uppercase tracking-widest truncate">
-              {practitioner.role}
-            </p>
-            <span className="text-slate-700 text-[11px]">•</span>
-            <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">
-              {practitioner.id}
-            </p>
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-start">
+            <h4 className="text-base font-bold text-white truncate hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)}>
+              {practitioner.name}
+            </h4>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider bg-slate-900 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
+              {practitioner.verificationLevel || 'L4'}
+            </span>
           </div>
-        </div>
+          <p className="text-xs text-primary font-medium truncate mt-0.5">{practitioner.role}</p>
 
-        <div className="mt-4 sm:mt-5 flex items-center gap-2 sm:gap-3 p-3 bg-slate-950/30 rounded-2xl border border-slate-800/50">
-          <span className="material-symbols-outlined text-slate-600 text-base">hub</span>
-          <p className="text-[11px] font-bold text-slate-400 truncate uppercase tracking-tight">{practitioner.location}</p>
+          <div className="flex items-center gap-1 mt-2 text-slate-500">
+            <span className="material-symbols-outlined text-[14px]">location_on</span>
+            <span className="text-[11px] font-medium truncate uppercase tracking-wide">{practitioner.location}</span>
+          </div>
         </div>
       </div>
 
-      <div className="p-5 sm:p-8 pt-2 sm:pt-3 mt-auto flex gap-3">
+      {/* Footer: Actions */}
+      <div className="flex gap-2 mt-auto pt-4 border-t border-slate-800/50">
         <button
           onClick={() => navigate(`/clinician/${practitioner.id}`)}
-          className="flex-1 py-4 bg-slate-800 hover:bg-slate-700 text-white text-[11px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-lg"
+          className="flex-1 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-white border border-blue-500/20 hover:border-blue-500/50 text-xs font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2"
         >
-          <span className="material-symbols-outlined text-base sm:text-lg">account_circle</span>
           Profile
         </button>
         <button
           onClick={() => onMessage(practitioner)}
-          className="size-12 sm:size-14 flex items-center justify-center bg-primary hover:bg-blue-600 border border-primary/20 rounded-2xl text-white transition-all active:scale-[0.98] shadow-lg shadow-primary/10"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500/50 rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-500/20"
+          title="Send Message"
         >
           <span className="material-symbols-outlined text-lg">chat_bubble</span>
         </button>
@@ -190,8 +159,8 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
           {chatHistory.map((msg) => (
             <div key={msg.id} className={`flex flex-col ${msg.sender === 'Me' ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[85%] p-4 rounded-3xl text-[13px] shadow-lg ${msg.sender === 'Me'
-                  ? 'bg-primary/20 border border-primary/30 text-white rounded-tr-none'
-                  : 'bg-slate-800/50 border border-white/5 text-slate-300 rounded-tl-none'
+                ? 'bg-primary/20 border border-primary/30 text-white rounded-tr-none'
+                : 'bg-slate-800/50 border border-white/5 text-slate-300 rounded-tl-none'
                 }`}>
                 <p className="leading-relaxed">{msg.text}</p>
                 <div className="flex items-center gap-2 mt-2.5 justify-end opacity-40">
@@ -235,6 +204,9 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
   );
 };
 
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
+
 const ClinicianDirectory: React.FC = () => {
   const [searchName, setSearchName] = useState('');
   const [selectedRole, setSelectedRole] = useState('All');
@@ -260,9 +232,9 @@ const ClinicianDirectory: React.FC = () => {
   });
 
   return (
-    <div className="min-h-full flex flex-col bg-background-dark">
-      <div className="p-6 sm:p-10 space-y-6 sm:space-y-10 flex-1">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+    <PageContainer className="min-h-full bg-background-dark">
+      <Section spacing="default" className="flex-1">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
           <div className="space-y-1">
             <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-white">Practitioners</h1>
             <p className="text-slate-500 text-[11px] sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
@@ -338,7 +310,7 @@ const ClinicianDirectory: React.FC = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-10 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-12">
           {filteredPractitioners.map((p) => (
             <PractitionerCard
               key={p.id}
@@ -354,13 +326,13 @@ const ClinicianDirectory: React.FC = () => {
             </div>
           )}
         </div>
-      </div>
+      </Section>
 
       <MessageDrawer
         practitioner={activeMessagePractitioner}
         onClose={() => setActiveMessagePractitioner(null)}
       />
-    </div>
+    </PageContainer>
   );
 };
 

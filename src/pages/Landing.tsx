@@ -79,7 +79,7 @@ const Landing: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-[#05070a] text-slate-100 selection:bg-primary/30 selection:text-white font-sans overflow-x-hidden relative">
+    <div className="min-h-screen bg-transparent text-slate-100 selection:bg-primary/30 selection:text-white font-sans overflow-x-hidden relative">
 
       {/* Starry Night Parallax Background - Fixed across entire page */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -91,11 +91,12 @@ const Landing: React.FC = () => {
           className="absolute inset-0 transition-transform duration-0"
           style={{
             transform: `translateY(${scrollY * 0.08}px)`,
-            backgroundImage: 'url(/Night Sky.png)',
+            backgroundImage: 'url("/Night Sky.png")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            opacity: 0.9
+            opacity: 0.9,
+            // Removed negative z-index to prevent stacking issues
           }}
         />
       </div>

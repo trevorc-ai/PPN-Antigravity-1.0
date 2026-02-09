@@ -80,25 +80,25 @@ export default function ProtocolEfficiency() {
     const totalPotentialProfit = processedData.reduce((acc, curr) => acc + (curr.profit > 0 ? curr.profit : 0), 0);
 
     return (
-        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-8 h-full">
+        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-8 h-full overflow-y-auto custom-scrollbar">
             {/* HEADER */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div>
-                    <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
+                <div title="Forecasting financial efficiency and margin analysis for selected protocols">
+                    <h2 className="text-xl font-black text-white tracking-tighter flex items-center gap-2">
                         <Calculator className="text-indigo-500" />
                         Protocol ROI Engine
                     </h2>
                     <p className="text-xs text-slate-400 font-medium mt-1">
-                        Financial Efficiency & Margin Analysis
+                        Financial Efficiency & Margin Analysis.
                     </p>
                 </div>
                 {/* CONTROLS */}
                 <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 flex items-center gap-4 w-full md:w-auto">
-                    <div className="p-2 bg-indigo-500/20 rounded-lg">
+                    <div className="p-2 bg-indigo-500/20 rounded-lg" title="Cost Calculator Settings">
                         <DollarSign className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div className="flex-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1" title="Adjust the estimated hourly operational cost to see impact on margin">
                             Est. Hourly Overhead: <span className="text-white">${overhead}</span>
                         </label>
                         <input
@@ -124,13 +124,13 @@ export default function ProtocolEfficiency() {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
                                 <XAxis
                                     type="number" dataKey="hours" name="Time" unit="hr"
-                                    tick={{ fill: '#94a3b8', fontSize: 10 }}
-                                    label={{ value: 'Staff Hours Required', position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 10 }}
+                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                    label={{ value: 'Staff Hours Required', position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 11 }}
                                 />
                                 <YAxis
                                     type="number" dataKey="revenue" name="Revenue" unit="$"
-                                    tick={{ fill: '#94a3b8', fontSize: 10 }}
-                                    label={{ value: 'Revenue per Unit', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 10 }}
+                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                    label={{ value: 'Revenue per Unit', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }}
                                 />
                                 <Tooltip content={<CustomTooltip overhead={overhead} />} />
 
@@ -149,7 +149,7 @@ export default function ProtocolEfficiency() {
                         </ResponsiveContainer>
                     </div>
                     {/* Legend Overlay */}
-                    <div className="absolute top-6 right-6 flex flex-col gap-2 text-[10px] font-bold uppercase tracking-widest bg-slate-900/80 p-2 rounded-lg border border-slate-800 z-10">
+                    <div className="absolute top-6 right-6 flex flex-col gap-2 text-xs font-bold uppercase tracking-widest bg-slate-900/80 p-2 rounded-lg border border-slate-800 z-10">
                         <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Profitable
                         </div>
@@ -161,7 +161,7 @@ export default function ProtocolEfficiency() {
 
                 {/* SIDEBAR: LEADERBOARD */}
                 <div className="flex flex-col gap-4">
-                    <div className="p-5 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl">
+                    <div className="p-5 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl" title="Projected net profit if all protocols are run once">
                         <div className="flex items-center gap-2 mb-2">
                             <TrendingUp className="w-4 h-4 text-indigo-400" />
                             <h3 className="text-xs font-black text-indigo-300 uppercase tracking-widest">Efficiency Forecast</h3>
@@ -169,7 +169,7 @@ export default function ProtocolEfficiency() {
                         <p className="text-3xl font-black text-white tracking-tight">
                             ${totalPotentialProfit.toLocaleString()}
                         </p>
-                        <p className="text-[10px] text-indigo-400/60 font-medium mt-1">
+                        <p className="text-xs text-indigo-400/60 font-medium mt-1">
                             Total Net Profit (Single Run of All Protocols)
                         </p>
                     </div>
@@ -180,7 +180,7 @@ export default function ProtocolEfficiency() {
                                     <div className={`text-xs font-black w-4 text-slate-600`}>#{i + 1}</div>
                                     <div>
                                         <div className="text-xs font-bold text-slate-200">{p.name}</div>
-                                        <div className="text-[10px] text-slate-500">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
+                                        <div className="text-xs text-slate-500">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
                                     </div>
                                 </div>
                                 <div className={`text-xs font-mono font-bold ${p.profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-// Corrected import for named export
 import { useNavigate } from 'react-router-dom';
+import { PageContainer } from '../components/layouts/PageContainer';
 
 const SimpleSearch: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -27,7 +27,7 @@ const SimpleSearch: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-[140px] pointer-events-none animate-pulse"></div>
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
 
-      <div className="w-full max-w-3xl space-y-10 relative z-10 text-center">
+      <PageContainer width="narrow" className="space-y-10 relative z-10 text-center">
         <div className="space-y-4">
           <div className="inline-flex items-center justify-center size-20 rounded-[2rem] bg-slate-900 border border-slate-800 shadow-2xl mb-4 group hover:border-primary/50 transition-all duration-500">
             <span className="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">auto_awesome</span>
@@ -59,12 +59,12 @@ const SimpleSearch: React.FC = () => {
         </form>
 
         <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
-          <span className="text-[12px] font-black text-slate-500 tracking-[0.2em] mr-2 w-full sm:w-auto mb-2 sm:mb-0">Fast Access Nodes:</span>
+          <span className="text-sm font-black text-slate-500 tracking-[0.2em] mr-2 w-full sm:w-auto mb-2 sm:mb-0">Fast Access Nodes:</span>
           {quickLinks.map((link) => (
             <button
               key={link.label}
               onClick={() => navigate(link.path)}
-              className="px-6 py-3 bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-primary/30 rounded-full text-[12px] font-black text-slate-400 hover:text-white transition-all flex items-center gap-3 shadow-lg group/link"
+              className="px-6 py-3 bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-primary/30 rounded-full text-sm font-black text-slate-400 hover:text-white transition-all flex items-center gap-3 shadow-lg group/link"
             >
               <span className="material-symbols-outlined text-lg group-hover:link:text-primary transition-colors">{link.icon}</span>
               <span className="tracking-widest">{link.label}</span>
@@ -90,7 +90,7 @@ const SimpleSearch: React.FC = () => {
             <p className="text-[11px] font-black text-slate-500 tracking-widest">Search Recall</p>
           </div>
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 };

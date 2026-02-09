@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#020408] border-t border-white/5 pt-20 pb-10 mt-auto">
+    <footer className="bg-[#020408] border-t border-white/5 pt-32 pb-10 mt-24">
       <div className="max-w-[1600px] mx-auto px-6 sm:px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
 
         {/* Column 1: Institutional Brand */}

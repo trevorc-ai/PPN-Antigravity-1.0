@@ -2,6 +2,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
+
 const FeatureItem: React.FC<{ text: string; locked?: boolean }> = ({ text, locked }) => (
   <div className={`flex items-start gap-3 ${locked ? 'opacity-40' : ''}`}>
     <span className={`material-symbols-outlined text-lg ${locked ? 'text-slate-600' : 'text-primary font-black'}`}>
@@ -41,7 +44,7 @@ const PricingCard: React.FC<{
 
       <button
         onClick={() => navigate('/login')}
-        className={`w-full py-4 rounded-xl text-[12px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 mb-10 ${buttonClass}`}
+        className={`w-full py-4 rounded-xl text-sm font-black uppercase tracking-[0.2em] transition-all active:scale-95 mb-10 ${buttonClass}`}
       >
         {buttonText}
       </button>
@@ -69,9 +72,9 @@ const Pricing: React.FC = () => {
         </p>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-12">
+      <PageContainer className="px-6 sm:px-12 space-y-12">
         {/* Give-to-get Banner */}
-        <div className="relative group">
+        <Section spacing="default" className="relative group">
           <div className="absolute -inset-0.5 bg-accent-amber/20 blur opacity-75 rounded-[2.5rem]"></div>
           <div className="relative bg-[#0c0f14] border border-accent-amber/30 rounded-[2.5rem] p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex gap-6 items-start">
@@ -87,16 +90,16 @@ const Pricing: React.FC = () => {
             </div>
             <button
               onClick={() => navigate('/contribution')}
-              className="px-8 py-4 bg-accent-amber hover:bg-amber-500 text-black text-[12px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all flex items-center gap-2 shrink-0 active:scale-95 shadow-xl shadow-accent-amber/10"
+              className="px-8 py-4 bg-accent-amber hover:bg-amber-500 text-black text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all flex items-center gap-2 shrink-0 active:scale-95 shadow-xl shadow-accent-amber/10"
             >
               Learn About Contribution
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
-        </div>
+        </Section>
 
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Section spacing="default" className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <PricingCard
             type="Individual"
             title="The Guild Member"
@@ -143,10 +146,10 @@ const Pricing: React.FC = () => {
               'Regulatory Compliance Ready (HIPAA/GDPR)'
             ]}
           />
-        </div>
+        </Section>
 
         {/* Comparison Table Section */}
-        <div className="pt-20 space-y-10">
+        <Section spacing="spacious" className="space-y-10">
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-black text-white tracking-tight">Detailed Feature Comparison</h2>
             <p className="text-slate-500 text-[11px] font-black uppercase tracking-widest">Compare all tools and infrastructure features across tiers.</p>
@@ -186,8 +189,8 @@ const Pricing: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
+        </Section>
+      </PageContainer>
     </div>
   );
 };

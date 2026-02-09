@@ -5,6 +5,8 @@ import { SAMPLE_INTERVENTION_RECORDS, MEDICATIONS_LIST } from '../constants';
 import { PatientRecord } from '../types';
 import { MOCK_RISK_DATA } from '../constants/analyticsData';
 import { supabase } from '../lib/supabase';
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
 
 // Clinical Standardization Constants
 const WEIGHT_RANGES = Array.from({ length: 22 }, (_, i) => {
@@ -306,137 +308,141 @@ const ProtocolBuilder: React.FC = () => {
   `;
 
   return (
-    <div id="protocol-builder-root" className="min-h-full p-6 sm:p-10 space-y-10 animate-in fade-in duration-700 max-w-[1600px] mx-auto pb-24">
-      <style>{OVERRIDE_STYLES}</style>
+    <PageContainer width="wide" className="min-h-full py-6 sm:py-10 pb-24 animate-in fade-in duration-700">
+      <div id="protocol-builder-root" className="space-y-10">
+        <style>{OVERRIDE_STYLES}</style>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-5xl font-black tracking-tighter text-white">
-              My Protocols
-            </h1>
-            <div className="px-2 py-0.5 bg-clinical-green/10 border border-clinical-green/20 rounded-md text-[11px] font-mono text-clinical-green tracking-widest font-black">Standardized_v2.4</div>
+        <Section>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-5xl font-black tracking-tighter text-white">
+                  My Protocols
+                </h1>
+                <div className="px-2 py-0.5 bg-clinical-green/10 border border-clinical-green/20 rounded-md text-[11px] font-mono text-clinical-green tracking-widest font-black">Standardized_v2.4</div>
+              </div>
+              <p className="text-slate-500 text-[11px] font-black tracking-[0.3em]">Institutional Research Architecture // Node_0x7</p>
+            </div>
+
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-8 py-4 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-2xl tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
+            >
+              <PlusCircle size={18} />
+              Create New Protocol
+            </button>
           </div>
-          <p className="text-slate-500 text-[11px] font-black tracking-[0.3em]">Institutional Research Architecture // Node_0x7</p>
-        </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="px-8 py-4 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-2xl tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
-        >
-          <PlusCircle size={18} />
-          Create New Protocol
-        </button>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="relative group max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
+                <input
+                  type="text"
+                  placeholder="Search local protocols..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-12 rounded-xl pl-12 pr-6 text-sm font-bold transition-all"
+                />
+              </div>
+
+              <div className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
+                        <th className="px-8 py-6">Protocol Reference</th>
+                        <th className="px-8 py-6">Current Status</th>
+                        <th className="px-8 py-6">Dosage</th>
+                        <th className="px-8 py-6 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/30">
+                      {filteredProtocols.map((p) => (
+                        <tr key={p.id} className="hover:bg-primary/5 transition-colors group">
+                          <td className="px-8 py-6">
+                            <div className="flex flex-col">
+                              <span className="text-base font-black text-white leading-tight">{p.protocol.substance} Protocol</span>
+                              <span className="text-[11px] font-mono text-slate-500 font-bold tracking-tight mt-1">{p.id} • {p.siteId}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-2">
+                              <div className={`size-1.5 rounded-full ${p.status === 'Completed' ? 'bg-clinical-green' : p.status === 'Active' ? 'bg-primary' : 'bg-slate-500'}`}></div>
+                              <span className={`text-[11px] font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>{p.status}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6 text-sm font-mono text-slate-400">{p.protocol.dosage} {p.protocol.dosageUnit}</td>
+                          <td className="px-8 py-6 text-right">
+                            <button
+                              onClick={() => navigate(`/protocol/${p.id}`)}
+                              className="text-[11px] font-black text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
+                            >
+                              Open Protocol
+                              <ChevronRight className="size-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {filteredProtocols.length === 0 && (
+                  <div className="py-20 text-center space-y-4">
+                    <ClipboardList className="mx-auto text-slate-800" size={48} />
+                    <p className="text-slate-600 font-black uppercase tracking-widest text-[11px]">Zero Protocol Matches Found</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-8">
+              <div className="bg-[#111418] border border-slate-800 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <Activity size={80} />
+                </div>
+                <div className="space-y-1 relative z-10 mb-8">
+                  <h3 className="text-xl font-black text-white tracking-tighter">Outcome Velocity</h3>
+                  <p className="text-[11px] font-black text-primary tracking-[0.3em]">Network Baseline Analytics</p>
+                </div>
+                <div className="space-y-6 relative z-10">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-end">
+                      <span className="text-[11px] font-bold text-slate-500 tracking-widest">Protocol Adherence</span>
+                      <span className="text-sm font-mono font-black text-white">94%</span>
+                    </div>
+                    <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                      <div className="h-full bg-clinical-green shadow-[0_0_8px_#53d22d]" style={{ width: '94%' }}></div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-end">
+                      <span className="text-[11px] font-bold text-slate-500 tracking-widest">Safety Compliance</span>
+                      <span className="text-sm font-mono font-black text-white">100%</span>
+                    </div>
+                    <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary shadow-[0_0_8px_#2b74f3]" style={{ width: '100%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-primary/5 border border-primary/20 p-8 rounded-[2.5rem] space-y-4">
+                <div className="flex items-center gap-3">
+                  <Info className="text-primary" size={20} />
+                  <h4 className="text-[11px] font-black text-white uppercase tracking-widest">Regulatory Notice</h4>
+                </div>
+                <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
+                  Changes to Published protocols require an institutional version bump and lead investigator sign-off. All modifications are logged in the immutable audit ledger.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <NewProtocolModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="relative group max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
-            <input
-              type="text"
-              placeholder="Search local protocols..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 rounded-xl pl-12 pr-6 text-sm font-bold transition-all"
-            />
-          </div>
-
-          <div className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
-                    <th className="px-8 py-6">Protocol Reference</th>
-                    <th className="px-8 py-6">Current Status</th>
-                    <th className="px-8 py-6">Dosage</th>
-                    <th className="px-8 py-6 text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/30">
-                  {filteredProtocols.map((p) => (
-                    <tr key={p.id} className="hover:bg-primary/5 transition-colors group">
-                      <td className="px-8 py-6">
-                        <div className="flex flex-col">
-                          <span className="text-base font-black text-white leading-tight">{p.protocol.substance} Protocol</span>
-                          <span className="text-[11px] font-mono text-slate-500 font-bold tracking-tight mt-1">{p.id} • {p.siteId}</span>
-                        </div>
-                      </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center gap-2">
-                          <div className={`size-1.5 rounded-full ${p.status === 'Completed' ? 'bg-clinical-green' : p.status === 'Active' ? 'bg-primary' : 'bg-slate-500'}`}></div>
-                          <span className={`text-[11px] font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>{p.status}</span>
-                        </div>
-                      </td>
-                      <td className="px-8 py-6 text-sm font-mono text-slate-400">{p.protocol.dosage} {p.protocol.dosageUnit}</td>
-                      <td className="px-8 py-6 text-right">
-                        <button
-                          onClick={() => navigate(`/protocol/${p.id}`)}
-                          className="text-[11px] font-black text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
-                        >
-                          Open Protocol
-                          <ChevronRight className="size-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {filteredProtocols.length === 0 && (
-              <div className="py-20 text-center space-y-4">
-                <ClipboardList className="mx-auto text-slate-800" size={48} />
-                <p className="text-slate-600 font-black uppercase tracking-widest text-[11px]">Zero Protocol Matches Found</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="space-y-8">
-          <div className="bg-[#111418] border border-slate-800 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Activity size={80} />
-            </div>
-            <div className="space-y-1 relative z-10 mb-8">
-              <h3 className="text-xl font-black text-white tracking-tighter">Outcome Velocity</h3>
-              <p className="text-[11px] font-black text-primary tracking-[0.3em]">Network Baseline Analytics</p>
-            </div>
-            <div className="space-y-6 relative z-10">
-              <div className="space-y-2">
-                <div className="flex justify-between items-end">
-                  <span className="text-[11px] font-bold text-slate-500 tracking-widest">Protocol Adherence</span>
-                  <span className="text-sm font-mono font-black text-white">94%</span>
-                </div>
-                <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden">
-                  <div className="h-full bg-clinical-green shadow-[0_0_8px_#53d22d]" style={{ width: '94%' }}></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-end">
-                  <span className="text-[11px] font-bold text-slate-500 tracking-widest">Safety Compliance</span>
-                  <span className="text-sm font-mono font-black text-white">100%</span>
-                </div>
-                <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary shadow-[0_0_8px_#2b74f3]" style={{ width: '100%' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-primary/5 border border-primary/20 p-8 rounded-[2.5rem] space-y-4">
-            <div className="flex items-center gap-3">
-              <Info className="text-primary" size={20} />
-              <h4 className="text-[11px] font-black text-white uppercase tracking-widest">Regulatory Notice</h4>
-            </div>
-            <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-              Changes to Published protocols require an institutional version bump and lead investigator sign-off. All modifications are logged in the immutable audit ledger.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <NewProtocolModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </div>
+    </PageContainer>
   );
 };
 

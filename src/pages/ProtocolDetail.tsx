@@ -8,6 +8,7 @@ import {
 } from 'recharts';
 import { PATIENTS } from '../constants';
 import { Info, ChevronRight } from 'lucide-react';
+import { PageContainer } from '../components/layouts/PageContainer';
 
 // UI COMPONENT: Contextual Tooltip
 const SimpleTooltip: React.FC<{ text: string; children: React.ReactNode }> = ({ text, children }) => (
@@ -102,7 +103,7 @@ const ProtocolDetail: React.FC = () => {
       {/* Decorative Background (Hidden on Print) */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[180px] pointer-events-none print:hidden"></div>
 
-      <div className="max-w-[1800px] mx-auto space-y-8 relative z-10">
+      <PageContainer width="wide" className="space-y-8 relative z-10">
 
         {/* NAVIGATION HEADER (Hidden on Print) */}
         <div className="flex justify-between items-center print:hidden">
@@ -546,13 +547,13 @@ const ProtocolDetail: React.FC = () => {
             </div>
           </div>
         </section>
-      </div>
+      </PageContainer>
 
       {/* Print Footer */}
       <div className="hidden print:block fixed bottom-0 left-0 w-full text-center text-[11px] font-mono font-bold uppercase text-black pb-4">
         Confidential Clinical Dossier • PPN Research Node 0x7 • Do Not Distribute
       </div>
-    </div>
+    </div >
   );
 };
 

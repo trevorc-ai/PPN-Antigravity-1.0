@@ -4,6 +4,25 @@ body {
   color: #F5F5F0;
 }
 
+/* Global Focus Styles for Accessibility */
+:focus-visible {
+  outline: 2px solid #2b74f3;
+  outline-offset: 2px;
+}
+
+/* Glassmorphism Card Utilities */
+.card-glass {
+  background: rgba(13, 17, 23, 0.85); /* High opacity for accessible contrast */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-solid {
+  background: #0f1218;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;

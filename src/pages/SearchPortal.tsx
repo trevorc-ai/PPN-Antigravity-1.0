@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SUBSTANCES, CLINICIANS, PATIENTS } from '../constants';
 import { GoogleGenAI } from "@google/genai";
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
 
 // --- TYPES & INTERFACES ---
 type SearchCategory = 'All' | 'Substances' | 'Clinicians' | 'Patients' | 'Safety';
@@ -517,7 +519,7 @@ const SearchPortal: React.FC = () => {
         </div>
       </section>
 
-      <div className="flex flex-1 overflow-hidden max-w-[1600px] mx-auto w-full relative z-10">
+      <div className="flex flex-1 overflow-hidden w-full relative z-10">
 
         {/* Smart Filters Sidebar */}
         <aside className={`
@@ -606,156 +608,160 @@ const SearchPortal: React.FC = () => {
         </aside>
 
         {/* Results Stream */}
-        <section className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-8" onClick={() => { if (window.innerWidth < 1024) setIsFilterOpen(false); }}>
+        <section className="flex-1 overflow-y-auto custom-scrollbar" onClick={() => { if (window.innerWidth < 1024) setIsFilterOpen(false); }}>
+          <PageContainer width="wide" className="py-8">
+            <Section spacing="spacious">
 
-          {/* AI Synthesis */}
-          {query.trim().length > 0 && (
-            <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="bg-indigo-600/10 border border-indigo-500/20 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <span className="material-symbols-outlined text-7xl">auto_awesome</span>
-                </div>
+              {/* AI Synthesis */}
+              {query.trim().length > 0 && (
+                <div className="mb-8 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="bg-indigo-600/10 border border-indigo-500/20 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                      <span className="material-symbols-outlined text-7xl">auto_awesome</span>
+                    </div>
 
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="size-8 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
-                    <span className="material-symbols-outlined text-lg animate-pulse">psychology</span>
-                  </div>
-                  <div className="space-y-0.5">
-                    <span className="text-[11px] font-black text-indigo-300 tracking-[0.2em] uppercase">Neural Copilot</span>
-                  </div>
-                </div>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="size-8 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                        <span className="material-symbols-outlined text-lg animate-pulse">psychology</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[11px] font-black text-indigo-300 tracking-[0.2em] uppercase">Neural Copilot</span>
+                      </div>
+                    </div>
 
-                {isAiLoading ? (
-                  <div className="space-y-3">
-                    <div className="h-1.5 bg-indigo-500/10 rounded-full w-3/4 animate-pulse"></div>
-                    <div className="h-1.5 bg-indigo-500/10 rounded-full w-1/2 animate-pulse"></div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <p className="text-xs sm:text-sm font-medium text-slate-200 leading-relaxed opacity-90">
-                      {aiAnalysis || "Synthesizing global node data..."}
-                    </p>
-                    {groundingChunks.length > 0 && (
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {groundingChunks.filter(c => c.web).slice(0, 3).map((chunk, i) => (
-                          <a key={i} href={chunk.web.uri} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-[11px] font-black text-indigo-300 tracking-widest flex items-center gap-2 hover:bg-indigo-500/20 transition-all">
-                            <span className="material-symbols-outlined text-[10px]">link</span>
-                            {chunk.web.title?.slice(0, 20) || 'Source'}...
-                          </a>
-                        ))}
+                    {isAiLoading ? (
+                      <div className="space-y-3">
+                        <div className="h-1.5 bg-indigo-500/10 rounded-full w-3/4 animate-pulse"></div>
+                        <div className="h-1.5 bg-indigo-500/10 rounded-full w-1/2 animate-pulse"></div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <p className="text-xs sm:text-sm font-medium text-slate-200 leading-relaxed opacity-90">
+                          {aiAnalysis || "Synthesizing global node data..."}
+                        </p>
+                        {groundingChunks.length > 0 && (
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {groundingChunks.filter(c => c.web).slice(0, 3).map((chunk, i) => (
+                              <a key={i} href={chunk.web.uri} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-[11px] font-black text-indigo-300 tracking-widest flex items-center gap-2 hover:bg-indigo-500/20 transition-all">
+                                <span className="material-symbols-outlined text-[10px]">link</span>
+                                {chunk.web.title?.slice(0, 20) || 'Source'}...
+                              </a>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* RENDER LOGIC: Grouped Overview vs Deep Dive */}
-          {activeCategory === 'All' ? (
-            <div className="space-y-6 pb-20">
-
-              {/* Row 1: Substances (Bento Top) */}
-              {substanceResults.length > 0 && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <SectionHeader
-                    title="Matched Substances"
-                    icon="biotech"
-                    count={substanceResults.length}
-                    onSeeAll={() => handleCategoryChange('Substances')}
-                  />
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {substanceResults.slice(0, 3).map((sub, i) => (
-                      <SubstanceCard key={`sub-${sub.id}-${i}`} sub={sub} variant="compact" />
-                    ))}
-                  </div>
                 </div>
               )}
 
-              {/* Row 2: Split View (Patients Left, Clinicians Right) */}
-              {(patientResults.length > 0 || clinicianResults.length > 0) && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {/* RENDER LOGIC: Grouped Overview vs Deep Dive */}
+              {activeCategory === 'All' ? (
+                <div className="space-y-6 pb-20">
 
-                  {/* Left Col: Patients */}
-                  <div className="flex flex-col">
-                    {patientResults.length > 0 && (
-                      <>
-                        <SectionHeader
-                          title="Patient Registry"
-                          icon="personal_injury"
-                          count={patientResults.length}
-                          onSeeAll={() => handleCategoryChange('Patients')}
-                        />
-                        <div className="flex flex-col gap-3">
-                          {patientResults.slice(0, 3).map((pat, i) => (
-                            <PatientCard key={`pat-${pat.id}-${i}`} res={pat} variant="compact" />
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Right Col: Clinicians */}
-                  <div className="flex flex-col">
-                    {clinicianResults.length > 0 && (
-                      <>
-                        <SectionHeader
-                          title="Verified Clinicians"
-                          icon="groups"
-                          count={clinicianResults.length}
-                          onSeeAll={() => handleCategoryChange('Clinicians')}
-                        />
-                        <div className="flex flex-col gap-3">
-                          {clinicianResults.slice(0, 3).map((clin, i) => (
-                            <ClinicianCard key={`clin-${clin.id}-${i}`} clin={clin} variant="compact" />
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Empty State */}
-              {substanceResults.length === 0 && patientResults.length === 0 && clinicianResults.length === 0 && (
-                <div className="py-24 text-center">
-                  <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
-                    <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
-                  </div>
-                  <p className="text-slate-500 font-black tracking-widest text-[11px] uppercase">No registry nodes found matching criteria.</p>
-                  <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
-                </div>
-              )}
-            </div>
-          ) : (
-            /* DEEP DIVE: Full Grid for Active Category */
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-              {activeCategory === 'Substances' && substanceResults.map((sub, i) => (
-                <SubstanceCard key={`sub-full-${sub.id}-${i}`} sub={sub} variant="full" />
-              ))}
-
-              {(activeCategory === 'Patients' || activeCategory === 'Safety') && patientResults.map((pat, i) => (
-                <PatientCard key={`pat-full-${pat.id}-${i}`} res={pat} variant="full" />
-              ))}
-
-              {activeCategory === 'Clinicians' && clinicianResults.map((clin, i) => (
-                <ClinicianCard key={`clin-full-${clin.id}-${i}`} clin={clin} variant="full" />
-              ))}
-
-              {((activeCategory === 'Substances' && substanceResults.length === 0) ||
-                ((activeCategory === 'Patients' || activeCategory === 'Safety') && patientResults.length === 0) ||
-                (activeCategory === 'Clinicians' && clinicianResults.length === 0)) && (
-                  <div className="col-span-full py-24 text-center">
-                    <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
-                      <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
+                  {/* Row 1: Substances (Bento Top) */}
+                  {substanceResults.length > 0 && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                      <SectionHeader
+                        title="Matched Substances"
+                        icon="biotech"
+                        count={substanceResults.length}
+                        onSeeAll={() => handleCategoryChange('Substances')}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {substanceResults.slice(0, 3).map((sub, i) => (
+                          <SubstanceCard key={`sub-${sub.id}-${i}`} sub={sub} variant="compact" />
+                        ))}
+                      </div>
                     </div>
-                    <p className="text-slate-500 font-black tracking-widest text-[11px] uppercase">No registry nodes found in this category.</p>
-                    <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
-                  </div>
-                )}
-            </div>
-          )}
+                  )}
+
+                  {/* Row 2: Split View (Patients Left, Clinicians Right) */}
+                  {(patientResults.length > 0 || clinicianResults.length > 0) && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+                      {/* Left Col: Patients */}
+                      <div className="flex flex-col">
+                        {patientResults.length > 0 && (
+                          <>
+                            <SectionHeader
+                              title="Patient Registry"
+                              icon="personal_injury"
+                              count={patientResults.length}
+                              onSeeAll={() => handleCategoryChange('Patients')}
+                            />
+                            <div className="flex flex-col gap-3">
+                              {patientResults.slice(0, 3).map((pat, i) => (
+                                <PatientCard key={`pat-${pat.id}-${i}`} res={pat} variant="compact" />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Right Col: Clinicians */}
+                      <div className="flex flex-col">
+                        {clinicianResults.length > 0 && (
+                          <>
+                            <SectionHeader
+                              title="Verified Clinicians"
+                              icon="groups"
+                              count={clinicianResults.length}
+                              onSeeAll={() => handleCategoryChange('Clinicians')}
+                            />
+                            <div className="flex flex-col gap-3">
+                              {clinicianResults.slice(0, 3).map((clin, i) => (
+                                <ClinicianCard key={`clin-${clin.id}-${i}`} clin={clin} variant="compact" />
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty State */}
+                  {substanceResults.length === 0 && patientResults.length === 0 && clinicianResults.length === 0 && (
+                    <div className="py-24 text-center">
+                      <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
+                        <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
+                      </div>
+                      <p className="text-slate-500 font-black tracking-widest text-[11px] uppercase">No registry nodes found matching criteria.</p>
+                      <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* DEEP DIVE: Full Grid for Active Category */
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+                  {activeCategory === 'Substances' && substanceResults.map((sub, i) => (
+                    <SubstanceCard key={`sub-full-${sub.id}-${i}`} sub={sub} variant="full" />
+                  ))}
+
+                  {(activeCategory === 'Patients' || activeCategory === 'Safety') && patientResults.map((pat, i) => (
+                    <PatientCard key={`pat-full-${pat.id}-${i}`} res={pat} variant="full" />
+                  ))}
+
+                  {activeCategory === 'Clinicians' && clinicianResults.map((clin, i) => (
+                    <ClinicianCard key={`clin-full-${clin.id}-${i}`} clin={clin} variant="full" />
+                  ))}
+
+                  {((activeCategory === 'Substances' && substanceResults.length === 0) ||
+                    ((activeCategory === 'Patients' || activeCategory === 'Safety') && patientResults.length === 0) ||
+                    (activeCategory === 'Clinicians' && clinicianResults.length === 0)) && (
+                      <div className="col-span-full py-24 text-center">
+                        <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
+                          <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
+                        </div>
+                        <p className="text-slate-500 font-black tracking-widest text-[11px] uppercase">No registry nodes found in this category.</p>
+                        <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
+                      </div>
+                    )}
+                </div>
+              )}
+            </Section>
+          </PageContainer>
         </section>
       </div>
     </div>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CLINICIANS, NEWS_ARTICLES } from '../constants';
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
 
 interface SecureGateProps {
   onMenuClick?: () => void;
@@ -44,7 +46,7 @@ const PricingCard: React.FC<{
 
     <button
       onClick={onAction}
-      className={`w-full py-5 rounded-2xl text-[11px] font-black tracking-[0.2em] transition-all active:scale-95 mb-12 shadow-lg ${buttonClass}`}
+      className={`w-full py-5 rounded-2xl text-sm font-black tracking-[0.2em] transition-all active:scale-95 mb-12 shadow-lg ${buttonClass}`}
     >
       {buttonText}
     </button>
@@ -87,7 +89,7 @@ const NewsSnippet: React.FC<{ title: string; category: string; time: string }> =
       </span>
       <span className="text-[11px] font-mono text-slate-600 tracking-widest">{time}</span>
     </div>
-    <h4 className="text-[12px] font-medium text-slate-300 group-hover:text-white transition-colors line-clamp-1 leading-tight tracking-tight">{title}</h4>
+    <h4 className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors line-clamp-1 leading-tight tracking-tight">{title}</h4>
   </div>
 );
 
@@ -162,14 +164,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="pt-6 flex flex-col sm:flex-row items-center gap-8">
             <button
               onClick={() => navigate('/login')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-primary text-white text-[11px] font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95 group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-primary text-white text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95 group"
             >
               Login to Portal
               <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </button>
             <button
               onClick={scrollToAbout}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-white/5 hover:bg-white/10 text-white text-[11px] font-black rounded-2xl tracking-[0.3em] transition-all border border-white/10 group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-white/5 hover:bg-white/10 text-white text-sm font-black rounded-2xl tracking-[0.3em] transition-all border border-white/10 group"
             >
               Explore Identity
               <span className="material-symbols-outlined text-lg group-hover:translate-y-1 transition-transform">expand_more</span>
@@ -200,14 +202,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               </p>
               <button
                 onClick={() => navigate('/login')}
-                className="w-full py-5 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-xl tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-primary/30 active:scale-95 group"
+                className="w-full py-5 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-primary/30 active:scale-95 group"
               >
                 Log In to Portal
                 <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
               <button
                 onClick={() => navigate('/login?tab=request')}
-                className="w-full py-4 bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white text-[11px] font-black rounded-xl tracking-[0.2em] transition-all"
+                className="w-full py-4 bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white text-sm font-black rounded-xl tracking-[0.2em] transition-all"
               >
                 Request Access
               </button>
@@ -229,11 +231,11 @@ const SecureGate: React.FC<SecureGateProps> = () => {
 
       {/* Network Perspectives */}
       <div className="py-12 bg-[#05070a]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <PageContainer>
           <div className="border-[1.5px] border-primary/30 rounded-[2.5rem] p-12 sm:p-20 relative overflow-hidden bg-slate-900/10 backdrop-blur-md">
             <div className="flex items-center justify-center gap-6 mb-16 relative z-10">
               <div className="h-px bg-slate-800/60 flex-1"></div>
-              <h3 className="text-[12px] font-black text-slate-500 tracking-[1.0em] whitespace-nowrap">Network Perspectives</h3>
+              <h3 className="text-sm font-black text-slate-500 tracking-[1.0em] whitespace-nowrap">Network Perspectives</h3>
               <div className="h-px bg-slate-800/60 flex-1"></div>
             </div>
 
@@ -258,14 +260,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               />
             </div>
           </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Institutional Identity Section */}
       <div id="institutional-identity" className="relative py-24 bg-[#080a0f] border-b border-white/5">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none"></div>
-        <div className="max-w-7xl mx-auto px-8 relative z-10 text-center space-y-12">
-          <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-[12px] font-black text-primary tracking-[0.5em] mb-6 shadow-2xl">
+        <PageContainer className="relative z-10 text-center space-y-12">
+          <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-sm font-black text-primary tracking-[0.5em] mb-6 shadow-2xl">
             <span className="material-symbols-outlined text-lg">info</span>
             Registry ID: 0x9921-PPN
           </div>
@@ -276,12 +278,12 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <p className="max-w-3xl mx-auto text-slate-400 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
             PPN is a secure, cross-node clinical network dedicated to the rigorous study and safe implementation of psychedelic-assisted therapies.
           </p>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Stats Area - Unified Framework Section */}
       <div className="py-24 bg-[#05070a]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <PageContainer>
           <div className="border-[1.5px] border-primary/30 rounded-[2.5rem] p-12 sm:p-20 bg-slate-900/5 backdrop-blur-sm relative z-10 overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
               <div className="space-y-10">
@@ -297,7 +299,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <div className="pt-6">
                   <button
                     onClick={scrollToLogin}
-                    className="px-14 py-6 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
+                    className="px-14 py-6 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
                   >
                     Start Researching
                   </button>
@@ -315,7 +317,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                     ].map((stat) => (
                       <div key={stat.label} className="p-6 sm:p-10 bg-black/40 border border-slate-800 rounded-[2rem] space-y-4 hover:border-slate-600 transition-all hover:scale-105 shadow-xl">
                         <span className={`text-4xl sm:text-5xl font-black ${stat.color} leading-none block tracking-tighter`}>{stat.val}</span>
-                        <p className="text-[10px] sm:text-[11px] font-black text-slate-500 tracking-[0.4em] leading-tight">{stat.label}</p>
+                        <p className="text-xs font-black text-slate-500 tracking-[0.4em] leading-tight">{stat.label}</p>
                       </div>
                     ))}
                   </div>
@@ -323,14 +325,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               </div>
             </div>
           </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Principles Section */}
       <div id="security-compliance" className="py-24 bg-[#080a0f]/50 border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-8 space-y-24">
+        <PageContainer className="space-y-24">
           <div className="text-center space-y-12">
-            <h3 className="text-[14px] font-black text-primary tracking-[0.8em]">Core Principles</h3>
+            <h3 className="text-sm font-black text-primary tracking-[0.8em]">Core Principles</h3>
             <div className="max-w-3xl mx-auto border-[1.5px] border-primary/40 rounded-2xl p-10 backdrop-blur-sm shadow-[0_0_30px_rgba(43,116,243,0.1)]">
               <h2 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-none">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Built</span> for Regulatory Rigor.
@@ -369,12 +371,12 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               </div>
             ))}
           </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Global Map Node Section */}
       <div id="global-network" className="py-24">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <PageContainer>
           <div className="border-[1.5px] border-primary/30 rounded-[2.5rem] p-16 sm:p-32 relative overflow-hidden bg-slate-900/5 backdrop-blur-sm shadow-[0_0_80px_rgba(0,0,0,0.3)] text-center flex flex-col items-center space-y-16">
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none"></div>
@@ -402,14 +404,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               ))}
             </div>
           </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Membership Tiers Section */}
       <div id="membership-tiers" className="py-24 bg-[#080a0f] border-t border-white/5 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-8 space-y-28 relative z-10">
+        <PageContainer className="space-y-28 relative z-10">
           <div className="text-center space-y-8">
-            <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-accent-amber/10 border border-accent-amber/20 text-[12px] font-black text-accent-amber tracking-[0.6em] mb-4 shadow-2xl">
+            <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-accent-amber/10 border border-accent-amber/20 text-sm font-black text-accent-amber tracking-[0.6em] mb-4 shadow-2xl">
               <span className="material-symbols-outlined text-lg">payments</span>
               Membership Framework
             </div>
@@ -472,13 +474,13 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               ]}
             />
           </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Final Call to Action */}
       <div className="py-24 bg-[#080a0f] border-t border-white/5 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-        <div className="max-w-5xl mx-auto px-8 text-center space-y-16 relative z-10">
+        <PageContainer width="narrow" className="text-center space-y-16 relative z-10">
           <div className="space-y-6">
             <h2 className="text-5xl sm:text-8xl font-black text-white tracking-tighter leading-none">Join the Cooperative.</h2>
             <p className="text-slate-500 font-medium text-xl sm:text-3xl leading-relaxed max-w-3xl mx-auto opacity-80">
@@ -488,13 +490,13 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-8">
             <button
               onClick={scrollToLogin}
-              className="px-16 py-7 bg-white text-black text-[13px] font-black rounded-2xl tracking-[0.5em] transition-all hover:bg-slate-200 hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)]"
+              className="px-16 py-7 bg-white text-black text-sm font-black rounded-2xl tracking-[0.5em] transition-all hover:bg-slate-200 hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,255,255,0.1)]"
             >
               Login to Session
             </button>
             <button
               onClick={scrollToPricing}
-              className="px-16 py-7 bg-transparent border-2 border-slate-800 text-slate-300 text-[13px] font-black rounded-2xl tracking-[0.5em] transition-all hover:bg-white/5 active:scale-95"
+              className="px-16 py-7 bg-transparent border-2 border-slate-800 text-slate-300 text-sm font-black rounded-2xl tracking-[0.5em] transition-all hover:bg-white/5 active:scale-95"
             >
               Inquire for Access
             </button>
@@ -505,7 +507,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <span className="text-2xl font-black text-white italic tracking-tighter">GDPR</span>
             <span className="text-2xl font-black text-white italic tracking-tighter">GMP</span>
           </div>
-        </div>
+        </PageContainer>
       </div>
     </div >
   );

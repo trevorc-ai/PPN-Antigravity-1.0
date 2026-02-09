@@ -41,6 +41,9 @@ interface ContributionModelProps {
   onMenuClick?: () => void;
 }
 
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
+
 const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
 
@@ -49,8 +52,8 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
       {/* HEADER */}
       <div className="h-16 bg-[#0a0c10]/90 border-b border-white/5 flex items-center justify-between px-4 sm:px-8 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-4">
-          <button 
-            onClick={onMenuClick} 
+          <button
+            onClick={onMenuClick}
             className="lg:hidden size-10 flex items-center justify-center rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all"
             aria-label="Open menu"
           >
@@ -58,20 +61,20 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
           </button>
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/')}>
             <div className="bg-primary rounded-lg p-1.5 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-               <span className="material-symbols-outlined text-white text-lg font-black">science</span>
+              <span className="material-symbols-outlined text-white text-lg font-black">science</span>
             </div>
             <span className="text-sm font-black text-white uppercase tracking-[0.2em] hidden sm:block">The Give-to-Get Model</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4">
-          <Link to="/" className="hidden lg:flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors group">
+          <Link to="/" className="hidden lg:flex items-center gap-2 text-[11px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors group">
             <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
             Back to Home
           </Link>
-          <button 
+          <button
             onClick={() => navigate('/#secure-access-node')}
-            className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[9px] font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
+            className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
           >
             Login
           </button>
@@ -82,11 +85,11 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
       <div className="relative py-20 sm:py-32 bg-[#080a0f] border-b border-white/5 overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[700px] bg-primary/10 rounded-full blur-[160px] pointer-events-none"></div>
-        
+
         <div className="max-w-5xl mx-auto px-6 relative z-10 text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4 shadow-xl">
-             <span className="material-symbols-outlined text-sm">database</span>
-             Clinical Wisdom Economics
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-4 shadow-xl">
+            <span className="material-symbols-outlined text-sm">database</span>
+            Clinical Wisdom Economics
           </div>
           <h1 className="text-5xl sm:text-8xl font-black tracking-tighter text-white leading-none">
             Clinical Wisdom <br />
@@ -98,17 +101,17 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-12 py-24 space-y-32">
-        
+      <PageContainer className="py-24 space-y-32">
+
         {/* HOW IT WORKS - 3 STEPS */}
-        <section className="space-y-16">
+        <Section spacing="default" className="space-y-16">
           <div className="text-center space-y-4">
-            <h3 className="text-[12px] font-black text-primary tracking-[0.5em]">The Framework</h3>
+            <h3 className="text-xs font-black text-primary tracking-[0.5em]">The Framework</h3>
             <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tight">How It Works</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StepCard 
+            <StepCard
               number="01"
               title="Log Your Outcomes"
               points={[
@@ -117,7 +120,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
               ]}
               icon="clinical_notes"
             />
-            <StepCard 
+            <StepCard
               number="02"
               title="Unlock the Trust"
               points={[
@@ -126,7 +129,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
               ]}
               icon="key"
             />
-            <StepCard 
+            <StepCard
               number="03"
               title="Grow the Network"
               points={[
@@ -136,63 +139,63 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
               icon="hub"
             />
           </div>
-        </section>
+        </Section>
 
         {/* FAQ SECTION */}
-        <section className="max-w-4xl mx-auto space-y-16">
+        <Section spacing="default" className="max-w-4xl mx-auto space-y-16">
           <div className="text-center space-y-4">
-            <h3 className="text-[12px] font-black text-accent-amber tracking-[0.5em]">Verification Details</h3>
+            <h3 className="text-xs font-black text-accent-amber tracking-[0.5em]">Verification Details</h3>
             <h2 className="text-4xl font-black text-white tracking-tight">Frequently Asked Questions</h2>
           </div>
 
           <div className="space-y-6">
-            <FAQItem 
+            <FAQItem
               q="What counts as a 'Valid Record'?"
               a="A record must include dosage, substance, and at least one outcome metric (like a PHQ-9 score). Empty forms don't count."
             />
-            <FAQItem 
+            <FAQItem
               q="What happens if I miss a month?"
               a="You keep access to your own data, but the Global Dashboard locks until you contribute again."
             />
-            <FAQItem 
+            <FAQItem
               q="Is my patient data safe?"
               a="Absolutely. We never ask for names. All data is anonymized before it enters the global pool."
             />
           </div>
-        </section>
+        </Section>
 
         {/* CTA */}
-        <div className="bg-[#111418]/60 border border-slate-800 rounded-[4rem] p-12 sm:p-24 text-center space-y-10 relative overflow-hidden shadow-2xl">
-           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-30"></div>
-           <div className="space-y-4 relative z-10">
-              <h2 className="text-4xl sm:text-7xl font-black text-white tracking-tighter leading-tight">Ready to join the <span className="text-primary">Cooperative?</span></h2>
-              <p className="text-slate-500 font-medium text-xl leading-relaxed max-w-2xl mx-auto">
-                Join 500+ clinical researchers in building the world's most robust repository for psychedelic therapy.
-              </p>
-           </div>
-           <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
-              <button 
-                onClick={() => navigate('/#secure-access-node')}
-                className="px-12 py-6 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
-              >
-                Sign Up for Free Month
-              </button>
-              <button 
-                onClick={() => navigate('/#membership-tiers')}
-                className="px-12 py-6 bg-transparent border-2 border-slate-800 text-slate-300 text-[12px] font-black rounded-2xl uppercase tracking-[0.3em] transition-all hover:bg-white/5 active:scale-95"
-              >
-                View Access Tiers
-              </button>
-           </div>
-        </div>
+        <Section spacing="default" className="bg-[#111418]/60 border border-slate-800 rounded-[4rem] p-12 sm:p-24 text-center space-y-10 relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-30"></div>
+          <div className="space-y-4 relative z-10">
+            <h2 className="text-4xl sm:text-7xl font-black text-white tracking-tighter leading-tight">Ready to join the <span className="text-primary">Cooperative?</span></h2>
+            <p className="text-slate-500 font-medium text-xl leading-relaxed max-w-2xl mx-auto">
+              Join 500+ clinical researchers in building the world's most robust repository for psychedelic therapy.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
+            <button
+              onClick={() => navigate('/#secure-access-node')}
+              className="px-12 py-6 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-2xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
+            >
+              Sign Up for Free Month
+            </button>
+            <button
+              onClick={() => navigate('/#membership-tiers')}
+              className="px-12 py-6 bg-transparent border-2 border-slate-800 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.3em] transition-all hover:bg-white/5 active:scale-95"
+            >
+              View Access Tiers
+            </button>
+          </div>
+        </Section>
 
-      </div>
+      </PageContainer>
 
       {/* FOOTER */}
       <footer className="py-12 border-t border-white/5 text-center">
-         <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.5em]">
-           Psychedelic Practitioners Network © 2025 // Node Integrity Verified
-         </p>
+        <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em]">
+          Psychedelic Practitioners Network © 2025 // Node Integrity Verified
+        </p>
       </footer>
     </div>
   );

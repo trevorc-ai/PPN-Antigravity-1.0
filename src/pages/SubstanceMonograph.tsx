@@ -8,6 +8,8 @@ import {
   Tooltip, ResponsiveContainer, RadarChart, PolarGrid,
   PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
 
 const ResearchSources: React.FC<{ chunks: any[] }> = ({ chunks }) => {
   if (!chunks || chunks.length === 0) return null;
@@ -37,7 +39,7 @@ const ResearchSources: React.FC<{ chunks: any[] }> = ({ chunks }) => {
             className="group flex flex-col gap-1 bg-slate-900/40 p-3 rounded-2xl border border-slate-800 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all duration-300"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[12px] text-slate-300 font-bold truncate group-hover:text-white transition-colors">{s.title}</span>
+              <span className="text-sm text-slate-300 font-bold truncate group-hover:text-white transition-colors">{s.title}</span>
               <span className="material-symbols-outlined text-[14px] text-slate-600 group-hover:text-indigo-400 transition-colors">arrow_outward</span>
             </div>
             <span className="text-[11px] font-mono text-slate-600 truncate">{s.uri}</span>
@@ -125,7 +127,7 @@ const SubstanceMonograph: React.FC = () => {
         </div>
         <button
           onClick={() => navigate('/catalog')}
-          className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white text-[12px] font-semibold rounded-xl uppercase tracking-widest transition-all"
+          className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-xl uppercase tracking-widest transition-all"
         >
           Return to Registry
         </button>
@@ -143,16 +145,16 @@ const SubstanceMonograph: React.FC = () => {
           <div className="absolute -bottom-48 -right-48 size-[800px] bg-indigo-500/5 rounded-full blur-[160px] animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-12 py-12 sm:py-20 flex flex-col lg:flex-row items-center justify-between gap-16">
+        <PageContainer className="relative z-10 py-12 sm:py-20 flex flex-col lg:flex-row items-center justify-between gap-16">
           <div className="space-y-8 text-center lg:text-left flex-1">
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
-              <span className="px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full text-[12px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/10">
+              <span className="px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/10">
                 {sub.phase}
               </span>
-              <span className="px-4 py-1.5 bg-slate-900/80 text-slate-400 border border-slate-800 rounded-full text-[12px] font-black uppercase tracking-[0.2em]">
+              <span className="px-4 py-1.5 bg-slate-900/80 text-slate-400 border border-slate-800 rounded-full text-sm font-black uppercase tracking-[0.2em]">
                 {sub.schedule}
               </span>
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-clinical-green/10 text-clinical-green border border-clinical-green/20 rounded-full text-[12px] font-black uppercase tracking-[0.2em]">
+              <div className="flex items-center gap-2 px-4 py-1.5 bg-clinical-green/10 text-clinical-green border border-clinical-green/20 rounded-full text-sm font-black uppercase tracking-[0.2em]">
                 <span className="size-2 bg-clinical-green rounded-full animate-pulse"></span>
                 Clinical Dossier
               </div>
@@ -168,7 +170,7 @@ const SubstanceMonograph: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4">
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-row items-center gap-4">
                 <p className="text-[11px] font-black text-slate-600 uppercase tracking-[0.2em]">Registry Access</p>
                 <div className="flex -space-x-3">
                   {[1, 2, 3, 4].map(i => (
@@ -179,7 +181,7 @@ const SubstanceMonograph: React.FC = () => {
                 </div>
               </div>
               <div className="h-10 w-px bg-white/5 hidden sm:block"></div>
-              <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest leading-tight">
+              <p className="text-sm font-black text-slate-400 uppercase tracking-widest leading-tight">
                 <span className="text-white">Live Search Enriched</span><br />Institutional Research Node
               </p>
             </div>
@@ -212,8 +214,8 @@ const SubstanceMonograph: React.FC = () => {
             <div className="w-full lg:w-80 bg-slate-900/60 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative group overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-10 transition-opacity"></div>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[12px] font-black text-slate-500 uppercase tracking-widest">Aggregate Efficacy</p>
-                <span className="text-[12px] font-mono text-clinical-green font-black">NODE_SIGMA</span>
+                <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Aggregate Efficacy</p>
+                <span className="text-sm font-mono text-clinical-green font-black">NODE_SIGMA</span>
               </div>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-5xl font-black text-white tracking-tighter">{(sub.efficacy * 100).toFixed(1)}</span>
@@ -227,11 +229,11 @@ const SubstanceMonograph: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </PageContainer>
       </div>
 
-      <div className="max-w-[1600px] mx-auto px-6 sm:px-10 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <PageContainer width="wide" className="py-12">
+        <Section spacing="default" className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
           {/* LEFT COLUMN: Pharmacological & Clinical Record (Span 8) */}
           <div className="lg:col-span-8 space-y-6">
@@ -262,7 +264,7 @@ const SubstanceMonograph: React.FC = () => {
                         <span className="material-symbols-outlined text-[13px] text-slate-600 group-hover/item:text-primary transition-colors">{item.icon}</span>
                         <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest">{item.label}</span>
                       </div>
-                      <span className="text-[12px] font-mono font-bold text-slate-200 truncate block group-hover/item:text-white transition-colors">{item.val}</span>
+                      <span className="text-sm font-mono font-bold text-slate-200 truncate block group-hover/item:text-white transition-colors">{item.val}</span>
                     </div>
                   ))}
                 </div>
@@ -363,7 +365,7 @@ const SubstanceMonograph: React.FC = () => {
                     </p>
                     <button
                       onClick={runAiSynthesis}
-                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 group active:scale-95"
+                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 group active:scale-95"
                     >
                       <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">bolt</span>
                       Initialize Synthesis
@@ -387,14 +389,14 @@ const SubstanceMonograph: React.FC = () => {
                         <span className="material-symbols-outlined text-lg">folder_zip</span>
                       </div>
                       <div>
-                        <p className="text-[12px] font-bold text-slate-300 group-hover:text-white transition-colors">Log_0x{i}2</p>
+                        <p className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">Log_0x{i}2</p>
                         <p className="text-[11px] font-mono text-slate-600 font-bold uppercase tracking-widest leading-none">OCT 2025</p>
                       </div>
                     </div>
                     <span className="material-symbols-outlined text-slate-700 text-sm group-hover:text-white transition-colors">download</span>
                   </div>
                 ))}
-                <button className="w-full py-3.5 mt-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[12px] font-black rounded-2xl uppercase tracking-widest transition-all">
+                <button className="w-full py-3.5 mt-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-widest transition-all">
                   Full Registry Access
                 </button>
               </div>
@@ -429,13 +431,13 @@ const SubstanceMonograph: React.FC = () => {
                     </div>
                     <span className={`px-3 py-1 rounded-full text-[11px] font-black uppercase border ${inter.risk === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-accent-amber/10 text-accent-amber border-accent-amber/20'}`}>{inter.risk} RISK</span>
                   </div>
-                  <p className="text-xs text-slate-400 font-medium leading-relaxed">{inter.description}</p>
+                  <p className="text-sm text-slate-400 font-medium leading-relaxed">{inter.description}</p>
                 </div>
               ))}
             </div>
           </section>
-        </div>
-      </div>
+        </Section>
+      </PageContainer>
     </div>
   );
 };

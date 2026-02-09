@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
 
 interface NotificationItem {
   id: string;
@@ -126,7 +128,7 @@ const Notifications: React.FC = () => {
   });
 
   return (
-    <div className="p-6 sm:p-10 max-w-[1400px] mx-auto animate-in fade-in duration-500 relative">
+    <PageContainer className="animate-in fade-in duration-500 relative">
 
       {showToast && (
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top-4 fade-in duration-300">
@@ -137,7 +139,7 @@ const Notifications: React.FC = () => {
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-10">
+      <Section spacing="default" className="flex flex-col lg:flex-row gap-10">
 
         {/* Main Feed */}
         <div className="flex-1 space-y-8">
@@ -146,7 +148,7 @@ const Notifications: React.FC = () => {
               <h1 className="text-4xl font-black tracking-tight text-white">Notifications</h1>
               <p className="text-slate-500 text-sm font-medium">Manage urgent clinical alerts and system updates.</p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all">
+            <button className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-xl text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all">
               <span className="material-symbols-outlined text-lg">check_circle</span>
               Mark all as read
             </button>
@@ -158,8 +160,8 @@ const Notifications: React.FC = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
                 className={`px-6 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === tab
-                    ? 'bg-accent-amber text-black shadow-lg shadow-accent-amber/10'
-                    : 'text-slate-500 hover:text-white'
+                  ? 'bg-accent-amber text-black shadow-lg shadow-accent-amber/10'
+                  : 'text-slate-500 hover:text-white'
                   }`}
               >
                 {tab}
@@ -173,16 +175,16 @@ const Notifications: React.FC = () => {
               <div
                 key={notif.id}
                 className={`relative group bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden transition-all hover:bg-slate-900/60 ${notif.type === 'critical' ? 'border-l-4 border-l-accent-amber' :
-                    notif.type === 'system' ? 'border-l-4 border-l-primary' :
-                      notif.type === 'protocol' ? 'border-l-4 border-l-slate-700' :
-                        notif.type === 'warning' ? 'border-l-4 border-l-accent-amber/50' :
-                          'border-l-4 border-l-slate-800'
+                  notif.type === 'system' ? 'border-l-4 border-l-primary' :
+                    notif.type === 'protocol' ? 'border-l-4 border-l-slate-700' :
+                      notif.type === 'warning' ? 'border-l-4 border-l-accent-amber/50' :
+                        'border-l-4 border-l-slate-800'
                   }`}
               >
                 <div className="p-6 flex gap-6">
                   <div className={`size-12 rounded-xl flex items-center justify-center shrink-0 border border-white/5 ${notif.type === 'critical' ? 'bg-accent-amber/10 text-accent-amber' :
-                      notif.type === 'system' ? 'bg-primary/10 text-primary' :
-                        'bg-slate-800/50 text-slate-500'
+                    notif.type === 'system' ? 'bg-primary/10 text-primary' :
+                      'bg-slate-800/50 text-slate-500'
                     }`}>
                     <span className="material-symbols-outlined text-2xl">{getIcon(notif.type)}</span>
                   </div>
@@ -260,7 +262,7 @@ const Notifications: React.FC = () => {
                 ].map((pref) => (
                   <div key={pref.id} className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-slate-200">{pref.label}</p>
+                      <p className="text-[11px] font-bold text-slate-200">{pref.label}</p>
                       <p className="text-[11px] text-slate-500">{pref.sub}</p>
                     </div>
                     <button
@@ -307,7 +309,7 @@ const Notifications: React.FC = () => {
 
             <div className="relative z-10 space-y-4">
               <h3 className="text-xl font-black text-white tracking-tight">Need Help?</h3>
-              <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
                 Contact the Research IT Support team for issues with receiving notifications.
               </p>
               <button className="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] font-black text-white uppercase tracking-widest rounded-xl transition-all">
@@ -316,8 +318,8 @@ const Notifications: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Section>
+    </PageContainer>
   );
 };
 

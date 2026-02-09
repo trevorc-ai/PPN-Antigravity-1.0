@@ -1,7 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { NEWS_ARTICLES } from '../constants';
-import { GoogleGenAI } from "@google/genai";
+import React, { useState, useMemo } from 'react';
 import { NewsArticle } from '../types';
+import { NEWS_ARTICLES } from '../constants';
+import ConnectFeedButton from '../components/ui/ConnectFeedButton';
+
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
+
 
 const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
   return (
@@ -42,6 +46,9 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
         <img
           src={article.imageUrl}
           alt={article.title}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=800'; // Reliable fallback
+          }}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#111418] via-[#111418]/20 to-transparent"></div>
@@ -52,7 +59,7 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
             }`}>
             {article.category}
           </span>
-          <span className="text-[11px] font-mono text-slate-500 uppercase tracking-widest">{article.date}</span>
+          <span className="text-[11px] font-mono text-slate-500 uppercase tracking-widest">{article.timestamp}</span>
         </div>
       </div>
 
@@ -60,7 +67,7 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
         <h3 className="text-xl font-black text-slate-100 group-hover:text-white leading-tight tracking-tight transition-colors">
           {article.title}
         </h3>
-        <p className="text-[13px] text-slate-500 leading-relaxed font-medium line-clamp-3">
+        <p className="text-sm text-slate-500 leading-relaxed font-medium line-clamp-3">
           {article.summary}
         </p>
         <button className="mt-auto flex items-center gap-2 text-[11px] font-black text-primary hover:text-white uppercase tracking-[0.2em] transition-all group/btn">
@@ -73,22 +80,28 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
 };
 
 const News: React.FC = () => {
+  const [articles, setArticles] = useState<NewsArticle[]>(NEWS_ARTICLES);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [goodNewsOnly, setGoodNewsOnly] = useState(true); // Default to Smart Filter ON
+  const [sortBy, setSortBy] = useState<'recent' | 'cited'>('recent');
+
+  const categories = ['All', 'Regulation', 'Clinical Trials', 'Industry'];
+
+  const cycleCategory = () => {
+    const currentIndex = categories.indexOf(selectedCategory);
+    const nextIndex = (currentIndex + 1) % categories.length;
+    setSelectedCategory(categories[nextIndex]);
+  };
 
   // Filter logic
   const filteredNews = useMemo(() => {
-    return NEWS_ITEMS.filter(item => {
+    let result = articles.filter(item => {
       const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.summary.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory !== 'All' ? item.category === selectedCategory : true;
 
       // Smart Sentiment Logic:
-      // If "Good News Only" is ON:
-      // 1. Partners/Network: Show ONLY Positive
-      // 2. Regulation: Show ALL (Critical Intelligence)
-      // 3. Others: Show ONLY Positive
       let matchesSentiment = true;
       if (goodNewsOnly) {
         if (item.category === 'Regulation') {
@@ -102,36 +115,56 @@ const News: React.FC = () => {
 
       return matchesSearch && matchesCategory && matchesSentiment;
     });
-  }, [searchQuery, selectedCategory, goodNewsOnly]); // Add goodNewsOnly to dependencies
+
+    // Sorting
+    if (sortBy === 'cited') {
+      result = [...result].sort((a, b) => (b.impactScore || 0) - (a.impactScore || 0)); // Added fallback for impactScore
+    }
+    // Default is recent (array order)
+
+    return result;
+  }, [articles, searchQuery, selectedCategory, goodNewsOnly, sortBy]);
 
   return (
-    <div className="min-h-full flex flex-col bg-[#0e1117] animate-in fade-in duration-1000">
-      <div className="max-w-[1600px] mx-auto w-full flex flex-col lg:flex-row gap-10 p-6 sm:p-10">
+    <PageContainer className="animate-in fade-in duration-1000">
+      <Section spacing="default" className="flex flex-col lg:flex-row gap-10">
 
         {/* Main Feed Section */}
         <div className="flex-1 space-y-8">
-          <h1 className="text-5xl font-black tracking-tighter text-white">
-            News Feed
-          </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <h1 className="text-5xl font-black tracking-tighter text-white">
+              News Feed
+            </h1>
+            <ConnectFeedButton />
+          </div>
 
-          <FeatureArticle article={NEWS_ARTICLES[0]} />
+          {articles.length > 0 && <FeatureArticle article={articles[0]} />}
 
           {/* Filter Bar */}
           <div className="flex flex-col sm:flex-row items-center gap-4 bg-[#1c222d]/40 border border-slate-800 p-2 rounded-2xl backdrop-blur-md">
             <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
-              <button className="px-5 py-2.5 bg-primary rounded-lg text-[11px] font-black text-white uppercase tracking-widest shadow-lg flex items-center gap-2">
+              <button
+                onClick={() => setSortBy('recent')}
+                className={`px-5 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+              >
                 <span className="material-symbols-outlined text-sm">schedule</span>
                 Most Recent
               </button>
-              <button className="px-5 py-2.5 rounded-lg text-[11px] font-black text-slate-500 hover:text-white uppercase tracking-widest flex items-center gap-2 transition-all">
+              <button
+                onClick={() => setSortBy('cited')}
+                className={`px-5 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+              >
                 <span className="material-symbols-outlined text-sm">star</span>
                 Most Cited
               </button>
             </div>
 
-            <button className="px-4 py-2.5 bg-black/20 border border-slate-800 rounded-xl text-[11px] font-black text-slate-400 hover:text-white uppercase tracking-widest flex items-center gap-4 transition-all group">
-              Compound Type
-              <span className="material-symbols-outlined text-base text-slate-600 group-hover:text-primary">expand_more</span>
+            <button
+              onClick={cycleCategory}
+              className={`px-4 py-2.5 border rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-400 hover:text-white'}`}
+            >
+              {selectedCategory === 'All' ? 'Compound Type' : selectedCategory}
+              <span className="material-symbols-outlined text-base">expand_more</span>
             </button>
 
             <div className="relative flex-1 group">
@@ -141,7 +174,7 @@ const News: React.FC = () => {
                 placeholder="Search research..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 bg-black/40 border border-slate-800 rounded-xl pl-12 pr-4 text-xs font-bold text-white focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all"
+                className="w-full h-11 bg-black/40 border border-slate-800 rounded-xl pl-12 pr-4 text-sm font-bold text-white focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all"
               />
             </div>
           </div>
@@ -170,7 +203,11 @@ const News: React.FC = () => {
             </div>
             <div className="flex flex-wrap gap-2">
               {['#Psilocybin', '#MDMA-Research', '#Neuroscience', '#PhaseIII', '#ReformBill', '#Ligands'].map(tag => (
-                <button key={tag} className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-[11px] font-black text-slate-400 hover:text-white hover:border-primary/50 transition-all uppercase tracking-widest">
+                <button
+                  key={tag}
+                  onClick={() => setSearchQuery(tag.replace('#', ''))}
+                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-[11px] font-black text-slate-400 hover:text-white hover:border-primary/50 transition-all uppercase tracking-widest"
+                >
                   {tag}
                 </button>
               ))}
@@ -184,7 +221,7 @@ const News: React.FC = () => {
                 <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                   <span className="material-symbols-outlined text-xl">mail</span>
                 </div>
-                <h3 className="text-xs font-black text-white tracking-[0.2em]">Weekly Briefing</h3>
+                <h3 className="text-sm font-black text-white tracking-[0.2em]">Weekly Briefing</h3>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                 Get the most critical clinical updates delivered to your inbox every Monday morning.
@@ -194,9 +231,9 @@ const News: React.FC = () => {
               <input
                 type="email"
                 placeholder="professional@clinic.com"
-                className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-[11px] font-mono text-white focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
+                className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-white focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
               />
-              <button className="w-full py-4 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
+              <button className="w-full py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
                 Subscribe Now
               </button>
               <p className="text-[10px] text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>
@@ -243,8 +280,8 @@ const News: React.FC = () => {
             </div>
           </div>
         </aside>
-      </div>
-    </div>
+      </Section>
+    </PageContainer>
   );
 };
 

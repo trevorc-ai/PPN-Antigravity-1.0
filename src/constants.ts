@@ -6,37 +6,41 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     id: 'NEWS-001',
     title: 'FDA Grants Breakthrough Therapy Designation for LSD-Assisted Anxiety Treatment',
     summary: 'Clinical results from Phase IIb trials demonstrate rapid and sustained reduction in anxiety symptoms following a single high-dose administration.',
-    category: 'Regulatory',
+    category: 'Regulation',
     source: 'FDA.gov',
     timestamp: '2h ago',
     impactScore: 94,
     readTime: '4 min',
     imageUrl: 'https://images.unsplash.com/photo-1532187863486-abf9bdad1b4c?auto=format&fit=crop&q=80&w=800',
-    verified: true
+    verified: true,
+    sentiment: 'positive'
   },
   {
     id: 'NEWS-002',
     title: 'Zurich Node Reports 85% Efficacy in Phase 3 TRD Trials',
     summary: 'Institutional data from the Swiss research hub indicates significant efficacy lift in treatment-resistant depression cohorts.',
-    category: 'Clinical',
+    category: 'Clinical Trials',
     source: 'Zurich Clinical Hub',
     timestamp: '5h ago',
     impactScore: 82,
     readTime: '7 min',
     imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=800',
-    verified: true
+    verified: true,
+    sentiment: 'positive',
+    isPartner: true
   },
   {
     id: 'NEWS-003',
     title: 'New Protocol Guidelines: MDMA-Assisted Therapy v2.4',
     summary: 'Global research council releases updated dosing and integration frameworks for Phase III MDMA applications.',
-    category: 'Clinical',
+    category: 'Clinical Trials',
     source: 'MAPS Public Benefit Corp',
     timestamp: '1d ago',
     impactScore: 98,
     readTime: '5 min',
     imageUrl: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=800',
-    verified: true
+    verified: true,
+    sentiment: 'positive'
   },
   {
     id: 'NEWS-004',
@@ -48,7 +52,8 @@ export const NEWS_ARTICLES: NewsArticle[] = [
     impactScore: 65,
     readTime: '3 min',
     imageUrl: 'https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&q=80&w=800',
-    verified: true
+    verified: true,
+    sentiment: 'positive'
   }
 ];
 

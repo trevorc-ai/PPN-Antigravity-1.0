@@ -49,27 +49,27 @@ export default function MetabolicRiskGauge() {
     const chartData = [{ name: 'Risk', value: activeRule.score, fill: activeRule.color }];
 
     return (
-        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-6 h-full relative overflow-hidden">
+        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-6 h-full relative overflow-y-auto custom-scrollbar">
 
             {/* Background Glow */}
             <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[100px] opacity-10 transition-colors duration-700 pointer-events-none`}
                 style={{ backgroundColor: activeRule.color }}></div>
 
             {/* HEADER */}
-            <div className="relative z-10">
-                <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
+            <div className="relative z-10" title="Assessing toxicity risk interactions using patient CYP450 genomic markers">
+                <h2 className="text-xl font-black text-white tracking-tighter flex items-center gap-2">
                     <Gauge className="text-indigo-500" />
-                    Metabolic Gauge
+                    Metabolic Risk Gauge
                 </h2>
                 <p className="text-xs text-slate-400 font-medium mt-1">
-                    CYP450 Genomic Safety Check
+                    CYP450 Genomic Safety Check.
                 </p>
             </div>
 
             {/* CONTROLS */}
             <div className="grid grid-cols-2 gap-4 relative z-10">
                 <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Protocol Substance</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Protocol Substance</label>
                     <div className="relative">
                         <select
                             value={selectedSubstance}
@@ -85,12 +85,13 @@ export default function MetabolicRiskGauge() {
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Genomic Status</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Genomic Status</label>
                     <div className="relative">
                         <select
                             value={selectedStatus}
                             onChange={(e) => setSelectedStatus(e.target.value)}
                             className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs font-bold text-white appearance-none focus:ring-1 focus:ring-indigo-500 outline-none"
+                            title="Select patient's metabolizer status (from genetic test)"
                         >
                             <option value="Poor">Poor Metabolizer (PM)</option>
                             <option value="Intermediate">Intermediate (IM)</option>
@@ -127,7 +128,7 @@ export default function MetabolicRiskGauge() {
                     <div className={`text-4xl font-black tracking-tighter transition-colors duration-500`} style={{ color: activeRule.color }}>
                         {activeRule.riskLevel}
                     </div>
-                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">
                         Toxicity Risk
                     </div>
                 </div>
@@ -135,25 +136,25 @@ export default function MetabolicRiskGauge() {
 
             {/* ACTION CARD */}
             <div className={`p-4 rounded-xl border relative z-10 transition-all duration-500 ${activeRule.riskLevel === 'High' ? 'bg-rose-500/10 border-rose-500/30' :
-                    activeRule.riskLevel === 'Moderate' ? 'bg-amber-500/10 border-amber-500/30' :
-                        'bg-emerald-500/10 border-emerald-500/30'
+                activeRule.riskLevel === 'Moderate' ? 'bg-amber-500/10 border-amber-500/30' :
+                    'bg-emerald-500/10 border-emerald-500/30'
                 }`}>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3" title="Clinical action required based on genomic risk">
                     {activeRule.riskLevel === 'High' ? <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" /> :
                         activeRule.riskLevel === 'Moderate' ? <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" /> :
                             <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />}
 
                     <div>
                         <h4 className={`text-xs font-black uppercase tracking-widest mb-1 ${activeRule.riskLevel === 'High' ? 'text-rose-400' :
-                                activeRule.riskLevel === 'Moderate' ? 'text-amber-400' :
-                                    'text-emerald-400'
+                            activeRule.riskLevel === 'Moderate' ? 'text-amber-400' :
+                                'text-emerald-400'
                             }`}>
                             Clinical Guidance
                         </h4>
                         <p className="text-xs text-slate-300 font-medium leading-relaxed">
                             {activeRule.recommendation}
                         </p>
-                        <p className="text-[10px] text-slate-500 mt-2 font-mono">
+                        <p className="text-xs text-slate-500 mt-2 font-mono">
                             Mechanism: {activeRule.mechanism}
                         </p>
                     </div>

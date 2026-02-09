@@ -83,169 +83,160 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const handleAuthAction = () => scrollToSection('secure-access-node');
 
   return (
-    <header className="h-20 flex items-center justify-between px-6 sm:px-10 border-b border-white/5 bg-[#0a0c12] sticky top-0 z-40 backdrop-blur-xl">
-      <div className="flex items-center gap-8 flex-1">
-        {/* Portal Title & Local Nav */}
-        <div className="flex items-center gap-4 shrink-0">
-          <button
-            onClick={onMenuClick}
-            className="lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-lg"
-          >
-            <span className="material-symbols-outlined">menu</span>
-          </button>
-          <div className="flex flex-col">
-            <Link to="/" className="hover:opacity-80 transition-opacity">
-              <h2 className="text-lg font-black text-white tracking-tight hidden md:block leading-none mb-1">
-                PPN Research Portal
-              </h2>
-            </Link>
-            <div className="hidden md:flex items-center gap-2">
-              <span className="text-[11px] font-black text-slate-600 tracking-widest">Gateway</span>
-              <div className="px-1.5 py-0.5 rounded bg-clinical-green/10 text-clinical-green text-[11px] font-black border border-clinical-green/20">Verified</div>
-            </div>
+    <header className="h-20 border-b border-white/5 bg-[#0a0c12] sticky top-0 z-40 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto h-full px-6 sm:px-10 flex items-center justify-between">
+        <div className="flex items-center gap-8 flex-1">
+          {/* Portal Title & Local Nav */}
+          <div className="flex items-center gap-4 shrink-0">
+            <button
+              onClick={onMenuClick}
+              className="lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all shadow-lg"
+            >
+              <span className="material-symbols-outlined">menu</span>
+            </button>
           </div>
+
+          {!isAuthenticated && isLanding && (
+            <div className="hidden lg:flex items-center gap-10 ml-6">
+              {[
+                { label: 'Security', id: 'security-compliance' },
+                { label: 'Network', id: 'global-network' },
+                { label: 'Membership', id: 'membership-tiers' }
+              ].map((link) => (
+                <button
+                  key={link.label}
+                  onClick={() => scrollToSection(link.id)}
+                  className="text-[11px] font-black text-slate-400 hover:text-white tracking-[0.25em] transition-all relative group"
+                >
+                  {link.label}
+                  <div className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full opacity-50"></div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {!isAuthenticated && isLanding && (
-          <div className="hidden lg:flex items-center gap-10 ml-6">
-            {[
-              { label: 'Security', id: 'security-compliance' },
-              { label: 'Network', id: 'global-network' },
-              { label: 'Membership', id: 'membership-tiers' }
-            ].map((link) => (
-              <button
-                key={link.label}
-                onClick={() => scrollToSection(link.id)}
-                className="text-[11px] font-black text-slate-400 hover:text-white tracking-[0.25em] transition-all relative group"
-              >
-                {link.label}
-                <div className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full opacity-50"></div>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-center gap-6 ml-6">
-        {isAuthenticated ? (
-          <>
-            <div className="hidden lg:flex items-center gap-8 mr-4">
-              <div className="flex flex-col items-end">
-                <span className="text-[11px] font-black text-slate-600 tracking-widest leading-none mb-1">Latency</span>
-                <div className="flex items-center gap-2">
-                  <div className={`size-1.5 rounded-full ${latency < 18 ? 'bg-clinical-green' : 'bg-accent-amber'} animate-pulse shadow-[0_0_8px] shadow-current`}></div>
-                  <span className="text-[11px] font-mono text-slate-400 font-black">{latency.toFixed(1)}ms</span>
-                </div>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-[11px] font-black text-slate-600 tracking-widest leading-none mb-1">Sync Status</span>
-                <span className="text-[11px] font-mono text-clinical-green font-black tracking-tighter">Synchronized</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <NavIconButton
-                icon="explore"
-                label="Start Page Tour"
-                tooltip="System Tour"
-                onClick={onStartTour}
-              />
-              {/* TOUR TARGET: SEARCH */}
-              <div id="tour-search-node" className="contents">
-                <NavIconButton
-                  icon="search"
-                  label="Search Registry"
-                  tooltip="Global Search"
-                  onClick={() => navigate('/advanced-search')}
-                />
-              </div>
-              {/* TOUR TARGET: NOTIFICATIONS */}
-              <div id="tour-notifications" className="contents">
-                <NavIconButton
-                  icon="notifications"
-                  label="Notifications"
-                  tooltip="Node Alerts"
-                  badge
-                  onClick={() => navigate('/notifications')}
-                />
-              </div>
-              {/* TOUR TARGET: HELP */}
-              <div id="tour-help-node" className="contents">
-                <NavIconButton
-                  icon="help"
-                  label="Help & Support"
-                  tooltip="Clinical Support"
-                  onClick={() => navigate('/help')}
-                />
-              </div>
-            </div>
-
-            <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block"></div>
-
-            {/* User Dropdown Menu */}
-            <div id="tour-user-profile" className="relative" ref={menuRef}>
-              <div
-                className="flex items-center gap-3 pl-2 group cursor-pointer hover:bg-white/5 rounded-2xl p-1 transition-all"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                <div className="relative">
-                  <div className="size-10 rounded-full bg-cover bg-center border-2 border-primary/40 group-hover:border-primary transition-all shadow-[0_0_15px_rgba(43,116,243,0.2)]" style={{ backgroundImage: `url(${currentUser.imageUrl})` }}></div>
-                  <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-clinical-green border-2 border-[#0a0c12] rounded-full"></div>
-                </div>
-                <div className="hidden lg:flex flex-col">
-                  <p className="text-[12px] font-black text-white leading-none mb-1 group-hover:text-primary transition-colors">Dr. Sarah Jenkins</p>
-                  <div className="flex items-center gap-1">
-                    <span className="text-[11px] text-slate-500 font-bold tracking-widest leading-none">Practitioner</span>
-                    <span className="material-symbols-outlined text-[15px] text-slate-500 group-hover:text-white transition-transform duration-300" style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'none' }}>expand_more</span>
+        <div className="flex items-center gap-6 ml-6">
+          {isAuthenticated ? (
+            <>
+              <div className="hidden lg:flex items-center gap-8 mr-4">
+                <div className="flex flex-col items-end">
+                  <span className="text-[11px] font-black text-slate-600 tracking-widest leading-none mb-1">Latency</span>
+                  <div className="flex items-center gap-2">
+                    <div className={`size-1.5 rounded-full ${latency < 18 ? 'bg-clinical-green' : 'bg-accent-amber'} animate-pulse shadow-[0_0_8px] shadow-current`}></div>
+                    <span className="text-[11px] font-mono text-slate-400 font-black">{latency.toFixed(1)}ms</span>
                   </div>
                 </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[11px] font-black text-slate-600 tracking-widest leading-none mb-1">Sync Status</span>
+                  <span className="text-[11px] font-mono text-clinical-green font-black tracking-tighter">Synchronized</span>
+                </div>
               </div>
 
-              {/* Menu Dropdown Panel */}
-              {isMenuOpen && (
-                <div className="absolute right-0 mt-3 w-56 bg-[#0c0f16] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl">
-                  <div className="px-4 py-3 border-b border-white/5 mb-2">
-                    <p className="text-[10px] font-black text-slate-500 tracking-widest leading-none mb-1">Session Node</p>
-                    <p className="text-xs font-bold text-white truncate">sarah.jenkins@ppn-research.org</p>
-                  </div>
-
-                  <button
-                    onClick={() => { navigate(`/clinician/${currentUser.id}`); setIsMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
-                  >
-                    <span className="material-symbols-outlined text-lg">account_circle</span>
-                    View Research Profile
-                  </button>
-
-                  <button
-                    onClick={() => { navigate('/settings'); setIsMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
-                  >
-                    <span className="material-symbols-outlined text-lg">settings_applications</span>
-                    Account Settings
-                  </button>
-
-                  <div className="h-px bg-white/5 my-2"></div>
-
-                  <button
-                    onClick={() => { onLogout(); setIsMenuOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-400/5 transition-all text-xs font-bold"
-                  >
-                    <span className="material-symbols-outlined text-lg">logout</span>
-                    Sign Out of Node
-                  </button>
+              <div className="flex items-center gap-3">
+                <NavIconButton
+                  icon="explore"
+                  label="Start Page Tour"
+                  tooltip="System Tour"
+                  onClick={onStartTour}
+                />
+                {/* TOUR TARGET: SEARCH */}
+                <div id="tour-search-node" className="contents">
+                  <NavIconButton
+                    icon="search"
+                    label="Search Registry"
+                    tooltip="Global Search"
+                    onClick={() => navigate('/advanced-search')}
+                  />
                 </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <button
-            onClick={handleAuthAction}
-            className="px-6 py-2.5 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
-          >
-            Login
-          </button>
-        )}
+                {/* TOUR TARGET: NOTIFICATIONS */}
+                <div id="tour-notifications" className="contents">
+                  <NavIconButton
+                    icon="notifications"
+                    label="Notifications"
+                    tooltip="Node Alerts"
+                    badge
+                    onClick={() => navigate('/notifications')}
+                  />
+                </div>
+                {/* TOUR TARGET: HELP */}
+                <div id="tour-help-node" className="contents">
+                  <NavIconButton
+                    icon="help"
+                    label="Help & Support"
+                    tooltip="Clinical Support"
+                    onClick={() => navigate('/help')}
+                  />
+                </div>
+              </div>
+
+              <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block"></div>
+
+              {/* User Dropdown Menu */}
+              <div id="tour-user-profile" className="relative" ref={menuRef}>
+                <div
+                  className="flex items-center gap-3 pl-2 group cursor-pointer hover:bg-white/5 rounded-2xl p-1 transition-all"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                  <div className="relative">
+                    <div className="size-10 rounded-full bg-cover bg-center border-2 border-primary/40 group-hover:border-primary transition-all shadow-[0_0_15px_rgba(43,116,243,0.2)]" style={{ backgroundImage: `url(${currentUser.imageUrl})` }}></div>
+                    <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-clinical-green border-2 border-[#0a0c12] rounded-full"></div>
+                  </div>
+                  <div className="hidden lg:flex flex-col">
+                    <p className="text-[12px] font-black text-white leading-none mb-1 group-hover:text-primary transition-colors">Dr. Sarah Jenkins</p>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[11px] text-slate-500 font-bold tracking-widest leading-none">Practitioner</span>
+                      <span className="material-symbols-outlined text-[15px] text-slate-500 group-hover:text-white transition-transform duration-300" style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'none' }}>expand_more</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Menu Dropdown Panel */}
+                {isMenuOpen && (
+                  <div className="absolute right-0 mt-3 w-56 bg-[#0c0f16] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl">
+                    <div className="px-4 py-3 border-b border-white/5 mb-2">
+                      <p className="text-[10px] font-black text-slate-500 tracking-widest leading-none mb-1">Session Node</p>
+                      <p className="text-xs font-bold text-white truncate">sarah.jenkins@ppn-research.org</p>
+                    </div>
+
+                    <button
+                      onClick={() => { navigate(`/clinician/${currentUser.id}`); setIsMenuOpen(false); }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
+                    >
+                      <span className="material-symbols-outlined text-lg">account_circle</span>
+                      View Research Profile
+                    </button>
+
+                    <button
+                      onClick={() => { navigate('/settings'); setIsMenuOpen(false); }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
+                    >
+                      <span className="material-symbols-outlined text-lg">settings_applications</span>
+                      Account Settings
+                    </button>
+
+                    <div className="h-px bg-white/5 my-2"></div>
+
+                    <button
+                      onClick={() => { onLogout(); setIsMenuOpen(false); }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-400/5 transition-all text-xs font-bold"
+                    >
+                      <span className="material-symbols-outlined text-lg">logout</span>
+                      Sign Out of Node
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <button
+              onClick={handleAuthAction}
+              className="px-6 py-2.5 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
+            >
+              Login
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -91,12 +91,12 @@ export default function ClinicPerformanceRadar() {
             {/* Header Controls */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2 print:text-black">
+                    <h2 className="text-xl font-black text-white tracking-tighter flex items-center gap-2 print:text-black" title="Aggregated performance metrics comparing this node against the global network average">
                         <TrendingUp className="text-indigo-500" />
-                        Performance Radar
+                        Clinic Performance Radar
                     </h2>
                     <p className="text-xs text-slate-400 font-medium mt-1 print:text-slate-600">
-                        Comparative analysis against N=14,200 Network Nodes
+                        Analyzing efficacy, safety, and operational metrics against N=14,200 Network Nodes.
                     </p>
                 </div>
                 <div className="flex items-center gap-2 print:hidden">
@@ -175,7 +175,7 @@ export default function ClinicPerformanceRadar() {
                     {insights.map((insight, idx) => (
                         <div key={idx} className="p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors group">
                             <div className="flex justify-between items-start mb-2">
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{insight.label}</span>
+                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{insight.label}</span>
                                 {insight.status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
                                 {insight.status === 'warning' && <AlertCircle className="w-4 h-4 text-amber-500" />}
                                 {insight.status === 'danger' && <AlertCircle className="w-4 h-4 text-red-500" />}

@@ -1,6 +1,8 @@
 
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
 import {
   Bar, ResponsiveContainer,
   BarChart, Cell
@@ -110,32 +112,34 @@ const SubstanceCatalog: React.FC = () => {
 
   return (
     <div className="min-h-full flex flex-col lg:flex-row bg-[#080a10] animate-in fade-in duration-700">
-      <div className="flex-1 p-6 sm:p-10 lg:p-12 space-y-12 overflow-y-auto custom-scrollbar">
-        <div className="space-y-10">
-          <div className="space-y-8">
-            <h1 className="text-5xl font-black text-white tracking-tighter">Substances</h1>
-            <div className="flex flex-wrap gap-3">
-              {['Showing: All Classes', 'Clinical Stage Only', 'High Binding Affinity'].map(filter => (
-                <button
-                  key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all border ${activeFilter === filter
-                    ? 'bg-primary border-primary text-white shadow-[0_0_20px_rgba(43,116,243,0.3)]'
-                    : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-white'
-                    }`}
-                >
-                  {filter.toUpperCase()}
-                </button>
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <PageContainer width="wide" className="p-6 sm:p-10 lg:p-12 space-y-12">
+          <Section spacing="default" className="space-y-10">
+            <div className="space-y-8">
+              <h1 className="text-5xl font-black text-white tracking-tighter">Substances</h1>
+              <div className="flex flex-wrap gap-3">
+                {['Showing: All Classes', 'Clinical Stage Only', 'High Binding Affinity'].map(filter => (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all border ${activeFilter === filter
+                      ? 'bg-primary border-primary text-white shadow-[0_0_20px_rgba(43,116,243,0.3)]'
+                      : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-white'
+                      }`}
+                  >
+                    {filter.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-20">
+              {SUBSTANCES.map(sub => (
+                <SubstanceCard key={sub.id} sub={sub} />
               ))}
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-20">
-            {SUBSTANCES.map(sub => (
-              <SubstanceCard key={sub.id} sub={sub} />
-            ))}
-          </div>
-        </div>
+          </Section>
+        </PageContainer>
       </div>
 
       <aside className="w-full lg:w-[440px] border-l border-slate-800/60 bg-[#0a0c10] p-10 lg:sticky lg:top-0 h-full overflow-y-auto custom-scrollbar flex flex-col gap-12 backdrop-blur-xl shrink-0">
@@ -201,7 +205,7 @@ const SubstanceCatalog: React.FC = () => {
           <div className="space-y-5 bg-slate-900/40 p-6 rounded-[2rem] border border-slate-800/40 relative overflow-hidden group">
             <div className="absolute inset-0 bg-accent-amber/5 opacity-0 group-hover:opacity-10 transition-opacity"></div>
 
-            <p className="text-[12px] text-slate-400 font-medium leading-relaxed italic relative z-10">
+            <p className="text-sm text-slate-400 font-medium leading-relaxed italic relative z-10">
               Perform immediate clinical interaction cross-referencing across the global registry.
             </p>
 
@@ -212,7 +216,7 @@ const SubstanceCatalog: React.FC = () => {
                   <select
                     value={selectedMatrixSub}
                     onChange={(e) => setSelectedMatrixSub(e.target.value)}
-                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-xs font-black text-slate-200 focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-colors"
+                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-sm font-black text-slate-200 focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-colors"
                   >
                     {SUBSTANCES.map(s => <option key={s.id} value={s.name}>{s.name.toUpperCase()}</option>)}
                   </select>
@@ -226,7 +230,7 @@ const SubstanceCatalog: React.FC = () => {
                   <select
                     value={secondaryMed}
                     onChange={(e) => setSecondaryMed(e.target.value)}
-                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-xs font-black text-white focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-all"
+                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-sm font-black text-white focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-all"
                   >
                     <option value="">Select Medication...</option>
                     {MEDICATIONS_LIST.map(med => (
@@ -241,7 +245,7 @@ const SubstanceCatalog: React.FC = () => {
             <button
               onClick={handleSafetyScan}
               disabled={!secondaryMed}
-              className="w-full py-4 bg-accent-amber hover:bg-amber-500 disabled:opacity-50 text-black text-xs font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-accent-amber/10 flex items-center justify-center gap-2 active:scale-95 relative z-10"
+              className="w-full py-4 bg-accent-amber hover:bg-amber-500 disabled:opacity-50 text-black text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-accent-amber/10 flex items-center justify-center gap-2 active:scale-95 relative z-10"
             >
               <span className="material-symbols-outlined text-lg">verified_user</span>
               Analyze Interaction
@@ -267,7 +271,7 @@ const SubstanceCatalog: React.FC = () => {
           </div>
         </div>
       </aside>
-    </div>
+    </div >
   );
 };
 
