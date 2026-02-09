@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 // Corrected imports for named exports
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BarChart, Bar, Cell, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import { PATIENTS } from '../constants';
 
@@ -211,31 +211,34 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
               </div>
 
               <ul className="space-y-0.5">
-                {section.items.map((item) => {
-                  const isActive = location.pathname === item.path;
-                  return (
-                    <li key={item.path} id={item.id ? item.id : undefined}>
-                      <Link
-                        to={item.path}
-                        onClick={() => { if (window.innerWidth < 1024) onClose(); }}
-                        className={`group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
-                          ? 'bg-primary/20 text-white ring-1 ring-primary/40 shadow-[0_0_15px_rgba(43,116,243,0.2)]'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
-                          }`}
-                        aria-current={isActive ? 'page' : undefined}
-                      >
-                        {isActive && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3]"></div>
-                        )}
-                        <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'
-                          }`} aria-hidden="true">
-                          {item.icon}
-                        </span>
-                        <span className="text-[14px] font-bold uppercase tracking-wide">{item.label}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
+                {section.items.map((item) => (
+                  <li key={item.path} id={item.id}>
+                    <NavLink
+                      to={item.path}
+                      onClick={() => {
+                        // Only close sidebar on mobile
+                        if (window.innerWidth < 1024) onClose();
+                      }}
+                      className={({ isActive }) => `group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
+                        ? 'bg-primary/20 text-white ring-1 ring-primary/40 shadow-[0_0_15px_rgba(43,116,243,0.2)]'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
+                        }`}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3]"></div>
+                          )}
+                          <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'
+                            }`} aria-hidden="true">
+                            {item.icon}
+                          </span>
+                          <span className="text-[14px] font-bold uppercase tracking-wide">{item.label}</span>
+                        </>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
               </ul>
             </nav>
           ))}
