@@ -34,7 +34,8 @@ const Settings: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-2.5 ml-1">
             <span className="material-symbols-outlined text-slate-400 text-xl">verified_user</span>
-            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest">Authentication</h2>
+            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest whitespace-nowrap">Authentication</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
           </div>
 
           <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl divide-y divide-slate-800/40">
@@ -80,7 +81,8 @@ const Settings: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-2.5 ml-1">
             <span className="material-symbols-outlined text-slate-400 text-xl">visibility_off</span>
-            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest">Data Privacy</h2>
+            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest whitespace-nowrap">Data Privacy</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
           </div>
 
           <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl divide-y divide-slate-800/40">
@@ -121,7 +123,8 @@ const Settings: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-2.5 ml-1">
             <span className="material-symbols-outlined text-slate-400 text-xl">devices</span>
-            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest">Access Control</h2>
+            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest whitespace-nowrap">Access Control</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
           </div>
 
           <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl backdrop-blur-md">
@@ -200,7 +203,8 @@ const Settings: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-2.5 ml-1">
             <span className="material-symbols-outlined text-slate-400 text-xl">key</span>
-            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest">Encryption</h2>
+            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest whitespace-nowrap">Encryption</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
           </div>
 
           <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] p-8 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-8">
@@ -226,7 +230,8 @@ const Settings: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-2.5 ml-1">
             <span className="material-symbols-outlined text-slate-400 text-xl">dns</span>
-            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest">Node Configuration</h2>
+            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest whitespace-nowrap">Node Configuration</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
           </div>
 
           <div className="bg-[#0D121C] border border-slate-800 rounded-[2rem] p-8 shadow-2xl">

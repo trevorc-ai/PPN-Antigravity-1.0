@@ -16,7 +16,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Clinical Stage</p>
           <span className="text-xs font-bold text-white">{data.payload.name}</span>
           <div className="mt-2 pt-2 border-t border-slate-800">
-             <span className="text-[9px] text-slate-400">Total Volume: {data.value}</span>
+             <span className="text-[10px] text-slate-400">Total Volume: {data.value}</span>
           </div>
         </div>
        );
@@ -33,8 +33,8 @@ const CustomTooltip = ({ active, payload }: any) => {
            <span className="text-[10px] font-black text-white uppercase tracking-widest">{sourceName} → {targetName}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wide">Retention:</span>
-          <span className="text-[9px] text-emerald-400 font-mono font-black">{value} Patients</span>
+          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Retention:</span>
+          <span className="text-[10px] text-emerald-400 font-mono font-black">{value} Patients</span>
         </div>
       </div>
     );

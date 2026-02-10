@@ -7,19 +7,9 @@ import {
   XAxis, YAxis, CartesianGrid
 } from 'recharts';
 import { PATIENTS } from '../constants';
-import { Info, ChevronRight } from 'lucide-react';
+import { Info, ChevronRight, HelpCircle } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
-
-// UI COMPONENT: Contextual Tooltip
-const SimpleTooltip: React.FC<{ text: string; children: React.ReactNode }> = ({ text, children }) => (
-  <div className="relative group flex items-center">
-    {children}
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2.5 bg-[#020408] border border-slate-700 rounded-lg text-[11px] font-medium text-slate-200 z-50 shadow-2xl pointer-events-none tracking-wide leading-relaxed">
-      {text}
-      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-700"></div>
-    </div>
-  </div>
-);
+import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 
 const ProtocolDetail: React.FC = () => {
   const { id } = useParams();
@@ -159,9 +149,9 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black text-white uppercase tracking-[0.2em] print:text-black">Receptor Affinity Profile</h3>
-                  <SimpleTooltip text="Comparative binding affinity logic: Target Substance vs. Endogenous Standard (Serotonin/Dopamine Baselne).">
+                  <AdvancedTooltip content="Comparative binding affinity logic: Target Substance vs. Endogenous Standard (Serotonin/Dopamine Baselne).">
                     <Info className="text-slate-600 hover:text-white transition-colors cursor-help print:hidden" size={16} />
-                  </SimpleTooltip>
+                  </AdvancedTooltip>
                 </div>
               </div>
 
@@ -219,9 +209,9 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black text-white uppercase tracking-[0.2em] print:text-black">Therapeutic Envelope</h3>
-                  <SimpleTooltip text="Environmental setting, support staff ratio, and integration time allocation.">
+                  <AdvancedTooltip content="Environmental setting, support staff ratio, and integration time allocation.">
                     <Info className="text-slate-600 hover:text-white transition-colors cursor-help print:hidden" size={16} />
-                  </SimpleTooltip>
+                  </AdvancedTooltip>
                 </div>
               </div>
 
@@ -276,12 +266,12 @@ const ProtocolDetail: React.FC = () => {
                   {/* Music Badge Footer */}
                   {record.context?.musicPresence && (
                     <div className="flex justify-start pt-2">
-                      <SimpleTooltip text="Curated music playlist used to guide the therapeutic session.">
+                      <AdvancedTooltip content="Curated music playlist used to guide the therapeutic session.">
                         <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-emerald-900/20 border border-emerald-800/50 text-emerald-400 print:bg-transparent print:text-black print:border-black cursor-help">
                           <span className="material-symbols-outlined text-lg">music_note</span>
                           <span className="text-xs font-black uppercase tracking-widest">Auditory Drive Active</span>
                         </div>
-                      </SimpleTooltip>
+                      </AdvancedTooltip>
                     </div>
                   )}
                 </div>
@@ -296,9 +286,9 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black text-white uppercase tracking-[0.2em] print:text-black">EFFICACY TRAJECTORY (PHQ-9)</h3>
-                  <SimpleTooltip text="Longitudinal tracking of clinical outcome measures (e.g., PHQ-9) vs. baseline.">
+                  <AdvancedTooltip content="Longitudinal tracking of clinical outcome measures (e.g., PHQ-9) vs. baseline.">
                     <Info className="text-slate-600 hover:text-white transition-colors cursor-help print:hidden" size={16} />
-                  </SimpleTooltip>
+                  </AdvancedTooltip>
                 </div>
               </div>
 
@@ -386,9 +376,9 @@ const ProtocolDetail: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <label className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Protocol</label>
-                    <SimpleTooltip text="Core pharmacological and identity parameters of the recorded intervention.">
+                    <AdvancedTooltip content="Core pharmacological and identity parameters of the recorded intervention.">
                       <Info className="text-slate-600 hover:text-primary transition-colors cursor-help print:hidden" size={14} />
-                    </SimpleTooltip>
+                    </AdvancedTooltip>
                   </div>
                   <p className="text-3xl font-black text-white tracking-tight print:text-black">{record.protocol.substance}</p>
                 </div>
@@ -425,9 +415,9 @@ const ProtocolDetail: React.FC = () => {
                 <span className="material-symbols-outlined text-3xl text-red-500 print:text-black">medical_services</span>
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-black text-white uppercase tracking-widest print:text-black">Safety Monitor</h3>
-                  <SimpleTooltip text="Real-time monitoring of concomitant medications and adverse events.">
+                  <AdvancedTooltip content="Real-time monitoring of concomitant medications and adverse events.">
                     <Info className="text-slate-600 hover:text-white transition-colors cursor-help print:hidden" size={14} />
-                  </SimpleTooltip>
+                  </AdvancedTooltip>
                 </div>
               </div>
 

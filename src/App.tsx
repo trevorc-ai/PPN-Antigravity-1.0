@@ -9,6 +9,8 @@ import SubstanceMonograph from './pages/SubstanceMonograph';
 import InteractionChecker from './pages/InteractionChecker';
 import AuditLogs from './pages/AuditLogs';
 import ProtocolBuilder from './pages/ProtocolBuilder';
+import ProtocolBuilderRedesign from './pages/ProtocolBuilderRedesign';
+import ProtocolBuilderV2 from './pages/ProtocolBuilderV2';
 import ProtocolDetail from './pages/ProtocolDetail';
 import ClinicianDirectory from './pages/ClinicianDirectory';
 import ClinicianProfile from './pages/ClinicianProfile';
@@ -18,6 +20,7 @@ import News from './pages/News';
 import HelpFAQ from './pages/HelpFAQ';
 import Notifications from './pages/Notifications';
 import Settings from './pages/Settings';
+import DataExport from './pages/DataExport';
 import Sidebar from './components/Sidebar';
 import TopHeader from './components/TopHeader';
 import Breadcrumbs from './components/Breadcrumbs';
@@ -26,7 +29,10 @@ import GuidedTour from './components/GuidedTour';
 import SecureGate from './pages/SecureGate';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Landing from './pages/Landing';
+import PhysicsDemo from './pages/PhysicsDemo';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
@@ -41,6 +47,7 @@ import PatientRetentionPage from './pages/deep-dives/PatientRetentionPage';
 import RevenueAuditPage from './pages/deep-dives/RevenueAuditPage';
 import RiskMatrixPage from './pages/deep-dives/RiskMatrixPage';
 import SafetySurveillancePage from './pages/deep-dives/SafetySurveillancePage';
+import PatientFlowPage from './pages/deep-dives/PatientFlowPage';
 
 /**
  * ScrollToTop Component
@@ -82,14 +89,16 @@ const ProtectedLayout: React.FC<{
 }> = ({ isAuthenticated, onLogout, isSidebarOpen, setIsSidebarOpen, showTour, setShowTour }) => {
   const navigate = useNavigate();
 
-  // DISABLED AUTH CHECK FOR VISUAL AUDIT (Supabase Deferred)
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate('/login');
-  //   }
-  // }, [isAuthenticated, navigate]);
+  // AUTH CHECK ENABLED (with demo mode bypass)
+  useEffect(() => {
+    const isDemoMode = localStorage.getItem('demo_mode') === 'true';
+    if (!isAuthenticated && !isDemoMode) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
 
-  // if (!isAuthenticated) return null;
+  const isDemoMode = localStorage.getItem('demo_mode') === 'true';
+  if (!isAuthenticated && !isDemoMode) return null;
 
   const completeTour = () => {
     setShowTour(false);
@@ -157,7 +166,11 @@ const AppContent: React.FC = () => {
         <Route path="/landing" element={<Landing />} />
         <Route path="/about" element={<About />} />
         <Route path="/secure-gate" element={<SecureGate />} />
+        <Route path="/vibe-check" element={<PhysicsDemo />} />
+        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Routes */}
         <Route element={
@@ -180,14 +193,19 @@ const AppContent: React.FC = () => {
           <Route path="/interactions" element={<InteractionChecker />} />
           <Route path="/audit" element={<AuditLogs />} />
           <Route path="/builder" element={<ProtocolBuilder />} />
+          <Route path="/builder-v2" element={<ProtocolBuilderRedesign />} />
+          <Route path="/builder-new" element={<ProtocolBuilderV2 />} />
+          <Route path="/v2" element={<ProtocolBuilderV2 />} />
           <Route path="/protocol/:id" element={<ProtocolDetail />} />
           <Route path="/clinicians" element={<ClinicianDirectory />} />
           <Route path="/clinician/:id" element={<ClinicianProfile />} />
           <Route path="/help" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/data-export" element={<DataExport />} />
 
           {/* Deep Dives */}
+          <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
           <Route path="/deep-dives/regulatory-map" element={<RegulatoryMapPage />} />
           <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
           <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />

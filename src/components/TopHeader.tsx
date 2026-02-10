@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { CLINICIANS } from '../constants';
+import { supabase } from '../supabaseClient';
 
 interface TopHeaderProps {
   onMenuClick: () => void;
@@ -18,13 +19,13 @@ const NavIconButton: React.FC<{
   badge?: boolean;
   activeScale?: boolean;
 }> = ({ onClick, icon, label, tooltip, badge, activeScale = true }) => (
-  <div className="relative group/tooltip">
+  <div className="relative group/tooltip flex flex-col items-center gap-1">
     <button
       onClick={onClick}
-      className="size-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all hover:bg-white/10 shadow-sm group"
+      className="size-11 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all hover:bg-white/10 shadow-sm group"
       aria-label={label}
     >
-      <span className={`material-symbols-outlined text-2xl transition-transform ${activeScale ? 'group-active:scale-90' : ''}`}>
+      <span className={`material-symbols-outlined text-[24px] transition-transform ${activeScale ? 'group-active:scale-90' : ''}`}>
         {icon}
       </span>
       {badge && (
@@ -57,16 +58,36 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
     return () => clearInterval(interval);
   }, []);
 
-  // Handle click outside to close user menu
+  // Handle click outside  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  // Handle logout with Supabase signOut
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      localStorage.clear();
+      sessionStorage.clear();
+      setIsMenuOpen(false);
+      navigate('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      navigate('/');
+    }
+  };
 
   const scrollToSection = (id: string) => {
     if (isLanding) {
@@ -85,7 +106,10 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   return (
     <header className="h-20 border-b border-white/5 bg-[#0a0c12] sticky top-0 z-40 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto h-full px-6 sm:px-10 flex items-center justify-between">
-        <div className="flex items-center gap-8 flex-1">
+        {/* Spacer to push everything right */}
+        <div className="flex-1"></div>
+
+        <div className="flex items-center gap-8">
           {/* Portal Title & Local Nav */}
           <div className="flex items-center gap-4 shrink-0">
             <button
@@ -97,7 +121,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           </div>
 
           {!isAuthenticated && isLanding && (
-            <div className="hidden lg:flex items-center gap-10 ml-6">
+            <div className="hidden lg:flex items-center gap-10">
               {[
                 { label: 'Security', id: 'security-compliance' },
                 { label: 'Network', id: 'global-network' },
@@ -116,58 +140,60 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           )}
         </div>
 
-        <div className="flex items-center gap-6 ml-6">
+        <div className="flex items-center gap-6">
           {isAuthenticated ? (
             <>
-              <div className="hidden lg:flex items-center gap-8 mr-4">
-                <div className="flex flex-col items-end">
-                  <span className="text-[11px] font-black text-slate-600 tracking-widest leading-none mb-1">Latency</span>
+              <div className="hidden lg:flex items-center gap-4 mr-6 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                <div className="flex flex-col items-end border-r border-white/10 pr-4">
+                  <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Latency</span>
                   <div className="flex items-center gap-2">
                     <div className={`size-1.5 rounded-full ${latency < 18 ? 'bg-clinical-green' : 'bg-accent-amber'} animate-pulse shadow-[0_0_8px] shadow-current`}></div>
-                    <span className="text-[11px] font-mono text-slate-400 font-black">{latency.toFixed(1)}ms</span>
+                    <span className="text-[11px] font-mono text-slate-300 font-bold">{latency.toFixed(1)}ms</span>
                   </div>
                 </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-[11px] font-black text-slate-600 tracking-widest leading-none mb-1">Sync Status</span>
-                  <span className="text-[11px] font-mono text-clinical-green font-black tracking-tighter">Synchronized</span>
+                <div className="flex flex-col items-start pl-1">
+                  <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Sync Status</span>
+                  <span className="text-[11px] font-mono text-clinical-green font-bold tracking-tight">Synchronized</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 mr-2">
                 <NavIconButton
                   icon="explore"
-                  label="Start Page Tour"
+                  label="Tour"
                   tooltip="System Tour"
                   onClick={onStartTour}
                 />
-                {/* TOUR TARGET: SEARCH */}
                 <div id="tour-search-node" className="contents">
                   <NavIconButton
                     icon="search"
-                    label="Search Registry"
-                    tooltip="Global Search"
-                    onClick={() => navigate('/advanced-search')}
+                    label="Search"
+                    tooltip="Search Registry"
+                    onClick={() => alert('Coming Soon!')}
                   />
                 </div>
-                {/* TOUR TARGET: NOTIFICATIONS */}
                 <div id="tour-notifications" className="contents">
                   <NavIconButton
                     icon="notifications"
-                    label="Notifications"
-                    tooltip="Node Alerts"
-                    badge
-                    onClick={() => navigate('/notifications')}
+                    label="Alerts"
+                    tooltip="Notifications"
+                    onClick={() => alert('Coming Soon!')}
                   />
                 </div>
-                {/* TOUR TARGET: HELP */}
                 <div id="tour-help-node" className="contents">
                   <NavIconButton
                     icon="help"
-                    label="Help & Support"
-                    tooltip="Clinical Support"
-                    onClick={() => navigate('/help')}
+                    label="Help"
+                    tooltip="Help & Support"
+                    onClick={() => alert('Contact support@ppn.network')}
                   />
                 </div>
+                <NavIconButton
+                  icon="science"
+                  label="Vibe"
+                  tooltip="Physics Demo"
+                  onClick={() => navigate('/vibe-check')}
+                />
               </div>
 
               <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block"></div>
@@ -218,7 +244,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     <div className="h-px bg-white/5 my-2"></div>
 
                     <button
-                      onClick={() => { onLogout(); setIsMenuOpen(false); }}
+                      onClick={handleLogout}
                       className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-400/5 transition-all text-xs font-bold"
                     >
                       <span className="material-symbols-outlined text-lg">logout</span>

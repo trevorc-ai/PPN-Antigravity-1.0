@@ -1,18 +1,45 @@
-
 body {
   background-color: #0e1117;
   color: #F5F5F0;
 }
 
-/* Global Focus Styles for Accessibility */
+/* Enhanced Focus Styles for Accessibility (WCAG 2.4.7 - Focus Visible) */
 :focus-visible {
+  outline: 3px solid #2b74f3;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Stronger focus for buttons */
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #2b74f3;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(43, 116, 243, 0.2);
+}
+
+/* Focus for form inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #2b74f3;
+  outline-offset: 0px;
+  border-color: #2b74f3;
+  box-shadow: 0 0 0 3px rgba(43, 116, 243, 0.15);
+}
+
+/* Focus for cards and interactive containers */
+[role="button"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
   outline: 2px solid #2b74f3;
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(43, 116, 243, 0.15);
 }
 
 /* Glassmorphism Card Utilities */
 .card-glass {
-  background: rgba(13, 17, 23, 0.85); /* High opacity for accessible contrast */
+  background: rgba(13, 17, 23, 0.85);
+  /* High opacity for accessible contrast */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -46,10 +73,13 @@ body {
 }
 
 @keyframes twinkle {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.2);
@@ -58,4 +88,54 @@ body {
 
 .animate-twinkle {
   animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Gradient Text Utilities (Accessible - WCAG AA Compliant) */
+.text-gradient-primary {
+  background: linear-gradient(90deg, #2b74f3 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* Fallback for browsers that don't support background-clip */
+  color: #2b74f3;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #a855f7;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(90deg, #06b6d4 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #06b6d4;
+}
+
+/* 
+  ========================================
+   GLOBAL FONT SIZE ENFORCEMENT (User req)
+  ========================================
+   Prevent any text from being smaller than 10pt (~13.33px).
+   Overriding Tailwind's small text utilities.
+*/
+
+.text-xs,
+.text-\[10px\],
+.text-\[11px\],
+.text-\[12px\],
+.text-\[9px\] {
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+}
+
+/* specific resets for Recharts or other SVG text that might need to be small but readable */
+tspan,
+text {
+  font-size: 12px !important;
+  /* SVG text often breaks if too large, 12px is a safe compromise */
 }

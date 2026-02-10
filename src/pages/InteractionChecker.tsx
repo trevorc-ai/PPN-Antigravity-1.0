@@ -158,7 +158,7 @@ const InteractionChecker: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 px-2">
             <span className="material-symbols-outlined text-xs text-slate-600">lock</span>
-            <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Validated Protocol List Only</span>
+            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Validated Protocol List Only</span>
           </div>
         </section>
 
@@ -186,7 +186,7 @@ const InteractionChecker: React.FC = () => {
           <div className="px-2">
             <button
               onClick={handleRequestAgent}
-              className="text-[9px] font-bold text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2 group"
+              className="text-[10px] font-bold text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2 group"
             >
               <span>Agent not listed? Request institutional database update.</span>
               <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">arrow_forward</span>

@@ -97,14 +97,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
 
       <aside
         id="tour-sidebar-nav"
-        className={`fixed lg:static inset-y-0 left-0 w-64 flex flex-col border-r border-border-dark bg-[#0a0c10] shrink-0 h-full z-[70] transition-all duration-500 transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} ${isLocked ? 'grayscale opacity-40 pointer-events-none' : ''}`}
+        className={`fixed lg:static inset-y-0 left-0 xl:w-64 lg:w-20 flex flex-col border-r border-border-dark bg-[#0a0c10] shrink-0 h-full z-[70] transition-all duration-300 transform ${isOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'} ${isLocked ? 'grayscale opacity-40 pointer-events-none' : ''}`}
         aria-label="Main Navigation"
       >
         {isLocked && (
           <div className="absolute inset-0 z-[80] bg-[#0a0c10]/20 backdrop-blur-[1px]" />
         )}
 
-        <div className="p-4 pb-2 flex items-center justify-between shrink-0">
+        <div className="p-4 pb-2 flex items-center justify-between shrink-0 lg:justify-center xl:justify-start">
           <Link
             to="/advanced-search"
             className={`flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg p-2 transition-all ${isSearchActive
@@ -113,17 +113,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
               }`}
             aria-label="PPN Research Portal Home"
           >
-            <div className="relative">
+            <div className="relative shrink-0">
               <div className={`absolute inset-0 bg-primary/40 blur-lg rounded-lg transition-all ${isSearchActive ? 'opacity-50' : 'group-hover:bg-primary/60'}`}></div>
               <div className={`relative rounded-lg p-1.5 flex items-center justify-center shadow-lg transition-colors ${isSearchActive ? 'bg-[#0a0c10]' : 'bg-primary'}`}>
                 <span className={`material-symbols-outlined text-xl transition-colors ${isSearchActive ? 'text-primary' : 'text-white'}`}>science</span>
               </div>
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-white text-[14px] uppercase font-black leading-tight tracking-tight">PPN Research Portal</h1>
+            <div className={`flex flex-col ${isOpen ? 'flex' : 'lg:hidden xl:flex'}`}>
+              <h1 className="text-white text-[14px] uppercase font-black leading-tight tracking-tight whitespace-nowrap">PPN Portal</h1>
               <div className="flex items-center gap-1">
                 <div className="size-1 rounded-full bg-clinical-green animate-pulse"></div>
-                <p className="text-slate-400 text-[11px] font-bold tracking-[0.2em]">Live Practitioner: 04</p>
+                <p className="text-slate-400 text-[11px] font-bold tracking-[0.2em] whitespace-nowrap">Live: 04</p>
               </div>
             </div>
           </Link>
@@ -136,10 +136,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
           </button>
         </div>
 
-        <div className="px-3 py-2 shrink-0">
+        {/* Chart Widget - Hidden on collapsed sidebar (LG), Visible on XL and Mobile Open */}
+        <div className={`px-3 py-2 shrink-0 ${isOpen ? 'block' : 'lg:hidden xl:block'}`}>
           <div className="p-3 rounded-xl bg-[#111318] border border-slate-800/50 relative overflow-hidden group">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-black text-slate-400 tracking-widest">Active Protocols (Node Level)</span>
+              <span className="text-[11px] font-black text-slate-400 tracking-widest whitespace-nowrap">Active Protocols</span>
               <div className="flex items-center gap-1">
                 <span className="text-[11px] font-mono font-bold text-primary px-1 bg-primary/10 rounded">LIVE</span>
               </div>
@@ -194,9 +195,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
             <div className="flex items-center justify-between border-t border-slate-800/40 pt-1.5">
               <div className="flex items-center gap-1">
                 <div className="size-1.5 rounded-full bg-clinical-green shadow-[0_0_6px_#53d22d]"></div>
-                <span className="text-[11px] font-black text-slate-400 tracking-widest">Node Sync: {activeProtocolsCount} Records</span>
+                <span className="text-[11px] font-black text-slate-400 tracking-widest whitespace-nowrap">Node Sync</span>
               </div>
-              <span className="text-[11px] font-mono text-slate-600">ID_0x7</span>
+              <span className="text-[11px] font-mono text-slate-600">0x7</span>
             </div>
           </div>
         </div>
@@ -204,10 +205,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
         <div className="flex-1 px-3 py-1 space-y-6 overflow-y-auto custom-scrollbar">
           {sections.map((section) => (
             <nav key={section.title} className="space-y-2" aria-label={section.title}>
-              <div className="px-3">
-                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest opacity-80">
+              <div className={`px-3 ${isOpen ? 'block' : 'lg:hidden xl:block'}`}>
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest opacity-80 whitespace-nowrap">
                   {section.title}
                 </h3>
+              </div>
+
+              {/* Divider for collapsed view */}
+              <div className={`px-2 my-2 ${isOpen ? 'hidden' : 'lg:block xl:hidden'}`}>
+                <div className="h-px bg-white/5 w-full"></div>
               </div>
 
               <ul className="space-y-0.5">
@@ -219,21 +225,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
                         // Only close sidebar on mobile
                         if (window.innerWidth < 1024) onClose();
                       }}
-                      className={({ isActive }) => `group relative flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
+                      className={({ isActive }) => `group relative flex items-center ${isOpen ? 'gap-2.5 px-3' : 'lg:justify-center lg:px-0 lg:gap-0 xl:justify-start xl:gap-2.5 xl:px-3'} gap-2.5 px-3 py-2 rounded-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isActive
                         ? 'bg-primary/20 text-white ring-1 ring-primary/40 shadow-[0_0_15px_rgba(43,116,243,0.2)]'
                         : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/30'
                         }`}
+                      title={item.label} // Tooltip for collapsed mode
                     >
                       {({ isActive }) => (
                         <>
                           {isActive && (
-                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3]"></div>
+                            <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-primary rounded-r-full shadow-[0_0_8px_#2b74f3] ${isOpen ? '' : 'lg:left-1 xl:left-0'}`}></div>
                           )}
                           <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'
                             }`} aria-hidden="true">
                             {item.icon}
                           </span>
-                          <span className="text-[14px] font-bold uppercase tracking-wide">{item.label}</span>
+                          <span className={`text-[14px] font-bold uppercase tracking-wide whitespace-nowrap ${isOpen ? 'block' : 'lg:hidden xl:block'}`}>{item.label}</span>
                         </>
                       )}
                     </NavLink>

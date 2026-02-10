@@ -143,3 +143,50 @@ CREATE POLICY "Public read refs" ON public.ref_pharmacology FOR SELECT USING (tr
 CREATE POLICY "Public read financials" ON public.ref_protocol_financials FOR SELECT USING (true);
 CREATE POLICY "Public read metabolic" ON public.ref_metabolic_rules FOR SELECT USING (true);
 
+
+-- ============================================================================
+-- PATIENT FLOW TRACKING TABLES (Added to resolve "Ghost Tables" issue)
+-- ============================================================================
+-- These tables were missing from the schema but used in the frontend.
+-- See backend/sync_schema.sql for the complete implementation with RLS.
+-- ============================================================================
+
+-- Reference Table: Flow Event Types
+CREATE TABLE IF NOT EXISTS public.ref_flow_event_types (
+    event_type_id BIGSERIAL PRIMARY KEY,
+    event_type_name TEXT NOT NULL UNIQUE,
+    event_category TEXT,
+    description TEXT,
+    display_order INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Log Table: Patient Flow Events
+CREATE TABLE IF NOT EXISTS public.log_patient_flow_events (
+    flow_event_id BIGSERIAL PRIMARY KEY,
+    site_id BIGINT NOT NULL,
+    subject_id BIGINT NOT NULL,
+    event_type_id BIGINT NOT NULL REFERENCES public.ref_flow_event_types(event_type_id),
+    event_date DATE NOT NULL,
+    session_number INTEGER,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_by UUID,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_by UUID
+);
+
+-- Enable RLS
+ALTER TABLE public.ref_flow_event_types ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.log_patient_flow_events ENABLE ROW LEVEL SECURITY;
+
+-- Basic read policies (full policies in backend/sync_schema.sql)
+CREATE POLICY "Public read flow event types" ON public.ref_flow_event_types FOR SELECT USING (true);
+CREATE POLICY "Public read flow events" ON public.log_patient_flow_events FOR SELECT USING (true);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_flow_events_site_id ON public.log_patient_flow_events(site_id);
+CREATE INDEX IF NOT EXISTS idx_flow_events_subject_id ON public.log_patient_flow_events(subject_id);
+CREATE INDEX IF NOT EXISTS idx_flow_events_event_type ON public.log_patient_flow_events(event_type_id);

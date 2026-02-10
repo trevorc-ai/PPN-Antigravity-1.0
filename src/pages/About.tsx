@@ -20,7 +20,7 @@ const About: React.FC = () => {
           </div>
           <h1 className="text-5xl sm:text-8xl font-black tracking-tighter text-white leading-none">
             Advancing the <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Science</span> of Psychedelic Therapy.
+            <span className="text-gradient-primary">Science</span> of Psychedelic Therapy.
           </h1>
           <p className="max-w-2xl mx-auto text-slate-400 text-base sm:text-xl font-medium leading-relaxed">
             PPN is a secure, cross-node clinical network dedicated to the rigorous study and safe implementation of psychedelic-assisted therapies.
@@ -34,7 +34,7 @@ const About: React.FC = () => {
         <Section spacing="default" className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-              A <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Unified</span> Framework for <br />Clinical Excellence.
+              A <span className="text-gradient-primary">Unified</span> Framework for <br />Clinical Excellence.
             </h2>
             <div className="space-y-6 text-slate-400 text-base leading-relaxed font-medium">
               <p>
@@ -84,7 +84,7 @@ const About: React.FC = () => {
             <h3 className="text-[11px] font-black text-primary tracking-[0.4em] uppercase tracking-[0.8em]">Our Principles</h3>
             <div className="max-w-2xl mx-auto border-[1px] border-primary/30 rounded-xl p-8 backdrop-blur-sm shadow-xl">
               <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Built</span> for Regulatory Rigor.
+                <span className="text-gradient-primary">Built</span> for Regulatory Rigor.
               </h2>
             </div>
           </div>
@@ -127,7 +127,7 @@ const About: React.FC = () => {
 
           <div className="space-y-4 max-w-2xl relative z-10">
             <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-tight">
-              The Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Psychedelic Practitioner</span> Network.
+              The Global <span className="text-gradient-purple">Psychedelic Practitioner</span> Network.
             </h2>
             <p className="text-slate-400 font-medium text-lg leading-relaxed">
               PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
@@ -151,7 +151,7 @@ const About: React.FC = () => {
         <Section spacing="default" className="flex flex-col items-center space-y-10 py-10">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Access</span> the Discovery Network.
+              <span className="text-gradient-primary">Access</span> the Discovery Network.
             </h2>
             <p className="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
               Qualified practitioners and research institutions are invited to apply for institutional node access.

@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { supabase } from '../supabaseClient';
+import {
+  Loader2,
+  AlertCircle,
+  ShieldCheck,
+  Lock,
+  Database,
+  Users,
+  CheckCircle,
+  Activity,
+  ShieldAlert,
+  Zap,
+  ArrowRight,
+  BarChart3
+} from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -13,6 +26,11 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
+import SafetyRiskMatrixDemo from '../components/demos/SafetyRiskMatrixDemo';
+import ClinicRadarDemo from '../components/demos/ClinicRadarDemo';
+import PatientJourneyDemo from '../components/demos/PatientJourneyDemo';
+import { GravityButton } from '../components/GravityButton';
+import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
 
 const chartData = [
   { name: 'Node Avg', value: 68, color: '#334155' },
@@ -22,7 +40,6 @@ const chartData = [
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
   const [activeStatIndex, setActiveStatIndex] = useState(0);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -53,7 +70,7 @@ const Landing: React.FC = () => {
 
     // Development-only bypass
     if (import.meta.env.DEV && email === 'dev@test.com' && password === 'dev123') {
-      console.log('🔓 Development bypass activated');
+      // Development bypass removed for security
       setTimeout(() => {
         navigate('/dashboard');
       }, 500);
@@ -86,19 +103,34 @@ const Landing: React.FC = () => {
         {/* Base dark gradient */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]"></div>
 
-        {/* User's Night Sky Image with Subtle Parallax */}
-        <div
-          className="absolute inset-0 transition-transform duration-0"
-          style={{
-            transform: `translateY(${scrollY * 0.08}px)`,
-            backgroundImage: 'url("/Night Sky.png")',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            opacity: 0.9,
-            // Removed negative z-index to prevent stacking issues
-          }}
-        />
+        {/* CSS-Generated Starfield */}
+        <div className="absolute inset-0" style={{
+          transform: `translateY(${scrollY * 0.05}px)`,
+          backgroundImage: `
+            radial-gradient(2px 2px at 20% 30%, white, transparent),
+            radial-gradient(2px 2px at 60% 70%, white, transparent),
+            radial-gradient(1px 1px at 50% 50%, white, transparent),
+            radial-gradient(1px 1px at 80% 10%, white, transparent),
+            radial-gradient(2px 2px at 90% 60%, white, transparent),
+            radial-gradient(1px 1px at 33% 80%, white, transparent),
+            radial-gradient(1px 1px at 15% 90%, white, transparent)
+          `,
+          backgroundSize: '200px 200px, 300px 300px, 250px 250px, 400px 400px, 350px 350px, 280px 280px, 320px 320px',
+          backgroundPosition: '0 0, 40px 60px, 130px 270px, 70px 100px, 200px 150px, 90px 220px, 160px 50px',
+          opacity: 0.4
+        }}></div>
+
+        {/* Twinkling stars layer */}
+        <div className="absolute inset-0 animate-twinkle" style={{
+          transform: `translateY(${scrollY * 0.08}px)`,
+          backgroundImage: `
+            radial-gradient(1px 1px at 25% 25%, rgba(255,255,255,0.8), transparent),
+            radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.6), transparent),
+            radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,0.7), transparent)
+          `,
+          backgroundSize: '300px 300px, 400px 400px, 350px 350px',
+          opacity: 0.3
+        }}></div>
       </div>
 
       {/* SECTION: Hero */}
@@ -126,19 +158,13 @@ const Landing: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6 w-full"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900/50 border border-slate-800 rounded-full text-[11px] sm:text-[12px] font-black uppercase tracking-[0.25em] text-slate-400">
-                <span className="size-2 bg-primary rounded-full animate-ping"></span>
-                Practitioner-Only Benchmarking Portal
+              <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/10 border-2 border-primary/30 rounded-full text-[12px] sm:text-[13px] font-black uppercase tracking-[0.25em] text-primary shadow-lg shadow-primary/10">
+                <span className="material-symbols-outlined text-lg">psychology</span>
+                For Psychedelic Therapy Practitioners
               </div>
-              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9]">
+              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-2 text-slate-100">
                 Standardized Outcomes. <br />
-                <motion.span
-                  animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-primary bg-200% auto"
-                >
-                  Benchmarked Safety.
-                </motion.span>
+                <span className="text-gradient-primary inline-block pb-1">Benchmarked</span> Safety.
               </h1>
               <p className="text-lg sm:text-xl text-slate-400 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
                 PPN Research Portal is a community-driven practitioner-only outcomes registry for psychedelic care. Track outcome change across sessions and compare results to aggregated network benchmarks, built with privacy by design, with no patient names or narrative notes stored.
@@ -158,64 +184,51 @@ const Landing: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* Login Form */}
+            {/* Call-to-Action Buttons */}
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="w-full max-w-md lg:mx-0 mx-auto"
+              className="flex flex-col sm:flex-row gap-4 w-full max-w-md lg:mx-0 mx-auto"
             >
-              <form onSubmit={handleSearch} className="space-y-4">
-                {error && (
-                  <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-red-400">{error}</p>
-                  </div>
-                )}
-                <div className="space-y-3">
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-5 py-4 bg-slate-900/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors font-medium"
-                    required
-                    disabled={loading}
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-5 py-4 bg-slate-900/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors font-medium"
-                    required
-                    disabled={loading}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full px-8 py-4 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-[12px] font-black rounded-xl uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Authenticating...
-                    </>
-                  ) : (
-                    'Enter Portal'
-                  )}
-                </button>
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    onClick={() => navigate('/signup')}
-                    className="text-[11px] font-bold text-slate-400 hover:text-primary transition-colors uppercase tracking-widest"
-                  >
-                    Request Network Access →
-                  </button>
-                </div>
-              </form>
+              <button
+                onClick={() => navigate('/login')}
+                className="flex-1 px-8 py-5 bg-primary hover:bg-blue-600 text-white text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+              >
+                Access Portal
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => navigate('/signup')}
+                className="flex-1 px-8 py-5 bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-200 hover:text-white text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all hover:bg-slate-800 active:scale-95"
+              >
+                Request Access
+              </button>
+            </motion.div>
+
+
+
+
+            {/* Quick Stats */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1 }}
+              className="grid grid-cols-3 gap-6 w-full max-w-md lg:mx-0 mx-auto pt-8 border-t border-slate-800/50"
+            >
+              <div className="text-center">
+                <p className="text-2xl font-black text-white">12k+</p>
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Records</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-black text-white">840+</p>
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Clinicians</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-black text-clinical-green">98%</p>
+                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Uptime</p>
+              </div>
             </motion.div>
           </div>
 
@@ -226,307 +239,508 @@ const Landing: React.FC = () => {
               animate={{
                 opacity: 1,
                 scale: 1,
-                x: 0,
-                y: [0, -20, 0]
+                x: [0, 30, -20, 25, 0],
+                y: [0, -40, 10, -30, 0],
+                rotate: [0, 5, -5, 3, 0]
               }}
               transition={{
                 opacity: { duration: 1.5 },
                 scale: { duration: 1.5 },
-                y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                x: { duration: 10, repeat: Infinity, ease: "easeInOut" },
+                y: { duration: 10, repeat: Infinity, ease: "easeInOut" },
+                rotate: { duration: 10, repeat: Infinity, ease: "easeInOut" }
               }}
               className="w-[400px] lg:w-[600px] pointer-events-none z-0"
             >
-              <img src="/molecules/Ketamine.webp" alt="Ketamine Molecule" className="w-full h-auto" />
+              <img src="/molecules/Psilocybin.webp" alt="Psilocybin Molecule" className="w-full h-auto" />
             </motion.div>
           </div>
         </div>
       </div>
 
-      {/* SECTION: Live Search Demo (Simplified SimpleSearch Integration) */}
-      <section className="py-20 px-6 relative z-10">
-        <div className="max-w-4xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight">Real-World Outcome Data</h2>
-            <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.3em]">Query Your Node benchmarks in real-time</p>
+      {/* SECTION: Trust Indicators */}
+      <section className="py-24 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <p className="text-center text-sm text-slate-500 font-bold uppercase tracking-widest mb-12">
+            Trusted by Leading Research Institutions
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+            <motion.div
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <ShieldCheck className="w-12 h-12 mx-auto mb-3 text-clinical-green" />
+              <p className="text-sm font-bold text-slate-400">HIPAA Compliant</p>
+            </motion.div>
+            <motion.div
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Lock className="w-12 h-12 mx-auto mb-3 text-primary" />
+              <p className="text-sm font-bold text-slate-400">End-to-End Encrypted</p>
+            </motion.div>
+            <motion.div
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Database className="w-12 h-12 mx-auto mb-3 text-purple-400" />
+              <p className="text-sm font-bold text-slate-400">12,482+ Records</p>
+            </motion.div>
+            <motion.div
+              className="text-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Users className="w-12 h-12 mx-auto mb-3 text-indigo-400" />
+              <p className="text-sm font-bold text-slate-400">Multi-Site Network</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* SECTION: How It Works */}
+      <section className="py-32 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 space-y-4">
+            <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">Simple Process</p>
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-200">How It Works</h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">Four steps to collaborative clinical intelligence</p>
           </div>
 
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-indigo-500/20 blur-2xl rounded-[3rem] opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <form onSubmit={handleSearch} className="relative bg-slate-900/90 border border-slate-800 rounded-[2.5rem] p-4 flex items-center shadow-2xl backdrop-blur-xl">
-              <input
-                type="text"
-                placeholder="Search de-identified benchmarks (e.g. 'Ketamine efficacy 2024')"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 bg-transparent border-none focus:ring-0 px-6 py-4 text-white placeholder:text-slate-600 font-bold"
-              />
-              <button className="size-14 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg active:scale-95 transition-transform">
-                <span className="material-symbols-outlined text-2xl">search</span>
-              </button>
-            </form>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
             {[
-              { label: 'Indexed Nodes', value: '12,482', color: 'text-white' },
-              { label: 'Safety Events', value: '840+', color: 'text-red-400' },
-              { label: 'Sync Latency', value: '14.2ms', color: 'text-clinical-green' },
-              { label: 'Outcomes', value: '98% recall', color: 'text-primary' }
-            ].map((stat, i) => (
+              {
+                step: 1,
+                title: "Join Network",
+                desc: "Request access and verify credentials",
+                icon: Users
+              },
+              {
+                step: 2,
+                title: "Log Protocols",
+                desc: "Enter de-identified treatment data",
+                icon: Database
+              },
+              {
+                step: 3,
+                title: "Track Outcomes",
+                desc: "Monitor safety and efficacy metrics",
+                icon: Activity
+              },
+              {
+                step: 4,
+                title: "Benchmark",
+                desc: "Compare against network averages",
+                icon: BarChart3
+              }
+            ].map((item, i) => (
               <motion.div
-                key={i}
-                animate={{
-                  scale: activeStatIndex === i ? 1.05 : 1,
-                  borderColor: activeStatIndex === i ? 'rgba(43, 116, 243, 0.4)' : 'rgba(30, 41, 59, 0.5)'
-                }}
-                className="p-6 bg-slate-900/20 border border-slate-800/50 rounded-3xl text-center space-y-1 transition-colors"
+                key={item.step}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: i * 0.15 }}
+                className="text-center space-y-4 relative"
               >
-                <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
-                <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest leading-tight">{stat.label}</p>
+                {/* Connector Line */}
+                {i < 3 && (
+                  <div className="hidden lg:block absolute left-1/2 top-8 h-0.5 w-full bg-gradient-to-r from-primary/50 via-primary/30 to-transparent -z-10" style={{ transform: 'translateX(2rem)' }} />
+                )}
+
+                {/* Step Number Circle */}
+                <div className="relative inline-block">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center mx-auto relative z-10">
+                    <span className="text-2xl font-black text-primary">{item.step}</span>
+                  </div>
+                  <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl" />
+                </div>
+
+                {/* Icon */}
+                <item.icon className="w-8 h-8 mx-auto text-slate-400" />
+
+                {/* Content */}
+                <h3 className="text-xl font-black text-slate-300">{item.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SECTION: Problem vs Solution (AIDA Narrative) */}
-      <section className="py-32 px-6 bg-slate-950/30 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h3 className="text-[13px] font-black text-primary uppercase tracking-[0.3em]">The Problem</h3>
-                <h2 className="text-4xl sm:text-6xl font-black tracking-tighter leading-none">Generic Trials Fail <br /> Specific Patients.</h2>
-                <p className="text-lg text-slate-400 font-medium leading-relaxed">
-                  Clinical silos create fragmented insights. Without standardized, coded data, clinics struggle to benchmark their performance or identify systemic safety trends beyond their walls.
-                </p>
-              </div>
+      {/* SECTION: Product Showcase - See What's Inside */}
+      <section className="py-32 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto space-y-20">
+          {/* Section Header */}
+          <div className="text-center space-y-4">
+            <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">Clinical Intelligence Platform</p>
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight pb-2 text-slate-200">
+              Built for <span className="text-gradient-primary inline-block pb-1">Safety</span>.<br />Designed for Growth.
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
+              See how PPN helps you practice with confidence.
+            </p>
+          </div>
 
-              <div className="space-y-4 pt-10 border-t border-slate-800/50">
-                <h3 className="text-[13px] font-black text-clinical-green uppercase tracking-[0.3em]">The PPN Solution</h3>
-                <h2 className="text-4xl sm:text-6xl font-black tracking-tighter leading-none">Structured Data. <br />Network Comparisons.</h2>
-                <p className="text-lg text-slate-200 font-medium leading-relaxed">
-                  We standardize psychedelic treatment outcomes so clinics can compare results to network benchmarks. High-fidelity safety surveillance ensures every practitioner contributes to a growing collective intelligence.
+          {/* Feature 1: Safety Risk Matrix */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+          >
+            {/* Component Left */}
+            <div className="relative group order-2 lg:order-1">
+              <div className="absolute -inset-4 bg-red-500/10 rounded-[4rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+              <div className="relative">
+                <SafetyRiskMatrixDemo />
+              </div>
+            </div>
+
+            {/* Text Right */}
+            <div className="space-y-6 order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-[11px] font-black text-red-400 uppercase tracking-widest">
+                <span className="material-symbols-outlined text-sm">security</span>
+                Safety Surveillance
+              </div>
+              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+                Active guardrails for every session.
+              </h3>
+              <p className="text-lg text-slate-300 leading-relaxed font-medium">
+                Catch risks before they enter the treatment room. The system automatically cross-checks your patient's current medications against your selected protocol, flagging dangerous interactions like Serotonin Syndrome instantly.
+              </p>
+              <button
+                onClick={() => navigate('/deep-dives/safety-surveillance')}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 text-sm font-black rounded-xl uppercase tracking-widest transition-all group"
+              >
+                View Live Demo
+                <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Feature 2: Clinical Radar */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+          >
+            {/* Text Left */}
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-[11px] font-black text-primary uppercase tracking-widest">
+                <span className="material-symbols-outlined text-sm">query_stats</span>
+                Network Benchmarking
+              </div>
+              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+                Calibrate your practice against the global standard.
+              </h3>
+              <p className="text-lg text-slate-300 leading-relaxed font-medium">
+                Stop practicing in isolation. Instantly see how your clinic's safety scores, patient retention rates, and efficacy outcomes compare to the anonymized network average, helping you spot blind spots before they become liabilities.
+              </p>
+              <button
+                onClick={() => navigate('/analytics')}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 border border-primary/20 hover:bg-primary/20 text-primary text-sm font-black rounded-xl uppercase tracking-widest transition-all group"
+              >
+                View Live Demo
+                <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </button>
+            </div>
+
+            {/* Component Right */}
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-primary/10 rounded-[4rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+              <div className="relative">
+                <ClinicRadarDemo />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Feature 3: Patient Journey */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+          >
+            {/* Component Left */}
+            <div className="relative group order-2 lg:order-1">
+              <div className="absolute -inset-4 bg-emerald-500/10 rounded-[4rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+              <div className="relative">
+                <PatientJourneyDemo />
+              </div>
+            </div>
+
+            {/* Text Right */}
+            <div className="space-y-6 order-1 lg:order-2">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[11px] font-black text-emerald-400 uppercase tracking-widest">
+                <span className="material-symbols-outlined text-sm">timeline</span>
+                Patient Outcomes
+              </div>
+              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+                The story behind the symptom.
+              </h3>
+              <p className="text-lg text-slate-300 leading-relaxed font-medium">
+                Show your patients the direct link between their sessions and their progress. This timeline view connects specific dosing events to mood improvements, turning abstract feelings into visible breakthroughs.
+              </p>
+              <button
+                onClick={() => navigate('/deep-dives/patient-journey')}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400 text-sm font-black rounded-xl uppercase tracking-widest transition-all group"
+              >
+                View Live Demo
+                <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      </section >
+
+      {/* SECTION: Global Network */}
+      <section className="py-32 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-center text-center space-y-10">
+            {/* Background effects */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+            {/* Heading */}
+            <div className="space-y-4 max-w-2xl relative z-10">
+              <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-tight">
+                The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Network.
+              </h2>
+              <p className="text-slate-400 font-medium text-lg leading-relaxed">
+                PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
+              </p>
+            </div>
+
+            {/* City Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl relative z-10">
+              {['Baltimore', 'London', 'Zurich', 'Palo Alto'].map(loc => (
+                <div key={loc} className="space-y-2">
+                  <p className="text-2xl font-black text-white">{loc}</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
+                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION: Mission & Stats */}
+      <section className="py-32 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+            {/* Left: Text */}
+            <div className="space-y-8">
+              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+                A <span className="text-gradient-primary inline-block pb-1">Unified</span> Framework for <br />Clinical Excellence.
+              </h2>
+              <div className="space-y-6 text-slate-400 text-base leading-relaxed font-medium">
+                <p>
+                  Founded on the principles of open collaboration and radical data integrity, the Psychedelic Practitioners Network (PPN) bridges the gap between discovery and clinical practice.
+                </p>
+                <p>
+                  We believe that the future of mental health requires a high-fidelity infrastructure capable of tracking long-term outcomes, managing complex substance interactions, and facilitating secure practitioner knowledge exchange.
                 </p>
               </div>
             </div>
 
-            {/* Visual Demo Card */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative group"
-            >
-              <div className="absolute -inset-4 bg-primary/20 rounded-[4rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-              <div className="relative bg-slate-900 border border-slate-800 rounded-[3rem] p-8 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 animate-pulse mt-4 font-mono font-bold">
-                      <div className="size-1 bg-primary rounded-full"></div>
-                      <span className="text-[8px] text-primary/40 uppercase tracking-widest font-bold">Calculating Logical Integrity...</span>
-                    </div>
+            {/* Right: Stats Grid */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full opacity-50"></div>
+              <div className="relative bg-[#111418]/60 border border-slate-800 rounded-[3rem] p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
+                    <span className="text-3xl font-black text-white">12k+</span>
+                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>
                   </div>
-                  <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-[11px] font-black text-primary uppercase">Active Node_4.2</div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  <div className="space-y-4">
-                    {[1, 2].map(i => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: 10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.2 }}
-                        className="p-4 bg-black/40 border border-white/5 rounded-2xl flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="size-10 rounded-xl bg-slate-800 flex items-center justify-center text-primary">
-                            <span className="material-symbols-outlined text-xl">monitoring</span>
-                          </div>
-                          <div>
-                            <p className="text-[13px] font-bold">Outcome Marker {i}</p>
-                            <p className="text-[12px] font-mono text-slate-600 font-black tracking-widest uppercase">+2.4% vs Baseline</p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
+                  <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
+                    <span className="text-3xl font-black text-clinical-green">04</span>
+                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Global Hubs</p>
                   </div>
-
-                  <div className="h-[200px] w-full bg-black/20 rounded-2xl p-4 border border-white/5">
-                    <p className="text-[11px] font-black text-slate-600 uppercase tracking-widest mb-4">Network Benchmarking</p>
-                    <ResponsiveContainer width="100%" height="80%">
-                      <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fill: '#475569', fontSize: 10, fontWeight: 800 }}
-                        />
-                        <Tooltip
-                          cursor={{ fill: 'transparent' }}
-                          contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', fontSize: '10px' }}
-                        />
-                        <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                          {chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
+                  <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
+                    <span className="text-3xl font-black text-primary">85%</span>
+                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Avg. Outcome Lift</p>
                   </div>
-                </div>
-
-                <div className="mt-8 pt-8 border-t border-slate-800/50 flex items-center justify-between">
-                  <p className="text-[12px] text-slate-500 font-medium">"Clinics see their own internal registry. Cross-site benchmarks are aggregated and de-identified."</p>
-                  <span className="material-symbols-outlined text-primary text-3xl">verified_user</span>
+                  <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
+                    <span className="text-3xl font-black text-accent-amber">99.9%</span>
+                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Data Integrity</p>
+                  </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* SECTION: Bento Box Features */}
+      {/* SECTION: Bento Box Features - BENTO GRID */}
       <section className="py-32 px-6 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="text-center space-y-4">
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter">Clinical Intelligence Infrastructure</h2>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+              Clinical <span className="text-gradient-primary inline-block pb-1">Intelligence</span> Infrastructure
+            </h2>
             <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.4em]">Designed for Institutional Precision</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-[280px]">
+          <BentoGrid>
             {/* Cell 1: Internal Registry */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-slate-900/40 border border-white/5 rounded-[3rem] p-10 hover:bg-slate-900/60 transition-all group overflow-hidden relative"
-            >
-              <div className="h-full flex flex-col justify-between relative z-10">
-                <div className="space-y-2">
-                  <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 mb-4 group-hover:scale-110 transition-transform">
-                    <span className="material-symbols-outlined text-3xl">database</span>
+            <BentoCard span={6} glass>
+              <motion.div
+                whileHover={{ y: -5 }}
+                className="h-full overflow-hidden relative group"
+              >
+                <div className="h-full flex flex-col justify-between relative z-10">
+                  <div className="space-y-2">
+                    <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 mb-4 group-hover:scale-110 transition-transform">
+                      <span className="material-symbols-outlined text-3xl">database</span>
+                    </div>
+                    <h3 className="text-3xl font-black tracking-tight text-white">Internal Registry</h3>
+                    <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-md">
+                      Secure local tracking of your site's unique outcomes with standardized measures.
+                    </p>
                   </div>
-                  <h3 className="text-3xl font-black tracking-tight text-white">Internal Registry</h3>
-                  <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-md">
-                    Secure local tracking of your site's unique outcomes with standardized measures.
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-500 font-mono">Structured Data Capture</span>
+                    <div className="h-px flex-1 bg-slate-800"></div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-500 font-mono">Structured Data Capture</span>
-                  <div className="h-px flex-1 bg-slate-800"></div>
-                </div>
-              </div>
-              <span className="absolute bottom-0 right-0 p-10 material-symbols-outlined text-[180px] text-white/5 -mb-20 -mr-10 group-hover:scale-110 transition-transform">inventory_2</span>
-            </motion.div>
+                <span className="absolute bottom-0 right-0 p-10 material-symbols-outlined text-[180px] text-white/5 -mb-20 -mr-10 group-hover:scale-110 transition-transform">inventory_2</span>
+              </motion.div>
+            </BentoCard>
 
             {/* Cell 2: Network Benchmarks */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-indigo-600/10 border border-indigo-500/20 rounded-[3rem] p-10 group hover:shadow-2xl hover:shadow-indigo-500/5 transition-all"
-            >
-              <div className="h-full flex flex-col justify-between">
-                <div className="space-y-4">
-                  <span className="material-symbols-outlined text-4xl text-indigo-400">query_stats</span>
-                  <h3 className="text-2xl font-black tracking-tight">Network Benchmarks</h3>
-                  <p className="text-slate-400 font-medium leading-relaxed">
-                    Compare your results against aggregated, de-identified percentiles.
-                  </p>
-                </div>
-                <div className="pt-6">
-                  <div className="flex items-center gap-2 px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full w-fit">
-                    <motion.span
-                      animate={{ opacity: [1, 0.4, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="size-1.5 bg-indigo-400 rounded-full"
-                    ></motion.span>
-                    <span className="text-[11px] font-black uppercase text-indigo-300">Cohort Comparisons</span>
+            <BentoCard span={6}>
+              <motion.div
+                whileHover={{ y: -5 }}
+                className="h-full bg-indigo-600/10 border border-indigo-500/20 rounded-2xl p-6 group hover:shadow-2xl hover:shadow-indigo-500/5 transition-all"
+              >
+                <div className="h-full flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <span className="material-symbols-outlined text-4xl text-indigo-400">query_stats</span>
+                    <h3 className="text-2xl font-black tracking-tight">Network Benchmarks</h3>
+                    <p className="text-slate-400 font-medium leading-relaxed">
+                      Compare your results against aggregated, de-identified percentiles.
+                    </p>
+                  </div>
+                  <div className="pt-6">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full w-fit">
+                      <motion.span
+                        animate={{ opacity: [1, 0.4, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="size-1.5 bg-indigo-400 rounded-full"
+                      ></motion.span>
+                      <span className="text-[11px] font-black uppercase text-indigo-300">Cohort Comparisons</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </BentoCard>
 
             {/* Cell 3: Safety Surveillance */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-red-600/5 border border-red-500/10 rounded-[3rem] p-10 group hover:border-red-500/30 transition-all"
-            >
-              <div className="h-full flex flex-col justify-between">
-                <div className="space-y-4">
-                  <span className="material-symbols-outlined text-4xl text-red-400">security</span>
-                  <h3 className="text-2xl font-black tracking-tight">Safety Surveillance</h3>
-                  <p className="text-slate-400 font-medium leading-relaxed">
-                    Real-time detection of adverse events and contraindication spikes.
-                  </p>
+            <BentoCard span={6}>
+              <motion.div
+                whileHover={{ y: -5 }}
+                className="h-full bg-red-600/5 border border-red-500/10 rounded-2xl p-6 group hover:border-red-500/30 transition-all"
+              >
+                <div className="h-full flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <span className="material-symbols-outlined text-4xl text-red-400">security</span>
+                    <h3 className="text-2xl font-black tracking-tight">Safety Surveillance</h3>
+                    <p className="text-slate-400 font-medium leading-relaxed">
+                      Real-time detection of adverse events and contraindication spikes.
+                    </p>
+                  </div>
+                  <div className="p-4 bg-black/40 rounded-2xl border border-red-500/10">
+                    <p className="text-[12px] font-mono text-red-400/80 font-bold uppercase tracking-widest">Global Risk Pulse Active</p>
+                  </div>
                 </div>
-                <div className="p-4 bg-black/40 rounded-2xl border border-red-500/10">
-                  <p className="text-[12px] font-mono text-red-400/80 font-bold uppercase tracking-widest">Global Risk Pulse Active</p>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </BentoCard>
 
             {/* Cell 4: Structured Data */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              className="bg-slate-900/40 border border-white/5 rounded-[3rem] p-10 relative overflow-hidden group"
-            >
-              <div className="h-full flex flex-col justify-between relative z-10">
-                <div className="space-y-2">
-                  <h3 className="text-3xl font-black tracking-tight text-white">Standardized Measures</h3>
-                  <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-lg">
-                    We use structured, coded data (MedDRA, ICAN) to ensure every data point contributes to validated benchmarks.
-                  </p>
+            <BentoCard span={6} glass>
+              <motion.div
+                whileHover={{ y: -5 }}
+                className="h-full relative overflow-hidden group"
+              >
+                <div className="h-full flex flex-col justify-between relative z-10">
+                  <div className="space-y-2">
+                    <h3 className="text-3xl font-black tracking-tight text-white">Standardized Measures</h3>
+                    <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-lg">
+                      We use structured, coded data (MedDRA, ICAN) to ensure every data point contributes to validated benchmarks.
+                    </p>
+                  </div>
+                  <div className="flex gap-4">
+                    {['MedDRA', 'LOINC', 'SNOMED'].map(code => (
+                      <span key={code} className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[11px] font-black text-slate-500 tracking-widest uppercase">{code}</span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex gap-4">
-                  {['MedDRA', 'LOINC', 'SNOMED'].map(code => (
-                    <span key={code} className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[11px] font-black text-slate-500 tracking-widest uppercase">{code}</span>
-                  ))}
+                <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-125 transition-transform duration-700">
+                  <span className="material-symbols-outlined text-[140px]">code</span>
                 </div>
-              </div>
-              <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-125 transition-transform duration-700">
-                <span className="material-symbols-outlined text-[140px]">code</span>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION: Institutional Proof */}
-      <section className="py-20 px-6 bg-slate-950/20 relative z-10">
-        <div className="max-w-7xl mx-auto px-6 whitespace-nowrap overflow-hidden flex items-center">
-          <span className="text-[12px] font-black text-slate-600 uppercase tracking-[0.4em] mr-12 shrink-0">Institutional Nodes</span>
-          <div className="flex items-center gap-16 animate-marquee">
-            {['Zurich', 'Boston', 'London', 'Berlin', 'Mexico City', 'New York', 'Sydney'].map((node, i) => (
-              <span key={i} className="text-xl font-black text-slate-500 uppercase tracking-tighter opacity-40 hover:opacity-100 transition-opacity cursor-default">{node}</span>
-            ))}
-          </div>
-          {/* Duplicate for seamless loop */}
-          <div className="flex items-center gap-16 animate-marquee ml-16">
-            {['Zurich', 'Boston', 'London', 'Berlin', 'Mexico City', 'New York', 'Sydney'].map((node, i) => (
-              <span key={i} className="text-xl font-black text-slate-500 uppercase tracking-tighter opacity-40 hover:opacity-100 transition-opacity cursor-default">{node}</span>
-            ))}
-          </div>
+              </motion.div>
+            </BentoCard>
+          </BentoGrid>
         </div>
       </section>
 
       {/* SECTION: About PPN */}
-      <section className="py-32 px-6 bg-[#07090d] border-b border-slate-900/50 relative z-10">
+      <section className="py-32 px-6 border-b border-slate-900/50 relative z-10">
         <div className="max-w-4xl mx-auto text-left space-y-8">
-          <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
-            About PPN
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-200 tracking-tight">
+            About <span className="text-gradient-primary inline-block pb-1">PPN</span>
           </h2>
-          <p className="text-lg text-slate-400 leading-relaxed font-medium">
-            The Psychedelic Practitioner Network (PPN) is a practitioner-only network focused on one thing: helping clinics learn faster from real-world care. We do that by standardizing the inputs that shape outcomes across preparation, dosing, and integration, then returning aggregated benchmarks and safety learning that clinics can use to improve consistency. We built PPN with privacy by design, structured fields over narrative text, de-identified longitudinal tracking inside a clinic, and network insights shown only in aggregate.
-          </p>
+          <div className="space-y-6">
+            <p className="text-lg text-slate-400 leading-relaxed font-medium">
+              The <span className="text-white font-bold">Psychedelic Practitioners Network (PPN)</span> is a practitioner-only network focused on one thing: helping clinics learn faster from real-world care. We do that by standardizing the inputs that shape outcomes across preparation, dosing, and integration, then returning aggregated benchmarks and safety learning that clinics can use to improve consistency.
+            </p>
+            <p className="text-lg text-slate-400 leading-relaxed font-medium">
+              We built PPN with privacy by design, structured fields over narrative text, de-identified longitudinal tracking inside a clinic, and network insights shown only in aggregate.
+            </p>
+          </div>
+
+          {/* Veterans PTSD Statement */}
+          <div className="mt-8 p-6 bg-indigo-600/10 border-2 border-indigo-500/20 rounded-2xl">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-indigo-500/20 rounded-xl">
+                <span className="material-symbols-outlined text-2xl text-indigo-400">military_tech</span>
+              </div>
+              <div>
+                <h4 className="text-xl font-black text-white mb-2">Supporting Our Veterans</h4>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  We are committed to supporting <span className="text-gradient-primary inline-block font-bold pb-1">veterans with PTSD</span> through
+                  evidence-based psychedelic therapy research. A portion of our network's de-identified data contributes to
+                  VA-partnered studies on MDMA-assisted therapy and psilocybin for treatment-resistant PTSD.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="pt-4">
             <a
               href="mailto:info@ppnportal.net"
-              className="inline-flex items-center px-8 py-4 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-100 text-[12px] font-black rounded-2xl uppercase tracking-[0.25em] transition-all hover:bg-slate-800 active:scale-95"
+              className="inline-flex items-center px-8 py-4 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-100 text-sm font-black rounded-2xl uppercase tracking-[0.25em] transition-all hover:bg-slate-800 active:scale-95"
             >
               Contact Us
             </a>
           </div>
         </div>
-      </section>
+      </section >
       <footer className="py-32 px-6 bg-[#05070a] border-t border-slate-900 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -540,7 +754,7 @@ const Landing: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-[12px] font-black uppercase tracking-widest text-slate-200">Legal & Privacy</h4>
+              <h4 className="text-sm font-black uppercase tracking-widest text-slate-200">Legal & Privacy</h4>
               <ul className="space-y-2 text-sm text-slate-500 font-medium">
                 <li className="hover:text-primary transition-colors cursor-pointer">Terms of Service</li>
                 <li className="hover:text-primary transition-colors cursor-pointer">De-identification Policy</li>
@@ -549,16 +763,16 @@ const Landing: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-[12px] font-black uppercase tracking-widest text-slate-200">Network Status</h4>
+              <h4 className="text-sm font-black uppercase tracking-widest text-slate-200">Network Status</h4>
               <div className="p-4 bg-slate-900/50 border border-slate-800 rounded-2xl space-y-1">
-                <p className="text-[13px] font-black text-clinical-green">Operational</p>
-                <p className="text-[11px] text-slate-600 font-black uppercase tracking-widest">Global Sync Active</p>
+                <p className="text-sm font-black text-clinical-green">Operational</p>
+                <p className="text-sm text-slate-600 font-black uppercase tracking-widest">Global Sync Active</p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-[12px] font-black uppercase tracking-widest text-slate-200">Identity Guard</h4>
-              <button onClick={() => navigate('/login')} className="w-full py-4 bg-slate-900 border border-slate-800 rounded-2xl text-[12px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
+              <h4 className="text-sm font-black uppercase tracking-widest text-slate-200">Identity Guard</h4>
+              <button onClick={() => navigate('/login')} className="w-full py-4 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
                 System Security Login
               </button>
             </div>
@@ -566,16 +780,16 @@ const Landing: React.FC = () => {
 
           {/* FINAL BOUNDARY STATEMENT */}
           <div className="pt-20 border-t border-slate-900 text-center space-y-6">
-            <p className="text-[13px] font-bold text-slate-600 leading-relaxed max-w-3xl mx-auto uppercase tracking-widest">
+            <p className="text-sm font-bold text-slate-600 leading-relaxed max-w-3xl mx-auto uppercase tracking-widest">
               PPN Research Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance. We do not support patient-level data sharing across clinics.
             </p>
-            <p className="text-[11px] text-slate-700 font-medium tracking-widest">
+            <p className="text-sm text-slate-700 font-medium tracking-widest">
               &copy; 2026 PRECISION PSYCHEDELIC NETWORK (PPN). ALL RIGHTS RESERVED. FOR INSTITUTIONAL USE ONLY.
             </p>
           </div>
         </div>
       </footer>
-    </div>
+    </div >
   );
 };
 

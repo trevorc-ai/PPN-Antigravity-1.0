@@ -4,7 +4,7 @@ import {
   Activity, AlertTriangle, TrendingUp, Users,
   Map, Zap, BrainCircuit, ArrowRight, Plus, ShieldCheck, Clock
 } from 'lucide-react';
-import ConnectFeedButton from '../components/ui/ConnectFeedButton';
+
 
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
@@ -15,7 +15,7 @@ const InsightCard = ({ title, value, subtext, icon: Icon, color, link, delay }: 
   return (
     <div
       onClick={() => navigate(link)}
-      className={`card-glass group relative overflow-hidden rounded-3xl p-6 hover:border-slate-500 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between h-[200px] animate-in fade-in slide-in-from-bottom-4 duration-700`}
+      className={`card-glass group relative overflow-hidden rounded-3xl p-6 hover:border-slate-500 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between h-[230px] animate-in fade-in slide-in-from-bottom-4 duration-700`}
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Hover Gradient Effect */}
@@ -76,10 +76,7 @@ export default function Dashboard() {
             Dashboard
           </h1>
         </div>
-        {/* Header Actions */}
-        <div className="flex items-center gap-4">
-          <ConnectFeedButton />
-        </div>
+
       </Section>
 
       {/* TELEMETRY ROW */}
@@ -140,36 +137,34 @@ export default function Dashboard() {
             delay={500}
           />
 
-          {/* Action Buttons */}
-          <div className="flex gap-4 h-[200px]">
-            {/* New Protocol Button */}
-            <div
-              onClick={() => navigate('/builder')}
-              className="
-                card-glass group flex-1 rounded-3xl border-2 border-dashed border-indigo-500/30 p-6
-                hover:border-indigo-500 cursor-pointer transition-all
-                flex flex-col items-center justify-center gap-4
-              "
-            >
-              <div className="p-4 rounded-full bg-indigo-500/10 border border-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-all">
-                <Plus className="w-8 h-8 text-indigo-400 group-hover:text-white" />
+          {/* QUICK ACTIONS CARD - Unified to maintain bento grid symmetry */}
+          <div className="card-glass group relative overflow-hidden rounded-3xl p-6 hover:border-slate-500 hover:shadow-2xl transition-all h-[230px] flex flex-col">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
+                <Zap className="w-6 h-6 text-indigo-400" />
               </div>
-              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest group-hover:text-white transition-colors">New Protocol</span>
+              <div className="p-2 rounded-full bg-slate-900 border border-slate-800">
+                <Plus className="w-5 h-5 text-indigo-400 group-hover:text-white transition-colors" />
+              </div>
             </div>
 
-            {/* Add/Update Profile Button */}
-            <div
-              onClick={() => navigate('/clinician/profile')}
-              className="
-                card-glass group flex-1 rounded-3xl border-2 border-dashed border-emerald-500/30 p-6
-                hover:border-emerald-500 cursor-pointer transition-all
-                flex flex-col items-center justify-center gap-4
-              "
-            >
-              <div className="p-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                <Users className="w-8 h-8 text-emerald-400 group-hover:text-white" />
-              </div>
-              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest group-hover:text-white transition-colors text-center">Add/Update Profile</span>
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Quick Actions</h3>
+
+            <div className="grid grid-cols-2 gap-3 mt-auto">
+              <button
+                onClick={() => navigate('/builder')}
+                className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white border border-indigo-500/20 hover:border-indigo-500 transition-all active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="text-[12px] font-black uppercase tracking-wider">Protocol</span>
+              </button>
+              <button
+                onClick={() => navigate('/clinician/profile')}
+                className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/20 hover:border-emerald-500 transition-all active:scale-95"
+              >
+                <Users className="w-4 h-4" />
+                <span className="text-[12px] font-black uppercase tracking-wider">Profile</span>
+              </button>
             </div>
           </div>
         </div>

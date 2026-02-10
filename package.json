@@ -1,7 +1,7 @@
 {
   "name": "ppn-portal-v3.33",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -52,9 +52,9 @@ const METRIC_DEFINITIONS: Record<string, string> = {
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-900/95 backdrop-blur-sm p-4 border border-slate-700 rounded-lg shadow-xl max-w-[250px]">
-                <h4 className="text-slate-200 font-bold mb-1 text-xs uppercase tracking-wider">{label}</h4>
-                <p className="text-xs text-slate-500 mb-3 italic">
+            <div className="bg-slate-900/95 backdrop-blur-sm p-4 border border-slate-700 rounded-lg shadow-xl max-w-[250px] z-50 print:bg-white print:border-gray-200 print:text-black">
+                <h4 className="text-slate-200 font-bold mb-1 text-xs uppercase tracking-wider print:text-black">{label}</h4>
+                <p className="text-xs text-slate-500 mb-3 italic print:text-gray-500">
                     {METRIC_DEFINITIONS[label] || 'Performance Metric'}
                 </p>
                 <div className="flex flex-col gap-2">
@@ -65,9 +65,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                                     className="w-2 h-2 rounded-full"
                                     style={{ backgroundColor: entry.color }}
                                 />
-                                <span className="text-slate-300 font-medium">{entry.name}:</span>
+                                <span className="text-slate-300 font-medium print:text-gray-700">{entry.name}:</span>
                             </div>
-                            <span className="text-white font-bold font-mono">{entry.dataKey === 'A' ? entry.payload.A : entry.payload.B}</span>
+                            <span className="text-white font-bold font-mono print:text-black">{entry.dataKey === 'A' ? entry.payload.A : entry.payload.B}</span>
                         </div>
                     ))}
                 </div>
@@ -82,24 +82,14 @@ export default function ClinicPerformanceRadar() {
     const currentData = timeRange === 'quarter' ? DATA_QUARTER : DATA_YEAR;
     const insights = METRIC_INSIGHTS[timeRange];
 
-    const handleExport = () => {
-        window.print();
-    };
-
     return (
-        <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl space-y-6">
+        <div className="w-full h-full flex flex-col p-6 print:p-0 print:bg-white">
             {/* Header Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-xl font-black text-white tracking-tighter flex items-center gap-2 print:text-black" title="Aggregated performance metrics comparing this node against the global network average">
-                        <TrendingUp className="text-indigo-500" />
-                        Clinic Performance Radar
-                    </h2>
-                    <p className="text-xs text-slate-400 font-medium mt-1 print:text-slate-600">
-                        Analyzing efficacy, safety, and operational metrics against N=14,200 Network Nodes.
-                    </p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                <div className="flex-1">
+                    {/* Title removed here as it is handled by the parent card */}
                 </div>
-                <div className="flex items-center gap-2 print:hidden">
+                <div className="flex items-center gap-2 print:hidden z-10">
                     <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
                         <button
                             onClick={() => setTimeRange('quarter')}
@@ -116,18 +106,12 @@ export default function ClinicPerformanceRadar() {
                             Last 12 Mo
                         </button>
                     </div>
-                    <button
-                        onClick={handleExport}
-                        className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition-colors"
-                        title="Export Report"
-                    >
-                        <Download className="w-4 h-4" />
-                    </button>
                 </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Radar Chart Section */}
-                <div className="lg:col-span-2 h-[350px] relative">
+
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-0">
+                {/* Radar Chart Section - Added min-h-0 to prevent flex item overflow */}
+                <div className="lg:col-span-2 relative min-h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={currentData}>
                             <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
@@ -158,22 +142,18 @@ export default function ClinicPerformanceRadar() {
                             <Tooltip content={<CustomTooltip />} />
                         </RadarChart>
                     </ResponsiveContainer>
-
-                    {/* Watermark for Print */}
-                    <div className="hidden print:block absolute bottom-0 right-0 text-slate-200 text-4xl font-black opacity-10 uppercase transform -rotate-12">
-                        Confidential
-                    </div>
                 </div>
-                {/* Insights Panel */}
-                <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-2 mb-2">
+
+                {/* Insights Panel - Scrollable if content overflows */}
+                <div className="flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar max-h-[400px]">
+                    <div className="flex items-center gap-2 mb-2 sticky top-0 bg-[#0f1218]/90 backdrop-blur pb-2 z-10 print:bg-white">
                         <FileText className="w-4 h-4 text-slate-400" />
-                        <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest">
+                        <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest print:text-black">
                             {timeRange === 'quarter' ? 'Quarterly' : 'Annual'} Analysis
                         </h3>
                     </div>
                     {insights.map((insight, idx) => (
-                        <div key={idx} className="p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors group">
+                        <div key={idx} className="p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors group print:bg-gray-50 print:border-gray-200">
                             <div className="flex justify-between items-start mb-2">
                                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{insight.label}</span>
                                 {insight.status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
@@ -181,17 +161,17 @@ export default function ClinicPerformanceRadar() {
                                 {insight.status === 'danger' && <AlertCircle className="w-4 h-4 text-red-500" />}
                             </div>
                             <div className="flex items-end gap-2 mb-1">
-                                <span className="text-xl font-mono font-bold text-slate-200">{insight.value}</span>
+                                <span className="text-xl font-mono font-bold text-slate-200 print:text-black">{insight.value}</span>
                             </div>
-                            <p className="text-[11px] text-slate-400 leading-snug group-hover:text-slate-300 transition-colors">
+                            <p className="text-[11px] text-slate-400 leading-snug group-hover:text-slate-300 transition-colors print:text-gray-600">
                                 {insight.text}
                             </p>
                         </div>
                     ))}
 
-                    <div className="mt-auto pt-4 border-t border-slate-800 text-center">
-                        <p className="text-[9px] text-slate-600 font-mono">
-                            Generated: {new Date().toLocaleDateString()} • Node ID: 8821-X
+                    <div className="mt-auto pt-4 border-t border-slate-800 text-center print:border-gray-200">
+                        <p className="text-[10px] text-slate-600 font-mono">
+                            Node ID: 8821-X
                         </p>
                     </div>
                 </div>

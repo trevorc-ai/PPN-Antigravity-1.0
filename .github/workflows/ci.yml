@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check TypeScript
+      run: npx tsc --noEmit
+
+    - name: Build project
+      run: npm run build
+      env:
+        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist-${{ matrix.node-version }}
+        path: dist/
+        retention-days: 7
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check for console.log
+      run: |
+        if grep -r "console\.log" src/ --include="*.tsx" --include="*.ts" | grep -v "// allow-console"; then
+          echo "❌ Found console.log statements. Please remove them or add // allow-console comment."
+          exit 1
+        else
+          echo "✅ No console.log statements found"
+        fi
+
+    - name: Check for 'any' types
+      run: |
+        ANY_COUNT=$(grep -r ": any" src/ --include="*.tsx" --include="*.ts" | wc -l)
+        echo "Found $ANY_COUNT instances of 'any' type"
+        if [ $ANY_COUNT -gt 35 ]; then
+          echo "⚠️ Warning: Too many 'any' types. Please add proper TypeScript types."
+          # Not failing the build, just warning
+        fi

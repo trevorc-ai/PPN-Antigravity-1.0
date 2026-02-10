@@ -33,7 +33,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           );
         })}
         <div className="mt-2 pt-2 border-t border-slate-800">
-           <p className="text-[9px] text-slate-500">PHQ-9 Severity Index</p>
+           <p className="text-[10px] text-slate-500">PHQ-9 Severity Index</p>
         </div>
       </div>
     );
@@ -112,7 +112,7 @@ const ConfidenceCone: React.FC = () => {
                         className={`size-2 rounded-full ${entry.value === 'Confidence Interval' ? 'rounded-sm' : ''}`} 
                         style={{ backgroundColor: entry.color }}
                       ></div>
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{entry.value}</span>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{entry.value}</span>
                     </div>
                   ))}
                 </div>

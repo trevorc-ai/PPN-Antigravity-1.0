@@ -1,6 +1,13 @@
 import React from 'react';
 import {
-    ShieldCheck
+    ShieldCheck,
+    Printer,
+    Download,
+    Share2,
+    Activity,
+    TrendingUp,
+    Users,
+    AlertTriangle
 } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
@@ -9,60 +16,76 @@ import PatientConstellation from '../components/analytics/PatientConstellation';
 import ProtocolEfficiency from '../components/analytics/ProtocolEfficiency';
 import MolecularPharmacology from '../components/analytics/MolecularPharmacology';
 import MetabolicRiskGauge from '../components/analytics/MetabolicRiskGauge';
-
-
+import { GlassmorphicCard } from '../components/ui/GlassmorphicCard';
 
 const Analytics = () => {
-    return (
-        <PageContainer className="space-y-8 animate-in fade-in duration-700 pb-20 pt-8">
+    const handlePrint = () => {
+        window.print();
+    };
 
-            {/* HEADER */}
-            <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    return (
+        <PageContainer className="space-y-8 animate-in fade-in duration-700 pb-20 pt-8 print:p-0 print:space-y-4 print:bg-white">
+
+            {/* HEADER - Hide on Print (except limits) */}
+            <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 print:hidden">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
                         <h1 className="text-5xl font-black tracking-tighter text-white">
                             Clinical Intelligence
                         </h1>
-                        <div className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded-md text-xs font-mono text-indigo-400 tracking-widest font-black" title="Current Active Node ID">
+                        <div className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded-md text-xs font-mono text-indigo-400 tracking-widest font-black">
                             LIVE_NODE_07
                         </div>
                     </div>
                     <p className="text-slate-400 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed mt-4">
-                        This dashboard provides real-time insights into clinical outcomes and safety metrics. It aggregates data from across the network to help you make informed treatment decisions.
+                        Real-time network insights and safety metrics.
                     </p>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center gap-3" title="Current Node Compliance Audit Status">
-                        <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                        <div>
-                            <div className="text-xs font-black text-slate-500 uppercase tracking-widest">Compliance Status</div>
-                            <div className="text-sm font-bold text-white">Audit Ready (Grade A)</div>
-                        </div>
-                    </div>
+                    <button
+                        onClick={handlePrint}
+                        className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
+                    >
+                        <Printer className="w-5 h-5" />
+                        <span className="font-bold">Print Report</span>
+                    </button>
                 </div>
             </Section>
 
-            {/* KPI RIBBON (Layer 1) */}
-            <Section spacing="tight" className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* PRINT HEADER - Visible ONLY on Print */}
+            <div className="hidden print:block mb-8 border-b-2 border-black pb-4">
+                <h1 className="text-4xl font-black text-black mb-2">Clinical Intelligence Report</h1>
+                <div className="flex justify-between text-sm text-gray-600 font-mono">
+                    <span>Generated: {new Date().toLocaleDateString()}</span>
+                    <span>Node: LIVE_NODE_07</span>
+                    <span>User: Dr. Sarah Chen</span>
+                </div>
+            </div>
+
+            {/* KPI RIBBON */}
+            <Section spacing="tight" className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2">
                 {[
-                    { label: 'Active Protocols', value: '124', trend: '+12%', color: 'text-blue-400' },
-                    { label: 'Patient Alerts', value: '3', trend: '-2', color: 'text-amber-400' },
-                    { label: 'Network Efficiency', value: '94.2%', trend: '+0.8%', color: 'text-emerald-400' },
-                    { label: 'Global Risk Score', value: 'Low', trend: 'Stable', color: 'text-slate-400' }
+                    { label: 'Active Protocols', value: '124', trend: '+12%', icon: Activity, color: 'text-blue-400 print:text-blue-700' },
+                    { label: 'Patient Alerts', value: '3', trend: '-2', icon: AlertTriangle, color: 'text-amber-400 print:text-amber-700' },
+                    { label: 'Network Efficiency', value: '94.2%', trend: '+0.8%', icon: TrendingUp, color: 'text-emerald-400 print:text-emerald-700' },
+                    { label: 'Risk Score', value: 'Low', trend: 'Stable', icon: ShieldCheck, color: 'text-slate-400 print:text-gray-700' }
                 ].map((stat, i) => (
-                    <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl h-full flex flex-col justify-between">
-                        <div className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">{stat.label}</div>
+                    <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl h-full flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none">
+                        <div className="flex items-center gap-2 mb-2">
+                            <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                            <div className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-gray-500">{stat.label}</div>
+                        </div>
                         <div className="flex items-baseline gap-2">
                             <div className={`text-3xl font-black ${stat.color} tracking-tight`}>{stat.value}</div>
-                            <div className="text-xs font-bold text-slate-400 bg-slate-900/50 px-2 py-0.5 rounded border border-slate-800">{stat.trend}</div>
+                            <div className="text-xs font-bold text-slate-400 bg-slate-900/50 px-2 py-0.5 rounded border border-slate-800 print:bg-gray-100 print:text-gray-600 print:border-gray-200">{stat.trend}</div>
                         </div>
                     </div>
                 ))}
             </Section>
 
-            {/* FILTER CONTROLS (Layer 2) */}
-            <Section spacing="tight" className="sticky top-4 z-40">
+            {/* FILTER CONTROLS - Hide on Print */}
+            <Section spacing="tight" className="sticky top-4 z-40 print:hidden">
                 <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-[#0a0c12]/80 border border-slate-800/80 p-2 rounded-2xl backdrop-blur-xl shadow-2xl">
                     <div className="flex items-center gap-2 px-2">
                         <div className="size-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
@@ -85,86 +108,93 @@ const Analytics = () => {
                             <option>Last Quarter</option>
                             <option>YTD</option>
                         </select>
-                        <div className="relative flex-1">
-                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
-                            <input
-                                type="text"
-                                placeholder="Filter by protocol ID..."
-                                className="w-full bg-black/40 border border-slate-700/50 text-xs font-bold text-white rounded-lg pl-9 pr-3 py-2 outline-none focus:border-indigo-500/50 placeholder:text-slate-600 uppercase tracking-wider"
-                            />
-                        </div>
                     </div>
                 </div>
             </Section>
 
             {/* COMPONENT GRID */}
-            <Section spacing="default" className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <Section spacing="default" className="grid grid-cols-1 xl:grid-cols-2 gap-8 print:block print:space-y-8">
 
-                {/* ROW 1: CLINIC PERFORMANCE (Overview) */}
-                <div className="space-y-3 xl:col-span-2">
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-black text-slate-400 tracking-tight ml-1" title="Real-time clinic performance metrics across key indicators vs. Network Average">
-                            Performance Radar
-                        </h3>
-                        <div className="h-px bg-slate-800 flex-1"></div>
-                    </div>
-                    <div className="h-[500px] overflow-hidden rounded-2xl bg-[#0a0c12]/50 border border-slate-800/50 relative">
+                {/* CHART 1: PERFORMANCE RADAR */}
+                <div className="xl:col-span-2 print:break-inside-avoid print:mb-8">
+                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
+                        <div className="absolute top-6 left-6 z-10">
+                            <h3 className="text-lg font-black text-white print:text-black">Performance Radar</h3>
+                            <p className="text-sm text-slate-400 print:text-gray-500">Clinic metrics vs Network Average</p>
+                        </div>
                         <ClinicPerformanceRadar />
-                    </div>
+                    </GlassmorphicCard>
                 </div>
 
-                {/* ROW 2: PATIENT GALAXY (Deep Dive) */}
-                <div className="space-y-3 xl:col-span-2">
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-black text-slate-400 tracking-tight ml-1" title="Cluster analysis of patient outcomes based on treatment resistance and symptom severity">
-                            Patient Galaxy
-                        </h3>
-                        <div className="h-px bg-slate-800 flex-1"></div>
-                    </div>
-                    <div className="h-[500px] overflow-hidden rounded-2xl bg-[#0a0c12]/50 border border-slate-800/50 relative">
+                {/* CHART 2: PATIENT GALAXY */}
+                <div className="xl:col-span-2 print:break-inside-avoid print:mb-8">
+                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
+                        <div className="absolute top-6 left-6 z-10">
+                            <h3 className="text-lg font-black text-white print:text-black">Patient Galaxy</h3>
+                            <p className="text-sm text-slate-400 print:text-gray-500">Outcomes clustering analysis</p>
+                        </div>
                         <PatientConstellation />
-                    </div>
+                    </GlassmorphicCard>
                 </div>
 
-                {/* ROW 3: MOLECULAR & GENOMIC (Mechanism) */}
-                <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-black text-slate-400 tracking-tight ml-1" title="Receptor binding profiles and molecular affinity data">
-                            Molecular Bridge
-                        </h3>
-                        <div className="h-px bg-slate-800 flex-1"></div>
-                    </div>
-                    <div className="h-[500px] overflow-hidden rounded-2xl bg-[#0a0c12]/50 border border-slate-800/50 relative">
+                {/* CHART 3: MOLECULAR */}
+                <div className="print:break-inside-avoid print:mb-8">
+                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
+                        <div className="absolute top-6 left-6 z-10">
+                            <h3 className="text-lg font-black text-white print:text-black">Molecular Bridge</h3>
+                            <p className="text-sm text-slate-400 print:text-gray-500">Receptor affinity profiles</p>
+                        </div>
                         <MolecularPharmacology />
-                    </div>
+                    </GlassmorphicCard>
                 </div>
 
-                <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-black text-slate-400 tracking-tight ml-1" title="Patient metabolic risk analysis based on CYP450 genomic markers">
-                            Genomic Safety
-                        </h3>
-                        <div className="h-px bg-slate-800 flex-1"></div>
-                    </div>
-                    <div className="h-[500px] overflow-hidden rounded-2xl bg-[#0a0c12]/50 border border-slate-800/50 relative">
+                {/* CHART 4: GENOMIC RISK */}
+                <div className="print:break-inside-avoid print:mb-8">
+                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
+                        <div className="absolute top-6 left-6 z-10">
+                            <h3 className="text-lg font-black text-white print:text-black">Genomic Safety</h3>
+                            <p className="text-sm text-slate-400 print:text-gray-500">CYP450 metabolic risk analysis</p>
+                        </div>
                         <MetabolicRiskGauge />
-                    </div>
+                    </GlassmorphicCard>
                 </div>
 
-                {/* ROW 4: ROI (Financial) */}
-                <div className="space-y-3 xl:col-span-2">
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-black text-slate-400 tracking-tight ml-1" title="Financial efficiency modeling and protocol margin analysis">
-                            Protocol ROI
-                        </h3>
-                        <div className="h-px bg-slate-800 flex-1"></div>
-                    </div>
-                    <div className="h-[500px] overflow-hidden rounded-2xl bg-[#0a0c12]/50 border border-slate-800/50 relative">
+                {/* CHART 5: ROI */}
+                <div className="xl:col-span-2 print:break-inside-avoid print:mb-8">
+                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
+                        <div className="absolute top-6 left-6 z-10">
+                            <h3 className="text-lg font-black text-white print:text-black">Protocol ROI</h3>
+                            <p className="text-sm text-slate-400 print:text-gray-500">Financial efficiency modeling</p>
+                        </div>
                         <ProtocolEfficiency />
-                    </div>
+                    </GlassmorphicCard>
                 </div>
 
             </Section>
+
+            {/* PRINT FOOTER */}
+            <div className="hidden print:block text-center text-xs text-gray-400 pt-8 border-t border-gray-200 mt-8">
+                <p>CONFIDENTIAL: For Clinical Use Only. Generated by PPN Research Portal.</p>
+            </div>
+
+            {/* GLOBAL PRINT STYLES */}
+            <style jsx global>{`
+                @media print {
+                    @page {
+                        margin: 1cm;
+                        size: portrait;
+                    }
+                    body {
+                        background: white !important;
+                        color: black !important;
+                    }
+                    /* Force charts to print background colors if needed */
+                    * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                }
+            `}</style>
         </PageContainer>
     );
 };

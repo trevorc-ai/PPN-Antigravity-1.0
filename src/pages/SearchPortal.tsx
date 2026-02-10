@@ -183,9 +183,9 @@ const SubstanceCard: React.FC<{ sub: any; variant?: 'compact' | 'full' }> = ({ s
         onClick={() => navigate(`/monograph/${sub.id}`)}
         className="group flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-2xl p-3 hover:border-primary/50 transition-all cursor-pointer h-24 overflow-hidden relative"
       >
-        <div className="size-16 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
+        <div className="size-16 rounded-xl bg-black/80 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-105 transition-transform p-2">
           {sub.imageUrl ? (
-            <img src={sub.imageUrl} alt={sub.name} className="w-full h-full object-cover p-1" style={{ mixBlendMode: 'screen', opacity: 0.9 }} />
+            <img src={sub.imageUrl} alt={sub.name} className="w-full h-full object-contain" style={{ mixBlendMode: 'screen', opacity: 0.9 }} />
           ) : (
             <span className="material-symbols-outlined text-2xl text-slate-500">biotech</span>
           )}
@@ -215,9 +215,9 @@ const SubstanceCard: React.FC<{ sub: any; variant?: 'compact' | 'full' }> = ({ s
       </div>
 
       <div className="flex items-center gap-4 relative z-10">
-        <div className="size-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden shadow-md group-hover:scale-105 transition-transform">
+        <div className="size-16 rounded-2xl bg-black/80 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden shadow-md group-hover:scale-105 transition-transform p-2">
           {sub.imageUrl ? (
-            <img src={sub.imageUrl} alt={sub.name} className="w-full h-full object-cover p-1" style={{ mixBlendMode: 'screen', opacity: 0.9 }} />
+            <img src={sub.imageUrl} alt={sub.name} className="w-full h-full object-contain" style={{ mixBlendMode: 'screen', opacity: 0.9 }} />
           ) : (
             <span className="material-symbols-outlined text-2xl text-slate-500">biotech</span>
           )}
@@ -467,7 +467,7 @@ const SearchPortal: React.FC = () => {
               <h1 className="text-5xl font-black tracking-tighter mb-4 text-white">
                 PPN Research Portal
               </h1>
-              <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">Unified Clinical Registry</p>
+              <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">Search and analyze de-identified treatment protocols across the global network</p>
             </div>
           </div>
 
@@ -477,21 +477,37 @@ const SearchPortal: React.FC = () => {
             <div className="absolute -inset-2 bg-gradient-to-r from-primary/30 via-blue-500/30 to-primary/30 blur-3xl rounded-full opacity-60 group-focus-within:opacity-100 transition-opacity duration-700 -z-10"></div>
 
             <div className="relative">
-              <div className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none z-10">
-                <img src="/sparkle-icon.png" alt="" className="w-6 h-6" />
-                <span className="text-slate-600 text-lg font-bold">Search protocols, adverse events, or use the Neural Copilot...</span>
+              {/* AI Sparkle Icon (LEFT side) */}
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                <span className="material-symbols-outlined text-primary text-xl">auto_awesome</span>
               </div>
+
+              {/* Search Input */}
               <input
                 id="tour-search-node"
                 type="text"
                 value={query}
                 onChange={(e) => handleQueryChange(e.target.value)}
-                placeholder=""
-                className="w-full h-16 sm:h-24 bg-slate-950/95 border-2 border-primary/50 rounded-[2.5rem] px-16 text-lg font-bold text-white focus:ring-0 focus:border-primary transition-all backdrop-blur-2xl text-center hover:border-primary/70"
+                placeholder="Search protocols, adverse events, Ketamine + Neural Cognition..."
+                className="
+                  w-full h-16 sm:h-24 pl-12 pr-14 py-4
+                  bg-slate-900/50 border-2 border-slate-700 rounded-[2.5rem]
+                  text-white placeholder-slate-500
+                  focus:outline-none focus:border-primary/50 focus:bg-slate-900/70 focus:rounded-[2.5rem]
+                  transition-all duration-300
+                  text-lg font-bold
+                "
               />
+
+              {/* Search Button (RIGHT side) */}
+              <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary rounded-xl hover:bg-blue-600 transition-colors">
+                <span className="material-symbols-outlined text-white">search</span>
+              </button>
+
+              {/* Filter Toggle Button */}
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className={`absolute right-4 top-1/2 -translate-y-1/2 size-12 flex items-center justify-center rounded-full border transition-all z-10 ${isFilterOpen ? 'bg-primary border-primary text-white' : 'bg-[#111418] border-slate-800 text-slate-400 hover:border-slate-700'}`}
+                className={`absolute right-16 top-1/2 -translate-y-1/2 size-12 flex items-center justify-center rounded-full border transition-all z-10 ${isFilterOpen ? 'bg-primary border-primary text-white' : 'bg-[#111418] border-slate-800 text-slate-400 hover:border-slate-700'}`}
                 title="Toggle Advanced Filters"
               >
                 <span className="material-symbols-outlined text-2xl">tune</span>
@@ -519,15 +535,15 @@ const SearchPortal: React.FC = () => {
         </div>
       </section>
 
-      <div className="flex flex-1 overflow-hidden w-full relative z-10">
+      <div className="flex flex-1 overflow-hidden w-full relative z-10 max-w-[1600px] mx-auto px-6 gap-12">
 
         {/* Smart Filters Sidebar */}
         <aside className={`
           absolute inset-y-0 left-0 z-40 bg-[#05070a]/95 backdrop-blur-xl border-r border-slate-800 p-0 transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] overflow-hidden
-          lg:static lg:bg-transparent lg:border-white/5
-          ${isFilterOpen ? 'w-72 translate-x-0 shadow-2xl lg:shadow-none lg:w-72 lg:border-r' : 'w-72 -translate-x-full lg:translate-x-0 lg:w-0 lg:border-none'}
+          lg:static lg:bg-transparent lg:border-white/5 lg:sticky lg:top-24 lg:h-fit
+          ${isFilterOpen ? 'w-72 translate-x-0 shadow-2xl lg:shadow-none lg:w-80 lg:border-r' : 'w-72 -translate-x-full lg:translate-x-0 lg:w-0 lg:border-none'}
         `}>
-          <div className="h-full overflow-y-auto custom-scrollbar p-6 space-y-8 pb-20 w-72">
+          <div className="h-full overflow-y-auto custom-scrollbar p-6 space-y-8 pb-20 w-72 lg:w-80">
             <div className="flex items-center justify-between lg:hidden mb-2">
               <h3 className="text-sm font-black text-white uppercase tracking-widest">Filters</h3>
               <button onClick={() => setIsFilterOpen(false)} className="p-2 text-slate-500 hover:text-white">
@@ -582,7 +598,7 @@ const SearchPortal: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">trending_down</span> Min. Efficacy
               </label>
               <div className="flex flex-col gap-2">
@@ -590,7 +606,7 @@ const SearchPortal: React.FC = () => {
                   <button
                     key={opt}
                     onClick={() => setFilters(prev => ({ ...prev, minEfficacy: opt }))}
-                    className={`py-2.5 px-3 rounded-lg text-[9px] font-black uppercase border text-left transition-all ${filters.minEfficacy === opt
+                    className={`py-2.5 px-3 rounded-lg text-[10px] font-black uppercase border text-left transition-all ${filters.minEfficacy === opt
                       ? 'bg-primary/20 border-primary text-white shadow-lg'
                       : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:border-slate-700'
                       }`}
