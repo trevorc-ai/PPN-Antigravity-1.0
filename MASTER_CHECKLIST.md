@@ -1,6 +1,6 @@
 # ✅ MASTER CHECKLIST - PPN Research Portal
 
-**Last Updated:** 2026-02-12 00:04 PST  
+**Last Updated:** 2026-02-12 01:03 PST  
 **Updated By:** LEAD  
 **Purpose:** High-level progress tracking for all initiatives
 
@@ -50,6 +50,16 @@
 - [ ] Toast notification system (BUILDER - queued)
 - [ ] Environment variable setup (.env files)
 - [ ] Remove all alert() calls
+
+### **Phase 1: Safety Features** 🔴 IN PROGRESS
+- [ ] Add SafetyRiskMatrix to Dashboard (BUILDER - assigned)
+- [ ] Add SafetySurveillance to main navigation (BUILDER - assigned)
+- [ ] Add SafetyBenchmark to Analytics page (BUILDER - assigned)
+- [ ] Create useSafetyAlerts hook
+- [ ] Create usePractitionerProtocols hook
+- [ ] Create useSafetyBenchmark hook
+- **Timeline:** 2 days (4-6 hours)
+- **Priority:** CRITICAL - Addresses #1 practitioner pain point
 
 ---
 
