@@ -160,11 +160,11 @@
 - [x] ~~Create ARTIFACT_INDEX.md~~
 - [x] ~~Push changes to Git~~
 - [x] ~~Clarify Age/Weight/Race scope~~ (DEFERRED to post-demo)
-- [ ] **BUILDER:** Fix demo mode security
+- [x] ~~Resolve Protocol Builder duplication~~ (COMPLETE)
+- [ ] **BUILDER:** Fix demo mode security (ASSIGNED - waiting for acknowledgment)
 - [ ] **INSPECTOR:** Verify Protocol Builder Phase 1
-- [ ] **LEAD:** Resolve Protocol Builder duplication
 
-**Progress:** 4/7 (57%)
+**Progress:** 5/7 (71%)
 
 ---
 
