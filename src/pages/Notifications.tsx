@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
+import { useToast } from '../contexts/ToastContext';
 
 interface NotificationItem {
   id: string;
@@ -23,8 +24,8 @@ interface NotificationItem {
 
 const Notifications: React.FC = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [activeTab, setActiveTab] = useState<'All' | 'Unread' | 'Flagged'>('All');
-  const [showToast, setShowToast] = useState<string | null>(null);
   const [preferences, setPreferences] = useState({
     safetyAlerts: true,
     protocolAmendments: true,
@@ -102,8 +103,10 @@ const Notifications: React.FC = () => {
     if (notif.type === 'critical') {
       navigate('/audit');
     } else if (notif.type === 'protocol') {
-      setShowToast("Downloading Secure Protocol v2.4...");
-      setTimeout(() => setShowToast(null), 3000);
+      addToast({
+        type: 'info',
+        message: "Downloading Secure Protocol v2.4..."
+      });
     } else if (notif.type === 'warning') {
       navigate('/clinicians');
     } else if (notif.type === 'training') {
@@ -128,16 +131,9 @@ const Notifications: React.FC = () => {
   });
 
   return (
-    <PageContainer className="animate-in fade-in duration-500 relative">
+    <PageContainer className="!max-w-7xl animate-in fade-in duration-500 relative">
 
-      {showToast && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top-4 fade-in duration-300">
-          <div className="bg-[#0c0f14] border border-primary/40 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 backdrop-blur-xl">
-            <span className="material-symbols-outlined text-primary animate-pulse">downloading</span>
-            <span className="text-[11px] font-black tracking-tight uppercase">{showToast}</span>
-          </div>
-        </div>
-      )}
+
 
       <Section spacing="default" className="flex flex-col lg:flex-row gap-10">
 

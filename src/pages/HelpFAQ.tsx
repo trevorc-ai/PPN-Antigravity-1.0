@@ -51,20 +51,43 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
       q: "Is the PDF Dossier HIPAA compliant?",
       a: "Yes. The 'Generate PDF' engine strips all UI elements and renders a clean, white-paper clinical record suitable for external Electronic Health Records (EHR).",
       category: "Clinical Toolsets"
+    },
+    {
+      q: "Do you store patient information?",
+      a: "No. We do not store any information that can identify a patient (like names, dates of birth, addresses, or contact info). We only store anonymous data points about the treatment (like 'Male, 30-35, 160lbs, treated with 25mg Psilocybin'). Think of it like a census: we count the statistics, not the people.",
+      category: "Regulatory"
+    },
+    {
+      q: "Why can't patients log in to enter their own data?",
+      a: (
+        <span>
+          To keep the data rigorously accurate and legally safe.
+          <br /><br />
+          <strong>1. Data Quality:</strong> Data entered by trained practitioners is more consistent than self-reported data.
+          <br />
+          <strong>2. Legal Safety:</strong> By only allowing practitioners to access the system, we create a firewall. We never collect patient IP addresses or metadata.
+        </span>
+      ),
+      category: "Regulatory"
     }
   ];
 
   const filteredFaqs = useMemo(() => {
     return faqs.filter(faq => {
       const matchesCategory = selectedCategory === "All" || faq.category === selectedCategory;
-      const qText = faq.q.toLowerCase();
-      // Only search answer if it's a string to avoid complex ReactNode parsing
       const aText = typeof faq.a === 'string' ? faq.a.toLowerCase() : '';
+      const qText = faq.q.toLowerCase();
 
       const matchesSearch = qText.includes(searchQuery.toLowerCase()) || aText.includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   }, [searchQuery, selectedCategory]);
+
+  // Append new FAQs here so they render correctly
+  // Note: We are modifying the array definition above in the real file, but to keep the edit clean
+  // we will insert them into the `faqs` array definition.
+  // Converting this to a replace block that targets the array content directly.
+
 
   const handleCategoryClick = (categoryTitle: string) => {
     if (categoryTitle === "Getting Started" && onStartTour && selectedCategory === categoryTitle) {

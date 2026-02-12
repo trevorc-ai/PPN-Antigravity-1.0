@@ -4,6 +4,7 @@ import { SUBSTANCES, CLINICIANS, PATIENTS } from '../constants';
 import { GoogleGenAI } from "@google/genai";
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
+import { PatientRecord, Substance, Clinician, Outcome } from '../types';
 
 // --- TYPES & INTERFACES ---
 type SearchCategory = 'All' | 'Substances' | 'Clinicians' | 'Patients' | 'Safety';
@@ -48,7 +49,7 @@ const SectionHeader: React.FC<{ title: string; icon: string; count: number; onSe
 
 // --- RICH CARD COMPONENTS ---
 
-const PatientCard: React.FC<{ res: any; variant?: 'compact' | 'full' }> = ({ res, variant = 'full' }) => {
+const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }> = ({ res, variant = 'full' }) => {
   const navigate = useNavigate();
 
   // 1. Infer Condition from Outcome Type
@@ -59,7 +60,7 @@ const PatientCard: React.FC<{ res: any; variant?: 'compact' | 'full' }> = ({ res
   else if (outcomeType === 'CAPS-5') condition = 'PTSD';
 
   // 2. Calculate Trajectory (Delta)
-  const baseline = res.outcomes?.find((o: any) => o.interpretation.toLowerCase().includes('baseline'))?.score || 0;
+  const baseline = res.outcomes?.find((o: Outcome) => o.interpretation.toLowerCase().includes('baseline'))?.score || 0;
   const current = res.outcomes?.[res.outcomes.length - 1]?.score || 0;
   const delta = baseline - current;
   const isResponder = delta >= 5; // Clinical significance threshold
@@ -174,7 +175,7 @@ const PatientCard: React.FC<{ res: any; variant?: 'compact' | 'full' }> = ({ res
   );
 };
 
-const SubstanceCard: React.FC<{ sub: any; variant?: 'compact' | 'full' }> = ({ sub, variant = 'full' }) => {
+const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> = ({ sub, variant = 'full' }) => {
   const navigate = useNavigate();
 
   if (variant === 'compact') {
@@ -239,7 +240,7 @@ const SubstanceCard: React.FC<{ sub: any; variant?: 'compact' | 'full' }> = ({ s
   );
 };
 
-const ClinicianCard: React.FC<{ clin: any; variant?: 'compact' | 'full' }> = ({ clin, variant = 'full' }) => {
+const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }> = ({ clin, variant = 'full' }) => {
   const navigate = useNavigate();
 
   if (variant === 'compact') {
@@ -304,6 +305,13 @@ const ClinicianCard: React.FC<{ clin: any; variant?: 'compact' | 'full' }> = ({ 
 
 // --- MAIN COMPONENT ---
 
+interface GroundingChunk {
+  web?: {
+    uri: string;
+    title: string;
+  };
+}
+
 const SearchPortal: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
@@ -323,7 +331,7 @@ const SearchPortal: React.FC = () => {
 
   // AI Integration States
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
-  const [groundingChunks, setGroundingChunks] = useState<any[]>([]);
+  const [groundingChunks, setGroundingChunks] = useState<GroundingChunk[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 

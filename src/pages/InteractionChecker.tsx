@@ -2,16 +2,21 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
+import { useToast } from '../contexts/ToastContext';
 import { INTERACTION_RULES, MEDICATIONS_LIST } from '../constants';
 
 const PSYCHEDELICS = ['Psilocybin', 'MDMA', 'Ketamine', 'LSD-25', '5-MeO-DMT', 'Ibogaine', 'Mescaline'];
 
+import { supabase } from '../supabaseClient';
+
 const InteractionChecker: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [selectedPsychedelic, setSelectedPsychedelic] = useState(searchParams.get('agentA') || '');
   const [selectedMedication, setSelectedMedication] = useState(searchParams.get('agentB') || '');
-  const [toast, setToast] = useState<string | null>(null);
+  const [dbRule, setDbRule] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const agentA = searchParams.get('agentA');
@@ -20,19 +25,65 @@ const InteractionChecker: React.FC = () => {
     if (agentB) setSelectedMedication(agentB);
   }, [searchParams]);
 
+  // Fetch interaction rule from Supabase
+  useEffect(() => {
+    const fetchInteraction = async () => {
+      if (!selectedPsychedelic || !selectedMedication) {
+        setDbRule(null);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('ref_knowledge_graph')
+          .select('*')
+          .ilike('substance_name', selectedPsychedelic)
+          .ilike('interactor_name', selectedMedication)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error fetching interaction:', error);
+          // Fallback to local constant only if DB fails (optional, but omitting for now to enforce DB source)
+        }
+
+        if (data) {
+          setDbRule({
+            id: `DB-${data.interaction_id}`,
+            substance: data.substance_name,
+            interactor: data.interactor_name,
+            riskLevel: data.risk_level,
+            severity: data.severity_grade,
+            description: data.clinical_description,
+            mechanism: data.mechanism,
+            source: data.evidence_source,
+            sourceUrl: data.source_url,
+            isKnown: true
+          });
+        } else {
+          setDbRule(null);
+        }
+      } catch (err) {
+        console.error('Unexpected error:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Debounce slightly to prevent rapid firing updates
+    const timeoutId = setTimeout(() => {
+      fetchInteraction();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [selectedPsychedelic, selectedMedication]);
+
   const analysisResult = useMemo(() => {
     if (!selectedPsychedelic || !selectedMedication) return null;
+    if (isLoading) return null; // Wait for load
 
-    // Use centralized INTERACTION_RULES registry
-    const rule = INTERACTION_RULES.find(
-      r => r.substance.toLowerCase() === selectedPsychedelic.toLowerCase() && r.interactor.toLowerCase() === selectedMedication.toLowerCase()
-    );
-
-    if (rule) {
-      return {
-        ...rule,
-        isKnown: true
-      };
+    if (dbRule) {
+      return dbRule;
     }
 
     // Default "Nominal" state for undocumented nodes
@@ -48,7 +99,7 @@ const InteractionChecker: React.FC = () => {
       source: "National Library of Medicine / PubMed (2024)",
       sourceUrl: "https://pubmed.ncbi.nlm.nih.gov/"
     };
-  }, [selectedPsychedelic, selectedMedication]);
+  }, [selectedPsychedelic, selectedMedication, dbRule, isLoading]);
 
   const handleClear = () => {
     setSelectedPsychedelic('');
@@ -61,7 +112,7 @@ const InteractionChecker: React.FC = () => {
   };
 
   const handleRequestAgent = () => {
-    alert("Request logged: The clinical data team has been notified to review this missing agent for the next registry update.");
+    addToast({ title: 'Request Logged', message: 'The clinical data team has been notified to review this missing agent.', type: 'success' });
   };
 
   const getSeverityStyles = (risk: number) => {
@@ -94,16 +145,9 @@ const InteractionChecker: React.FC = () => {
   const styles = analysisResult ? getSeverityStyles(analysisResult.riskLevel) : null;
 
   return (
-    <PageContainer width="wide" className="p-4 sm:p-10 space-y-8 animate-in fade-in duration-700">
+    <PageContainer width="wide" className="!max-w-[1600px] p-4 sm:p-10 space-y-8 animate-in fade-in duration-700">
 
-      {toast && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-top-4 duration-300">
-          <div className="bg-[#0c0f14] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-primary/40 backdrop-blur-xl">
-            <span className="material-symbols-outlined text-primary animate-spin">sync</span>
-            <span className="text-[11px] font-black tracking-tight uppercase">{toast}</span>
-          </div>
-        </div>
-      )}
+      {/* Local Toast removed in favor of global context */}
 
       {/* Back Button */}
       <button

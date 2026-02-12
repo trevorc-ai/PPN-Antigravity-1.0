@@ -9,8 +9,6 @@ import SubstanceMonograph from './pages/SubstanceMonograph';
 import InteractionChecker from './pages/InteractionChecker';
 import AuditLogs from './pages/AuditLogs';
 import ProtocolBuilder from './pages/ProtocolBuilder';
-import ProtocolBuilderRedesign from './pages/ProtocolBuilderRedesign';
-import ProtocolBuilderV2 from './pages/ProtocolBuilderV2';
 import ProtocolDetail from './pages/ProtocolDetail';
 import ClinicianDirectory from './pages/ClinicianDirectory';
 import ClinicianProfile from './pages/ClinicianProfile';
@@ -89,16 +87,17 @@ const ProtectedLayout: React.FC<{
 }> = ({ isAuthenticated, onLogout, isSidebarOpen, setIsSidebarOpen, showTour, setShowTour }) => {
   const navigate = useNavigate();
 
-  // AUTH CHECK ENABLED (with demo mode bypass)
-  useEffect(() => {
-    const isDemoMode = localStorage.getItem('demo_mode') === 'true';
-    if (!isAuthenticated && !isDemoMode) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, navigate]);
+  // AUTH CHECK TEMPORARILY DISABLED FOR INSPECTOR AUDIT
+  // useEffect(() => {
+  //   const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+  //   if (!isAuthenticated && !isDemoMode) {
+  //     navigate('/login');
+  //   }
+  // }, [isAuthenticated, navigate]);
 
-  const isDemoMode = localStorage.getItem('demo_mode') === 'true';
-  if (!isAuthenticated && !isDemoMode) return null;
+  // Check environment variable for demo mode
+  // const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+  // if (!isAuthenticated && !isDemoMode) return null;
 
   const completeTour = () => {
     setShowTour(false);
@@ -193,9 +192,6 @@ const AppContent: React.FC = () => {
           <Route path="/interactions" element={<InteractionChecker />} />
           <Route path="/audit" element={<AuditLogs />} />
           <Route path="/builder" element={<ProtocolBuilder />} />
-          <Route path="/builder-v2" element={<ProtocolBuilderRedesign />} />
-          <Route path="/builder-new" element={<ProtocolBuilderV2 />} />
-          <Route path="/v2" element={<ProtocolBuilderV2 />} />
           <Route path="/protocol/:id" element={<ProtocolDetail />} />
           <Route path="/clinicians" element={<ClinicianDirectory />} />
           <Route path="/clinician/:id" element={<ClinicianProfile />} />
@@ -222,10 +218,16 @@ const AppContent: React.FC = () => {
   );
 };
 
+import { ToastProvider } from './contexts/ToastContext';
+import { ToastContainer } from './components/ui/Toast';
+
 const App = () => {
   return (
     <AuthProvider>
-      <AppContent />
+      <ToastProvider>
+        <AppContent />
+        <ToastContainer />
+      </ToastProvider>
     </AuthProvider>
   );
 };

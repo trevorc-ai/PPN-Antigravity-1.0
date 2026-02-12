@@ -69,27 +69,27 @@
 
 ### Frontend Fixes
 
-- [ ] **Fix Analytics.tsx Container**
+- [x] **Fix Analytics.tsx Container**
   **File:** `src/pages/Analytics.tsx`
   **Change:** Add `max-w-7xl` container
   **Reference:** DESIGN_SYSTEM.md line 108
 
-- [ ] **Fix ProtocolDetail.tsx Width**
+- [x] **Fix ProtocolDetail.tsx Width**
   **File:** `src/pages/ProtocolDetail.tsx`
   **Change:** Reduce from `max-w-[1800px]` to `max-w-[1600px]`
   **Reference:** DESIGN_SYSTEM.md line 113
 
-- [ ] **Fix Notifications.tsx Width**
+- [x] **Fix Notifications.tsx Width**
   **File:** `src/pages/Notifications.tsx`
   **Change:** Change from `max-w-[1400px]` to `max-w-7xl`
   **Reference:** DESIGN_SYSTEM.md line 115
 
-- [ ] **Fix InteractionChecker.tsx Width**
+- [x] **Fix InteractionChecker.tsx Width**
   **File:** `src/pages/InteractionChecker.tsx`
   **Change:** Increase from `max-w-[1200px]` to `max-w-[1600px]`
   **Reference:** DESIGN_SYSTEM.md line 114
 
-- [ ] **Fix SubstanceCatalog.tsx Container**
+- [x] **Fix SubstanceCatalog.tsx Container**
   **File:** `src/pages/SubstanceCatalog.tsx`
   **Change:** Add `max-w-7xl` container
   **Reference:** DESIGN_SYSTEM.md line 118

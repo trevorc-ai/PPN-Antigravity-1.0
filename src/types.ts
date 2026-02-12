@@ -176,3 +176,11 @@ export interface ClusterPoint {
   protocol: string;
   outcome: number;
 }
+
+// --- TOAST TYPES ---
+export interface Toast {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
+  duration?: number;
+}

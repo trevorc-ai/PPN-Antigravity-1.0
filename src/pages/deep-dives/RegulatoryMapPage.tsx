@@ -7,10 +7,10 @@ import { Section } from '../../components/layouts/Section';
 
 const RegulatoryMapPage: React.FC = () => {
     return (
-        <div className="min-h-screen bg-[#05070a] text-white flex flex-col">
+        <div className="min-h-screen bg-[#080a10] text-white flex flex-col">
 
             {/* Page Header - Keep custom wide header but constrain content */}
-            <div className="border-b border-slate-900 bg-[#0B0E14] w-full">
+            <div className="border-b border-slate-900 bg-[#0d1117] w-full">
                 <PageContainer width="wide" className="py-8 sm:py-12">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>

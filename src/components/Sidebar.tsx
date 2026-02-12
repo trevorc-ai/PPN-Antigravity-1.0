@@ -120,7 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
               </div>
             </div>
             <div className={`flex flex-col ${isOpen ? 'flex' : 'lg:hidden xl:flex'}`}>
-              <h1 className="text-white text-[14px] uppercase font-black leading-tight tracking-tight whitespace-nowrap">PPN Portal</h1>
+              <h1 className="text-white text-[14px] uppercase font-black leading-tight tracking-tight whitespace-nowrap">PPN Research Portal</h1>
               <div className="flex items-center gap-1">
                 <div className="size-1 rounded-full bg-clinical-green animate-pulse"></div>
                 <p className="text-slate-400 text-[11px] font-bold tracking-[0.2em] whitespace-nowrap">Live: 04</p>

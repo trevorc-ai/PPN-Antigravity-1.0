@@ -535,6 +535,479 @@ export const PATIENTS: PatientRecord[] = [
     ],
     consent: { verified: false, timestamp: '2023-11-01', type: 'Clinical-Only' },
     lastUpdated: '2023-11-01'
+  },
+  // NEW: Multi-session treatment timeline examples
+  {
+    id: 'TL-001',
+    siteId: 'NODE-01',
+    status: 'Active',
+    demographics: {
+      age: 38,
+      sex: 'Female',
+      race: '2106-3',
+      weight: 68,
+      patientHash: '6f9a2b3c4d5e8f1a'
+    },
+    protocol: { substance: 'Psilocybin', dosage: '25', dosageUnit: 'mg', frequency: 'Monthly', route: 'Oral', startDate: '2024-01-01' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 4,
+      integrationHours: 6,
+      modalities: ['CBT'],
+      concomitantMeds: []
+    },
+    experience: {
+      difficultyScore: 4,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2024-01-01', score: 18, type: 'PHQ-9', interpretation: 'Session 1: Moderate' },
+      { date: '2024-01-08', score: 15, type: 'PHQ-9', interpretation: 'Session 2: Moderate' },
+      { date: '2024-01-12', score: 12, type: 'PHQ-9', interpretation: 'Session 3: Moderate' },
+      { date: '2024-01-16', score: 11, type: 'PHQ-9', interpretation: 'Session 4: Mild' }
+    ],
+    consent: { verified: true, timestamp: '2023-12-28', type: 'Research-Sharing' },
+    lastUpdated: '2024-01-16'
+  },
+  {
+    id: 'TL-002',
+    siteId: 'NODE-01',
+    status: 'Active',
+    demographics: {
+      age: 42,
+      sex: 'Male',
+      race: '2054-5',
+      weight: 85,
+      patientHash: 'a1b2c3d4e5f67890'
+    },
+    protocol: { substance: 'Psilocybin', dosage: '50', dosageUnit: 'mg', frequency: 'Bi-Weekly', route: 'Oral', startDate: '2024-01-05' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '2:1',
+      musicPresence: true,
+      prepHours: 6,
+      integrationHours: 10,
+      modalities: ['Psychodynamic', 'Somatic'],
+      concomitantMeds: ['Escitalopram (Lexapro)']
+    },
+    experience: {
+      difficultyScore: 5,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [
+      {
+        id: 'AE-TL2-1',
+        date: '2024-01-19',
+        type: 'Nausea',
+        severity: 2,
+        causality: 'Related',
+        description: 'Mild nausea during onset, resolved within 30 minutes.',
+        meddraCode: 10028813
+      }
+    ],
+    outcomes: [
+      { date: '2024-01-05', score: 21, type: 'PHQ-9', interpretation: 'Session 1: Severe' },
+      { date: '2024-01-12', score: 17, type: 'PHQ-9', interpretation: 'Session 2: Moderate' },
+      { date: '2024-01-19', score: 14, type: 'PHQ-9', interpretation: 'Session 3: Moderate' },
+      { date: '2024-01-26', score: 9, type: 'PHQ-9', interpretation: 'Session 4: Mild' },
+      { date: '2024-02-02', score: 6, type: 'PHQ-9', interpretation: 'Session 5: Mild' }
+    ],
+    consent: { verified: true, timestamp: '2024-01-01', type: 'Research-Sharing' },
+    lastUpdated: '2024-02-02'
+  },
+  {
+    id: 'TL-003',
+    siteId: 'NODE-04',
+    status: 'Completed',
+    demographics: {
+      age: 29,
+      sex: 'Female',
+      race: '2106-3',
+      weight: 62,
+      patientHash: 'b2c3d4e5f6789012'
+    },
+    protocol: { substance: 'MDMA', dosage: '100', dosageUnit: 'mg', frequency: 'Monthly', route: 'Oral', startDate: '2023-09-01' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 3,
+      integrationHours: 8,
+      modalities: ['IFS', 'Somatic'],
+      concomitantMeds: []
+    },
+    experience: {
+      difficultyScore: 7,
+      resolutionStatus: 'Resolved in Session'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2023-09-01', score: 19, type: 'PHQ-9', interpretation: 'Session 1: Moderate' },
+      { date: '2023-10-01', score: 14, type: 'PHQ-9', interpretation: 'Session 2: Moderate' },
+      { date: '2023-11-01', score: 8, type: 'PHQ-9', interpretation: 'Session 3: Mild' },
+      { date: '2023-12-01', score: 4, type: 'PHQ-9', interpretation: 'Session 4: Remission' }
+    ],
+    consent: { verified: true, timestamp: '2023-08-25', type: 'Research-Sharing' },
+    lastUpdated: '2023-12-15'
+  },
+  {
+    id: 'TL-004',
+    siteId: 'NODE-07',
+    status: 'Active',
+    demographics: {
+      age: 51,
+      sex: 'Male',
+      race: '2054-5',
+      weight: 88,
+      patientHash: 'c3d4e5f678901234'
+    },
+    protocol: { substance: 'Ketamine', dosage: '0.5', dosageUnit: 'mg/kg', frequency: 'Weekly', route: 'Intravenous', startDate: '2024-01-10' },
+    context: {
+      setting: 'Clinical (Soft)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 0,
+      integrationHours: 2,
+      modalities: ['None/Sitter'],
+      concomitantMeds: ['Venlafaxine (Effexor)', 'Lorazepam (Ativan)']
+    },
+    experience: {
+      difficultyScore: 2,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2024-01-10', score: 28, type: 'MADRS', interpretation: 'Session 1: Severe' },
+      { date: '2024-01-17', score: 22, type: 'MADRS', interpretation: 'Session 2: Moderate' },
+      { date: '2024-01-24', score: 18, type: 'MADRS', interpretation: 'Session 3: Moderate' },
+      { date: '2024-01-31', score: 14, type: 'MADRS', interpretation: 'Session 4: Mild' },
+      { date: '2024-02-07', score: 12, type: 'MADRS', interpretation: 'Session 5: Mild' }
+    ],
+    consent: { verified: true, timestamp: '2024-01-05', type: 'Research-Sharing' },
+    lastUpdated: '2024-02-07'
+  },
+  // Substance switch example
+  {
+    id: 'TL-005',
+    siteId: 'NODE-01',
+    status: 'Active',
+    demographics: {
+      age: 35,
+      sex: 'Female',
+      race: '2106-3',
+      weight: 70,
+      patientHash: 'd4e5f67890123456'
+    },
+    protocol: { substance: 'MDMA', dosage: '120', dosageUnit: 'mg', frequency: 'Monthly', route: 'Oral', startDate: '2024-01-03' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 4,
+      integrationHours: 12,
+      modalities: ['IFS'],
+      concomitantMeds: []
+    },
+    experience: {
+      difficultyScore: 6,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2024-01-03', score: 20, type: 'PHQ-9', interpretation: 'Session 1 (Psilocybin 25mg): Moderate' },
+      { date: '2024-01-10', score: 16, type: 'PHQ-9', interpretation: 'Session 2 (Psilocybin 50mg): Moderate' },
+      { date: '2024-01-17', score: 13, type: 'PHQ-9', interpretation: 'Session 3 (MDMA 100mg): Moderate' },
+      { date: '2024-01-24', score: 8, type: 'PHQ-9', interpretation: 'Session 4 (MDMA 120mg): Mild' }
+    ],
+    consent: { verified: true, timestamp: '2024-01-01', type: 'Research-Sharing' },
+    lastUpdated: '2024-01-24'
+  },
+  // Dose escalation example
+  {
+    id: 'TL-006',
+    siteId: 'NODE-02',
+    status: 'Active',
+    demographics: {
+      age: 47,
+      sex: 'Male',
+      race: '2106-3',
+      weight: 92,
+      patientHash: 'e5f678901234567a'
+    },
+    protocol: { substance: 'Psilocybin', dosage: '50', dosageUnit: 'mg', frequency: 'Bi-Weekly', route: 'Oral', startDate: '2024-01-02' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '2:1',
+      musicPresence: true,
+      prepHours: 6,
+      integrationHours: 8,
+      modalities: ['CBT', 'Psychodynamic'],
+      concomitantMeds: ['Bupropion (Wellbutrin)']
+    },
+    experience: {
+      difficultyScore: 5,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2024-01-02', score: 22, type: 'PHQ-9', interpretation: 'Session 1 (15mg): Severe' },
+      { date: '2024-01-09', score: 19, type: 'PHQ-9', interpretation: 'Session 2 (25mg): Moderate' },
+      { date: '2024-01-16', score: 15, type: 'PHQ-9', interpretation: 'Session 3 (35mg): Moderate' },
+      { date: '2024-01-23', score: 11, type: 'PHQ-9', interpretation: 'Session 4 (50mg): Mild' },
+      { date: '2024-01-30', score: 7, type: 'PHQ-9', interpretation: 'Session 5 (50mg): Mild' }
+    ],
+    consent: { verified: true, timestamp: '2023-12-30', type: 'Research-Sharing' },
+    lastUpdated: '2024-01-30'
+  },
+  // High-frequency treatment
+  {
+    id: 'TL-007',
+    siteId: 'NODE-07',
+    status: 'Active',
+    demographics: {
+      age: 33,
+      sex: 'Female',
+      race: '2054-5',
+      weight: 59,
+      patientHash: 'f67890123456789b'
+    },
+    protocol: { substance: 'Ketamine', dosage: '0.5', dosageUnit: 'mg/kg', frequency: 'Twice Weekly', route: 'Intravenous', startDate: '2024-01-08' },
+    context: {
+      setting: 'Clinical (Soft)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 0,
+      integrationHours: 1,
+      modalities: ['None/Sitter'],
+      concomitantMeds: ['Duloxetine (Cymbalta)']
+    },
+    experience: {
+      difficultyScore: 1,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2024-01-08', score: 26, type: 'PHQ-9', interpretation: 'Session 1: Severe' },
+      { date: '2024-01-11', score: 23, type: 'PHQ-9', interpretation: 'Session 2: Severe' },
+      { date: '2024-01-15', score: 19, type: 'PHQ-9', interpretation: 'Session 3: Moderate' },
+      { date: '2024-01-18', score: 16, type: 'PHQ-9', interpretation: 'Session 4: Moderate' },
+      { date: '2024-01-22', score: 13, type: 'PHQ-9', interpretation: 'Session 5: Moderate' },
+      { date: '2024-01-25', score: 10, type: 'PHQ-9', interpretation: 'Session 6: Mild' },
+      { date: '2024-01-29', score: 8, type: 'PHQ-9', interpretation: 'Session 7: Mild' }
+    ],
+    consent: { verified: true, timestamp: '2024-01-05', type: 'Research-Sharing' },
+    lastUpdated: '2024-01-29'
+  },
+  // Rapid responder
+  {
+    id: 'TL-008',
+    siteId: 'NODE-04',
+    status: 'Completed',
+    demographics: {
+      age: 26,
+      sex: 'Male',
+      race: '2106-3',
+      weight: 75,
+      patientHash: 'g78901234567890c'
+    },
+    protocol: { substance: 'Psilocybin', dosage: '30', dosageUnit: 'mg', frequency: 'Single Session', route: 'Oral', startDate: '2023-12-01' },
+    context: {
+      setting: 'Retreat Center',
+      supportRatio: '1:2',
+      musicPresence: true,
+      prepHours: 8,
+      integrationHours: 16,
+      modalities: ['Psychodynamic', 'Somatic'],
+      concomitantMeds: []
+    },
+    experience: {
+      difficultyScore: 8,
+      resolutionStatus: 'Resolved in Session'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2023-12-01', score: 24, type: 'PHQ-9', interpretation: 'Session 1: Severe' },
+      { date: '2023-12-08', score: 9, type: 'PHQ-9', interpretation: 'Session 2: Mild' },
+      { date: '2023-12-15', score: 4, type: 'PHQ-9', interpretation: 'Session 3: Remission' }
+    ],
+    consent: { verified: true, timestamp: '2023-11-28', type: 'Research-Sharing' },
+    lastUpdated: '2023-12-20'
+  },
+  // Non-responder with adverse events
+  {
+    id: 'TL-009',
+    siteId: 'NODE-02',
+    status: 'Observation',
+    demographics: {
+      age: 52,
+      sex: 'Female',
+      race: '2106-3',
+      weight: 78,
+      patientHash: 'h89012345678901d'
+    },
+    protocol: { substance: 'LSD-25', dosage: '150', dosageUnit: 'ug', frequency: 'Monthly', route: 'Oral', startDate: '2023-11-15' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '2:1',
+      musicPresence: false,
+      prepHours: 6,
+      integrationHours: 10,
+      modalities: ['CBT'],
+      concomitantMeds: ['Quetiapine (Seroquel)']
+    },
+    experience: {
+      difficultyScore: 9,
+      resolutionStatus: 'Unresolved/Lingering'
+    },
+    safetyEvents: [
+      {
+        id: 'AE-TL9-1',
+        date: '2023-11-15',
+        type: 'Anxiety',
+        severity: 3,
+        causality: 'Related',
+        description: 'Severe anxiety during peak, required benzodiazepine intervention.',
+        meddraCode: 10002855
+      },
+      {
+        id: 'AE-TL9-2',
+        date: '2023-12-15',
+        type: 'Panic Attack',
+        severity: 2,
+        causality: 'Related',
+        description: 'Panic attack during onset, resolved with grounding techniques.',
+        meddraCode: 10033664
+      }
+    ],
+    outcomes: [
+      { date: '2023-11-15', score: 17, type: 'GAD-7', interpretation: 'Session 1: Severe' },
+      { date: '2023-12-15', score: 18, type: 'GAD-7', interpretation: 'Session 2: Severe' },
+      { date: '2024-01-15', score: 16, type: 'GAD-7', interpretation: 'Session 3: Severe' }
+    ],
+    consent: { verified: true, timestamp: '2023-11-10', type: 'Research-Sharing' },
+    lastUpdated: '2024-01-20'
+  },
+  // Long-term maintenance
+  {
+    id: 'TL-010',
+    siteId: 'NODE-01',
+    status: 'Active',
+    demographics: {
+      age: 44,
+      sex: 'Male',
+      race: '2054-5',
+      weight: 80,
+      patientHash: 'i90123456789012e'
+    },
+    protocol: { substance: 'Psilocybin', dosage: '25', dosageUnit: 'mg', frequency: 'Quarterly', route: 'Oral', startDate: '2023-06-01' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 4,
+      integrationHours: 6,
+      modalities: ['CBT', 'IFS'],
+      concomitantMeds: []
+    },
+    experience: {
+      difficultyScore: 3,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2023-06-01', score: 20, type: 'PHQ-9', interpretation: 'Session 1: Moderate' },
+      { date: '2023-09-01', score: 8, type: 'PHQ-9', interpretation: 'Session 2: Mild' },
+      { date: '2023-12-01', score: 5, type: 'PHQ-9', interpretation: 'Session 3: Mild' },
+      { date: '2024-03-01', score: 4, type: 'PHQ-9', interpretation: 'Session 4: Remission' }
+    ],
+    consent: { verified: true, timestamp: '2023-05-28', type: 'Research-Sharing' },
+    lastUpdated: '2024-03-05'
+  },
+  // Mixed modality with route change
+  {
+    id: 'TL-011',
+    siteId: 'NODE-07',
+    status: 'Active',
+    demographics: {
+      age: 39,
+      sex: 'Female',
+      race: '2106-3',
+      weight: 64,
+      patientHash: 'j01234567890123f'
+    },
+    protocol: { substance: 'Ketamine', dosage: '0.75', dosageUnit: 'mg/kg', frequency: 'Weekly', route: 'Intramuscular', startDate: '2024-01-05' },
+    context: {
+      setting: 'Clinical (Soft)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 1,
+      integrationHours: 3,
+      modalities: ['Somatic', 'IFS'],
+      concomitantMeds: ['Mirtazapine (Remeron)']
+    },
+    experience: {
+      difficultyScore: 4,
+      resolutionStatus: 'Resolved'
+    },
+    safetyEvents: [],
+    outcomes: [
+      { date: '2024-01-05', score: 25, type: 'PHQ-9', interpretation: 'Session 1 (IV): Severe' },
+      { date: '2024-01-12', score: 21, type: 'PHQ-9', interpretation: 'Session 2 (IV): Severe' },
+      { date: '2024-01-19', score: 17, type: 'PHQ-9', interpretation: 'Session 3 (IM): Moderate' },
+      { date: '2024-01-26', score: 13, type: 'PHQ-9', interpretation: 'Session 4 (IM): Moderate' },
+      { date: '2024-02-02', score: 9, type: 'PHQ-9', interpretation: 'Session 5 (IM): Mild' }
+    ],
+    consent: { verified: true, timestamp: '2024-01-01', type: 'Research-Sharing' },
+    lastUpdated: '2024-02-02'
+  },
+  // Combination therapy
+  {
+    id: 'TL-012',
+    siteId: 'NODE-04',
+    status: 'Active',
+    demographics: {
+      age: 31,
+      sex: 'Male',
+      race: '2106-3',
+      weight: 77,
+      patientHash: 'k12345678901234g'
+    },
+    protocol: { substance: 'MDMA', dosage: '125', dosageUnit: 'mg', frequency: 'Bi-Weekly', route: 'Oral', startDate: '2024-01-04' },
+    context: {
+      setting: 'Clinical (Medical)',
+      supportRatio: '1:1',
+      musicPresence: true,
+      prepHours: 3,
+      integrationHours: 10,
+      modalities: ['IFS', 'Somatic', 'Psychodynamic'],
+      concomitantMeds: []
+    },
+    experience: {
+      difficultyScore: 7,
+      resolutionStatus: 'Resolved in Session'
+    },
+    safetyEvents: [
+      {
+        id: 'AE-TL12-1',
+        date: '2024-01-18',
+        type: 'Tachycardia',
+        severity: 2,
+        causality: 'Related',
+        description: 'Elevated heart rate (110 bpm) during peak, monitored and resolved.',
+        meddraCode: 10043071
+      }
+    ],
+    outcomes: [
+      { date: '2024-01-04', score: 23, type: 'PHQ-9', interpretation: 'Session 1: Severe' },
+      { date: '2024-01-18', score: 18, type: 'PHQ-9', interpretation: 'Session 2: Moderate' },
+      { date: '2024-02-01', score: 12, type: 'PHQ-9', interpretation: 'Session 3: Moderate' },
+      { date: '2024-02-15', score: 7, type: 'PHQ-9', interpretation: 'Session 4: Mild' }
+    ],
+    consent: { verified: true, timestamp: '2024-01-01', type: 'Research-Sharing' },
+    lastUpdated: '2024-02-15'
   }
 ];
 

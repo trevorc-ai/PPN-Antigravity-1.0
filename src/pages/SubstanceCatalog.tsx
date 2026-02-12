@@ -113,7 +113,7 @@ const SubstanceCatalog: React.FC = () => {
   return (
     <div className="min-h-full flex flex-col lg:flex-row bg-[#080a10] animate-in fade-in duration-700">
       <div className="flex-1 overflow-y-auto custom-scrollbar">
-        <PageContainer width="wide" className="p-6 sm:p-10 lg:p-12 space-y-12">
+        <PageContainer className="!max-w-7xl p-6 sm:p-10 lg:p-12 space-y-12">
           <Section spacing="default" className="space-y-10">
             <div className="space-y-8">
               <h1 className="text-5xl font-black text-white tracking-tighter">Substances</h1>

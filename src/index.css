@@ -90,6 +90,30 @@ select:focus-visible {
   animation: twinkle 3s ease-in-out infinite;
 }
 
+@keyframes star-drift {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(15px, -10px);
+  }
+
+  50% {
+    transform: translate(-10px, 15px);
+  }
+
+  75% {
+    transform: translate(10px, 5px);
+  }
+}
+
+.animate-star-drift {
+  animation: star-drift 120s ease-in-out infinite;
+}
+
 /* Gradient Text Utilities (Accessible - WCAG AA Compliant) */
 .text-gradient-primary {
   background: linear-gradient(90deg, #2b74f3 0%, #60a5fa 100%);

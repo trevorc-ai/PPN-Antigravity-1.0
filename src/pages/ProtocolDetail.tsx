@@ -93,7 +93,7 @@ const ProtocolDetail: React.FC = () => {
       {/* Decorative Background (Hidden on Print) */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[180px] pointer-events-none print:hidden"></div>
 
-      <PageContainer width="wide" className="space-y-8 relative z-10">
+      <PageContainer width="wide" className="!max-w-[1600px] space-y-8 relative z-10">
 
         {/* NAVIGATION HEADER (Hidden on Print) */}
         <div className="flex justify-between items-center print:hidden">
@@ -415,7 +415,10 @@ const ProtocolDetail: React.FC = () => {
                 <span className="material-symbols-outlined text-3xl text-red-500 print:text-black">medical_services</span>
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-black text-white uppercase tracking-widest print:text-black">Safety Monitor</h3>
-                  <AdvancedTooltip content="Real-time monitoring of concomitant medications and adverse events.">
+                  <AdvancedTooltip
+                    content="Real-time monitoring of concomitant medications and adverse events."
+                    side="bottom"
+                  >
                     <Info className="text-slate-600 hover:text-white transition-colors cursor-help print:hidden" size={14} />
                   </AdvancedTooltip>
                 </div>

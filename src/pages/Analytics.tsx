@@ -24,7 +24,7 @@ const Analytics = () => {
     };
 
     return (
-        <PageContainer className="space-y-8 animate-in fade-in duration-700 pb-20 pt-8 print:p-0 print:space-y-4 print:bg-white">
+        <PageContainer className="!max-w-7xl space-y-8 animate-in fade-in duration-700 pb-20 pt-8 print:p-0 print:space-y-4 print:bg-white">
 
             {/* HEADER - Hide on Print (except limits) */}
             <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 print:hidden">

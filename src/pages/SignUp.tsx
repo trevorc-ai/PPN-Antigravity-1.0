@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { Lock, Mail, User, Stethoscope, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { useToast } from '../contexts/ToastContext';
 
 const SignUp = () => {
     const navigate = useNavigate();
+    const { addToast } = useToast();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +51,7 @@ const SignUp = () => {
                 navigate('/');
             } else {
                 // If no session, they probably need to confirm email.
-                alert('Registration successful! Please check your email to confirm your account.');
+                addToast({ title: 'Registration Successful', message: 'Please check your email to confirm your account.', type: 'success' });
                 navigate('/login');
             }
 

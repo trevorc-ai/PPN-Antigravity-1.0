@@ -1,10 +1,10 @@
 {
-  "name": "ppn-portal-v3.33",
+  "name": "ppn-research-portal",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3000",
     "build": "vite build",
     "preview": "vite preview"
   },

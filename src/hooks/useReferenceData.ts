@@ -9,6 +9,7 @@ export interface ReferenceData {
     smokingStatus: any[];
     severityGrades: any[];
     safetyEvents: any[];
+    resolutionStatus: any[];
     loading: boolean;
     error: any;
 }
@@ -19,6 +20,10 @@ export const useReferenceData = (): ReferenceData => {
         routes: [],
         indications: [],
         modalities: [],
+        smokingStatus: [],
+        severityGrades: [],
+        safetyEvents: [],
+        resolutionStatus: [],
         loading: true,
         error: null
     });
@@ -26,14 +31,15 @@ export const useReferenceData = (): ReferenceData => {
     useEffect(() => {
         const fetchRefs = async () => {
             try {
-                const [subRes, routeRes, indRes, modRes, smokeRes, sevRes, safeRes] = await Promise.all([
+                const [subRes, routeRes, indRes, modRes, smokeRes, sevRes, safeRes, resRes] = await Promise.all([
                     supabase.from('ref_substances').select('*').order('substance_name'),
                     supabase.from('ref_routes').select('*').order('route_name'),
                     supabase.from('ref_indications').select('*').order('indication_name'),
                     supabase.from('ref_support_modality').select('*').order('modality_name'),
                     supabase.from('ref_smoking_status').select('*').order('status_name'),
                     supabase.from('ref_severity_grade').select('*').order('grade_value'),
-                    supabase.from('ref_safety_events').select('*').order('event_name')
+                    supabase.from('ref_safety_events').select('*').order('event_name'),
+                    supabase.from('ref_resolution_status').select('*').order('status_name')
                 ]);
 
                 if (subRes.error) throw subRes.error;
@@ -52,6 +58,7 @@ export const useReferenceData = (): ReferenceData => {
                     smokingStatus: smokeRes.data || [],
                     severityGrades: sevRes.data || [],
                     safetyEvents: safeRes.data || [],
+                    resolutionStatus: resRes.data || [],
                     loading: false,
                     error: null
                 });

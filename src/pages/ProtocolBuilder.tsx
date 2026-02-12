@@ -1,12 +1,19 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Microscope, Activity, ClipboardList, PlusCircle, Search, Info, ChevronRight, AlertTriangle, Brain, Lock, ChevronDown, History, User, X, HelpCircle } from 'lucide-react';
+
+import { supabase } from '../supabaseClient';
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
+import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
+import { ButtonGroup } from '../components/forms/ButtonGroup';
+import {
+  User, Brain, Activity, Microscope, Shield, Lock, Info, AlertTriangle,
+  Search, PlusCircle, ClipboardList, ChevronRight, ChevronDown, Copy, CheckCircle,
+  HelpCircle, History, X
+} from 'lucide-react';
 import { SAMPLE_INTERVENTION_RECORDS, MEDICATIONS_LIST } from '../constants';
 import { PatientRecord } from '../types';
 import { MOCK_RISK_DATA } from '../constants/analyticsData';
-import { supabase } from '../lib/supabase';
-import { PageContainer } from '../components/layouts/PageContainer';
-import { Section } from '../components/layouts/Section';
 
 // Clinical Standardization Constants
 const WEIGHT_RANGES = Array.from({ length: 22 }, (_, i) => {
@@ -14,7 +21,7 @@ const WEIGHT_RANGES = Array.from({ length: 22 }, (_, i) => {
   const endKg = startKg + 5;
   const startLbs = Math.round(startKg * 2.20462);
   const endLbs = Math.round(endKg * 2.20462);
-  return `${startKg}-${endKg} kg (${startLbs}-${endLbs} lbs)`;
+  return `${startKg} -${endKg} kg(${startLbs} - ${endLbs} lbs)`;
 });
 
 const SUBSTANCE_OPTIONS = [
@@ -133,16 +140,26 @@ const generatePatientHash = async (inputText: string): Promise<string> => {
   return hashHex;
 };
 
-// UI COMPONENT: Contextual Tooltip
-const SimpleTooltip: React.FC<{ text: string; children: React.ReactNode }> = ({ text, children }) => (
-  <div className="relative group flex items-center">
-    {children}
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2.5 bg-[#020408] border border-slate-700 rounded-lg text-[11px] font-medium text-slate-200 z-50 shadow-2xl pointer-events-none tracking-wide leading-relaxed">
-      {text}
-      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-700"></div>
-    </div>
-  </div>
-);
+// [Removed SimpleTooltip - Replaced with AdvancedTooltip system]
+
+const PROTOCOL_TEMPLATE_OPTIONS = [
+  { value: null, label: '-- Create New Protocol --' },
+  { value: 'standard-psilocybin', label: 'Standard Psilocybin 25mg (COMPASS)' },
+  { value: 'mdma-maps', label: 'MDMA-Assisted Therapy (MAPS)' },
+  { value: 'ketamine-iv', label: 'Ketamine IV 0.5mg/kg' },
+  { value: 'esketamine-nasal', label: 'Esketamine Nasal 84mg' },
+  { value: 'custom', label: 'Custom / Site-Specific' }
+];
+
+const SESSION_NUMBER_OPTIONS = [
+  { value: 1, label: 'Session 1 (Baseline)' },
+  { value: 2, label: 'Session 2' },
+  { value: 3, label: 'Session 3' },
+  { value: 4, label: 'Session 4' },
+  { value: 5, label: 'Session 5' },
+  { value: 6, label: 'Session 6+' },
+  { value: 0, label: 'Follow-up Only (No Dosing)' }
+];
 
 // UI COMPONENT: Accordion Section with Waterfall Navigation
 const SectionAccordion: React.FC<{
@@ -159,7 +176,7 @@ const SectionAccordion: React.FC<{
   const isMouseDown = useRef(false);
 
   return (
-    <div className={`bg-slate-900/50 border ${isOpen ? 'border-slate-700' : 'border-slate-800'} rounded-2xl mb-4 overflow-hidden transition-all duration-300`}>
+    <div className={`bg - slate - 900 / 50 border ${isOpen ? 'border-slate-700' : 'border-slate-800'} rounded - 2xl mb - 4 overflow - hidden transition - all duration - 300`}>
       <button
         type="button"
         onMouseDown={() => { isMouseDown.current = true; }}
@@ -173,26 +190,26 @@ const SectionAccordion: React.FC<{
           onToggle();
           isMouseDown.current = false;
         }}
-        className={`w-full flex items-center justify-between p-4 sm:p-5 ${isOpen ? 'bg-slate-800/40' : 'bg-transparent'} hover:bg-slate-800/60 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary/50`}
+        className={`w - full flex items - center justify - between p - 4 sm: p - 5 ${isOpen ? 'bg-slate-800/40' : 'bg-transparent'} hover: bg - slate - 800 / 60 transition - colors cursor - pointer focus: outline - none focus: ring - 2 focus: ring - inset focus: ring - primary / 50`}
       >
         <div className="flex items-center gap-3">
           {tooltipText ? (
-            <SimpleTooltip text={tooltipText}>
-              <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${isOpen ? `bg-white/5 ${activeColor}` : 'bg-slate-950 text-slate-600'}`}>
+            <AdvancedTooltip content={tooltipText} tier="micro" side="top">
+              <div className={`size - 10 rounded - xl flex items - center justify - center transition - colors ${isOpen ? `bg-white/5 ${activeColor}` : 'bg-slate-950 text-slate-600'} `}>
                 <Icon size={18} />
               </div>
-            </SimpleTooltip>
+            </AdvancedTooltip>
           ) : (
-            <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${isOpen ? `bg-white/5 ${activeColor}` : 'bg-slate-950 text-slate-600'}`}>
+            <div className={`size - 10 rounded - xl flex items - center justify - center transition - colors ${isOpen ? `bg-white/5 ${activeColor}` : 'bg-slate-950 text-slate-600'} `}>
               <Icon size={18} />
             </div>
           )}
-          <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${isOpen ? 'text-white' : 'text-slate-400'}`}>{title}</h3>
+          <h3 className={`text - xs sm: text - sm font - black uppercase tracking - widest ${isOpen ? 'text-white' : 'text-slate-400'} `}>{title}</h3>
           {headerHelp}
         </div>
-        <ChevronDown className={`transition-transform duration-300 text-slate-500 ${isOpen ? 'rotate-180 text-white' : ''}`} size={18} />
+        <ChevronDown className={`transition - transform duration - 300 text - slate - 500 ${isOpen ? 'rotate-180 text-white' : ''} `} size={18} />
       </button>
-      <div className={`transition-[max-height] duration-500 ease-in-out overflow-hidden ${isOpen ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition - [max - height] duration - 500 ease -in -out overflow - hidden ${isOpen ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'} `}>
         <div className="p-4 sm:p-6 border-t border-slate-800/50 bg-black/10">
           {children}
         </div>
@@ -201,14 +218,17 @@ const SectionAccordion: React.FC<{
   );
 };
 
-// INTERFACE: Recent Subject Memory
+// INTERFACE: Recent Subject Memory (HIPAA-Compliant)
 interface RecentSubject {
-  hash: string;
-  label: string;
-  lastDate: string;
+  subject_id: string;              // System-generated ID (e.g., "PT-A7B9C2D4E5")
+  last_substance_id: number | null; // FK to ref_substances
+  last_substance_name: string | null; // Denormalized for display
+  session_count: number;           // Total sessions for this patient
+  last_session_date: string;       // ISO date of most recent session
+  created_at: string;              // First session date
 }
 
-const ProtocolBuilder: React.FC = () => {
+const ProtocolBuilderRedesign: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [protocols, setProtocols] = useState<any[]>([]);
@@ -246,14 +266,12 @@ const ProtocolBuilder: React.FC = () => {
     fetchProtocols();
   }, []);
 
+  // HIPAA Compliance: Clean up legacy localStorage with PII
   useEffect(() => {
-    const existing = localStorage.getItem('ppn_recent_subjects');
-    if (!existing) {
-      const dummyData: RecentSubject[] = [
-        { hash: 'e3b0c44298fc1c14', label: '1985-05 (42M)', lastDate: new Date().toISOString() },
-        { hash: '8f9a2b3c4d5e6f7a', label: '1992-11 (32F)', lastDate: new Date().toISOString() }
-      ];
-      localStorage.setItem('ppn_recent_subjects', JSON.stringify(dummyData));
+    const legacyKey = 'ppn_recent_subjects';
+    if (localStorage.getItem(legacyKey)) {
+      localStorage.removeItem(legacyKey);
+      console.warn('[HIPAA Cleanup] Removed legacy patient lookup data containing PII');
     }
   }, []);
 
@@ -269,43 +287,43 @@ const ProtocolBuilder: React.FC = () => {
   }, [searchQuery, protocols]);
 
   const OVERRIDE_STYLES = `
-    #protocol-builder-root input[type="text"], 
-    #protocol-builder-root input[type="number"], 
-    #protocol-builder-root select, 
-    #protocol-builder-root textarea {
-      background-color: #0f172a !important;
-      color: white !important;
-      border: 1px solid #334155 !important;
-    }
-    #protocol-builder-root input::placeholder,
-    #protocol-builder-root textarea::placeholder {
-      color: #64748b !important;
-    }
-    #protocol-builder-root input[type=range] {
-      -webkit-appearance: none; 
-      background: transparent; 
-    }
-    #protocol-builder-root input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      height: 24px;
-      width: 24px;
-      border-radius: 50%;
-      background: #2b74f3;
-      cursor: pointer;
-      margin-top: -10px;
-      box-shadow: 0 0 10px rgba(43, 116, 243, 0.5);
-    }
-    #protocol-builder-root input[type=range]::-webkit-slider-runnable-track {
-      width: 100%;
-      height: 4px;
-      cursor: pointer;
-      background: #334155;
-      border-radius: 2px;
-    }
-    #protocol-builder-root select {
-      color-scheme: dark;
-    }
-  `;
+#protocol - builder - root input[type = "text"],
+  #protocol - builder - root input[type = "number"],
+    #protocol - builder - root select,
+      #protocol - builder - root textarea {
+  background - color: #0f172a!important;
+  color: white!important;
+  border: 1px solid #334155!important;
+}
+#protocol - builder - root input:: placeholder,
+  #protocol - builder - root textarea::placeholder {
+  color: #64748b!important;
+}
+#protocol - builder - root input[type = range] {
+  -webkit - appearance: none;
+  background: transparent;
+}
+#protocol - builder - root input[type = range]:: -webkit - slider - thumb {
+  -webkit - appearance: none;
+  height: 24px;
+  width: 24px;
+  border - radius: 50 %;
+  background: #2b74f3;
+  cursor: pointer;
+  margin - top: -10px;
+  box - shadow: 0 0 10px rgba(43, 116, 243, 0.5);
+}
+#protocol - builder - root input[type = range]:: -webkit - slider - runnable - track {
+  width: 100 %;
+  height: 4px;
+  cursor: pointer;
+  background: #334155;
+  border - radius: 2px;
+}
+#protocol - builder - root select {
+  color - scheme: dark;
+}
+`;
 
   return (
     <PageContainer width="wide" className="min-h-full py-6 sm:py-10 pb-24 animate-in fade-in duration-700">
@@ -368,14 +386,14 @@ const ProtocolBuilder: React.FC = () => {
                           </td>
                           <td className="px-8 py-6">
                             <div className="flex items-center gap-2">
-                              <div className={`size-1.5 rounded-full ${p.status === 'Completed' ? 'bg-clinical-green' : p.status === 'Active' ? 'bg-primary' : 'bg-slate-500'}`}></div>
-                              <span className={`text-[11px] font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>{p.status}</span>
+                              <div className={`size - 1.5 rounded - full ${p.status === 'Completed' ? 'bg-clinical-green' : p.status === 'Active' ? 'bg-primary' : 'bg-slate-500'} `}></div>
+                              <span className={`text - [11px] font - black uppercase tracking - widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'} `}>{p.status}</span>
                             </div>
                           </td>
                           <td className="px-8 py-6 text-sm font-mono text-slate-400">{p.protocol.dosage} {p.protocol.dosageUnit}</td>
                           <td className="px-8 py-6 text-right">
                             <button
-                              onClick={() => navigate(`/protocol/${p.id}`)}
+                              onClick={() => navigate(`/ protocol / ${p.id} `)}
                               className="text-[11px] font-black text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
                             >
                               Open Protocol
@@ -448,13 +466,28 @@ const ProtocolBuilder: React.FC = () => {
 
 const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState<string>('demographics');
+  const [activeSection, setActiveSection] = useState<string>('demographics'); // Auto-open first accordion
   const openSection = (section: string) => setActiveSection(section);
   const [recentSubjects, setRecentSubjects] = useState<RecentSubject[]>([]);
   const [showRecentDropdown, setShowRecentDropdown] = useState(false);
   const [tempMed, setTempMed] = useState('');
 
   const [formData, setFormData] = useState({
+    // DB-Driven Fields (IDs)
+    substance_id: null as number | null,
+    route_id: null as number | null,
+    smoking_status_id: null as number | null,
+    resolution_status_id: null as number | null,
+    severity_grade_id: null as number | null,
+    safety_event_id: null as number | null,
+    indication_id: null as number | null,
+    modality_id: null as number | null,
+    protocol_template_id: null as string | null,
+    session_number: 1,
+    session_date: new Date().toISOString().split('T')[0],
+    concomitant_med_ids: [] as number[],
+
+    // Legacy / Transformation Fields (to be deprecated or mapped)
     subjectId: '',
     patientInput: '',
     patientHash: '',
@@ -462,11 +495,11 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     sex: '',
     race: '',
     weightRange: WEIGHT_RANGES[6],
-    smokingStatus: '',
-    substance: SUBSTANCE_OPTIONS[0],
+    smokingStatus: '', // keep for now, will map to ID
+    substance: SUBSTANCE_OPTIONS[0], // keep for now
     dosage: '25',
     dosageUnit: 'mg',
-    route: ROUTE_OPTIONS[0],
+    route: ROUTE_OPTIONS[0], // keep for now
     frequency: FREQUENCY_OPTIONS[0],
     hasSafetyEvent: false,
     severity: 1,
@@ -482,15 +515,84 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     resolutionStatus: RESOLUTION_OPTIONS[0]
   });
 
+  // --- REFERENCE DATA STATE ---
+  const [refSubstances, setRefSubstances] = useState<any[]>([]);
+  const [refRoutes, setRefRoutes] = useState<any[]>([]);
+  const [refModalities, setRefModalities] = useState<any[]>([]);
+  const [refSmokingStatus, setRefSmokingStatus] = useState<any[]>([]);
+  const [refSeverity, setRefSeverity] = useState<any[]>([]);
+  const [refSafetyEvents, setRefSafetyEvents] = useState<any[]>([]);
+  const [refResolution, setRefResolution] = useState<any[]>([]);
+  const [refIndications, setRefIndications] = useState<any[]>([]);
+  const [refMedications, setRefMedications] = useState<any[]>([]);
+  const [medSearchQuery, setMedSearchQuery] = useState('');
+
+  // --- FETCH REFERENCE DATA ---
+  useEffect(() => {
+    const fetchRefs = async () => {
+      // Parallel fetch for speed
+      const [
+        { data: sub },
+        { data: rou },
+        { data: mod },
+        { data: smo },
+        { data: sev },
+        { data: saf },
+        { data: res },
+        { data: ind },
+        { data: med }
+      ] = await Promise.all([
+        supabase.from('ref_substances').select('*').eq('is_active', true).order('substance_name'),
+        supabase.from('ref_routes').select('*').eq('is_active', true).order('route_name'),
+        supabase.from('ref_support_modality').select('*').eq('is_active', true).order('modality_name'),
+        supabase.from('ref_smoking_status').select('*').eq('is_active', true).order('status_name'),
+        supabase.from('ref_severity_grade').select('*').eq('is_active', true).order('grade_value'),
+        supabase.from('ref_safety_events').select('*').eq('is_active', true).order('event_name'),
+        supabase.from('ref_resolution_status').select('*').eq('is_active', true).order('status_name'),
+        supabase.from('ref_indications').select('*').eq('is_active', true).order('indication_name'),
+        supabase.from('ref_medications').select('*').eq('is_active', true).order('medication_name')
+      ]);
+
+      if (sub) setRefSubstances(sub);
+      if (rou) setRefRoutes(rou);
+      if (mod) setRefModalities(mod);
+      if (smo) setRefSmokingStatus(smo);
+      if (sev) setRefSeverity(sev);
+      if (saf) setRefSafetyEvents(saf);
+      if (res) setRefResolution(res);
+      if (ind) setRefIndications(ind);
+      if (med) setRefMedications(med);
+    };
+
+    if (isOpen) {
+      fetchRefs();
+    }
+  }, [isOpen]);
+
+  // --- HELPER: Format Relative Time ---
+  const formatRelativeTime = (isoDate: string): string => {
+    const now = new Date();
+    const then = new Date(isoDate);
+    const diffMs = now.getTime() - then.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`;
+    return `${Math.floor(diffDays / 365)} years ago`;
+  };
+
   // --- DATA FILTERING: Recent Subjects ---
   const filteredRecents = useMemo(() => {
-    if (!formData.patientInput) return recentSubjects;
-    const input = formData.patientInput.toLowerCase();
+    if (!formData.subjectId) return recentSubjects;
+    const input = formData.subjectId.toLowerCase();
     return recentSubjects.filter(s =>
-      s.label.toLowerCase().includes(input) ||
-      s.hash.toLowerCase().includes(input)
+      s.subject_id.toLowerCase().includes(input) ||
+      (s.last_substance_name?.toLowerCase() || '').includes(input)
     );
-  }, [recentSubjects, formData.patientInput]);
+  }, [recentSubjects, formData.subjectId]);
 
   // --- SAFETY LOGIC ENGINE ---
   const riskWarnings = useMemo(() => {
@@ -557,47 +659,101 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
       const generateSegment = () => {
         const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let result = '';
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 10; i++) {
           result += charset.charAt(Math.floor(Math.random() * charset.length));
         }
         return result;
       };
-      const generatedId = `PT-${generateSegment()}-${generateSegment()}`;
+      const generatedId = `PT - ${generateSegment()} `;
       setFormData(prev => ({ ...prev, subjectId: generatedId, patientInput: '', patientHash: '' }));
-      const saved = localStorage.getItem('ppn_recent_subjects');
-      if (saved) {
-        setRecentSubjects(JSON.parse(saved));
+
+      // Fetch recent patients from database (HIPAA-compliant)
+      const fetchRecentPatients = async () => {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+
+          // Query log_clinical_records for recent unique patients
+          const { data, error } = await supabase
+            .from('log_clinical_records')
+            .select('patient_link_code, substance_id, session_number, session_date, created_at')
+            .eq('practitioner_id', user.id)
+            .order('session_date', { ascending: false })
+            .limit(50); // Fetch more to deduplicate
+
+          if (error) throw error;
+
+          if (data) {
+            // Deduplicate by patient_link_code and get most recent session for each
+            const patientMap = new Map<string, any>();
+            data.forEach(record => {
+              const existing = patientMap.get(record.patient_link_code);
+              if (!existing || new Date(record.session_date) > new Date(existing.session_date)) {
+                patientMap.set(record.patient_link_code, record);
+              }
+            });
+
+            // Count sessions per patient
+            const sessionCounts = new Map<string, number>();
+            data.forEach(record => {
+              sessionCounts.set(record.patient_link_code, (sessionCounts.get(record.patient_link_code) || 0) + 1);
+            });
+
+            // Build RecentSubject array
+            const recentPatients: RecentSubject[] = Array.from(patientMap.values())
+              .slice(0, 10)
+              .map(record => {
+                const substanceName = refSubstances.find(s => s.substance_id === record.substance_id)?.substance_name || null;
+                return {
+                  subject_id: record.patient_link_code,
+                  last_substance_id: record.substance_id,
+                  last_substance_name: substanceName,
+                  session_count: sessionCounts.get(record.patient_link_code) || 1,
+                  last_session_date: record.session_date,
+                  created_at: record.created_at
+                };
+              });
+
+            setRecentSubjects(recentPatients);
+          }
+        } catch (err) {
+          console.error('[Patient Lookup] Failed to fetch recent patients:', err);
+          // Fail silently - user can still enter ID manually
+        }
+      };
+
+      // Only fetch if we have substance data loaded
+      if (refSubstances.length > 0) {
+        fetchRecentPatients();
       }
     }
-  }, [isOpen]);
+  }, [isOpen, refSubstances]);
 
   const handleIdentityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (/^[0-9-]*$/.test(val) && val.length <= 7) {
-      setFormData(prev => ({ ...prev, patientInput: val }));
-    }
-  };
-
-  const handleIdentityBlur = async () => {
-    setTimeout(() => setShowRecentDropdown(false), 200);
-    if (formData.patientInput.trim().length > 0) {
-      const hash = await generatePatientHash(formData.patientInput);
-      setFormData(prev => ({
-        ...prev,
-        patientHash: hash,
-        subjectId: `PT-${hash.substring(0, 8).toUpperCase()}`
-      }));
+    const val = e.target.value.toUpperCase();
+    if (/^[A-Z0-9-]*$/.test(val) && val.length <= 15) {
+      setFormData(prev => ({ ...prev, subjectId: val }));
     }
   };
 
   const handleRecentSelect = (subject: RecentSubject) => {
     setFormData(prev => ({
       ...prev,
-      patientInput: subject.label.split(' ')[0],
-      patientHash: subject.hash,
-      subjectId: `PT-${subject.hash.substring(0, 8).toUpperCase()}`
+      subjectId: subject.subject_id,
+      substance_id: subject.last_substance_id, // Pre-fill last substance
+      session_number: subject.session_count + 1, // Auto-increment session
+      patientInput: '' // Clear legacy field
     }));
     setShowRecentDropdown(false);
+  };
+
+  const [copiedId, setCopiedId] = useState(false);
+  const handleCopyId = () => {
+    if (formData.subjectId) {
+      navigator.clipboard.writeText(formData.subjectId);
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2000);
+    }
   };
 
   const toggleSection = (section: string) => {
@@ -605,19 +761,72 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
   };
 
   const isFormValid = useMemo(() => {
-    return (
-      formData.subjectAge.trim() !== '' &&
-      formData.sex !== '' &&
-      formData.race !== '' &&
-      formData.weightRange !== '' &&
-      formData.smokingStatus !== '' &&
-      formData.substance !== '' &&
-      formData.dosage.trim() !== '' &&
-      formData.frequency !== '' &&
-      formData.route !== '' &&
-      formData.consentVerified === true
-    );
+    // 1. Demographics
+    if (!formData.subjectId || !formData.subjectAge || !formData.sex || !formData.race || !formData.weightRange) return false;
+    if (!formData.indication_id) return false;
+
+    // 2. Protocol
+    if (!formData.substance_id || !formData.route_id || !formData.session_number) return false;
+    if (!formData.dosage || isNaN(parseFloat(formData.dosage))) return false;
+
+    // 3. Outcomes & Context
+    if (!formData.session_date) return false;
+    if (!formData.prepHours || !formData.integrationHours) return false;
+    if (!formData.setting) return false;
+    if (!formData.modality_id) return false;
+    if (!formData.resolution_status_id) return false;
+
+    // 4. Safety Logic & Consent
+    if (formData.hasSafetyEvent) {
+      if (!formData.severity_grade_id || !formData.safety_event_id) return false;
+    }
+    if (!formData.consentVerified) return false;
+
+    return true;
   }, [formData]);
+
+  // Progress indicator helper
+  const getCompletionStatus = () => {
+    const requiredFields = [
+      formData.subjectId,
+      formData.sex,
+      formData.smoking_status_id, // Added for progress
+      formData.race, // Added for progress
+      formData.weightRange, // Added for progress
+      formData.indication_id, // Added for progress
+      formData.substance_id,
+      formData.route_id,
+      formData.dosage,
+      formData.session_number,
+      formData.session_date, // Added for progress
+      formData.prepHours, // Added for progress
+      formData.integrationHours, // Added for progress
+      formData.setting, // Added for progress
+      formData.modality_id, // Added for progress
+      formData.resolution_status_id, // Added for progress
+      formData.consentVerified
+    ];
+
+    let completedCount = 0;
+    requiredFields.forEach(field => {
+      if (field !== null && field !== undefined && field !== '' && (Array.isArray(field) ? field.length > 0 : true)) {
+        completedCount++;
+      }
+    });
+
+    // Handle conditional fields
+    if (formData.hasSafetyEvent) {
+      if (formData.severity_grade_id) completedCount++;
+      if (formData.safety_event_id) completedCount++;
+    } else {
+      // If no safety event, these aren't required, so don't count them as incomplete
+      completedCount += 2; // Add back the potential missing count for safety fields
+    }
+
+    const totalFields = requiredFields.length + (formData.hasSafetyEvent ? 0 : 2); // Adjust total if safety fields are not required
+
+    return `${completedCount} of ${totalFields} required fields complete`;
+  };
 
   const handleModalityChange = (mod: string) => {
     setFormData(prev => ({
@@ -651,101 +860,173 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   // --- SUPABASE INTEGRATION ---
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
     setIsSubmitting(true);
 
     try {
-      // Get authenticated user
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        alert('You must be logged in to save protocols');
+        alert('Authentication Error: You must be logged in to save protocols.');
         setIsSubmitting(false);
         return;
       }
 
-      // Prepare protocol payload for new table structure
-      const protocolPayload = {
-        user_id: user.id,
-        name: `${formData.substance} Protocol - ${formData.patientInput || 'New'}`,
-        substance: formData.substance,
-        indication: formData.indication || null,
-        status: 'active',
-        dosing_schedule: {
-          dosage: formData.dosage,
-          dosageUnit: formData.dosageUnit,
+      // Fetch User Site Context (MVP Assumption: User belongs to 1 context site)
+      const { data: userSite } = await supabase
+        .from('user_sites')
+        .select('site_id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .single();
+
+      // Construct Payload for log_clinical_records (Schema-Aligned)
+      const payload = {
+        // Core Identity
+        practitioner_id: user.id,
+        site_id: userSite?.site_id || null,
+        patient_link_code: formData.subjectId,  // FIX: was patient_id
+
+        // Session Info
+        session_type: 'Dosing Session',  // ADD: required field
+        session_number: formData.session_number,
+        session_date: formData.session_date,
+        protocol_template_id: formData.protocol_template_id,
+        protocol_id: null,  // ADD: leave null for MVP
+
+        // Substance & Route
+        substance_id: formData.substance_id,
+        route_id: formData.route_id,
+        dosage_amount: parseFloat(formData.dosage),  // FIX: rename from dosage
+
+        // Patient Demographics (top-level, not in notes)
+        patient_age: formData.subjectAge,
+        patient_sex: formData.sex,
+        patient_weight_range: formData.weightRange,
+        patient_smoking_status_id: formData.smoking_status_id,  // FIX: rename
+
+        // Outcomes
+        indication_id: formData.indication_id,
+        baseline_phq9_score: formData.phq9Score,  // ADD: use same value for MVP
+        psychological_difficulty_score: formData.difficultyScore,  // FIX: rename
+        outcome_measure: 'PHQ-9',  // ADD: default value
+        outcome_score: formData.phq9Score,  // ADD: same as baseline for MVP
+
+        // Support
+        support_modality_ids: formData.concomitant_med_ids, // This was modalities, but the schema expects IDs. Assuming concomitant_med_ids is the correct mapping for now.
+        concomitant_meds: formData.concomitantMeds,  // FIX: use text field, not array
+
+        // Safety
+        safety_event_id: formData.hasSafetyEvent ? formData.safety_event_id : null,
+        severity_grade_id: formData.hasSafetyEvent ? formData.severity_grade_id : null,
+        resolution_status_id: formData.resolution_status_id,
+        safety_event_category: null,  // ADD: leave null for MVP
+        clinical_phenotype: null,  // ADD: leave null for MVP
+        severity_rating: formData.hasSafetyEvent ? formData.severity : null,  // Legacy field
+
+        // Legacy/Extra (keep in notes for fields not in schema)
+        notes: {
+          race: formData.race,
+          dosage_unit: formData.dosageUnit,
           frequency: formData.frequency,
-          route: formData.route
-        },
-        safety_criteria: formData.hasSafetyEvent ? {
-          event: formData.safetyEventDescription,
-          severity: formData.severity,
-          resolution: formData.resolution
-        } : null,
-        outcome_measures: {
-          phq9: formData.phq9Score,
-          difficulty: formData.difficultyScore
-        },
-        notes: JSON.stringify({
-          demographics: {
-            age: formData.subjectAge,
-            sex: formData.sex,
-            weight: formData.weightRange,
-            race: formData.race,
-            smoking: formData.smokingStatus
-          },
-          context: {
-            setting: formData.setting,
-            prepHours: formData.prepHours,
-            integrationHours: formData.integrationHours,
-            modalities: formData.modalities,
-            concomitantMeds: formData.concomitantMeds
-          },
-          consent: {
-            verified: formData.consentVerified,
-            timestamp: new Date().toISOString()
-          }
-        })
+          prep_hours: parseFloat(formData.prepHours),
+          integration_hours: parseFloat(formData.integrationHours),
+          setting: formData.setting,
+          verified_consent: formData.consentVerified,
+          app_version: '2.4-redesign'
+        }
       };
 
-      // Insert into Supabase
-      const { data: newProtocol, error } = await supabase
-        .from('protocols')
-        .insert([protocolPayload])
-        .select()
-        .single();
+      // Insert into Log Table
+      const { error } = await supabase
+        .from('log_clinical_records')
+        .insert([payload]);
 
       if (error) throw error;
 
-      // Update local state for recent subjects
-      if (formData.patientHash) {
+      // Update local state for recent patients (HIPAA-compliant - no PII)
+      if (formData.subjectId && formData.substance_id) {
+        const substanceName = refSubstances.find(s => s.substance_id === formData.substance_id)?.substance_name || null;
         const newSubject: RecentSubject = {
-          hash: formData.patientHash,
-          label: `${formData.patientInput || 'YYYY-MM'} (${formData.subjectAge}${formData.sex.charAt(0)})`,
-          lastDate: new Date().toISOString()
+          subject_id: formData.subjectId,
+          last_substance_id: formData.substance_id,
+          last_substance_name: substanceName,
+          session_count: formData.session_number,
+          last_session_date: formData.session_date,
+          created_at: new Date().toISOString()
         };
-        const updated = [newSubject, ...recentSubjects.filter(s => s.hash !== newSubject.hash)].slice(0, 5);
-        localStorage.setItem('ppn_recent_subjects', JSON.stringify(updated));
+        const updated = [newSubject, ...recentSubjects.filter(s => s.subject_id !== newSubject.subject_id)].slice(0, 10);
+        setRecentSubjects(updated);
+        // Note: Not storing in localStorage anymore - will fetch from database
       }
 
-      // Success feedback
-      alert(`Protocol saved successfully! ID: ${newProtocol.id}`);
-      onClose();
-
-      // Refresh the protocols list
-      window.location.reload();
+      setSubmissionSuccess(true);
 
     } catch (err) {
       console.error("Protocol Submission Error:", err);
-      alert("Failed to save protocol to secure database. Please try again.");
+      alert("Failed to save record to Clinical Log. Please check your connection or permissions.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const cleanForm = () => {
+    // Reset logic if needed
+    window.location.reload();
+  };
+
   if (!isOpen) return null;
+
+  if (submissionSuccess) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="w-full max-w-lg bg-[#0f172a] border border-emerald-500/30 rounded-3xl shadow-2xl overflow-hidden ring-4 ring-emerald-500/10">
+          <div className="p-8 text-center space-y-6">
+            <div className="mx-auto size-20 ease-out-back bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 ring-1 ring-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+              <CheckCircle size={40} className="text-emerald-400" />
+            </div>
+
+            <div className="space-y-2">
+              <h2 className="text-2xl font-black text-white tracking-tight">Protocol Recorded</h2>
+              <p className="text-sm font-medium text-slate-400">Data secured in PPN Registry (Hypothesis Node 1)</p>
+            </div>
+
+            <div className="bg-slate-900 rounded-xl p-4 border border-slate-800 flex flex-col items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Subject Identifier</span>
+              <div className="flex items-center gap-3 text-xl font-mono font-bold text-white tracking-wider">
+                {formData.subjectId}
+                <button onClick={handleCopyId} className="text-slate-500 hover:text-white transition-colors">
+                  {copiedId ? <CheckCircle size={18} className="text-emerald-500" /> : <Copy size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                const note = `PPN CLINICAL RECORD\n-------------------\nSubject: ${formData.subjectId} \nDate: ${new Date().toLocaleDateString()} \n\nProtocol: ${formData.substance} (${formData.dosage}${formData.dosageUnit}) \nRoute: ${formData.route} \nStrategy: ${formData.frequency} \n\nOutcomes: \n - PHQ - 9: ${formData.phq9Score} \n - Difficulty: ${formData.difficultyScore}/10\n- Safety: ${formData.hasSafetyEvent ? `Adverse Event (Grade ${formData.severity})` : 'Clear'}\n\nVerified by: Clinician ID ${formData.user_id || 'Self'}`;
+                navigator.clipboard.writeText(note);
+                alert("Clinical note copied to clipboard!");
+              }}
+              className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all border border-slate-700"
+            >
+              <ClipboardList size={18} />
+              Copy Clinical Note for EMR
+            </button >
+
+            <button
+              onClick={cleanForm}
+              className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95"
+            >
+              Return to Dashboard
+            </button>
+          </div >
+        </div >
+      </div >
+    );
+  }
 
   const fieldLabelClass = "text-slate-500 text-xs tracking-widest font-black block ml-1 mb-1.5";
   const standardInputClass = "w-full rounded-xl px-4 h-12 sm:h-14 text-base font-bold transition-all focus:outline-none";
@@ -757,7 +1038,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         <div className="p-6 sm:p-8 border-b border-slate-800 flex justify-between items-center bg-slate-900/20 shrink-0">
           <div className="flex items-center gap-6">
             <div>
-              <h1 className="text-2xl font-black text-white tracking-tight">Create New Protocol</h1>
+              <div className="flex items-center justify-between mb-1">
+                <h1 className="text-2xl font-black text-white tracking-tight">Create New Protocol</h1>
+                <span className="text-sm text-slate-400 ml-4">
+                  {getCompletionStatus()}
+                </span>
+              </div>
               <p className="text-xs font-bold text-slate-500 tracking-widest mt-1">Clinical Protocol Registry v2.4</p>
             </div>
             {formData.subjectId && (
@@ -771,7 +1057,7 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
             )}
           </div>
           <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-xl transition-colors text-slate-500">
-            <span className="material-symbols-outlined text-lg font-black">close</span>
+            <X size={20} />
           </button>
         </div>
 
@@ -846,53 +1132,72 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="md:col-span-2 space-y-2 pb-4 border-b border-slate-800/50 relative z-20">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <label className="text-slate-500 text-xs tracking-widest font-black block ml-1">Subject Birth Reference (YYYY-MM)</label>
-                    <SimpleTooltip text="Enter Birth Year and Month to generate a unique cohort ID without using names.">
-                      <HelpCircle size={12} className="text-slate-600 hover:text-primary cursor-help transition-colors" />
-                    </SimpleTooltip>
+                    <label className="text-slate-500 text-xs tracking-widest font-black block ml-1">Subject ID (New or Existing)</label>
+                    <AdvancedTooltip
+                      tier="standard"
+                      title="Subject Lookup"
+                      content="Type a previous Subject ID to link this protocol to an existing patient history. Or use the auto-generated ID for a new patient."
+                    >
+                      <History size={12} className="text-slate-600 hover:text-primary cursor-help transition-colors" />
+                    </AdvancedTooltip>
                   </div>
                   <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+                      <User size={16} />
+                    </div>
                     <input
                       type="text"
-                      placeholder="e.g. 1985-05"
-                      value={formData.patientInput}
+                      value={formData.subjectId}
                       onChange={handleIdentityChange}
                       onFocus={() => setShowRecentDropdown(true)}
-                      onBlur={handleIdentityBlur}
-                      className={`${standardInputClass} border-indigo-500/30 focus:border-indigo-500/60 bg-indigo-900/10 font-mono tracking-wider`}
+                      onBlur={() => setTimeout(() => setShowRecentDropdown(false), 200)}
+                      className={`${standardInputClass} pl-12 pr-12 border-indigo-500/30 focus:border-indigo-500/60 bg-indigo-900/10 font-mono tracking-wider text-indigo-200`}
                     />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
+                      <AdvancedTooltip tier="micro" content={copiedId ? "Copied!" : "Copy ID to Clipboard"}>
+                        <button
+                          onClick={handleCopyId}
+                          className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                        >
+                          {copiedId ? <CheckCircle size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                        </button>
+                      </AdvancedTooltip>
+                    </div>
+
                     {showRecentDropdown && filteredRecents.length > 0 && (
                       <div className="absolute top-full left-0 w-full mt-2 bg-[#0f172a] border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
                         <div className="px-4 py-2 bg-slate-900/50 border-b border-slate-800 text-[11px] font-black text-slate-500 tracking-widest flex items-center gap-2">
-                          <History size={10} /> Recent Matches
+                          <History size={10} /> Recent Patients (Last 10)
                         </div>
                         {filteredRecents.map((subject, idx) => (
                           <button
                             key={idx}
                             onMouseDown={() => handleRecentSelect(subject)}
-                            className="w-full text-left px-4 py-3 hover:bg-white/5 flex items-center justify-between group transition-colors"
+                            className="w-full text-left px-4 py-3 hover:bg-white/5 transition-colors border-b border-slate-800/30 last:border-0"
                           >
-                            <span className="text-sm font-bold text-slate-300 group-hover:text-white">{subject.label}</span>
-                            <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">{subject.hash.substring(0, 6)}...</span>
+                            <div className="flex flex-col gap-1">
+                              <span className="text-sm font-mono font-bold text-white">
+                                {subject.subject_id}
+                              </span>
+                              <span className="text-xs text-slate-400 font-medium">
+                                {subject.last_substance_name || 'Unknown'} • Session {subject.session_count} • Last seen {formatRelativeTime(subject.last_session_date)}
+                              </span>
+                            </div>
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
-                  {formData.patientHash ? (
-                    <div className="flex items-center gap-2 mt-2 animate-in fade-in slide-in-from-top-1">
-                      <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded text-[9px] font-black uppercase tracking-widest flex items-center gap-1">
-                        <Lock size={10} /> Privacy Active
-                      </span>
-                      <span className="text-[10px] font-mono text-slate-500">Anonymized ID: {formData.patientHash.substring(0, 8).toUpperCase()}</span>
-                    </div>
-                  ) : (
-                    <p className="text-[9px] text-slate-500 font-medium">This data is hashed locally. PPN never sees the patient's name.</p>
-                  )}
+                  <p className="text-[10px] text-slate-500 font-medium mt-2">Format: PT-XXXXXXXXXX. IDs are anonymous.</p>
                 </div>
 
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Age</label>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Age</label>
+                    <AdvancedTooltip tier="micro" content="Patient age at time of session">
+                      <Info size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
                   <select
                     value={formData.subjectAge}
                     onChange={e => setFormData({ ...formData, subjectAge: e.target.value })}
@@ -906,31 +1211,49 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                 </div>
 
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Biological Sex</label>
-                  <select
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Biological Sex</label>
+                    <AdvancedTooltip tier="micro" content="Sex assigned at birth for biological tracking">
+                      <Info size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
+                  <ButtonGroup
+                    options={[
+                      { value: 'Male', label: 'Male' },
+                      { value: 'Female', label: 'Female' },
+                      { value: 'Intersex', label: 'Intersex' },
+                      { value: 'Unknown', label: 'Unknown' }
+                    ]}
                     value={formData.sex}
-                    onChange={e => setFormData({ ...formData, sex: e.target.value })}
-                    className={standardInputClass}
-                  >
-                    <option value="" disabled className="text-slate-600">Select Sex...</option>
-                    {SEX_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                    onChange={(value) => setFormData({ ...formData, sex: value })}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Smoking Status</label>
-                  <select
-                    value={formData.smokingStatus}
-                    onChange={e => setFormData({ ...formData, smokingStatus: e.target.value })}
-                    className={standardInputClass}
-                  >
-                    <option value="" disabled className="text-slate-600">Select Status...</option>
-                    {SMOKING_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Smoking Status</label>
+                    <AdvancedTooltip tier="micro" content="Smoking affects drug metabolism rates">
+                      <HelpCircle size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
+                  <ButtonGroup
+                    options={refSmokingStatus.map(opt => ({
+                      value: opt.smoking_status_id.toString(),
+                      label: opt.status_name
+                    }))}
+                    value={formData.smoking_status_id?.toString() || ''}
+                    onChange={(value) => setFormData({ ...formData, smoking_status_id: parseInt(value) })}
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Race / Ethnicity</label>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Race / Ethnicity</label>
+                    <AdvancedTooltip tier="micro" content="For analyzing demographic response variances">
+                      <Info size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
                   <select
                     value={formData.race}
                     onChange={e => setFormData({ ...formData, race: e.target.value })}
@@ -942,7 +1265,31 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                 </div>
 
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Weight Range</label>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Primary Indication</label>
+                    <AdvancedTooltip tier="micro" content="Condition being treated">
+                      <HelpCircle size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
+                  <select
+                    value={formData.indication_id || ''}
+                    onChange={e => setFormData({ ...formData, indication_id: parseInt(e.target.value) })}
+                    className={standardInputClass}
+                  >
+                    <option value="" disabled className="text-slate-600">Select Indication...</option>
+                    {refIndications.map(ind => (
+                      <option key={ind.indication_id} value={ind.indication_id}>{ind.indication_name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Weight Range</label>
+                    <AdvancedTooltip tier="standard" type="clinical" title="Dosage Safety" content="Weight is critical for calculating safe medicine amounts. Please select the accurate range.">
+                      <AlertTriangle size={10} className="text-slate-600 hover:text-amber-500 transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
                   <select
                     value={formData.weightRange}
                     onChange={e => setFormData({ ...formData, weightRange: e.target.value })}
@@ -990,7 +1337,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
             >
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Setting</label>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Setting</label>
+                    <AdvancedTooltip tier="standard" content="The environment (Set & Setting) significantly impacts the patient's experience and safety.">
+                      <Info size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
                   <select
                     value={formData.setting}
                     onChange={e => setFormData({ ...formData, setting: e.target.value })}
@@ -1002,7 +1354,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className={fieldLabelClass}>Prep Hours</label>
+                    <div className="flex items-center gap-2">
+                      <label className={fieldLabelClass}>Prep Hours</label>
+                      <AdvancedTooltip tier="micro" content="Hours spent preparing before session">
+                        <History size={10} className="text-slate-600 hover:text-white transition-colors" />
+                      </AdvancedTooltip>
+                    </div>
                     <input
                       type="number"
                       min="0" max="20"
@@ -1012,7 +1369,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className={fieldLabelClass}>Integration Hours</label>
+                    <div className="flex items-center gap-2">
+                      <label className={fieldLabelClass}>Integration Hours</label>
+                      <AdvancedTooltip tier="micro" content="Hours planned for post-session therapy">
+                        <History size={10} className="text-slate-600 hover:text-white transition-colors" />
+                      </AdvancedTooltip>
+                    </div>
                     <input
                       type="number"
                       min="0" max="50"
@@ -1026,75 +1388,68 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <label className={fieldLabelClass}>Support Modality</label>
-                    <SimpleTooltip text="Select all therapeutic modalities present during the dosing session.">
+                    <AdvancedTooltip tier="standard" title="Therapy Style" content="Select the therapy methods used to support the patient, like CBT (Talk Therapy) or Somatic (Body Focus).">
                       <Info size={14} className="text-slate-500 hover:text-primary cursor-help transition-colors mb-1.5" />
-                    </SimpleTooltip>
+                    </AdvancedTooltip>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {MODALITY_OPTIONS.map(mod => (
-                      <label key={mod} className={`flex items-center justify-center gap-2 p-3 rounded-xl border cursor-pointer transition-all ${formData.modalities[mod]
-                        ? 'bg-primary/20 border-primary text-white shadow-[0_0_10px_rgba(43,116,243,0.2)]'
-                        : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-600'
-                        }`}>
-                        <input
-                          type="checkbox"
-                          className="hidden"
-                          checked={!!formData.modalities[mod]}
-                          onChange={() => handleModalityChange(mod)}
-                        />
-                        <div className={`size-4 rounded border flex items-center justify-center transition-colors ${formData.modalities[mod] ? 'bg-primary border-primary' : 'border-slate-600'
-                          }`}>
-                          {formData.modalities[mod] && <span className="material-symbols-outlined text-[10px] text-white font-black">check</span>}
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-wider">{mod}</span>
-                      </label>
-                    ))}
-                  </div>
+                  <select
+                    value={formData.modality_id || ''}
+                    onChange={e => setFormData({ ...formData, modality_id: parseInt(e.target.value) })}
+                    className={standardInputClass}
+                  >
+                    <option value="" disabled className="text-slate-600">Select Support Modality...</option>
+                    {refModalities.map(mod => <option key={mod.modality_id} value={mod.modality_id}>{mod.modality_name}</option>)}
+                  </select>
                 </div>
 
                 <div className="space-y-3 pt-6 border-t border-slate-800/50">
                   <label className={fieldLabelClass}>Concomitant Medications</label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <select
-                        value={tempMed}
-                        onChange={(e) => setTempMed(e.target.value)}
-                        className={standardInputClass}
-                      >
-                        <option value="">Select Medication...</option>
-                        {MEDICATIONS_LIST.map(m => (
-                          <option key={m} value={m}>{m}</option>
-                        ))}
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                        <ChevronDown size={16} />
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleAddMed}
-                      disabled={!tempMed}
-                      className="px-4 bg-slate-800 hover:bg-primary hover:text-white text-slate-400 border border-slate-700 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <PlusCircle size={20} />
-                    </button>
+                  <input
+                    type="text"
+                    placeholder="Search medications..."
+                    value={medSearchQuery}
+                    onChange={e => setMedSearchQuery(e.target.value)}
+                    className={`${standardInputClass} mb-2`}
+                  />
+
+                  <div className="max-h-48 overflow-y-auto custom-scrollbar border border-slate-800 rounded-xl p-3 space-y-2 bg-slate-950/30">
+                    {refMedications
+                      .filter(m => m.medication_name.toLowerCase().includes(medSearchQuery.toLowerCase()))
+                      .map(med => (
+                        <label key={med.medication_id} className="flex items-center gap-2 cursor-pointer hover:bg-slate-800/30 p-2 rounded-lg transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={formData.concomitant_med_ids.includes(med.medication_id)}
+                            onChange={() => {
+                              const ids = formData.concomitant_med_ids;
+                              const exists = ids.includes(med.medication_id);
+                              const newIds = exists ? ids.filter(id => id !== med.medication_id) : [...ids, med.medication_id];
+
+                              // Sync legacy string for Risk Checker
+                              const newNames = refMedications
+                                .filter(m => newIds.includes(m.medication_id))
+                                .map(m => m.medication_name)
+                                .join(', ');
+
+                              setFormData({
+                                ...formData,
+                                concomitant_med_ids: newIds,
+                                concomitantMeds: newNames
+                              });
+                            }}
+                            className="rounded border-slate-600 text-primary focus:ring-primary/20 bg-slate-900"
+                          />
+                          <span className="text-xs text-slate-300 font-medium">{med.medication_name}</span>
+                        </label>
+                      ))}
+                    {refMedications.length === 0 && (
+                      <p className="text-xs text-slate-500 italic p-2">Loading medications...</p>
+                    )}
                   </div>
 
-                  <div className="flex flex-wrap gap-2 min-h-[40px] p-2 bg-slate-950/50 border border-slate-800/50 rounded-xl">
-                    {formData.concomitantMeds.split(',').map(s => s.trim()).filter(s => s).length === 0 && (
-                      <span className="text-[10px] text-slate-600 italic p-1">No medications added.</span>
-                    )}
-                    {formData.concomitantMeds.split(',').map(s => s.trim()).filter(s => s).map((med, idx) => (
-                      <div key={idx} className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg group hover:border-red-500/50 transition-colors">
-                        <span className="text-[10px] font-bold text-slate-300">{med}</span>
-                        <button
-                          onClick={() => handleRemoveMed(med)}
-                          className="text-slate-500 hover:text-red-400 transition-colors"
-                        >
-                          <X size={12} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  <p className="text-[10px] text-slate-500">
+                    {formData.concomitant_med_ids.length} medication(s) selected
+                  </p>
 
                   {riskWarnings.length > 0 && (
                     <div className="mt-4 space-y-3 animate-in fade-in slide-in-from-top-2">
@@ -1124,62 +1479,89 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
               onToggle={() => toggleSection('protocol')}
               onFocus={() => openSection('protocol')}
               headerHelp={
-                <div className="group relative ml-2" onClick={(e) => e.stopPropagation()}>
-                  {/* Contextual Help: Protocol Parameters (Paragraph Format) */}
-                  <Info
-                    size={20}
-                    className="text-slate-500 hover:text-primary transition-colors cursor-help"
-                    strokeWidth={2}
-                  />
-                  {/* Tooltip Container - Top-Down - WIDENED to 480px */}
-                  <div className="absolute left-0 top-full mt-3 w-[480px] bg-slate-900 border border-slate-600 p-5 rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-
-                    {/* Decorative Arrow (Pointing UP) */}
-                    <div className="absolute top-[-6px] left-4 w-3 h-3 bg-slate-900 border-t border-l border-slate-600 rotate-45"></div>
-
-                    <div className="flex items-center gap-2 mb-3">
-                      <Microscope size={16} className="text-primary" />
-                      <h5 className="text-sm font-black text-white uppercase tracking-widest">Clinical Regimen</h5>
+                <AdvancedTooltip
+                  tier="guide"
+                  title="Clinical Regimen Guide"
+                  type="science"
+                  width="w-[420px]"
+                  content={
+                    <div className="space-y-3">
+                      <p><strong className="text-white">Substance:</strong> Choose the main active medicine (like Psilocybin). This links to our chemical safety database.</p>
+                      <p><strong className="text-white">Dosage:</strong> Enter the exact amount. <span className="text-amber-400">⚠️ Warning:</span> The system alerts you if the dose exceeds safe limits.</p>
+                      <p><strong className="text-white">Route:</strong> How does the medicine enter the body? This changes how fast it works.</p>
                     </div>
-
-                    <div className="space-y-3 text-sm text-slate-300 font-medium leading-relaxed text-left">
-                      <p>
-                        <span className="text-white font-bold">Substance:</span> Identify the primary active agent (e.g., Psilocybin). This links to our Substance Catalog for monograph data.
-                      </p>
-                      <p>
-                        <span className="text-white font-bold">Dosage:</span> Enter the precise amount. This triggers our automated High-Dose Guardrails to prevent dosing errors.
-                      </p>
-                      <p>
-                        <span className="text-white font-bold">Route:</span> Specify the administration pathway (e.g., Oral) for accurate bioavailability tracking.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                  }
+                >
+                  <Info size={20} className="text-slate-500 hover:text-primary transition-colors cursor-help" />
+                </AdvancedTooltip>
               }
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                <div className="space-y-2">
-                  <label className={fieldLabelClass}>Substance Compound</label>
+                <div className="sm:col-span-2 space-y-2 border-b border-slate-800/50 pb-4 mb-2">
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Protocol Template (Optional)</label>
+                    <AdvancedTooltip tier="micro" content="Pre-fill based on standard protocols">
+                      <Info size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
                   <select
-                    value={formData.substance}
-                    onChange={e => setFormData({ ...formData, substance: e.target.value })}
+                    value={formData.protocol_template_id || ''}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setFormData({ ...formData, protocol_template_id: val || null });
+                    }}
                     className={standardInputClass}
                   >
-                    {SUBSTANCE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                    {PROTOCOL_TEMPLATE_OPTIONS.map(opt => (
+                      <option key={opt.value || 'new'} value={opt.value || ''}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Substance Compound</label>
+                    <AdvancedTooltip tier="standard" type="science" title="Active Agent" content="Select the primary active molecule. This links to our pharmacological interaction database.">
+                      <Microscope size={10} className="text-slate-600 hover:text-purple-400 transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
+                  <select
+                    value={formData.substance_id || ''}
+                    onChange={e => {
+                      const id = parseInt(e.target.value);
+                      const label = refSubstances.find(s => s.substance_id === id)?.substance_name || '';
+                      setFormData({ ...formData, substance_id: id, substance: label });
+                    }}
+                    className={standardInputClass}
+                  >
+                    <option value="" disabled>Select Substance...</option>
+                    {refSubstances.map(s => <option key={s.substance_id} value={s.substance_id}>{s.substance_name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Administration Route</label>
-                  <select
-                    value={formData.route}
-                    onChange={e => setFormData({ ...formData, route: e.target.value })}
-                    className={standardInputClass}
-                  >
-                    {ROUTE_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Administration Route</label>
+                    <AdvancedTooltip tier="micro" content="Delivery method affects onset and duration">
+                      <Activity size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
+                  <ButtonGroup
+                    options={refRoutes.map(r => ({
+                      value: r.route_id.toString(),
+                      label: r.route_name
+                    }))}
+                    value={formData.route_id?.toString() || ''}
+                    onChange={(value) => setFormData({ ...formData, route_id: parseInt(value) })}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Standardized Dosage</label>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Standardized Dosage</label>
+                    <AdvancedTooltip tier="standard" type="critical" title="Check Dosage" content="Ensure dose is within safe clinical limits. High doses trigger a safety alert.">
+                      <Shield size={10} className="text-slate-600 hover:text-red-400 transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
                   <div className="flex gap-3 items-end">
                     <input
                       type="text"
@@ -1224,7 +1606,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                   </div>
                 )}
                 <div className="space-y-2">
-                  <label className={fieldLabelClass}>Frequency</label>
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Frequency</label>
+                    <AdvancedTooltip tier="micro" content="How often is this protocol administered?">
+                      <History size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
                   <select
                     value={formData.frequency}
                     onChange={e => setFormData({ ...formData, frequency: e.target.value })}
@@ -1232,6 +1619,23 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                   >
                     {FREQUENCY_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                   </select>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <label className={fieldLabelClass}>Session Number</label>
+                    <AdvancedTooltip tier="micro" content="Track progression">
+                      <History size={10} className="text-slate-600 hover:text-white transition-colors" />
+                    </AdvancedTooltip>
+                  </div>
+                  <ButtonGroup
+                    options={SESSION_NUMBER_OPTIONS.map(opt => ({
+                      value: opt.value.toString(),
+                      label: opt.label
+                    }))}
+                    value={formData.session_number.toString()}
+                    onChange={(value) => setFormData({ ...formData, session_number: parseInt(value) })}
+                    required
+                  />
                 </div>
               </div>
             </SectionAccordion>
@@ -1243,37 +1647,46 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
               onToggle={() => toggleSection('outcomes')}
               onFocus={() => openSection('outcomes')}
               headerHelp={
-                <div className="group relative ml-2" onClick={(e) => e.stopPropagation()}>
-                  <Info
-                    size={20}
-                    className="text-slate-500 hover:text-primary transition-colors cursor-help"
-                    strokeWidth={2}
-                  />
-                  <div className="absolute left-0 top-full mt-3 w-80 bg-slate-900 border border-slate-600 p-5 rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
-                    <div className="absolute top-[-6px] right-6 w-3 h-3 bg-slate-900 border-t border-l border-slate-600 rotate-45"></div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <ClipboardList size={16} className="text-primary" />
-                      <h5 className="text-sm font-black text-white uppercase tracking-widest">Outcomes & Compliance</h5>
+                <AdvancedTooltip
+                  tier="guide"
+                  title="Outcomes & Safety"
+                  type="critical"
+                  content={
+                    <div className="space-y-3">
+                      <p><strong className="text-white">Did it work?</strong> Use standard scales (like PHQ-9) to measure if the patient got better.</p>
+                      <p><strong className="text-white">Was it safe?</strong> <span className="text-red-400">Critical:</span> You must report any bad side effects immediately.</p>
+                      <p><strong className="text-white">Consent:</strong> Ensure you have signed permission forms on file.</p>
                     </div>
-                    <div className="space-y-3 text-sm text-slate-300 font-medium leading-relaxed text-left">
-                      <p>
-                        <span className="text-white font-bold">Baseline:</span> Select validated instruments (like GAD-7) to measure clinical progress.
-                      </p>
-                      <p>
-                        <span className="text-white font-bold">Adverse Events:</span> Log any negative reactions immediately to trigger the pharmacovigilance network.
-                      </p>
-                      <p>
-                        <span className="text-white font-bold">Consent:</span> You must verify that a signed Informed Consent form is on file before submission.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                  }
+                >
+                  <Info size={20} className="text-slate-500 hover:text-primary transition-colors cursor-help" />
+                </AdvancedTooltip>
               }
             >
               <div className="space-y-8">
                 <div className="space-y-4">
+                  <div className="space-y-2 pb-4 border-b border-slate-800/50">
+                    <div className="flex items-center gap-2">
+                      <label className={fieldLabelClass}>Session Date</label>
+                      <AdvancedTooltip tier="micro" content="Date of clinical encounter">
+                        <History size={10} className="text-slate-600 hover:text-white transition-colors" />
+                      </AdvancedTooltip>
+                    </div>
+                    <input
+                      type="date"
+                      value={formData.session_date}
+                      onChange={e => setFormData({ ...formData, session_date: e.target.value })}
+                      className={standardInputClass}
+                    />
+                  </div>
+
                   <div className="flex justify-between items-end">
-                    <label className={fieldLabelClass}>Psychological Difficulty</label>
+                    <div className="flex items-center gap-2">
+                      <label className={fieldLabelClass}>Psychological Difficulty</label>
+                      <AdvancedTooltip tier="standard" title="Subjective Distress" content="Rate how challenging the experience was for the patient (1=Blissful, 10=Extreme Distress).">
+                        <Brain size={10} className="text-slate-600 hover:text-white transition-colors" />
+                      </AdvancedTooltip>
+                    </div>
                     <span className="text-sm font-black text-white bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
                       {formData.difficultyScore}/10
                     </span>
@@ -1287,7 +1700,7 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                       onChange={e => setFormData({ ...formData, difficultyScore: parseInt(e.target.value) })}
                       className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
                     />
-                    <div className="flex justify-between text-[9px] font-black text-slate-500 uppercase tracking-widest mt-3">
+                    <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest mt-3">
                       <span>1 = Bliss</span>
                       <span>5 = Neutral</span>
                       <span>10 = Extreme Distress</span>
@@ -1297,7 +1710,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className={fieldLabelClass}>Baseline PHQ-9 Score</label>
+                    <div className="flex items-center gap-2">
+                      <label className={fieldLabelClass}>Baseline PHQ-9 Score</label>
+                      <AdvancedTooltip tier="standard" title="Depression Scale" content="Patient Health Questionnaire 9. Measures depression severity (0-27).">
+                        <Activity size={10} className="text-slate-600 hover:text-white transition-colors" />
+                      </AdvancedTooltip>
+                    </div>
                     <select
                       value={formData.phq9Score}
                       onChange={e => setFormData({ ...formData, phq9Score: parseInt(e.target.value) })}
@@ -1307,55 +1725,63 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className={fieldLabelClass}>Resolution Status</label>
+                    <div className="flex items-center gap-2">
+                      <label className={fieldLabelClass}>Resolution Status</label>
+                      <AdvancedTooltip tier="micro" content="Did the patient achieve closure?">
+                        <CheckCircle size={10} className="text-slate-600 hover:text-white transition-colors" />
+                      </AdvancedTooltip>
+                    </div>
                     <select
-                      value={formData.resolutionStatus}
-                      onChange={e => setFormData({ ...formData, resolutionStatus: e.target.value })}
+                      value={formData.resolution_status_id || ''}
+                      onChange={e => setFormData({ ...formData, resolution_status_id: parseInt(e.target.value) })}
                       className={standardInputClass}
                     >
-                      {RESOLUTION_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      <option value="" disabled>Select Status...</option>
+                      {refResolution.map(opt => <option key={opt.resolution_status_id} value={opt.resolution_status_id}>{opt.status_name}</option>)}
                     </select>
                   </div>
                 </div>
 
-                <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-6 shadow-inner">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <AlertTriangle className="text-accent-amber" size={18} />
-                      <h3 className="text-sm font-black text-white uppercase tracking-widest">Adverse Events</h3>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={formData.hasSafetyEvent}
-                        onChange={e => setFormData({ ...formData, hasSafetyEvent: e.target.checked })}
-                      />
-                      <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-amber shadow-sm"></div>
-                    </label>
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <AlertTriangle className="text-accent-amber" size={18} />
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest">Adverse Events</h3>
+                    <AdvancedTooltip tier="standard" type="warning" title="Safety Report" content="Turn this ON if there were any bad side effects, physical problems, or safety scares.">
+                      <Info size={14} className="text-slate-500 hover:text-amber-500 transition-colors" />
+                    </AdvancedTooltip>
                   </div>
+                  <ButtonGroup
+                    label=""
+                    options={[
+                      { value: 'no', label: 'No' },
+                      { value: 'yes', label: 'Yes' }
+                    ]}
+                    value={formData.hasSafetyEvent ? 'yes' : 'no'}
+                    onChange={(value) => setFormData({ ...formData, hasSafetyEvent: value === 'yes' })}
+                  />
 
                   {formData.hasSafetyEvent && (
                     <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
                       <div className="space-y-2">
                         <label className={fieldLabelClass}>Severity (CTCAE Grade)</label>
                         <select
-                          value={formData.severity}
-                          onChange={e => setFormData({ ...formData, severity: parseInt(e.target.value) })}
+                          value={formData.severity_grade_id || ''}
+                          onChange={e => setFormData({ ...formData, severity_grade_id: parseInt(e.target.value) })}
                           className={standardInputClass}
                         >
-                          {SEVERITY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                          <option value="" disabled>Select Grade...</option>
+                          {refSeverity.map(opt => <option key={opt.severity_grade_id} value={opt.severity_grade_id}>{opt.grade_label}</option>)}
                         </select>
                       </div>
                       <div className="space-y-2">
                         <label className="text-red-400 text-[10px] uppercase tracking-widest font-black block ml-1 mb-1.5">Primary Clinical Observation</label>
                         <select
-                          value={formData.safetyEventDescription}
-                          onChange={e => setFormData({ ...formData, safetyEventDescription: e.target.value })}
+                          value={formData.safety_event_id || ''}
+                          onChange={e => setFormData({ ...formData, safety_event_id: parseInt(e.target.value) })}
                           className={`${standardInputClass} safety-field`}
                         >
                           <option value="" disabled className="text-slate-600">Select Observation...</option>
-                          {SAFETY_EVENT_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                          {refSafetyEvents.map(opt => <option key={opt.safety_event_id} value={opt.safety_event_id}>{opt.event_name}</option>)}
                         </select>
                       </div>
                     </div>
@@ -1369,6 +1795,9 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         <div className="p-6 sm:p-8 border-t border-slate-800 bg-slate-950 space-y-6 shrink-0">
           <div className="px-2">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wide flex items-center gap-3 cursor-pointer group">
+              <AdvancedTooltip tier="critical" title="Legal Requirement" content="You must verify that a signed Informed Consent form is on file. Data cannot be submitted without this.">
+                <Shield size={16} className="text-slate-600 group-hover:text-primary transition-colors" />
+              </AdvancedTooltip>
               <input
                 type="checkbox"
                 checked={formData.consentVerified}
@@ -1404,4 +1833,4 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
   );
 };
 
-export default ProtocolBuilder;
+export default ProtocolBuilderRedesign;

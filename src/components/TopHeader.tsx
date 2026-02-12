@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
+import { useToast } from '../contexts/ToastContext';
 
 interface TopHeaderProps {
   onMenuClick: () => void;
@@ -44,6 +45,7 @@ const NavIconButton: React.FC<{
 const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTour, isAuthenticated = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { addToast } = useToast();
   const [latency, setLatency] = useState(14);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -105,10 +107,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
   return (
     <header className="h-20 border-b border-white/5 bg-[#0a0c12] sticky top-0 z-40 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto h-full px-6 sm:px-10 flex items-center justify-between">
-        {/* Spacer to push everything right */}
-        <div className="flex-1"></div>
-
+      <div className="h-full px-6 sm:px-10 pr-6 sm:pr-10 flex items-center justify-end ml-auto max-w-7xl">
         <div className="flex items-center gap-8">
           {/* Portal Title & Local Nav */}
           <div className="flex items-center gap-4 shrink-0">
@@ -169,7 +168,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     icon="search"
                     label="Search"
                     tooltip="Search Registry"
-                    onClick={() => alert('Coming Soon!')}
+                    onClick={() => addToast({ title: 'Feature Pending', message: 'Global registry search coming in v2.0', type: 'info' })}
                   />
                 </div>
                 <div id="tour-notifications" className="contents">
@@ -177,7 +176,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     icon="notifications"
                     label="Alerts"
                     tooltip="Notifications"
-                    onClick={() => alert('Coming Soon!')}
+                    onClick={() => addToast({ title: 'No New Alerts', message: 'You are all caught up.', type: 'success' })}
                   />
                 </div>
                 <div id="tour-help-node" className="contents">
@@ -185,7 +184,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     icon="help"
                     label="Help"
                     tooltip="Help & Support"
-                    onClick={() => alert('Contact support@ppn.network')}
+                    onClick={() => addToast({ title: 'Support Contacted', message: 'Ticket #492 created. Check email.', type: 'success' })}
                   />
                 </div>
                 <NavIconButton
