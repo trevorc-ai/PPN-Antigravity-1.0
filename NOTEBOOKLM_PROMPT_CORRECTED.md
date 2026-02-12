@@ -81,18 +81,57 @@ CRITICAL BRANDING REQUIREMENTS:
     - "App" (it's a web application, not mobile app)
     - "Software" (too generic)
 
+11. USE CASES (Always reference these):
+    
+    Use Case 1: "Prove You're Not Reckless"
+    - For: Entheogenic religion operators (psilocybin ceremonies)
+    - Problem: "Law enforcement thinks we're unlicensed therapy. How do I prove we're operating safely?"
+    - Solution: SafetyRiskMatrix, SafetySurveillance, SafetyBenchmark
+    - ROI: Documentation saved DEA petition, prevented shutdown
+    - Timeline: 1 month to activation
+    
+    Use Case 2: "Reduce Malpractice Exposure"
+    - For: Licensed ketamine clinics
+    - Problem: "What's my malpractice exposure if something goes wrong?"
+    - Solution: SafetyBenchmark (proof of standard-of-care), SafetySurveillance (early warning)
+    - ROI: $50K saved in legal fees, 10% insurance premium reduction
+    - Timeline: 3 months to retention
+    
+    Use Case 3: "Get Reimbursement Approved"
+    - For: Ketamine clinics seeking insurance coverage
+    - Problem: "How do I prove to payers that ketamine therapy is safe and effective?"
+    - Solution: Network benchmarking data, safety analytics, outcome tracking
+    - ROI: $120K/year revenue increase (20 patients × $500/session × 12 sessions)
+    - Timeline: 6 months to advocacy
+    
+    Use Case 4: "Scale Without Quality Collapse"
+    - For: Multi-site operators
+    - Problem: "How do I ensure consistent quality across 3 sites?"
+    - Solution: Multi-site dashboards, protocol templates, performance benchmarking
+    - ROI: Prevented major incident at Denver site, maintained 95% safety score
+    - Timeline: 6 months to multi-site success
+    
+    Use Case 5: "Comply With State Regulations"
+    - For: Oregon/Colorado psilocybin programs
+    - Problem: "How do I generate quarterly compliance reports for the state?"
+    - Solution: Automated compliance dashboard, one-click report generation
+    - ROI: 15 hours/month saved (vs. manual spreadsheet tracking)
+    - Timeline: 3 months to retention
+
 When generating content, always:
 - Use correct name: "PPN Research Portal"
 - Use correct colors: Indigo (#6366f1), Cyan (#06b6d4), Purple (#8b5cf6)
 - Use correct fonts: Inter for all text
 - Use correct tone: Professional, evidence-based, practitioner-focused
 - Use correct messaging: No PHI, Network Benchmarking, Evidence-Based
+- Reference specific use cases (not generic "better documentation")
 
 If you're unsure about any branding element, default to:
 - Name: "PPN Research Portal"
 - Color: Indigo (#6366f1)
 - Font: Inter
 - Tone: Professional and scientific
+- Use Case: "Prove You're Not Reckless" (most compelling)
 ```
 
 ---
@@ -247,8 +286,15 @@ Focus on:
 1. Problem: Practitioners need safety tools and benchmarking
 2. Solution: PPN enables network benchmarking without PHI
 3. Competitive advantage: Osmind can't do benchmarking (PHI blocks it)
-4. Use cases: Prove safety, reduce malpractice, get reimbursement
+4. Use cases: 
+   - "Prove You're Not Reckless" (entheogenic operators)
+   - "Reduce Malpractice Exposure" (ketamine clinics)
+   - "Get Reimbursement Approved" (insurance coverage)
 5. Pricing: Free Interaction Checker, paid tiers for benchmarking
+6. ROI Examples:
+   - $50K saved in legal fees
+   - $120K/year revenue increase from reimbursement
+   - 15 hours/month saved on compliance reporting
 
 Avoid:
 - Hype language ("revolutionary," "game-changing")
@@ -313,21 +359,106 @@ Use EXECUTIVE_PITCH_DECK.md as the source of truth for all content.
 
 Slide structure:
 1. Title: "PPN Research Portal: The Clinical Intelligence Platform for Psychedelic Therapy"
-2. Problem: Practitioners need safety tools and benchmarking
-3. Solution: No PHI architecture enables network benchmarking
-4. Competitive Advantage: Osmind can't do benchmarking (PHI blocks it)
-5. Use Cases: Prove safety, reduce malpractice, get reimbursement
-6. Pricing: Free tools, paid tiers for benchmarking
-7. Traction: 14 sites, 10,247 protocols, 0 HIPAA breaches
-8. Ask: Beta partners, advisors, pilot programs
+   Visual: 3D psilocybin molecule (indigo/cyan glow) on dark navy background
 
-Visual style:
+2. Problem: Practitioners need safety tools and benchmarking
+   Visual: Split-screen showing "Current State" (spreadsheets, manual tracking) vs. "Desired State" (automated, benchmarked)
+
+3. Solution: No PHI architecture enables network benchmarking
+   Visual: Architecture diagram showing "Site A, B, C → Aggregated Data → Network Benchmarks" (no patient identifiers)
+
+4. Competitive Advantage: Osmind can't do benchmarking (PHI blocks it)
+   Visual: Comparison table:
+   | Feature | PPN | Osmind |
+   |---------|-----|--------|
+   | Network Benchmarking | ✅ | ❌ (PHI blocks) |
+   | No Seizure Risk | ✅ | ❌ (PHI = liability) |
+   | Free Tier | ✅ | ❌ |
+
+5. Use Case 1: "Prove You're Not Reckless"
+   Visual: Before/After comparison
+   - Before: ❌ No documentation, ❌ Reactive response, ❌ No proof of standards
+   - After: ✅ Audit-ready docs, ✅ Proactive risk assessment, ✅ 62nd percentile proof
+   ROI: Documentation saved DEA petition
+
+6. Use Case 2: "Reduce Malpractice Exposure"
+   Visual: Safety Score Gauge (speedometer style)
+   - Practitioner: 92/100 (62nd percentile)
+   - Network Average: 85/100
+   - Zones: Red (0-25), Yellow (25-50), Blue (50-75), Green (75-100)
+   ROI: $50K saved in legal fees, 10% insurance reduction
+
+7. Use Case 3: "Get Reimbursement Approved"
+   Visual: Revenue Impact Chart (bar chart)
+   - Before PPN: $0 insurance reimbursement
+   - After PPN: $120K/year (20 patients × $500/session × 12 sessions)
+   ROI: $120K/year revenue increase
+
+8. Pricing: Free tools, paid tiers for benchmarking
+   Visual: Pricing comparison table (4 columns: Free, Solo, Clinic, Network)
+   - Free: Interaction Checker, Self-Reporting
+   - Solo ($49/month): + Network Benchmarking, Analytics, Export
+   - Clinic ($149/month): + 5 Users, Templates, Compliance
+   - Network ($499/month): + Unlimited Users, API, White-Label
+
+9. Traction: 14 sites, 10,247 protocols, 0 HIPAA breaches
+   Visual: Growth chart (line chart)
+   - X-axis: Months (Jan, Feb, Mar, ...)
+   - Y-axis: Protocols logged
+   - Line: Exponential growth from 0 to 10,247
+
+10. Network Effect: More sites = better benchmarks = more value
+    Visual: Flywheel diagram
+    - More Sites → More Data → Better Benchmarks → More Value → More Sites
+
+11. Safety Performance Dashboard
+    Visual: Screenshot of Dashboard showing:
+    - Safety Score: 92/100 (62nd percentile)
+    - Adverse Event Rate: 2.3% (vs. 3.1% network avg)
+    - Time Saved: 12 hours this month
+
+12. Interaction Checker (Free Tool)
+    Visual: Screenshot of Interaction Checker showing:
+    - Input: Psilocybin + SSRI
+    - Output: 🔴 Red Alert - "High risk of serotonin syndrome"
+    - Evidence: PubMed citations
+
+13. Roadmap: Mobile-first, MEQ30, 3D molecules
+    Visual: Timeline (Q1, Q2, Q3, Q4)
+    - Q1: Mobile PWA, Push notifications
+    - Q2: MEQ30 integration, Outcome tracking
+    - Q3: 3D molecule viewer, Receptor binding
+    - Q4: API access, White-label
+
+14. Ask: Beta partners, advisors, pilot programs
+    Visual: Three columns:
+    - Beta Partners: 5 sites (Oregon, Colorado, ketamine clinics)
+    - Advisors: Clinical leaders, legal experts
+    - Pilot Programs: State psilocybin programs
+
+15. Contact: Trevor Calton, Founder
+    Visual: Contact info + QR code to demo
+
+Visual style (ALL SLIDES):
 - Background: Dark navy (#0f172a)
 - Primary color: Indigo (#6366f1)
+- Secondary color: Cyan (#06b6d4)
+- Accent color: Purple (#8b5cf6)
 - Font: Inter (all text)
-- Charts: Simple, clean, data-focused
+- Charts: Simple, clean, data-focused (not cluttered)
+- Icons: Minimal, line-style (not filled)
+- Spacing: Generous whitespace, not cramped
+
+Chart specifications:
+- Line charts: Indigo line (#6366f1), 3px thickness, smooth curves
+- Bar charts: Indigo bars (#6366f1), horizontal layout for comparisons
+- Gauge charts: Semicircle, color zones (red/yellow/blue/green)
+- Tables: Dark navy background, indigo headers, white text
+- Diagrams: Simple arrows, minimal text, clear flow
 
 MUST use correct name: "PPN Research Portal" (not "Psychedelic Practitioner Network")
+MUST include specific ROI numbers ($50K, $120K, 15 hours/month)
+MUST reference specific use cases (not generic "better documentation")
 ```
 
 ---
