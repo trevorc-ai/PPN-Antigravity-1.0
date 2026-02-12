@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ShieldCheck,
     Printer,
@@ -17,8 +17,30 @@ import ProtocolEfficiency from '../components/analytics/ProtocolEfficiency';
 import MolecularPharmacology from '../components/analytics/MolecularPharmacology';
 import MetabolicRiskGauge from '../components/analytics/MetabolicRiskGauge';
 import { GlassmorphicCard } from '../components/ui/GlassmorphicCard';
+import { supabase } from '../supabaseClient';
+import { useAnalyticsData } from '../hooks/useAnalyticsData';
 
 const Analytics = () => {
+    const [siteId, setSiteId] = useState<number | null>(null);
+    const analytics = useAnalyticsData(siteId);
+
+    useEffect(() => {
+        const fetchUserSite = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data: userSite } = await supabase
+                .from('user_sites')
+                .select('site_id')
+                .eq('user_id', user.id)
+                .limit(1)
+                .single();
+
+            if (userSite) setSiteId(userSite.site_id);
+        };
+
+        fetchUserSite();
+    }, []);
     const handlePrint = () => {
         window.print();
     };
@@ -63,13 +85,63 @@ const Analytics = () => {
                 </div>
             </div>
 
+            {/* ERROR STATE */}
+            {analytics.error && (
+                <Section spacing="tight">
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 flex items-start gap-3">
+                        <AlertTriangle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
+                        <div>
+                            <p className="text-red-400 font-bold">Failed to load analytics</p>
+                            <p className="text-red-400/80 text-sm mt-1">{analytics.error}</p>
+                        </div>
+                    </div>
+                </Section>
+            )}
+
+            {/* EMPTY STATE */}
+            {!analytics.loading && !analytics.error && analytics.activeProtocols === 0 && (
+                <Section spacing="tight">
+                    <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-12 text-center">
+                        <Activity className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                        <h3 className="text-xl font-black text-white mb-2">No Clinical Data Yet</h3>
+                        <p className="text-slate-400 max-w-md mx-auto">
+                            Submit your first protocol using the Protocol Builder to see analytics and insights here.
+                        </p>
+                    </div>
+                </Section>
+            )}
+
             {/* KPI RIBBON */}
             <Section spacing="tight" className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2">
                 {[
-                    { label: 'Active Protocols', value: '124', trend: '+12%', icon: Activity, color: 'text-blue-400 print:text-blue-700' },
-                    { label: 'Patient Alerts', value: '3', trend: '-2', icon: AlertTriangle, color: 'text-amber-400 print:text-amber-700' },
-                    { label: 'Network Efficiency', value: '94.2%', trend: '+0.8%', icon: TrendingUp, color: 'text-emerald-400 print:text-emerald-700' },
-                    { label: 'Risk Score', value: 'Low', trend: 'Stable', icon: ShieldCheck, color: 'text-slate-400 print:text-gray-700' }
+                    {
+                        label: 'Active Protocols',
+                        value: analytics.loading ? '...' : analytics.activeProtocols.toString(),
+                        trend: '+12%',
+                        icon: Activity,
+                        color: 'text-blue-400 print:text-blue-700'
+                    },
+                    {
+                        label: 'Patient Alerts',
+                        value: analytics.loading ? '...' : analytics.patientAlerts.toString(),
+                        trend: analytics.patientAlerts > 0 ? `${analytics.patientAlerts}` : '0',
+                        icon: AlertTriangle,
+                        color: 'text-amber-400 print:text-amber-700'
+                    },
+                    {
+                        label: 'Network Efficiency',
+                        value: analytics.loading ? '...' : `${analytics.networkEfficiency}%`,
+                        trend: '+0.8%',
+                        icon: TrendingUp,
+                        color: 'text-emerald-400 print:text-emerald-700'
+                    },
+                    {
+                        label: 'Risk Score',
+                        value: analytics.loading ? '...' : analytics.riskScore,
+                        trend: 'Stable',
+                        icon: ShieldCheck,
+                        color: analytics.riskScore === 'Low' ? 'text-emerald-400 print:text-emerald-700' : analytics.riskScore === 'Medium' ? 'text-amber-400 print:text-amber-700' : 'text-red-400 print:text-red-700'
+                    }
                 ].map((stat, i) => (
                     <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl h-full flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none">
                         <div className="flex items-center gap-2 mb-2">
