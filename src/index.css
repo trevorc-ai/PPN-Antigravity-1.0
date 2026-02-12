@@ -180,3 +180,80 @@ svg tspan,
 .tooltip {
   font-size: 12px !important;
 }
+
+/* 
+  ========================================
+   MOBILE INPUT CONSTRAINTS (DESIGNER)
+  ========================================
+   Prevents input overflow on mobile devices
+   Fixes: Help, Practitioners, Interaction Checker, Research Portal
+   Date: 2026-02-12
+*/
+
+@media (max-width: 768px) {
+
+  /* All text inputs must fit within viewport */
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Ensure parent containers don't force overflow */
+  .search-container,
+  .input-wrapper,
+  form>div {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* Fix for absolute positioned buttons next to inputs */
+  button[class*="absolute"] {
+    position: relative !important;
+  }
+
+  /* Ensure dropdowns fit in viewport */
+  .dropdown,
+  .select-wrapper {
+    max-width: 100%;
+  }
+}
+
+/* 
+  ========================================
+   MOBILE TABLE SCROLL CONTAINERS
+  ========================================
+   Tables should scroll within containers, not page-level
+*/
+
+@media (max-width: 768px) {
+
+  /* Custom scrollbar for mobile tables */
+  .table-scroll-container {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-scroll-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .table-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #334155;
+    border-radius: 4px;
+  }
+
+  .table-scroll-container::-webkit-scrollbar-track {
+    background-color: #0f172a;
+  }
+}
