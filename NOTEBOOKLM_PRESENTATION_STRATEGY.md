@@ -1,6 +1,6 @@
 # 🚀 NOTEBOOKLM PRESENTATION STRATEGY (ZERO-EFFORT SOLUTION)
 
-**For:** Trevor Calton  
+**For:** PPN Portal Team  
 **Date:** February 11, 2026  
 **Purpose:** Fast, polished presentations using NotebookLM (no slide creation needed)
 

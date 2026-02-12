@@ -1,7 +1,7 @@
 # 🛡️ WHY "NO PHI" IS STRATEGIC BRILLIANCE, NOT OVERCAUTION
 
 **Executive Memo for:** Business Partners  
-**From:** Trevor Calton, Founder  
+**From:** PPN Portal Founder  
 **Date:** February 11, 2026  
 **Re:** Why PHI = Existential Risk (And Why Our Competitors Will Fail)
 

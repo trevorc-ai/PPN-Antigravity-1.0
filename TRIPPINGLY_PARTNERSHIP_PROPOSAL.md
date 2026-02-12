@@ -2,7 +2,7 @@
 ## Affiliate & Distribution Partnership
 
 **For:** Trippingly.net founder  
-**From:** Trevor Calton, PPN Portal  
+**From:** PPN Portal Team, PPN Portal  
 **Date:** 2026-02-12  
 **Type:** Affiliate partnership + content collaboration
 

@@ -283,7 +283,7 @@ Want to save your checks? Create a free account (30 seconds):
 Need help? Reply to this email.
 
 Best,
-Trevor
+PPN Team
 Founder, PPN Portal
 
 P.S. Ready to log protocols? Upgrade to Solo ($49/month, 14-day free trial):
@@ -318,7 +318,7 @@ Your safety score updates automatically!
 Questions? Reply to this email.
 
 Best,
-Trevor
+PPN Team
 
 P.S. Want to see how you compare to other practitioners? Upgrade to Clinic tier:
 [Unlock Benchmarking →]
@@ -352,7 +352,7 @@ Questions? Reply to this email or schedule a call:
 [Schedule 15-Min Call →]
 
 Best,
-Trevor
+PPN Team
 
 P.S. Top performers are in the 90th percentile. Where do you rank?
 ```

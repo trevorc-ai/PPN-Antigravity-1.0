@@ -438,7 +438,7 @@ Slide structure:
     - Advisors: Clinical leaders, legal experts
     - Pilot Programs: State psilocybin programs
 
-15. Contact: Trevor Calton, Founder
+15. Contact: PPN Portal Founder
     Visual: Contact info + QR code to demo
 
 Visual style (ALL SLIDES):

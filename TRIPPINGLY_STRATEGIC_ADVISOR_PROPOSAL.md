@@ -2,7 +2,7 @@
 ## Partnership + Advisory + Investment Opportunity
 
 **For:** Trippingly.net founder (Former VC)  
-**From:** Trevor Calton, PPN Portal  
+**From:** PPN Portal Team, PPN Portal  
 **Date:** 2026-02-12  
 **Opportunity:** Affiliate partnership + strategic advisor + potential angel investment
 
@@ -305,7 +305,7 @@ Quick context: I'm building **PPN Portal**, a clinical intelligence platform for
 Let me know if you're interested.
 
 Best,  
-Trevor
+PPN Team
 
 ---
 

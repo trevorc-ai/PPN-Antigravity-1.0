@@ -1,7 +1,7 @@
 # 🎯 PPN RESEARCH PORTAL - EXECUTIVE PITCH DECK
 
 **Presentation for:** Clinical Network Leaders, NIH Leadership, Strategic Partners  
-**Prepared by:** Trevor Calton, Founder  
+**Prepared by:** PPN Portal Founder  
 **Date:** February 2026  
 **Version:** 1.0 - Executive Briefing
 
@@ -14,7 +14,7 @@
 
 **Tagline:** *"See what works. Before you treat."*
 
-**Presenter:** Trevor Calton  
+**Presenter:** PPN Portal Team  
 **Contact:** [Your contact info]
 
 ---
@@ -418,7 +418,7 @@ Year 2:   150 sites →  N=5000 →  High confidence  →  Indispensable
 ### **Who's Building This**
 
 **Founder:**
-- Trevor Calton
+- PPN Portal Team
 - [Your background - keep brief, credibility-focused]
 
 **Clinical Advisors:**
@@ -570,7 +570,7 @@ Year 2:   150 sites →  N=5000 →  High confidence  →  Indispensable
 ---
 
 **Contact:**  
-Trevor Calton  
+PPN Portal Team  
 [Email]  
 [Phone]  
 [Website]

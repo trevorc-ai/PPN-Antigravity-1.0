@@ -35,7 +35,7 @@
 
 **Why Critical:** Potential distribution channel (10K-50K monthly visitors) + fundraising help.
 
-**Owner:** You (Trevor)  
+**Owner:** Product Owner  
 **Timeline:** This week
 
 **Email Draft:** See `TRIPPINGLY_STRATEGIC_ADVISOR_PROPOSAL.md`
@@ -107,7 +107,7 @@
 
 **Why Important:** Investor pitch materials + partner presentations.
 
-**Owner:** You (Trevor)  
+**Owner:** Product Owner  
 **Timeline:** 2-3 hours
 
 **Prompts:** See `NOTEBOOKLM_PROMPT_CORRECTED.md` and `NOTEBOOKLM_PROMPT_WHY_NO_PHI.md`
@@ -206,7 +206,7 @@
 
 **Why Important:** SEO + thought leadership + content marketing.
 
-**Owner:** You (Trevor) - writing, BUILDER - pages  
+**Owner:** Product Owner - writing, BUILDER - pages  
 **Timeline:** 2 weeks
 
 ---
@@ -252,7 +252,7 @@
 
 **Why Important:** Need $500K-$1M Seed round to scale (Q2 2026).
 
-**Owner:** You (Trevor) + Trippingly advisor (if he joins)  
+**Owner:** Product Owner + Trippingly advisor (if he joins)  
 **Timeline:** Q2 2026 (April-June)
 
 ---
@@ -265,7 +265,7 @@
 - **Blocker:** None (in progress)
 
 ### **Priority 2: Trippingly Partnership Outreach 📧**
-- **Owner:** You (Trevor)
+- **Owner:** Product Owner
 - **Deadline:** Friday, Feb 14
 - **Action:** Send email, schedule call
 
