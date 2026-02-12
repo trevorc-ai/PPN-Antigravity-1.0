@@ -245,7 +245,7 @@
 | BUILDER | Security fix, database wiring, Analytics, Toast | 🟡 Assigned |
 | INSPECTOR | Pre-demo verification | 🟡 Assigned |
 | DESIGNER | Clinical Intelligence (parallel track) | 🔴 In Progress |
-| SUBA | Clinical Intelligence schema (parallel track) | 🔴 In Progress |
+| SOOP | Clinical Intelligence schema (parallel track) | 🔴 In Progress |
 
 ---
 

@@ -39,7 +39,7 @@
 
 ### **2. Database Schema Foundation**
 **Status:** ✅ COMPLETE  
-**Agent:** SUBA (previously completed)  
+**Agent:** SOOP (previously completed)  
 **Evidence:**
 - Migrations 003, 004, 004b executed
 - Reference tables populated
@@ -175,7 +175,7 @@ Which version should be canonical?
 ---
 
 ### **TASK 5: Clinical Intelligence Schema Design**
-**Assigned To:** @SUBA  
+**Assigned To:** @SOOP  
 **Priority:** P1 - HIGH (Strategic Initiative)  
 **Estimated Effort:** 2-3 days  
 **Status:** 🟡 READY TO START
@@ -184,7 +184,7 @@ Which version should be canonical?
 Design database schema for real-time clinical intelligence features.
 
 **Task File:**
-`SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` (688 lines, comprehensive spec)
+`SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` (688 lines, comprehensive spec)
 
 **Key Deliverables:**
 - `log_planned_protocols` table (protocols BEFORE treatment)
@@ -198,7 +198,7 @@ Design database schema for real-time clinical intelligence features.
 This enables the paradigm shift from "retroactive logging" to "predictive planning + outcome comparison."
 
 **Next Step:**
-SUBA reads task file, designs schema, creates migration plan, hands to INSPECTOR for review.
+SOOP reads task file, designs schema, creates migration plan, hands to INSPECTOR for review.
 
 ---
 
@@ -256,7 +256,7 @@ Replace mock data in analytics components with real Supabase queries.
 **Timeline:** Tomorrow (4 hours)  
 **Deliverable:** Completion artifact
 
-### **SUBA - High Priority**
+### **SOOP - High Priority**
 **Task:** Clinical Intelligence Schema Design  
 **Priority:** P1  
 **Timeline:** This week (2-3 days)  
@@ -312,10 +312,10 @@ Replace mock data in analytics components with real Supabase queries.
 
 **Tomorrow (2026-02-12):**
 4. ✅ BUILDER: Implement Toast system (4 hours)
-5. ✅ SUBA: Start Clinical Intelligence schema design (Day 1 of 3)
+5. ✅ SOOP: Start Clinical Intelligence schema design (Day 1 of 3)
 
 **This Week:**
-6. ✅ SUBA: Complete Clinical Intelligence schema (Days 2-3)
+6. ✅ SOOP: Complete Clinical Intelligence schema (Days 2-3)
 7. ✅ DESIGNER: Wire ProtocolBuilder to database (2-3 hours)
 
 **Next Week:**
@@ -327,7 +327,7 @@ Replace mock data in analytics components with real Supabase queries.
 
 **Task Files:**
 - `DESIGNER_TASK_PROTOCOLBUILDER_PHASE1.md` - Phase 1 spec
-- `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` - Schema design spec
+- `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` - Schema design spec
 - `BUILDER_HANDOFF.md` - Approved changes from Designer audit
 - `NEXT_TASKS.md` - Overall task backlog
 

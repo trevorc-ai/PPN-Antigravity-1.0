@@ -261,12 +261,12 @@ INSPECTOR pre-review addition:
 
 **Problem:**
 - DESIGNER designs UI for data fields
-- SUBA designs database schema
+- SOOP designs database schema
 - No verification that UI fields match database columns
 
 **Leak:**
 - BUILDER discovers missing database columns
-- Must wait for SUBA to add columns
+- Must wait for SOOP to add columns
 - Timeline delays
 
 **Root Cause:**
@@ -277,8 +277,8 @@ No schema verification in DESIGNER workflow.
 BEFORE DESIGNER creates mockups:
 1. DESIGNER reads database schema (migrations/)
 2. DESIGNER verifies all fields have database columns
-3. DESIGNER flags missing columns to SUBA
-4. SUBA adds columns
+3. DESIGNER flags missing columns to SOOP
+4. SOOP adds columns
 5. THEN DESIGNER creates mockups
 ```
 

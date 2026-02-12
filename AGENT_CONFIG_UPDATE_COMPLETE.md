@@ -14,7 +14,7 @@ Every agent MUST start every response with their name:
 **LEAD:** [response]
 **DESIGNER:** [response]
 **BUILDER:** [response]
-**SUBA:** [response]
+**SOOP:** [response]
 **INSPECTOR:** [response]
 **CRAWL:** [response]
 ```
@@ -75,7 +75,7 @@ Every agent now has:
 
 ---
 
-### **SUBA**
+### **SOOP**
 - **Tools:** Terminal, file_editor
 - **Role:** Database specialist
 - **Owns:** /migrations directory, all .sql files
@@ -181,7 +181,7 @@ Every agent now has:
 - [x] DESIGNER tools limited to browser only
 - [x] DESIGNER role clarified as spec creator, not coder
 - [x] BUILDER has mandatory step-back analysis
-- [x] SUBA has additive-only schema rules
+- [x] SOOP has additive-only schema rules
 - [x] INSPECTOR and CRAWL are read-only
 - [x] All file paths use absolute Desktop location
 - [x] All instructions use imperative language
@@ -231,7 +231,7 @@ This is a critical rule. Please restart your response.
 ### **Agent works outside their lane:**
 ```
 STOP. You are working outside your lane.
-[DESIGNER touching database / SUBA touching frontend / etc.]
+[DESIGNER touching database / SOOP touching frontend / etc.]
 This task must be assigned to [CORRECT_AGENT].
 ```
 

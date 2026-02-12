@@ -24,7 +24,7 @@
 - [BUILDER Task - Demo Mode Security Fix](BUILDER_TASK_DEMO_MODE_SECURITY_FIX.md) - Fix authentication bypass vulnerability (LEAD, 2026-02-11)
 - [BUILDER Handoff](BUILDER_HANDOFF.md) - Approved changes including Toast system (DESIGNER, 2026-02-11)
 - [DESIGNER Task - Clinical Intelligence Platform](DESIGNER_TASK_CLINICAL_INTELLIGENCE_PLATFORM.md) - UI/UX for clinical intelligence (LEAD, 2026-02-11)
-- [SUBA Task - Clinical Intelligence Schema](SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md) - Database schema for clinical intelligence (LEAD, 2026-02-11)
+- [SOOP Task - Clinical Intelligence Schema](SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md) - Database schema for clinical intelligence (LEAD, 2026-02-11)
 
 ### **Protocol Builder Phase 1**
 - [DESIGNER Task - Protocol Builder Phase 1](DESIGNER_TASK_PROTOCOLBUILDER_PHASE1.md) - Original Phase 1 task specification (LEAD, 2026-02-11)
@@ -77,17 +77,17 @@
 ## 🗄️ DATABASE & SCHEMA
 
 ### **Governance**
-- [Database Governance Rules](DATABASE_GOVERNANCE_RULES.md) - Complete governance rules (SUBA, date unknown)
-- [Database Governance Summary](DATABASE_GOVERNANCE_SUMMARY.md) - Summary of rules (SUBA, date unknown)
-- [Database Governance Quickref](DATABASE_GOVERNANCE_QUICKREF.md) - Quick reference (SUBA, date unknown)
-- [Database Lock-Ins](DATABASE_LOCK_INS.md) - Locked decisions (SUBA, date unknown)
+- [Database Governance Rules](DATABASE_GOVERNANCE_RULES.md) - Complete governance rules (SOOP, date unknown)
+- [Database Governance Summary](DATABASE_GOVERNANCE_SUMMARY.md) - Summary of rules (SOOP, date unknown)
+- [Database Governance Quickref](DATABASE_GOVERNANCE_QUICKREF.md) - Quick reference (SOOP, date unknown)
+- [Database Lock-Ins](DATABASE_LOCK_INS.md) - Locked decisions (SOOP, date unknown)
 
 ### **Schema Reviews**
-- [Complete Database Schema Review](COMPLETE_DATABASE_SCHEMA_REVIEW.md) - Full schema review (SUBA, date unknown)
-- [ChatGPT Schema Review Request](CHATGPT_SCHEMA_REVIEW_REQUEST.md) - External review request (SUBA, date unknown)
+- [Complete Database Schema Review](COMPLETE_DATABASE_SCHEMA_REVIEW.md) - Full schema review (SOOP, date unknown)
+- [ChatGPT Schema Review Request](CHATGPT_SCHEMA_REVIEW_REQUEST.md) - External review request (SOOP, date unknown)
 
 ### **Specifications**
-- [Bulk Data Upload Spec](BULK_DATA_UPLOAD_SPEC.md) - Bulk upload specification (SUBA, date unknown)
+- [Bulk Data Upload Spec](BULK_DATA_UPLOAD_SPEC.md) - Bulk upload specification (SOOP, date unknown)
 
 ---
 
@@ -143,7 +143,7 @@
 ### **Component Audits**
 - [Component Data Audit](COMPONENT_DATA_AUDIT.md) - Component inventory (CRAWL, date unknown)
 - [AuditLogs Page Audit](AUDITLOGS_PAGE_AUDIT.md) - AuditLogs page review (CRAWL, date unknown)
-- [Database Connectivity Audit](DATABASE_CONNECTIVITY_AUDIT.md) - Database connection review (SUBA, date unknown)
+- [Database Connectivity Audit](DATABASE_CONNECTIVITY_AUDIT.md) - Database connection review (SOOP, date unknown)
 
 ### **Design Audits**
 - [Creative Director Audit](CREATIVE_DIRECTOR_AUDIT.md) - Design system audit (DESIGNER, date unknown)

@@ -401,7 +401,7 @@
 | DESIGNER | 🟡 Idle | Clinical Intelligence (Day 1) | Available for misc tasks |
 | INSPECTOR | 🟡 Assigned | Protocol Builder verification | Start tomorrow 9 AM |
 | BUILDER | 🟢 Complete | Analytics connection | Standby for fixes |
-| SUBA | 🟡 Idle | Clinical Intelligence (Day 1) | Available |
+| SOOP | 🟡 Idle | Clinical Intelligence (Day 1) | Available |
 | CRAWL | ⚪ Available | None | Available |
 
 ---

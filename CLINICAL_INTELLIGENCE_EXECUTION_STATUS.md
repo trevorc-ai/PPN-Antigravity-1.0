@@ -44,8 +44,8 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 
 ---
 
-### **TASK 2: SUBA - Database Schema Design**
-**File:** `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`  
+### **TASK 2: SOOP - Database Schema Design**
+**File:** `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`  
 **Assigned:** 2026-02-11 16:45 PST  
 **Status:** 🔴 NOT STARTED  
 **Priority:** P0 - Critical  
@@ -69,12 +69,12 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 - [ ] Multi-substance support via JSONB
 - [ ] LEAD approval received
 
-**Next Step:** SUBA reads task file and begins schema design
+**Next Step:** SOOP reads task file and begins schema design
 
 ---
 
 ### **TASK 3: INSPECTOR - Safety & Compliance Review**
-**Status:** ⏸️ QUEUED (waiting for DESIGNER + SUBA specs)  
+**Status:** ⏸️ QUEUED (waiting for DESIGNER + SOOP specs)  
 **Priority:** P0 - Critical  
 **Estimated Effort:** 1-2 days  
 
@@ -85,7 +85,7 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 - [ ] Safety review: Drug interaction alerts accuracy
 - [ ] Clinical claims review: No treatment efficacy claims
 
-**Trigger:** Starts when DESIGNER + SUBA deliver specs
+**Trigger:** Starts when DESIGNER + SOOP deliver specs
 
 ---
 
@@ -109,7 +109,7 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 - [ ] Protocol comparison (planned vs actual)
 - [ ] Patient-facing view
 
-**Trigger:** Starts when INSPECTOR approves DESIGNER + SUBA specs
+**Trigger:** Starts when INSPECTOR approves DESIGNER + SOOP specs
 
 ---
 
@@ -120,7 +120,7 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 │ WEEK 1-2: DESIGN & ARCHITECTURE                            │
 ├─────────────────────────────────────────────────────────────┤
 │ Feb 11-14  │ DESIGNER: Create mockups (15 total)           │
-│ Feb 11-14  │ SUBA: Design schema + queries                 │
+│ Feb 11-14  │ SOOP: Design schema + queries                 │
 │ Feb 15     │ Dr. Shena Demo (show mockups + vision)        │
 │ Feb 16-17  │ INSPECTOR: Review specs                       │
 │ Feb 18     │ LEAD: Final approval                          │
@@ -130,7 +130,7 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 │ WEEK 3-4: PHASE 1 IMPLEMENTATION (FOUNDATION)              │
 ├─────────────────────────────────────────────────────────────┤
 │ Feb 19-25  │ BUILDER: Button groups + shortcuts           │
-│ Feb 19-25  │ SUBA: Execute migration scripts               │
+│ Feb 19-25  │ SOOP: Execute migration scripts               │
 │ Feb 26-28  │ BUILDER: Basic split-screen layout            │
 │ Feb 28     │ INSPECTOR: QA Phase 1                         │
 └─────────────────────────────────────────────────────────────┘
@@ -139,7 +139,7 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 │ WEEK 5-6: PHASE 2 IMPLEMENTATION (LIVE INTELLIGENCE)       │
 ├─────────────────────────────────────────────────────────────┤
 │ Mar 1-7    │ BUILDER: Real-time queries integration       │
-│ Mar 1-7    │ SUBA: Query optimization                      │
+│ Mar 1-7    │ SOOP: Query optimization                      │
 │ Mar 8-14   │ BUILDER: Data visualization components        │
 │ Mar 14     │ INSPECTOR: QA Phase 2                         │
 └─────────────────────────────────────────────────────────────┘
@@ -263,12 +263,12 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 **Impact:** High - Breaks live data visualization UX  
 **Probability:** Medium  
 **Mitigation:**
-- SUBA optimizes queries with indexes
+- SOOP optimizes queries with indexes
 - Use materialized views for common queries
 - Implement Redis caching (60 sec TTL)
 - Fall back to "calculating..." state if >1 sec
 
-**Owner:** SUBA  
+**Owner:** SOOP  
 **Status:** 🟡 Monitoring
 
 ---
@@ -338,7 +338,7 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 
 ### **Daily Standups (Async):**
 - DESIGNER posts mockup progress
-- SUBA posts schema design progress
+- SOOP posts schema design progress
 - INSPECTOR posts review findings
 - BUILDER posts implementation progress
 
@@ -367,18 +367,18 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 3. Start mockup creation (Priority 1: Core screens)
 4. Target: 5 mockups by Feb 13 (for Dr. Shena demo prep)
 
-### **SUBA:**
-1. Read `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`
+### **SOOP:**
+1. Read `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`
 2. Review existing schema in `supabase/migrations/`
 3. Start schema design for `log_planned_protocols`
 4. Write sample aggregation queries
 5. Test query performance with sample data
 
 ### **LEAD (Me):**
-1. Monitor DESIGNER + SUBA progress
+1. Monitor DESIGNER + SOOP progress
 2. Prepare Dr. Shena demo script
 3. Review mockups as DESIGNER delivers
-4. Approve schema as SUBA delivers
+4. Approve schema as SOOP delivers
 
 ---
 
@@ -391,7 +391,7 @@ We are transforming the Protocol Builder from a "fast data entry form" into a "r
 
 ### **Task Specifications:**
 4. `DESIGNER_TASK_CLINICAL_INTELLIGENCE_PLATFORM.md` - UI/UX task
-5. `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` - Database task
+5. `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` - Database task
 
 ### **Design System:**
 6. `DESIGN_SYSTEM.md` - Colors, typography, components

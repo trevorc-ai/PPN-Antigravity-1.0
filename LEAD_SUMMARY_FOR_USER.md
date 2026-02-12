@@ -71,9 +71,9 @@ I've completed a comprehensive review of all completed tasks, open task files, a
 
 ---
 
-### **3. SUBA - High Priority**
+### **3. SOOP - High Priority**
 **Task:** Clinical Intelligence Schema Design  
-**File:** `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`  
+**File:** `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`  
 **Priority:** P1 - HIGH (Strategic Initiative)  
 **Timeline:** This week (2-3 days)
 
@@ -175,9 +175,9 @@ I've created 3 comprehensive documents:
 @BUILDER - Please implement Toast system per BUILDER_HANDOFF.md lines 110-298
 ```
 
-**Step 5: Assign SUBA Clinical Intelligence**
+**Step 5: Assign SOOP Clinical Intelligence**
 ```
-@SUBA - Please execute SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md
+@SOOP - Please execute SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md
 ```
 
 ### **This Week:**
@@ -198,7 +198,7 @@ I've created 3 comprehensive documents:
 
 **P1 - High (This Week):**
 4. ✅ BUILDER: Implement Toast system
-5. ✅ SUBA: Design Clinical Intelligence schema
+5. ✅ SOOP: Design Clinical Intelligence schema
 6. ✅ DESIGNER: Wire ProtocolBuilder to database
 
 **P2 - Medium (This Month):**

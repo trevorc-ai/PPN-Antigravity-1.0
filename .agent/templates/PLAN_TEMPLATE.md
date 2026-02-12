@@ -164,7 +164,7 @@ WHERE table_name = 'table_name';
 
 ---
 
-### **Phase 6: Database Migration** (Assigned to: SUBA, if applicable)
+### **Phase 6: Database Migration** (Assigned to: SOOP, if applicable)
 - [ ] Review migration file against governance rules
 - [ ] Run migration in development environment
 - [ ] Run verification queries

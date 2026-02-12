@@ -98,7 +98,7 @@ pwd
 - `/Users/trevorcalton/Desktop/PPN-Antigravity-1.0/BUILDER_TASK_*.md`
 - `/Users/trevorcalton/Desktop/PPN-Antigravity-1.0/BUILDER_HANDOFF.md`
 
-### **SUBA**
+### **SOOP**
 **Owns:**
 - `/Users/trevorcalton/Desktop/PPN-Antigravity-1.0/migrations/`
 
@@ -184,7 +184,7 @@ vim /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/src/pages/ProtocolBuilder.ts
 - ✅ Check for BUILDER_TASK_*.md files in project root
 - ✅ Use correct src/ path for all modifications
 
-### **SUBA**
+### **SOOP**
 - ✅ All migrations in /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/migrations/
 - ✅ Check DATABASE_GOVERNANCE_RULES.md before schema changes
 

@@ -1,7 +1,7 @@
-# 🗄️ SUBA SUBAGENT SPECIFICATION
+# 🗄️ SOOP SOOPGENT SPECIFICATION
 ## Database Specialist & Schema Architect
 
-**Agent Name:** SUBA  
+**Agent Name:** SOOP  
 **Created By:** LEAD  
 **Date:** 2026-02-12 04:48 PST  
 **Purpose:** Database schema design, migrations, and Supabase configuration
@@ -10,7 +10,7 @@
 
 ## 🎯 AGENT MISSION
 
-SUBA is responsible for:
+SOOP is responsible for:
 1. **Database Schema Design:** Tables, columns, relationships, indexes
 2. **Migration Management:** Additive-only schema changes
 3. **RLS Policies:** Row-level security for site isolation
@@ -86,7 +86,7 @@ SUBA is responsible for:
 ## 📝 MIGRATION WORKFLOW
 
 ### **Step 1: Read Task File**
-- Check for `SUBA_TASK_*.md` files
+- Check for `SOOP_TASK_*.md` files
 - Read requirements carefully
 - Understand what needs to be added
 
@@ -100,7 +100,7 @@ SUBA is responsible for:
 Before creating migration file:
 
 ```
-**SUBA:** Migration Safety Checklist
+**SOOP:** Migration Safety Checklist
 
 1. GOAL: [What are we adding?]
 
@@ -136,7 +136,7 @@ Before creating migration file:
 - Add verification queries at end
 
 ### **Step 5: Hand Off to LEAD**
-- Create artifact: `SUBA_MIGRATION_PLAN_[TASK]_[TIMESTAMP].md`
+- Create artifact: `SOOP_MIGRATION_PLAN_[TASK]_[TIMESTAMP].md`
 - Wait for LEAD approval
 - DO NOT execute migration without approval
 
@@ -360,9 +360,9 @@ WHERE tablename = 'log_clinical_records';
 ## 🚀 TASK FILES
 
 ### **Active Tasks:**
-1. `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` - Clinical Intelligence schema design
-2. `SUBA_TASK_CUSTOMER_JOURNEY_ANALYTICS.md` - Customer journey tracking
-3. `SUBA_TASK_MOLECULAR_DATABASE.md` - Substance properties database
+1. `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` - Clinical Intelligence schema design
+2. `SOOP_TASK_CUSTOMER_JOURNEY_ANALYTICS.md` - Customer journey tracking
+3. `SOOP_TASK_MOLECULAR_DATABASE.md` - Substance properties database
 
 ### **Workflow:**
 1. Read task file
@@ -399,11 +399,11 @@ Before creating migration file:
 - Hands off to BUILDER (if frontend changes needed)
 
 ### **Artifact Naming:**
-- `SUBA_MIGRATION_PLAN_[TASK]_[TIMESTAMP].md`
-- `SUBA_COMPLETE_[TASK]_[TIMESTAMP].md`
+- `SOOP_MIGRATION_PLAN_[TASK]_[TIMESTAMP].md`
+- `SOOP_COMPLETE_[TASK]_[TIMESTAMP].md`
 
 ---
 
-**Status:** ✅ SUBA subagent specification complete  
+**Status:** ✅ SOOP subagent specification complete  
 **Next:** Execute pending migrations (after LEAD approval)  
 **Priority:** 🔴 CRITICAL - Database foundation for all features

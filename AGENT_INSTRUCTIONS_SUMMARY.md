@@ -1,4 +1,4 @@
-# 🤖 AGENT & SUBAGENT INSTRUCTIONS SUMMARY
+# 🤖 AGENT & SOOPGENT INSTRUCTIONS SUMMARY
 
 **Project:** PPN Research Portal  
 **Agent Configuration:** `/Users/trevorcalton/Desktop/PPN-Antigravity-1.0/agent.yaml`  
@@ -24,14 +24,14 @@
 3. **Agent Delegation:**
    - UI/UX changes → @DESIGNER
    - React/TypeScript code → @BUILDER
-   - Database schema → @SUBA
+   - Database schema → @SOOP
    - Design compliance → @INSPECTOR
    - QA testing → @CRAWL
 
 ### **Never Allow:**
 - Cross-lane violations
 - DESIGNER touching database
-- SUBA touching frontend
+- SOOP touching frontend
 - BUILDER modifying schema
 
 ---
@@ -53,11 +53,11 @@
 - User experience
 
 ❌ **NEVER TOUCH:**
-- `/migrations/` (SUBA only)
-- `.sql` files (SUBA only)
-- Database schemas (SUBA only)
+- `/migrations/` (SOOP only)
+- `.sql` files (SOOP only)
+- Database schemas (SOOP only)
 - Backend API logic (BUILDER only)
-- RLS policies (SUBA only)
+- RLS policies (SOOP only)
 
 ### **Workflow (3 Phases):**
 
@@ -171,10 +171,10 @@ Safety valve between DESIGNER and BUILDER
 - Frontend state management
 
 ❌ **NEVER TOUCH:**
-- `/migrations/` (SUBA only)
-- `.sql` files (SUBA only)
-- Database schema definitions (SUBA only)
-- RLS policies (SUBA only)
+- `/migrations/` (SOOP only)
+- `.sql` files (SOOP only)
+- Database schema definitions (SOOP only)
+- RLS policies (SOOP only)
 
 ### **Workflow:**
 1. Read INSPECTOR's pre-review artifact
@@ -220,7 +220,7 @@ If task file exists, follow it EXACTLY. Do not improvise.
 
 ---
 
-## 🗄️ SUBA (Subagent)
+## 🗄️ SOOP (Subagent)
 
 **Model:** Claude 4.5 Sonnet  
 **Tools:** Terminal, File Editor  
@@ -271,7 +271,7 @@ If task file exists, follow it EXACTLY. Do not improvise.
 
 ### **Migration Workflow:**
 ```
-**SUBA:** Migration Plan
+**SOOP:** Migration Plan
 
 1. GOAL: [What are we adding?]
 2. TABLES: [List new tables with columns]
@@ -383,19 +383,19 @@ Never overwrite previous reports. Each test session = new report file.
 ### **Database Schema Change Flow:**
 
 ```
-1. SUBA designs schema
+1. SOOP designs schema
    ↓
-2. SUBA creates migration plan
+2. SOOP creates migration plan
    ↓
-3. SUBA hands off to LEAD
+3. SOOP hands off to LEAD
    ↓
 4. LEAD approves migration
    ↓
-5. SUBA executes migration
+5. SOOP executes migration
    ↓
-6. SUBA verifies success
+6. SOOP verifies success
    ↓
-7. SUBA hands off to BUILDER (if frontend changes needed)
+7. SOOP hands off to BUILDER (if frontend changes needed)
 ```
 
 ### **QA Testing Flow:**
@@ -420,7 +420,7 @@ Every response MUST start with agent name:
 - `**DESIGNER:**`
 - `**INSPECTOR:**`
 - `**BUILDER:**`
-- `**SUBA:**`
+- `**SOOP:**`
 - `**CRAWL:**`
 
 ### **2. Absolute Paths Only:**
@@ -434,7 +434,7 @@ Subagents communicate via artifacts only. No direct chat between agents.
 
 ### **5. Safety First:**
 - INSPECTOR reviews before and after implementation
-- SUBA checks for PHI/PII before every migration
+- SOOP checks for PHI/PII before every migration
 - BUILDER performs step-back analysis before coding
 - CRAWL reports issues without fixing
 
@@ -446,7 +446,7 @@ Subagents communicate via artifacts only. No direct chat between agents.
 - `agent.yaml` - This configuration file
 
 **Governance:**
-- `DATABASE_GOVERNANCE_RULES.md` - Database rules (SUBA must read)
+- `DATABASE_GOVERNANCE_RULES.md` - Database rules (SOOP must read)
 - `DESIGN_SYSTEM.md` - Design standards (DESIGNER must follow)
 - `PATH_UPDATE_ALL_AGENTS.md` - Project location (LEAD must read)
 

@@ -100,7 +100,7 @@ BUILDER writes the code based on TECH_SPEC.md.
 For database changes, you have **additional checkpoints**:
 
 1. **Review PLAN.md** (from LEAD) - Database impact assessment
-2. **Review db_plan.md** (from SUBA) - Migration script and schema changes
+2. **Review db_plan.md** (from SOOP) - Migration script and schema changes
 3. **Review INSPECTOR's QA report** - PHI/PII risks, breaking changes
 4. **YOU RUN THE MIGRATION** - Never auto-run database changes
 5. **Review verification queries** (from INSPECTOR) - Confirm success

@@ -17,7 +17,7 @@ I've identified **two parallel workstreams:**
 
 ### **Workstream B: Clinical Intelligence Platform (Strategic - 8 Weeks)**
 - Already in progress per `CLINICAL_INTELLIGENCE_EXECUTION_STATUS.md`
-- DESIGNER and SUBA tasks assigned but not started
+- DESIGNER and SOOP tasks assigned but not started
 - Major transformation initiative
 
 **Decision:** Execute both workstreams in parallel with clear prioritization.
@@ -130,9 +130,9 @@ Design the UI/UX for the Clinical Intelligence Platform transformation.
 
 ---
 
-### **ASSIGNMENT 5: SUBA**
+### **ASSIGNMENT 5: SOOP**
 **Task:** Clinical Intelligence Database Schema  
-**File:** `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`  
+**File:** `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`  
 **Priority:** P1 - HIGH (Strategic Initiative)  
 **Timeline:** Feb 11-14 (2-3 days)  
 **Status:** 🔴 ASSIGNED NOW (Already in CLINICAL_INTELLIGENCE_EXECUTION_STATUS.md)
@@ -153,7 +153,7 @@ Design database schema for real-time clinical intelligence features.
 All queries must return in **<1 second** for live data visualization to work.
 
 **Action Required:**
-1. Read `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` (688 lines)
+1. Read `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` (688 lines)
 2. Review existing schema in `supabase/migrations/`
 3. Design `log_planned_protocols` table
 4. Write sample aggregation queries
@@ -169,20 +169,20 @@ All queries must return in **<1 second** for live data visualization to work.
 - ✅ INSPECTOR: Verify Protocol Builder Phase 1 (1 hour)
 - ✅ BUILDER: Fix demo mode security (30 minutes)
 - ✅ DESIGNER: Start Clinical Intelligence mockups (Day 1 of 4)
-- ✅ SUBA: Start Clinical Intelligence schema (Day 1 of 3)
+- ✅ SOOP: Start Clinical Intelligence schema (Day 1 of 3)
 
 ### **Tomorrow (Feb 12):**
 - ✅ BUILDER: Implement Toast system (4 hours)
 - ✅ DESIGNER: Continue mockups (Day 2 of 4)
-- ✅ SUBA: Continue schema design (Day 2 of 3)
+- ✅ SOOP: Continue schema design (Day 2 of 3)
 
 ### **Feb 13:**
 - ✅ DESIGNER: Continue mockups (Day 3 of 4)
-- ✅ SUBA: Complete schema design (Day 3 of 3)
+- ✅ SOOP: Complete schema design (Day 3 of 3)
 
 ### **Feb 14:**
 - ✅ DESIGNER: Finalize mockups (Day 4 of 4)
-- ✅ SUBA: Hand off to INSPECTOR
+- ✅ SOOP: Hand off to INSPECTOR
 - ✅ LEAD: Review all deliverables for Dr. Shena demo
 
 ### **Feb 15:**
@@ -198,7 +198,7 @@ All queries must return in **<1 second** for live data visualization to work.
 | **BUILDER** | Demo Mode Security Fix | 🔴 ASSIGNED | Today (30m) |
 | **BUILDER** | Toast System Implementation | 🟡 QUEUED | Tomorrow (4h) |
 | **DESIGNER** | Clinical Intelligence Mockups | 🔴 ASSIGNED | Feb 14 (4 days) |
-| **SUBA** | Clinical Intelligence Schema | 🔴 ASSIGNED | Feb 14 (3 days) |
+| **SOOP** | Clinical Intelligence Schema | 🔴 ASSIGNED | Feb 14 (3 days) |
 
 ---
 
@@ -219,14 +219,14 @@ All queries must return in **<1 second** for live data visualization to work.
 ---
 
 ### **Workstream B: Clinical Intelligence**
-**Owner:** DESIGNER + SUBA  
+**Owner:** DESIGNER + SOOP  
 **Timeline:** 8 weeks (phased)  
 **Blocking:** Dr. Shena demo (Feb 15)  
 **Impact:** Strategic transformation
 
 **Sequence:**
 1. DESIGNER creates mockups → Hands to LEAD (Feb 14)
-2. SUBA designs schema → Hands to INSPECTOR (Feb 14)
+2. SOOP designs schema → Hands to INSPECTOR (Feb 14)
 3. LEAD approves mockups → Dr. Shena demo (Feb 15)
 4. INSPECTOR reviews schema → Hands to LEAD (Feb 16-17)
 5. LEAD approves schema → BUILDER starts implementation (Feb 19)
@@ -277,7 +277,7 @@ All agents: Your task files are ready. Begin execution immediately.
 **INSPECTOR:** Start with `INSPECTOR_TASK_PROTOCOLBUILDER_PHASE1_VERIFICATION.md`  
 **BUILDER:** Start with `BUILDER_TASK_DEMO_MODE_SECURITY_FIX.md`  
 **DESIGNER:** Start with `DESIGNER_TASK_CLINICAL_INTELLIGENCE_PLATFORM.md`  
-**SUBA:** Start with `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`
+**SOOP:** Start with `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md`
 
 ---
 

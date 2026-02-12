@@ -37,9 +37,9 @@
 
 ### **Clinical Intelligence Platform** 🔴 IN PROGRESS
 - [x] DESIGNER assigned (mockups - Day 1/3)
-- [x] SUBA assigned (schema - Day 1/3)
+- [x] SOOP assigned (schema - Day 1/3)
 - [ ] DESIGNER mockups complete (Day 2)
-- [ ] SUBA schema complete (Day 2)
+- [ ] SOOP schema complete (Day 2)
 - [ ] INSPECTOR pre-review (Day 3)
 - [ ] BUILDER implementation (Day 4-5)
 - [ ] INSPECTOR post-review (Day 6)
@@ -99,7 +99,7 @@
 - [x] Database governance rules established
 
 ### **In Progress**
-- [ ] Clinical Intelligence schema (SUBA - Day 1/3)
+- [ ] Clinical Intelligence schema (SOOP - Day 1/3)
 
 ### **Queued**
 - [ ] Wire ProtocolBuilder to database (blocked by duplication)
@@ -232,7 +232,7 @@
 | DESIGNER | Clinical Intelligence mockups | 🔴 Day 1/3 | Feb 13 |
 | INSPECTOR | Protocol Builder verification | 🟡 Assigned | TBD |
 | BUILDER | Demo mode security fix | 🟡 Assigned | TBD |
-| SUBA | Clinical Intelligence schema | 🔴 Day 1/3 | Feb 13 |
+| SOOP | Clinical Intelligence schema | 🔴 Day 1/3 | Feb 13 |
 | CRAWL | Idle | ⚪ Available | - |
 
 ---

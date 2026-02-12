@@ -515,7 +515,7 @@ Learning:
 
 ---
 
-### **2. LEAD → SUBA (Database Specialist)**
+### **2. LEAD → SOOP (Database Specialist)**
 **Task:** Design schema for planned protocols, comparisons, multi-substance support
 
 **Deliverables:**
@@ -599,7 +599,7 @@ Learning:
 - **Risk:** Complexity delays launch
   - **Mitigation:** Phased rollout (foundation first, intelligence second)
 - **Risk:** Real-time queries too slow
-  - **Mitigation:** SUBA optimizes queries, indexes, caching
+  - **Mitigation:** SOOP optimizes queries, indexes, caching
 - **Risk:** Privacy/compliance blocks features
   - **Mitigation:** INSPECTOR reviews before implementation
 

@@ -1,7 +1,7 @@
-# 📊 SUBA TASK: CUSTOMER JOURNEY ANALYTICS INFRASTRUCTURE
+# 📊 SOOP TASK: CUSTOMER JOURNEY ANALYTICS INFRASTRUCTURE
 ## Database Schema, Calculations & Visualizations
 
-**Assigned To:** SUBA (Database & Backend Specialist)  
+**Assigned To:** SOOP (Database & Backend Specialist)  
 **Reviewed By:** INSPECTOR (QA & Validation)  
 **Managed By:** LEAD  
 **Date:** 2026-02-12 02:30 PST  
@@ -778,7 +778,7 @@ Legend: ["Your Score", "Network Average"]
 
 ---
 
-## ✅ SUBA IMPLEMENTATION CHECKLIST
+## ✅ SOOP IMPLEMENTATION CHECKLIST
 
 ### **Phase 1: Database Schema (4 hours)**
 - [ ] Create `journey_events` table
@@ -867,6 +867,6 @@ Legend: ["Your Score", "Network Average"]
 
 ---
 
-**Status:** 🟡 ASSIGNED - Awaiting SUBA acknowledgment  
+**Status:** 🟡 ASSIGNED - Awaiting SOOP acknowledgment  
 **Priority:** 🔴 HIGH - Enables customer journey tracking  
-**Next:** SUBA implements schema, INSPECTOR validates 🔍
+**Next:** SOOP implements schema, INSPECTOR validates 🔍

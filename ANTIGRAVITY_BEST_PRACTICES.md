@@ -116,7 +116,7 @@ Based on your `agent.yaml`, you can direct requests to specialists:
 ```
 
 ```
-@SUBA I need to add a new column to the log_clinical_records table
+@SOOP I need to add a new column to the log_clinical_records table
 ```
 
 ### **Why This Helps:**
@@ -226,7 +226,7 @@ Expected: form should submit and show success message"
    ```
 
 2. **Review db_plan.md:**
-   - SUBA creates migration plan
+   - SOOP creates migration plan
    - INSPECTOR reviews for PHI/PII risks
    - You approve
 
@@ -340,7 +340,7 @@ Create a DESIGN_SPEC.md with accessible color choices."
 
 ### **Database Change:**
 ```
-"@SUBA I need to add a medication_adherence_score column to 
+"@SOOP I need to add a medication_adherence_score column to 
 log_clinical_records. Create a db_plan.md with the migration script."
 ```
 

@@ -6,7 +6,7 @@
 | Demo Mode Security Fix | BUILDER | 🔴 ASSIGNED | `BUILDER_TASK_DEMO_MODE_SECURITY_FIX.md` | 2026-02-11 19:19 |
 | Toast System Implementation | BUILDER | 🟡 QUEUED | `BUILDER_HANDOFF.md` (lines 110-298) | 2026-02-11 19:19 |
 | Clinical Intelligence Mockups | DESIGNER | 🔴 ASSIGNED | `DESIGNER_TASK_CLINICAL_INTELLIGENCE_PLATFORM.md` | 2026-02-11 16:40 |
-| Clinical Intelligence Schema | SUBA | 🔴 ASSIGNED | `SUBA_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` | 2026-02-11 16:45 |
+| Clinical Intelligence Schema | SOOP | 🔴 ASSIGNED | `SOOP_TASK_CLINICAL_INTELLIGENCE_SCHEMA.md` | 2026-02-11 16:45 |
 
 ---
 
@@ -16,7 +16,7 @@
 |------|-------|-----------|----------|-------|
 | ButtonGroup Component | DESIGNER | 2026-02-11 | `/src/components/forms/ButtonGroup.tsx` | Component exists, integrated into ProtocolBuilder |
 | Protocol Builder Phase 1 Design Spec | DESIGNER | 2026-02-11 12:08 | `DESIGN_SPEC_PROTOCOLBUILDER_PHASE1_20260211.md` | ⚠️ Conditional approval, changes required |
-| Database Schema Foundation | SUBA | 2026-02-10 | Migrations 003, 004, 004b | Reference tables populated |
+| Database Schema Foundation | SOOP | 2026-02-10 | Migrations 003, 004, 004b | Reference tables populated |
 | Strategic Documents | LEAD | 2026-02-11 | `EXECUTIVE_PITCH_DECK.md`, `WHY_NO_PHI_EXECUTIVE_MEMO.md` | Complete |
 
 ---
@@ -70,11 +70,11 @@
 ### **Tomorrow (2026-02-12):**
 5. 🔴 **BUILDER:** Implement Toast system
 6. 🔴 **DESIGNER:** Continue Clinical Intelligence mockups (Day 2)
-7. 🔴 **SUBA:** Continue Clinical Intelligence schema (Day 2)
+7. 🔴 **SOOP:** Continue Clinical Intelligence schema (Day 2)
 
 ### **This Week:**
 8. 🟡 **DESIGNER:** Wire ProtocolBuilder to database (after scope clarification)
-9. 🟡 **INSPECTOR:** Review Clinical Intelligence specs (after DESIGNER + SUBA complete)
+9. 🟡 **INSPECTOR:** Review Clinical Intelligence specs (after DESIGNER + SOOP complete)
 
 ---
 

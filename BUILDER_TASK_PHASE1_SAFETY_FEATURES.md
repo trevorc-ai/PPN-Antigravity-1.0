@@ -476,12 +476,12 @@ export const useSafetyBenchmark = () => {
 1. **Database Schema:**
    - Risk: `safety_alerts` table doesn't exist
    - Mitigation: Create migration if needed
-   - Owner: SUBA
+   - Owner: SOOP
 
 2. **Performance:**
    - Risk: Queries too slow (> 500ms)
    - Mitigation: Add database indexes
-   - Owner: SUBA
+   - Owner: SOOP
 
 3. **Data Availability:**
    - Risk: Not enough data for benchmarks (N<10)
@@ -490,7 +490,7 @@ export const useSafetyBenchmark = () => {
 
 **Escalation Path:**
 - If blocked > 2 hours → Report to LEAD
-- If schema changes needed → Assign to SUBA
+- If schema changes needed → Assign to SOOP
 - If design changes needed → Assign to DESIGNER
 
 ---

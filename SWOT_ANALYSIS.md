@@ -133,7 +133,7 @@
 - Key person risk
 
 **Mitigation:**
-- Agent-based development (DESIGNER, SUBA, BUILDER, INSPECTOR)
+- Agent-based development (DESIGNER, SOOP, BUILDER, INSPECTOR)
 - Phased rollout (focus on MVP, not perfection)
 - Dr. Shena as clinical advisor (not just user)
 - Hire contractors for specific tasks (design, QA)

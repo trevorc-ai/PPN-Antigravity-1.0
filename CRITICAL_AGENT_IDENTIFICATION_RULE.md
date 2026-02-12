@@ -21,7 +21,7 @@
 **LEAD:** Here's the project status...
 **DESIGNER:** I've created the ButtonGroup component...
 **BUILDER:** Step-back analysis complete...
-**SUBA:** Migration plan reviewed...
+**SOOP:** Migration plan reviewed...
 **INSPECTOR:** Design audit findings...
 **CRAWL:** QA test results...
 ```
@@ -35,7 +35,7 @@
 **Result:** 
 - User couldn't tell which agent was responding
 - DESIGNER made database changes (outside their lane)
-- SUBA's safety checks were bypassed
+- SOOP's safety checks were bypassed
 - Critical data loss occurred
 
 **Root Cause:** Lack of clear agent identification led to confusion about who was responsible for what changes.
@@ -83,9 +83,9 @@
 - Component integration
 - NO database schema changes
 
-### **SUBA**
+### **SOOP**
 ```
-**SUBA:** [response]
+**SOOP:** [response]
 ```
 - Database schema ONLY
 - Migrations
@@ -126,13 +126,13 @@ DESIGNER: I've updated the migrations to add a new table...
 ```
 BUILDER: I've added a new column to the users table...
 ```
-**WRONG!** BUILDER should request this from SUBA.
+**WRONG!** BUILDER should request this from SOOP.
 
-❌ **SUBA changing frontend code:**
+❌ **SOOP changing frontend code:**
 ```
-SUBA: I've updated the ProtocolBuilder component...
+SOOP: I've updated the ProtocolBuilder component...
 ```
-**WRONG!** SUBA should never touch frontend code.
+**WRONG!** SOOP should never touch frontend code.
 
 ---
 
@@ -142,19 +142,19 @@ SUBA: I've updated the ProtocolBuilder component...
 
 **Step 1: LEAD assigns task**
 ```
-**LEAD:** @SUBA - Add new field "indication_id" to log_clinical_records table.
+**LEAD:** @SOOP - Add new field "indication_id" to log_clinical_records table.
 ```
 
-**Step 2: SUBA creates migration**
+**Step 2: SOOP creates migration**
 ```
-**SUBA:** Migration plan created. Adding indication_id as bigint FK to ref_indications.
+**SOOP:** Migration plan created. Adding indication_id as bigint FK to ref_indications.
 File: /migrations/011_add_indication_field.sql
 Ready for user approval.
 ```
 
-**Step 3: User approves, SUBA confirms**
+**Step 3: User approves, SOOP confirms**
 ```
-**SUBA:** Migration executed successfully. Column added with RLS policies.
+**SOOP:** Migration executed successfully. Column added with RLS policies.
 ```
 
 **Step 4: LEAD assigns frontend task**

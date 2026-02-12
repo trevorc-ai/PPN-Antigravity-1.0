@@ -7,7 +7,7 @@
 
 ## Summary
 
-**Total Subagents:** 5 (DESIGNER, INSPECTOR, BUILDER, SUBA, CRAWL)  
+**Total Subagents:** 5 (DESIGNER, INSPECTOR, BUILDER, SOOP, CRAWL)  
 **Task Files Found:** 4  
 **Issues Identified:** 3
 
@@ -89,7 +89,7 @@
 
 ---
 
-## 4. SUBA
+## 4. SOOP
 
 **Model:** claude-4.5-sonnet  
 **Tools:** terminal, file_editor  
@@ -97,7 +97,7 @@
 
 ### Current Instructions
 ✅ **Good:**
-- Clear identity ("SUBA, the Database Specialist")
+- Clear identity ("SOOP, the Database Specialist")
 - Strong safety rules (no DROP TABLE without permission)
 - 4-step workflow (Model → Safety Check → Execute → Document)
 - References 3NF normalization
@@ -112,7 +112,7 @@
 
 ### Recommendation
 🔧 **UPDATE:** Instructions should reference Supabase, /migrations folder, raw SQL  
-⚠️ **CREATE:** `SUBA_TASK_CURRENT.md` if database work is needed
+⚠️ **CREATE:** `SOOP_TASK_CURRENT.md` if database work is needed
 
 ---
 
@@ -148,12 +148,12 @@
 
 ### Critical Issues
 1. ❌ **BUILDER instructions reference Python** (should be React/TypeScript)
-2. ❌ **SUBA instructions reference wrong folders** (/database vs /migrations)
+2. ❌ **SOOP instructions reference wrong folders** (/database vs /migrations)
 3. ❌ **BUILDER has hardcoded outdated task**
 
 ### Missing Task Files
 1. ❌ INSPECTOR_TASK_CURRENT.md
-2. ❌ SUBA_TASK_CURRENT.md
+2. ❌ SOOP_TASK_CURRENT.md
 3. ❌ CRAWL_TASK_CURRENT.md (optional)
 
 ### Recommendations
@@ -161,11 +161,11 @@
 #### Immediate Actions
 1. ✅ **DESIGNER** - Already fixed with Phase 1 task file
 2. 🔧 **Update BUILDER instructions** - Remove Python references, update to React/TypeScript
-3. 🔧 **Update SUBA instructions** - Reference Supabase, /migrations, raw SQL
+3. 🔧 **Update SOOP instructions** - Reference Supabase, /migrations, raw SQL
 
 #### Optional Actions
 4. ⚠️ **Create INSPECTOR task** - If visual audit is needed
-5. ⚠️ **Create SUBA task** - If database work is needed
+5. ⚠️ **Create SOOP task** - If database work is needed
 6. ⚠️ **Create CRAWL task** - If full site QA is needed
 
 ---
@@ -202,7 +202,7 @@ instructions: |
   Once you have completed the Step-Back analysis, generate the code blocks.
 ```
 
-### Fix 2: Update SUBA Instructions
+### Fix 2: Update SOOP Instructions
 
 **Current:**
 ```yaml
@@ -231,10 +231,10 @@ Your Workflow:
 ## Next Steps
 
 1. ✅ **DESIGNER** - Task file created, ready to work
-2. 🔧 **Update agent.yaml** - Fix BUILDER and SUBA instructions
-3. ⚠️ **Create task files** - For INSPECTOR, SUBA, CRAWL if needed
+2. 🔧 **Update agent.yaml** - Fix BUILDER and SOOP instructions
+3. ⚠️ **Create task files** - For INSPECTOR, SOOP, CRAWL if needed
 
 ---
 
 **Status:** Audit complete, fixes identified  
-**Priority:** Update BUILDER and SUBA instructions before next use
+**Priority:** Update BUILDER and SOOP instructions before next use

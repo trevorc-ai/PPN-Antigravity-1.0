@@ -1,7 +1,7 @@
-# 🧬 SUBA TASK: MOLECULAR DATABASE INFRASTRUCTURE
+# 🧬 SOOP TASK: MOLECULAR DATABASE INFRASTRUCTURE
 ## 3D Molecules, Receptors, Pharmacology & MEQ30
 
-**Assigned To:** SUBA (Database & Backend Specialist)  
+**Assigned To:** SOOP (Database & Backend Specialist)  
 **Reviewed By:** INSPECTOR (QA & Validation)  
 **Managed By:** LEAD  
 **Date:** 2026-02-12 02:42 PST  
@@ -814,6 +814,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 ---
 
-**Status:** 🟡 ASSIGNED - Awaiting SUBA acknowledgment  
+**Status:** 🟡 ASSIGNED - Awaiting SOOP acknowledgment  
 **Priority:** 🔴 HIGH - Enables advanced features  
-**Next:** SUBA implements schema, INSPECTOR validates data accuracy 🧬
+**Next:** SOOP implements schema, INSPECTOR validates data accuracy 🧬

@@ -1,6 +1,6 @@
-# 🗄️ SUBA TASK: CLINICAL INTELLIGENCE DATABASE SCHEMA
+# 🗄️ SOOP TASK: CLINICAL INTELLIGENCE DATABASE SCHEMA
 
-**Assigned To:** SUBA (Database Specialist)  
+**Assigned To:** SOOP (Database Specialist)  
 **Assigned By:** LEAD  
 **Date:** 2026-02-11 16:45 PST  
 **Priority:** P0 - CRITICAL  
@@ -663,7 +663,7 @@ return result;
 
 ---
 
-## 📞 **HANDOFF TO SUBA**
+## 📞 **HANDOFF TO SOOP**
 
 **LEAD:** This is the database foundation for our clinical intelligence platform.
 
@@ -682,6 +682,6 @@ return result;
 ---
 
 **Task Created:** 2026-02-11 16:45 PST  
-**Assigned To:** SUBA  
+**Assigned To:** SOOP  
 **Status:** 🔴 AWAITING START  
-**Next Step:** SUBA designs schema, then hands to INSPECTOR
+**Next Step:** SOOP designs schema, then hands to INSPECTOR

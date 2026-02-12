@@ -1,4 +1,4 @@
-# 📧 MARKETING & AUTOMATIONS SUBAGENT
+# 📧 MARKETING & AUTOMATIONS SOOPGENT
 ## Growth Marketing, SEO, Partnerships & Automation Workflows
 
 **Agent Name:** MARKETER  

@@ -13,7 +13,7 @@
 - 🎨 **DESIGNER:** Creates visual specifications
 - 🔍 **INSPECTOR:** QA gatekeeper - checks feasibility and creates tech specs
 - 🔨 **BUILDER:** Implements code based on tech specs
-- 🗄️ **SUBA:** Database specialist
+- 🗄️ **SOOP:** Database specialist
 
 ### **Chain of Custody Workflow:**
 LEAD creates PLAN.md → DESIGNER creates DESIGN_SPEC.md → INSPECTOR creates TECH_SPEC.md → BUILDER writes code
@@ -199,7 +199,7 @@ BUILDER does NOT decide styling - follows DESIGNER's spec.
    - Follows hard constraints exactly
    - Marks implementation checkboxes as complete
    ↓
-10. SUBA reads PLAN.md → updates Phase 6 section (if database changes)
+10. SOOP reads PLAN.md → updates Phase 6 section (if database changes)
    - Reviews migration against governance rules
    - Executes migration
    - Marks database checkboxes as complete
@@ -257,9 +257,9 @@ BUILDER does NOT decide styling - follows DESIGNER's spec.
    ↓
 3. USER reviews against governance rules
    ↓
-4. SUBA analyzes current schema
+4. SOOP analyzes current schema
    ↓
-5. SUBA creates db_plan.md with:
+5. SOOP creates db_plan.md with:
    - Tables/columns to add (ADDITIVE ONLY)
    - Indexes to create
    - RLS policies to add
@@ -456,7 +456,7 @@ notify_user({
   - `DESIGNER: The color palette is...`
   - `BUILDER: I have updated the file...`
   - `INSPECTOR: Feasibility check passed...`
-  - `SUBA: Migration script created...`
+  - `SOOP: Migration script created...`
 
 ---
 
