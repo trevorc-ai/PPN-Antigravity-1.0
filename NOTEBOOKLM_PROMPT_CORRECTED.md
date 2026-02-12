@@ -18,9 +18,10 @@ You are creating content for PPN Research Portal, a clinical intelligence platfo
 CRITICAL BRANDING REQUIREMENTS:
 
 1. NAME:
-   - Correct: "PPN Research Portal" or "PPN"
-   - NEVER: "Psychedelic Practitioner Network" (outdated)
-   - NEVER: "PPN Portal" (redundant)
+   - Full Name: "Psychedelic Practitioner Network Research"
+   - Short Name (preferred): "PPN Portal"
+   - Also acceptable: "PPN Research Portal" or "PPN"
+   - NEVER: Just "Psychedelic Practitioner Network" (incomplete)
    - NEVER: Any other variation
 
 2. TAGLINE:
@@ -119,7 +120,7 @@ CRITICAL BRANDING REQUIREMENTS:
     - Timeline: 3 months to retention
 
 When generating content, always:
-- Use correct name: "PPN Research Portal"
+- Use correct name: "PPN Portal" (preferred) or "Psychedelic Practitioner Network Research" (full)
 - Use correct colors: Indigo (#6366f1), Cyan (#06b6d4), Purple (#8b5cf6)
 - Use correct fonts: Inter for all text
 - Use correct tone: Professional, evidence-based, practitioner-focused
@@ -127,7 +128,7 @@ When generating content, always:
 - Reference specific use cases (not generic "better documentation")
 
 If you're unsure about any branding element, default to:
-- Name: "PPN Research Portal"
+- Name: "PPN Portal" (preferred) or "Psychedelic Practitioner Network Research" (full)
 - Color: Indigo (#6366f1)
 - Font: Inter
 - Tone: Professional and scientific
@@ -215,7 +216,7 @@ font-size: 14px;
 ### **Before Sharing Any NotebookLM Output:**
 
 **Branding:**
-- [ ] Name is "PPN Research Portal" (not "Psychedelic Practitioner Network")
+- [ ] Name is "PPN Portal" or "Psychedelic Practitioner Network Research" (not just "Psychedelic Practitioner Network")
 - [ ] Tagline is "The Clinical Intelligence Platform for Psychedelic Therapy"
 - [ ] Colors are Indigo (#6366f1), Cyan (#06b6d4), Purple (#8b5cf6)
 - [ ] Fonts are Inter (headings and body)
@@ -273,10 +274,10 @@ font-size: 14px;
 4. Add this prompt:
 
 ```
-Create a 10-minute audio overview of PPN Research Portal.
+Create a 10-minute audio overview of PPN Portal (Psychedelic Practitioner Network Research).
 
 CRITICAL: Use these exact terms:
-- Name: "PPN Research Portal" (NOT "Psychedelic Practitioner Network")
+- Name: "PPN Portal" or "Psychedelic Practitioner Network Research" (NOT just "Psychedelic Practitioner Network")
 - Tagline: "The Clinical Intelligence Platform for Psychedelic Therapy"
 - Key message: "No PHI, No Seizure Risk"
 - Unique value: "Network Benchmarking"
@@ -298,7 +299,7 @@ Focus on:
 
 Avoid:
 - Hype language ("revolutionary," "game-changing")
-- Wrong name ("Psychedelic Practitioner Network")
+- Incomplete name (just "Psychedelic Practitioner Network" without "Research Portal")
 - Generic positioning ("better EHR")
 ```
 
@@ -311,7 +312,7 @@ Avoid:
 ### **Step 4: Validate Output**
 
 **Listen to audio and check:**
-- [ ] Says "PPN Research Portal" (not old name)
+- [ ] Says "PPN Portal" or full name "Psychedelic Practitioner Network Research"
 - [ ] Mentions "No PHI, No Seizure Risk"
 - [ ] Mentions "Network Benchmarking" as unique value
 - [ ] Tone is professional (not hype)
@@ -329,19 +330,19 @@ Avoid:
 ### **For Audio Overview:**
 
 ```
-Create a 10-minute audio overview of PPN Research Portal for clinical leaders.
+Create a 10-minute audio overview of PPN Portal for clinical leaders.
 
 Use EXECUTIVE_PITCH_DECK.md as the primary source for all branding and messaging.
 
 MUST include:
-- Correct name: "PPN Research Portal"
+- Correct name: "PPN Portal" or "Psychedelic Practitioner Network Research"
 - Tagline: "The Clinical Intelligence Platform for Psychedelic Therapy"
 - Key differentiator: "No PHI architecture enables network benchmarking"
 - Target audience: Ketamine clinics, psilocybin facilitators
 - Use cases: Prove safety, reduce malpractice, get reimbursement
 
 MUST avoid:
-- Old name: "Psychedelic Practitioner Network"
+- Incomplete name: Just "Psychedelic Practitioner Network" (missing "Research Portal")
 - Hype language: "revolutionary," "game-changing"
 - Generic positioning: "better EHR" or "practice management"
 
@@ -353,12 +354,13 @@ Tone: Professional, evidence-based, scientific (like JAMA article, not TechCrunc
 ### **For Slide Outline:**
 
 ```
-Create a 15-slide executive presentation outline for PPN Research Portal.
+Create a 15-slide executive presentation outline for PPN Portal.
 
 Use EXECUTIVE_PITCH_DECK.md as the source of truth for all content.
 
 Slide structure:
-1. Title: "PPN Research Portal: The Clinical Intelligence Platform for Psychedelic Therapy"
+1. Title: "PPN Portal: The Clinical Intelligence Platform for Psychedelic Therapy"
+   Subtitle: "Psychedelic Practitioner Network Research"
    Visual: 3D psilocybin molecule (indigo/cyan glow) on dark navy background
 
 2. Problem: Practitioners need safety tools and benchmarking
@@ -456,7 +458,7 @@ Chart specifications:
 - Tables: Dark navy background, indigo headers, white text
 - Diagrams: Simple arrows, minimal text, clear flow
 
-MUST use correct name: "PPN Research Portal" (not "Psychedelic Practitioner Network")
+MUST use correct name: "PPN Portal" or "Psychedelic Practitioner Network Research" (not just "Psychedelic Practitioner Network")
 MUST include specific ROI numbers ($50K, $120K, 15 hours/month)
 MUST reference specific use cases (not generic "better documentation")
 ```
@@ -466,7 +468,7 @@ MUST reference specific use cases (not generic "better documentation")
 ### **For Q&A Prep:**
 
 ```
-I'm meeting with clinical leaders to discuss PPN Research Portal.
+I'm meeting with clinical leaders to discuss PPN Portal (Psychedelic Practitioner Network Research).
 
 Prepare answers to these objections, using EXECUTIVE_PITCH_DECK.md and WHY_NO_PHI_EXECUTIVE_MEMO.md:
 
@@ -477,7 +479,7 @@ Prepare answers to these objections, using EXECUTIVE_PITCH_DECK.md and WHY_NO_PH
 5. "What's your competitive moat?"
 
 For each answer:
-- Use correct name: "PPN Research Portal"
+- Use correct name: "PPN Portal" or "Psychedelic Practitioner Network Research"
 - Reference "No PHI, No Seizure Risk" messaging
 - Explain network benchmarking advantage
 - Tone: Professional, evidence-based, confident (not defensive)
@@ -489,7 +491,7 @@ For each answer:
 
 ### **BEFORE (Incorrect):**
 ```
-❌ Name: "Psychedelic Practitioner Network Portal"
+❌ Name: Just "Psychedelic Practitioner Network" (incomplete)
 ❌ Tagline: "Revolutionizing psychedelic therapy"
 ❌ Colors: Bright blue and green
 ❌ Font: Arial
@@ -499,7 +501,7 @@ For each answer:
 
 ### **AFTER (Correct):**
 ```
-✅ Name: "PPN Research Portal"
+✅ Name: "PPN Portal" or "Psychedelic Practitioner Network Research"
 ✅ Tagline: "The Clinical Intelligence Platform for Psychedelic Therapy"
 ✅ Colors: Indigo (#6366f1), Cyan (#06b6d4), Purple (#8b5cf6)
 ✅ Font: Inter
@@ -519,7 +521,7 @@ For each answer:
 - [ ] Added branding prompt to generation
 
 **Validation:**
-- [ ] Name is "PPN Research Portal" (not old name)
+- [ ] Name is "PPN Portal" or "Psychedelic Practitioner Network Research Portal"
 - [ ] Colors are Indigo/Cyan/Purple (not bright blue/green)
 - [ ] Fonts are Inter (not Arial/Times)
 - [ ] Tone is professional (not hype)
@@ -528,7 +530,7 @@ For each answer:
 **If Incorrect:**
 - [ ] Regenerate with more specific prompt
 - [ ] Reference EXECUTIVE_PITCH_DECK.md explicitly
-- [ ] Add "MUST use correct name: PPN Research Portal"
+- [ ] Add "MUST use correct name: PPN Portal or Psychedelic Practitioner Network Research"
 
 ---
 
