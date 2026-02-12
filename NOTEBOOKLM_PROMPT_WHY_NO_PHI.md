@@ -37,7 +37,47 @@ CRITICAL MESSAGING REQUIREMENTS:
    - Network benchmarking enabled (PHI blocks cross-site sharing)
    - Fast innovation (no legal review bottleneck)
 
-2. SPECIFIC NUMBERS (Always include):
+2. FIVE USE CASES (Show how No PHI enables each):
+   
+   Use Case 1: "Prove You're Not Reckless" (Entheogenic operators)
+   - Problem: Law enforcement scrutiny, DEA petitions
+   - How No PHI helps: Subpoena returns "50 protocols logged, 2 adverse events" (no patient names)
+   - Practitioner protected from legal exposure
+   - Documentation proves safety without exposing participants
+   - ROI: Documentation saved DEA petition, prevented shutdown
+   
+   Use Case 2: "Reduce Malpractice Exposure" (Ketamine clinics)
+   - Problem: Malpractice insurance premiums, lawsuit risk
+   - How No PHI helps: Network benchmarking proves standard-of-care compliance
+   - "Your adverse event rate: 2.3% (better than 62% of network)"
+   - Insurance companies see proof of safety protocols
+   - ROI: $50K saved in legal fees, 10% insurance premium reduction
+   
+   Use Case 3: "Get Reimbursement Approved" (Insurance coverage)
+   - Problem: Payers demand safety and efficacy data
+   - How No PHI helps: Aggregated network data shows safety across 14 sites
+   - "Network adverse event rate: 3.1% (lower than SSRIs at 15%)"
+   - Payers see evidence without patient identifiers
+   - ROI: $120K/year revenue increase (20 patients × $500/session × 12 sessions)
+   
+   Use Case 4: "Scale Without Quality Collapse" (Multi-site operators)
+   - Problem: Ensuring consistent quality across multiple locations
+   - How No PHI helps: Cross-site benchmarking without patient consent
+   - "Denver site: 4.2% adverse events (vs. Portland: 2.1%)"
+   - Identify quality issues before major incidents
+   - ROI: Prevented major incident at Denver site, maintained 95% safety score
+   
+   Use Case 5: "Comply With State Regulations" (Oregon/Colorado)
+   - Problem: Quarterly compliance reports required by state
+   - How No PHI helps: Automated reporting without exposing patient data
+   - One-click export: "Q1 2026: 127 sessions, 3 adverse events, 97.6% safety score"
+   - State regulators get data without patient identifiers
+   - ROI: 15 hours/month saved (vs. manual spreadsheet tracking)
+   
+   KEY INSIGHT: All 5 use cases require cross-site benchmarking, which PHI blocks.
+   Osmind can't do any of these because PHI requires patient consent for data sharing.
+
+3. SPECIFIC NUMBERS (Always include):
    - $1.7M saved over 5 years (vs. PHI compliance)
    - $10.8M average HIPAA breach cost
    - $115M Anthem settlement (largest HIPAA breach)
@@ -174,20 +214,26 @@ Tone: Confident, data-driven, strategic (not defensive or fearful)
 
 Structure:
 1. Hook: "No PHI isn't overcaution. It's our strategic moat." (30 sec)
-2. Legal: Real breach examples, 93% rate, zero risk (3 min)
+2. Legal: Real breach examples, 93% rate, zero risk (2 min)
 3. Financial: $1.7M saved, $10.8M breach cost (2 min)
-4. Privacy: Subpoena protection, benchmarking enabled (2 min)
-5. Competitive: Osmind can't do benchmarking (PHI blocks it) (1.5 min)
-6. Objections: "Why not be careful?" "Competitors do it" (1 min)
-7. Close: "We're building a better product, not avoiding risk" (30 sec)
+4. Privacy: Subpoena protection, benchmarking enabled (1.5 min)
+5. Use Cases: How No PHI enables all 5 use cases (2 min)
+   - "Prove You're Not Reckless": Subpoena returns no patient names
+   - "Reduce Malpractice": Network benchmarking proves standard-of-care
+   - "Get Reimbursement": Aggregated data for payers (no patient IDs)
+   - "Scale Quality": Cross-site benchmarking without consent
+   - "Comply With Regulations": Automated reports (no patient exposure)
+6. Competitive: Osmind can't do benchmarking (PHI blocks it) (1.5 min)
+7. Objections: "Why not be careful?" "Competitors do it" (1 min)
+8. Close: "We're building a better product, not avoiding risk" (30 sec)
 ```
 
 ---
 
-### **PROMPT 2: Slide Outline (10 slides)**
+### **PROMPT 2: Slide Outline (11 slides)**
 
 ```
-Create a 10-slide presentation outline explaining why PPN Portal uses "No PHI/PII" architecture.
+Create an 11-slide presentation outline explaining why PPN Portal uses "No PHI/PII" architecture.
 
 Use WHY_NO_PHI_EXECUTIVE_MEMO.md as the source of truth.
 
@@ -265,7 +311,20 @@ Slide structure:
    - Practitioner protected
    - Patient privacy intact
 
-9. Competitive Advantage: Why Osmind Can't Do Benchmarking
+9. Use Cases: How No PHI Enables All 5 Practitioner Workflows
+   Visual: 5-row table showing problem → solution
+   
+   | Use Case | Problem | How No PHI Helps | ROI |
+   |----------|---------|------------------|-----|
+   | "Prove You're Not Reckless" | DEA scrutiny | Subpoena: no patient names | Saved DEA petition |
+   | "Reduce Malpractice" | Insurance premiums | Network benchmarking proof | $50K saved |
+   | "Get Reimbursement" | Payer demands data | Aggregated safety data | $120K/year revenue |
+   | "Scale Quality" | Multi-site consistency | Cross-site benchmarking | Prevented incident |
+   | "Comply With Regulations" | Quarterly reports | Automated, no patient IDs | 15 hours/month saved |
+   
+   KEY INSIGHT: All 5 require cross-site benchmarking. PHI blocks this. Osmind can't do any of these.
+
+10. Competitive Advantage: Why Osmind Can't Do Benchmarking
    Visual: Comparison diagram
    
    Osmind (PHI):
@@ -282,12 +341,13 @@ Slide structure:
    
    This is our moat: Competitors can't copy without abandoning PHI
 
-10. Conclusion: Strategic Brilliance
+11. Conclusion: Strategic Brilliance
     Visual: Three checkmarks with numbers
     
     ✅ Legal: $0 breach risk (vs. $10.8M average)
     ✅ Financial: $1.7M saved over 5 years
     ✅ Privacy: Enables network benchmarking (competitors can't)
+    ✅ Use Cases: All 5 practitioner workflows enabled
     
     Bottom line: "We're not avoiding PHI. We're building a better product."
 
