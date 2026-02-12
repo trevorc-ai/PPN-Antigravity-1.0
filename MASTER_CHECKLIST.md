@@ -1,6 +1,6 @@
 # ✅ MASTER CHECKLIST - PPN Research Portal
 
-**Last Updated:** 2026-02-11 21:45 PST  
+**Last Updated:** 2026-02-11 22:05 PST  
 **Updated By:** LEAD  
 **Purpose:** High-level progress tracking for all initiatives
 
@@ -203,8 +203,10 @@
 
 ## 💡 QUICK WINS (< 1 hour each)
 
-- [ ] Fix demo mode security (30 min)
-- [ ] Resolve ProtocolBuilder duplication (30 min)
+- [x] ~~Fix demo mode security~~ (already secure)
+- [x] ~~Resolve ProtocolBuilder duplication~~ (COMPLETE)
+- [ ] **Delete/Hide Regulatory Map** (10 min) - Remove from navigation, to be deleted permanently
+- [ ] Replace alert() with Toast (15 min)
 - [ ] Update .env files (15 min)
 - [ ] Verify demo credentials (10 min)
 
