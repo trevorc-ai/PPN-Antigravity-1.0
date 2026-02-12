@@ -368,7 +368,7 @@ const ProtocolBuilder: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
-                      <tr className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
+                      <tr className="text-[11px] font-black text-slate-500 tracking-[0.2em] border-b border-slate-800/50">
                         <th className="px-8 py-6">Protocol Reference</th>
                         <th className="px-8 py-6">Current Status</th>
                         <th className="px-8 py-6">Dosage</th>
@@ -386,14 +386,14 @@ const ProtocolBuilder: React.FC = () => {
                           </td>
                           <td className="px-8 py-6">
                             <div className="flex items-center gap-2">
-                              <div className={`size - 1.5 rounded - full ${p.status === 'Completed' ? 'bg-clinical-green' : p.status === 'Active' ? 'bg-primary' : 'bg-slate-500'} `}></div>
-                              <span className={`text - [11px] font - black uppercase tracking - widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'} `}>{p.status}</span>
+                              <div className={`size-1.5 rounded-full ${p.status === 'Completed' ? 'bg-clinical-green' : p.status === 'Active' ? 'bg-primary' : 'bg-slate-500'}`}></div>
+                              <span className={`text-[11px] font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>{p.status}</span>
                             </div>
                           </td>
                           <td className="px-8 py-6 text-sm font-mono text-slate-400">{p.protocol.dosage} {p.protocol.dosageUnit}</td>
                           <td className="px-8 py-6 text-right">
                             <button
-                              onClick={() => navigate(`/ protocol / ${p.id} `)}
+                              onClick={() => navigate(`/protocol/${p.id}`)}
                               className="text-[11px] font-black text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
                             >
                               Open Protocol
@@ -1033,7 +1033,7 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   return (
     <div id="protocol-builder-root" className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-5xl bg-[#0f172a] border border-white/10 rounded-none sm:rounded-[2.5rem] min-h-screen sm:min-h-0 h-full sm:h-auto max-h-screen sm:max-h-[90vh] shadow-[0_0_50px_-12px_rgba(43,116,243,0.5)] ring-2 ring-primary/40 overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
+      <div className="w-full max-w-4xl bg-[#0f172a] border border-white/10 rounded-none sm:rounded-[2.5rem] min-h-screen sm:min-h-0 h-full sm:h-auto max-h-screen sm:max-h-[90vh] shadow-[0_0_50px_-12px_rgba(43,116,243,0.5)] ring-2 ring-primary/40 overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
 
         <div className="p-6 sm:p-8 border-b border-slate-800 flex justify-between items-center bg-slate-900/20 shrink-0">
           <div className="flex items-center gap-6">

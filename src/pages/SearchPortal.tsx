@@ -36,11 +36,11 @@ const SectionHeader: React.FC<{ title: string; icon: string; count: number; onSe
       <div className="size-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
         <span className="material-symbols-outlined text-sm">{icon}</span>
       </div>
-      <h3 className="text-sm font-black text-white uppercase tracking-widest">{title}</h3>
+      <h3 className="text-sm font-black text-white tracking-tight">{title}</h3>
       <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[11px] font-mono text-slate-400 font-bold">{count}</span>
     </div>
     {onSeeAll && (
-      <button onClick={onSeeAll} className="text-[12px] font-black text-primary uppercase tracking-widest hover:underline">
+      <button onClick={onSeeAll} className="text-[12px] font-bold text-primary hover:underline">
         View All
       </button>
     )}
@@ -120,7 +120,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
       <div className="flex justify-between items-start relative z-10">
         <div className="space-y-1">
           <h4 className="text-xl font-black text-white tracking-tight leading-tight">{cardTitle}</h4>
-          <p className="text-[11px] font-bold text-slate-500 tracking-wide uppercase">{cardSubtitle}</p>
+          <p className="text-[11px] font-medium text-slate-500">{cardSubtitle}</p>
         </div>
         {/* Patient ID as Discrete Badge */}
         <span className="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono font-bold text-slate-500">
@@ -131,7 +131,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
       {/* Efficacy Metric (The "Clinical HUD") */}
       <div className="space-y-3 relative z-10">
         <div className="flex justify-between items-end">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Efficacy ({outcomeType})</span>
+          <span className="text-[11px] font-medium text-slate-500">Efficacy ({outcomeType})</span>
           <span className={`text-2xl font-black ${isResponder ? 'text-clinical-green' : 'text-slate-400'}`}>
             ▼ {delta} pts
           </span>
@@ -152,12 +152,12 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
             <span className={`material-symbols-outlined text-base ${hasSafetyEvent ? 'text-red-500 animate-pulse' : 'text-clinical-green'}`}>
               {hasSafetyEvent ? 'warning' : 'check_circle'}
             </span>
-            <span className={`text-[11px] font-bold uppercase tracking-widest ${hasSafetyEvent ? 'text-red-400' : 'text-slate-400'}`}>
+            <span className={`text-[11px] font-medium ${hasSafetyEvent ? 'text-red-400' : 'text-slate-400'}`}>
               {hasSafetyEvent ? 'Adverse Event' : 'Safety Nominal'}
             </span>
           </div>
           {hasSafetyEvent && (
-            <span className="text-[11px] font-mono text-red-500 border border-red-500/30 px-1.5 rounded bg-red-500/10 uppercase font-bold">
+            <span className="text-[11px] font-mono text-red-500 border border-red-500/30 px-1.5 rounded bg-red-500/10 font-bold">
               Action Req.
             </span>
           )}
@@ -167,7 +167,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
         {isUnderbooked && (
           <div className="flex items-center gap-2 text-accent-amber bg-accent-amber/5 px-2.5 py-1.5 rounded-lg border border-accent-amber/10">
             <span className="material-symbols-outlined text-sm">schedule</span>
-            <span className="text-[11px] font-bold uppercase tracking-widest">Low Integration Hours</span>
+            <span className="text-[11px] font-medium">Low Integration Hours</span>
           </div>
         )}
       </div>
@@ -193,7 +193,7 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
         </div>
         <div className="min-w-0 flex-1">
           <h4 className="text-sm font-black text-white truncate group-hover:text-primary transition-colors">{sub.name}</h4>
-          <p className="text-[11px] text-slate-500 font-bold tracking-widest uppercase truncate mt-0.5">{sub.class}</p>
+          <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{sub.class}</p>
           <div className="flex items-center gap-2 mt-2">
             <span className="text-[11px] font-mono text-clinical-green bg-clinical-green/10 px-1.5 py-0.5 rounded border border-clinical-green/20">{(sub.efficacy * 100).toFixed(0)}% Eff.</span>
           </div>
@@ -209,10 +209,10 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
       className="group bg-slate-900/40 border border-slate-800 hover:border-slate-600 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-lg cursor-pointer relative overflow-hidden h-full"
     >
       <div className="flex items-center justify-between relative z-10">
-        <div className="px-2 py-1 rounded-lg text-[11px] font-black border uppercase bg-purple-500/10 text-purple-400 border-purple-500/20">
+        <div className="px-2 py-1 rounded-lg text-[11px] font-bold border bg-purple-500/10 text-purple-400 border-purple-500/20">
           Substance
         </div>
-        <span className="text-[12px] font-black text-slate-500 uppercase tracking-widest">{sub.schedule}</span>
+        <span className="text-[12px] font-medium text-slate-500">{sub.schedule}</span>
       </div>
 
       <div className="flex items-center gap-4 relative z-10">
@@ -225,14 +225,14 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
         </div>
         <div className="min-w-0">
           <h4 className="text-lg font-black text-white truncate group-hover:text-primary transition-colors">{sub.name}</h4>
-          <p className="text-[11px] text-slate-500 font-bold tracking-widest uppercase truncate">{sub.class}</p>
+          <p className="text-[11px] text-slate-500 font-medium truncate">{sub.class}</p>
         </div>
       </div>
 
       <div className="pt-3 mt-auto">
         <div className="w-full h-px bg-slate-800/50 mb-3"></div>
         <div className="flex justify-between items-center">
-          <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Efficacy</span>
+          <span className="text-[11px] font-medium text-slate-500">Efficacy</span>
           <span className="text-[11px] font-mono font-bold text-clinical-green">{(sub.efficacy * 100).toFixed(0)}%</span>
         </div>
       </div>
@@ -258,10 +258,10 @@ const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }>
         </div>
         <div className="min-w-0">
           <h4 className="text-sm font-black text-white truncate group-hover:text-primary transition-colors">{clin.name}</h4>
-          <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest truncate mt-0.5">{clin.role}</p>
+          <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{clin.role}</p>
           <div className="flex items-center gap-1 mt-1.5">
             <span className="material-symbols-outlined text-xs text-primary">verified</span>
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tight">Verified Node</span>
+            <span className="text-[11px] font-medium text-slate-400">Verified</span>
           </div>
         </div>
       </div>
@@ -275,7 +275,7 @@ const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }>
       className="group bg-slate-900/40 border border-slate-800 hover:border-slate-600 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-lg cursor-pointer relative overflow-hidden h-full"
     >
       <div className="flex items-center justify-between relative z-10">
-        <div className="px-2 py-1 rounded-lg text-[11px] font-black border uppercase bg-blue-500/10 text-blue-400 border-blue-500/20">
+        <div className="px-2 py-1 rounded-lg text-[11px] font-bold border bg-blue-500/10 text-blue-400 border-blue-500/20">
           Clinician
         </div>
         <span className="material-symbols-outlined text-slate-600 text-sm">verified</span>
@@ -291,7 +291,7 @@ const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }>
         </div>
         <div className="min-w-0">
           <h4 className="text-lg font-black text-white truncate group-hover:text-primary transition-colors">{clin.name}</h4>
-          <p className="text-[12px] text-slate-500 font-bold tracking-widest uppercase truncate">{clin.role}</p>
+          <p className="text-[12px] text-slate-500 font-medium truncate">{clin.role}</p>
         </div>
       </div>
 
@@ -531,7 +531,7 @@ const SearchPortal: React.FC = () => {
                 <button
                   key={cat.label}
                   onClick={() => handleCategoryChange(cat.label)}
-                  className={`px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-widest transition-all border flex items-center gap-2 ${isActive ? 'bg-slate-800 text-white border-slate-700 shadow-lg' : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900'
+                  className={`px-5 py-2 rounded-full text-[11px] font-bold transition-all border flex items-center gap-2 ${isActive ? 'bg-slate-800 text-white border-slate-700 shadow-lg' : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900'
                     }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">{cat.icon}</span>
@@ -553,19 +553,19 @@ const SearchPortal: React.FC = () => {
         `}>
           <div className="h-full overflow-y-auto custom-scrollbar p-6 space-y-8 pb-20 w-72 lg:w-80">
             <div className="flex items-center justify-between lg:hidden mb-2">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest">Filters</h3>
+              <h3 className="text-sm font-black text-white">Filters</h3>
               <button onClick={() => setIsFilterOpen(false)} className="p-2 text-slate-500 hover:text-white">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <div className="hidden lg:flex items-center justify-between mb-4">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Smart Filters</h3>
-              <button onClick={handleReset} className="text-[12px] font-black text-primary uppercase hover:underline">Reset</button>
+              <h3 className="text-xs font-bold text-slate-400">Smart Filters</h3>
+              <button onClick={handleReset} className="text-[12px] font-bold text-primary hover:underline">Reset</button>
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+              <label className="text-[11px] font-medium text-slate-500 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">location_on</span> Setting
               </label>
               <div className="flex flex-col gap-2">
@@ -573,7 +573,7 @@ const SearchPortal: React.FC = () => {
                   <button
                     key={opt}
                     onClick={() => setFilters(prev => ({ ...prev, setting: opt }))}
-                    className={`py-2.5 px-3 rounded-lg text-[11px] font-black uppercase border text-left transition-all ${filters.setting === opt
+                    className={`py-2.5 px-3 rounded-lg text-[11px] font-medium border text-left transition-all ${filters.setting === opt
                       ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300'
                       : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:border-slate-700'
                       }`}
@@ -585,7 +585,7 @@ const SearchPortal: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+              <label className="text-[11px] font-medium text-slate-500 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">science</span> Substance
               </label>
               <div className="flex flex-col gap-2">
@@ -593,7 +593,7 @@ const SearchPortal: React.FC = () => {
                   <button
                     key={opt}
                     onClick={() => setFilters(prev => ({ ...prev, substance: opt }))}
-                    className={`py-2.5 px-4 rounded-lg text-[11px] font-black uppercase text-left border transition-all flex justify-between items-center ${filters.substance === opt
+                    className={`py-2.5 px-4 rounded-lg text-[11px] font-medium text-left border transition-all flex justify-between items-center ${filters.substance === opt
                       ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
                       : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:border-slate-700'
                       }`}
@@ -606,7 +606,7 @@ const SearchPortal: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+              <label className="text-[10px] font-medium text-slate-500 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">trending_down</span> Min. Efficacy
               </label>
               <div className="flex flex-col gap-2">
@@ -614,7 +614,7 @@ const SearchPortal: React.FC = () => {
                   <button
                     key={opt}
                     onClick={() => setFilters(prev => ({ ...prev, minEfficacy: opt }))}
-                    className={`py-2.5 px-3 rounded-lg text-[10px] font-black uppercase border text-left transition-all ${filters.minEfficacy === opt
+                    className={`py-2.5 px-3 rounded-lg text-[10px] font-medium border text-left transition-all ${filters.minEfficacy === opt
                       ? 'bg-primary/20 border-primary text-white shadow-lg'
                       : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:border-slate-700'
                       }`}
@@ -625,7 +625,7 @@ const SearchPortal: React.FC = () => {
               </div>
             </div>
 
-            <button onClick={handleReset} className="lg:hidden w-full py-3 border border-slate-800 hover:bg-slate-800 rounded-xl text-[12px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-all">
+            <button onClick={handleReset} className="lg:hidden w-full py-3 border border-slate-800 hover:bg-slate-800 rounded-xl text-[12px] font-bold text-slate-500 hover:text-white transition-all">
               Reset Filters
             </button>
           </div>
@@ -649,7 +649,7 @@ const SearchPortal: React.FC = () => {
                         <span className="material-symbols-outlined text-lg animate-pulse">psychology</span>
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[11px] font-black text-indigo-300 tracking-[0.2em] uppercase">Neural Copilot</span>
+                        <span className="text-[11px] font-bold text-indigo-300">Neural Copilot</span>
                       </div>
                     </div>
 
@@ -681,64 +681,77 @@ const SearchPortal: React.FC = () => {
 
               {/* RENDER LOGIC: Grouped Overview vs Deep Dive */}
               {activeCategory === 'All' ? (
-                <div className="space-y-6 pb-20">
+                <div className="space-y-8 pb-20">
 
-                  {/* Row 1: Substances (Bento Top) */}
-                  {substanceResults.length > 0 && (
+                  {/* Unified Floating Molecules - Single Horizontal Slider */}
+                  {(substanceResults.length > 0 || patientResults.length > 0 || clinicianResults.length > 0) && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                      <SectionHeader
-                        title="Matched Substances"
-                        icon="biotech"
-                        count={substanceResults.length}
-                        onSeeAll={() => handleCategoryChange('Substances')}
-                      />
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {substanceResults.slice(0, 3).map((sub, i) => (
-                          <SubstanceCard key={`sub-${sub.id}-${i}`} sub={sub} variant="compact" />
-                        ))}
+                      {/* Subtle Header - No Box */}
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-sm font-bold text-slate-400">Research Results</h3>
+                        <span className="text-xs text-slate-500">
+                          {substanceResults.length + patientResults.length + clinicianResults.length} nodes
+                        </span>
                       </div>
-                    </div>
-                  )}
 
-                  {/* Row 2: Split View (Patients Left, Clinicians Right) */}
-                  {(patientResults.length > 0 || clinicianResults.length > 0) && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-                      {/* Left Col: Patients */}
-                      <div className="flex flex-col">
-                        {patientResults.length > 0 && (
-                          <>
-                            <SectionHeader
-                              title="Patient Registry"
-                              icon="personal_injury"
-                              count={patientResults.length}
-                              onSeeAll={() => handleCategoryChange('Patients')}
-                            />
-                            <div className="flex flex-col gap-3">
-                              {patientResults.slice(0, 3).map((pat, i) => (
-                                <PatientCard key={`pat-${pat.id}-${i}`} res={pat} variant="compact" />
-                              ))}
+                      {/* Horizontal Scrolling Container */}
+                      <div className="relative group">
+                        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth custom-scrollbar">
+                          {/* Substances First */}
+                          {substanceResults.slice(0, 3).map((sub, i) => (
+                            <div key={`sub-${sub.id}-${i}`} className="snap-start shrink-0 w-80">
+                              <SubstanceCard sub={sub} variant="compact" />
                             </div>
-                          </>
+                          ))}
+
+                          {/* Patients */}
+                          {patientResults.slice(0, 3).map((pat, i) => (
+                            <div key={`pat-${pat.id}-${i}`} className="snap-start shrink-0 w-80">
+                              <PatientCard res={pat} variant="compact" />
+                            </div>
+                          ))}
+
+                          {/* Clinicians */}
+                          {clinicianResults.slice(0, 3).map((clin, i) => (
+                            <div key={`clin-${clin.id}-${i}`} className="snap-start shrink-0 w-80">
+                              <ClinicianCard clin={clin} variant="compact" />
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Scroll Indicator - Subtle */}
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="h-0.5 w-8 bg-primary/30 rounded-full"></div>
+                          <div className="h-0.5 w-8 bg-slate-700 rounded-full"></div>
+                          <div className="h-0.5 w-8 bg-slate-700 rounded-full"></div>
+                        </div>
+                      </div>
+
+                      {/* View All Links - Subtle, Below Slider */}
+                      <div className="flex gap-4 mt-6 justify-center">
+                        {substanceResults.length > 3 && (
+                          <button
+                            onClick={() => handleCategoryChange('Substances')}
+                            className="text-xs text-slate-500 hover:text-primary transition-colors"
+                          >
+                            View all {substanceResults.length} substances →
+                          </button>
                         )}
-                      </div>
-
-                      {/* Right Col: Clinicians */}
-                      <div className="flex flex-col">
-                        {clinicianResults.length > 0 && (
-                          <>
-                            <SectionHeader
-                              title="Verified Clinicians"
-                              icon="groups"
-                              count={clinicianResults.length}
-                              onSeeAll={() => handleCategoryChange('Clinicians')}
-                            />
-                            <div className="flex flex-col gap-3">
-                              {clinicianResults.slice(0, 3).map((clin, i) => (
-                                <ClinicianCard key={`clin-${clin.id}-${i}`} clin={clin} variant="compact" />
-                              ))}
-                            </div>
-                          </>
+                        {patientResults.length > 3 && (
+                          <button
+                            onClick={() => handleCategoryChange('Patients')}
+                            className="text-xs text-slate-500 hover:text-primary transition-colors"
+                          >
+                            View all {patientResults.length} patients →
+                          </button>
+                        )}
+                        {clinicianResults.length > 3 && (
+                          <button
+                            onClick={() => handleCategoryChange('Clinicians')}
+                            className="text-xs text-slate-500 hover:text-primary transition-colors"
+                          >
+                            View all {clinicianResults.length} clinicians →
+                          </button>
                         )}
                       </div>
                     </div>
@@ -750,7 +763,7 @@ const SearchPortal: React.FC = () => {
                       <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
                         <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
                       </div>
-                      <p className="text-slate-500 font-black tracking-widest text-[11px] uppercase">No registry nodes found matching criteria.</p>
+                      <p className="text-slate-500 font-medium text-[11px]">No registry nodes found matching criteria.</p>
                       <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
                     </div>
                   )}
@@ -778,7 +791,7 @@ const SearchPortal: React.FC = () => {
                         <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
                           <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
                         </div>
-                        <p className="text-slate-500 font-black tracking-widest text-[11px] uppercase">No registry nodes found in this category.</p>
+                        <p className="text-slate-500 font-medium text-[11px]">No registry nodes found in this category.</p>
                         <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
                       </div>
                     )}
