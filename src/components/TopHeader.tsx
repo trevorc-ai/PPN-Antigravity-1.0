@@ -157,13 +157,18 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
               </div>
 
               <div className="flex items-center gap-2 mr-2">
-                <NavIconButton
-                  icon="explore"
-                  label="Tour"
-                  tooltip="System Tour"
-                  onClick={onStartTour}
-                />
-                <div id="tour-search-node" className="contents">
+                {/* Tour - Hidden on mobile */}
+                <div className="hidden lg:block">
+                  <NavIconButton
+                    icon="explore"
+                    label="Tour"
+                    tooltip="System Tour"
+                    onClick={onStartTour}
+                  />
+                </div>
+
+                {/* Search - Hidden on mobile */}
+                <div id="tour-search-node" className="hidden lg:contents">
                   <NavIconButton
                     icon="search"
                     label="Search"
@@ -171,6 +176,8 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     onClick={() => addToast({ title: 'Feature Pending', message: 'Global registry search coming in v2.0', type: 'info' })}
                   />
                 </div>
+
+                {/* Alerts - Always visible (essential) */}
                 <div id="tour-notifications" className="contents">
                   <NavIconButton
                     icon="notifications"
@@ -179,7 +186,9 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     onClick={() => addToast({ title: 'No New Alerts', message: 'You are all caught up.', type: 'success' })}
                   />
                 </div>
-                <div id="tour-help-node" className="contents">
+
+                {/* Help - Hidden on mobile */}
+                <div id="tour-help-node" className="hidden lg:contents">
                   <NavIconButton
                     icon="help"
                     label="Help"
@@ -187,12 +196,16 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     onClick={() => addToast({ title: 'Support Contacted', message: 'Ticket #492 created. Check email.', type: 'success' })}
                   />
                 </div>
-                <NavIconButton
-                  icon="science"
-                  label="Vibe"
-                  tooltip="Physics Demo"
-                  onClick={() => navigate('/vibe-check')}
-                />
+
+                {/* Vibe - Hidden on mobile */}
+                <div className="hidden lg:block">
+                  <NavIconButton
+                    icon="science"
+                    label="Vibe"
+                    tooltip="Physics Demo"
+                    onClick={() => navigate('/vibe-check')}
+                  />
+                </div>
               </div>
 
               <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block"></div>
