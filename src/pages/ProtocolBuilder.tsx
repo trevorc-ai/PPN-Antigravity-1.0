@@ -656,6 +656,9 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
 
   useEffect(() => {
     if (isOpen) {
+      // Reset accordion to auto-open demographics section
+      setActiveSection('demographics');
+
       const generateSegment = () => {
         const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let result = '';
