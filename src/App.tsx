@@ -31,6 +31,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Landing from './pages/Landing';
 import PhysicsDemo from './pages/PhysicsDemo';
+import HiddenComponentsShowcase from './pages/HiddenComponentsShowcase';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
@@ -166,6 +167,7 @@ const AppContent: React.FC = () => {
         <Route path="/about" element={<About />} />
         <Route path="/secure-gate" element={<SecureGate />} />
         <Route path="/vibe-check" element={<PhysicsDemo />} />
+        <Route path="/hidden-components" element={<HiddenComponentsShowcase />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
