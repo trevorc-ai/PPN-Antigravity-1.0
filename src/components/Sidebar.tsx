@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BarChart, Bar, Cell, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import { PATIENTS } from '../constants';
+import { useSafetyAlerts } from '../hooks/useSafetyAlerts';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
   const location = useLocation();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const isSearchActive = location.pathname === '/advanced-search';
+  const { alertCount } = useSafetyAlerts();
 
   // DYNAMIC CHART DATA: Aggregated from real PATIENTS registry
   const chartData = useMemo(() => {
@@ -74,6 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
     {
       title: 'Clinical Safety',
       items: [
+        { label: 'Safety Surveillance', icon: 'shield_with_heart', path: '/deep-dives/safety-surveillance', badge: alertCount },
         { label: 'Interaction Checker', icon: 'security', path: '/interactions' },
         { label: 'Audit Logs', icon: 'manage_search', path: '/audit' },
       ]
@@ -241,6 +244,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
                             {item.icon}
                           </span>
                           <span className={`text-[14px] font-bold uppercase tracking-wide whitespace-nowrap ${isOpen ? 'block' : 'lg:hidden xl:block'}`}>{item.label}</span>
+                          {item.badge !== undefined && item.badge > 0 && (
+                            <span className={`ml-auto px-2 py-0.5 rounded-full bg-red-500 text-white text-[11px] font-black ${isOpen ? 'block' : 'lg:hidden xl:block'}`}>
+                              {item.badge}
+                            </span>
+                          )}
                         </>
                       )}
                     </NavLink>
