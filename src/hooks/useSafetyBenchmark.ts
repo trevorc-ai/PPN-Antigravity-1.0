@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../supabaseClient';
 
 interface SafetyBenchmark {
     practitioner_adverse_event_rate: number;

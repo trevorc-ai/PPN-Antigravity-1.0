@@ -9,6 +9,8 @@ import {
 
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
+import SafetyRiskMatrix from '../components/analytics/SafetyRiskMatrix';
+import { usePractitionerProtocols } from '../hooks/usePractitionerProtocols';
 
 // --- COMPONENT: CLINIC PERFORMANCE CARD (PRIMARY) ---
 interface ClinicPerformanceCardProps {
@@ -142,6 +144,7 @@ const MetricPill: React.FC<MetricPillProps> = ({ icon: Icon, label, value, color
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { protocols, loading: protocolsLoading } = usePractitionerProtocols();
 
   return (
     <PageContainer className="min-h-screen bg-background-dark text-white flex flex-col gap-8">
@@ -204,6 +207,67 @@ export default function Dashboard() {
             color="bg-blue-500"
           />
         </div>
+      </Section>
+
+      {/* SAFETY RISK ASSESSMENT */}
+      <Section spacing="tight">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-black text-white tracking-tight">Safety Risk Assessment</h2>
+            <p className="text-sm text-slate-400 mt-1">Your protocols vs. network risk profile</p>
+          </div>
+          <button
+            onClick={() => navigate('/deep-dives/risk-matrix')}
+            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-indigo-500/50 text-sm font-bold text-slate-300 hover:text-white transition-all flex items-center gap-2"
+          >
+            View Detailed Analysis
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {protocolsLoading ? (
+          <div className="card-glass rounded-3xl p-12 flex items-center justify-center">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-4"></div>
+              <p className="text-sm text-slate-400">Loading safety data...</p>
+            </div>
+          </div>
+        ) : protocols.length > 0 ? (
+          <div className="card-glass rounded-3xl p-6 border-2 border-slate-800">
+            <SafetyRiskMatrix />
+            {protocols.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-slate-800">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Your Active Protocols</p>
+                <div className="flex flex-wrap gap-2">
+                  {protocols.slice(0, 5).map((protocol, index) => (
+                    <div
+                      key={index}
+                      className="px-3 py-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs font-medium text-indigo-300"
+                    >
+                      {protocol.substance_name} for {protocol.indication_name} ({protocol.session_count} sessions)
+                    </div>
+                  ))}
+                  {protocols.length > 5 && (
+                    <div className="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-slate-400">
+                      +{protocols.length - 5} more
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="card-glass rounded-3xl p-12 text-center">
+            <p className="text-slate-400 mb-2">No active protocols in the last 90 days</p>
+            <p className="text-sm text-slate-500">Log your first protocol to see safety risk assessment</p>
+            <button
+              onClick={() => navigate('/builder')}
+              className="mt-4 px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold transition-all"
+            >
+              Log Protocol
+            </button>
+          </div>
+        )}
       </Section>
 
       {/* RECOMMENDED NEXT STEPS */}
