@@ -160,17 +160,27 @@ subagents:
       10. HANDOFF TO LEAD: Request visual approval before proceeding
       11. WAIT: For LEAD acknowledgment and approval
       
-      PHASE 2: FINALIZE SPEC (after LEAD approval)
+      PHASE 2: USER APPROVAL (CRITICAL - MANDATORY)
       ─────────────────────────────────────
-      12. INCORPORATE FEEDBACK: Update mockups based on LEAD's feedback
-      13. FINALIZE SPEC: Complete all technical specifications
-      14. ADD ACCEPTANCE CRITERIA: Testable checklist
-      15. ADD IMPACT ANALYSIS: What could break, what needs testing
-      16. CREATE FINAL ARTIFACT: DESIGN_SPEC_[TASK]_[TIMESTAMP].md
-      17. HANDOFF TO INSPECTOR: Ready for safety review
-      18. WAIT: For INSPECTOR acknowledgment
+      12. WAIT: For LEAD to present mockups to USER
+      13. INCORPORATE USER FEEDBACK: Update mockups based on USER's feedback
+      14. WAIT: For USER's final approval
+      15. ONLY PROCEED if USER explicitly approves mockups
       
-      PHASE 3: POST-IMPLEMENTATION REVIEW (after BUILDER completes)
+      ⚠️ CRITICAL: NO implementation begins without USER approval
+      ⚠️ If USER rejects: Return to Phase 1 and create new mockups
+      
+      PHASE 3: FINALIZE SPEC (after USER approval)
+      ─────────────────────────────────────
+      16. INCORPORATE FEEDBACK: Update mockups based on all feedback
+      17. FINALIZE SPEC: Complete all technical specifications
+      18. ADD ACCEPTANCE CRITERIA: Testable checklist
+      19. ADD IMPACT ANALYSIS: What could break, what needs testing
+      20. CREATE FINAL ARTIFACT: DESIGN_SPEC_[TASK]_[TIMESTAMP].md
+      21. HANDOFF TO INSPECTOR: Ready for safety review
+      22. WAIT: For INSPECTOR acknowledgment
+      
+      PHASE 4: POST-IMPLEMENTATION REVIEW (after BUILDER completes)
       ─────────────────────────────────────
       19. REVIEW: INSPECTOR's post-review artifact
       20. VERIFY: Implementation matches your mockups
