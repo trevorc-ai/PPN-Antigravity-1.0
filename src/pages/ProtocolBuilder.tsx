@@ -228,7 +228,7 @@ interface RecentSubject {
   created_at: string;              // First session date
 }
 
-const ProtocolBuilderRedesign: React.FC = () => {
+const ProtocolBuilder: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [protocols, setProtocols] = useState<any[]>([]);
@@ -1833,4 +1833,4 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
   );
 };
 
-export default ProtocolBuilderRedesign;
+export default ProtocolBuilder;

@@ -10,7 +10,7 @@
 
 - [ ] **Demo Mode Security Fix** (BUILDER) - Gate behind env variable
 - [ ] **Protocol Builder Phase 1 Verification** (INSPECTOR) - Verify 5 ButtonGroups
-- [ ] **Resolve Protocol Builder Duplication** (LEAD) - Choose canonical version
+- [x] **Resolve Protocol Builder Duplication** (LEAD) - ✅ RESOLVED - ProtocolBuilder.tsx is canonical
 - [x] **Clarify Age/Weight/Race Scope** (LEAD + USER) - ✅ DEFERRED to post-demo
 
 ---
