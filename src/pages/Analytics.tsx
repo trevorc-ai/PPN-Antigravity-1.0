@@ -19,10 +19,13 @@ import MetabolicRiskGauge from '../components/analytics/MetabolicRiskGauge';
 import { GlassmorphicCard } from '../components/ui/GlassmorphicCard';
 import { supabase } from '../supabaseClient';
 import { useAnalyticsData } from '../hooks/useAnalyticsData';
+import SafetyBenchmark from '../components/analytics/SafetyBenchmark';
+import { useSafetyBenchmark } from '../hooks/useSafetyBenchmark';
 
 const Analytics = () => {
     const [siteId, setSiteId] = useState<number | null>(null);
     const analytics = useAnalyticsData(siteId);
+    const { benchmark, loading: benchmarkLoading } = useSafetyBenchmark();
 
     useEffect(() => {
         const fetchUserSite = async () => {
@@ -154,6 +157,69 @@ const Analytics = () => {
                         </div>
                     </div>
                 ))}
+            </Section>
+
+            {/* SAFETY PERFORMANCE BENCHMARK */}
+            <Section spacing="tight">
+                <div className="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 className="text-2xl font-black text-white tracking-tight">Safety Performance</h2>
+                        <p className="text-sm text-slate-400 mt-1">Your adverse event rate vs. network average</p>
+                    </div>
+                </div>
+
+                {benchmarkLoading ? (
+                    <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-12 flex items-center justify-center">
+                        <div className="text-center">
+                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-4"></div>
+                            <p className="text-sm text-slate-400">Loading safety benchmark...</p>
+                        </div>
+                    </div>
+                ) : benchmark ? (
+                    <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
+                        <SafetyBenchmark />
+
+                        {/* Interpretation */}
+                        <div className="mt-6 pt-6 border-t border-slate-800">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Your Rate</p>
+                                    <p className="text-2xl font-black text-white">{benchmark.practitioner_adverse_event_rate.toFixed(2)}%</p>
+                                    <p className="text-xs text-slate-500 mt-1">{benchmark.adverse_events} events / {benchmark.total_sessions} sessions</p>
+                                </div>
+                                <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Network Average</p>
+                                    <p className="text-2xl font-black text-white">{benchmark.network_average_rate.toFixed(2)}%</p>
+                                    <p className="text-xs text-slate-500 mt-1">All sites with N ≥ 10</p>
+                                </div>
+                                <div className={`rounded-xl p-4 border ${benchmark.status === 'excellent' ? 'bg-emerald-500/10 border-emerald-500/20' :
+                                        benchmark.status === 'good' ? 'bg-blue-500/10 border-blue-500/20' :
+                                            benchmark.status === 'average' ? 'bg-slate-900/50 border-slate-800' :
+                                                'bg-amber-500/10 border-amber-500/20'
+                                    }`}>
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Status</p>
+                                    <p className={`text-2xl font-black ${benchmark.status === 'excellent' ? 'text-emerald-400' :
+                                            benchmark.status === 'good' ? 'text-blue-400' :
+                                                benchmark.status === 'average' ? 'text-white' :
+                                                    'text-amber-400'
+                                        }`}>
+                                        {benchmark.status === 'excellent' ? 'Excellent' :
+                                            benchmark.status === 'good' ? 'Good' :
+                                                benchmark.status === 'average' ? 'Average' :
+                                                    'Needs Improvement'}
+                                    </p>
+                                    <p className="text-xs text-slate-500 mt-1">{benchmark.percentile}th percentile</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-12 text-center">
+                        <ShieldCheck className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                        <p className="text-slate-400 mb-2">Insufficient data for safety benchmark</p>
+                        <p className="text-sm text-slate-500">Log at least 10 protocols to see your safety performance</p>
+                    </div>
+                )}
             </Section>
 
             {/* FILTER CONTROLS - Hide on Print */}
