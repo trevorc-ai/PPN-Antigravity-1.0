@@ -1,6 +1,6 @@
 # ✅ MASTER CHECKLIST - PPN Research Portal
 
-**Last Updated:** 2026-02-11 20:10 PST  
+**Last Updated:** 2026-02-11 21:45 PST  
 **Updated By:** LEAD  
 **Purpose:** High-level progress tracking for all initiatives
 
@@ -11,7 +11,7 @@
 - [ ] **Demo Mode Security Fix** (BUILDER) - Gate behind env variable
 - [ ] **Protocol Builder Phase 1 Verification** (INSPECTOR) - Verify 5 ButtonGroups
 - [ ] **Resolve Protocol Builder Duplication** (LEAD) - Choose canonical version
-- [ ] **Clarify Age/Weight/Race Scope** (LEAD + USER) - Phase 2 or separate?
+- [x] **Clarify Age/Weight/Race Scope** (LEAD + USER) - ✅ DEFERRED to post-demo
 
 ---
 
@@ -26,6 +26,14 @@
 - [x] Replace Safety Event dropdown with ButtonGroup
 - [ ] INSPECTOR verification (assigned, not started)
 - [ ] Resolve duplication (ProtocolBuilder.tsx vs ProtocolBuilderRedesign.tsx)
+
+### **Protocol Builder Phase 1.5** ⏸️ DEFERRED (Post-Demo)
+- [ ] Age button group (6 options: 18-25, 26-35, 36-45, 46-55, 56-65, 66+)
+- [ ] Weight Range button group (7 weight brackets)
+- [ ] Race/Ethnicity button group (8 options)
+- [ ] Power user features (keyboard shortcuts, smart defaults)
+- **Decision:** Deferred to after Feb 15 demo
+- **Rationale:** Focus on critical fixes and demo readiness
 
 ### **Clinical Intelligence Platform** 🔴 IN PROGRESS
 - [x] DESIGNER assigned (mockups - Day 1/3)
@@ -151,12 +159,12 @@
 - [x] ~~Update agent.yaml with workflow improvements~~
 - [x] ~~Create ARTIFACT_INDEX.md~~
 - [x] ~~Push changes to Git~~
+- [x] ~~Clarify Age/Weight/Race scope~~ (DEFERRED to post-demo)
 - [ ] **BUILDER:** Fix demo mode security
 - [ ] **INSPECTOR:** Verify Protocol Builder Phase 1
 - [ ] **LEAD:** Resolve Protocol Builder duplication
-- [ ] **LEAD:** Clarify Age/Weight/Race scope
 
-**Progress:** 3/7 (43%)
+**Progress:** 4/7 (57%)
 
 ---
 
@@ -185,11 +193,11 @@
 
 ## 🚨 DECISIONS NEEDED
 
-| Decision | Owner | Deadline | Impact |
+| Decision | Owner | Deadline | Status |
 |----------|-------|----------|--------|
-| Age/Weight/Race scope (Phase 2 or separate?) | LEAD + USER | Today | DESIGNER workload |
-| Protocol Builder canonical version | LEAD | Today | Unblocks database wiring |
-| Dr. Shena demo scope | LEAD + USER | Feb 14 | Demo preparation |
+| ~~Age/Weight/Race scope~~ | ~~LEAD + USER~~ | ~~Today~~ | ✅ DEFERRED to post-demo |
+| Protocol Builder canonical version | LEAD | Today | ⏳ PENDING |
+| Dr. Shena demo scope | LEAD + USER | Feb 14 | ⏳ PENDING |
 
 ---
 
