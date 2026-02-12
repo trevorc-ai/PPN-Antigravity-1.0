@@ -113,7 +113,7 @@ export default function ClinicPerformanceRadar() {
                 {/* Radar Chart Section - Added min-h-0 to prevent flex item overflow */}
                 <div className="lg:col-span-2 relative min-h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
-                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={currentData}>
+                        <RadarChart cx="50%" cy="50%" outerRadius="65%" data={currentData}>
                             <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
                             <PolarAngleAxis
                                 dataKey="subject"

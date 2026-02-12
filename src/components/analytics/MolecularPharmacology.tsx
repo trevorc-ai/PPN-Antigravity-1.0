@@ -92,7 +92,7 @@ export default function MolecularPharmacology() {
                         Receptor Binding Potential (Standardized $K_i$ Affinity).
                     </p>
                 </div>
-                <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800">
+                <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto no-scrollbar shrink-0 max-w-full">
                     {Object.keys(MOLECULES).map((key) => (
                         <button
                             key={key}

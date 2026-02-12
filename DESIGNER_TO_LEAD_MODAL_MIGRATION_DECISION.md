@@ -204,22 +204,30 @@ Route: /builder/edit/:id → Full-page form (future)
 
 ## 📝 **IF APPROVED: IMPLEMENTATION CHECKLIST**
 
-### **DESIGNER will execute:**
+### **⚠️ IMPORTANT: This is BUILDER's work, not DESIGNER's**
+
+**BUILDER will execute:**
 - [ ] Create `/src/pages/ProtocolBuilderForm.tsx`
-- [ ] Move modal content to new page
+- [ ] Move modal content to new page component
 - [ ] Update routing in `/src/App.tsx`
 - [ ] Update "Create New Protocol" button to use `<Link>`
 - [ ] Remove modal state management
+- [ ] Ensure all form logic remains intact
 - [ ] Test on mobile viewport (393x852)
 - [ ] Test on desktop viewport (1920x1080)
 - [ ] Verify no regressions
-- [ ] Update handoff documentation
 - [ ] Notify LEAD when complete
 
+**DESIGNER will support:**
+- [ ] Verify mobile UX after migration
+- [ ] Update handoff documentation
+- [ ] Create new mobile screenshots
+- [ ] Confirm visual consistency
+
 ### **Estimated Timeline:**
-- **Start:** Upon approval
-- **Completion:** 1.5-2 hours
-- **Testing:** Additional 30 minutes
+- **BUILDER Implementation:** 1.5-2 hours
+- **DESIGNER Verification:** 30 minutes
+- **Total:** ~2.5 hours
 
 ---
 

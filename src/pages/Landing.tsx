@@ -68,9 +68,8 @@ const Landing: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    // Development-only bypass
-    if (import.meta.env.DEV && email === 'dev@test.com' && password === 'dev123') {
-      // Development bypass removed for security
+    // Demo Mode Bypass
+    if (import.meta.env.VITE_DEMO_MODE === 'true' && email === 'demo@test.com' && password === 'demo123') {
       setTimeout(() => {
         navigate('/dashboard');
       }, 500);
@@ -159,15 +158,15 @@ const Landing: React.FC = () => {
               className="space-y-6 w-full"
             >
               <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/10 border-2 border-primary/30 rounded-full text-[12px] sm:text-[13px] font-black uppercase tracking-[0.25em] text-primary shadow-lg shadow-primary/10">
-                <span className="material-symbols-outlined text-lg">psychology</span>
-                For Psychedelic Therapy Practitioners
+                <span className="material-symbols-outlined text-lg">grid_view</span>
+                Operational Intelligence for Modern Clinics
               </div>
-              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-2 text-slate-100">
-                Standardized Outcomes. <br />
-                <span className="text-gradient-primary inline-block pb-1">Benchmarked</span> Safety.
+              <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-4 text-slate-100">
+                Global Psychedelic <br />
+                <span className="text-gradient-primary inline-block pb-1">Practitioner Network</span>
               </h1>
               <p className="text-lg sm:text-xl text-slate-400 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
-                PPN Research Portal is a community-driven practitioner-only outcomes registry for psychedelic care. Track outcome change across sessions and compare results to aggregated network benchmarks, built with privacy by design, with no patient names or narrative notes stored.
+                The Practice Operating System for Psychedelic Therapy. Unify safety, outcomes, and compliance into a single secure platform.
               </p>
             </motion.div>
 
@@ -302,7 +301,48 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-
+      {/* SECTION: Unified Clinical Operations - NEW */}
+      <section className="py-24 px-6 relative z-10 border-y border-slate-800/50 bg-slate-900/20">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="space-y-8">
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+              Is your clinical workflow <span className="text-gradient-primary inline-block pb-1">fragmented?</span>
+            </h2>
+            <div className="space-y-4 text-slate-400 text-lg leading-relaxed font-medium">
+              <p>
+                IntakeQ for forms. Spruce for messaging. Spotify for music. Excel for outcomes. A generic EHR for billing.
+              </p>
+              <p>
+                This fragmentation leads to <strong>administrative burnout</strong> and data silos. PPN consolidates your clinical core into one unified flow.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/deep-dives/workflow-chaos')}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
+            >
+              Unify Your Practice
+              <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </button>
+          </div>
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-[2rem] blur-3xl opacity-30"></div>
+            <div className="relative bg-slate-950 border border-slate-800 rounded-[2rem] p-8 space-y-4">
+              <div className="flex items-center gap-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl opacity-60">
+                <span className="material-symbols-outlined text-red-400">warning</span>
+                <span className="text-red-300 font-bold text-sm">Disconnected Tools Risk</span>
+              </div>
+              <div className="flex items-center gap-4 p-4 bg-slate-900 border border-slate-800 rounded-xl">
+                <span className="material-symbols-outlined text-slate-500">description</span>
+                <span className="text-slate-400 font-bold text-sm line-through">Unsecure Spreadsheets</span>
+              </div>
+              <div className="flex items-center gap-4 p-4 bg-clinical-green/20 border border-clinical-green/30 rounded-xl">
+                <span className="material-symbols-outlined text-clinical-green">check_circle</span>
+                <span className="text-clinical-green font-bold text-sm">Unified PPN Record</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* SECTION: How It Works */}
       <section className="py-32 px-6 relative z-10">

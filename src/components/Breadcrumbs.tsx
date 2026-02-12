@@ -65,7 +65,7 @@ const Breadcrumbs: React.FC = () => {
       {location.pathname !== '/dashboard' && location.pathname !== '/advanced-search' && (
         <button
           onClick={() => navigate(-1)}
-          className="mr-4 pr-4 border-r border-white/10 flex items-center gap-1 text-[12px] font-black tracking-widest text-slate-500 hover:text-primary transition-colors group"
+          className="mr-4 pr-4 border-r border-white/10 hidden sm:flex items-center gap-1 text-[12px] font-black tracking-widest text-slate-500 hover:text-primary transition-colors group"
         >
           <span className="material-symbols-outlined text-[15px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
           Back

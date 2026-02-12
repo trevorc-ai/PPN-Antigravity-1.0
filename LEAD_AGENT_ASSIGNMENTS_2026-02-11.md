@@ -6,6 +6,21 @@
 
 ---
 
+## 🚀 QUICK START - AGENT INVOCATION
+
+**Copy/Paste these commands to start each agent:**
+
+| Agent | Task | Invocation File |
+|-------|------|-----------------|
+| **INSPECTOR** | Verify Protocol Builder | `INVOKE_INSPECTOR.md` |
+| **BUILDER** | Fix Security (Demo Mode) | `INVOKE_BUILDER_SECURITY.md` |
+| **SOOP** | Clinical Schema Design | `INVOKE_SOOP_SCHEMA.md` |
+| **BUILDER** | Toast UX (Run 2nd) | `INVOKE_BUILDER_UX.md` |
+
+---
+
+---
+
 ## 📊 SITUATION ANALYSIS
 
 I've identified **two parallel workstreams:**

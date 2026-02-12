@@ -351,8 +351,8 @@ const ProtocolBuilder: React.FC = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+            <div className="lg:col-span-3 space-y-6">
               <div className="relative group max-w-md">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
                 <input
@@ -1035,10 +1035,10 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
   const standardInputClass = "w-full rounded-xl px-4 h-12 sm:h-14 text-base font-bold transition-all focus:outline-none";
 
   return (
-    <div id="protocol-builder-root" className="fixed inset-0 z-50 flex items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-4xl bg-[#0f172a] border border-white/10 rounded-none sm:rounded-[2.5rem] min-h-screen sm:min-h-0 h-full sm:h-auto max-h-screen sm:max-h-[90vh] shadow-[0_0_50px_-12px_rgba(43,116,243,0.5)] ring-2 ring-primary/40 overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
+    <div id="protocol-builder-root" className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="w-full max-w-3xl bg-[#0f172a] border-0 sm:border border-white/10 rounded-none sm:rounded-[2.5rem] h-full sm:h-auto max-h-full sm:max-h-[90vh] shadow-[0_0_50px_-12px_rgba(43,116,243,0.5)] ring-0 sm:ring-2 ring-primary/40 overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col">
 
-        <div className="p-6 sm:p-8 border-b border-slate-800 flex justify-between items-center bg-slate-900/20 shrink-0">
+        <div className="p-4 sm:p-8 border-b border-slate-800 flex justify-between items-center bg-slate-900/20 shrink-0">
           <div className="flex items-center gap-6">
             <div>
               <div className="flex items-center justify-between mb-1">

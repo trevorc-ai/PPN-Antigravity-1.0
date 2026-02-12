@@ -6,7 +6,7 @@ interface ButtonGroupOption {
 }
 
 interface ButtonGroupProps {
-    label: string;
+    label?: string;
     options: ButtonGroupOption[];
     value: string;
     onChange: (value: string) => void;
@@ -24,18 +24,20 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
 }) => {
     return (
         <div className={`space-y-2 ${className}`}>
-            <label className="block text-sm font-medium text-slate-200">
-                {label}
-                {required && <span className="text-red-400 ml-1">*</span>}
-            </label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            {label && (
+                <label className="block text-sm font-medium text-slate-200">
+                    {label}
+                    {required && <span className="text-red-400 ml-1">*</span>}
+                </label>
+            )}
+            <div className="flex gap-2">
                 {options.map((option) => (
                     <button
                         key={option.value}
                         type="button"
                         onClick={() => onChange(option.value)}
                         className={`
-              w-full sm:flex-1 px-4 py-3 rounded-lg border transition-all duration-200
+              flex-1 px-4 py-2 rounded-lg border transition-all duration-200
               ${value === option.value
                                 ? 'bg-indigo-500 border-indigo-500 text-white font-semibold'
                                 : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700 hover:border-indigo-500 hover:text-slate-200'
