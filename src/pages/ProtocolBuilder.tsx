@@ -272,9 +272,9 @@ const ProtocolBuilder: React.FC = () => {
           siteId: 'NODE-01', // mock for now
           status: 'Completed', // logs are typically completed sessions
           protocol: {
-            substance: Array.isArray(record.ref_substances)
-              ? record.ref_substances[0]?.substance_name
-              : record.ref_substances?.substance_name || 'Unknown',
+            substance: Array.isArray((record as any).ref_substances)
+              ? (record as any).ref_substances[0]?.substance_name
+              : (record as any).ref_substances?.substance_name || 'Unknown',
             dosage: record.dosage_amount,
             dosageUnit: 'mg' // assuming mg for MVP
           },
@@ -571,7 +571,13 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
     modalities: { 'CBT': false, 'Somatic': false, 'Psychodynamic': false, 'IFS': false, 'None/Sitter': false } as Record<string, boolean>,
     concomitantMeds: '',
     difficultyScore: 5,
-    resolutionStatus: RESOLUTION_OPTIONS[0]
+    resolutionStatus: RESOLUTION_OPTIONS[0],
+    // Strict Schema IDs
+    patient_sex_id: null as number | null,
+    dosage_unit_id: null as number | null,
+    frequency_id: null as number | null,
+    setting_id: null as number | null,
+    weight_range_id: null as number | null
   });
 
   // --- REFERENCE DATA STATE ---
@@ -584,6 +590,11 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
   const [refResolution, setRefResolution] = useState<any[]>([]);
   const [refIndications, setRefIndications] = useState<any[]>([]);
   const [refMedications, setRefMedications] = useState<any[]>([]);
+  const [refDosageUnits, setRefDosageUnits] = useState<any[]>([]);
+  const [refFrequencies, setRefFrequencies] = useState<any[]>([]);
+  const [refSex, setRefSex] = useState<any[]>([]);
+  const [refWeightRanges, setRefWeightRanges] = useState<any[]>([]);
+  const [refSettings, setRefSettings] = useState<any[]>([]);
   const [medSearchQuery, setMedSearchQuery] = useState('');
 
   // --- FETCH REFERENCE DATA ---
@@ -599,7 +610,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         { data: saf },
         { data: res },
         { data: ind },
-        { data: med }
+        { data: med },
+        { data: unitRes },
+        { data: freqRes },
+        { data: sexRes },
+        { data: weiRes },
+        { data: setRes }
       ] = await Promise.all([
         supabase.from('ref_substances').select('*').eq('is_active', true).order('substance_name'),
         supabase.from('ref_routes').select('*').eq('is_active', true).order('route_name'),
@@ -609,7 +625,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         supabase.from('ref_safety_events').select('*').eq('is_active', true).order('event_name'),
         supabase.from('ref_resolution_status').select('*').eq('is_active', true).order('status_name'),
         supabase.from('ref_indications').select('*').eq('is_active', true).order('indication_name'),
-        supabase.from('ref_medications').select('*').eq('is_active', true).order('medication_name')
+        supabase.from('ref_medications').select('*').eq('is_active', true).order('medication_name'),
+        supabase.from('ref_dosage_units').select('*').eq('is_active', true).order('unit_label'),
+        supabase.from('ref_dosage_frequency').select('*').eq('is_active', true).order('frequency_label'),
+        supabase.from('ref_sex').select('*').eq('is_active', true).order('sex_label'),
+        supabase.from('ref_weight_ranges').select('*').eq('is_active', true).order('sort_order'),
+        supabase.from('ref_settings').select('*').eq('is_active', true).order('setting_label')
       ]);
 
       if (sub) setRefSubstances(sub);
@@ -621,6 +642,11 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
       if (res) setRefResolution(res);
       if (ind) setRefIndications(ind);
       if (med) setRefMedications(med);
+      if (unitRes) setRefDosageUnits(unitRes);
+      if (freqRes) setRefFrequencies(freqRes);
+      if (sexRes) setRefSex(sexRes);
+      if (weiRes) setRefWeightRanges(weiRes);
+      if (setRes) setRefSettings(setRes);
     };
 
     if (isOpen) {
@@ -946,6 +972,11 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         .single();
 
       // Construct Payload for log_clinical_records (Schema-Aligned)
+      // Resolve Labels for Legacy Notes
+      const dosageUnitLabel = refDosageUnits.find(u => u.id === formData.dosage_unit_id)?.unit_label || '';
+      const frequencyLabel = refFrequencies.find(f => f.id === formData.frequency_id)?.frequency_label || '';
+      const settingLabel = refSettings.find(s => s.id === formData.setting_id)?.setting_label || '';
+
       const payload = {
         // Core Identity
         practitioner_id: user.id,
@@ -962,13 +993,16 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         // Substance & Route
         substance_id: formData.substance_id,
         route_id: formData.route_id,
-        dosage_amount: parseFloat(formData.dosage),  // FIX: rename from dosage
+        dosage_amount: parseFloat(formData.dosage),
+        dosage_unit_id: formData.dosage_unit_id,
+        frequency_id: formData.frequency_id,
 
         // Patient Demographics (top-level, not in notes)
         patient_age: formData.subjectAge,
-        patient_sex: formData.sex,
-        patient_weight_range: formData.weightRange,
-        patient_smoking_status_id: formData.smoking_status_id,  // FIX: rename
+        patient_sex_id: formData.patient_sex_id,
+        patient_weight_range_id: formData.weight_range_id,
+        setting_id: formData.setting_id,
+        patient_smoking_status_id: formData.smoking_status_id,
 
         // Outcomes
         indication_id: formData.indication_id,
@@ -992,11 +1026,11 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         // Legacy/Extra (keep in notes for fields not in schema)
         notes: {
           race: formData.race,
-          dosage_unit: formData.dosageUnit,
-          frequency: formData.frequency,
+          dosage_unit: dosageUnitLabel,
+          frequency: frequencyLabel,
           prep_hours: parseFloat(formData.prepHours),
           integration_hours: parseFloat(formData.integrationHours),
-          setting: formData.setting,
+          setting: settingLabel,
           verified_consent: formData.consentVerified,
           concomitant_meds_text: formData.concomitantMeds,
           app_version: '2.4-redesign'
@@ -1281,14 +1315,9 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                     </AdvancedTooltip>
                   </div>
                   <ButtonGroup
-                    options={[
-                      { value: 'Male', label: 'Male' },
-                      { value: 'Female', label: 'Female' },
-                      { value: 'Intersex', label: 'Intersex' },
-                      { value: 'Unknown', label: 'Unknown' }
-                    ]}
-                    value={formData.sex}
-                    onChange={(value) => setFormData({ ...formData, sex: value })}
+                    options={refSex.map(s => ({ value: s.id, label: s.sex_label }))}
+                    value={formData.patient_sex_id}
+                    onChange={(value) => setFormData({ ...formData, patient_sex_id: value })}
                     required
                   />
                 </div>
@@ -1354,11 +1383,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                     </AdvancedTooltip>
                   </div>
                   <select
-                    value={formData.weightRange}
-                    onChange={e => setFormData({ ...formData, weightRange: e.target.value })}
+                    value={formData.weight_range_id || ''}
+                    onChange={e => setFormData({ ...formData, weight_range_id: Number(e.target.value) })}
                     className={standardInputClass}
                   >
-                    {WEIGHT_RANGES.map(w => <option key={w} value={w}>{w}</option>)}
+                    <option value="">Select Weight Range...</option>
+                    {refWeightRanges.map((w: any) => <option key={w.id} value={w.id}>{w.range_label}</option>)}
                   </select>
                 </div>
               </div>
@@ -1407,11 +1437,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                     </AdvancedTooltip>
                   </div>
                   <select
-                    value={formData.setting}
-                    onChange={e => setFormData({ ...formData, setting: e.target.value })}
+                    value={formData.setting_id || ''}
+                    onChange={e => setFormData({ ...formData, setting_id: Number(e.target.value) })}
                     className={standardInputClass}
                   >
-                    {SETTING_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                    <option value="">Select Setting...</option>
+                    {refSettings.map(s => <option key={s.id} value={s.id}>{s.setting_label}</option>)}
                   </select>
                 </div>
 
@@ -1638,11 +1669,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                       className={`${standardInputClass} flex-[2]`}
                     />
                     <select
-                      value={formData.dosageUnit}
-                      onChange={e => setFormData({ ...formData, dosageUnit: e.target.value })}
+                      value={formData.dosage_unit_id || ''}
+                      onChange={e => setFormData({ ...formData, dosage_unit_id: Number(e.target.value) })}
                       className={`${standardInputClass} flex-1`}
                     >
-                      {UNIT_OPTIONS.map(u => <option key={u} value={u}>{u}</option>)}
+                      <option value="">Unit...</option>
+                      {refDosageUnits.map(u => <option key={u.id} value={u.id}>{u.unit_label}</option>)}
                     </select>
                   </div>
                 </div>
@@ -1676,11 +1708,12 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                     </AdvancedTooltip>
                   </div>
                   <select
-                    value={formData.frequency}
-                    onChange={e => setFormData({ ...formData, frequency: e.target.value })}
+                    value={formData.frequency_id || ''}
+                    onChange={e => setFormData({ ...formData, frequency_id: Number(e.target.value) })}
                     className={standardInputClass}
                   >
-                    {FREQUENCY_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
+                    <option value="">Select Frequency...</option>
+                    {refFrequencies.map(f => <option key={f.id} value={f.id}>{f.frequency_label}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
