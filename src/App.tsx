@@ -49,6 +49,8 @@ import SafetySurveillancePage from './pages/deep-dives/SafetySurveillancePage';
 import PatientFlowPage from './pages/deep-dives/PatientFlowPage';
 import WorkflowChaosPage from './pages/deep-dives/WorkflowChaosPage';
 
+
+
 /**
  * ScrollToTop Component
  * Resets the scroll position of the main research viewport whenever the location changes.
@@ -194,7 +196,10 @@ const AppContent: React.FC = () => {
           <Route path="/monograph/:id" element={<SubstanceMonograph />} />
           <Route path="/interactions" element={<InteractionChecker />} />
           <Route path="/audit" element={<AuditLogs />} />
-          <Route path="/builder" element={<ProtocolBuilder />} />
+          <Route path="/audit" element={<AuditLogs />} />
+
+          {/* PROTOCOL BUILDER */}
+          <Route path="/protocols" element={<ProtocolBuilder />} />
           <Route path="/protocol/:id" element={<ProtocolDetail />} />
           <Route path="/clinicians" element={<ClinicianDirectory />} />
           <Route path="/clinician/:id" element={<ClinicianProfile />} />

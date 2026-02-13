@@ -61,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
         { label: 'News', icon: 'newspaper', path: '/news' },
         { label: 'Practitioners', icon: 'groups', path: '/clinicians' },
         { label: 'Substances', icon: 'biotech', path: '/catalog' },
-        { label: 'My Protocols', icon: 'article', path: '/builder' },
+        { label: 'My Protocols', icon: 'article', path: '/protocols' },
       ]
     },
     {
