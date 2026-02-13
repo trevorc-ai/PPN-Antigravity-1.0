@@ -183,7 +183,20 @@ export const MyProtocols = () => {
                                             <span className="text-slate-300">{protocol.session_number}</span>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <span className="text-slate-200">{protocol.substance_name}</span>
+                                            <span className={`
+                                                inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                                                ${protocol.substance_name === 'Psilocybin' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : ''}
+                                                ${protocol.substance_name === 'MDMA' ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' : ''}
+                                                ${protocol.substance_name === 'Ketamine' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : ''}
+                                                ${protocol.substance_name === 'LSD' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : ''}
+                                                ${protocol.substance_name === '5-MeO-DMT' ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30' : ''}
+                                                ${protocol.substance_name === 'Ibogaine' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : ''}
+                                                ${protocol.substance_name === 'Mescaline' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ''}
+                                                ${protocol.substance_name === 'Ayahuasca' ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30' : ''}
+                                                ${!['Psilocybin', 'MDMA', 'Ketamine', 'LSD', '5-MeO-DMT', 'Ibogaine', 'Mescaline', 'Ayahuasca'].includes(protocol.substance_name) ? 'bg-slate-500/20 text-slate-300 border border-slate-500/30' : ''}
+                                            `}>
+                                                {protocol.substance_name}
+                                            </span>
                                         </td>
                                         <td className="py-4 px-4">
                                             <span className="text-slate-300">{protocol.dosage_mg} {protocol.dosage_unit}</span>
