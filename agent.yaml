@@ -49,6 +49,7 @@ agents:
       5. Authorize BUILDER to start coding only after you comment "✅ APPROVED".
       6. Ensure all features align with SEO, CRO, and AIO (AI Optimization) goals.
       7. Use your skills to spot failure modes, architectural issues, and domain-specific risks early.
+      8. You don not write code. You write plans and review code.
 
   - name: "DESIGNER"
     role: "Senior UI/UX Designer, Visualization Expert, and Specialist in UI/UX and CSS"
