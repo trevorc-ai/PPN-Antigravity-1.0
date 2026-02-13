@@ -1,0 +1,229 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
+import { PageContainer } from '../components/layouts/PageContainer';
+import { Section } from '../components/layouts/Section';
+import { Plus, Filter, Calendar, ChevronRight } from 'lucide-react';
+
+interface Protocol {
+    id: number;
+    subject_id: string;
+    session_number: number;
+    substance_name: string;
+    indication_name: string;
+    session_date: string;
+    submitted_at: string | null;
+    dosage_mg: number;
+    dosage_unit: string;
+}
+
+export const MyProtocols = () => {
+    const navigate = useNavigate();
+    const [protocols, setProtocols] = useState<Protocol[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [filterSubstance, setFilterSubstance] = useState('all');
+    const [filterIndication, setFilterIndication] = useState('all');
+    const [filterStatus, setFilterStatus] = useState('all');
+
+    useEffect(() => {
+        fetchProtocols();
+    }, []);
+
+    const fetchProtocols = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('log_clinical_records')
+                .select(`
+          id,
+          subject_id,
+          session_number,
+          session_date,
+          submitted_at,
+          dosage_mg,
+          dosage_unit,
+          ref_substances (substance_name),
+          ref_indications (indication_name)
+        `)
+                .order('session_date', { ascending: false })
+                .limit(100);
+
+            if (error) throw error;
+
+            const formattedData = data?.map((record: any) => ({
+                id: record.id,
+                subject_id: record.subject_id,
+                session_number: record.session_number,
+                substance_name: record.ref_substances?.substance_name || 'Unknown',
+                indication_name: record.ref_indications?.indication_name || 'Unknown',
+                session_date: record.session_date,
+                submitted_at: record.submitted_at,
+                dosage_mg: record.dosage_mg,
+                dosage_unit: record.dosage_unit,
+            })) || [];
+
+            setProtocols(formattedData);
+        } catch (error) {
+            console.error('Error fetching protocols:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredProtocols = protocols.filter((protocol) => {
+        const matchesSubstance = filterSubstance === 'all' || protocol.substance_name === filterSubstance;
+        const matchesIndication = filterIndication === 'all' || protocol.indication_name === filterIndication;
+        const matchesStatus =
+            filterStatus === 'all' ||
+            (filterStatus === 'submitted' && protocol.submitted_at) ||
+            (filterStatus === 'draft' && !protocol.submitted_at);
+
+        return matchesSubstance && matchesIndication && matchesStatus;
+    });
+
+    const uniqueSubstances = Array.from(new Set(protocols.map(p => p.substance_name)));
+    const uniqueIndications = Array.from(new Set(protocols.map(p => p.indication_name)));
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    };
+
+    return (
+        <PageContainer>
+            <Section>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-50 mb-2">My Protocols</h1>
+                        <p className="text-slate-400">View and manage clinical session records</p>
+                    </div>
+                    <button
+                        onClick={() => navigate('/protocol-builder')}
+                        className="flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-lg transition-colors duration-200 font-medium"
+                    >
+                        <Plus className="w-5 h-5" />
+                        New Protocol
+                    </button>
+                </div>
+
+                {/* Filters */}
+                <div className="flex flex-wrap gap-3 mb-6">
+                    <select
+                        value={filterSubstance}
+                        onChange={(e) => setFilterSubstance(e.target.value)}
+                        className="px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                    >
+                        <option value="all">All Substances</option>
+                        {uniqueSubstances.map((substance) => (
+                            <option key={substance} value={substance}>{substance}</option>
+                        ))}
+                    </select>
+
+                    <select
+                        value={filterIndication}
+                        onChange={(e) => setFilterIndication(e.target.value)}
+                        className="px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                    >
+                        <option value="all">All Indications</option>
+                        {uniqueIndications.map((indication) => (
+                            <option key={indication} value={indication}>{indication}</option>
+                        ))}
+                    </select>
+
+                    <select
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        className="px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                    >
+                        <option value="all">All Status</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                </div>
+
+                {/* Protocols Table */}
+                {loading ? (
+                    <div className="text-center py-12 text-slate-400">Loading protocols...</div>
+                ) : filteredProtocols.length === 0 ? (
+                    <div className="text-center py-12">
+                        <p className="text-slate-400 mb-4">No protocols found</p>
+                        <button
+                            onClick={() => navigate('/protocol-builder')}
+                            className="text-teal-400 hover:text-teal-300 transition-colors"
+                        >
+                            Create your first protocol →
+                        </button>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-slate-700">
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Subject ID</th>
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Session</th>
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Substance</th>
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Dosage</th>
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Indication</th>
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th className="w-12"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredProtocols.map((protocol) => (
+                                    <tr
+                                        key={protocol.id}
+                                        onClick={() => navigate(`/protocol/${protocol.id}`)}
+                                        className="border-b border-slate-800 hover:bg-slate-900/50 cursor-pointer transition-colors"
+                                    >
+                                        <td className="py-4 px-4">
+                                            <span className="font-mono text-sm text-teal-400">{protocol.subject_id}</span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <span className="text-slate-300">{protocol.session_number}</span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <span className="text-slate-200">{protocol.substance_name}</span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <span className="text-slate-300">{protocol.dosage_mg} {protocol.dosage_unit}</span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <span className="text-slate-300">{protocol.indication_name}</span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <span className="text-slate-400 text-sm">{formatDate(protocol.session_date)}</span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            {protocol.submitted_at ? (
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                                    Submitted
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                                    Draft
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <ChevronRight className="w-5 h-5 text-slate-600" />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {/* Results Count */}
+                {!loading && filteredProtocols.length > 0 && (
+                    <div className="mt-6 text-sm text-slate-400">
+                        Showing {filteredProtocols.length} of {protocols.length} protocols
+                    </div>
+                )}
+            </Section>
+
+
+        </PageContainer>
+    );
+};

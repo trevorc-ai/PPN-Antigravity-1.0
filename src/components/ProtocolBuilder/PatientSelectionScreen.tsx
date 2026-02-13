@@ -1,18 +1,31 @@
 import React from 'react';
-import { User, Search } from 'lucide-react';
+import { User, Search, ArrowLeft } from 'lucide-react';
 
 interface PatientSelectionScreenProps {
     onNewPatient: () => void;
     onExistingPatient: () => void;
+    onBack?: () => void;
 }
 
 export const PatientSelectionScreen: React.FC<PatientSelectionScreenProps> = ({
     onNewPatient,
     onExistingPatient,
+    onBack,
 }) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#020408] via-[#0a0e1a] to-[#020408] flex items-center justify-center p-6">
             <div className="max-w-4xl w-full">
+                {/* Back Button */}
+                {onBack && (
+                    <button
+                        onClick={onBack}
+                        className="flex items-center gap-2 text-[#94a3b8] hover:text-[#f8fafc] transition-colors mb-6"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back to My Protocols
+                    </button>
+                )}
+
                 {/* Header */}
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-bold text-[#f8fafc] mb-3">

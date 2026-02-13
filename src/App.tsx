@@ -9,6 +9,7 @@ import SubstanceMonograph from './pages/SubstanceMonograph';
 import InteractionChecker from './pages/InteractionChecker';
 import AuditLogs from './pages/AuditLogs';
 import ProtocolBuilder from './pages/ProtocolBuilder';
+import { MyProtocols } from './pages/MyProtocols';
 import ProtocolDetail from './pages/ProtocolDetail';
 import ClinicianDirectory from './pages/ClinicianDirectory';
 import ClinicianProfile from './pages/ClinicianProfile';
@@ -199,7 +200,8 @@ const AppContent: React.FC = () => {
           <Route path="/audit" element={<AuditLogs />} />
 
           {/* PROTOCOL BUILDER */}
-          <Route path="/protocols" element={<ProtocolBuilder />} />
+          <Route path="/protocols" element={<MyProtocols />} />
+          <Route path="/protocol-builder" element={<ProtocolBuilder />} />
           <Route path="/protocol/:id" element={<ProtocolDetail />} />
           <Route path="/clinicians" element={<ClinicianDirectory />} />
           <Route path="/clinician/:id" element={<ClinicianProfile />} />

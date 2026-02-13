@@ -189,6 +189,11 @@ export const ProtocolBuilder = () => {
 
     console.log('Protocol submitted successfully:', data);
     setScreen('success');
+
+    // Auto-navigate back to My Protocols after 3 seconds
+    setTimeout(() => {
+      navigate('/protocols');
+    }, 3000);
   };
 
   const handleBackToReview = () => {
@@ -232,6 +237,7 @@ export const ProtocolBuilder = () => {
         <PatientSelectionScreen
           onNewPatient={handleNewPatient}
           onExistingPatient={handleExistingPatient}
+          onBack={() => navigate('/protocols')}
         />
         <PatientLookupModal
           isOpen={showLookupModal}
