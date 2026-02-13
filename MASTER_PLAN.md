@@ -17,10 +17,25 @@ Build the Practice Operating System for Psychedelic Therapy - unifying safety, o
 
 ## 📊 Current Status
 
-**Phase:** MVP → Product-Market Fit  
+**Phase:** MVP Development → Marketing Launch Prep  
+**Version:** 1.0.1 (Released Feb 12, 2026)  
 **North Star Metric:** Monthly Active Practitioners (MAP) - Target 100 by Q2 2026  
 **Team:** 6 agents (LEAD, DESIGNER, SOOP, BUILDER, MARKETER, ANALYST)  
 **Sprint:** Sprint 1 - Foundation (Week 1-2 of 16-week roadmap)
+
+### Recent Completions ✅
+- Protocol Builder database schema complete (SOOP, Feb 13)
+- Receptor affinity data for 8 substances
+- Drug interaction knowledge graph (15+ interactions)
+- 3 materialized views for analytics
+- My Protocols page filters implemented
+- Accessibility protocols enforced (font ≥12px)
+
+### Active Work
+- Customer journey analysis complete
+- Implementation roadmap approved
+- MARKETER and ANALYST agents activated
+- Ready to begin P0 Quick Wins
 
 ---
 
