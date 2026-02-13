@@ -15,9 +15,11 @@
     "dotenv": "^17.2.4",
     "framer-motion": "^12.33.0",
     "lucide-react": "^0.563.0",
+    "mixpanel-browser": "^2.55.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-ga4": "^2.1.0",
     "react-router-dom": "^7.13.0",
     "recharts": "^3.7.0",
     "tailwindcss-animate": "^1.0.7"
