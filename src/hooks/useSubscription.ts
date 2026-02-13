@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../supabaseClient';
 import type { SubscriptionTier, SubscriptionStatus } from '../lib/stripe';
 
 export interface Subscription {

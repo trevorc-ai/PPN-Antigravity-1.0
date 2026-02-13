@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { CreditCard, Calendar, AlertCircle, ExternalLink } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../supabaseClient';
 import { useSubscription } from '../hooks/useSubscription';
 import { SUBSCRIPTION_TIERS, formatCurrency } from '../lib/stripe';
 
@@ -77,12 +77,12 @@ export const BillingPortal: FC = () => {
                                     <div className="flex items-center gap-3">
                                         <span
                                             className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${subscription.status === 'active'
-                                                    ? 'bg-emerald-500/20 text-emerald-400'
-                                                    : subscription.status === 'trialing'
-                                                        ? 'bg-blue-500/20 text-blue-400'
-                                                        : subscription.status === 'past_due'
-                                                            ? 'bg-amber-500/20 text-amber-400'
-                                                            : 'bg-slate-500/20 text-slate-400'
+                                                ? 'bg-emerald-500/20 text-emerald-400'
+                                                : subscription.status === 'trialing'
+                                                    ? 'bg-blue-500/20 text-blue-400'
+                                                    : subscription.status === 'past_due'
+                                                        ? 'bg-amber-500/20 text-amber-400'
+                                                        : 'bg-slate-500/20 text-slate-400'
                                                 }`}
                                         >
                                             <div className="w-2 h-2 rounded-full bg-current"></div>

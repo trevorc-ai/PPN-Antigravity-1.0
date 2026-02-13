@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../supabaseClient';
 import {
     getStripe,
     SUBSCRIPTION_TIERS,
@@ -95,8 +95,8 @@ export const Checkout: FC = () => {
                         <button
                             onClick={() => setBillingInterval('monthly')}
                             className={`px-6 py-2 rounded-md font-semibold transition ${billingInterval === 'monthly'
-                                    ? 'bg-emerald-500 text-slate-900'
-                                    : 'text-slate-300 hover:text-white'
+                                ? 'bg-emerald-500 text-slate-900'
+                                : 'text-slate-300 hover:text-white'
                                 }`}
                         >
                             Monthly
@@ -104,8 +104,8 @@ export const Checkout: FC = () => {
                         <button
                             onClick={() => setBillingInterval('annual')}
                             className={`px-6 py-2 rounded-md font-semibold transition ${billingInterval === 'annual'
-                                    ? 'bg-emerald-500 text-slate-900'
-                                    : 'text-slate-300 hover:text-white'
+                                ? 'bg-emerald-500 text-slate-900'
+                                : 'text-slate-300 hover:text-white'
                                 }`}
                         >
                             Annual
@@ -134,8 +134,8 @@ export const Checkout: FC = () => {
                                 key={tier}
                                 onClick={() => setSelectedTier(tier)}
                                 className={`relative p-8 rounded-xl border-2 cursor-pointer transition-all ${isSelected
-                                        ? 'border-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-500/20'
-                                        : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
+                                    ? 'border-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-500/20'
+                                    : 'border-slate-700 bg-slate-800/50 hover:border-slate-600'
                                     }`}
                             >
                                 {/* Popular Badge */}
