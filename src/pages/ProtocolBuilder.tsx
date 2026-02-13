@@ -9,8 +9,9 @@ import { ButtonGroup } from '../components/forms/ButtonGroup';
 import {
   User, Brain, Activity, Microscope, Shield, Lock, Info, AlertTriangle,
   Search, PlusCircle, ClipboardList, ChevronRight, ChevronDown, Copy, CheckCircle,
-  HelpCircle, History, X
+  HelpCircle, History, X, TrendingUp
 } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { SAMPLE_INTERVENTION_RECORDS, MEDICATIONS_LIST } from '../constants';
 import { PatientRecord } from '../types';
 import { MOCK_RISK_DATA } from '../constants/analyticsData';
@@ -235,7 +236,7 @@ const ProtocolBuilder: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch user's protocols from Supabase
+  // Fetch user's clinical records (protocols) from Supabase
   useEffect(() => {
     const fetchProtocols = async () => {
       try {
@@ -248,14 +249,43 @@ const ProtocolBuilder: React.FC = () => {
         }
 
         const { data, error } = await supabase
-          .from('protocols')
-          .select('*')
-          .eq('user_id', user.id)
+          .from('log_clinical_records')
+          .select(`
+            id,
+            patient_link_code,
+            session_date,
+            dosage_amount,
+            outcome_score,
+            created_at,
+            ref_substances (
+              substance_name
+            )
+          `)
+          .eq('practitioner_id', user.id)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
 
-        setProtocols(data || []);
+        // Transform to UI format
+        const formattedData = (data || []).map(record => ({
+          id: record.patient_link_code, // metrics uses ID
+          siteId: 'NODE-01', // mock for now
+          status: 'Completed', // logs are typically completed sessions
+          protocol: {
+            substance: Array.isArray(record.ref_substances)
+              ? record.ref_substances[0]?.substance_name
+              : record.ref_substances?.substance_name || 'Unknown',
+            dosage: record.dosage_amount,
+            dosageUnit: 'mg' // assuming mg for MVP
+          },
+          // keep raw record if needed
+          _raw: record,
+          // for chart
+          date: record.session_date,
+          score: record.outcome_score || 0
+        }));
+
+        setProtocols(formattedData);
       } catch (error) {
         console.error('Error fetching protocols:', error);
       } finally {
@@ -424,24 +454,53 @@ const ProtocolBuilder: React.FC = () => {
                   <p className="text-[11px] font-black text-primary tracking-[0.3em]">Network Baseline Analytics</p>
                 </div>
                 <div className="space-y-6 relative z-10">
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-end">
-                      <span className="text-[11px] font-bold text-slate-500 tracking-widest">Protocol Adherence</span>
-                      <span className="text-sm font-mono font-black text-white">94%</span>
+                  {filteredProtocols.length > 0 ? (
+                    <div className="h-[180px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={[...filteredProtocols].reverse()}>
+                          <defs>
+                            <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#53d22d" stopOpacity={0.3} />
+                              <stop offset="95%" stopColor="#53d22d" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <XAxis dataKey="date" hide />
+                          <YAxis hide domain={[0, 27]} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
+                            itemStyle={{ color: '#fff', fontWeight: 'bold' }}
+                            labelStyle={{ color: '#94a3b8' }}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="score"
+                            stroke="#53d22d"
+                            fillOpacity={1}
+                            fill="url(#colorScore)"
+                            strokeWidth={3}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                      <div className="flex justify-between items-center px-2 mt-2">
+                        <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">First Session</span>
+                        <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">Latest</span>
+                      </div>
                     </div>
-                    <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden">
-                      <div className="h-full bg-clinical-green shadow-[0_0_8px_#53d22d]" style={{ width: '94%' }}></div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-[180px] text-slate-600">
+                      <TrendingUp size={32} className="mb-2 opacity-50" />
+                      <p className="text-xs font-bold uppercase tracking-widest">No Data Available</p>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-end">
-                      <span className="text-[11px] font-bold text-slate-500 tracking-widest">Safety Compliance</span>
-                      <span className="text-sm font-mono font-black text-white">100%</span>
+                  )}
+
+                  {filteredProtocols.length > 0 && (
+                    <div className="space-y-2 pt-2 border-t border-slate-800/50">
+                      <div className="flex justify-between items-end">
+                        <span className="text-[11px] font-bold text-slate-500 tracking-widest">Latest Outcome (PHQ-9)</span>
+                        <span className="text-sm font-mono font-black text-white">{filteredProtocols[0]?.score ?? '-'}</span>
+                      </div>
                     </div>
-                    <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary shadow-[0_0_8px_#2b74f3]" style={{ width: '100%' }}></div>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -919,8 +978,8 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
         outcome_score: formData.phq9Score,  // ADD: same as baseline for MVP
 
         // Support
-        support_modality_ids: formData.concomitant_med_ids, // This was modalities, but the schema expects IDs. Assuming concomitant_med_ids is the correct mapping for now.
-        concomitant_meds: formData.concomitantMeds,  // FIX: use text field, not array
+        modality_id: formData.modality_id, // Corrected: therapy style
+        concomitant_med_ids: formData.concomitant_med_ids, // Corrected: medication array
 
         // Safety
         safety_event_id: formData.hasSafetyEvent ? formData.safety_event_id : null,
@@ -939,6 +998,7 @@ const NewProtocolModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
           integration_hours: parseFloat(formData.integrationHours),
           setting: formData.setting,
           verified_consent: formData.consentVerified,
+          concomitant_meds_text: formData.concomitantMeds,
           app_version: '2.4-redesign'
         }
       };

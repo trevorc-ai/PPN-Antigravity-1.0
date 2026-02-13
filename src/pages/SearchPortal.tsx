@@ -508,7 +508,7 @@ const SearchPortal: React.FC = () => {
               />
 
               {/* Search Button (RIGHT side) */}
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary rounded-xl hover:bg-blue-600 transition-colors">
+              <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-primary rounded-xl hover:bg-blue-600 transition-colors">
                 <span className="material-symbols-outlined text-white">search</span>
               </button>
 

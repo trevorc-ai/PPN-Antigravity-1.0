@@ -115,8 +115,8 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               placeholder="Search help topics..."
               className="w-full bg-[#0D121C] border border-slate-800 rounded-lg py-4 px-14 text-white focus:outline-none focus:border-primary transition-all shadow-xl"
             />
-            <Search className="absolute left-5 top-[18px] text-slate-500" size={20} />
-            <button className="absolute right-3 top-2 bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium transition-colors">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-blue-600 text-white px-4 py-2 sm:px-6 rounded-md font-medium transition-colors">
               Search
             </button>
           </div>

@@ -4,6 +4,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { BarChart, Bar, Cell, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import { PATIENTS } from '../constants';
 import { useSafetyAlerts } from '../hooks/useSafetyAlerts';
+import MobileSidebar from './MobileSidebar';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -70,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
         { label: "Clinical Radar", icon: "radar", path: "/deep-dives/clinic-performance" },
         { label: "Patient Galaxy", icon: "hub", path: "/deep-dives/patient-constellation" },
         { label: "Molecular DB", icon: "science", path: "/deep-dives/molecular-pharmacology" },
-        { label: "Protocol ROI", icon: "savings", path: "/deep-dives/protocol-efficiency" }
+        // { label: "Protocol ROI", icon: "savings", path: "/deep-dives/protocol-efficiency" } // HIDDEN per user request 2026-02-12
       ]
     },
     {
@@ -92,15 +93,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
 
   return (
     <>
+      {/* Mobile Sidebar Integration */}
+      <div className="lg:hidden">
+        <MobileSidebar isOpen={isOpen} onClose={onClose} />
+      </div>
+
+      {/* Desktop Sidebar (Original) - Hidden on Mobile */}
       <div
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] hidden lg:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={onClose}
         aria-hidden="true"
       />
 
       <aside
         id="tour-sidebar-nav"
-        className={`fixed lg:static inset-y-0 left-0 xl:w-64 lg:w-20 flex flex-col border-r border-border-dark bg-[#0a0c10] shrink-0 h-full z-[70] transition-all duration-300 transform ${isOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'} ${isLocked ? 'grayscale opacity-40 pointer-events-none' : ''}`}
+        className={`fixed lg:static inset-y-0 left-0 xl:w-64 lg:w-20 hidden lg:flex flex-col border-r border-border-dark bg-[#0a0c10] shrink-0 h-full z-[70] transition-all duration-300 transform ${isOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'} ${isLocked ? 'grayscale opacity-40 pointer-events-none' : ''}`}
         aria-label="Main Navigation"
       >
         {isLocked && (

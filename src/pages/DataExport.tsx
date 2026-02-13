@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Download, FileText, AlertCircle, CheckCircle, XCircle, Eye, Shield } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
+import { DateInput } from '../components/forms/DateInput';
 
 interface ExportConfig {
     dateStart: string;
@@ -193,17 +194,15 @@ const DataExport: React.FC = () => {
                                             Date Range
                                         </label>
                                         <div className="grid grid-cols-2 gap-3">
-                                            <input
-                                                type="date"
+                                            <DateInput
                                                 value={config.dateStart}
-                                                onChange={(e) => setConfig({ ...config, dateStart: e.target.value })}
-                                                className="w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:border-primary transition-colors"
+                                                onChange={(value) => setConfig({ ...config, dateStart: value })}
+                                                placeholder="Start: MM/DD/YYYY"
                                             />
-                                            <input
-                                                type="date"
+                                            <DateInput
                                                 value={config.dateEnd}
-                                                onChange={(e) => setConfig({ ...config, dateEnd: e.target.value })}
-                                                className="w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:border-primary transition-colors"
+                                                onChange={(value) => setConfig({ ...config, dateEnd: value })}
+                                                placeholder="End: MM/DD/YYYY"
                                             />
                                         </div>
                                     </div>
@@ -237,8 +236,8 @@ const DataExport: React.FC = () => {
                                                     key={indication}
                                                     onClick={() => handleIndicationToggle(indication)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${config.indications.includes(indication)
-                                                            ? 'bg-primary text-white border border-primary'
-                                                            : 'bg-slate-900 text-slate-400 border border-slate-800 hover:border-slate-700'
+                                                        ? 'bg-primary text-white border border-primary'
+                                                        : 'bg-slate-900 text-slate-400 border border-slate-800 hover:border-slate-700'
                                                         }`}
                                                 >
                                                     {indication}
@@ -258,8 +257,8 @@ const DataExport: React.FC = () => {
                                                     key={format}
                                                     onClick={() => setConfig({ ...config, format })}
                                                     className={`p-4 rounded-xl border transition-all ${config.format === format
-                                                            ? 'bg-primary/10 border-primary text-primary'
-                                                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+                                                        ? 'bg-primary/10 border-primary text-primary'
+                                                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
                                                         }`}
                                                 >
                                                     <FileText className="mx-auto mb-2" size={24} />

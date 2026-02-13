@@ -276,7 +276,7 @@ export default function Dashboard() {
           <CheckCircle className="w-5 h-5 text-indigo-400" />
           <h2 className="text-xl font-black text-white tracking-tight">Recommended Next Steps</h2>
         </div>
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <NextStepItem
             number={1}
             text="Review 2 safety alerts from this week"
@@ -315,7 +315,7 @@ export default function Dashboard() {
             <span className="text-sm font-black uppercase tracking-wider">Analytics</span>
           </button>
           <button
-            onClick={() => navigate('/interaction-checker')}
+            onClick={() => navigate('/interactions')}
             className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-white border border-amber-500/20 hover:border-amber-500 transition-all active:scale-95"
           >
             <Activity className="w-6 h-6" />

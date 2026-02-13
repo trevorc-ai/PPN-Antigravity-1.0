@@ -197,15 +197,15 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   />
                 </div>
 
-                {/* Vibe - Hidden on mobile */}
-                <div className="hidden lg:block">
+                {/* Vibe - Hidden per user request 2026-02-12 */}
+                {/* <div className="hidden lg:block">
                   <NavIconButton
                     icon="science"
                     label="Vibe"
                     tooltip="Physics Demo"
                     onClick={() => navigate('/vibe-check')}
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block"></div>
