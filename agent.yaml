@@ -224,5 +224,7 @@ settings:
 
 # MEMORY & CONTEXT
 context_files:
+  - "MASTER_PLAN.md"  # Single source of truth - read this first!
+  - "docs/TEAM_HANDOFF_PROTOCOLS.md"
   - ".agent/rules/handoff_protocol.md"
   - "docs/architecture/tech_stack.md"
