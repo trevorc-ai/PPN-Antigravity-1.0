@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.38.0",
+    "@stripe/stripe-js": "^2.4.0",
     "@supabase/supabase-js": "^2.95.3",
     "@types/papaparse": "^5.5.2",
     "dotenv": "^17.2.4",
@@ -22,6 +23,7 @@
     "react-ga4": "^2.1.0",
     "react-router-dom": "^7.13.0",
     "recharts": "^3.7.0",
+    "stripe": "^14.14.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {

@@ -33,6 +33,8 @@ import ResetPassword from './pages/ResetPassword';
 import Landing from './pages/Landing';
 import PhysicsDemo from './pages/PhysicsDemo';
 import HiddenComponentsShowcase from './pages/HiddenComponentsShowcase';
+import Checkout from './pages/Checkout';
+import BillingPortal from './pages/BillingPortal';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
@@ -176,6 +178,8 @@ const AppContent: React.FC = () => {
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/billing" element={<BillingPortal />} />
 
         {/* Protected Routes */}
         <Route element={
