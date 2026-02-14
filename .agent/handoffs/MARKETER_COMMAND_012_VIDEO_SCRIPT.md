@@ -19,6 +19,24 @@ Create a professional product demo video script for the PPN Research Portal.
 
 ## REQUIREMENTS
 
+### 0. Strategic Framework Reference
+
+**CRITICAL:** Use the presentation slides as your narrative structure.
+
+**Location:** `.agent/research/presenation-slides/` (35 slides)
+
+**Key Slides to Reference:**
+- **The Problem:** Fragmented evidence base, lack of comparable data, inconsistent assessment tools, decision making in isolation
+- **The Solution:** Clinical Intelligence platform with real-time benchmarking, predictive outcome modeling, clinical decision support, research infrastructure
+- **Strategic Advantage (No PHI):** No HIPAA overhead, zero breach liability, cross-site data sharing, fast innovation cycle
+- **Core Innovation:** Split-screen interface, prospective intelligence, receptor impact visualization, safety alerts
+- **Market & Business Model:** Pricing tiers, go-to-market phases, field impact
+
+**Unique Value Proposition (from User):**
+> "Decentralized, anonymized, peer-to-peer protocol and outcome data sharing, and a real-time clinical intelligence platform that augments practitioner decision-making while simultaneously building the world's largest psychedelic therapy evidence base."
+
+---
+
 ### 1. Video Specs
 - **Length:** 2-3 minutes
 - **Audience:** Psychedelic therapy practitioners, clinic admins
