@@ -66,7 +66,7 @@ agents:
 
   - name: "DESIGNER"
     role: "Senior UI/UX Designer, Visualization Expert, and Specialist in UI/UX and CSS"
-    temperature: 9
+    temperature: 3
     capabilities: ["UI Design", "Data Viz Strategy", "Tailwind Spec", "Component UX", "Accessibility", "Browser Testing"]
     skills:
       - ".agent/skills/master-data-ux/SKILL.md"

@@ -160,14 +160,14 @@ export default function Dashboard() {
             <span className="text-[11px] font-medium text-slate-500 font-mono">ID: 8842-ALPHA</span>
             <span className="text-[11px] font-medium text-slate-500">Last updated: 2 min ago</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-white">
+          <h1 id="tour-welcome" className="text-5xl font-black tracking-tighter text-white">
             Dashboard
           </h1>
         </div>
       </Section>
 
       {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}
-      <Section spacing="tight">
+      <Section spacing="tight" id="tour-safety-dashboard">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-black text-white tracking-tight">Your Clinic Performance</h2>
           <span className="text-xs text-slate-500 font-medium">This Month</span>
@@ -210,7 +210,7 @@ export default function Dashboard() {
       </Section>
 
       {/* SAFETY RISK ASSESSMENT */}
-      <Section spacing="tight">
+      <Section spacing="tight" id="tour-telemetry-hud">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-black text-white tracking-tight">Safety Risk Assessment</h2>
@@ -271,7 +271,7 @@ export default function Dashboard() {
       </Section>
 
       {/* RECOMMENDED NEXT STEPS */}
-      <Section spacing="tight">
+      <Section spacing="tight" id="tour-recommended-next-steps">
         <div className="flex items-center gap-3 mb-4">
           <CheckCircle className="w-5 h-5 text-indigo-400" />
           <h2 className="text-xl font-black text-white tracking-tight">Recommended Next Steps</h2>
@@ -297,7 +297,7 @@ export default function Dashboard() {
       </Section>
 
       {/* QUICK ACTIONS */}
-      <Section spacing="tight">
+      <Section spacing="tight" id="tour-quick-actions">
         <h2 className="text-xl font-black text-white tracking-tight mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <button

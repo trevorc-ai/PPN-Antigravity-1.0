@@ -310,6 +310,14 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     </button>
 
                     <button
+                      onClick={() => { navigate('/profile/edit'); setIsMenuOpen(false); }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
+                    >
+                      <span className="material-symbols-outlined text-lg">edit_note</span>
+                      Edit Profile
+                    </button>
+
+                    <button
                       onClick={() => { navigate('/settings'); setIsMenuOpen(false); }}
                       className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
                     >

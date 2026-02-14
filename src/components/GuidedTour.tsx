@@ -12,33 +12,39 @@ interface TourStep {
 const TOUR_STEPS: TourStep[] = [
   {
     title: 'Spot Safety Issues Before They Escalate',
-    description: 'Live patient data alerts you to adverse events in real-time, so you can intervene early and keep your patients safe.',
+    description: "Live patient data alerts you to adverse events in real-time, so you can intervene early and keep your patients safe.",
+    selector: '#tour-welcome',
+    preferredPosition: 'bottom'
+  },
+  {
+    title: 'Monitor Vital Safety Trends',
+    description: 'Track real-time patient enrollment and safety monitoring trends to identify risks at a glance.',
     selector: '#tour-telemetry-hud',
     preferredPosition: 'bottom'
   },
   {
-    title: 'Find What You Need in Seconds',
-    description: 'Quick access to protocols, substances, and audit logs means less time searching and more time treating patients.',
+    title: 'Spend More Time Treating',
+    description: 'One-click access to all your protocols and patient records means you spend less time on admin and more time on care.',
     selector: 'aside',
     preferredPosition: 'right'
   },
   {
-    title: 'Make Evidence-Based Decisions with Confidence',
-    description: 'Search 12,000+ protocols from 840+ clinicians instantly, so you can choose treatments backed by real-world data.',
-    selector: '#tour-search-node',
-    preferredPosition: 'bottom'
+    title: 'Make Evidence-Based Decisions',
+    description: 'Cross-reference interactions and safety profiles in seconds to prescribe with total confidence.',
+    selector: '#tour-quick-actions',
+    preferredPosition: 'top'
   },
   {
-    title: 'Never Miss a Critical Safety Alert',
-    description: 'Urgent adverse event notifications appear here automatically, so you stay informed without checking multiple systems.',
-    selector: '#tour-notifications',
-    preferredPosition: 'left'
+    title: 'Never Miss a Critical Alert',
+    description: "Proactive risk monitoring identifies potential issues across your entire practice, keeping your license and patients secure.",
+    selector: '#tour-safety-dashboard', // Fixed selector target
+    preferredPosition: 'top'
   },
   {
-    title: 'Deliver Exceptional Care with Expert Guidance',
-    description: 'Access regulatory guidelines and clinical support instantly, so you can provide the highest standard of care with confidence.',
-    selector: '#tour-help-node',
-    preferredPosition: 'left'
+    title: 'Achieve Clinical Excellence',
+    description: 'Personalized recommendations help you optimize outcomes based on real-world evidence from the entire network.',
+    selector: '#tour-recommended-next-steps',
+    preferredPosition: 'top'
   }
 ];
 

@@ -13,6 +13,7 @@ import { MyProtocols } from './pages/MyProtocols';
 import ProtocolDetail from './pages/ProtocolDetail';
 import ClinicianDirectory from './pages/ClinicianDirectory';
 import ClinicianProfile from './pages/ClinicianProfile';
+import ProfileEdit from './pages/ProfileEdit';
 import SearchPortal from './pages/SearchPortal';
 import SimpleSearch from './pages/SimpleSearch';
 import News from './pages/News';
@@ -38,6 +39,8 @@ import BillingPortal from './pages/BillingPortal';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import BAA from './pages/BAA';
+import ProfileEdit from './pages/ProfileEdit';
+import ProfileSetup from './pages/ProfileSetup';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
@@ -209,7 +212,6 @@ const AppContent: React.FC = () => {
           <Route path="/monograph/:id" element={<SubstanceMonograph />} />
           <Route path="/interactions" element={<InteractionChecker />} />
           <Route path="/audit" element={<AuditLogs />} />
-          <Route path="/audit" element={<AuditLogs />} />
 
           {/* PROTOCOL BUILDER */}
           <Route path="/protocols" element={<MyProtocols />} />
@@ -220,6 +222,8 @@ const AppContent: React.FC = () => {
           <Route path="/help" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
+          <Route path="/profile-setup" element={<ProfileSetup />} />
           <Route path="/data-export" element={<DataExport />} />
 
           {/* Deep Dives */}

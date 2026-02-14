@@ -46,7 +46,12 @@ const Privacy: React.FC = () => {
                     <li>Organization/clinic name</li>
                 </ul>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.2 Usage Data</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.2 Optional Profile Information</h3>
+                <p className="text-slate-300 leading-relaxed mb-4">
+                    <strong>Profile setup is entirely optional.</strong> You are not required to complete your practitioner profile to use PPN Research Portal. Practitioners in jurisdictions where psychedelic therapy is not yet legal may use the platform without disclosing their identity or location.
+                </p>
+
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.3 Usage Data</h3>
                 <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
                     <li>Login times and IP addresses</li>
                     <li>Pages visited and features used</li>

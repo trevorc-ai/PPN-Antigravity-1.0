@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 
 const Settings: React.FC = () => {
+  const navigate = useNavigate();
   const [anonymizeEnabled, setAnonymizeEnabled] = useState(true);
   const [hipaaEnabled, setHipaaEnabled] = useState(true);
 
@@ -19,13 +20,59 @@ const Settings: React.FC = () => {
             <p className="text-slate-500 text-sm font-medium">Manage your account security, data privacy preferences, and session controls.</p>
           </div>
 
-          <div className="flex items-center gap-3 px-5 py-3 bg-accent-amber/5 border border-accent-amber/20 rounded-2xl shadow-xl">
-            <div className="size-8 rounded-xl bg-accent-amber/10 flex items-center justify-center text-accent-amber border border-accent-amber/20">
-              <span className="material-symbols-outlined text-xl">shield_with_heart</span>
+          <div className="flex gap-4">
+            <button
+              onClick={() => navigate('/profile/edit')}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition-colors text-sm font-semibold border border-slate-700 h-fit"
+            >
+              <span className="material-symbols-outlined text-lg">edit</span>
+              Edit Profile
+            </button>
+
+            <div className="flex items-center gap-3 px-5 py-3 bg-accent-amber/5 border border-accent-amber/20 rounded-2xl shadow-xl">
+              <div className="size-8 rounded-xl bg-accent-amber/10 flex items-center justify-center text-accent-amber border border-accent-amber/20">
+                <span className="material-symbols-outlined text-xl">shield_with_heart</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Security Health</span>
+                <span className="text-[11px] font-bold text-accent-amber uppercase tracking-tighter">Needs Attention</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Security Health</span>
-              <span className="text-[11px] font-bold text-accent-amber uppercase tracking-tighter">Needs Attention</span>
+          </div>
+        </div>
+
+        {/* Partner Tiers Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2.5 ml-1">
+            <span className="material-symbols-outlined text-slate-400 text-xl">workspace_premium</span>
+            <h2 className="text-sm font-black text-slate-100 uppercase tracking-widest whitespace-nowrap">Membership Tier</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
+          </div>
+
+          <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl p-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex items-start gap-6">
+                <div className="size-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
+                  <span className="material-symbols-outlined text-3xl">local_police</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-bold text-white">Partner Network Member</h3>
+                    <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-black uppercase tracking-widest">Active</span>
+                  </div>
+                  <p className="text-sm text-slate-400 max-w-xl font-medium leading-relaxed">
+                    You have full access to the Clinical Registry, Protocol Builder, and Network Intelligence tools. Your contribution to the global dataset is driving the future of psychedelic medicine.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <button className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-[11px] font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap">
+                  View Benefits
+                </button>
+                <button className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-[11px] font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap">
+                  Manage Billing
+                </button>
+              </div>
             </div>
           </div>
         </div>

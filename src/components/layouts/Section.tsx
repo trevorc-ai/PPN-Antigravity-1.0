@@ -4,12 +4,14 @@ interface SectionProps {
     children: React.ReactNode;
     spacing?: 'tight' | 'default' | 'spacious';
     className?: string;
+    id?: string;
 }
 
 export const Section = ({
     children,
     spacing = 'default',
-    className = ''
+    className = '',
+    id
 }: SectionProps) => {
     const spacingClasses = {
         tight: 'space-y-6',
@@ -18,7 +20,7 @@ export const Section = ({
     };
 
     return (
-        <div className={`${spacingClasses[spacing]} ${className}`}>
+        <div id={id} className={`${spacingClasses[spacing]} ${className}`}>
             {children}
         </div>
     );

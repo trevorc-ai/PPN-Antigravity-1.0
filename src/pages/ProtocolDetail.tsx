@@ -10,6 +10,7 @@ import { PATIENTS } from '../constants';
 import { Info, ChevronRight, HelpCircle } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
+import { useReceptorAffinity } from '../hooks/useReceptorAffinity';
 
 const ProtocolDetail: React.FC = () => {
   const { id } = useParams();
@@ -17,6 +18,9 @@ const ProtocolDetail: React.FC = () => {
 
   // Strict match against standardized IDs
   const record = PATIENTS.find(p => p.id === id);
+
+  // Fetch Receptor Affinity Data
+  const { profile, loading: affinityLoading } = useReceptorAffinity(record?.protocol.substance);
 
   if (!record) {
     return (
@@ -121,9 +125,12 @@ const ProtocolDetail: React.FC = () => {
               <h1 className="text-4xl font-black tracking-tight text-white print:text-black">
                 {record.demographics.patientHash ? record.demographics.patientHash.substring(0, 12) + '...' : 'ANONYMOUS'}
               </h1>
-              <span className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border print:border-black print:text-black print:bg-transparent ${record.status === 'Active' ? 'bg-primary/20 text-primary border-primary/30' :
+              <span className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border print:border-black print:text-black print:bg-transparent ${record.status === 'Active' ? 'bg-primary/20 text-primary border-primary/30' :
                 'bg-slate-800 text-slate-400 border-slate-700'
                 }`}>
+                <span className="material-symbols-outlined text-sm">
+                  {record.status === 'Active' ? 'radio_button_checked' : 'radio_button_unchecked'}
+                </span>
                 {record.status}
               </span>
             </div>
@@ -176,15 +183,19 @@ const ProtocolDetail: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="md:col-span-2 h-[300px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-2 print:bg-white print:border-gray-200">
+                <div
+                  role="img"
+                  aria-label="Radar chart showing receptor binding affinity for 6 targets: 5-HT2A, 5-HT2B, D2, Adrenergic, SERT, and NMDA. Compares target substance to serotonin baseline."
+                  className="md:col-span-2 h-[300px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-2 print:bg-white print:border-gray-200"
+                >
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart cx="50%" cy="50%" outerRadius="70%" data={[
-                      { subject: '5-HT2A (Psych)', A: 120, B: 100, fullMark: 150 },
-                      { subject: '5-HT2B (Cardio)', A: record.protocol.substance === 'MDMA' ? 110 : 40, B: 90, fullMark: 150 },
-                      { subject: 'D2 (Dopamine)', A: 80, B: 110, fullMark: 150 },
-                      { subject: 'Adrenergic (HR)', A: 95, B: 90, fullMark: 150 },
-                      { subject: 'SERT', A: record.protocol.substance === 'MDMA' ? 140 : 60, B: 85, fullMark: 150 },
-                      { subject: 'NMDA', A: record.protocol.substance === 'Ketamine' ? 130 : 20, B: 50, fullMark: 150 },
+                      { subject: '5-HT2A (Psych)', A: profile?.receptor_5ht2a || 0, B: 100, fullMark: 150 },
+                      { subject: '5-HT2B (Cardio)', A: profile?.receptor_5ht2b || 0, B: 90, fullMark: 150 },
+                      { subject: 'D2 (Dopamine)', A: profile?.receptor_d2 || 0, B: 110, fullMark: 150 },
+                      { subject: 'Adrenergic (HR)', A: profile?.receptor_adrenergic || 0, B: 90, fullMark: 150 },
+                      { subject: 'SERT', A: profile?.receptor_sert || 0, B: 85, fullMark: 150 },
+                      { subject: 'NMDA', A: profile?.receptor_nmda || 0, B: 50, fullMark: 150 },
                     ]}>
                       <PolarGrid stroke="#334155" />
                       <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 900 }} />
@@ -296,10 +307,10 @@ const ProtocolDetail: React.FC = () => {
 
                 {/* Subjective Difficulty Slider Viz */}
                 <div className="space-y-6 p-6 bg-slate-900/30 rounded-3xl border border-slate-800 flex flex-col justify-center print:bg-gray-50 print:border-gray-200">
-                  <h4 className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Subjective Difficulty</h4>
+                  <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest print:text-black">Subjective Difficulty</h4>
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-black text-white print:text-black">{record.experience?.difficultyScore || '—'}</span>
-                    <span className="text-xl font-bold text-slate-600 print:text-black">/ 10</span>
+                    <span className="text-xl font-bold text-slate-500 print:text-black">/ 10</span>
                   </div>
 
                   <div className="h-4 w-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-500 to-red-600 relative opacity-80 print:border print:border-black/20">
@@ -322,7 +333,11 @@ const ProtocolDetail: React.FC = () => {
 
                 {/* CHART UPGRADE: Efficacy Trajectory */}
                 <div className="flex flex-col gap-4">
-                  <div className="h-[250px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-4 print:bg-white print:border-gray-200">
+                  <div
+                    role="img"
+                    aria-label="Area chart showing PHQ-9 depression scores over time. Lower scores indicate improvement. Remission threshold is 5 points."
+                    className="h-[250px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-4 print:bg-white print:border-gray-200"
+                  >
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={chartData} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
                         <defs>
@@ -357,7 +372,7 @@ const ProtocolDetail: React.FC = () => {
                     </ResponsiveContainer>
                   </div>
                   <div className="text-center">
-                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest print:text-black">
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest print:text-black">
                       Lower Score = Improvement (Remission &lt; 5)
                     </p>
                   </div>
