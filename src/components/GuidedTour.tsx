@@ -11,32 +11,32 @@ interface TourStep {
 
 const TOUR_STEPS: TourStep[] = [
   {
-    title: 'Live Telemetry',
-    description: 'Real-time patient enrollment data and safety monitoring trends.',
+    title: 'Spot Safety Issues Before They Escalate',
+    description: 'Live patient data alerts you to adverse events in real-time, so you can intervene early and keep your patients safe.',
     selector: '#tour-telemetry-hud',
     preferredPosition: 'bottom'
   },
   {
-    title: 'Command Center',
-    description: 'Navigate the research registry, substances, and audit logs from here.',
+    title: 'Find What You Need in Seconds',
+    description: 'Quick access to protocols, substances, and audit logs means less time searching and more time treating patients.',
     selector: 'aside',
     preferredPosition: 'right'
   },
   {
-    title: 'Global Registry',
-    description: 'Instant access to cross-node search for protocols and compounds.',
+    title: 'Make Evidence-Based Decisions with Confidence',
+    description: 'Search 12,000+ protocols from 840+ clinicians instantly, so you can choose treatments backed by real-world data.',
     selector: '#tour-search-node',
     preferredPosition: 'bottom'
   },
   {
-    title: 'Safety Signals',
-    description: 'Urgent adverse event alerts and protocol updates appear here.',
+    title: 'Never Miss a Critical Safety Alert',
+    description: 'Urgent adverse event notifications appear here automatically, so you stay informed without checking multiple systems.',
     selector: '#tour-notifications',
     preferredPosition: 'left'
   },
   {
-    title: 'Clinical Support',
-    description: 'Access regulatory guidelines and technical support documentation.',
+    title: 'Deliver Exceptional Care with Expert Guidance',
+    description: 'Access regulatory guidelines and clinical support instantly, so you can provide the highest standard of care with confidence.',
     selector: '#tour-help-node',
     preferredPosition: 'left'
   }

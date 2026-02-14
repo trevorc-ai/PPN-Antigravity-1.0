@@ -133,7 +133,7 @@ const Landing: React.FC = () => {
       </div>
 
       {/* SECTION: Hero */}
-      <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden z-10">
+      <div className="relative pt-32 pb-20 lg:pt-40 lg:pb-24 px-6 overflow-hidden z-10">
         {/* Top Right Brand Label */}
         <div className="absolute top-10 right-10 z-20 hidden md:block group cursor-default">
           <div className="flex flex-col items-end">
@@ -148,7 +148,7 @@ const Landing: React.FC = () => {
         </div>
 
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full max-w-7xl mx-auto px-6 relative z-10">
           {/* Left Column (Text) */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-10">
             <motion.div
@@ -161,7 +161,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Operational Intelligence for Modern Clinics
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-4 text-slate-100">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[0.9] pb-4 text-slate-100">
                 Global Psychedelic <br />
                 <span className="text-gradient-primary inline-block pb-1">Practitioner Network</span>
               </h1>
@@ -249,7 +249,7 @@ const Landing: React.FC = () => {
                 y: { duration: 10, repeat: Infinity, ease: "easeInOut" },
                 rotate: { duration: 10, repeat: Infinity, ease: "easeInOut" }
               }}
-              className="w-[400px] lg:w-[600px] pointer-events-none z-0"
+              className="w-[300px] lg:w-[450px] pointer-events-none z-0"
             >
               <img src="/molecules/Psilocybin.webp" alt="Psilocybin Molecule" className="w-full h-auto" />
             </motion.div>
@@ -258,13 +258,13 @@ const Landing: React.FC = () => {
       </div>
 
       {/* SECTION: Trust Indicators */}
-      <section className="py-24 px-6 relative z-10">
+      <section className="py-20 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <p className="text-center text-sm text-slate-500 font-bold uppercase tracking-widest mb-12">
             Trusted by Leading Research Institutions
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 items-center">
             <motion.div
               className="text-center"
               whileHover={{ scale: 1.05 }}
@@ -302,7 +302,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Unified Clinical Operations - NEW */}
-      <section className="py-24 px-6 relative z-10 border-y border-slate-800/50 bg-slate-900/20">
+      <section className="py-20 px-6 relative z-10 border-y border-slate-800/50 bg-slate-900/20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
@@ -345,7 +345,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: How It Works */}
-      <section className="py-32 px-6 relative z-10">
+      <section className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">Simple Process</p>
@@ -353,7 +353,7 @@ const Landing: React.FC = () => {
             <p className="text-lg text-slate-400 max-w-2xl mx-auto">Four steps to collaborative clinical intelligence</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
             {[
               {
                 step: 1,
@@ -414,12 +414,12 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Product Showcase - See What's Inside */}
-      <section className="py-32 px-6 relative z-10">
+      <section className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           {/* Section Header */}
           <div className="text-center space-y-4">
             <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">Clinical Intelligence Platform</p>
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight pb-2 text-slate-200">
+            <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight pb-2 text-slate-200">
               Built for <span className="text-gradient-primary inline-block pb-1">Safety</span>.<br />Designed for Growth.
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
@@ -433,7 +433,7 @@ const Landing: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
           >
             {/* Component Left */}
             <div className="relative group order-2 lg:order-1">
@@ -444,7 +444,7 @@ const Landing: React.FC = () => {
             </div>
 
             {/* Text Right */}
-            <div className="space-y-6 order-1 lg:order-2">
+            <div className="space-y-8 order-1 lg:order-2">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-[11px] font-black text-red-400 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">security</span>
                 Safety Surveillance
@@ -471,10 +471,10 @@ const Landing: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center"
           >
             {/* Text Left */}
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-[11px] font-black text-primary uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">query_stats</span>
                 Network Benchmarking
@@ -509,7 +509,7 @@ const Landing: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center"
           >
             {/* Component Left */}
             <div className="relative group order-2 lg:order-1">
@@ -520,7 +520,7 @@ const Landing: React.FC = () => {
             </div>
 
             {/* Text Right */}
-            <div className="space-y-6 order-1 lg:order-2">
+            <div className="space-y-8 order-1 lg:order-2">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[11px] font-black text-emerald-400 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">timeline</span>
                 Patient Outcomes
@@ -600,8 +600,8 @@ const Landing: React.FC = () => {
             {/* Right: Stats Grid */}
             <div className="relative">
               <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full opacity-50"></div>
-              <div className="relative bg-[#111418]/60 border border-slate-800 rounded-[3rem] p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
-                <div className="grid grid-cols-2 gap-6">
+              <div className="relative bg-[#111418]/60 border border-slate-800 rounded-[3rem] p-10 sm:p-14 lg:p-16 shadow-2xl backdrop-blur-xl">
+                <div className="grid grid-cols-2 gap-8">
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-white">12k+</span>
                     <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>

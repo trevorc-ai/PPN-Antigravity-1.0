@@ -104,20 +104,20 @@ const BAA: React.FC = () => {
             <section id="section-3" className="mb-12">
                 <h2 className="text-2xl font-bold text-slate-100 mb-4">3. PERMITTED USES AND DISCLOSURES BY BUSINESS ASSOCIATE</h2>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">3.1 General Use and Disclosure Provisions</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">3.1 De-Identified Data Processing</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate may use or disclose PHI:
+                    Business Associate processes only de-identified, anonymized data for:
                 </p>
                 <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
-                    <li>To perform functions, activities, or services for, or on behalf of, Covered Entity as specified in the Service Agreement</li>
-                    <li>For the proper management and administration of Business Associate</li>
-                    <li>To carry out the legal responsibilities of Business Associate</li>
-                    <li>As required by law</li>
+                    <li>Clinical intelligence and decision support services</li>
+                    <li>Network-wide analytics and benchmarking</li>
+                    <li>Research and evidence generation</li>
+                    <li>Platform operation and improvement</li>
                 </ul>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">3.2 De-Identification</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">3.2 Data Architecture Compliance</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate may de-identify PHI in accordance with 45 CFR § 164.514(a)-(c) and use such de-identified data for research, analytics, and benchmarking purposes.
+                    All data is anonymized at source using system-generated Subject IDs in accordance with 45 CFR § 164.514(a)-(c). No re-identification is possible or permitted.
                 </p>
             </section>
 
@@ -125,19 +125,19 @@ const BAA: React.FC = () => {
             <section id="section-4" className="mb-12">
                 <h2 className="text-2xl font-bold text-slate-100 mb-4">4. OBLIGATIONS OF COVERED ENTITY</h2>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">4.1 Permissible Requests</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">4.1 Data Anonymization Responsibility</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Covered Entity shall not request Business Associate to use or disclose PHI in any manner that would not be permissible under the HIPAA Rules if done by Covered Entity.
+                    Covered Entity is solely responsible for ensuring all data submitted to the Service is de-identified and anonymized before entry, using system-generated Subject IDs with no linkage to patient identities.
                 </p>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">4.2 Notice of Privacy Practices</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">4.2 Compliance with Privacy-by-Design</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Covered Entity shall provide Business Associate with a copy of its Notice of Privacy Practices and any changes thereto.
+                    Covered Entity agrees to use the Service in accordance with its privacy-by-design architecture and shall not attempt to upload, transmit, or store any PHI or PII.
                 </p>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">4.3 Restrictions</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">4.3 Audit Rights</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Covered Entity shall notify Business Associate of any restriction on the use or disclosure of PHI that Covered Entity has agreed to.
+                    Covered Entity may request audit logs to verify that only de-identified data is processed by the Service.
                 </p>
             </section>
 
@@ -147,7 +147,7 @@ const BAA: React.FC = () => {
 
                 <h3 className="text-xl font-semibold text-slate-200 mb-3">5.1 Term</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    This Agreement shall be effective as of the Effective Date and shall terminate when all PHI provided by Covered Entity to Business Associate, or created or received by Business Associate on behalf of Covered Entity, is destroyed or returned to Covered Entity.
+                    This Agreement shall be effective as of the Effective Date and shall remain in effect for the duration of the Service Agreement.
                 </p>
 
                 <h3 className="text-xl font-semibold text-slate-200 mb-3">5.2 Termination for Cause</h3>
@@ -164,9 +164,9 @@ const BAA: React.FC = () => {
                     Upon termination, Business Associate shall:
                 </p>
                 <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
-                    <li>Return or destroy all PHI received from Covered Entity, or created or received by Business Associate on behalf of Covered Entity</li>
-                    <li>Retain no copies of PHI</li>
-                    <li>If return or destruction is not feasible, extend the protections of this Agreement to such PHI and limit further uses and disclosures</li>
+                    <li>Delete all de-identified data associated with Covered Entity's account within 30 days</li>
+                    <li>Provide written confirmation of data deletion upon request</li>
+                    <li>Retain no copies of Covered Entity's data except as required by law</li>
                 </ul>
             </section>
 
@@ -174,29 +174,32 @@ const BAA: React.FC = () => {
             <section id="section-6" className="mb-12">
                 <h2 className="text-2xl font-bold text-slate-100 mb-4">6. BREACH NOTIFICATION</h2>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">6.1 Discovery of Breach</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">6.1 Security Incident Notification</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall notify Covered Entity within 10 business days of discovery of a breach of unsecured PHI.
+                    Business Associate shall notify Covered Entity within 10 business days of discovery of any security incident affecting de-identified data integrity or availability.
                 </p>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">6.2 Content of Notification</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">6.2 Incident Report Content</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
                     The notification shall include:
                 </p>
                 <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
-                    <li>Identification of each individual whose unsecured PHI has been, or is reasonably believed to have been, accessed, acquired, or disclosed</li>
-                    <li>A brief description of what happened, including the date of the breach and the date of discovery</li>
-                    <li>A description of the types of unsecured PHI involved</li>
-                    <li>A brief description of what Business Associate is doing to investigate, mitigate harm, and prevent further breaches</li>
-                    <li>Contact information for individuals to ask questions or learn additional information</li>
+                    <li>Description of the security incident and affected systems</li>
+                    <li>Date and time of the incident and discovery</li>
+                    <li>Types of de-identified data potentially affected</li>
+                    <li>Remediation steps taken and preventive measures implemented</li>
+                    <li>Contact information for technical and security inquiries</li>
                 </ul>
+                <p className="text-slate-300 leading-relaxed mb-4">
+                    <strong>Note:</strong> Because the Service processes only de-identified data, security incidents do NOT constitute HIPAA breaches and do NOT trigger breach notification requirements under 45 CFR § 164.404.
+                </p>
             </section>
 
             {/* Section 7 */}
             <section id="section-7" className="mb-12">
                 <h2 className="text-2xl font-bold text-slate-100 mb-4">7. INDEMNIFICATION</h2>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall indemnify and hold harmless Covered Entity from any claims, damages, or expenses arising from Business Associate's breach of this Agreement or violation of HIPAA.
+                    Business Associate shall indemnify and hold harmless Covered Entity from any claims, damages, or expenses arising from Business Associate's breach of this Agreement, including but not limited to security incidents, data integrity failures, or violations of applicable data protection laws.
                 </p>
             </section>
 
