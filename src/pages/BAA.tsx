@@ -42,10 +42,10 @@ const BAA: React.FC = () => {
                     WHEREAS, Covered Entity and Business Associate have entered into a subscription agreement for the use of PPN Research Portal ("Service");
                 </p>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    WHEREAS, in connection with the Service, Business Associate may create, receive, maintain, or transmit Protected Health Information ("PHI") on behalf of Covered Entity;
+                    WHEREAS, the Service is architected to operate entirely on de-identified, anonymized data and does NOT collect, store, or transmit Protected Health Information ("PHI") or Personally Identifiable Information ("PII");
                 </p>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    WHEREAS, the Health Insurance Portability and Accountability Act of 1996 ("HIPAA"), as amended by the Health Information Technology for Economic and Clinical Health Act ("HITECH"), requires Business Associate to enter into this Agreement;
+                    WHEREAS, this architecture eliminates HIPAA compliance requirements and breach liability for both parties;
                 </p>
                 <p className="text-slate-300 leading-relaxed mb-4">
                     NOW, THEREFORE, in consideration of the mutual covenants and agreements herein contained, the parties agree as follows:
@@ -64,44 +64,39 @@ const BAA: React.FC = () => {
             <section id="section-2" className="mb-12">
                 <h2 className="text-2xl font-bold text-slate-100 mb-4">2. OBLIGATIONS OF BUSINESS ASSOCIATE</h2>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.1 Permitted Uses and Disclosures</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.1 Data Architecture</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate may use or disclose PHI only as permitted by this Agreement or as required by law.
+                    <strong>Business Associate will NOT receive, maintain, or transmit Protected Health Information (PHI) or Personally Identifiable Information (PII).</strong> All data processed by the Service is de-identified and anonymized at source using system-generated Subject IDs with no linkage to real patient identities.
+                </p>
+                <p className="text-slate-300 leading-relaxed mb-4">
+                    This architecture eliminates HIPAA compliance requirements and breach liability for both parties.
                 </p>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.2 Safeguards</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.2 Privacy-by-Design Principles</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall implement appropriate safeguards to prevent use or disclosure of PHI other than as provided for by this Agreement, including administrative, physical, and technical safeguards that reasonably and appropriately protect the confidentiality, integrity, and availability of electronic PHI.
+                    Business Associate implements the following privacy-by-design principles:
                 </p>
+                <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
+                    <li>Data minimization: Collect only what is necessary for clinical intelligence</li>
+                    <li>Anonymization at source: Patient identifiers never enter the system</li>
+                    <li>Aggregation by default: Individual-level data is aggregated for network insights</li>
+                    <li>Zero breach liability: No PHI means no HIPAA breach risk</li>
+                </ul>
 
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.3 Reporting</h3>
+                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.3 Data Security</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall report to Covered Entity any use or disclosure of PHI not provided for by this Agreement, including breaches of unsecured PHI, within 10 business days of discovery.
+                    Business Associate shall implement enterprise-grade security safeguards including:
                 </p>
+                <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
+                    <li>Encryption in transit (TLS 1.3) and at rest (AES-256)</li>
+                    <li>Role-based access control (RBAC)</li>
+                    <li>Activity logging and audit trails</li>
+                    <li>SOC 2 Type II certified infrastructure</li>
+                </ul>
 
                 <h3 className="text-xl font-semibold text-slate-200 mb-3">2.4 Subcontractors</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall ensure that any subcontractors that create, receive, maintain, or transmit PHI on behalf of Business Associate agree to the same restrictions and conditions that apply to Business Associate.
-                </p>
-
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.5 Access to PHI</h3>
-                <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall provide access to PHI in a Designated Record Set to Covered Entity or an Individual as necessary to satisfy Covered Entity's obligations under 45 CFR § 164.524.
-                </p>
-
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.6 Amendment of PHI</h3>
-                <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall make any amendments to PHI in a Designated Record Set as directed by Covered Entity pursuant to 45 CFR § 164.526.
-                </p>
-
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.7 Accounting of Disclosures</h3>
-                <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall document disclosures of PHI and information related to such disclosures as would be required for Covered Entity to respond to a request for an accounting of disclosures pursuant to 45 CFR § 164.528.
-                </p>
-
-                <h3 className="text-xl font-semibold text-slate-200 mb-3">2.8 Availability of Books and Records</h3>
-                <p className="text-slate-300 leading-relaxed mb-4">
-                    Business Associate shall make its internal practices, books, and records relating to the use and disclosure of PHI available to the Secretary of Health and Human Services for purposes of determining Covered Entity's compliance with HIPAA.
+                    Business Associate shall ensure that any subcontractors processing de-identified data agree to maintain the same privacy and security standards.
                 </p>
             </section>
 
