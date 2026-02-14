@@ -226,7 +226,97 @@ PPN-Antigravity-1.0/
 
 ---
 
+## 6. HANDBACK PROTOCOL (BUILDER → LEAD)
+
+### **Rule: Completion Artifacts Required**
+
+When BUILDER completes ANY feature, they **MUST** create a completion artifact.
+
+**Template Location:** `.agent/templates/completion_artifact_template.md`
+
+**Required Contents:**
+1. **What Was Implemented** - List of files created/modified
+2. **Verification Completed** - Checklist (browser testing, accessibility, etc.)
+3. **Git Commits** - List of commit hashes and messages
+4. **Handback to LEAD** - Explicit notification using @LEAD syntax
+
+**Example:**
+```markdown
+# Completion Report: Legal Pages Implementation
+
+**Completed by:** BUILDER  
+**Date:** Feb 14, 2026  
+**Status:** ✅ COMPLETE
+
+## What Was Implemented
+
+**Files Created:**
+- `src/pages/Terms.tsx` - Terms of Service page
+- `src/pages/Privacy.tsx` - Privacy Policy page
+- `src/pages/BAA.tsx` - Business Associate Agreement page
+
+## Verification Completed
+
+- [x] Browser tested (desktop + mobile)
+- [x] No console errors
+- [x] Matches design spec
+- [x] Accessibility verified (WCAG AA)
+
+## Git Commits
+
+```
+a1b2c3d - Add legal pages components
+e4f5g6h - Update App.tsx routing
+i7j8k9l - Add Footer legal links
+```
+
+## Handback to LEAD
+
+@LEAD, I have completed Legal Pages Implementation. 
+All 3 pages created, routes added, Footer updated.
+Ready for your review.
+```
+
+**Artifact Location:** Brain folder (same conversation as handoff)
+
+---
+
+## 7. VERIFICATION BEFORE STATUS UPDATES (LEAD)
+
+### **Rule: LEAD Must Verify Before Reporting Status**
+
+Before updating `task.md` or reporting status to user, LEAD **MUST** run verification checks:
+
+**Verification Checklist:**
+```bash
+# 1. Check recent git commits
+git log --oneline --since="24 hours ago" -10
+
+# 2. List files in key directories
+ls -la src/pages/
+ls -la src/components/
+ls -la migrations/
+
+# 3. Search for specific files
+find src -name "*[FeatureName]*"
+
+# 4. Check for completion artifacts
+ls -la /Users/trevorcalton/.gemini/antigravity/brain/[conversation-id]/
+```
+
+**Rule:** LEAD cannot say "not started" without running these checks.
+
+**Status Definitions:**
+- `[x]` = File exists in codebase + git committed
+- `[/]` = Work in progress (BUILDER actively working)
+- `[ ]` = Not started (no files, no commits)
+
+**Update task.md AFTER verifying, not before.**
+
+---
+
 ## 📊 WORKFLOW EXAMPLE
+
 
 ### **Feature: Login Page**
 
