@@ -85,6 +85,21 @@
 - **Last Update:** "✅ COMPLETE - Verified user_profiles migration exists with comprehensive schema. Created documentation and test data for interface testing. Ready for BUILDER to implement UI components."
 - **Notes:** Migration already created with subscription management, Stripe integration, and feature flags (exceeds original spec)
 
+### Command #006 - TopHeader Fix (Display Real User Profile)
+- **Date Issued:** Feb 13, 2026, 5:30 PM PST
+- **Issued By:** LEAD (on behalf of User)
+- **Assigned To:** BUILDER
+- **Directive:** "Fix TopHeader.tsx to display real user profile data from Supabase instead of hardcoded 'Dr. Sarah Jenkins'"
+- **Spec Location:** `/Users/trevorcalton/Desktop/PPN-Antigravity-1.0/.agent/handoffs/BUILDER_COMMAND_006_TOPHEADER_FIX.md`
+- **Implementation Plan:** `/Users/trevorcalton/.gemini/antigravity/brain/ec364aaf-2cd2-4f3f-9b70-fcc3645108de/topheader_fix_plan.md`
+- **Deadline:** Feb 14, 2026 EOD
+- **Status:** 🔴 PENDING (Not acknowledged)
+- **Priority:** P1 - High (Post-Launch, Pre-Pricing)
+- **Agent Acknowledgment:** ❌ Not yet acknowledged
+- **Last Update:** N/A
+- **Notes:** Must complete AFTER Legal Pages (Command #001). Blocks pricing page and user tiers implementation.
+- **Estimated Time:** 1-2 hours
+
 ---
 
 ## Completed Commands (Archive)
