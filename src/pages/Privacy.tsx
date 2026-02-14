@@ -6,7 +6,7 @@ const tableOfContents = [
     { id: 'section-1', title: '1. Introduction' },
     { id: 'section-2', title: '2. Information We Collect' },
     { id: 'section-3', title: '3. How We Use Your Information' },
-    { id: 'section-4', title: '4. HIPAA Compliance' },
+    { id: 'section-4', title: '4. Data Architecture & Privacy-by-Design' },
     { id: 'section-5', title: '5. Data Security' },
     { id: 'section-6', title: '6. Data Sharing' },
     { id: 'section-7', title: '7. Data Retention' },
@@ -94,28 +94,34 @@ const Privacy: React.FC = () => {
                 </ul>
             </section>
 
-            {/* Section 4 - HIPAA Compliance (Highlighted) */}
+            {/* Section 4 - Data Architecture & Privacy-by-Design (Highlighted) */}
             <section id="section-4" className="mb-12">
                 <div className="border-l-4 border-teal-400 pl-6 py-2 bg-teal-950/20">
                     <h2 className="text-2xl font-bold text-slate-100 mb-4 flex items-center gap-2">
                         <Shield className="w-6 h-6 text-teal-400" />
-                        4. HIPAA Compliance
+                        4. Data Architecture & Privacy-by-Design
                     </h2>
 
-                    <h3 className="text-xl font-semibold text-slate-200 mb-3">4.1 Business Associate Agreement</h3>
+                    <h3 className="text-xl font-semibold text-slate-200 mb-3">4.1 No Protected Health Information (PHI)</h3>
                     <p className="text-slate-300 leading-relaxed mb-4">
-                        We are a HIPAA-covered Business Associate and will sign a BAA with all users.
+                        <strong>We do NOT collect, store, or transmit Protected Health Information (PHI) or Personally Identifiable Information (PII).</strong> Our platform is architected from the ground up to operate entirely on de-identified, anonymized data.
+                    </p>
+                    <p className="text-slate-300 leading-relaxed mb-4">
+                        All patient data uses system-generated Subject IDs with no linkage to real identities. This architecture eliminates HIPAA compliance requirements and breach liability.
                     </p>
 
-                    <h3 className="text-xl font-semibold text-slate-200 mb-3">4.2 Protected Health Information (PHI)</h3>
+                    <h3 className="text-xl font-semibold text-slate-200 mb-3">4.2 Decentralized Peer-to-Peer Data Sharing</h3>
                     <p className="text-slate-300 leading-relaxed mb-4">
-                        We do NOT collect or store PHI. All patient data must be de-identified before entry into the system.
+                        Clinical data is shared across the network in a decentralized, anonymized manner. No single entity controls or owns the aggregated research data.
                     </p>
 
-                    <h3 className="text-xl font-semibold text-slate-200 mb-3">4.3 Minimum Necessary Standard</h3>
-                    <p className="text-slate-300 leading-relaxed mb-4">
-                        We collect only the minimum data necessary to provide the Service.
-                    </p>
+                    <h3 className="text-xl font-semibold text-slate-200 mb-3">4.3 Privacy-by-Design Principles</h3>
+                    <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
+                        <li>Data minimization: We collect only what is necessary for clinical intelligence</li>
+                        <li>Anonymization at source: Patient identifiers never enter the system</li>
+                        <li>Aggregation by default: Individual-level data is aggregated for network insights</li>
+                        <li>Zero breach liability: No PHI means no HIPAA breach risk</li>
+                    </ul>
                 </div>
             </section>
 
@@ -141,9 +147,10 @@ const Privacy: React.FC = () => {
 
                 <h3 className="text-xl font-semibold text-slate-200 mb-3">5.3 Infrastructure</h3>
                 <ul className="list-disc list-inside text-slate-300 leading-relaxed mb-4 space-y-2">
-                    <li>HIPAA-compliant hosting (AWS US-East)</li>
-                    <li>SOC 2 Type II certified</li>
-                    <li>Regular security audits</li>
+                    <li>Enterprise-grade hosting (Supabase on AWS)</li>
+                    <li>SOC 2 Type II certified infrastructure</li>
+                    <li>Regular security audits and penetration testing</li>
+                    <li>99.9% uptime SLA</li>
                 </ul>
             </section>
 
@@ -167,7 +174,7 @@ const Privacy: React.FC = () => {
                     <li>Sentry (error monitoring)</li>
                 </ul>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    All service providers are HIPAA-compliant and bound by BAAs.
+                    All service providers are bound by strict data processing agreements and security standards.
                 </p>
 
                 <h3 className="text-xl font-semibold text-slate-200 mb-3">6.3 Legal Requirements</h3>
@@ -192,7 +199,7 @@ const Privacy: React.FC = () => {
 
                 <h3 className="text-xl font-semibold text-slate-200 mb-3">7.2 Deleted Accounts</h3>
                 <p className="text-slate-300 leading-relaxed mb-4">
-                    Upon account deletion, you have 30 days to export your data. After 30 days, all data is permanently deleted per HIPAA requirements.
+                    Upon account deletion, you have 30 days to export your data. After 30 days, all data is permanently deleted.
                 </p>
 
                 <h3 className="text-xl font-semibold text-slate-200 mb-3">7.3 Legal Holds</h3>
