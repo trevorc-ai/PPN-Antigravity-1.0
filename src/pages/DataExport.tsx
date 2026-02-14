@@ -170,8 +170,9 @@ const DataExport: React.FC = () => {
                         <div>
                             <p className="text-sm font-bold text-amber-400 mb-1">STRICTLY CONFIDENTIAL</p>
                             <p className="text-sm text-slate-300">
-                                Personally Identifiable Information (PII) is automatically scrubbed from all generated files.
-                                Do not attempt to re-identify patients. All exports are logged under 21 CFR Part 11 compliance standards.
+                                No Personally Identifiable Information (PII) or Protected Health Information (PHI) is collected by this system.
+                                All patient data uses de-identified Subject IDs only. Exports contain aggregated, anonymized research data.
+                                All exports are logged under 21 CFR Part 11 compliance standards.
                             </p>
                         </div>
                     </div>
