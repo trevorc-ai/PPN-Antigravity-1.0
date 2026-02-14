@@ -187,8 +187,8 @@ const AppContent: React.FC = () => {
       <ScrollToTop />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/landing" element={<Landing />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/landing" element={<Navigate to="/" replace />} />
         <Route path="/about" element={<About />} />
         <Route path="/secure-gate" element={<SecureGate />} />
         <Route path="/vibe-check" element={<PhysicsDemo />} />
