@@ -99,7 +99,7 @@ export const MyProtocols = () => {
                     </div>
                     <button
                         onClick={() => navigate('/protocol-builder')}
-                        className="flex items-center gap-2 px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white rounded-lg transition-colors duration-200 font-medium"
+                        className="flex items-center gap-2 px-6 py-3 bg-[#14b8a6] hover:bg-[#0d9488] text-white rounded-lg transition-colors duration-200 font-medium"
                     >
                         <Plus className="w-5 h-5" />
                         New Protocol
@@ -111,7 +111,7 @@ export const MyProtocols = () => {
                     <select
                         value={filterSubstance}
                         onChange={(e) => setFilterSubstance(e.target.value)}
-                        className="px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                        className="px-4 py-2.5 bg-[#1f2937] border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-[#14b8a6] transition-colors"
                     >
                         <option value="all">All Substances</option>
                         {uniqueSubstances.map((substance) => (
@@ -122,7 +122,7 @@ export const MyProtocols = () => {
                     <select
                         value={filterIndication}
                         onChange={(e) => setFilterIndication(e.target.value)}
-                        className="px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                        className="px-4 py-2.5 bg-[#1f2937] border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-[#14b8a6] transition-colors"
                     >
                         <option value="all">All Indications</option>
                         {uniqueIndications.map((indication) => (
@@ -133,7 +133,7 @@ export const MyProtocols = () => {
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-teal-500 transition-colors"
+                        className="px-4 py-2.5 bg-[#1f2937] border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-[#14b8a6] transition-colors"
                     >
                         <option value="all">All Status</option>
                         <option value="submitted">Submitted</option>
@@ -149,7 +149,7 @@ export const MyProtocols = () => {
                         <p className="text-slate-400 mb-4">No protocols found</p>
                         <button
                             onClick={() => navigate('/protocol-builder')}
-                            className="text-teal-400 hover:text-teal-300 transition-colors"
+                            className="text-[#14b8a6] hover:text-[#0d9488] transition-colors"
                         >
                             Create your first protocol →
                         </button>
@@ -177,23 +177,20 @@ export const MyProtocols = () => {
                                         className="border-b border-slate-800 hover:bg-slate-900/50 cursor-pointer transition-colors"
                                     >
                                         <td className="py-4 px-4">
-                                            <span className="font-mono text-sm text-teal-400">{protocol.subject_id}</span>
+                                            <span className="font-mono text-sm text-[#14b8a6]">{protocol.subject_id}</span>
                                         </td>
                                         <td className="py-4 px-4">
                                             <span className="text-slate-300">{protocol.session_number}</span>
                                         </td>
                                         <td className="py-4 px-4">
                                             <span className={`
-                                                inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                                ${protocol.substance_name === 'Psilocybin' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : ''}
-                                                ${protocol.substance_name === 'MDMA' ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' : ''}
-                                                ${protocol.substance_name === 'Ketamine' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : ''}
-                                                ${protocol.substance_name === 'LSD' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : ''}
-                                                ${protocol.substance_name === '5-MeO-DMT' ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30' : ''}
-                                                ${protocol.substance_name === 'Ibogaine' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : ''}
-                                                ${protocol.substance_name === 'Mescaline' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : ''}
-                                                ${protocol.substance_name === 'Ayahuasca' ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30' : ''}
-                                                ${!['Psilocybin', 'MDMA', 'Ketamine', 'LSD', '5-MeO-DMT', 'Ibogaine', 'Mescaline', 'Ayahuasca'].includes(protocol.substance_name) ? 'bg-slate-500/20 text-slate-300 border border-slate-500/30' : ''}
+                                                inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white
+                                                ${protocol.substance_name === 'Psilocybin' ? 'bg-[#a78bfa]' : ''}
+                                                ${protocol.substance_name === 'MDMA' ? 'bg-[#f472b6]' : ''}
+                                                ${protocol.substance_name === 'Ketamine' ? 'bg-[#60a5fa]' : ''}
+                                                ${protocol.substance_name === 'LSD' ? 'bg-[#22d3ee]' : ''}
+                                                ${protocol.substance_name === '5-MeO-DMT' ? 'bg-[#fbbf24]' : ''}
+                                                ${!['Psilocybin', 'MDMA', 'Ketamine', 'LSD', '5-MeO-DMT'].includes(protocol.substance_name) ? 'bg-slate-500' : ''}
                                             `}>
                                                 {protocol.substance_name}
                                             </span>
@@ -209,11 +206,11 @@ export const MyProtocols = () => {
                                         </td>
                                         <td className="py-4 px-4">
                                             {protocol.submitted_at ? (
-                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                                    Submitted
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#10b981] text-white">
+                                                    Complete
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#f59e0b] text-white">
                                                     Draft
                                                 </span>
                                             )}

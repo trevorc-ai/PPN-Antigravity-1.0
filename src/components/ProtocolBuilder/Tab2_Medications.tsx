@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 
 interface Tab2MedicationsProps {
@@ -111,14 +111,17 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
                                 key={med.medication_id}
                                 onClick={() => toggleMedication(med.medication_id)}
                                 className={`
-                                    px-4 py-3 rounded-lg font-medium text-sm transition-all
+                                    relative px-4 py-3 rounded-lg font-medium text-sm transition-all
                                     ${isSelected
                                         ? 'bg-[#14b8a6] text-white border-2 border-[#0d9488] shadow-lg shadow-[#14b8a6]/20'
-                                        : 'bg-[#1a1f28] text-[#f8fafc] border border-[#1e293b] hover:border-[#14b8a6] hover:scale-105'
+                                        : 'bg-[#374151] text-slate-300 border border-[#4b5563] hover:bg-[#4b5563] hover:scale-105'
                                     }
                                 `}
                                 aria-pressed={isSelected}
                             >
+                                {isSelected && (
+                                    <Check className="absolute top-2 right-2 w-4 h-4 text-white" />
+                                )}
                                 <div className="font-semibold">{med.medication_name}</div>
                                 {med.brand_name && (
                                     <div className="text-xs opacity-70 mt-0.5">({med.brand_name})</div>
@@ -142,26 +145,26 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
                 {showMoreMedications && (
                     <div className="mt-3 space-y-2">
                         {Object.entries(medicationsByCategory).map(([category, meds]) => (
-                            <div key={category} className="border border-[#1e293b] rounded-lg overflow-hidden">
+                            <div key={category} className="border border-slate-700 rounded-lg overflow-hidden">
                                 {/* Category Header */}
                                 <button
                                     onClick={() => toggleCategory(category)}
-                                    className="w-full flex items-center justify-between px-4 py-2 bg-[#020408] hover:bg-[#0f1218] transition-colors"
+                                    className="w-full flex items-center justify-between px-4 py-2 bg-slate-800 hover:bg-slate-700 transition-colors"
                                 >
-                                    <span className="text-sm font-medium text-[#f8fafc]">{category}</span>
+                                    <span className="text-sm font-medium text-slate-200">{category}</span>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs text-[#94a3b8]">{meds.length} medications</span>
+                                        <span className="text-xs text-slate-400">{meds.length} medications</span>
                                         {expandedCategories.includes(category) ? (
-                                            <ChevronUp className="w-4 h-4 text-[#94a3b8]" />
+                                            <ChevronUp className="w-4 h-4 text-slate-400" />
                                         ) : (
-                                            <ChevronDown className="w-4 h-4 text-[#94a3b8]" />
+                                            <ChevronDown className="w-4 h-4 text-slate-400" />
                                         )}
                                     </div>
                                 </button>
 
                                 {/* Category Medications */}
                                 {expandedCategories.includes(category) && (
-                                    <div className="p-2 bg-[#0f1218] grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div className="p-2 bg-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         {meds.map((med) => {
                                             const isSelected = selectedMedications.includes(med.medication_id);
                                             return (
@@ -169,14 +172,17 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
                                                     key={med.medication_id}
                                                     onClick={() => toggleMedication(med.medication_id)}
                                                     className={`
-                                                        px-3 py-2 rounded text-left text-sm transition-all
+                                                        relative px-3 py-2 rounded text-left text-sm transition-all
                                                         ${isSelected
                                                             ? 'bg-[#14b8a6] text-white'
-                                                            : 'bg-[#1a1f28] text-[#f8fafc] hover:bg-[#14b8a6]/10'
+                                                            : 'bg-[#374151] text-slate-300 hover:bg-[#4b5563]'
                                                         }
                                                     `}
                                                     aria-pressed={isSelected}
                                                 >
+                                                    {isSelected && (
+                                                        <Check className="absolute top-2 right-2 w-3 h-3 text-white" />
+                                                    )}
                                                     <div className="font-medium">{med.medication_name}</div>
                                                     {med.brand_name && (
                                                         <div className="text-xs opacity-70">({med.brand_name})</div>

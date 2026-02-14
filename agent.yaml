@@ -226,6 +226,8 @@ settings:
 # MEMORY & CONTEXT
 context_files:
   - "MASTER_PLAN.md"  # Single source of truth - read this first!
+  - ".agent/handoffs/COMMAND_LOG.md"  # MANDATORY - Check for pending directives FIRST!
+  - ".agent/rules/DIRECTIVE_TRACKING_PROTOCOL.md"  # MANDATORY - Follow this protocol
   - "docs/TEAM_HANDOFF_PROTOCOLS.md"
   - ".agent/rules/handoff_protocol.md"
   - "docs/architecture/tech_stack.md"

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Info } from 'lucide-react';
+import { DosageSlider } from './DosageSlider';
+import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface Tab3ProtocolDetailsProps {
     formData: {
@@ -25,15 +27,10 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
     const [indications, setIndications] = useState<any[]>([]);
     const [substances, setSubstances] = useState<any[]>([]);
     const [routes, setRoutes] = useState<any[]>([]);
-    const [dosageWarning, setDosageWarning] = useState<string | null>(null);
 
     useEffect(() => {
         loadReferenceData();
     }, []);
-
-    useEffect(() => {
-        checkDosageRange();
-    }, [formData.dosage_mg, patientWeight]);
 
     const loadReferenceData = async () => {
         const [indicationsRes, substancesRes, routesRes] = await Promise.all([
@@ -47,41 +44,26 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
         if (routesRes.data) setRoutes(routesRes.data);
     };
 
-    const checkDosageRange = () => {
-        if (!formData.dosage_mg || !patientWeight) {
-            setDosageWarning(null);
-            return;
-        }
-
-        const weightRanges: Record<string, { min: number; max: number }> = {
-            '40-50kg': { min: 15, max: 20 },
-            '51-60kg': { min: 18, max: 25 },
-            '61-70kg': { min: 20, max: 28 },
-            '71-80kg': { min: 20, max: 30 },
-            '81-90kg': { min: 25, max: 35 },
-            '91-100kg': { min: 28, max: 40 },
-            '101+kg': { min: 30, max: 45 },
-        };
-
-        const range = weightRanges[patientWeight];
-        if (range) {
-            if (formData.dosage_mg < range.min || formData.dosage_mg > range.max) {
-                setDosageWarning(
-                    `Dosage outside safe range (${range.min}-${range.max}mg) for ${patientWeight}. Please verify.`
-                );
-            } else {
-                setDosageWarning(null);
-            }
-        }
+    const getSubstanceName = () => {
+        const substance = substances.find(s => s.substance_id === formData.substance_id);
+        return substance?.substance_name || '';
     };
 
     return (
         <div className="space-y-6">
             {/* Primary Indication */}
             <div>
-                <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-                    Primary Indication <span className="text-[#ef4444]">*</span>
-                </label>
+                <div className="flex items-center gap-2 mb-2">
+                    <label className="block text-sm font-medium text-[#f8fafc]">
+                        Primary Indication <span className="text-[#ef4444]">*</span>
+                    </label>
+                    <AdvancedTooltip
+                        content="Clinical definition and diagnostic criteria for this indication. Select the primary condition being treated in this session."
+                        tier="standard"
+                    >
+                        <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
+                    </AdvancedTooltip>
+                </div>
                 <select
                     value={formData.indication_id || ''}
                     onChange={(e) => onChange('indication_id', parseInt(e.target.value))}
@@ -98,9 +80,17 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
 
             {/* Substance */}
             <div>
-                <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-                    Substance <span className="text-[#ef4444]">*</span>
-                </label>
+                <div className="flex items-center gap-2 mb-2">
+                    <label className="block text-sm font-medium text-[#f8fafc]">
+                        Substance <span className="text-[#ef4444]">*</span>
+                    </label>
+                    <AdvancedTooltip
+                        content="Mechanism of action, receptor affinity profile, and pharmacokinetics. Choose the psychedelic substance being administered."
+                        tier="standard"
+                    >
+                        <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
+                    </AdvancedTooltip>
+                </div>
                 <select
                     value={formData.substance_id || ''}
                     onChange={(e) => onChange('substance_id', parseInt(e.target.value))}
@@ -115,43 +105,43 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                 </select>
             </div>
 
-            {/* Dosage */}
+            {/* Dosage Slider */}
             <div>
-                <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-                    Dosage <span className="text-[#ef4444]">*</span>
-                </label>
-                <div className="flex gap-3">
-                    <input
-                        type="number"
-                        value={formData.dosage_mg || ''}
-                        onChange={(e) => onChange('dosage_mg', parseFloat(e.target.value))}
-                        placeholder="25"
-                        className="flex-1 bg-[#020408] border border-[#1e293b] rounded-lg px-4 py-3 text-[#f8fafc] focus:border-[#14b8a6] focus:outline-none"
-                    />
-                    <select
-                        value={formData.dosage_unit}
-                        onChange={(e) => onChange('dosage_unit', e.target.value)}
-                        className="w-24 bg-[#020408] border border-[#1e293b] rounded-lg px-4 py-3 text-[#f8fafc] focus:border-[#14b8a6] focus:outline-none"
+                <div className="flex items-center gap-2 mb-3">
+                    <label className="block text-sm font-medium text-[#f8fafc]">
+                        Dosage <span className="text-[#ef4444]">*</span>
+                    </label>
+                    <AdvancedTooltip
+                        content="Therapeutic range: 20-30mg. High dose: 31-50mg. Dangerous: 51+mg. Adjust based on patient weight, prior experience, and clinical indication. Contraindications: cardiovascular disease, severe hypertension."
+                        tier="standard"
                     >
-                        <option value="mg">mg</option>
-                        <option value="μg">μg</option>
-                        <option value="mL">mL</option>
-                    </select>
+                        <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
+                    </AdvancedTooltip>
                 </div>
-
-                {dosageWarning && (
-                    <div className="mt-2 bg-[#f59e0b]/10 border border-[#f59e0b]/30 rounded-lg p-3 flex items-start gap-2">
-                        <AlertCircle className="w-5 h-5 text-[#f59e0b] flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-[#f59e0b]">{dosageWarning}</p>
-                    </div>
-                )}
+                <DosageSlider
+                    min={0}
+                    max={100}
+                    value={formData.dosage_mg || 25}
+                    onChange={(value) => onChange('dosage_mg', value)}
+                    unit={formData.dosage_unit}
+                    substanceName={getSubstanceName()}
+                    patientWeight={patientWeight}
+                />
             </div>
 
             {/* Administration Route */}
             <div>
-                <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-                    Administration Route <span className="text-[#ef4444]">*</span>
-                </label>
+                <div className="flex items-center gap-2 mb-2">
+                    <label className="block text-sm font-medium text-[#f8fafc]">
+                        Administration Route <span className="text-[#ef4444]">*</span>
+                    </label>
+                    <AdvancedTooltip
+                        content="Onset time: 30-60min (oral). Peak: 2-3hrs. Duration: 4-6hrs. Bioavailability: 50-60% (oral). Choose route based on clinical protocol and patient preference."
+                        tier="standard"
+                    >
+                        <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
+                    </AdvancedTooltip>
+                </div>
                 <select
                     value={formData.route_id || ''}
                     onChange={(e) => onChange('route_id', parseInt(e.target.value))}
@@ -166,51 +156,14 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                 </select>
             </div>
 
-            {/* Session Number */}
+            {/* Session Number (Read-only Display) */}
             <div>
-                <label className="block text-sm font-medium text-[#f8fafc] mb-2">
+                <label className="block text-sm font-medium text-[#94a3b8] mb-2">
                     Session Number
                 </label>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => onChange('session_number', Math.max(1, formData.session_number - 1))}
-                        className="w-10 h-10 bg-[#020408] border border-[#1e293b] rounded-lg text-[#f8fafc] hover:border-[#14b8a6] transition-colors"
-                    >
-                        −
-                    </button>
-                    <input
-                        type="number"
-                        value={formData.session_number}
-                        onChange={(e) => onChange('session_number', parseInt(e.target.value) || 1)}
-                        className="w-20 bg-[#020408] border border-[#1e293b] rounded-lg px-4 py-2 text-center text-[#f8fafc] focus:border-[#14b8a6] focus:outline-none"
-                    />
-                    <button
-                        onClick={() => onChange('session_number', formData.session_number + 1)}
-                        className="w-10 h-10 bg-[#020408] border border-[#1e293b] rounded-lg text-[#f8fafc] hover:border-[#14b8a6] transition-colors"
-                    >
-                        +
-                    </button>
-                </div>
-            </div>
-
-            {/* Session Date */}
-            <div>
-                <label className="block text-sm font-medium text-[#f8fafc] mb-2">
-                    Session Date <span className="text-[#ef4444]">*</span>
-                </label>
-                <div className="flex gap-3">
-                    <input
-                        type="date"
-                        value={formData.session_date}
-                        onChange={(e) => onChange('session_date', e.target.value)}
-                        className="flex-1 bg-[#020408] border border-[#1e293b] rounded-lg px-4 py-3 text-[#f8fafc] focus:border-[#14b8a6] focus:outline-none"
-                    />
-                    <button
-                        onClick={() => onChange('session_date', new Date().toISOString().split('T')[0])}
-                        className="px-4 py-3 bg-[#020408] border border-[#1e293b] rounded-lg text-[#94a3b8] hover:text-[#f8fafc] hover:border-[#14b8a6] transition-colors"
-                    >
-                        Today
-                    </button>
+                <div className="bg-[#0f1218] border border-[#1e293b] rounded-lg px-4 py-3">
+                    <span className="text-2xl font-bold text-[#f8fafc]">{formData.session_number}</span>
+                    <span className="text-sm text-[#94a3b8] ml-2">(Auto-calculated)</span>
                 </div>
             </div>
 

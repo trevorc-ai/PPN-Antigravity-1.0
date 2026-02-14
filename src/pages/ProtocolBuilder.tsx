@@ -305,7 +305,7 @@ export const ProtocolBuilder = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={!isFormComplete()}
-                  className="px-8 py-3 bg-[#10b981] hover:bg-[#059669] text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-8 py-3 bg-[#14b8a6] hover:bg-[#0d9488] text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Submit to Registry
                 </button>
