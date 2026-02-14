@@ -64,6 +64,24 @@
 - **Last Update:** "✅ COMPLETE - Created comprehensive test data migration ready for execution. Includes 30 protocols covering all 4 substances (Psilocybin, MDMA, Ketamine, LSD), all 5 indications, full dosage range, all routes, all frequencies, 3 adverse events, and full outcome spectrum. All data tagged with test user ID for easy removal."
 - **Notes:** Migration ready for manual execution via Supabase Dashboard. See TEST_DATA_LOADED.md for instructions.
 
+### Command #005 - BUILDER Database Dependencies (SOOP) ✅
+- **Date Issued:** Feb 13, 2026, 4:45 PM PST
+- **Issued By:** LEAD (on behalf of BUILDER)
+- **Assigned To:** SOOP
+- **Directive:** "BUILDER needs SOOP to perform some tasks. Please review them and assign to SOOP."
+- **Spec Location:** `/Users/trevorcalton/Desktop/PPN-Antigravity-1.0/.agent/handoffs/SOOP_BUILDER_DATABASE_DEPENDENCIES.md`
+- **Deadline:** Feb 13, 2026 EOD
+- **Status:** ✅ COMPLETE
+- **Priority:** P0 - CRITICAL (BUILDER blocked on User Profiles table)
+- **Agent Acknowledgment:** ✅ Acknowledged at 4:47 PM PST
+- **Completion Date:** Feb 13, 2026, 4:50 PM PST
+- **Deliverables:**
+  - Migration `020_create_user_profiles.sql` - VERIFIED (already exists, exceeds spec)
+  - `.agent/handoffs/SOOP_USER_PROFILES_COMPLETE.md` - Documentation with testing instructions
+  - `migrations/999_load_user_profile_test_data.sql` - Test data for owners and pilot testers
+- **Last Update:** "✅ COMPLETE - Verified user_profiles migration exists with comprehensive schema. Created documentation and test data for interface testing. Ready for BUILDER to implement UI components."
+- **Notes:** Migration already created with subscription management, Stripe integration, and feature flags (exceeds original spec)
+
 ---
 
 ## Completed Commands (Archive)
