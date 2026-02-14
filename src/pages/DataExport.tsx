@@ -157,7 +157,7 @@ const DataExport: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <div className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2">
                                 <Shield className="text-emerald-400" size={16} />
-                                <span className="text-xs font-bold text-emerald-400">SECURE CONNECTION</span>
+                                <span className="text-sm font-bold text-emerald-400">SECURE CONNECTION</span>
                             </div>
                         </div>
                     </div>
@@ -190,7 +190,7 @@ const DataExport: React.FC = () => {
                                 <div className="space-y-6">
                                     {/* Date Range */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 block">
                                             Date Range
                                         </label>
                                         <div className="grid grid-cols-2 gap-3">
@@ -209,7 +209,7 @@ const DataExport: React.FC = () => {
 
                                     {/* Substance Protocol */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 block">
                                             Substance Protocol
                                         </label>
                                         <select
@@ -227,7 +227,7 @@ const DataExport: React.FC = () => {
 
                                     {/* Clinical Indication */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 block">
                                             Clinical Indication
                                         </label>
                                         <div className="flex flex-wrap gap-2">
@@ -235,7 +235,7 @@ const DataExport: React.FC = () => {
                                                 <button
                                                     key={indication}
                                                     onClick={() => handleIndicationToggle(indication)}
-                                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${config.indications.includes(indication)
+                                                    className={`px-3 py-1.5 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${config.indications.includes(indication)
                                                         ? 'bg-primary text-white border border-primary'
                                                         : 'bg-slate-900 text-slate-400 border border-slate-800 hover:border-slate-700'
                                                         }`}
@@ -248,7 +248,7 @@ const DataExport: React.FC = () => {
 
                                     {/* Output Format */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 block">
                                             Output Format
                                         </label>
                                         <div className="grid grid-cols-3 gap-3">
@@ -262,7 +262,7 @@ const DataExport: React.FC = () => {
                                                         }`}
                                                 >
                                                     <FileText className="mx-auto mb-2" size={24} />
-                                                    <div className="text-xs font-black uppercase tracking-widest">{format}</div>
+                                                    <div className="text-sm font-black uppercase tracking-widest">{format}</div>
                                                 </button>
                                             ))}
                                         </div>
@@ -290,7 +290,7 @@ const DataExport: React.FC = () => {
                                     {/* Progress Bar */}
                                     {isGenerating && (
                                         <div className="space-y-2">
-                                            <div className="flex justify-between text-xs font-bold text-slate-400">
+                                            <div className="flex justify-between text-sm font-bold text-slate-400">
                                                 <span>Generating EXP-{new Date().toISOString().split('T')[0]}-BETA.{config.format}...</span>
                                                 <span>{progress}%</span>
                                             </div>
@@ -305,7 +305,7 @@ const DataExport: React.FC = () => {
 
                                     {/* PII Warning */}
                                     <div className="pt-4 border-t border-slate-800">
-                                        <div className="flex items-start gap-2 text-xs text-slate-500">
+                                        <div className="flex items-start gap-2 text-sm text-slate-500">
                                             <AlertCircle size={14} className="mt-0.5 shrink-0" />
                                             <p>
                                                 <span className="font-bold text-red-400">PII Warning:</span> All exports are logged.
@@ -339,11 +339,11 @@ const DataExport: React.FC = () => {
                                     <table className="w-full">
                                         <thead>
                                             <tr className="border-b border-slate-800">
-                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">File Name</th>
-                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Filters</th>
-                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Generated</th>
-                                                <th className="text-center py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Count</th>
-                                                <th className="text-center py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Actions</th>
+                                                <th className="text-left py-3 px-4 text-sm font-black text-slate-500 uppercase tracking-widest">File Name</th>
+                                                <th className="text-left py-3 px-4 text-sm font-black text-slate-500 uppercase tracking-widest">Filters</th>
+                                                <th className="text-left py-3 px-4 text-sm font-black text-slate-500 uppercase tracking-widest">Generated</th>
+                                                <th className="text-center py-3 px-4 text-sm font-black text-slate-500 uppercase tracking-widest">Count</th>
+                                                <th className="text-center py-3 px-4 text-sm font-black text-slate-500 uppercase tracking-widest">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -354,21 +354,21 @@ const DataExport: React.FC = () => {
                                                             {getStatusIcon(record.status)}
                                                             <div>
                                                                 <div className="text-sm font-bold text-white">{record.fileName}</div>
-                                                                <div className="text-xs text-slate-500 font-mono">ID: {record.id}</div>
+                                                                <div className="text-sm text-slate-500 font-mono">ID: {record.id}</div>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td className="py-4 px-4">
                                                         <div className="flex flex-wrap gap-1">
                                                             {record.filters.split(', ').map((filter, idx) => (
-                                                                <span key={idx} className="text-xs font-bold text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded">
+                                                                <span key={idx} className="text-sm font-bold text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded">
                                                                     {filter}
                                                                 </span>
                                                             ))}
                                                         </div>
                                                     </td>
                                                     <td className="py-4 px-4">
-                                                        <div className="text-xs text-slate-400">{record.generated}</div>
+                                                        <div className="text-sm text-slate-400">{record.generated}</div>
                                                     </td>
                                                     <td className="py-4 px-4 text-center">
                                                         {record.status === 'complete' ? (
@@ -396,7 +396,7 @@ const DataExport: React.FC = () => {
                                                                 </>
                                                             )}
                                                             {record.status === 'failed' && (
-                                                                <button className="px-3 py-1 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-xs font-bold hover:bg-red-500/20 transition-colors">
+                                                                <button className="px-3 py-1 bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg text-sm font-bold hover:bg-red-500/20 transition-colors">
                                                                     Export Failed
                                                                 </button>
                                                             )}
@@ -410,14 +410,14 @@ const DataExport: React.FC = () => {
 
                                 {/* Pagination */}
                                 <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-800">
-                                    <div className="text-xs text-slate-500">
+                                    <div className="text-sm text-slate-500">
                                         Showing <span className="font-bold text-white">1-4</span> of <span className="font-bold text-white">28</span> exports
                                     </div>
                                     <div className="flex gap-2">
-                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-400 rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">
+                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-400 rounded-lg text-sm font-bold hover:border-slate-700 transition-colors">
                                             Previous
                                         </button>
-                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-white rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">
+                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-white rounded-lg text-sm font-bold hover:border-slate-700 transition-colors">
                                             Next
                                         </button>
                                     </div>
@@ -429,7 +429,7 @@ const DataExport: React.FC = () => {
 
                 {/* Footer Compliance */}
                 <Section spacing="tight">
-                    <div className="flex items-center justify-center gap-6 text-xs text-slate-600">
+                    <div className="flex items-center justify-center gap-6 text-sm text-slate-600">
                         <div className="flex items-center gap-2">
                             <Shield size={14} />
                             <span>HIPAA Compliant</span>
