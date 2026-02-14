@@ -178,12 +178,14 @@ export const DosageSlider: React.FC<DosageSliderProps> = ({
                 ))}
             </div>
 
-            {/* Patient-Specific Recommendation */}
-            {patientWeight && (
+            {/* Patient-Specific Recommendation - HIDDEN FOR NOW */}
+            {/* TODO: Re-implement with research data framing (not medical advice) */}
+            {/* See: /Users/trevorcalton/.gemini/antigravity/brain/ec364aaf-2cd2-4f3f-9b70-fcc3645108de/implementation_plan.md */}
+            {/* {patientWeight && (
                 <div className="text-sm text-[#94a3b8] bg-[#0f1218] border border-[#1e293b] rounded-lg p-3">
                     <span className="font-medium text-[#f8fafc]">Recommendation:</span> Based on patient weight ({patientWeight}), suggested starting dose is 20-25{unit}.
                 </div>
-            )}
+            )} */}
         </div>
     );
 };
