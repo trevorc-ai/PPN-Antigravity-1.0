@@ -35,6 +35,9 @@ import PhysicsDemo from './pages/PhysicsDemo';
 import HiddenComponentsShowcase from './pages/HiddenComponentsShowcase';
 import Checkout from './pages/Checkout';
 import BillingPortal from './pages/BillingPortal';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import BAA from './pages/BAA';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
@@ -180,6 +183,11 @@ const AppContent: React.FC = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/billing" element={<BillingPortal />} />
+
+        {/* Legal Pages */}
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/baa" element={<BAA />} />
 
         {/* Protected Routes */}
         <Route element={

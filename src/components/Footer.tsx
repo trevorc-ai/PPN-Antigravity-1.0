@@ -111,9 +111,22 @@ const Footer: React.FC = () => {
 
       {/* Legal Banner */}
       <div className="max-w-[1600px] mx-auto px-6 sm:px-10 border-t border-white/[0.03] pt-10 flex flex-col md:flex-row items-center justify-between gap-8">
-        <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] text-center md:text-left">
-          © 2025 Psychedelic Practitioners Network. Institutional Access Nodes Verified. All Rights Reserved.
-        </p>
+        <div className="flex flex-col items-center md:items-start gap-4">
+          <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] text-center md:text-left">
+            © 2025 Psychedelic Practitioners Network. Institutional Access Nodes Verified. All Rights Reserved.
+          </p>
+          <div className="flex items-center gap-6">
+            <a href="/#/terms" className="text-[11px] font-black text-slate-600 hover:text-teal-400 uppercase tracking-widest transition-colors">
+              Terms
+            </a>
+            <a href="/#/privacy" className="text-[11px] font-black text-slate-600 hover:text-teal-400 uppercase tracking-widest transition-colors">
+              Privacy
+            </a>
+            <a href="/#/baa" className="text-[11px] font-black text-slate-600 hover:text-teal-400 uppercase tracking-widest transition-colors">
+              BAA
+            </a>
+          </div>
+        </div>
         <div className="flex items-center gap-6">
           <div className="px-4 py-1.5 bg-slate-900/80 border border-slate-800 rounded-lg text-[11px] font-mono text-slate-500 font-bold uppercase tracking-widest">
             v1.5.2_PRODUCTION
