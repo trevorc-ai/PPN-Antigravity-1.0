@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // Corrected imports for React Router v6
-import { HashRouter as Router, Routes, Route, useLocation, Navigate, useNavigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import About from './pages/About';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
@@ -100,17 +100,30 @@ const ProtectedLayout: React.FC<{
 }> = ({ isAuthenticated, onLogout, isSidebarOpen, setIsSidebarOpen, showTour, setShowTour }) => {
   const navigate = useNavigate();
 
-  // AUTH CHECK TEMPORARILY DISABLED FOR INSPECTOR AUDIT
-  // useEffect(() => {
-  //   const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
-  //   if (!isAuthenticated && !isDemoMode) {
-  //     navigate('/login');
-  //   }
-  // }, [isAuthenticated, navigate]);
+  // Enforce Profile Completion
+  const { profile, loading: authLoading } = useAuth();
+  const location = useLocation();
 
-  // Check environment variable for demo mode
-  // const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
-  // if (!isAuthenticated && !isDemoMode) return null;
+  // AUTH CHECK RE-ENABLED
+  useEffect(() => {
+    const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+    if (!isAuthenticated && !isDemoMode) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && profile) {
+      // Check if profile is incomplete (using first_name as proxy for now)
+      // and prevent infinite redirect loop if already on /profile-setup
+      const isProfileIncomplete = !profile.first_name;
+      const isOnSetupPage = location.pathname === '/profile-setup';
+
+      if (isProfileIncomplete && !isOnSetupPage) {
+        navigate('/profile-setup');
+      }
+    }
+  }, [authLoading, isAuthenticated, profile, location.pathname, navigate]);
 
   const completeTour = () => {
     setShowTour(false);

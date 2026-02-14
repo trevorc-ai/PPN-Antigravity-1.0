@@ -134,18 +134,46 @@ const Landing: React.FC = () => {
 
       {/* SECTION: Hero */}
       <div className="relative pt-32 pb-20 lg:pt-40 lg:pb-24 px-6 overflow-hidden z-10">
-        {/* Top Right Brand Label */}
-        <div className="absolute top-10 right-10 z-20 hidden md:block group cursor-default">
-          <div className="flex flex-col items-end">
-            <p className="text-[12px] font-black text-white tracking-[0.2em] uppercase transition-colors group-hover:text-primary">
-              PPN Research Portal
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] font-black text-slate-600 tracking-widest uppercase">Institutional Gateway</span>
-              <div className="size-1 rounded-full bg-clinical-green animate-pulse"></div>
+        {/* Public Navigation Bar */}
+        <nav className="absolute top-0 left-0 right-0 z-50 px-6 py-6 md:px-10">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <Activity className="text-white w-6 h-6" />
+              </div>
+              <div className="hidden md:block">
+                <p className="text-lg font-black text-white tracking-tight leading-none">PPN Portal</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Research Network</p>
+              </div>
+            </div>
+
+            {/* Desktop Links */}
+            <div className="hidden md:flex items-center gap-8">
+              {['Features', 'Network', 'About'].map((item) => (
+                <button key={item} className="text-sm font-bold text-slate-400 hover:text-white transition-colors">
+                  {item}
+                </button>
+              ))}
+            </div>
+
+            {/* Auth Buttons */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate('/login')}
+                className="text-sm font-bold text-white hover:text-indigo-400 transition-colors"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => navigate('/signup')}
+                className="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white text-xs font-black rounded-xl uppercase tracking-widest transition-all backdrop-blur-sm"
+              >
+                Join Network
+              </button>
             </div>
           </div>
-        </div>
+        </nav>
 
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full max-w-7xl mx-auto px-6 relative z-10">
