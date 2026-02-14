@@ -68,20 +68,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isLocked = false }) 
       title: 'Intelligence',
       items: [
         { label: "Regulatory Map", icon: "public", path: "/deep-dives/regulatory-map" },
-        { label: "Clinical Radar", icon: "radar", path: "/deep-dives/clinic-performance" },
-        { label: "Patient Galaxy", icon: "hub", path: "/deep-dives/patient-constellation" },
-        { label: "Molecular DB", icon: "science", path: "/deep-dives/molecular-pharmacology" },
-        // { label: "Protocol ROI", icon: "savings", path: "/deep-dives/protocol-efficiency" } // HIDDEN per user request 2026-02-12
+        // HIDDEN until Week 2 (not implemented):
+        // { label: "Clinical Radar", icon: "radar", path: "/deep-dives/clinic-performance" },
+        // { label: "Patient Galaxy", icon: "hub", path: "/deep-dives/patient-constellation" },
+        // { label: "Molecular DB", icon: "science", path: "/deep-dives/molecular-pharmacology" },
       ]
     },
-    {
-      title: 'Clinical Safety',
-      items: [
-        { label: 'Safety Surveillance', icon: 'shield_with_heart', path: '/deep-dives/safety-surveillance', badge: alertCount },
-        { label: 'Interaction Checker', icon: 'security', path: '/interactions' },
-        { label: 'Audit Logs', icon: 'manage_search', path: '/audit' },
-      ]
-    },
+    // HIDDEN entire Clinical Safety section until Week 2 (not implemented):
+    // {
+    //   title: 'Clinical Safety',
+    //   items: [
+    //     { label: 'Safety Surveillance', icon: 'shield_with_heart', path: '/deep-dives/safety-surveillance', badge: alertCount },
+    //     { label: 'Interaction Checker', icon: 'security', path: '/interactions' },
+    //     { label: 'Audit Logs', icon: 'manage_search', path: '/audit' },
+    //   ]
+    // },
     {
       title: 'Preferences',
       items: [
