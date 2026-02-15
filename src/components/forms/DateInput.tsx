@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface DateInputProps {
     value: string;
@@ -9,65 +9,63 @@ interface DateInputProps {
 }
 
 /**
- * DateInput Component with Calendar Picker
- * Uses native HTML5 date input with calendar dropdown
- * Format: YYYY-MM-DD (converted to MM/DD/YYYY for display if needed)
+ * Custom DateInput Component
+ * Replaces native <input type="date"> with clean, structured date input
+ * Format: MM/DD/YYYY
+ * No number spinners, clean UX
  */
 export const DateInput: React.FC<DateInputProps> = ({
     value,
     onChange,
-    placeholder = 'Select date',
+    placeholder = 'MM/DD/YYYY',
     className = '',
     label
 }) => {
-    // Convert MM/DD/YYYY to YYYY-MM-DD for HTML5 input
-    const toInputFormat = (dateStr: string): string => {
-        if (!dateStr) return '';
-        if (dateStr.includes('-')) return dateStr; // Already in YYYY-MM-DD
-
-        // Convert MM/DD/YYYY to YYYY-MM-DD
-        const parts = dateStr.split('/');
-        if (parts.length === 3) {
-            return `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
-        }
-        return '';
-    };
-
-    // Convert YYYY-MM-DD to MM/DD/YYYY for state
-    const toDisplayFormat = (dateStr: string): string => {
-        if (!dateStr) return '';
-        if (dateStr.includes('/')) return dateStr; // Already in MM/DD/YYYY
-
-        // Convert YYYY-MM-DD to MM/DD/YYYY
-        const parts = dateStr.split('-');
-        if (parts.length === 3) {
-            return `${parts[1]}/${parts[2]}/${parts[0]}`;
-        }
-        return '';
-    };
+    const [displayValue, setDisplayValue] = useState(value || '');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = e.target.value; // YYYY-MM-DD from HTML5 input
-        const displayValue = toDisplayFormat(inputValue); // Convert to MM/DD/YYYY
-        onChange(displayValue);
+        let input = e.target.value.replace(/\D/g, ''); // Remove non-digits
+
+        // Auto-format with slashes
+        if (input.length >= 2) {
+            input = input.slice(0, 2) + '/' + input.slice(2);
+        }
+        if (input.length >= 5) {
+            input = input.slice(0, 5) + '/' + input.slice(5, 9);
+        }
+
+        setDisplayValue(input);
+
+        // Only call onChange if we have a complete date or empty
+        if (input.length === 10) {
+            // Validate format MM/DD/YYYY
+            const parts = input.split('/');
+            const month = parseInt(parts[0]);
+            const day = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+
+            if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1900 && year <= 2100) {
+                onChange(input);
+            }
+        } else if (input.length === 0) {
+            onChange('');
+        }
     };
 
     return (
         <div className="w-full">
             {label && (
-                <label className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
                     {label}
                 </label>
             )}
             <input
-                type="date"
-                value={toInputFormat(value)}
+                type="text"
+                value={displayValue}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className={`w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:border-primary transition-colors placeholder:text-slate-600 cursor-pointer ${className}`}
-                style={{
-                    colorScheme: 'dark' // Makes calendar dropdown dark themed
-                }}
+                maxLength={10}
+                className={`w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:border-primary transition-colors placeholder:text-slate-600 ${className}`}
             />
         </div>
     );

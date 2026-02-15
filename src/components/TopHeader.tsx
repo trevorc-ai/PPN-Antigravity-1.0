@@ -1,23 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
-import { useAuth } from '../contexts/AuthContext';
-
-interface UserProfile {
-  id: string;
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  display_name?: string;
-  specialty?: string;
-  organization_name?: string;
-  role_tier: string;
-  subscription_status?: string;
-  subscription_tier?: string;
-}
 
 interface TopHeaderProps {
   onMenuClick: () => void;
@@ -60,46 +46,12 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
-  const { user } = useAuth();
   const [latency, setLatency] = useState(14);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [profileLoading, setProfileLoading] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
+  const currentUser = CLINICIANS[0]; // Dr. Sarah Jenkins
 
   const isLanding = location.pathname === '/';
-
-  // Fetch user profile from Supabase
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!user) {
-        setProfileLoading(false);
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-
-        if (error) {
-          console.error('Error fetching user profile:', error);
-          setUserProfile(null);
-        } else {
-          setUserProfile(data);
-        }
-      } catch (err) {
-        console.error('Unexpected error fetching user profile:', err);
-        setUserProfile(null);
-      } finally {
-        setProfileLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, [user]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -265,27 +217,13 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                   <div className="relative">
-                    {/* Default avatar with user initials */}
-                    <div className="size-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 border-2 border-primary/40 group-hover:border-primary transition-all shadow-[0_0_15px_rgba(43,116,243,0.2)] flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">
-                        {profileLoading ? '...' : userProfile ? `${userProfile.first_name[0]}${userProfile.last_name[0]}` : user?.email?.[0]?.toUpperCase() || 'U'}
-                      </span>
-                    </div>
+                    <div className="size-10 rounded-full bg-cover bg-center border-2 border-primary/40 group-hover:border-primary transition-all shadow-[0_0_15px_rgba(43,116,243,0.2)]" style={{ backgroundImage: `url(${currentUser.imageUrl})` }}></div>
                     <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-clinical-green border-2 border-[#0a0c12] rounded-full"></div>
                   </div>
                   <div className="hidden lg:flex flex-col">
-                    <p className="text-[12px] font-black text-white leading-none mb-1 group-hover:text-primary transition-colors">
-                      {profileLoading
-                        ? 'Loading...'
-                        : userProfile?.display_name
-                        || (userProfile ? `${userProfile.first_name} ${userProfile.last_name}` : null)
-                        || user?.email?.split('@')[0]
-                        || 'User'}
-                    </p>
+                    <p className="text-[12px] font-black text-white leading-none mb-1 group-hover:text-primary transition-colors">Dr. Sarah Jenkins</p>
                     <div className="flex items-center gap-1">
-                      <span className="text-[11px] text-slate-500 font-bold tracking-widest leading-none">
-                        {profileLoading ? '...' : userProfile?.role_tier === 'solo_practitioner' ? 'Practitioner' : userProfile?.role_tier === 'clinic_admin' ? 'Clinic Admin' : userProfile?.role_tier === 'super_admin' ? 'Admin' : 'User'}
-                      </span>
+                      <span className="text-[11px] text-slate-500 font-bold tracking-widest leading-none">Practitioner</span>
                       <span className="material-symbols-outlined text-[15px] text-slate-500 group-hover:text-white transition-transform duration-300" style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'none' }}>expand_more</span>
                     </div>
                   </div>
@@ -296,25 +234,15 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   <div className="absolute right-0 mt-3 w-56 bg-[#0c0f16] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl">
                     <div className="px-4 py-3 border-b border-white/5 mb-2">
                       <p className="text-[10px] font-black text-slate-500 tracking-widest leading-none mb-1">Session Node</p>
-                      <p className="text-xs font-bold text-white truncate">
-                        {profileLoading ? 'Loading...' : userProfile?.email || user?.email || 'No email'}
-                      </p>
+                      <p className="text-xs font-bold text-white truncate">sarah.jenkins@ppn-research.org</p>
                     </div>
 
                     <button
-                      onClick={() => { navigate(`/clinician/${userProfile?.id || 'profile'}`); setIsMenuOpen(false); }}
+                      onClick={() => { navigate(`/clinician/${currentUser.id}`); setIsMenuOpen(false); }}
                       className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
                     >
                       <span className="material-symbols-outlined text-lg">account_circle</span>
                       View Research Profile
-                    </button>
-
-                    <button
-                      onClick={() => { navigate('/profile/edit'); setIsMenuOpen(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-bold"
-                    >
-                      <span className="material-symbols-outlined text-lg">edit_note</span>
-                      Edit Profile
                     </button>
 
                     <button

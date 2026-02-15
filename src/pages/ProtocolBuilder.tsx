@@ -152,6 +152,7 @@ export const ProtocolBuilder = () => {
       return;
     }
 
+    console.log('Protocol submitted successfully:', data);
     setScreen('success');
 
     // Auto-navigate back to My Protocols after 3 seconds

@@ -15,10 +15,6 @@ interface Protocol {
     submitted_at: string | null;
     dosage_mg: number;
     dosage_unit: string;
-    patient_age?: number | null;
-    patient_sex?: string | null;
-    created_at?: string | null;
-    outcome_score?: number | null;
 }
 
 export const MyProtocols = () => {
@@ -45,10 +41,6 @@ export const MyProtocols = () => {
           submitted_at,
           dosage_mg,
           dosage_unit,
-          patient_age,
-          patient_sex,
-          created_at,
-          outcome_score,
           ref_substances (substance_name),
           ref_indications (indication_name)
         `)
@@ -67,10 +59,6 @@ export const MyProtocols = () => {
                 submitted_at: record.submitted_at,
                 dosage_mg: record.dosage_mg,
                 dosage_unit: record.dosage_unit,
-                patient_age: record.patient_age,
-                patient_sex: record.patient_sex,
-                created_at: record.created_at,
-                outcome_score: record.outcome_score,
             })) || [];
 
             setProtocols(formattedData);
@@ -98,23 +86,6 @@ export const MyProtocols = () => {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    };
-
-    const formatRelativeTime = (dateString: string): string => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now.getTime() - date.getTime();
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
-
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins}m ago`;
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays === 1) return 'Yesterday';
-        if (diffDays < 7) return `${diffDays}d ago`;
-        if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-        return `${Math.floor(diffDays / 30)}mo ago`;
     };
 
     return (
@@ -189,13 +160,11 @@ export const MyProtocols = () => {
                             <thead>
                                 <tr className="border-b border-slate-700">
                                     <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Subject ID</th>
-                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Subject</th>
                                     <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Session</th>
                                     <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Substance</th>
                                     <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Dosage</th>
                                     <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Indication</th>
-                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Created</th>
-                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Outcome</th>
+                                    <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Date</th>
                                     <th className="text-left py-4 px-4 text-sm font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                                     <th className="w-12"></th>
                                 </tr>
@@ -209,11 +178,6 @@ export const MyProtocols = () => {
                                     >
                                         <td className="py-4 px-4">
                                             <span className="font-mono text-sm text-[#14b8a6]">{protocol.subject_id}</span>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <span className="font-mono text-sm font-bold text-slate-400">
-                                                {protocol.patient_age || '?'}{protocol.patient_sex?.charAt(0) || '?'}
-                                            </span>
                                         </td>
                                         <td className="py-4 px-4">
                                             <span className="text-slate-300">{protocol.session_number}</span>
@@ -238,32 +202,7 @@ export const MyProtocols = () => {
                                             <span className="text-slate-300">{protocol.indication_name}</span>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-slate-300">
-                                                    {protocol.created_at ? formatDate(protocol.created_at) : 'N/A'}
-                                                </span>
-                                                <span className="text-[10px] text-slate-600 font-mono">
-                                                    {protocol.created_at ? formatRelativeTime(protocol.created_at) : ''}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            {protocol.outcome_score !== undefined && protocol.outcome_score !== null ? (
-                                                <div className="flex items-center gap-2">
-                                                    <div className={`w-2 h-2 rounded-full ${protocol.outcome_score >= 7 ? 'bg-[#10b981] shadow-[0_0_4px_#10b981]' :
-                                                            protocol.outcome_score >= 4 ? 'bg-[#f59e0b] shadow-[0_0_4px_#f59e0b]' :
-                                                                'bg-[#ef4444] shadow-[0_0_4px_#ef4444]'
-                                                        }`}></div>
-                                                    <span className={`text-sm font-bold ${protocol.outcome_score >= 7 ? 'text-[#10b981]' :
-                                                            protocol.outcome_score >= 4 ? 'text-[#f59e0b]' :
-                                                                'text-[#ef4444]'
-                                                        }`}>
-                                                        {protocol.outcome_score}/10
-                                                    </span>
-                                                </div>
-                                            ) : (
-                                                <span className="text-[11px] text-slate-700 font-mono">—</span>
-                                            )}
+                                            <span className="text-slate-400 text-sm">{formatDate(protocol.session_date)}</span>
                                         </td>
                                         <td className="py-4 px-4">
                                             {protocol.submitted_at ? (

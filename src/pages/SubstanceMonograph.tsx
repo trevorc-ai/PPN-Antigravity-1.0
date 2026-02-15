@@ -10,8 +10,6 @@ import {
 } from 'recharts';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
-import { MoleculeViewer } from '../components/MoleculeViewer';
-import { MOLECULAR_DATA } from '../data/molecular_structures';
 
 const ResearchSources: React.FC<{ chunks: any[] }> = ({ chunks }) => {
   if (!chunks || chunks.length === 0) return null;
@@ -60,7 +58,6 @@ const SubstanceMonograph: React.FC = () => {
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   const sub = useMemo(() => SUBSTANCES.find(s => s.id === id), [id]);
-  const sdfData = id ? MOLECULAR_DATA[id] : null;
 
   // Refactored to use centralized registry
   const interactions = useMemo(() => {
@@ -192,41 +189,22 @@ const SubstanceMonograph: React.FC = () => {
 
           <div className="flex flex-col items-center lg:items-end gap-8 shrink-0">
             {/* Square Molecule Container */}
-            <div className={`relative group ${!sdfData ? 'hover:scale-105 transition-transform duration-700' : ''}`}>
+            <div className="relative group">
               <div className="absolute -inset-4 bg-primary/20 rounded-[3.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              <div
-                className="relative size-64 sm:size-80 bg-slate-900/40 backdrop-blur-3xl border border-white/10 rounded-[3rem] shadow-2xl flex items-center justify-center overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
-
-                {sdfData ? (
-                  <div className="w-full h-full relative z-10">
-                    <MoleculeViewer
-                      moleculeName={sub.name}
-                      moleculeData={sdfData}
-                      format="sdf"
-                      style="stick"
-                      width="100%"
-                      height="100%"
-                      autoRotate={true}
-                      backgroundColor="transparent"
-                      showControls={true}
-                    />
-                  </div>
-                ) : (
-                  <img
-                    src={sub.imageUrl}
-                    alt={`${sub.name} Structure`}
-                    className="w-full h-full object-contain mix-blend-screen opacity-80 group-hover:opacity-100 transition-opacity duration-700 transform group-hover:scale-110"
-                  />
-                )}
+              <div className="relative size-64 sm:size-80 bg-slate-900/40 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-8 shadow-2xl flex items-center justify-center overflow-hidden transition-transform duration-700 group-hover:scale-[1.02]">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+                <img
+                  src={sub.imageUrl}
+                  alt={`${sub.name} Structure`}
+                  className="w-full h-full object-contain mix-blend-screen opacity-80 group-hover:opacity-100 transition-opacity duration-700 transform group-hover:scale-110"
+                />
 
                 {/* Micro-labels for the molecule container */}
-                <div className="absolute top-6 left-6 flex flex-col gap-0.5 pointer-events-none z-20">
+                <div className="absolute top-6 left-6 flex flex-col gap-0.5">
                   <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest leading-none">Structural</span>
                   <span className="text-[11px] font-black text-primary uppercase tracking-widest leading-none">0x{id?.slice(-4)}</span>
                 </div>
-                <div className="absolute bottom-6 right-6 flex flex-col items-end gap-0.5 pointer-events-none z-20">
+                <div className="absolute bottom-6 right-6 flex flex-col items-end gap-0.5">
                   <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest leading-none">Verified</span>
                   <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest leading-none">{sub.formula}</span>
                 </div>

@@ -11,40 +11,34 @@ interface TourStep {
 
 const TOUR_STEPS: TourStep[] = [
   {
-    title: 'Spot Safety Issues Before They Escalate',
-    description: "Live patient data alerts you to adverse events in real-time, so you can intervene early and keep your patients safe.",
-    selector: '#tour-welcome',
-    preferredPosition: 'bottom'
-  },
-  {
-    title: 'Monitor Vital Safety Trends',
-    description: 'Track real-time patient enrollment and safety monitoring trends to identify risks at a glance.',
+    title: 'Live Telemetry',
+    description: 'Real-time patient enrollment data and safety monitoring trends.',
     selector: '#tour-telemetry-hud',
     preferredPosition: 'bottom'
   },
   {
-    title: 'Spend More Time Treating',
-    description: 'One-click access to all your protocols and patient records means you spend less time on admin and more time on care.',
+    title: 'Command Center',
+    description: 'Navigate the research registry, substances, and audit logs from here.',
     selector: 'aside',
     preferredPosition: 'right'
   },
   {
-    title: 'Make Evidence-Based Decisions',
-    description: 'Cross-reference interactions and safety profiles in seconds to prescribe with total confidence.',
-    selector: '#tour-quick-actions',
-    preferredPosition: 'top'
+    title: 'Global Registry',
+    description: 'Instant access to cross-node search for protocols and compounds.',
+    selector: '#tour-search-node',
+    preferredPosition: 'bottom'
   },
   {
-    title: 'Never Miss a Critical Alert',
-    description: "Proactive risk monitoring identifies potential issues across your entire practice, keeping your license and patients secure.",
-    selector: '#tour-safety-dashboard', // Fixed selector target
-    preferredPosition: 'top'
+    title: 'Safety Signals',
+    description: 'Urgent adverse event alerts and protocol updates appear here.',
+    selector: '#tour-notifications',
+    preferredPosition: 'left'
   },
   {
-    title: 'Achieve Clinical Excellence',
-    description: 'Personalized recommendations help you optimize outcomes based on real-world evidence from the entire network.',
-    selector: '#tour-recommended-next-steps',
-    preferredPosition: 'top'
+    title: 'Clinical Support',
+    description: 'Access regulatory guidelines and technical support documentation.',
+    selector: '#tour-help-node',
+    preferredPosition: 'left'
   }
 ];
 

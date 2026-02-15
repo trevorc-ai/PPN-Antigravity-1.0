@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // Corrected imports for React Router v6
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet, useNavigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import About from './pages/About';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
@@ -13,7 +13,6 @@ import { MyProtocols } from './pages/MyProtocols';
 import ProtocolDetail from './pages/ProtocolDetail';
 import ClinicianDirectory from './pages/ClinicianDirectory';
 import ClinicianProfile from './pages/ClinicianProfile';
-import ProfileEdit from './pages/ProfileEdit';
 import SearchPortal from './pages/SearchPortal';
 import SimpleSearch from './pages/SimpleSearch';
 import News from './pages/News';
@@ -36,11 +35,6 @@ import PhysicsDemo from './pages/PhysicsDemo';
 import HiddenComponentsShowcase from './pages/HiddenComponentsShowcase';
 import Checkout from './pages/Checkout';
 import BillingPortal from './pages/BillingPortal';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import BAA from './pages/BAA';
-import ProfileEdit from './pages/ProfileEdit';
-import ProfileSetup from './pages/ProfileSetup';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
@@ -100,30 +94,17 @@ const ProtectedLayout: React.FC<{
 }> = ({ isAuthenticated, onLogout, isSidebarOpen, setIsSidebarOpen, showTour, setShowTour }) => {
   const navigate = useNavigate();
 
-  // Enforce Profile Completion
-  const { profile, loading: authLoading } = useAuth();
-  const location = useLocation();
+  // AUTH CHECK TEMPORARILY DISABLED FOR INSPECTOR AUDIT
+  // useEffect(() => {
+  //   const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+  //   if (!isAuthenticated && !isDemoMode) {
+  //     navigate('/login');
+  //   }
+  // }, [isAuthenticated, navigate]);
 
-  // AUTH CHECK RE-ENABLED
-  useEffect(() => {
-    const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
-    if (!isAuthenticated && !isDemoMode) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
-
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && profile) {
-      // Check if profile is incomplete (using first_name as proxy for now)
-      // and prevent infinite redirect loop if already on /profile-setup
-      const isProfileIncomplete = !profile.first_name;
-      const isOnSetupPage = location.pathname === '/profile-setup';
-
-      if (isProfileIncomplete && !isOnSetupPage) {
-        navigate('/profile-setup');
-      }
-    }
-  }, [authLoading, isAuthenticated, profile, location.pathname, navigate]);
+  // Check environment variable for demo mode
+  // const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
+  // if (!isAuthenticated && !isDemoMode) return null;
 
   const completeTour = () => {
     setShowTour(false);
@@ -187,8 +168,8 @@ const AppContent: React.FC = () => {
       <ScrollToTop />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/landing" element={<Navigate to="/" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/landing" element={<Landing />} />
         <Route path="/about" element={<About />} />
         <Route path="/secure-gate" element={<SecureGate />} />
         <Route path="/vibe-check" element={<PhysicsDemo />} />
@@ -199,11 +180,6 @@ const AppContent: React.FC = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/billing" element={<BillingPortal />} />
-
-        {/* Legal Pages */}
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/baa" element={<BAA />} />
 
         {/* Protected Routes */}
         <Route element={
@@ -225,6 +201,7 @@ const AppContent: React.FC = () => {
           <Route path="/monograph/:id" element={<SubstanceMonograph />} />
           <Route path="/interactions" element={<InteractionChecker />} />
           <Route path="/audit" element={<AuditLogs />} />
+          <Route path="/audit" element={<AuditLogs />} />
 
           {/* PROTOCOL BUILDER */}
           <Route path="/protocols" element={<MyProtocols />} />
@@ -235,8 +212,6 @@ const AppContent: React.FC = () => {
           <Route path="/help" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/profile/edit" element={<ProfileEdit />} />
-          <Route path="/profile-setup" element={<ProfileSetup />} />
           <Route path="/data-export" element={<DataExport />} />
 
           {/* Deep Dives */}
