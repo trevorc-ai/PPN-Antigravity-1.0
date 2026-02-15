@@ -4,10 +4,11 @@ title: Comprehensive UX/UI Friction Audit & Redesign of ProtocolBuilder
 type: DESIGN
 category: Design
 priority: CRITICAL
-status: INBOX
+status: 02_DESIGN
 created: 2026-02-15T00:59:56-08:00
 requested_by: Trevor Calton
 assigned_to: DESIGNER
+assigned_date: 2026-02-15T05:44:00-08:00
 estimated_complexity: 8/10
 failure_count: 0
 ---

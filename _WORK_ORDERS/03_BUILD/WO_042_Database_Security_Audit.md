@@ -4,10 +4,11 @@ title: Database Security Verification - PHI & RLS Audit
 type: AUDIT
 category: Security
 priority: CRITICAL
-status: INBOX
+status: INSPECTOR_REVIEW
 created: 2026-02-15T02:02:30-08:00
 requested_by: INSPECTOR
 assigned_to: SOOP
+assigned_date: 2026-02-15T05:44:00-08:00
 estimated_complexity: 6/10
 failure_count: 0
 ---

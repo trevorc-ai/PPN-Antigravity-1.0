@@ -4,14 +4,14 @@ title: Implement Audio-Analgesia Metadata Logging
 type: FEATURE
 category: Feature
 priority: LOW
-status: INBOX
+status: 03_BUILD
 created: 2026-02-14T23:41:45-08:00
 requested_by: Trevor Calton
-assigned_to: BUILDER
+assigned_to: SOOP
+assigned_date: 2026-02-15T05:49:00-08:00
 estimated_complexity: 5/10
 failure_count: 0
-owner: BUILDER
-status: 03_BUILD
+owner: SOOP
 ---
 
 # Work Order: Implement Audio-Analgesia Metadata Logging
