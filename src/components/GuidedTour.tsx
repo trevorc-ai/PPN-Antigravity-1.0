@@ -9,34 +9,35 @@ interface TourStep {
   preferredPosition: 'bottom' | 'right' | 'left' | 'top';
 }
 
+
 const TOUR_STEPS: TourStep[] = [
   {
-    title: 'Live Telemetry',
-    description: 'Real-time patient enrollment data and safety monitoring trends.',
+    title: 'Analyze Protocols',
+    description: 'View real-time safety insights and outcomes across your patient cohort.',
     selector: '#tour-telemetry-hud',
     preferredPosition: 'bottom'
   },
   {
-    title: 'Command Center',
-    description: 'Navigate the research registry, substances, and audit logs from here.',
+    title: 'Build Evidence-Based Protocols',
+    description: 'Create custom treatment plans with built-in safety checks and substance guidance.',
     selector: 'aside',
     preferredPosition: 'right'
   },
   {
-    title: 'Global Registry',
-    description: 'Instant access to cross-node search for protocols and compounds.',
+    title: 'Track Substance Affinity',
+    description: 'Monitor receptor binding profiles and predict potential interactions.',
     selector: '#tour-search-node',
     preferredPosition: 'bottom'
   },
   {
-    title: 'Safety Signals',
-    description: 'Urgent adverse event alerts and protocol updates appear here.',
+    title: 'Stay Informed',
+    description: 'Receive urgent safety alerts and protocol updates in real-time.',
     selector: '#tour-notifications',
     preferredPosition: 'left'
   },
   {
-    title: 'Clinical Support',
-    description: 'Access regulatory guidelines and technical support documentation.',
+    title: 'Get Expert Support',
+    description: 'Access help, FAQs, and community resources anytime you need them.',
     selector: '#tour-help-node',
     preferredPosition: 'left'
   }
@@ -136,7 +137,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
   if (!isVisible || !targetRect) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] isolate pointer-events-none">
+    <div className="fixed inset-0 z-[9999] isolate pointer-events-none">
       {/* Minimal backdrop */}
       <div
         className="absolute inset-0 bg-black/10 backdrop-blur-[1px] transition-opacity duration-500 pointer-events-auto"
@@ -145,7 +146,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
 
       {/* Target Highlighter (Dual Glow #1) */}
       <div
-        className="absolute transition-all duration-300 ease-out border-2 border-primary rounded-xl shadow-[0_0_15px_rgba(43,116,243,0.5)] z-[100]"
+        className="absolute transition-all duration-300 ease-out border-2 border-primary rounded-xl shadow-[0_0_15px_rgba(43,116,243,0.5)] z-[10000]"
         style={{
           top: targetRect.top - 4,
           left: targetRect.left - 4,
@@ -157,7 +158,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
       {/* Tour Box (Dual Glow #2) */}
       <div
         ref={cardRef}
-        className="absolute w-[300px] bg-[#0c1016] border-2 border-primary rounded-[1.5rem] p-6 shadow-[0_0_15px_rgba(43,116,243,0.5)] animate-in fade-in zoom-in-95 duration-300 pointer-events-auto flex flex-col gap-4 z-[101]"
+        className="absolute w-[300px] bg-[#0c1016] border-2 border-primary rounded-[1.5rem] p-6 shadow-[0_0_15px_rgba(43,116,243,0.5)] animate-in fade-in zoom-in-95 duration-300 pointer-events-auto flex flex-col gap-4 z-[10001]"
         style={popoverStyle}
       >
         <div className="flex items-center justify-between">

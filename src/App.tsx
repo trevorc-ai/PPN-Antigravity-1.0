@@ -20,6 +20,7 @@ import HelpFAQ from './pages/HelpFAQ';
 import Notifications from './pages/Notifications';
 import Settings from './pages/Settings';
 import DataExport from './pages/DataExport';
+import ProfileEdit from './pages/ProfileEdit';
 import Sidebar from './components/Sidebar';
 import TopHeader from './components/TopHeader';
 import Breadcrumbs from './components/Breadcrumbs';
@@ -212,6 +213,7 @@ const AppContent: React.FC = () => {
           <Route path="/help" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/data-export" element={<DataExport />} />
 
           {/* Deep Dives */}

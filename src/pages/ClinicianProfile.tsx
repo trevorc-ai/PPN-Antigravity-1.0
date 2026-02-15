@@ -4,6 +4,7 @@ import { CLINICIANS } from '../constants';
 import { ShieldCheck, Database, Network, Award } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
+import { TierBadge } from '../components/profile/TierBadge';
 
 interface Credential {
   title: string;
@@ -181,10 +182,19 @@ const ClinicianProfile: React.FC = () => {
             <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-none">Practitioner Profile</h1>
             <p className="text-slate-500 font-medium text-sm sm:text-lg">Manage professional identity, credentials, and research output.</p>
           </div>
-          <button className="flex items-center gap-2 px-6 py-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-2xl text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all">
-            <span className="material-symbols-outlined text-lg">share</span>
-            Share Profile
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/profile/edit')}
+              className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-blue-600 border border-primary/30 rounded-2xl text-[11px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
+            >
+              <span className="material-symbols-outlined text-lg">edit</span>
+              Edit Profile
+            </button>
+            <button className="flex items-center gap-2 px-6 py-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-2xl text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all">
+              <span className="material-symbols-outlined text-lg">share</span>
+              Share Profile
+            </button>
+          </div>
         </div>
 
         <div>
@@ -283,6 +293,9 @@ const ClinicianProfile: React.FC = () => {
                     }`}>
                     {clinician.status}
                   </span>
+                </div>
+                <div className="pt-2">
+                  <TierBadge tier="partner" />
                 </div>
               </div>
 
