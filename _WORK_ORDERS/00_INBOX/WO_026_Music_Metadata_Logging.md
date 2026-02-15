@@ -4,14 +4,15 @@ title: Implement Audio-Analgesia Metadata Logging
 type: FEATURE
 category: Feature
 priority: LOW
-status: 03_BUILD
+status: 00_INBOX
 created: 2026-02-14T23:41:45-08:00
 requested_by: Trevor Calton
-assigned_to: SOOP
-assigned_date: 2026-02-15T05:49:00-08:00
+assigned_to: PENDING
+assigned_date: 2026-02-15T10:34:00-08:00
 estimated_complexity: 5/10
 failure_count: 0
-owner: SOOP
+owner: PENDING
+deferred_reason: P0 work (WO_047 Quality Scoring Database) takes priority
 ---
 
 # Work Order: Implement Audio-Analgesia Metadata Logging

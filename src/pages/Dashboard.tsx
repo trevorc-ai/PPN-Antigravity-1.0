@@ -261,8 +261,8 @@ export default function Dashboard() {
             <p className="text-slate-400 mb-2">No active protocols in the last 90 days</p>
             <p className="text-sm text-slate-500">Log your first protocol to see safety risk assessment</p>
             <button
-              onClick={() => navigate('/builder')}
-              className="mt-4 px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold transition-all"
+              onClick={() => navigate('/protocol-builder')}
+              className="mt-4 px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-bold transition-all cursor-pointer"
             >
               Log Protocol
             </button>
@@ -291,7 +291,7 @@ export default function Dashboard() {
           <NextStepItem
             number={3}
             text="Log 3 pending follow-up sessions"
-            link="/builder"
+            link="/protocol-builder"
           />
         </div>
       </Section>
@@ -301,36 +301,36 @@ export default function Dashboard() {
         <h2 className="text-xl font-black text-white tracking-tight mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <button
-            onClick={() => navigate('/builder')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white border border-indigo-500/20 hover:border-indigo-500 transition-all active:scale-95"
+            onClick={() => navigate('/protocol-builder')}
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white border border-indigo-500/20 hover:border-indigo-500 transition-all active:scale-95 cursor-pointer"
           >
             <Plus className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Log Protocol</span>
           </button>
           <button
             onClick={() => navigate('/analytics')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-blue-500/10 hover:bg-blue-500 text-blue-300 hover:text-white border border-blue-500/20 hover:border-blue-500 transition-all active:scale-95"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-blue-500/10 hover:bg-blue-500 text-blue-300 hover:text-white border border-blue-500/20 hover:border-blue-500 transition-all active:scale-95 cursor-pointer"
           >
             <BarChart3 className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Analytics</span>
           </button>
           <button
             onClick={() => navigate('/interactions')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-white border border-amber-500/20 hover:border-amber-500 transition-all active:scale-95"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-white border border-amber-500/20 hover:border-amber-500 transition-all active:scale-95 cursor-pointer"
           >
             <Activity className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Check Interactions</span>
           </button>
           <button
             onClick={() => navigate('/data-export')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/20 hover:border-emerald-500 transition-all active:scale-95"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/20 hover:border-emerald-500 transition-all active:scale-95 cursor-pointer"
           >
             <TrendingUp className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Export Data</span>
           </button>
           <button
             onClick={() => navigate('/deep-dives/clinic-performance')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-purple-500/10 hover:bg-purple-500 text-purple-300 hover:text-white border border-purple-500/20 hover:border-purple-500 transition-all active:scale-95"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-purple-500/10 hover:bg-purple-500 text-purple-300 hover:text-white border border-purple-500/20 hover:border-purple-500 transition-all active:scale-95 cursor-pointer"
           >
             <Users className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Benchmarks</span>

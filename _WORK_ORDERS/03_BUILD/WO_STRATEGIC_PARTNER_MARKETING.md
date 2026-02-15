@@ -2,9 +2,10 @@
 title: "Strategic Partner/Affiliate Marketing Proposal"
 category: "Marketing / Design"
 priority: "P1"
+owner: "MARKETER"
 assigned_to: "MARKETER"
 created_date: "2026-02-15"
-status: "PENDING"
+status: "03_BUILD"
 failure_count: 0
 estimated_effort: "HIGH"
 ---

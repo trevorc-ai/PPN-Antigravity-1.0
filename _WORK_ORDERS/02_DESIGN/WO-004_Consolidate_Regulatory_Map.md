@@ -1,9 +1,10 @@
 ---
 id: WO-004
-status: 00_INBOX
+status: 02_DESIGN
 priority: P2 (High)
 category: Design / Architecture
-owner: PENDING_LEAD_ASSIGNMENT
+owner: DESIGNER
+assigned_date: 2026-02-15T11:13:00-08:00
 failure_count: 0
 ---
 
@@ -92,3 +93,72 @@ You and the swarm are ONLY allowed to modify the following specific files/areas:
 - Add "Regulatory Updates" feed to existing sidebar
 - Maintain "Weekly Briefing", "Portal Metrics", and "Source Context" cards
 - Ensure responsive layout on smaller screens
+
+---
+
+## LEAD ARCHITECTURE
+
+### Technical Strategy
+
+This is a **UI/UX consolidation task** requiring DESIGNER to create layout mockups before any implementation. The goal is to merge two standalone pages into a unified "Intelligence Hub" while maintaining all existing functionality.
+
+### Design Requirements (DESIGNER Deliverables)
+
+**Phase 1: Layout Mockups**
+1. Create 3 layout options for user review:
+   - **Option A:** Regulatory Grid above News Feed (regulatory-first)
+   - **Option B:** Regulatory Grid below News Feed (news-first)
+   - **Option C:** Tabbed interface (News | Regulatory Map)
+2. Show filter synchronization UX (compound filters affecting both components)
+3. Design "Regulatory Updates" RSS feed integration in sidebar
+4. Ensure glassmorphism styling consistency
+
+**Phase 2: Component Architecture**
+- Map current component structure:
+  - `RegulatoryMosaic.tsx` location and dependencies
+  - `News.tsx` current layout and sections
+  - Sidebar navigation structure
+- Propose new component hierarchy for unified page
+- Define shared state management for synchronized filters
+
+**Phase 3: Interaction Design**
+- Bi-directional filtering:
+  - News filter → Regulatory Grid highlighting
+  - State click → News feed filtering
+- Responsive breakpoints for mobile/tablet
+- Keyboard navigation flow
+
+### Implementation Constraints
+
+**Must Preserve:**
+- All existing Regulatory Map functionality (state grid, status indicators)
+- All existing News Feed functionality (filters, tabs, cards)
+- "Source Context" and "Portal Metrics" sidebar cards
+- Glassmorphism visual design system
+
+**Must Remove:**
+- Standalone Regulatory Map route in `AppRoutes.tsx`
+- "Regulatory Map" entry in `Sidebar.tsx`
+
+**Must Add:**
+- "Regulatory Updates" RSS feed to News page sidebar
+- Filter synchronization logic
+- Unified page title/header
+
+### File Impact Analysis
+
+**Files to Modify:**
+1. `/frontend/src/pages/News.tsx` - Add regulatory grid section
+2. `/frontend/src/components/intelligence/RegulatoryMosaic.tsx` - Extract as reusable component
+3. `/frontend/src/components/navigation/Sidebar.tsx` - Remove standalone link
+4. `/frontend/src/routes/AppRoutes.tsx` - Remove `/regulatory-map` route
+
+**No Database Changes Required** - This is purely frontend UI consolidation.
+
+### Assignment
+
+**Owner:** DESIGNER  
+**Status:** 02_DESIGN  
+**Priority:** P2 (High)
+
+DESIGNER must create layout mockups and get user approval before BUILDER implementation begins.

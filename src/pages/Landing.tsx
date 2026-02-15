@@ -159,7 +159,7 @@ const Landing: React.FC = () => {
             >
               <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/10 border-2 border-primary/30 rounded-full text-[12px] sm:text-[13px] font-black uppercase tracking-[0.25em] text-primary shadow-lg shadow-primary/10">
                 <span className="material-symbols-outlined text-lg">grid_view</span>
-                Operational Intelligence for Modern Clinics
+                Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
               <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-4 text-slate-100">
                 Global Psychedelic <br />
@@ -234,20 +234,18 @@ const Landing: React.FC = () => {
           {/* Right Column (Visual) */}
           <div className="flex justify-center lg:justify-end relative">
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, x: 50 }}
+              initial={{ opacity: 0, scale: 0.8 }}
               animate={{
                 opacity: 1,
-                scale: 1,
-                x: [0, 30, -20, 25, 0],
-                y: [0, -40, 10, -30, 0],
-                rotate: [0, 5, -5, 3, 0]
+                scale: [1, 1.05, 1],
               }}
               transition={{
                 opacity: { duration: 1.5 },
-                scale: { duration: 1.5 },
-                x: { duration: 10, repeat: Infinity, ease: "easeInOut" },
-                y: { duration: 10, repeat: Infinity, ease: "easeInOut" },
-                rotate: { duration: 10, repeat: Infinity, ease: "easeInOut" }
+                scale: {
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }
               }}
               className="w-[400px] lg:w-[600px] pointer-events-none z-0"
             >

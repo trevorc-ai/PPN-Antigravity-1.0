@@ -2,9 +2,10 @@
 title: "Tiered Event Tracking & Database Views"
 category: "Analytics / Database"
 priority: "P1"
+owner: "ANALYST"
 assigned_to: "ANALYST"
 created_date: "2026-02-15"
-status: "PENDING"
+status: "03_BUILD"
 failure_count: 0
 estimated_effort: "HIGH"
 ---

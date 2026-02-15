@@ -2,9 +2,10 @@
 title: "Minimalistic Clinical Sci-Fi Logo Study & Visual Identity"
 category: "Design"
 priority: "P2"
+owner: "DESIGNER"
 assigned_to: "DESIGNER"
 created_date: "2026-02-15"
-status: "PENDING"
+status: "02_DESIGN"
 failure_count: 0
 estimated_effort: "MEDIUM"
 ---

@@ -2,9 +2,10 @@
 title: "Full Site-Wide Accessibility Audit and Component Crawl"
 category: "Design / QA"
 priority: "P1"
+owner: "DESIGNER"
 assigned_to: "DESIGNER"
 created_date: "2026-02-15"
-status: "PENDING"
+status: "02_DESIGN"
 failure_count: 0
 estimated_effort: "HIGH"
 ---

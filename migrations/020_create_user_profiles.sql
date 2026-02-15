@@ -1,112 +1,55 @@
--- Migration 020: Create User Profiles Table (SIMPLIFIED)
--- Date: 2026-02-13
--- Purpose: User profile management with minimal fields (no liability risk)
+-- Migration 020: Create User Profiles Table (MINIMAL + ROLE)
+-- Date: 2026-02-15
+-- Purpose: Minimal table with role-based access control
+-- Note: Email and password are in auth.users (Supabase Auth)
 
--- User Profiles Table (SIMPLIFIED - No PII/License Data)
+-- Create user roles reference table
+CREATE TABLE IF NOT EXISTS public.ref_user_roles (
+    id SERIAL PRIMARY KEY,
+    role_name TEXT NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Seed user roles
+INSERT INTO public.ref_user_roles (role_name, description) VALUES
+    ('admin', 'System administrator with full access'),
+    ('partner', 'Partner organization with elevated privileges'),
+    ('user', 'Standard user with basic access')
+ON CONFLICT (role_name) DO NOTHING;
+
+-- Create user profiles table
 CREATE TABLE IF NOT EXISTS public.user_profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    
-    -- Basic Information (REQUIRED)
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    
-    -- Display Preferences (OPTIONAL)
-    display_name TEXT,  -- e.g., "Dr. Smith" or "Sarah" - user's choice
-    
-    -- Professional Context (OPTIONAL, NO VERIFICATION)
-    specialty TEXT,  -- Self-reported, no verification
-    organization_name TEXT,  -- Self-reported
-    
-    -- Role & Permissions (RBAC)
-    role_tier TEXT NOT NULL DEFAULT 'solo_practitioner'
-        CHECK (role_tier IN (
-            'super_admin',
-            'partner',
-            'pilot_free',
-            'pilot_paid',
-            'solo_practitioner',
-            'clinic_admin'
-        )),
-    
-    -- Subscription Management
-    subscription_status TEXT DEFAULT 'inactive'
-        CHECK (subscription_status IN (
-            'active',
-            'trialing',
-            'past_due',
-            'canceled',
-            'inactive',
-            'lifetime_free'
-        )),
-    subscription_tier TEXT
-        CHECK (subscription_tier IN (
-            'solo',
-            'clinic_5',
-            'clinic_10',
-            'clinic_25',
-            'clinic_50',
-            'enterprise'
-        )),
-    pilot_expires_at TIMESTAMPTZ,
-    protocol_limit INTEGER,
-    
-    -- Stripe Integration
-    stripe_customer_id TEXT,
-    stripe_subscription_id TEXT,
-    
-    -- Settings
-    is_profile_complete BOOLEAN DEFAULT FALSE,
-    
-    -- Feature Flags
-    features JSONB DEFAULT '{}',
-    
-    -- Metadata
+    display_name TEXT,
+    role_id INTEGER NOT NULL DEFAULT 3 REFERENCES ref_user_roles(id), -- Default to 'user'
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    
     UNIQUE(user_id)
 );
 
--- Enable RLS
+-- Enable RLS on both tables
+ALTER TABLE public.ref_user_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies
-CREATE POLICY "Users can read own profile"
-    ON public.user_profiles FOR SELECT
-    USING (auth.uid() = user_id);
+-- RLS Policy: Everyone can read roles (reference data)
+CREATE POLICY "Anyone can read user roles"
+    ON public.ref_user_roles
+    FOR SELECT
+    TO authenticated
+    USING (true);
 
-CREATE POLICY "Users can insert own profile"
-    ON public.user_profiles FOR INSERT
+-- RLS Policy: Users can only access their own profile
+CREATE POLICY "Users can manage own profile"
+    ON public.user_profiles
+    FOR ALL
+    USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own profile"
-    ON public.user_profiles FOR UPDATE
-    USING (auth.uid() = user_id);
 
 -- Indexes for performance
 CREATE INDEX idx_user_profiles_user_id ON public.user_profiles(user_id);
-CREATE INDEX idx_user_profiles_role_tier ON public.user_profiles(role_tier);
-CREATE INDEX idx_user_profiles_subscription_status ON public.user_profiles(subscription_status);
-CREATE INDEX idx_user_profiles_email ON public.user_profiles(email);
-
--- Updated_at trigger
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_user_profiles_updated_at
-    BEFORE UPDATE ON public.user_profiles
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+CREATE INDEX idx_user_profiles_role_id ON public.user_profiles(role_id);
 
 -- Comments
-COMMENT ON TABLE public.user_profiles IS 'User profile data with minimal fields (no license/credential liability)';
-COMMENT ON COLUMN public.user_profiles.display_name IS 'Optional: How user wants to be addressed (e.g., "Dr. Smith" or "Sarah")';
-COMMENT ON COLUMN public.user_profiles.specialty IS 'Optional: Self-reported specialty, no verification required';
-COMMENT ON COLUMN public.user_profiles.organization_name IS 'Optional: Self-reported organization name';
+COMMENT ON TABLE public.ref_user_roles IS 'Reference table for user role types (admin, partner, user)';
+COMMENT ON TABLE public.user_profiles IS 'User profiles with role-based access - email/password in auth.users';

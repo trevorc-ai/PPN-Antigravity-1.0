@@ -1,9 +1,11 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface TopHeaderProps {
   onMenuClick: () => void;
@@ -37,7 +39,7 @@ const NavIconButton: React.FC<{
     {/* Tooltip implementation */}
     <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
       <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
-      <span className="text-[11px] font-black text-slate-300 tracking-[0.15em] relative z-10">{tooltip}</span>
+      <span className="text-[12px] font-black text-slate-300 tracking-[0.15em] relative z-10">{tooltip}</span>
     </div>
   </div>
 );
@@ -46,6 +48,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
+  const { signOut } = useAuth();
   const [latency, setLatency] = useState(14);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -108,16 +111,43 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
     };
   }, [isMenuOpen]);
 
-  // Handle logout with Supabase signOut
+  // Handle logout with AuthContext signOut
   const handleLogout = async () => {
+    console.log('[TopHeader] Logout initiated');
+    setIsMenuOpen(false);
+
     try {
-      await supabase.auth.signOut();
+      console.log('[TopHeader] Calling signOut from AuthContext');
+      await signOut();
+      console.log('[TopHeader] signOut completed successfully');
+
+      addToast({
+        title: 'Logged Out',
+        message: 'You have been signed out successfully.',
+        type: 'success'
+      });
+    } catch (error) {
+      console.error('[TopHeader] Logout error:', error);
+
+      // Fallback: force logout even if signOut fails
+      try {
+        await supabase.auth.signOut();
+      } catch (supabaseError) {
+        console.error('[TopHeader] Supabase signOut also failed:', supabaseError);
+      }
+
+      // Clear storage manually
       localStorage.clear();
       sessionStorage.clear();
-      setIsMenuOpen(false);
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
+
+      // Show error toast
+      addToast({
+        title: 'Logged Out',
+        message: 'Session ended (with errors)',
+        type: 'warning'
+      });
+
+      // Force navigation
       navigate('/');
     }
   };
@@ -160,7 +190,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                 <button
                   key={link.label}
                   onClick={() => scrollToSection(link.id)}
-                  className="text-[11px] font-black text-slate-400 hover:text-white tracking-[0.25em] transition-all relative group"
+                  className="text-[12px] font-black text-slate-400 hover:text-white tracking-[0.25em] transition-all relative group"
                 >
                   {link.label}
                   <div className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full opacity-50"></div>
@@ -175,15 +205,15 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
             <>
               <div className="hidden lg:flex items-center gap-4 mr-6 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
                 <div className="flex flex-col items-end border-r border-white/10 pr-4">
-                  <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Latency</span>
+                  <span className="text-[12px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Latency</span>
                   <div className="flex items-center gap-2">
                     <div className={`size-1.5 rounded-full ${latency < 18 ? 'bg-clinical-green' : 'bg-accent-amber'} animate-pulse shadow-[0_0_8px] shadow-current`}></div>
-                    <span className="text-[11px] font-mono text-slate-300 font-bold">{latency.toFixed(1)}ms</span>
+                    <span className="text-[12px] font-mono text-slate-300 font-bold">{latency.toFixed(1)}ms</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-start pl-1">
-                  <span className="text-[10px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Sync Status</span>
-                  <span className="text-[11px] font-mono text-clinical-green font-bold tracking-tight">Synchronized</span>
+                  <span className="text-[12px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Sync Status</span>
+                  <span className="text-[12px] font-mono text-clinical-green font-bold tracking-tight">Synchronized</span>
                 </div>
               </div>
 
@@ -260,7 +290,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                       {loading ? 'Loading...' : (userProfile?.display_name || userProfile?.email?.split('@')[0] || 'User')}
                     </p>
                     <div className="flex items-center gap-1">
-                      <span className="text-[11px] text-slate-500 font-bold tracking-widest leading-none">Practitioner</span>
+                      <span className="text-[12px] text-slate-500 font-bold tracking-widest leading-none">Practitioner</span>
                       <span className="material-symbols-outlined text-[15px] text-slate-500 group-hover:text-white transition-transform duration-300" style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'none' }}>expand_more</span>
                     </div>
                   </div>
@@ -270,7 +300,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                 {isMenuOpen && (
                   <div className="absolute right-0 mt-3 w-56 bg-[#0c0f16] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl">
                     <div className="px-4 py-3 border-b border-white/5 mb-2">
-                      <p className="text-[10px] font-black text-slate-500 tracking-widest leading-none mb-1">Session Node</p>
+                      <p className="text-[12px] font-black text-slate-500 tracking-widest leading-none mb-1">Session Node</p>
                       <p className="text-xs font-bold text-white truncate">{userProfile?.email || 'user@ppn-research.org'}</p>
                     </div>
 
