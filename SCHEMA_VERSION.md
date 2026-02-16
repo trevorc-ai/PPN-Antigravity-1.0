@@ -60,4 +60,22 @@ This schema has been stabilized after critical remediation work. Any changes req
 **Date:** 2026-02-15  
 **Changes:** Renamed 11 tables to add `log_` prefix, deleted `site_code` column
 
+---
+
+## Pending Work
+
+### TODO: RLS Policies for User Registration
+
+> [!IMPORTANT]
+> **Blocked by:** Provider registration strategy decision
+> 
+> **Action Required:** After deciding on provider registration flow, revisit RLS policies for:
+> - `log_user_profiles` - How do new users create their profile?
+> - `log_user_sites` - How do users get assigned to sites?
+> - Registration flow security model
+> 
+> **Current State:** Basic RLS policies applied, but may need adjustment based on registration strategy
+
+---
+
 **DO NOT MODIFY THIS SCHEMA WITHOUT EXPLICIT APPROVAL**
