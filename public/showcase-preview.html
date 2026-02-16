@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Showcase - Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0e1117 0%, #1a1f2e 100%);
+            color: #f1f5f9;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-radius: 8px;
+            color: #fbbf24;
+            font-size: 0.75rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 20px;
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .section-badge {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .badge-user-review {
+            background: #4f46e5;
+        }
+        
+        .badge-analytics {
+            background: #059669;
+        }
+        
+        .badge-deep-dives {
+            background: #7c3aed;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+        }
+        
+        .component-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 40px;
+            transition: all 0.3s ease;
+        }
+        
+        .component-card:hover {
+            border-color: rgba(96, 165, 250, 0.4);
+            box-shadow: 0 10px 40px rgba(96, 165, 250, 0.1);
+        }
+        
+        .component-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .component-meta {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+        
+        .component-preview {
+            background: #0a0a0a;
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-style: italic;
+        }
+        
+        .note {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 40px;
+        }
+        
+        .note-title {
+            font-weight: 900;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            font-size: 1.125rem;
+        }
+        
+        .note-text {
+            color: #94a3b8;
+            line-height: 1.8;
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #a78bfa;
+            font-size: 0.9em;
+        }
+        
+        .component-list {
+            display: grid;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .component-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        .component-item-title {
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 4px;
+        }
+        
+        .component-item-desc {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Component Showcase</h1>
+            <p class="subtitle">Visual testing playground - All components in one scrollable page</p>
+            <span class="badge">Testing Only</span>
+        </div>
+
+        <!-- USER_REVIEW COMPONENTS -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-badge badge-user-review">USER_REVIEW</span>
+                <h2 class="section-title">Components from Work Orders</h2>
+            </div>
+
+            <div class="component-list">
+                <div class="component-item">
+                    <div class="component-item-title">WO_003: Dosage Calculator</div>
+                    <div class="component-item-desc">Potency Normalizer Calculator - Interactive dosage calculation tool</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">WO_004: Crisis Logger</div>
+                    <div class="component-item-desc">Tactical Incident Logging Interface - Real-time crisis event tracking</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">WO_005: Blind Vetting Scanner</div>
+                    <div class="component-item-desc">Client Security Check Terminal - Privacy-preserving verification system</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">WO_008: Profile Edit</div>
+                    <div class="component-item-desc">User Profile Editing & Partner Tiers - Comprehensive profile management</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALYTICS COMPONENTS -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-badge badge-analytics">ANALYTICS</span>
+                <h2 class="section-title">Charts from Analytics Page</h2>
+            </div>
+
+            <div class="component-list">
+                <div class="component-item">
+                    <div class="component-item-title">Clinic Performance Radar</div>
+                    <div class="component-item-desc">Clinic metrics vs Network Average - Multi-dimensional performance analysis</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Patient Galaxy</div>
+                    <div class="component-item-desc">Outcomes clustering analysis - Interactive patient outcome visualization</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Protocol ROI</div>
+                    <div class="component-item-desc">Financial efficiency modeling - Protocol cost-benefit analysis</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Molecular Bridge</div>
+                    <div class="component-item-desc">Receptor affinity profiles - Pharmacological binding visualization</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Genomic Safety</div>
+                    <div class="component-item-desc">CYP450 metabolic risk analysis - Drug metabolism safety assessment</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Safety Performance Benchmark</div>
+                    <div class="component-item-desc">Adverse event rate vs network average - Comparative safety metrics</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEEP-DIVE COMPONENTS -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-badge badge-deep-dives">DEEP-DIVES</span>
+                <h2 class="section-title">Orphan Components from Deep-Dive Pages</h2>
+            </div>
+
+            <div class="component-list">
+                <div class="component-item">
+                    <div class="component-item-title">Regulatory Mosaic</div>
+                    <div class="component-item-desc">From RegulatoryMapPage - Compliance landscape visualization</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Patient Journey Snapshot</div>
+                    <div class="component-item-desc">From PatientJourneyPage - Treatment timeline visualization</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Revenue Forensics</div>
+                    <div class="component-item-desc">From RevenueAuditPage - Financial flow analysis</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Confidence Cone</div>
+                    <div class="component-item-desc">From ComparativeEfficacyPage - Statistical confidence visualization</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Safety Risk Matrix</div>
+                    <div class="component-item-desc">From RiskMatrixPage - Risk assessment heatmap</div>
+                </div>
+                
+                <div class="component-item">
+                    <div class="component-item-title">Patient Flow Sankey</div>
+                    <div class="component-item-desc">From PatientRetentionPage - Patient flow and retention visualization</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTIONS -->
+        <div class="note">
+            <div class="note-title">📋 How to View Interactive Components</div>
+            <div class="note-text">
+                <p><strong>This is a static preview.</strong> To see the fully interactive components with live data and animations, you need to:</p>
+                <ol style="margin-left: 20px; margin-top: 12px; line-height: 2;">
+                    <li>Fix the dev server permissions issue</li>
+                    <li>Run <code>npm run dev</code> in your terminal</li>
+                    <li>Navigate to <code>http://localhost:3000/#/component-showcase</code></li>
+                </ol>
+                <p style="margin-top: 16px;"><strong>Route Status:</strong> The <code>/component-showcase</code> route is configured as a <strong>public route</strong> (no authentication required) in your App.tsx file.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px; padding: 40px; color: #64748b; font-size: 0.875rem;">
+            <p>Component Showcase • Testing Environment • ${new Date().toLocaleDateString()}</p>
+        </div>
+    </div>
+</body>
+</html>

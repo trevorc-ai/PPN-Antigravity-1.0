@@ -159,6 +159,24 @@ This document contains:
 4. **Testimonials:** Add patient + practitioner quotes to pricing page?
 5. **Compare Plans Toggle:** Add side-by-side feature comparison?
 
+### 🎯 MARKETER RESPONSE (2026-02-15)
+
+**All questions answered in:** [WO_046_Pricing_Page_Strategy_Recommendations.md](file:///Users/trevorcalton/.gemini/antigravity/brain/86e475ba-7845-45e4-942b-76b154cdc8f7/WO_046_Pricing_Page_Strategy_Recommendations.md)
+
+**Quick Summary:**
+1. ✅ **YES** - Add pricing calculator for Clinic tier (Phase 2 - Week 2)
+2. ❌ **NO** - Do NOT gate drug checker with email (kills adoption, use soft CTAs instead)
+3. ✅ **YES** - Add "Most Popular" tag to Solo tier (Phase 1 - Week 1)
+4. ✅ **YES** - Add testimonials (practitioner-focused, strategic placement)
+5. ✅ **YES** - Add feature comparison toggle (Phase 1 - Week 1)
+
+**Implementation Priority:**
+- **Phase 1 (MVP - Week 1):** Most Popular badge, comparison table, hero testimonial
+- **Phase 2 (Week 2):** Pricing calculator, testimonial carousel
+
+**Total Estimated Effort:** 10-12 hours (BUILDER implementation)
+
+
 ---
 
 ## Timeline
