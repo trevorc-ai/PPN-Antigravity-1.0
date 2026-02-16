@@ -1,12 +1,14 @@
 ---
 id: WO-006
-status: 03_BUILD
+status: 05_USER_REVIEW
 priority: P1 (Critical)
 category: Bug / Authentication
 owner: BUILDER
 assigned_date: 2026-02-15T11:07:00-08:00
 failure_count: 0
 created_date: 2026-02-15T11:07:00-08:00
+lead_approved: 2026-02-15T15:36:00-08:00
+completed_date: 2026-02-15T15:44:00-08:00
 ---
 
 # User Request

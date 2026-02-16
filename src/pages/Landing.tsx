@@ -255,6 +255,40 @@ const Landing: React.FC = () => {
         </div>
       </div>
 
+      {/* SECTION: Global Alliance */}
+      <section className="py-32 px-6 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-center text-center space-y-10">
+            {/* Background effects */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+            {/* Heading */}
+            <div className="space-y-4 max-w-2xl relative z-10">
+              <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-tight">
+                The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
+              </h2>
+              <p className="text-slate-400 font-medium text-lg leading-relaxed">
+                PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
+              </p>
+            </div>
+
+            {/* City Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl relative z-10">
+              {['Baltimore', 'London', 'Zurich', 'Palo Alto'].map(loc => (
+                <div key={loc} className="space-y-2">
+                  <p className="text-2xl font-black text-white">{loc}</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
+                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION: Trust Indicators */}
       <section className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -541,39 +575,7 @@ const Landing: React.FC = () => {
         </div>
       </section >
 
-      {/* SECTION: Global Network */}
-      <section className="py-32 px-6 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-center text-center space-y-10">
-            {/* Background effects */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-            {/* Heading */}
-            <div className="space-y-4 max-w-2xl relative z-10">
-              <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-tight">
-                The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Network.
-              </h2>
-              <p className="text-slate-400 font-medium text-lg leading-relaxed">
-                PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
-              </p>
-            </div>
-
-            {/* City Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl relative z-10">
-              {['Baltimore', 'London', 'Zurich', 'Palo Alto'].map(loc => (
-                <div key={loc} className="space-y-2">
-                  <p className="text-2xl font-black text-white">{loc}</p>
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* SECTION: Mission & Stats */}
       <section className="py-32 px-6 relative z-10">
