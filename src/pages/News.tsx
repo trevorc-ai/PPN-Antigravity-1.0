@@ -145,7 +145,7 @@ const News: React.FC = () => {
 
         {/* Main Feed Section */}
         <div className="flex-1 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
             <h1 className="text-5xl font-black tracking-tighter text-slate-200">
               Intelligence Hub
             </h1>
@@ -153,7 +153,7 @@ const News: React.FC = () => {
           </div>
 
           {/* Regulatory Mosaic - Integrated from standalone page */}
-          <div className="mb-10">
+          <div className="mb-14">
             <RegulatoryMosaic
               onStateSelect={handleStateSelect}
               externalSelectedState={selectedStateFilter}
@@ -183,7 +183,7 @@ const News: React.FC = () => {
           {articles.length > 0 && <FeatureArticle article={articles[0]} />}
 
           {/* Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 bg-[#1c222d]/40 border border-slate-800 p-2 rounded-2xl backdrop-blur-md">
+          <div className="flex flex-col sm:flex-row items-center gap-4 bg-[#1c222d]/40 border border-slate-800 p-2 rounded-2xl backdrop-blur-md mt-8">
             <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
               <button
                 onClick={() => setSortBy('recent')}
@@ -221,7 +221,7 @@ const News: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-6 pt-4">
+          <div className="space-y-6 pt-6">
             <div className="flex items-center gap-3">
               <div className="w-1 h-6 bg-primary rounded-full"></div>
               <h2 className="text-2xl font-black text-slate-200 tracking-tighter">News Feed</h2>
@@ -248,7 +248,7 @@ const News: React.FC = () => {
                 <button
                   key={tag}
                   onClick={() => setSearchQuery(tag.replace('#', ''))}
-                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-xs font-black text-slate-400 hover:text-slate-200 hover:border-primary/50 transition-all uppercase tracking-widest"
+                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-xs font-bold text-slate-400 hover:text-slate-200 hover:border-primary/50 transition-all tracking-wide"
                 >
                   {tag}
                 </button>
@@ -257,7 +257,7 @@ const News: React.FC = () => {
           </section>
 
           {/* Weekly Briefing */}
-          <section className="bg-[#1c222d]/60 border border-slate-800 rounded-[2.5rem] p-8 space-y-6 relative overflow-hidden group shadow-2xl">
+          <section className="bg-[#1c222d]/60 border border-slate-800 rounded-[2.5rem] p-10 space-y-6 relative overflow-hidden group shadow-2xl">
             <div className="space-y-2 relative z-10">
               <div className="flex items-center gap-3 mb-2">
                 <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
@@ -283,7 +283,7 @@ const News: React.FC = () => {
           </section>
 
           {/* Portal Metrics */}
-          <section className="bg-[#1c222d]/30 border border-slate-800 rounded-[2.5rem] p-8 space-y-8">
+          <section className="bg-[#1c222d]/30 border border-slate-800 rounded-[2.5rem] p-10 space-y-8">
             <div className="space-y-1">
               <h3 className="text-xs font-black text-slate-200 uppercase tracking-[0.2em]">Portal Metrics</h3>
             </div>
