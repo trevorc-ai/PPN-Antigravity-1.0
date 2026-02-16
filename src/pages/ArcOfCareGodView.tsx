@@ -172,7 +172,7 @@ const ArcOfCareGodView: React.FC = () => {
                         type="info"
                         side="left"
                     >
-                        <button className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200 font-bold text-xs rounded-lg transition-colors">
                             <Download className="w-4 h-4" />
                             <span className="hidden sm:inline">Export PDF</span>
                         </button>
@@ -209,10 +209,12 @@ const ArcOfCareGodView: React.FC = () => {
                                 type="clinical"
                                 title="PHQ-9"
                             >
-                                <div className="p-4 bg-slate-900/40 rounded-lg text-center cursor-help hover:bg-slate-900/60 transition-colors">
-                                    <div className={`text-3xl mb-2 ${phq9Info.color}`}>{phq9Info.emoji}</div>
-                                    <div className={`text-4xl font-black ${phq9Info.color}`}>{journey.baseline.phq9}</div>
-                                    <div className="text-sm text-slate-400 font-semibold mt-1">PHQ-9</div>
+                                <div className="p-4 bg-slate-900/40 rounded-lg flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                                    <div className="flex items-center justify-center gap-2 mb-2">
+                                        <span className={`text-3xl ${phq9Info.color}`}>{phq9Info.emoji}</span>
+                                        <span className={`text-4xl font-black ${phq9Info.color}`}>{journey.baseline.phq9}</span>
+                                    </div>
+                                    <div className="text-sm text-slate-400 font-semibold">PHQ-9</div>
                                 </div>
                             </AdvancedTooltip>
 
@@ -222,10 +224,12 @@ const ArcOfCareGodView: React.FC = () => {
                                 type="clinical"
                                 title="GAD-7"
                             >
-                                <div className="p-4 bg-slate-900/40 rounded-lg text-center cursor-help hover:bg-slate-900/60 transition-colors">
-                                    <div className={`text-3xl mb-2 ${gad7Info.color}`}>{gad7Info.emoji}</div>
-                                    <div className={`text-4xl font-black ${gad7Info.color}`}>{journey.baseline.gad7}</div>
-                                    <div className="text-sm text-slate-400 font-semibold mt-1">GAD-7</div>
+                                <div className="p-4 bg-slate-900/40 rounded-lg flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                                    <div className="flex items-center justify-center gap-2 mb-2">
+                                        <span className={`text-3xl ${gad7Info.color}`}>{gad7Info.emoji}</span>
+                                        <span className={`text-4xl font-black ${gad7Info.color}`}>{journey.baseline.gad7}</span>
+                                    </div>
+                                    <div className="text-sm text-slate-400 font-semibold">GAD-7</div>
                                 </div>
                             </AdvancedTooltip>
 
@@ -235,10 +239,12 @@ const ArcOfCareGodView: React.FC = () => {
                                 type="warning"
                                 title="ACE Score"
                             >
-                                <div className="p-4 bg-slate-900/40 rounded-lg text-center cursor-help hover:bg-slate-900/60 transition-colors">
-                                    <div className="text-3xl mb-2">⚠️</div>
-                                    <div className="text-4xl font-black text-amber-400">{journey.baseline.aceScore}</div>
-                                    <div className="text-sm text-slate-400 font-semibold mt-1">ACE</div>
+                                <div className="p-4 bg-slate-900/40 rounded-lg flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                                    <div className="flex items-center justify-center gap-2 mb-2">
+                                        <span className="text-3xl">⚠️</span>
+                                        <span className="text-4xl font-black text-amber-400">{journey.baseline.aceScore}</span>
+                                    </div>
+                                    <div className="text-sm text-slate-400 font-semibold">ACE</div>
                                 </div>
                             </AdvancedTooltip>
 
@@ -248,10 +254,12 @@ const ArcOfCareGodView: React.FC = () => {
                                 type="success"
                                 title="Expectancy"
                             >
-                                <div className="p-4 bg-slate-900/40 rounded-lg text-center cursor-help hover:bg-slate-900/60 transition-colors">
-                                    <div className="text-3xl mb-2">✨</div>
-                                    <div className="text-4xl font-black text-emerald-400">{journey.baseline.expectancy}</div>
-                                    <div className="text-sm text-slate-400 font-semibold mt-1">Expect</div>
+                                <div className="p-4 bg-slate-900/40 rounded-lg flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                                    <div className="flex items-center justify-center gap-2 mb-2">
+                                        <span className="text-3xl">✨</span>
+                                        <span className="text-4xl font-black text-emerald-400">{journey.baseline.expectancy}</span>
+                                    </div>
+                                    <div className="text-sm text-slate-400 font-semibold">Expect</div>
                                 </div>
                             </AdvancedTooltip>
                         </div>
