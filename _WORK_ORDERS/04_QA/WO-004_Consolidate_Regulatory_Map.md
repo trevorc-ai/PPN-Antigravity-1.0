@@ -1,13 +1,14 @@
 ---
 id: WO-004
-status: 03_BUILD
+status: 04_QA
 priority: P2 (High)
 category: Design / Architecture
-owner: BUILDER
-assigned_to: BUILDER
-assigned_date: 2026-02-16T11:42:00-08:00
+owner: INSPECTOR
+assigned_to: INSPECTOR
+assigned_date: 2026-02-16T12:16:00-08:00
 created_date: 2026-02-15T11:13:00-08:00
 failure_count: 1
+builder_fix_completed: 2026-02-16T12:16:00-08:00
 ---
 
 # User Request
