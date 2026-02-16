@@ -33,7 +33,7 @@ const Analytics = () => {
             if (!user) return;
 
             const { data: userSite } = await supabase
-                .from('user_sites')
+                .from('log_user_sites')
                 .select('site_id')
                 .eq('user_id', user.id)
                 .limit(1)
@@ -193,15 +193,15 @@ const Analytics = () => {
                                     <p className="text-xs text-slate-500 mt-1">All sites with N ≥ 10</p>
                                 </div>
                                 <div className={`rounded-xl p-4 border ${benchmark.status === 'excellent' ? 'bg-emerald-500/10 border-emerald-500/20' :
-                                        benchmark.status === 'good' ? 'bg-blue-500/10 border-blue-500/20' :
-                                            benchmark.status === 'average' ? 'bg-slate-900/50 border-slate-800' :
-                                                'bg-amber-500/10 border-amber-500/20'
+                                    benchmark.status === 'good' ? 'bg-blue-500/10 border-blue-500/20' :
+                                        benchmark.status === 'average' ? 'bg-slate-900/50 border-slate-800' :
+                                            'bg-amber-500/10 border-amber-500/20'
                                     }`}>
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Status</p>
                                     <p className={`text-2xl font-black ${benchmark.status === 'excellent' ? 'text-emerald-400' :
-                                            benchmark.status === 'good' ? 'text-blue-400' :
-                                                benchmark.status === 'average' ? 'text-white' :
-                                                    'text-amber-400'
+                                        benchmark.status === 'good' ? 'text-blue-400' :
+                                            benchmark.status === 'average' ? 'text-white' :
+                                                'text-amber-400'
                                         }`}>
                                         {benchmark.status === 'excellent' ? 'Excellent' :
                                             benchmark.status === 'good' ? 'Good' :

@@ -57,13 +57,14 @@ export const useReferenceData = (): ReferenceData => {
                     supabase.from('ref_settings').select('*').order('setting_label')
                 ]);
 
-                if (subRes.error) throw subRes.error;
-                if (routeRes.error) throw routeRes.error;
-                if (indRes.error) throw indRes.error;
-                if (modRes.error) throw modRes.error;
-                if (smokeRes.error) throw smokeRes.error;
-                if (sevRes.error) throw sevRes.error;
-                if (safeRes.error) throw safeRes.error;
+                // Log errors but don't throw - fail gracefully
+                if (subRes.error) console.log('Error fetching substances:', subRes.error);
+                if (routeRes.error) console.log('Error fetching routes:', routeRes.error);
+                if (indRes.error) console.log('Error fetching indications:', indRes.error);
+                if (modRes.error) console.log('Error fetching modalities:', modRes.error);
+                if (smokeRes.error) console.log('Error fetching smoking status:', smokeRes.error);
+                if (sevRes.error) console.log('Error fetching severity grades:', sevRes.error);
+                if (safeRes.error) console.log('Error fetching safety events:', safeRes.error);
 
                 setData({
                     substances: subRes.data || [],
@@ -83,8 +84,8 @@ export const useReferenceData = (): ReferenceData => {
                     error: null
                 });
             } catch (err) {
-                console.error('Error fetching reference data:', err);
-                // Fallback or keep empty
+                console.log('Error fetching reference data (non-critical):', err);
+                // Fail gracefully - set empty data instead of crashing
                 setData(prev => ({ ...prev, loading: false, error: err }));
             }
         };

@@ -32,7 +32,7 @@ export const useSafetyBenchmark = () => {
 
                 // Get user's site_id from user_sites
                 const { data: userSites, error: userSitesError } = await supabase
-                    .from('user_sites')
+                    .from('log_user_sites')
                     .select('site_id')
                     .eq('user_id', user.id)
                     .single();

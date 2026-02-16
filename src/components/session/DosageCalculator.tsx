@@ -28,7 +28,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({ sessionId, o
                 const { data, error } = await supabase
                     .from('ref_substances')
                     .select('*')
-                    .order('name');
+                    .order('substance_name');
 
                 if (error) throw error;
                 setSubstances(data || []);

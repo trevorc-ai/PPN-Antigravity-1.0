@@ -49,7 +49,6 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const location = useLocation();
   const { addToast } = useToast();
   const { signOut } = useAuth();
-  const [latency, setLatency] = useState(14);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -61,22 +60,45 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await supabase
-            .from('user_profiles')
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        // If there's an auth error or no user, just set loading to false and return
+        if (authError || !user) {
+          console.log('No authenticated user found');
+          setLoading(false);
+          return;
+        }
+
+        // Try to fetch profile, but don't crash if it fails
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from('log_user_profiles')
             .select('*')
             .eq('user_id', user.id)
             .single();
 
+          if (!profileError && profile) {
+            setUserProfile({
+              ...profile,
+              email: user.email,
+              id: user.id
+            });
+          } else {
+            // Set minimal profile if fetch fails
+            setUserProfile({
+              email: user.email,
+              id: user.id
+            });
+          }
+        } catch (profileError) {
+          console.log('Profile fetch failed, using minimal user data:', profileError);
           setUserProfile({
-            ...profile,
             email: user.email,
             id: user.id
           });
         }
       } catch (error) {
-        console.error('Error fetching user profile:', error);
+        console.log('Auth check failed (expected on public pages):', error);
       } finally {
         setLoading(false);
       }
@@ -84,15 +106,12 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
     if (isAuthenticated) {
       fetchUserProfile();
+    } else {
+      setLoading(false);
     }
   }, [isAuthenticated]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLatency(prev => Math.max(8, Math.min(22, prev + (Math.random() * 4 - 2))));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+
 
   // Handle click outside  // Close menu when clicking outside
   useEffect(() => {
@@ -203,21 +222,9 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
         <div className="flex items-center gap-6">
           {isAuthenticated ? (
             <>
-              <div className="hidden lg:flex items-center gap-4 mr-6 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-                <div className="flex flex-col items-end border-r border-white/10 pr-4">
-                  <span className="text-[12px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Latency</span>
-                  <div className="flex items-center gap-2">
-                    <div className={`size-1.5 rounded-full ${latency < 18 ? 'bg-clinical-green' : 'bg-accent-amber'} animate-pulse shadow-[0_0_8px] shadow-current`}></div>
-                    <span className="text-[12px] font-mono text-slate-300 font-bold">{latency.toFixed(1)}ms</span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-start pl-1">
-                  <span className="text-[12px] font-black text-slate-500 tracking-widest uppercase mb-0.5">Sync Status</span>
-                  <span className="text-[12px] font-mono text-clinical-green font-bold tracking-tight">Synchronized</span>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-2 mr-2">
+
+              <div className="flex items-center gap-3">
                 {/* Tour - Hidden on mobile */}
                 <div className="hidden lg:block">
                   <NavIconButton
@@ -228,35 +235,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   />
                 </div>
 
-                {/* Search - Hidden on mobile */}
-                <div id="tour-search-node" className="hidden lg:contents">
-                  <NavIconButton
-                    icon="search"
-                    label="Search"
-                    tooltip="Search Registry"
-                    onClick={() => addToast({ title: 'Feature Pending', message: 'Global registry search coming in v2.0', type: 'info' })}
-                  />
-                </div>
 
-                {/* Alerts - Always visible (essential) */}
-                <div id="tour-notifications" className="contents">
-                  <NavIconButton
-                    icon="notifications"
-                    label="Alerts"
-                    tooltip="Notifications"
-                    onClick={() => addToast({ title: 'No New Alerts', message: 'You are all caught up.', type: 'success' })}
-                  />
-                </div>
-
-                {/* Help - Hidden on mobile */}
-                <div id="tour-help-node" className="hidden lg:contents">
-                  <NavIconButton
-                    icon="help"
-                    label="Help"
-                    tooltip="Help & Support"
-                    onClick={() => addToast({ title: 'Support Contacted', message: 'Ticket #492 created. Check email.', type: 'success' })}
-                  />
-                </div>
 
                 {/* Vibe - Hidden per user request 2026-02-12 */}
                 {/* <div className="hidden lg:block">

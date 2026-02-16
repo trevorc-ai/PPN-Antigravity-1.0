@@ -37,7 +37,7 @@ const ProfileEdit: React.FC = () => {
             }
 
             const { data: profile, error } = await supabase
-                .from('user_profiles')
+                .from('log_user_profiles')
                 .select('*')
                 .eq('user_id', user.id)
                 .single();
@@ -98,7 +98,7 @@ const ProfileEdit: React.FC = () => {
             if (!user) throw new Error('Not authenticated');
 
             const { error } = await supabase
-                .from('user_profiles')
+                .from('log_user_profiles')
                 .update({
                     display_name: formData.display_name.trim(),
                     specialty: formData.specialty.trim(),

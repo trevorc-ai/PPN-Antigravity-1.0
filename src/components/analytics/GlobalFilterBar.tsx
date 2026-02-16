@@ -60,10 +60,10 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 // Load sites (user can only see their assigned sites due to RLS)
                 const { data: sitesData } = await supabase
-                    .from('sites')
-                    .select('id, name')
+                    .from('log_sites')
+                    .select('site_id, site_name')
                     .eq('is_active', true)
-                    .order('name');
+                    .order('site_name');
 
                 // Load substances
                 const { data: substancesData } = await supabase
@@ -85,9 +85,9 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 // Load protocols
                 const { data: protocolsData } = await supabase
-                    .from('protocols')
-                    .select('id, name')
-                    .order('name');
+                    .from('log_protocols')
+                    .select('protocol_id, protocol_name')
+                    .order('protocol_name');
 
                 setSites(sitesData || []);
                 setSubstances(substancesData || []);
