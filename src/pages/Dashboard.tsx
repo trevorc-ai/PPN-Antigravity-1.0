@@ -155,14 +155,57 @@ export default function Dashboard() {
           <div className="flex items-center gap-3 mb-2">
             <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
+              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
             </span>
-            <span className="text-[11px] font-medium text-slate-3000 font-mono">ID: 8842-ALPHA</span>
-            <span className="text-[11px] font-medium text-slate-3000">Last updated: 2 min ago</span>
+            <span className="text-xs font-medium text-slate-3000 font-mono">ID: 8842-ALPHA</span>
+            <span className="text-xs font-medium text-slate-3000">Last updated: 2 min ago</span>
           </div>
           <h1 className="text-5xl font-black tracking-tighter text-slate-200">
             Dashboard
           </h1>
+        </div>
+      </Section>
+
+      {/* SEARCH BAR SECTION */}
+      <Section spacing="tight">
+        <div className="relative group max-w-4xl mx-auto">
+          {/* Background Glow */}
+          <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 blur-2xl rounded-full opacity-50 group-focus-within:opacity-80 transition-opacity duration-700 -z-10"></div>
+
+          <div className="relative">
+            {/* AI Sparkle Icon */}
+            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+              <span className="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+            </div>
+
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search protocols, substances, adverse events..."
+              onFocus={() => navigate('/advanced-search')}
+              className="
+                w-full h-16 pl-14 pr-16 py-4
+                bg-slate-900/50 border-2 border-slate-700 rounded-[2rem]
+                text-slate-300 placeholder-slate-500
+                focus:outline-none focus:border-primary/50 focus:bg-slate-900/70
+                transition-all duration-300
+                text-base font-bold
+                cursor-pointer
+              "
+            />
+
+            {/* Search Button */}
+            <button
+              onClick={() => navigate('/advanced-search')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-primary rounded-xl hover:bg-blue-600 transition-colors"
+            >
+              <span className="material-symbols-outlined text-slate-300">search</span>
+            </button>
+          </div>
+
+          <p className="text-xs text-slate-400 text-center mt-3">
+            AI-powered search across {protocols.length}+ protocols • Advanced filters • Real-time analysis
+          </p>
         </div>
       </Section>
 
@@ -376,7 +419,7 @@ export default function Dashboard() {
       </Section>
 
       <div className="text-center pt-10 border-t border-slate-900 mt-auto">
-        <p className="text-[10px] text-slate-600 font-mono">
+        <p className="text-xs text-slate-600 font-mono">
           Antigravity Clinical OS • v1.2.4 • Encrypted
         </p>
       </div>
