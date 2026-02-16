@@ -87,7 +87,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
     return (
       <div
         onClick={() => navigate(`/protocol/${res.id}`)}
-        className="group bg-slate-900/40 border border-slate-800 hover:border-primary/50 rounded-2xl p-4 transition-all duration-300 cursor-pointer h-24 flex items-center justify-between relative overflow-hidden"
+        className="group bg-gradient-to-br from-slate-900/60 to-slate-800/40 border border-slate-700 hover:border-primary/60 rounded-2xl p-4 transition-all duration-300 cursor-pointer h-24 flex items-center justify-between relative overflow-hidden shadow-lg hover:shadow-primary/20"
       >
         <div className="flex flex-col justify-center min-w-0 pr-4">
           <div className="flex items-center gap-2 mb-1">
@@ -114,7 +114,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
   return (
     <div
       onClick={() => navigate(`/protocol/${res.id}`)}
-      className={`group bg-slate-900/40 border ${hasSafetyEvent ? 'border-red-500/30 hover:border-red-500/60' : 'border-slate-800 hover:border-primary/50'} rounded-[2rem] p-6 transition-all duration-300 cursor-pointer flex flex-col gap-6 relative overflow-hidden shadow-lg hover:shadow-2xl h-full`}
+      className={`group bg-gradient-to-br from-slate-900/70 to-slate-800/50 border-2 ${hasSafetyEvent ? 'border-red-500/40 hover:border-red-500/70' : 'border-slate-700 hover:border-primary/60'} rounded-[2rem] p-6 transition-all duration-300 cursor-pointer flex flex-col gap-6 relative overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-primary/30 h-full`}
     >
       {/* Header: Clinical Context First */}
       <div className="flex justify-between items-start relative z-10">
@@ -182,7 +182,7 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
     return (
       <div
         onClick={() => navigate(`/monograph/${sub.id}`)}
-        className="group flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-2xl p-3 hover:border-primary/50 transition-all cursor-pointer h-24 overflow-hidden relative"
+        className="group flex items-center gap-4 bg-gradient-to-br from-purple-900/20 to-slate-900/60 border border-purple-700/30 rounded-2xl p-3 hover:border-purple-500/60 transition-all cursor-pointer h-24 overflow-hidden relative shadow-lg hover:shadow-purple-500/20"
       >
         <div className="size-16 rounded-xl bg-black/80 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-105 transition-transform p-2">
           {sub.imageUrl ? (
@@ -206,7 +206,7 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
   return (
     <div
       onClick={() => navigate(`/monograph/${sub.id}`)}
-      className="group bg-slate-900/40 border border-slate-800 hover:border-slate-600 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-lg cursor-pointer relative overflow-hidden h-full"
+      className="group bg-gradient-to-br from-purple-900/30 to-slate-900/70 border-2 border-purple-700/40 hover:border-purple-500/70 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-xl hover:shadow-purple-500/30 cursor-pointer relative overflow-hidden h-full"
     >
       <div className="flex items-center justify-between relative z-10">
         <div className="px-2 py-1 rounded-lg text-[11px] font-bold border bg-purple-500/10 text-purple-400 border-purple-500/20">
@@ -247,7 +247,7 @@ const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }>
     return (
       <div
         onClick={() => navigate(`/clinician/${clin.id}`)}
-        className="group flex items-center gap-4 bg-slate-900/40 border border-slate-800 rounded-2xl p-3 hover:border-primary/50 transition-all cursor-pointer h-24"
+        className="group flex items-center gap-4 bg-gradient-to-br from-blue-900/20 to-slate-900/60 border border-blue-700/30 rounded-2xl p-3 hover:border-blue-500/60 transition-all cursor-pointer h-24 shadow-lg hover:shadow-blue-500/20"
       >
         <div className="size-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
           {clin.imageUrl ? (
@@ -272,7 +272,7 @@ const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }>
   return (
     <div
       onClick={() => navigate(`/clinician/${clin.id}`)}
-      className="group bg-slate-900/40 border border-slate-800 hover:border-slate-600 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-lg cursor-pointer relative overflow-hidden h-full"
+      className="group bg-gradient-to-br from-blue-900/30 to-slate-900/70 border-2 border-blue-700/40 hover:border-blue-500/70 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-xl hover:shadow-blue-500/30 cursor-pointer relative overflow-hidden h-full"
     >
       <div className="flex items-center justify-between relative z-10">
         <div className="px-2 py-1 rounded-lg text-[11px] font-bold border bg-blue-500/10 text-blue-400 border-blue-500/20">
