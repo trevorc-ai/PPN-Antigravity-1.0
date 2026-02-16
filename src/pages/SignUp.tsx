@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Lock, Mail, User, Stethoscope, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { Lock, Mail, Stethoscope, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 
 const SignUp = () => {
@@ -12,10 +12,7 @@ const SignUp = () => {
 
     const [formData, setFormData] = useState({
         email: '',
-        password: '',
-        fullName: '',
-        licenseType: '',
-        organization: ''
+        password: ''
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -31,15 +28,7 @@ const SignUp = () => {
             // 1. Sign Up using Supabase Auth
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: formData.email,
-                password: formData.password,
-                options: {
-                    data: {
-                        full_name: formData.fullName,
-                        license_type: formData.licenseType,
-                        organization: formData.organization,
-                        role: 'practitioner' // Default role
-                    }
-                }
+                password: formData.password
             });
 
             if (authError) throw authError;
@@ -91,25 +80,6 @@ const SignUp = () => {
                     )}
 
                     <div className="space-y-4">
-                        {/* Full Name */}
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Full Name</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <User className="h-4 w-4 text-slate-500" />
-                                </div>
-                                <input
-                                    name="fullName"
-                                    type="text"
-                                    required
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 placeholder-slate-600"
-                                    placeholder="Dr. Jane Doe"
-                                    value={formData.fullName}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        </div>
-
                         {/* Email */}
                         <div className="space-y-1">
                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email Address</label>
@@ -144,39 +114,6 @@ const SignUp = () => {
                                     className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 placeholder-slate-600"
                                     placeholder="••••••••"
                                     value={formData.password}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        </div>
-
-                        {/* License Type */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">License</label>
-                                <select
-                                    name="licenseType"
-                                    required
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                                    value={formData.licenseType}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Select...</option>
-                                    <option value="MD">MD / DO</option>
-                                    <option value="NP">Nurse Practitioner</option>
-                                    <option value="PA">Physician Assistant</option>
-                                    <option value="PhD">PhD / PsyD</option>
-                                    <option value="LCSW">LCSW / LPC</option>
-                                    <option value="RN">Registered Nurse</option>
-                                </select>
-                            </div>
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Org / Clinic</label>
-                                <input
-                                    name="organization"
-                                    type="text"
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 placeholder-slate-600"
-                                    placeholder="Clinic Name"
-                                    value={formData.organization}
                                     onChange={handleChange}
                                 />
                             </div>
