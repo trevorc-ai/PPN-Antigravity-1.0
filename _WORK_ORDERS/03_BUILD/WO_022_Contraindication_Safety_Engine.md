@@ -164,3 +164,71 @@ Create reusable `InteractionChecker` component that queries `drug_interactions` 
 - Ensure color-coded warnings have text labels (accessibility)
 - Test with screen readers
 - Verify database query performance
+
+---
+
+## 🔍 LEAD REVIEW (2026-02-16)
+
+**Status:** NEEDS REVISION - Missing critical requirement
+
+### What BUILDER Delivered
+
+✅ **Completed:**
+- Created `InteractionChecker` component (`src/components/clinical/InteractionChecker.tsx`)
+- Queries `ref_drug_interactions` table from Supabase
+- Displays SEVERE (Red), MODERATE (Yellow), and MILD (Blue) interactions
+- Shows mechanism, risk description, and clinical recommendations from DB
+- Includes PubMed references where available
+- Uses ARIA `role="alert"` for accessibility
+- Does NOT block saving (Harm Reduction philosophy)
+- Integrated into ProtocolBuilder
+
+### Critical Missing Requirement
+
+❌ **Safety Acknowledgment Checkbox for Red Alerts**
+
+The work order explicitly states:
+> "MUST require a 'Safety Acknowledgment' click if a Red Alert is present"
+
+**Current behavior:** Component displays SEVERE interactions but does NOT require acknowledgment.
+
+**Required behavior:** When SEVERE interactions are present, user must check a box acknowledging they understand the risks before proceeding.
+
+### Required Fix
+
+Add to the component (after SEVERE interactions display):
+
+```tsx
+{severeInteractions.length > 0 && (
+  <div className="bg-red-500/10 border-2 border-red-500 rounded-lg p-4 mt-4">
+    <label className="flex items-start gap-3 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={acknowledged}
+        onChange={(e) => setAcknowledged(e.target.checked)}
+        className="mt-1 w-4 h-4 rounded border-red-500 text-red-500 focus:ring-red-500"
+        aria-required="true"
+      />
+      <span className="text-sm text-slate-300">
+        <strong className="text-red-400">I understand the risks</strong> and choose to proceed with this protocol despite the contraindication(s) listed above.
+      </span>
+    </label>
+  </div>
+)}
+```
+
+**Pass acknowledgment state to parent:**
+- Add `onAcknowledgmentChange?: (acknowledged: boolean) => void` to props
+- Call callback when checkbox changes
+- Parent (ProtocolBuilder) can disable Save button until acknowledged
+
+### Routing Decision
+
+**Return to BUILDER** to add Safety Acknowledgment checkbox.
+
+**Estimated time:** 15-20 minutes
+
+---
+
+**LEAD STATUS:** ⚠️ Needs revision. Return to BUILDER to add Safety Acknowledgment checkbox for SEVERE interactions.
+
