@@ -146,7 +146,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
             const data = payload[0].payload;
             return (
                 <div className="bg-[#0c0f16] border border-white/10 rounded-xl p-4 shadow-2xl">
-                    <p className="text-sm font-black text-white mb-2">{data.stage}</p>
+                    <p className="text-sm font-black text-slate-300 mb-2">{data.stage}</p>
                     <div className="space-y-1">
                         <p className="text-xs text-slate-300">
                             <span className="font-bold text-primary">{data.patients.toLocaleString()}</span> unique patients
@@ -214,7 +214,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
                 <div className="text-center space-y-4">
                     <span className="material-symbols-outlined text-6xl text-slate-600">waterfall_chart</span>
                     <div>
-                        <p className="text-lg font-black text-white mb-2">No Data Available</p>
+                        <p className="text-lg font-black text-slate-300 mb-2">No Data Available</p>
                         <p className="text-sm text-slate-400">
                             {filters.siteIds.length > 0 || filters.dateRange.start || filters.substanceIds.length > 0
                                 ? 'Try adjusting your filters'
@@ -236,14 +236,14 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-3xl text-primary">waterfall_chart</span>
                     <div>
-                        <h3 className="text-xl font-black text-white">Patient Flow Funnel</h3>
+                        <h3 className="text-xl font-black text-slate-200">Patient Flow Funnel</h3>
                         <p className="text-xs text-slate-400 font-medium">Progression through treatment stages</p>
                     </div>
                 </div>
 
                 {totalPatients > 0 && (
                     <div className="text-right">
-                        <p className="text-[11px] font-black text-slate-500 tracking-widest uppercase">Starting Cohort</p>
+                        <p className="text-[11px] font-black text-slate-3000 tracking-widest uppercase">Starting Cohort</p>
                         <p className="text-2xl font-black text-primary">{totalPatients.toLocaleString()}</p>
                     </div>
                 )}
@@ -295,10 +295,10 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
             <div className="mt-6 pt-6 border-t border-slate-800 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.map((stage, index) => (
                     <div key={stage.stageOrder} className="text-center">
-                        <p className="text-[10px] font-black text-slate-500 tracking-widest uppercase mb-1">
+                        <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">
                             {stage.stage.split(' ')[0]}
                         </p>
-                        <p className="text-lg font-black text-white">{stage.patients}</p>
+                        <p className="text-lg font-black text-slate-300">{stage.patients}</p>
                         {index > 0 && stage.dropoffRate > 0 && (
                             <p className="text-[10px] text-red-400 font-bold">-{stage.dropoffRate}%</p>
                         )}

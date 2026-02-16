@@ -33,13 +33,13 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({ onComplete, 
 
           {/* Inner Ring */}
           <div className={`w-24 h-24 bg-emerald-500 rounded-full shadow-[0_0_50px_rgba(16,185,129,0.5)] flex items-center justify-center transition-all duration-300 ${stage === 2 ? 'scale-110' : 'scale-100'}`}>
-            <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
             </svg>
           </div>
         </div>
 
-        <h2 className="text-3xl font-black text-white mt-8 tracking-tighter uppercase">{message}</h2>
+        <h2 className="text-3xl font-black text-slate-200 mt-8 tracking-tighter uppercase">{message}</h2>
         <p className="text-emerald-400 font-mono tracking-widest text-xs mt-2">{subMessage}</p>
 
       </div>

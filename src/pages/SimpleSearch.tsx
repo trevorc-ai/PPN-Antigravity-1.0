@@ -32,7 +32,7 @@ const SimpleSearch: React.FC = () => {
           <div className="inline-flex items-center justify-center size-20 rounded-[2rem] bg-slate-900 border border-slate-800 shadow-2xl mb-4 group hover:border-primary/50 transition-all duration-500">
             <span className="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">auto_awesome</span>
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-100">PPN Research Portal</h1>
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300">PPN Research Portal</h1>
           <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">
             Access the unified clinical database for high-fidelity molecular research and protocol discovery.
           </p>
@@ -47,11 +47,11 @@ const SimpleSearch: React.FC = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search protocols, adverse events, or ask the Neural Copilot..."
-              className="w-full h-16 sm:h-24 bg-slate-900/90 border border-slate-700/50 rounded-[2.5rem] px-10 sm:px-14 text-sm text-white focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all backdrop-blur-2xl shadow-2xl placeholder:text-slate-600 font-bold"
+              className="w-full h-16 sm:h-24 bg-slate-900/90 border border-slate-700/50 rounded-[2.5rem] px-10 sm:px-14 text-sm text-slate-300 focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all backdrop-blur-2xl shadow-2xl placeholder:text-slate-600 font-bold"
             />
             <button
               type="submit"
-              className="absolute right-4 top-1/2 -translate-y-1/2 size-12 sm:size-16 bg-primary hover:bg-blue-600 rounded-full flex items-center justify-center text-white transition-all shadow-xl active:scale-95 group/btn"
+              className="absolute right-4 top-1/2 -translate-y-1/2 size-12 sm:size-16 bg-primary hover:bg-blue-600 rounded-full flex items-center justify-center text-slate-300 transition-all shadow-xl active:scale-95 group/btn"
             >
               <span className="material-symbols-outlined text-2xl sm:text-3xl group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
             </button>
@@ -59,12 +59,12 @@ const SimpleSearch: React.FC = () => {
         </form>
 
         <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
-          <span className="text-sm font-black text-slate-500 tracking-[0.2em] mr-2 w-full sm:w-auto mb-2 sm:mb-0">Fast Access Nodes:</span>
+          <span className="text-sm font-black text-slate-3000 tracking-[0.2em] mr-2 w-full sm:w-auto mb-2 sm:mb-0">Fast Access Nodes:</span>
           {quickLinks.map((link) => (
             <button
               key={link.label}
               onClick={() => navigate(link.path)}
-              className="px-6 py-3 bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-primary/30 rounded-full text-sm font-black text-slate-400 hover:text-white transition-all flex items-center gap-3 shadow-lg group/link"
+              className="px-6 py-3 bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-primary/30 rounded-full text-sm font-black text-slate-400 hover:text-slate-200 transition-all flex items-center gap-3 shadow-lg group/link"
             >
               <span className="material-symbols-outlined text-lg group-hover:link:text-primary transition-colors">{link.icon}</span>
               <span className="tracking-widest">{link.label}</span>
@@ -74,20 +74,20 @@ const SimpleSearch: React.FC = () => {
 
         <div className="pt-16 grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-2xl mx-auto border-t border-slate-800/50">
           <div className="text-center space-y-1">
-            <p className="text-2xl font-black text-slate-100">12,482</p>
-            <p className="text-[11px] font-black text-slate-500 tracking-widest">Indexed Nodes</p>
+            <p className="text-2xl font-black text-slate-300">12,482</p>
+            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Indexed Nodes</p>
           </div>
           <div className="text-center space-y-1">
             <p className="text-2xl font-black text-clinical-green">14.2ms</p>
-            <p className="text-[11px] font-black text-slate-500 tracking-widest">Query Latency</p>
+            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Query Latency</p>
           </div>
           <div className="text-center space-y-1">
             <p className="text-2xl font-black text-primary">Live</p>
-            <p className="text-[11px] font-black text-slate-500 tracking-widest">Protocol Sync</p>
+            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Protocol Sync</p>
           </div>
           <div className="text-center space-y-1">
             <p className="text-2xl font-black text-indigo-400">98%</p>
-            <p className="text-[11px] font-black text-slate-500 tracking-widest">Search Recall</p>
+            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Search Recall</p>
           </div>
         </div>
       </PageContainer>

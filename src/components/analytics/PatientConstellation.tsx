@@ -152,14 +152,14 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
         <div className="bg-[#0f1218] border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative">
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-colors z-10"
+                className="absolute top-4 right-4 p-2 text-slate-3000 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors z-10"
             >
                 <X className="w-5 h-5" />
             </button>
 
             {/* Modal Content Wrapper */}
             <div className="px-6 pt-6 pb-2">
-                <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+                <h3 className="text-xl font-black text-slate-200 uppercase tracking-tight flex items-center gap-2">
                     {patient.id}
                 </h3>
                 <p className="text-xs text-slate-400 font-mono mt-1">
@@ -172,7 +172,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 {/* Left Column: Protocol */}
                 <div className="space-y-6">
                     <div>
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Protocol Used</span>
+                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Protocol Used</span>
                         <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                             <div className="flex items-center gap-2 mb-1">
                                 <BrainCircuit className="w-4 h-4 text-indigo-400" />
@@ -183,11 +183,11 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                     </div>
 
                     <div>
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinical Outcome</span>
+                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Clinical Outcome</span>
 
                         <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
                             <div className="flex items-center gap-4">
-                                <div className="text-3xl font-black text-white">{patient.outcome}</div>
+                                <div className="text-3xl font-black text-slate-300">{patient.outcome}</div>
                                 {patient.details.timeline.length > 0 && (
                                     <div className="text-xs font-mono text-emerald-400">
                                         {patient.details.timeline[0].score} &rarr; {patient.details.timeline[patient.details.timeline.length - 1].score} (PHQ-9)
@@ -200,7 +200,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 {/* Right Column: Context */}
                 <div className="space-y-6">
                     <div>
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Concomitant Meds</span>
+                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Concomitant Meds</span>
                         <div className="flex flex-wrap gap-2">
                             {patient.details.medications.length > 0 ? (
                                 patient.details.medications.map(med => (
@@ -214,7 +214,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                         </div>
                     </div>
                     <div>
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinician Notes</span>
+                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Clinician Notes</span>
                         <p className="text-xs text-slate-400 italic leading-relaxed border-l-2 border-slate-700 pl-3">
                             "{patient.details.clinician_notes}"
                         </p>
@@ -245,14 +245,14 @@ export default function PatientConstellation() {
                         <Search className="w-5 h-5 text-indigo-500" />
                     </div>
                     <div title="Scatter plot visualizing patient outcomes based on treatment resistance and symptom severity">
-                        <h3 className="text-lg font-black text-white tracking-tight">Patient Galaxy Analysis</h3>
+                        <h3 className="text-lg font-black text-slate-200 tracking-tight">Patient Galaxy Analysis</h3>
                         <p className="text-xs text-slate-400 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
                     </div>
                 </div>
 
                 <button
                     onClick={() => setShowGuide(!showGuide)}
-                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-white transition-colors"
+                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-3000 hover:text-slate-200 transition-colors"
                     title="How to read this chart"
                 >
                     <Info className="w-5 h-5" />
@@ -262,7 +262,7 @@ export default function PatientConstellation() {
             {/* Educational Guide Popover */}
             {showGuide && (
                 <div className="absolute top-16 right-6 w-72 bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-2xl z-20 animate-in fade-in slide-in-from-top-2">
-                    <h4 className="text-xs font-black text-white uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <h4 className="text-xs font-black text-slate-300 uppercase tracking-widest mb-2 flex items-center gap-2">
                         <Lightbulb className="w-3 h-3 text-amber-400" /> Interpreting the Galaxy
                     </h4>
                     <ul className="space-y-3 text-[11px] text-slate-400 leading-relaxed">
@@ -295,7 +295,7 @@ export default function PatientConstellation() {
                                     const data = payload[0].payload;
                                     return (
                                         <div className="bg-slate-900/95 backdrop-blur border border-slate-700 p-3 rounded-lg shadow-xl z-50">
-                                            <p className="text-white font-bold text-xs mb-1">{data.id}</p>
+                                            <p className="text-slate-300 font-bold text-xs mb-1">{data.id}</p>
                                             <p className="text-xs text-slate-400">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
                                             <p className="text-xs text-slate-400">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
                                         </div>

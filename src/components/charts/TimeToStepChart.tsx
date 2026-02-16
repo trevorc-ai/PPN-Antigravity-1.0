@@ -77,7 +77,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
             const data = payload[0].payload;
             return (
                 <div className="bg-[#0c0f16] border border-white/10 rounded-xl p-4 shadow-2xl">
-                    <p className="text-sm font-black text-white mb-2">{data.transition}</p>
+                    <p className="text-sm font-black text-slate-300 mb-2">{data.transition}</p>
                     <div className="space-y-1">
                         <p className="text-xs text-slate-300">
                             <span className="font-bold text-primary">Median: {data.medianDays} days</span>
@@ -134,7 +134,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                 <div className="text-center space-y-4">
                     <span className="material-symbols-outlined text-6xl text-slate-600">schedule</span>
                     <div>
-                        <p className="text-lg font-black text-white mb-2">No Data Available</p>
+                        <p className="text-lg font-black text-slate-300 mb-2">No Data Available</p>
                         <p className="text-sm text-slate-400 max-w-md">
                             {filters.siteIds.length > 0
                                 ? 'No transitions found for selected filters. Try adjusting your filters or note that small-cell suppression hides transitions with fewer than 10 patients.'
@@ -156,13 +156,13 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-3xl text-primary">schedule</span>
                     <div>
-                        <h3 className="text-xl font-black text-white">Time to Next Step</h3>
+                        <h3 className="text-xl font-black text-slate-200">Time to Next Step</h3>
                         <p className="text-xs text-slate-400 font-medium">Median days between treatment stages</p>
                     </div>
                 </div>
 
                 <div className="text-right">
-                    <p className="text-[11px] font-black text-slate-500 tracking-widest uppercase">Avg Median</p>
+                    <p className="text-[11px] font-black text-slate-3000 tracking-widest uppercase">Avg Median</p>
                     <p className="text-2xl font-black text-primary">{Math.round(avgMedianDays * 10) / 10} days</p>
                 </div>
             </div>
@@ -216,7 +216,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
 
             {/* Legend */}
             <div className="mt-6 pt-6 border-t border-slate-800">
-                <p className="text-[10px] font-black text-slate-500 tracking-widest uppercase mb-3">Speed Indicators</p>
+                <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-3">Speed Indicators</p>
                 <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-emerald-500"></div>
@@ -241,10 +241,10 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.map((transition) => (
                     <div key={`${transition.fromStage}-${transition.toStage}`} className="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800">
-                        <p className="text-[10px] font-black text-slate-500 tracking-widest uppercase mb-1">
+                        <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">
                             {transition.transition}
                         </p>
-                        <p className="text-lg font-black text-white">{transition.medianDays}d</p>
+                        <p className="text-lg font-black text-slate-300">{transition.medianDays}d</p>
                         <p className="text-[10px] text-slate-400 font-medium">
                             P75: {transition.p75Days}d
                         </p>

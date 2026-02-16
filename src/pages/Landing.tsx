@@ -95,7 +95,7 @@ const Landing: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-100 selection:bg-primary/30 selection:text-white font-sans overflow-x-hidden relative">
+    <div className="min-h-screen bg-transparent text-slate-300 selection:bg-primary/30 selection:text-slate-300 font-sans overflow-x-hidden relative">
 
       {/* Starry Night Parallax Background - Fixed across entire page */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -137,7 +137,7 @@ const Landing: React.FC = () => {
         {/* Top Right Brand Label */}
         <div className="absolute top-10 right-10 z-20 hidden md:block group cursor-default">
           <div className="flex flex-col items-end">
-            <p className="text-[12px] font-black text-white tracking-[0.2em] uppercase transition-colors group-hover:text-primary">
+            <p className="text-[12px] font-black text-slate-300 tracking-[0.2em] uppercase transition-colors group-hover:text-primary">
               PPN Research Portal
             </p>
             <div className="flex items-center gap-2 mt-1">
@@ -161,12 +161,15 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-4 text-slate-100">
+              <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-4 text-slate-300">
                 Global Psychedelic <br />
                 <span className="text-gradient-primary inline-block pb-1">Practitioner Network</span>
               </h1>
               <p className="text-lg sm:text-xl text-slate-400 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
                 The Practice Operating System for Psychedelic Therapy. Unify safety, outcomes, and compliance into a single secure platform.
+              </p>
+              <p className="text-lg text-slate-300 max-w-2xl lg:mx-0 mx-auto font-medium tracking-wide">
+                Augmented intelligence for the global psychedelic wellness community.
               </p>
             </motion.div>
 
@@ -177,7 +180,7 @@ const Landing: React.FC = () => {
               transition={{ duration: 1, delay: 0.5 }}
               className="max-w-2xl lg:mx-0 mx-auto p-4 bg-slate-900/40 border border-slate-800 rounded-2xl"
             >
-              <p className="text-[12px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
+              <p className="text-[12px] font-black text-slate-3000 uppercase tracking-widest leading-relaxed">
                 <span className="text-primary mr-2">Notice:</span>
                 PPN Research Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
               </p>
@@ -192,7 +195,7 @@ const Landing: React.FC = () => {
             >
               <button
                 onClick={() => navigate('/login')}
-                className="flex-1 px-8 py-5 bg-primary hover:bg-blue-600 text-white text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
+                className="flex-1 px-8 py-5 bg-primary hover:bg-blue-600 text-slate-300 text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
               >
                 Access Portal
                 <ArrowRight className="w-4 h-4" />
@@ -200,7 +203,7 @@ const Landing: React.FC = () => {
 
               <button
                 onClick={() => navigate('/signup')}
-                className="flex-1 px-8 py-5 bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-200 hover:text-white text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all hover:bg-slate-800 active:scale-95"
+                className="flex-1 px-8 py-5 bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-200 hover:text-slate-200 text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all hover:bg-slate-800 active:scale-95"
               >
                 Request Access
               </button>
@@ -217,16 +220,16 @@ const Landing: React.FC = () => {
               className="grid grid-cols-3 gap-6 w-full max-w-md lg:mx-0 mx-auto pt-8 border-t border-slate-800/50"
             >
               <div className="text-center">
-                <p className="text-2xl font-black text-white">12k+</p>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Records</p>
+                <p className="text-2xl font-black text-slate-300">12k+</p>
+                <p className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest mt-1">Records</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-black text-white">840+</p>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Clinicians</p>
+                <p className="text-2xl font-black text-slate-300">840+</p>
+                <p className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest mt-1">Clinicians</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-black text-clinical-green">98%</p>
-                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">Uptime</p>
+                <p className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest mt-1">Uptime</p>
               </div>
             </motion.div>
           </div>
@@ -265,7 +268,7 @@ const Landing: React.FC = () => {
 
             {/* Heading */}
             <div className="space-y-4 max-w-2xl relative z-10">
-              <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-tight">
+              <h2 className="text-4xl sm:text-6xl font-black text-slate-200 tracking-tighter leading-tight">
                 The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
               </h2>
               <p className="text-slate-400 font-medium text-lg leading-relaxed">
@@ -277,10 +280,10 @@ const Landing: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl relative z-10">
               {['Baltimore', 'London', 'Zurich', 'Palo Alto'].map(loc => (
                 <div key={loc} className="space-y-2">
-                  <p className="text-2xl font-black text-white">{loc}</p>
+                  <p className="text-2xl font-black text-slate-300">{loc}</p>
                   <div className="flex items-center justify-center gap-2">
                     <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
+                    <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Active Practitioner</span>
                   </div>
                 </div>
               ))}
@@ -292,7 +295,7 @@ const Landing: React.FC = () => {
       {/* SECTION: Trust Indicators */}
       <section className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <p className="text-center text-sm text-slate-500 font-bold uppercase tracking-widest mb-12">
+          <p className="text-center text-sm text-slate-3000 font-bold uppercase tracking-widest mb-12">
             Trusted by Leading Research Institutions
           </p>
 
@@ -337,7 +340,7 @@ const Landing: React.FC = () => {
       <section className="py-24 px-6 relative z-10 border-y border-slate-800/50 bg-slate-900/20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-200 tracking-tight leading-tight">
               Is your clinical workflow <span className="text-gradient-primary inline-block pb-1">fragmented?</span>
             </h2>
             <div className="space-y-4 text-slate-400 text-lg leading-relaxed font-medium">
@@ -350,7 +353,7 @@ const Landing: React.FC = () => {
             </div>
             <button
               onClick={() => navigate('/deep-dives/workflow-chaos')}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
             >
               Unify Your Practice
               <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -364,7 +367,7 @@ const Landing: React.FC = () => {
                 <span className="text-red-300 font-bold text-sm">Disconnected Tools Risk</span>
               </div>
               <div className="flex items-center gap-4 p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                <span className="material-symbols-outlined text-slate-500">description</span>
+                <span className="material-symbols-outlined text-slate-3000">description</span>
                 <span className="text-slate-400 font-bold text-sm line-through">Unsecure Spreadsheets</span>
               </div>
               <div className="flex items-center gap-4 p-4 bg-clinical-green/20 border border-clinical-green/30 rounded-xl">
@@ -438,7 +441,7 @@ const Landing: React.FC = () => {
 
                 {/* Content */}
                 <h3 className="text-xl font-black text-slate-300">{item.title}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+                <p className="text-sm text-slate-3000 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -481,7 +484,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-sm">security</span>
                 Safety Surveillance
               </div>
-              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-200 leading-tight">
                 Active guardrails for every session.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
@@ -511,7 +514,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-sm">query_stats</span>
                 Network Benchmarking
               </div>
-              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-200 leading-tight">
                 Calibrate your practice against the global standard.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
@@ -557,7 +560,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-sm">timeline</span>
                 Patient Outcomes
               </div>
-              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+              <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-200 leading-tight">
                 The story behind the symptom.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
@@ -584,7 +587,7 @@ const Landing: React.FC = () => {
 
             {/* Left: Text */}
             <div className="space-y-8">
-              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-200 leading-tight">
                 A <span className="text-gradient-primary inline-block pb-1">Unified</span> Framework for <br />Clinical Excellence.
               </h2>
               <div className="space-y-6 text-slate-400 text-base leading-relaxed font-medium">
@@ -603,20 +606,20 @@ const Landing: React.FC = () => {
               <div className="relative bg-[#111418]/60 border border-slate-800 rounded-[3rem] p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                    <span className="text-3xl font-black text-white">12k+</span>
-                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>
+                    <span className="text-3xl font-black text-slate-300">12k+</span>
+                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Enrolled Subjects</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-clinical-green">04</span>
-                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Global Hubs</p>
+                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Global Hubs</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-primary">85%</span>
-                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Avg. Outcome Lift</p>
+                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Avg. Outcome Lift</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-accent-amber">99.9%</span>
-                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Data Integrity</p>
+                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Data Integrity</p>
                   </div>
                 </div>
               </div>
@@ -630,10 +633,10 @@ const Landing: React.FC = () => {
       <section className="py-32 px-6 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-200 leading-tight">
               Clinical <span className="text-gradient-primary inline-block pb-1">Intelligence</span> Infrastructure
             </h2>
-            <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.4em]">Designed for Institutional Precision</p>
+            <p className="text-[12px] text-slate-3000 font-black uppercase tracking-[0.4em]">Designed for Institutional Precision</p>
           </div>
 
           <BentoGrid>
@@ -648,17 +651,17 @@ const Landing: React.FC = () => {
                     <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 mb-4 group-hover:scale-110 transition-transform">
                       <span className="material-symbols-outlined text-3xl">database</span>
                     </div>
-                    <h3 className="text-3xl font-black tracking-tight text-white">Internal Registry</h3>
+                    <h3 className="text-3xl font-black tracking-tight text-slate-200">Internal Registry</h3>
                     <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-md">
                       Secure local tracking of your site's unique outcomes with standardized measures.
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-500 font-mono">Structured Data Capture</span>
+                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-3000 font-mono">Structured Data Capture</span>
                     <div className="h-px flex-1 bg-slate-800"></div>
                   </div>
                 </div>
-                <span className="absolute bottom-0 right-0 p-10 material-symbols-outlined text-[180px] text-white/5 -mb-20 -mr-10 group-hover:scale-110 transition-transform">inventory_2</span>
+                <span className="absolute bottom-0 right-0 p-10 material-symbols-outlined text-[180px] text-slate-300/5 -mb-20 -mr-10 group-hover:scale-110 transition-transform">inventory_2</span>
               </motion.div>
             </BentoCard>
 
@@ -719,14 +722,14 @@ const Landing: React.FC = () => {
               >
                 <div className="h-full flex flex-col justify-between relative z-10">
                   <div className="space-y-2">
-                    <h3 className="text-3xl font-black tracking-tight text-white">Standardized Measures</h3>
+                    <h3 className="text-3xl font-black tracking-tight text-slate-200">Standardized Measures</h3>
                     <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-lg">
                       We use structured, coded data (MedDRA, ICAN) to ensure every data point contributes to validated benchmarks.
                     </p>
                   </div>
                   <div className="flex gap-4">
                     {['MedDRA', 'LOINC', 'SNOMED'].map(code => (
-                      <span key={code} className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[11px] font-black text-slate-500 tracking-widest uppercase">{code}</span>
+                      <span key={code} className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[11px] font-black text-slate-3000 tracking-widest uppercase">{code}</span>
                     ))}
                   </div>
                 </div>
@@ -747,7 +750,7 @@ const Landing: React.FC = () => {
           </h2>
           <div className="space-y-6">
             <p className="text-lg text-slate-400 leading-relaxed font-medium">
-              The <span className="text-white font-bold">Psychedelic Practitioners Network (PPN)</span> is a practitioner-only network focused on one thing: helping clinics learn faster from real-world care. We do that by standardizing the inputs that shape outcomes across preparation, dosing, and integration, then returning aggregated benchmarks and safety learning that clinics can use to improve consistency.
+              The <span className="text-slate-300 font-bold">Psychedelic Practitioners Network (PPN)</span> is a practitioner-only network focused on one thing: helping clinics learn faster from real-world care. We do that by standardizing the inputs that shape outcomes across preparation, dosing, and integration, then returning aggregated benchmarks and safety learning that clinics can use to improve consistency.
             </p>
             <p className="text-lg text-slate-400 leading-relaxed font-medium">
               We built PPN with privacy by design, structured fields over narrative text, de-identified longitudinal tracking inside a clinic, and network insights shown only in aggregate.
@@ -761,7 +764,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-2xl text-indigo-400">military_tech</span>
               </div>
               <div>
-                <h4 className="text-xl font-black text-white mb-2">Supporting Our Veterans</h4>
+                <h4 className="text-xl font-black text-slate-300 mb-2">Supporting Our Veterans</h4>
                 <p className="text-sm text-slate-300 leading-relaxed">
                   We are committed to supporting <span className="text-gradient-primary inline-block font-bold pb-1">veterans with PTSD</span> through
                   evidence-based psychedelic therapy research. A portion of our network's de-identified data contributes to
@@ -774,7 +777,7 @@ const Landing: React.FC = () => {
           <div className="pt-4">
             <a
               href="mailto:info@ppnportal.net"
-              className="inline-flex items-center px-8 py-4 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-100 text-sm font-black rounded-2xl uppercase tracking-[0.25em] transition-all hover:bg-slate-800 active:scale-95"
+              className="inline-flex items-center px-8 py-4 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.25em] transition-all hover:bg-slate-800 active:scale-95"
             >
               Contact Us
             </a>
@@ -788,14 +791,14 @@ const Landing: React.FC = () => {
               <h1 className="text-2xl font-black tracking-tighter cursor-default">
                 PPN <span className="text-primary font-bold">Portal</span>
               </h1>
-              <p className="text-sm text-slate-500 leading-relaxed font-medium">
+              <p className="text-sm text-slate-3000 leading-relaxed font-medium">
                 The institutional standard for outcomes tracking and safety surveillance in psychedelic research.
               </p>
             </div>
 
             <div className="space-y-4">
               <h4 className="text-sm font-black uppercase tracking-widest text-slate-200">Legal & Privacy</h4>
-              <ul className="space-y-2 text-sm text-slate-500 font-medium">
+              <ul className="space-y-2 text-sm text-slate-3000 font-medium">
                 <li className="hover:text-primary transition-colors cursor-pointer">Terms of Service</li>
                 <li className="hover:text-primary transition-colors cursor-pointer">De-identification Policy</li>
                 <li className="hover:text-primary transition-colors cursor-pointer">Registry Consensus</li>

@@ -78,7 +78,6 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
         {
             title: 'Intelligence',
             items: [
-                { label: "Regulatory Map", icon: "public", path: "/deep-dives/regulatory-map" },
                 { label: "Clinical Radar", icon: "radar", path: "/deep-dives/clinic-performance" },
                 { label: "Patient Galaxy", icon: "hub", path: "/deep-dives/patient-constellation" },
                 { label: "Molecular DB", icon: "science", path: "/deep-dives/molecular-pharmacology" },
@@ -129,11 +128,11 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                         <div className="relative">
                             <div className="absolute inset-0 bg-indigo-500/40 blur-md rounded-lg" />
                             <div className="relative rounded-lg p-1.5 bg-indigo-500 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-lg text-white">science</span>
+                                <span className="material-symbols-outlined text-lg text-slate-300">science</span>
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-white text-xs uppercase font-black leading-tight tracking-tight">
+                            <h1 className="text-slate-200 text-xs uppercase font-black leading-tight tracking-tight">
                                 PPN Research
                             </h1>
                             <div className="flex items-center gap-1">
@@ -146,7 +145,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                     {/* Close Button - Thumb-reach zone (top right) */}
                     <button
                         onClick={onClose}
-                        className="p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors active:scale-95"
+                        className="p-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-lg transition-colors active:scale-95"
                         aria-label="Close menu"
                     >
                         <span className="material-symbols-outlined text-2xl">close</span>
@@ -157,7 +156,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                 <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-6">
                     {sections.map((section) => (
                         <nav key={section.title} className="space-y-2">
-                            <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest px-2">
+                            <h3 className="text-xs font-black text-slate-3000 uppercase tracking-widest px-2">
                                 {section.title}
                             </h3>
                             <ul className="space-y-1">
@@ -168,8 +167,8 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                                             onClick={onClose}
                                             className={({ isActive }) =>
                                                 `group relative flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${isActive
-                                                    ? 'bg-indigo-500/20 text-white ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-500/10'
-                                                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50 active:scale-95'
+                                                    ? 'bg-indigo-500/20 text-slate-300 ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-500/10'
+                                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 active:scale-95'
                                                 }`
                                             }
                                         >
@@ -195,7 +194,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
 
                                                     {/* Badge */}
                                                     {item.badge !== undefined && item.badge > 0 && (
-                                                        <span className="px-2 py-0.5 rounded-full bg-red-500 text-white text-xs font-black min-w-[20px] text-center">
+                                                        <span className="px-2 py-0.5 rounded-full bg-red-500 text-slate-300 text-xs font-black min-w-[20px] text-center">
                                                             {item.badge}
                                                         </span>
                                                     )}
@@ -255,7 +254,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                                                 const data = payload[0].payload;
                                                 return (
                                                     <div className="bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 shadow-xl">
-                                                        <p className="text-xs font-bold text-white">{data.name}</p>
+                                                        <p className="text-xs font-bold text-slate-300">{data.name}</p>
                                                         <p className="text-xs font-mono text-indigo-400">{data.count} Active</p>
                                                     </div>
                                                 );

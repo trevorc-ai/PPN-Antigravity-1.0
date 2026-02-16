@@ -65,7 +65,7 @@ const Breadcrumbs: React.FC = () => {
       {location.pathname !== '/dashboard' && location.pathname !== '/advanced-search' && (
         <button
           onClick={() => navigate(-1)}
-          className="mr-4 pr-4 border-r border-white/10 hidden sm:flex items-center gap-1 text-[12px] font-black tracking-widest text-slate-500 hover:text-primary transition-colors group"
+          className="mr-4 pr-4 border-r border-white/10 hidden sm:flex items-center gap-1 text-[12px] font-black tracking-widest text-slate-3000 hover:text-primary transition-colors group"
         >
           <span className="material-symbols-outlined text-[15px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
           Back
@@ -75,7 +75,7 @@ const Breadcrumbs: React.FC = () => {
       <div className="flex items-center gap-2.5">
         <Link
           to="/advanced-search"
-          className={`flex items-center gap-2 text-xs font-black tracking-[0.2em] uppercase transition-all group ${isPortalActive ? 'text-primary' : 'text-slate-500 hover:text-primary'
+          className={`flex items-center gap-2 text-xs font-black tracking-[0.2em] uppercase transition-all group ${isPortalActive ? 'text-primary' : 'text-slate-3000 hover:text-primary'
             }`}
         >
           <div className={`size-5 rounded-md flex items-center justify-center transition-colors ${isPortalActive ? 'bg-primary/20 text-primary' : 'bg-slate-800 group-hover:bg-primary/20 group-hover:text-primary'

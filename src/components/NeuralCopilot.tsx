@@ -97,7 +97,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
           onClick={() => setOptimizationMode(!optimizationMode)}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-all"
         >
-          <span className={`text-[11px] font-black uppercase tracking-widest ${optimizationMode ? 'text-primary' : 'text-slate-500'}`}>
+          <span className={`text-[11px] font-black uppercase tracking-widest ${optimizationMode ? 'text-primary' : 'text-slate-3000'}`}>
             {optimizationMode ? 'Deep Matrix' : 'Standard'}
           </span>
           {optimizationMode ? <ToggleRight className="text-primary size-5" /> : <ToggleLeft className="text-slate-700 size-5" />}
@@ -130,7 +130,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
             {chatHistory.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                 <div className={`max-w-[95%] p-5 rounded-[1.5rem] text-[11px] font-medium leading-relaxed shadow-lg relative ${msg.role === 'user'
-                    ? 'bg-primary/20 text-white border border-primary/25 rounded-tr-none'
+                    ? 'bg-primary/20 text-slate-300 border border-primary/25 rounded-tr-none'
                     : msg.type === 'warning'
                       ? 'bg-amber-500/5 border-l-4 border-amber-500 border-y border-r border-amber-500/20 text-amber-100 rounded-tl-none'
                       : 'bg-slate-900/90 text-indigo-100 border border-slate-800 rounded-tl-none'
@@ -174,12 +174,12 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
             onChange={(e) => setQuery(e.target.value)}
             disabled={isAnalyzing}
             placeholder="Search global research ledger..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-[12px] text-white focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-800 font-mono transition-all pr-14 shadow-inner disabled:opacity-50"
+            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-[12px] text-slate-300 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-800 font-mono transition-all pr-14 shadow-inner disabled:opacity-50"
           />
           <button
             type="submit"
             disabled={isAnalyzing || !query.trim()}
-            className="absolute right-2 top-1/2 -translate-y-1/2 size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-xl active:scale-90 disabled:opacity-20"
+            className="absolute right-2 top-1/2 -translate-y-1/2 size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-slate-200 transition-all shadow-xl active:scale-90 disabled:opacity-20"
           >
             <Sparkles className="size-5" />
           </button>

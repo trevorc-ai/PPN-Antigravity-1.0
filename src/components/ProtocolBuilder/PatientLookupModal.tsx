@@ -248,7 +248,7 @@ export const PatientLookupModal: React.FC<PatientLookupModalProps> = ({
                     <button
                         onClick={handleSearch}
                         disabled={loading}
-                        className="mt-4 bg-[#14b8a6] hover:bg-[#0d9488] text-white px-6 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        className="mt-4 bg-[#14b8a6] hover:bg-[#0d9488] text-slate-300 px-6 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                         <Search className="w-4 h-4" />
                         {loading ? 'Searching...' : 'Search'}
@@ -299,7 +299,7 @@ export const PatientLookupModal: React.FC<PatientLookupModalProps> = ({
                                     </div>
                                     <button
                                         onClick={() => onSelectPatient(patient)}
-                                        className="bg-[#10b981] hover:bg-[#059669] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                                        className="bg-[#10b981] hover:bg-[#059669] text-slate-300 px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
                                     >
                                         Select
                                         <ChevronRight className="w-4 h-4" />

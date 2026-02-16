@@ -1,13 +1,14 @@
 ---
 id: WO-051
-status: 00_INBOX
+status: 03_BUILD
 priority: P1 (Critical)
 category: Feature / Legal / Marketing / Design
-owner: PENDING_LEAD_ASSIGNMENT
+owner: MARKETER
 failure_count: 0
 created_date: 2026-02-15T17:22:10-08:00
 requires_coordination: true
 coordinating_agents: [LEAD, MARKETER, DESIGNER, SOOP, INSPECTOR, BUILDER]
+current_phase: 1_CONTENT_STRATEGY
 ---
 
 # User Request
@@ -257,3 +258,137 @@ This work order requires **tight coordination** across all agents. LEAD must def
 "We can't share personal data because we don't even collect it. We respect privacy."
 
 This should be the foundation of all privacy messaging.
+
+---
+
+## 🏗️ LEAD ARCHITECTURE
+
+### Strategic Overview
+
+This is a **foundational privacy initiative** that touches legal, marketing, design, database, and implementation layers. Given the complexity and coordination requirements, I'm implementing a **strict 6-phase sequential workflow** where each agent must complete their deliverables before the next phase begins.
+
+### Technical Strategy
+
+**Phase 1: Content Strategy (MARKETER)** ← **CURRENT PHASE**
+- Draft all privacy messaging copy
+- Research Oregon/Colorado privacy regulations
+- Create messaging framework
+- Define tone/voice for legal content
+- **Deliverable:** Privacy content document in ticket
+
+**Phase 2: UI/UX Design (DESIGNER)**
+- Design footer component with privacy statement
+- Create privacy policy page layout
+- Design provider directory opt-in UI
+- Create "Privacy First" visual identity
+- **Deliverable:** Design specs appended to ticket
+
+**Phase 3: Database Architecture (SOOP)**
+- Audit current schema for PHI/PII compliance
+- Design provider directory opt-in system
+- Create privacy flags in user profiles
+- Write RLS policies for directory visibility
+- **Deliverable:** Migration script + audit report
+
+**Phase 4: Compliance Review (INSPECTOR)**
+- Review all privacy claims for legal accuracy
+- Verify HIPAA compliance
+- Audit data collection practices
+- Approve privacy statement
+- **Deliverable:** Compliance sign-off in ticket
+
+**Phase 5: Implementation (BUILDER)**
+- Build footer component
+- Create privacy policy page
+- Implement provider directory opt-in
+- Add privacy statements to landing/login
+- **Deliverable:** Working implementation
+
+**Phase 6: Final QA (INSPECTOR)**
+- Accessibility audit
+- Security review
+- Final compliance check
+- **Deliverable:** Production approval
+
+### Key Architectural Decisions
+
+**1. Database Schema Additions**
+```sql
+-- Add to user_profiles table
+ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS 
+  directory_visible BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE user_profiles ADD COLUMN IF NOT EXISTS 
+  directory_opt_in_date TIMESTAMPTZ;
+
+-- RLS policy for directory queries
+CREATE POLICY "directory_visibility" ON user_profiles
+  FOR SELECT USING (
+    directory_visible = TRUE 
+    OR auth.uid() = user_id
+  );
+```
+
+**2. Component Architecture**
+- **Footer Component:** Site-wide, persistent, concise privacy statement
+- **Privacy Policy Page:** Full legal documentation at `/privacy-policy`
+- **Directory Opt-In Toggle:** User profile settings section
+- **Landing Page Privacy Badge:** Prominent "Privacy First" messaging
+
+**3. Routing Strategy**
+- Footer links to full privacy policy
+- Privacy policy accessible without authentication
+- Directory opt-in only visible to authenticated providers
+- Privacy settings in user profile dashboard
+
+### Critical Constraints
+
+**MUST ENFORCE:**
+- ✅ Opt-in only (default: NOT visible in directory)
+- ✅ Zero patient PII collection (enforced at database level)
+- ✅ Provider PII only if directory opt-in enabled
+- ✅ All privacy claims verified by INSPECTOR before deployment
+- ✅ Minimum 12px font size for all legal text
+- ✅ WCAG AA contrast ratios for all privacy UI
+
+**MUST AVOID:**
+- ❌ Auto-enrollment in public directory
+- ❌ Collecting patient data "just in case"
+- ❌ Legal jargon without plain-language translation
+- ❌ Hidden privacy settings
+- ❌ Unsubstantiated HIPAA/security claims
+
+### Dependencies & Integration Points
+
+**Synergy with existing work:**
+- `WO-050` (Landing Page Marketing): Integrate "Privacy First" messaging
+- `WO_042` (Database Security Audit): Leverage audit findings
+- `WO_041` (UX Accessibility Audit): Ensure accessible privacy controls
+
+**No blockers:** This work can proceed immediately.
+
+### Success Metrics
+
+- [ ] Zero patient PII in database (verified by SOOP audit)
+- [ ] Provider directory opt-in rate tracked
+- [ ] Privacy policy page analytics (views, time on page)
+- [ ] Zero privacy-related user complaints
+- [ ] INSPECTOR compliance sign-off achieved
+
+### Handoff Protocol
+
+**MARKETER:** You are now assigned Phase 1. Create a new section in this ticket titled `## MARKETER DELIVERABLES` and document:
+1. Footer privacy statement (2-3 sentences max)
+2. Full privacy policy content
+3. Oregon/Colorado compliance research findings
+4. "Privacy First" messaging framework
+5. Provider directory opt-in explanation copy
+
+When complete, move this ticket to `04_QA` for LEAD review before proceeding to Phase 2.
+
+**DO NOT** pass to DESIGNER until LEAD approves your content strategy.
+
+---
+
+**LEAD STATUS:** ✅ Architecture complete. Ticket routed to MARKETER for Phase 1.
+

@@ -51,7 +51,7 @@ export default function RegulatoryWeather() {
         <div className="bg-[#0f1218] border border-slate-800 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-4">
                 <Shield className="w-5 h-5 text-slate-400" />
-                <h3 className="text-lg font-semibold text-white">Regulatory Weather</h3>
+                <h3 className="text-lg font-semibold text-slate-200">Regulatory Weather</h3>
             </div>
 
             <div className="space-y-4">
@@ -65,7 +65,7 @@ export default function RegulatoryWeather() {
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                     <Icon className={`w-4 h-4 ${config.color} flex-shrink-0`} />
-                                    <h4 className="text-sm font-medium text-white">{item.title}</h4>
+                                    <h4 className="text-sm font-medium text-slate-300">{item.title}</h4>
                                 </div>
                                 <p className="text-xs text-slate-400 mt-1">{item.detail}</p>
                             </div>

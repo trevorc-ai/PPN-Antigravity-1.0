@@ -53,12 +53,12 @@ const SafetyRiskMatrixDemo: React.FC = () => {
             {/* Top Metrics */}
             <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
-                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Risk Index</p>
+                    <p className="text-sm font-bold text-slate-3000 uppercase tracking-widest mb-1">Risk Index</p>
                     <p className="text-3xl font-black text-emerald-400">0.4%</p>
                     <p className="text-sm text-slate-600 font-medium mt-1">Current Low Risk</p>
                 </div>
                 <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
-                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Serious Events</p>
+                    <p className="text-sm font-bold text-slate-3000 uppercase tracking-widest mb-1">Serious Events</p>
                     <p className="text-3xl font-black text-slate-400">0</p>
                     <p className="text-sm text-slate-600 font-medium mt-1">No G4/G5 Events</p>
                 </div>
@@ -66,7 +66,7 @@ const SafetyRiskMatrixDemo: React.FC = () => {
 
             {/* Heatmap */}
             <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Frequency × Severity Matrix</p>
+                <p className="text-sm font-bold text-slate-3000 uppercase tracking-widest mb-4">Frequency × Severity Matrix</p>
 
                 <div className="overflow-x-auto">
                     <div className="inline-block min-w-full">
@@ -75,7 +75,7 @@ const SafetyRiskMatrixDemo: React.FC = () => {
                             <div className="w-24 shrink-0"></div>
                             {severityGrades.map((grade, i) => (
                                 <div key={i} className="flex-1 min-w-[60px] text-center">
-                                    <p className="text-sm font-black text-slate-500 uppercase tracking-wider whitespace-pre-line leading-tight">
+                                    <p className="text-sm font-black text-slate-3000 uppercase tracking-wider whitespace-pre-line leading-tight">
                                         {grade}
                                     </p>
                                 </div>
@@ -86,7 +86,7 @@ const SafetyRiskMatrixDemo: React.FC = () => {
                         {frequencyLevels.map((freq, freqIdx) => (
                             <div key={freqIdx} className="flex items-center mb-1">
                                 <div className="w-24 shrink-0 pr-2">
-                                    <p className="text-sm font-black text-slate-500 uppercase tracking-wider text-right whitespace-pre-line leading-tight">
+                                    <p className="text-sm font-black text-slate-3000 uppercase tracking-wider text-right whitespace-pre-line leading-tight">
                                         {freq}
                                     </p>
                                 </div>
@@ -113,15 +113,15 @@ const SafetyRiskMatrixDemo: React.FC = () => {
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-800/50">
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded bg-emerald-500/50 border border-emerald-400/70"></div>
-                        <span className="text-sm font-bold text-slate-500 uppercase">Mild/Moderate</span>
+                        <span className="text-sm font-bold text-slate-3000 uppercase">Mild/Moderate</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded bg-amber-500/50 border border-amber-400/70"></div>
-                        <span className="text-sm font-bold text-slate-500 uppercase">Severe</span>
+                        <span className="text-sm font-bold text-slate-3000 uppercase">Severe</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded bg-red-500/50 border border-red-400/70"></div>
-                        <span className="text-sm font-bold text-slate-500 uppercase">Critical</span>
+                        <span className="text-sm font-bold text-slate-3000 uppercase">Critical</span>
                     </div>
                 </div>
             </div>

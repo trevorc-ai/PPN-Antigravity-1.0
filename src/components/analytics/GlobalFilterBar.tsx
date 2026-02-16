@@ -191,7 +191,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-2xl text-primary">filter_alt</span>
-                    <h3 className="text-lg font-black text-white">Global Filters</h3>
+                    <h3 className="text-lg font-black text-slate-200">Global Filters</h3>
                     {activeFilterCount > 0 && (
                         <span className="px-2.5 py-1 rounded-full bg-primary/20 border border-primary/30 text-xs font-bold text-primary">
                             {activeFilterCount} active
@@ -202,7 +202,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                 {activeFilterCount > 0 && (
                     <button
                         onClick={handleClearFilters}
-                        className="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-white text-xs font-bold rounded-xl uppercase tracking-widest transition-all"
+                        className="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 text-xs font-bold rounded-xl uppercase tracking-widest transition-all"
                     >
                         Clear All
                     </button>
@@ -221,14 +221,14 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                             type="date"
                             value={filters.dateRange.start}
                             onChange={(e) => handleDateChange('start', e.target.value)}
-                            className="w-full px-4 py-3 bg-slate-900/80 border border-slate-800 rounded-xl text-white text-sm font-medium focus:outline-none focus:border-primary transition-colors"
+                            className="w-full px-4 py-3 bg-slate-900/80 border border-slate-800 rounded-xl text-slate-300 text-sm font-medium focus:outline-none focus:border-primary transition-colors"
                             placeholder="Start date"
                         />
                         <input
                             type="date"
                             value={filters.dateRange.end}
                             onChange={(e) => handleDateChange('end', e.target.value)}
-                            className="w-full px-4 py-3 bg-slate-900/80 border border-slate-800 rounded-xl text-white text-sm font-medium focus:outline-none focus:border-primary transition-colors"
+                            className="w-full px-4 py-3 bg-slate-900/80 border border-slate-800 rounded-xl text-slate-300 text-sm font-medium focus:outline-none focus:border-primary transition-colors"
                             placeholder="End date"
                         />
                     </div>
@@ -249,7 +249,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                         onChange={() => handleSiteChange(site.id)}
                                         className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                     />
-                                    <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                                    <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
                                         {site.name}
                                     </span>
                                 </label>
@@ -272,7 +272,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                     onChange={() => handleSubstanceChange(substance.substance_id)}
                                     className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                 />
-                                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
                                     {substance.substance_name}
                                 </span>
                             </label>
@@ -294,7 +294,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                     onChange={() => handleRouteChange(route.route_id)}
                                     className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                 />
-                                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
                                     {route.route_name}
                                 </span>
                             </label>
@@ -316,7 +316,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                     onChange={() => handleModalityChange(modality.support_modality_id)}
                                     className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                 />
-                                <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
                                     {modality.support_modality}
                                 </span>
                             </label>
@@ -339,13 +339,13 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                         onChange={() => handleProtocolChange(protocol.id)}
                                         className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                     />
-                                    <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                                    <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
                                         {protocol.name}
                                     </span>
                                 </label>
                             ))
                         ) : (
-                            <p className="text-xs text-slate-500 italic">No protocols available</p>
+                            <p className="text-xs text-slate-3000 italic">No protocols available</p>
                         )}
                     </div>
                 </div>

@@ -39,9 +39,9 @@ const SafetyRiskMatrix: React.FC = () => {
             <div className="size-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20">
               <ShieldAlert size={18} />
             </div>
-            <h3 className="text-lg font-black text-white tracking-tight">Pharmacovigilance Matrix</h3>
+            <h3 className="text-lg font-black text-slate-200 tracking-tight">Pharmacovigilance Matrix</h3>
           </div>
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Cross-Interaction Risk Map</p>
+          <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Cross-Interaction Risk Map</p>
         </div>
 
         <div className="group/info relative">
@@ -71,7 +71,7 @@ const SafetyRiskMatrix: React.FC = () => {
             <React.Fragment key={med}>
               {/* Row Label */}
               <div className="col-span-1 flex items-center justify-end pr-3">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-right leading-tight">
+                <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest text-right leading-tight">
                   {med}
                 </span>
               </div>
@@ -91,7 +91,7 @@ const SafetyRiskMatrix: React.FC = () => {
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-[#0f172a] border border-slate-700 rounded-xl shadow-2xl opacity-0 group-hover/cell:opacity-100 transition-opacity pointer-events-none z-50">
                       <div className="flex items-center gap-2 mb-2 border-b border-slate-700/50 pb-2">
                         <div className={`size-1.5 rounded-full ${level >= 4 ? 'bg-red-500 animate-pulse' : 'bg-slate-500'}`}></div>
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest">
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
                           {sub} + {med}
                         </span>
                       </div>
@@ -111,15 +111,15 @@ const SafetyRiskMatrix: React.FC = () => {
       <div className="mt-4 pt-4 border-t border-slate-800 flex justify-center gap-6">
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-red-500 shadow-[0_0_8px_#ef4444]"></div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Contraindicated</span>
+          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Contraindicated</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-orange-500"></div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">High Risk</span>
+          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">High Risk</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-slate-700"></div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Safe / No Data</span>
+          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Safe / No Data</span>
         </div>
       </div>
 

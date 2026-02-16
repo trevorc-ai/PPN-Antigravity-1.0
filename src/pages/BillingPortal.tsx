@@ -53,7 +53,7 @@ export const BillingPortal: FC = () => {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">Subscription & Billing</h1>
+                    <h1 className="text-3xl font-bold text-slate-200 mb-2">Subscription & Billing</h1>
                     <p className="text-slate-400">Manage your subscription and payment methods</p>
                 </div>
 
@@ -71,7 +71,7 @@ export const BillingPortal: FC = () => {
                         <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8">
                             <div className="flex items-start justify-between mb-6">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-white mb-2">
+                                    <h2 className="text-2xl font-bold text-slate-200 mb-2">
                                         {tierConfig?.name}
                                     </h2>
                                     <div className="flex items-center gap-3">
@@ -138,7 +138,7 @@ export const BillingPortal: FC = () => {
                             {subscription.currentPeriodEnd && (
                                 <div className="mb-6">
                                     <p className="text-sm text-slate-400 mb-1">Current billing period ends</p>
-                                    <p className="text-white font-semibold">
+                                    <p className="text-slate-300 font-semibold">
                                         {subscription.currentPeriodEnd.toLocaleDateString('en-US', {
                                             month: 'long',
                                             day: 'numeric',
@@ -166,7 +166,7 @@ export const BillingPortal: FC = () => {
                         {/* Features Included */}
                         {tierConfig && (
                             <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-8">
-                                <h3 className="text-xl font-bold text-white mb-4">What's Included</h3>
+                                <h3 className="text-xl font-bold text-slate-200 mb-4">What's Included</h3>
                                 <ul className="grid md:grid-cols-2 gap-3">
                                     {tierConfig.features.map((feature, i) => (
                                         <li key={i} className="flex items-start gap-2 text-slate-300">
@@ -182,7 +182,7 @@ export const BillingPortal: FC = () => {
                     // No Subscription State
                     <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-12 text-center">
                         <CreditCard className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold text-white mb-2">No Active Subscription</h2>
+                        <h2 className="text-2xl font-bold text-slate-200 mb-2">No Active Subscription</h2>
                         <p className="text-slate-400 mb-8">
                             Start your free trial to access all features of PPN Research Portal.
                         </p>

@@ -35,13 +35,13 @@ const PricingCard: React.FC<{
       <span className="text-[11px] font-black text-primary tracking-[0.2em]">{type}</span>
       {tag && <span className="px-3 py-1 rounded-xl bg-accent-amber/10 text-accent-amber border border-accent-amber/20 text-[11px] font-black tracking-widest">{tag}</span>}
     </div>
-    <h3 className="text-3xl font-black text-white tracking-tight mb-8">{title}</h3>
+    <h3 className="text-3xl font-black text-slate-200 tracking-tight mb-8">{title}</h3>
 
     <div className="mb-10">
       <div className="flex items-baseline gap-1.5">
-        <span className="text-5xl font-black text-white">{price}</span>
+        <span className="text-5xl font-black text-slate-300">{price}</span>
       </div>
-      {priceSub && <p className="text-[11px] font-bold text-slate-500 tracking-widest mt-2">{priceSub}</p>}
+      {priceSub && <p className="text-[11px] font-bold text-slate-3000 tracking-widest mt-2">{priceSub}</p>}
     </div>
 
     <button
@@ -63,7 +63,7 @@ const Testimonial: React.FC<{ name: string; role: string; quote: string; image: 
     <div className="flex items-center gap-4">
       <div className="size-14 rounded-2xl bg-cover bg-center border border-slate-700 shrink-0" style={{ backgroundImage: `url(${image})` }}></div>
       <div className="min-w-0">
-        <h4 className="text-sm font-black text-white leading-tight truncate">{name}</h4>
+        <h4 className="text-sm font-black text-slate-300 leading-tight truncate">{name}</h4>
         <p className="text-[11px] font-black text-primary tracking-[0.15em] mt-1">{role}</p>
       </div>
     </div>
@@ -89,7 +89,7 @@ const NewsSnippet: React.FC<{ title: string; category: string; time: string }> =
       </span>
       <span className="text-[11px] font-mono text-slate-600 tracking-widest">{time}</span>
     </div>
-    <h4 className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors line-clamp-1 leading-tight tracking-tight">{title}</h4>
+    <h4 className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors line-clamp-1 leading-tight tracking-tight">{title}</h4>
   </div>
 );
 
@@ -109,7 +109,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
   };
 
   return (
-    <div className="min-h-full bg-[#05070a] text-slate-100 font-sans overflow-x-hidden">
+    <div className="min-h-full bg-[#05070a] text-slate-300 font-sans overflow-x-hidden">
       {/* Hero Section */}
       <div className="flex flex-col lg:flex-row min-h-[800px] relative overflow-hidden border-b border-white/5">
         <div className="absolute top-1/4 left-1/4 size-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
@@ -123,7 +123,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <span className="material-symbols-outlined font-black text-xl">verified_user</span>
                 <span className="text-[11px] font-black tracking-[0.5em]">Encrypted Network Psychedelic Practitioner: 0x7</span>
               </div>
-              <h1 className="text-4xl sm:text-8xl font-black tracking-tighter text-white leading-[1.0]">
+              <h1 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-200 leading-[1.0]">
                 Psychedelic <br />
                 Practitioners <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Network (PPN)</span>
@@ -141,7 +141,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <span className="material-symbols-outlined font-black text-2xl">emoji_objects</span>
                 <span className="text-[11px] font-black tracking-[0.4em]">Institutional Mission</span>
               </div>
-              <p className="text-xl sm:text-2xl font-medium text-slate-100 italic leading-snug tracking-tight">
+              <p className="text-xl sm:text-2xl font-medium text-slate-300 italic leading-snug tracking-tight">
                 "Advancing clinical excellence through collaborative research and cross-node data insights."
               </p>
             </div>
@@ -164,14 +164,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="pt-6 flex flex-col sm:flex-row items-center gap-8">
             <button
               onClick={() => navigate('/login')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-primary text-white text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95 group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-primary text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95 group"
             >
               Login to Portal
               <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </button>
             <button
               onClick={scrollToAbout}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-white/5 hover:bg-white/10 text-white text-sm font-black rounded-2xl tracking-[0.3em] transition-all border border-white/10 group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-white/5 hover:bg-white/10 text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all border border-white/10 group"
             >
               Explore Identity
               <span className="material-symbols-outlined text-lg group-hover:translate-y-1 transition-transform">expand_more</span>
@@ -182,8 +182,8 @@ const SecureGate: React.FC<SecureGateProps> = () => {
         {/* Right Sidebar Login Panel */}
         <aside id="secure-access-node" className="w-full lg:w-[500px] bg-[#0a0c10]/80 backdrop-blur-3xl border-l border-white/5 flex flex-col p-10 sm:p-24 justify-center relative shadow-2xl z-20">
           <div className="space-y-4 mb-12">
-            <h2 className="text-5xl font-black text-white tracking-tighter">Secure Access</h2>
-            <p className="text-slate-500 font-bold text-[11px] tracking-[0.3em]">Institutional Verification Psychedelic Practitioner</p>
+            <h2 className="text-5xl font-black text-slate-200 tracking-tighter">Secure Access</h2>
+            <p className="text-slate-3000 font-bold text-[11px] tracking-[0.3em]">Institutional Verification Psychedelic Practitioner</p>
           </div>
 
           <div className="space-y-8">
@@ -193,8 +193,8 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                   <span className="material-symbols-outlined text-2xl">lock</span>
                 </div>
                 <div>
-                  <h3 className="text-white font-black tracking-widest text-[14px]">Restricted Node</h3>
-                  <p className="text-slate-500 text-[11px] font-bold mt-1">Authorized Personnel Only</p>
+                  <h3 className="text-slate-200 font-black tracking-widest text-[14px]">Restricted Node</h3>
+                  <p className="text-slate-3000 text-[11px] font-bold mt-1">Authorized Personnel Only</p>
                 </div>
               </div>
               <p className="text-slate-400 text-[12px] font-medium leading-relaxed">
@@ -202,14 +202,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               </p>
               <button
                 onClick={() => navigate('/login')}
-                className="w-full py-5 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-primary/30 active:scale-95 group"
+                className="w-full py-5 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-primary/30 active:scale-95 group"
               >
                 Log In to Portal
                 <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
               <button
                 onClick={() => navigate('/login?tab=request')}
-                className="w-full py-4 bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white text-sm font-black rounded-xl tracking-[0.2em] transition-all"
+                className="w-full py-4 bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200 text-sm font-black rounded-xl tracking-[0.2em] transition-all"
               >
                 Request Access
               </button>
@@ -221,8 +221,8 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               <div className="size-12 rounded-2xl bg-accent-amber/10 flex items-center justify-center text-accent-amber shrink-0 border border-accent-amber/20 shadow-lg">
                 <span className="material-symbols-outlined text-2xl">security</span>
               </div>
-              <p className="text-[11px] font-bold text-slate-500 leading-relaxed tracking-tight">
-                Sessions are end-to-end encrypted. <span className="text-white">HIPAA / GDPR</span> compliance modules active. Local synchronization via global gateway.
+              <p className="text-[11px] font-bold text-slate-3000 leading-relaxed tracking-tight">
+                Sessions are end-to-end encrypted. <span className="text-slate-300">HIPAA / GDPR</span> compliance modules active. Local synchronization via global gateway.
               </p>
             </div>
           </div>
@@ -235,7 +235,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="border-[1.5px] border-primary/30 rounded-[2.5rem] p-12 sm:p-20 relative overflow-hidden bg-slate-900/10 backdrop-blur-md">
             <div className="flex items-center justify-center gap-6 mb-16 relative z-10">
               <div className="h-px bg-slate-800/60 flex-1"></div>
-              <h3 className="text-sm font-black text-slate-500 tracking-[1.0em] whitespace-nowrap">Network Perspectives</h3>
+              <h3 className="text-sm font-black text-slate-3000 tracking-[1.0em] whitespace-nowrap">Network Perspectives</h3>
               <div className="h-px bg-slate-800/60 flex-1"></div>
             </div>
 
@@ -271,7 +271,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <span className="material-symbols-outlined text-lg">info</span>
             Registry ID: 0x9921-PPN
           </div>
-          <h2 className="text-4xl sm:text-8xl font-black tracking-tighter text-white leading-none">
+          <h2 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-200 leading-none">
             Advancing the <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Science</span> of Psychedelic Therapy.
           </h2>
@@ -287,7 +287,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="border-[1.5px] border-primary/30 rounded-[2.5rem] p-12 sm:p-20 bg-slate-900/5 backdrop-blur-sm relative z-10 overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
               <div className="space-y-10">
-                <h3 className="text-4xl sm:text-7xl font-black tracking-tighter text-white leading-none">
+                <h3 className="text-4xl sm:text-7xl font-black tracking-tighter text-slate-200 leading-none">
                   A <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Unified</span> <br />
                   Framework for <br />
                   Excellence.
@@ -299,7 +299,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <div className="pt-6">
                   <button
                     onClick={scrollToLogin}
-                    className="px-14 py-6 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
+                    className="px-14 py-6 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
                   >
                     Start Researching
                   </button>
@@ -310,14 +310,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <div className="relative bg-[#0c0f14] border border-slate-800 rounded-[3rem] p-10 sm:p-14 shadow-2xl backdrop-blur-2xl">
                   <div className="grid grid-cols-2 gap-6 sm:gap-10">
                     {[
-                      { val: '12k+', label: 'Enrolled Subjects', color: 'text-white' },
+                      { val: '12k+', label: 'Enrolled Subjects', color: 'text-slate-300' },
                       { val: '04', label: 'Global Hubs', color: 'text-clinical-green' },
                       { val: '85%', label: 'Avg. Outcome Lift', color: 'text-primary' },
                       { val: '99.9%', label: 'Data Integrity', color: 'text-accent-amber' },
                     ].map((stat) => (
                       <div key={stat.label} className="p-6 sm:p-10 bg-black/40 border border-slate-800 rounded-[2rem] space-y-4 hover:border-slate-600 transition-all hover:scale-105 shadow-xl">
                         <span className={`text-4xl sm:text-5xl font-black ${stat.color} leading-none block tracking-tighter`}>{stat.val}</span>
-                        <p className="text-xs font-black text-slate-500 tracking-[0.4em] leading-tight">{stat.label}</p>
+                        <p className="text-xs font-black text-slate-3000 tracking-[0.4em] leading-tight">{stat.label}</p>
                       </div>
                     ))}
                   </div>
@@ -334,7 +334,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="text-center space-y-12">
             <h3 className="text-sm font-black text-primary tracking-[0.8em]">Core Principles</h3>
             <div className="max-w-3xl mx-auto border-[1.5px] border-primary/40 rounded-2xl p-10 backdrop-blur-sm shadow-[0_0_30px_rgba(43,116,243,0.1)]">
-              <h2 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-none">
+              <h2 className="text-4xl sm:text-7xl font-black text-slate-200 tracking-tight leading-none">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Built</span> for Regulatory Rigor.
               </h2>
             </div>
@@ -365,8 +365,8 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                   <span className="material-symbols-outlined text-6xl">{principle.icon}</span>
                 </div>
                 <div className="space-y-6">
-                  <h4 className="text-3xl font-black text-white tracking-tight leading-none">{principle.title}</h4>
-                  <p className="text-lg text-slate-500 font-medium leading-relaxed italic">"{principle.desc}"</p>
+                  <h4 className="text-3xl font-black text-slate-300 tracking-tight leading-none">{principle.title}</h4>
+                  <p className="text-lg text-slate-3000 font-medium leading-relaxed italic">"{principle.desc}"</p>
                 </div>
               </div>
             ))}
@@ -382,7 +382,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none"></div>
 
             <div className="space-y-8 max-w-3xl relative z-10">
-              <h2 className="text-4xl sm:text-8xl font-black text-white tracking-tighter leading-none">
+              <h2 className="text-4xl sm:text-8xl font-black text-slate-200 tracking-tighter leading-none">
                 The Global <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Psychedelic Practitioner</span> <br />
                 Network.
@@ -395,10 +395,10 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-16 w-full max-w-4xl relative z-10 border-t border-slate-800/60 pt-20">
               {['Baltimore', 'London', 'Zurich', 'Palo Alto'].map(loc => (
                 <div key={loc} className="space-y-4 group cursor-default">
-                  <p className="text-3xl font-black text-white group-hover:text-primary transition-colors leading-none">{loc}</p>
+                  <p className="text-3xl font-black text-slate-300 group-hover:text-primary transition-colors leading-none">{loc}</p>
                   <div className="flex items-center justify-center gap-2.5">
                     <span className="size-2.5 rounded-full bg-clinical-green animate-pulse shadow-[0_0_12px_#53d22d]"></span>
-                    <span className="text-[11px] font-black text-slate-500 tracking-widest">Active Practitioner</span>
+                    <span className="text-[11px] font-black text-slate-3000 tracking-widest">Active Practitioner</span>
                   </div>
                 </div>
               ))}
@@ -415,10 +415,10 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               <span className="material-symbols-outlined text-lg">payments</span>
               Membership Framework
             </div>
-            <h2 className="text-4xl sm:text-8xl font-black text-white tracking-tighter leading-none">
+            <h2 className="text-4xl sm:text-8xl font-black text-slate-200 tracking-tighter leading-none">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Access</span> the Network.
             </h2>
-            <p className="max-w-2xl mx-auto text-slate-500 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
+            <p className="max-w-2xl mx-auto text-slate-3000 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
               Professional membership and subscription tiers for the PPN Research community.
             </p>
           </div>
@@ -430,7 +430,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               price="Free*"
               priceSub="*With validated data contribution"
               buttonText="Join the Guild"
-              buttonClass="bg-primary hover:bg-blue-600 text-white shadow-xl shadow-primary/20"
+              buttonClass="bg-primary hover:bg-blue-600 text-slate-300 shadow-xl shadow-primary/20"
               isPrimary
               tag="GIVE-TO-GET"
               onAction={scrollToLogin}
@@ -449,7 +449,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               price="Variable"
               priceSub="Per facility / per month"
               buttonText="Request Demo"
-              buttonClass="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
+              buttonClass="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
               onAction={() => navigate('/help')}
               features={[
                 'Clinic View Analytics',
@@ -464,7 +464,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               price="Custom"
               priceSub="Enterprise Licensing"
               buttonText="Contact Sales"
-              buttonClass="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
+              buttonClass="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
               onAction={() => navigate('/help')}
               features={[
                 'Aggregated Datasets',
@@ -482,8 +482,8 @@ const SecureGate: React.FC<SecureGateProps> = () => {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
         <PageContainer width="narrow" className="text-center space-y-16 relative z-10">
           <div className="space-y-6">
-            <h2 className="text-5xl sm:text-8xl font-black text-white tracking-tighter leading-none">Join the Cooperative.</h2>
-            <p className="text-slate-500 font-medium text-xl sm:text-3xl leading-relaxed max-w-3xl mx-auto opacity-80">
+            <h2 className="text-5xl sm:text-8xl font-black text-slate-200 tracking-tighter leading-none">Join the Cooperative.</h2>
+            <p className="text-slate-3000 font-medium text-xl sm:text-3xl leading-relaxed max-w-3xl mx-auto opacity-80">
               Qualified practitioners and research institutions are invited to apply for institutional access.
             </p>
           </div>
@@ -502,10 +502,10 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             </button>
           </div>
           <div className="flex items-center justify-center gap-10 pt-12 opacity-20 grayscale hover:opacity-50 transition-opacity">
-            <span className="text-[11px] font-black text-slate-500 tracking-[0.4em]">Compliance Matrix:</span>
-            <span className="text-2xl font-black text-white italic tracking-tighter">HIPAA</span>
-            <span className="text-2xl font-black text-white italic tracking-tighter">GDPR</span>
-            <span className="text-2xl font-black text-white italic tracking-tighter">GMP</span>
+            <span className="text-[11px] font-black text-slate-3000 tracking-[0.4em]">Compliance Matrix:</span>
+            <span className="text-2xl font-black text-slate-300 italic tracking-tighter">HIPAA</span>
+            <span className="text-2xl font-black text-slate-300 italic tracking-tighter">GDPR</span>
+            <span className="text-2xl font-black text-slate-300 italic tracking-tighter">GMP</span>
           </div>
         </PageContainer>
       </div>

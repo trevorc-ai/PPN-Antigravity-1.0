@@ -69,8 +69,8 @@ const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
 
         <div className="p-8 flex flex-col gap-4">
           <div className="min-w-0 space-y-1.5">
-            <h3 className="text-3xl font-black text-white tracking-tighter truncate group-hover:text-primary transition-colors">{sub.name}</h3>
-            <p className="text-[12px] text-slate-500 font-bold italic leading-relaxed line-clamp-2">
+            <h3 className="text-3xl font-black text-slate-200 tracking-tighter truncate group-hover:text-primary transition-colors">{sub.name}</h3>
+            <p className="text-[12px] text-slate-3000 font-bold italic leading-relaxed line-clamp-2">
               {sub.chemicalName}
             </p>
           </div>
@@ -89,7 +89,7 @@ const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
       <div className="px-8 pb-8">
         <button
           onClick={() => navigate(`/monograph/${sub.id}`)}
-          className="w-full py-4 bg-primary hover:bg-blue-600 text-white text-xs font-black rounded-xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 border-t border-white/10"
+          className="w-full py-4 bg-primary hover:bg-blue-600 text-slate-300 text-xs font-black rounded-xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 border-t border-white/10"
         >
           View Full Monograph
         </button>
@@ -116,15 +116,15 @@ const SubstanceCatalog: React.FC = () => {
         <PageContainer className="!max-w-7xl p-6 sm:p-10 lg:p-12 space-y-12">
           <Section spacing="default" className="space-y-10">
             <div className="space-y-8">
-              <h1 className="text-5xl font-black text-white tracking-tighter">Substances</h1>
+              <h1 className="text-5xl font-black text-slate-200 tracking-tighter">Substances</h1>
               <div className="flex flex-wrap gap-3">
                 {['Showing: All Classes', 'Clinical Stage Only', 'High Binding Affinity'].map(filter => (
                   <button
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
                     className={`px-8 py-3 rounded-full text-[11px] font-black uppercase tracking-widest transition-all border ${activeFilter === filter
-                      ? 'bg-primary border-primary text-white shadow-[0_0_20px_rgba(43,116,243,0.3)]'
-                      : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-white'
+                      ? 'bg-primary border-primary text-slate-300 shadow-[0_0_20px_rgba(43,116,243,0.3)]'
+                      : 'bg-slate-900 border-slate-800 text-slate-3000 hover:text-slate-200'
                       }`}
                   >
                     {filter.toUpperCase()}
@@ -146,11 +146,11 @@ const SubstanceCatalog: React.FC = () => {
         <div className="space-y-8">
           <div className="flex items-center gap-4">
             <span className="material-symbols-outlined text-accent-amber font-black text-3xl">analytics</span>
-            <h2 className="text-sm font-black text-white tracking-[0.25em] uppercase">Quick Insights</h2>
+            <h2 className="text-sm font-black text-slate-200 tracking-[0.25em] uppercase">Quick Insights</h2>
           </div>
 
           <div className="space-y-4">
-            <p className="text-[12px] font-black text-slate-500 uppercase tracking-widest">Global Research Trends (Publication Volume)</p>
+            <p className="text-[12px] font-black text-slate-3000 uppercase tracking-widest">Global Research Trends (Publication Volume)</p>
             <div className="h-48 w-full bg-[#0d1117] border border-slate-800/60 rounded-[2rem] p-6 shadow-inner relative overflow-hidden">
               <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '15px 15px' }}></div>
               <ResponsiveContainer width="100%" height="100%">
@@ -167,7 +167,7 @@ const SubstanceCatalog: React.FC = () => {
         </div>
 
         <div className="space-y-6">
-          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Substance Class: <span className="text-white">TRYPTAMINES</span></p>
+          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Substance Class: <span className="text-slate-300">TRYPTAMINES</span></p>
           <div className="space-y-3">
             <div className="flex justify-between text-[11px] font-black text-slate-600 uppercase tracking-[0.2em]">
               <span>Receptor Binding Density</span>
@@ -180,17 +180,17 @@ const SubstanceCatalog: React.FC = () => {
         <div className="grid grid-cols-2 gap-5">
           <div className="bg-[#0d1117] border border-slate-800/60 p-8 rounded-[2rem] shadow-xl space-y-2 relative overflow-hidden group">
             <div className="absolute -top-2 -right-2 opacity-5"><span className="material-symbols-outlined text-4xl">folder_open</span></div>
-            <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Total Studies</p>
+            <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Total Studies</p>
             <div className="flex items-end gap-2">
-              <span className="text-4xl font-black text-white tracking-tighter leading-none">1,242</span>
+              <span className="text-4xl font-black text-slate-300 tracking-tighter leading-none">1,242</span>
               <span className="text-[11px] font-black text-clinical-green mb-1">+12% YoY</span>
             </div>
           </div>
           <div className="bg-[#0d1117] border border-slate-800/60 p-8 rounded-[2rem] shadow-xl space-y-2 relative overflow-hidden group">
             <div className="absolute -top-2 -right-2 opacity-5"><span className="material-symbols-outlined text-4xl">trending_up</span></div>
-            <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Clinical ROI</p>
+            <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Clinical ROI</p>
             <div className="flex items-end gap-2">
-              <span className="text-4xl font-black text-white tracking-tighter leading-none">8.4x</span>
+              <span className="text-4xl font-black text-slate-300 tracking-tighter leading-none">8.4x</span>
               <span className="text-[11px] font-black text-accent-amber mb-1 tracking-widest">STABLE</span>
             </div>
           </div>
@@ -199,7 +199,7 @@ const SubstanceCatalog: React.FC = () => {
         <div className="space-y-6 pt-6 border-t border-slate-800/60">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-accent-amber font-black">health_and_safety</span>
-            <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">Drug Safety Matrix</h3>
+            <h3 className="text-[11px] font-black text-slate-200 uppercase tracking-[0.2em]">Drug Safety Matrix</h3>
           </div>
 
           <div className="space-y-5 bg-slate-900/40 p-6 rounded-[2rem] border border-slate-800/40 relative overflow-hidden group">
@@ -211,7 +211,7 @@ const SubstanceCatalog: React.FC = () => {
 
             <div className="space-y-4 relative z-10">
               <div className="space-y-2">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">Substance Compound</label>
+                <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest ml-1">Substance Compound</label>
                 <div className="relative">
                   <select
                     value={selectedMatrixSub}
@@ -225,12 +225,12 @@ const SubstanceCatalog: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">Secondary Medication</label>
+                <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest ml-1">Secondary Medication</label>
                 <div className="relative">
                   <select
                     value={secondaryMed}
                     onChange={(e) => setSecondaryMed(e.target.value)}
-                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-sm font-black text-white focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-all"
+                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-sm font-black text-slate-300 focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-all"
                   >
                     <option value="">Select Medication...</option>
                     {MEDICATIONS_LIST.map(med => (
@@ -263,9 +263,9 @@ const SubstanceCatalog: React.FC = () => {
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-10 transition-opacity"></div>
             <div className="flex items-center gap-3 mb-3 relative z-10">
               <span className="material-symbols-outlined text-indigo-400 text-2xl font-black">verified</span>
-              <span className="text-[11px] font-black text-white uppercase tracking-widest">Compliance Status: Active</span>
+              <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Compliance Status: Active</span>
             </div>
-            <p className="text-[11px] text-slate-500 font-medium leading-relaxed italic relative z-10">
+            <p className="text-[11px] text-slate-3000 font-medium leading-relaxed italic relative z-10">
               Institutional access verified. All data presented is for research purposes only.
             </p>
           </div>

@@ -87,7 +87,7 @@ export const DosageSlider: React.FC<DosageSliderProps> = ({
                         <span className="text-2xl text-[#94a3b8] ml-1">{unit}</span>
                     </div>
                     <div
-                        className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${currentZone.bgColor}`}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold text-slate-300 ${currentZone.bgColor}`}
                         style={{ backgroundColor: currentZone.color }}
                     >
                         {currentZone.label}

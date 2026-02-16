@@ -21,7 +21,7 @@ const PatientFlowPage: React.FC = () => {
                 <div className="border-b border-slate-800 pb-8">
                     <div className="flex items-center gap-4 mb-3">
                         <span className="material-symbols-outlined text-4xl text-primary">timeline</span>
-                        <h1 className="text-5xl font-black tracking-tighter text-white">Patient Flow</h1>
+                        <h1 className="text-5xl font-black tracking-tighter text-slate-200">Patient Flow</h1>
                     </div>
                     <p className="text-lg text-slate-400 font-medium">
                         Track patient progression through intake, consent, baseline, session, and follow-up stages

@@ -9,7 +9,10 @@ import { Tab2_Medications } from '../components/ProtocolBuilder/Tab2_Medications
 import { Tab3_ProtocolDetails } from '../components/ProtocolBuilder/Tab3_ProtocolDetails';
 import { ClinicalInsightsPanel } from '../components/ProtocolBuilder/ClinicalInsightsPanel';
 import { SubmissionSuccessScreen } from '../components/ProtocolBuilder/SubmissionSuccessScreen';
-import { ChevronLeft } from 'lucide-react';
+import { InteractionChecker } from '../components/clinical/InteractionChecker';
+import { ChevronLeft, Check, AlertCircle, Sparkles } from 'lucide-react';
+
+console.log('🎨 ProtocolBuilder REDESIGN v2.0 - Premium Glassmorphic UI');
 
 type WorkflowScreen = 'selection' | 'form' | 'success';
 
@@ -126,6 +129,19 @@ export const ProtocolBuilder = () => {
     );
   };
 
+  const getCompletedFieldsCount = (): number => {
+    let count = 0;
+    if (formData.patient_age) count++;
+    if (formData.patient_sex) count++;
+    if (formData.patient_weight_range) count++;
+    if (formData.indication_id) count++;
+    if (formData.substance_id) count++;
+    if (formData.dosage_mg) count++;
+    if (formData.route_id) count++;
+    if (formData.consent_verified) count++;
+    return count;
+  };
+
   const handleSubmit = async () => {
     if (!isFormComplete()) {
       alert('Please complete all required fields');
@@ -239,7 +255,23 @@ export const ProtocolBuilder = () => {
 
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-[#f8fafc]">Protocol Builder</h1>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              {/* Progress Indicator */}
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-xs text-[#94a3b8]">Completion</p>
+                  <p className="text-sm font-bold text-[#f8fafc]">
+                    {Math.round((getCompletedFieldsCount() / 8) * 100)}%
+                  </p>
+                </div>
+                <div className="w-24 h-2 bg-[#1e293b] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#14b8a6] to-[#10b981] transition-all duration-300"
+                    style={{ width: `${(getCompletedFieldsCount() / 8) * 100}%` }}
+                  />
+                </div>
+              </div>
+
               <span className="text-sm text-[#94a3b8]">
                 Subject ID: <span className="font-mono text-[#14b8a6]">{formData.subject_id}</span>
               </span>
@@ -253,60 +285,112 @@ export const ProtocolBuilder = () => {
         {/* Main Content: 70/30 Split */}
         <div className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-6">
           {/* Left Column: Form (70%) */}
-          <div>
-            <div className="bg-[#0f1218] border border-[#1e293b] rounded-xl p-6 space-y-8">
-              {/* Patient Information Section */}
-              <div>
-                <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Patient Information</h2>
-                <Tab1_PatientInfo
-                  formData={{
-                    patient_age: formData.patient_age,
-                    patient_sex: formData.patient_sex,
-                    patient_weight_range: formData.patient_weight_range,
-                    smoking_status: formData.smoking_status,
-                    prior_experience: formData.prior_experience,
-                  }}
-                  onChange={handleFormChange}
-                  isPreFilled={isPreFilled}
-                  preFillDate={preFillDate}
-                />
+          <div className="space-y-6">
+            {/* Section 1: Patient Information */}
+            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#14b8a6] to-[#0d9488] flex items-center justify-center shadow-lg shadow-[#14b8a6]/30">
+                  <span className="text-xl font-black text-slate-300">1</span>
+                </div>
+                <h2 className="text-3xl font-black bg-gradient-to-r from-[#f8fafc] to-[#cbd5e1] bg-clip-text text-transparent">
+                  Patient Information
+                </h2>
               </div>
+              <Tab1_PatientInfo
+                formData={{
+                  patient_age: formData.patient_age,
+                  patient_sex: formData.patient_sex,
+                  patient_weight_range: formData.patient_weight_range,
+                  smoking_status: formData.smoking_status,
+                  prior_experience: formData.prior_experience,
+                }}
+                onChange={handleFormChange}
+                isPreFilled={isPreFilled}
+                preFillDate={preFillDate}
+              />
+            </div>
 
-              {/* Medications Section */}
-              <div>
-                <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Concomitant Medications</h2>
-                <Tab2_Medications
-                  selectedMedications={formData.concomitant_medication_ids}
-                  onChange={(meds) => handleFormChange('concomitant_medication_ids', meds)}
-                />
+            {/* Section 2: Concomitant Medications */}
+            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#14b8a6] to-[#0d9488] flex items-center justify-center shadow-lg shadow-[#14b8a6]/30">
+                  <span className="text-xl font-black text-slate-300">2</span>
+                </div>
+                <h2 className="text-3xl font-black bg-gradient-to-r from-[#f8fafc] to-[#cbd5e1] bg-clip-text text-transparent">
+                  Concomitant Medications
+                </h2>
               </div>
+              <Tab2_Medications
+                selectedMedications={formData.concomitant_medication_ids}
+                onChange={(meds) => handleFormChange('concomitant_medication_ids', meds)}
+              />
+            </div>
 
-              {/* Protocol Details Section */}
-              <div>
-                <h2 className="text-xl font-semibold text-[#f8fafc] mb-4">Protocol Details</h2>
-                <Tab3_ProtocolDetails
-                  formData={{
-                    indication_id: formData.indication_id,
-                    substance_id: formData.substance_id,
-                    dosage_mg: formData.dosage_mg,
-                    dosage_unit: formData.dosage_unit,
-                    route_id: formData.route_id,
-                    session_number: formData.session_number,
-                    session_date: '', // Removed from UI
-                    consent_verified: formData.consent_verified,
-                  }}
-                  onChange={handleFormChange}
-                  patientWeight={formData.patient_weight_range}
-                />
+            {/* Section 3: Protocol Details */}
+            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#14b8a6] to-[#0d9488] flex items-center justify-center shadow-lg shadow-[#14b8a6]/30">
+                  <span className="text-xl font-black text-slate-300">3</span>
+                </div>
+                <h2 className="text-3xl font-black bg-gradient-to-r from-[#f8fafc] to-[#cbd5e1] bg-clip-text text-transparent">
+                  Protocol Details
+                </h2>
               </div>
+              <Tab3_ProtocolDetails
+                formData={{
+                  indication_id: formData.indication_id,
+                  substance_id: formData.substance_id,
+                  dosage_mg: formData.dosage_mg,
+                  dosage_unit: formData.dosage_unit,
+                  route_id: formData.route_id,
+                  session_number: formData.session_number,
+                  session_date: '', // Removed from UI
+                  consent_verified: formData.consent_verified,
+                }}
+                onChange={handleFormChange}
+                patientWeight={formData.patient_weight_range}
+              />
+            </div>
 
-              {/* Submit Button */}
-              <div className="flex justify-end pt-6 border-t border-[#1e293b]">
+            {/* Submit Section */}
+            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20">
+              <div className="flex flex-col items-end gap-4">
+                {/* Missing Fields Alert */}
+                {!isFormComplete() && (
+                  <div className="w-full bg-gradient-to-r from-[#ef4444]/10 to-[#dc2626]/10 border-2 border-[#ef4444]/30 rounded-xl px-6 py-4 flex items-start gap-4 mb-2">
+                    <AlertCircle className="w-6 h-6 text-[#ef4444] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-base font-bold text-[#ef4444] mb-2">
+                        Missing Required Fields
+                      </p>
+                      <ul className="text-sm text-[#fca5a5] space-y-1.5">
+                        {!formData.patient_age && <li>• Age Range</li>}
+                        {!formData.patient_sex && <li>• Biological Sex</li>}
+                        {!formData.patient_weight_range && <li>• Weight Range</li>}
+                        {!formData.indication_id && <li>• Primary Indication</li>}
+                        {!formData.substance_id && <li>• Substance</li>}
+                        {!formData.dosage_mg && <li>• Dosage</li>}
+                        {!formData.route_id && <li>• Administration Route</li>}
+                        {!formData.consent_verified && <li>• Consent Verification</li>}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Button */}
                 <button
                   onClick={handleSubmit}
                   disabled={!isFormComplete()}
-                  className="px-8 py-3 bg-[#14b8a6] hover:bg-[#0d9488] text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`
+                    px-10 py-5 rounded-xl font-black text-lg
+                    flex items-center gap-3 transition-all duration-300
+                    ${isFormComplete()
+                      ? 'bg-gradient-to-r from-[#14b8a6] to-[#0d9488] hover:from-[#0d9488] hover:to-[#0a7a6a] text-slate-300 shadow-2xl shadow-[#14b8a6]/40 hover:shadow-[#14b8a6]/60 hover:scale-105 border-2 border-[#14b8a6]/50'
+                      : 'bg-[#1e293b] text-[#64748b] cursor-not-allowed border-2 border-[#1e293b]'
+                    }
+                  `}
                 >
+                  <Check className="w-6 h-6" />
                   Submit to Registry
                 </button>
               </div>
@@ -316,16 +400,30 @@ export const ProtocolBuilder = () => {
           {/* Right Column: Clinical Insights (30%) */}
           <div>
             <div className="sticky top-6">
-              <ClinicalInsightsPanel
-                isVisible={showClinicalInsights}
-                substanceId={formData.substance_id}
-                medicationIds={formData.concomitant_medication_ids}
-                indicationId={formData.indication_id}
-                patientAge={formData.patient_age}
-                patientSex={formData.patient_sex}
-                patientWeight={formData.patient_weight_range}
-                dosageMg={formData.dosage_mg}
-              />
+              {showClinicalInsights ? (
+                <ClinicalInsightsPanel
+                  isVisible={showClinicalInsights}
+                  substanceId={formData.substance_id}
+                  medicationIds={formData.concomitant_medication_ids}
+                  indicationId={formData.indication_id}
+                  patientAge={formData.patient_age}
+                  patientSex={formData.patient_sex}
+                  patientWeight={formData.patient_weight_range}
+                  dosageMg={formData.dosage_mg}
+                />
+              ) : (
+                <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 text-center shadow-2xl shadow-black/20">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#14b8a6]/20 to-[#0d9488]/20 border-2 border-[#14b8a6]/30 flex items-center justify-center">
+                    <Sparkles className="w-10 h-10 text-[#14b8a6]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#f8fafc] mb-3">
+                    Clinical Insights
+                  </h3>
+                  <p className="text-sm text-[#94a3b8] leading-relaxed">
+                    Fill in patient details to see personalized safety insights
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

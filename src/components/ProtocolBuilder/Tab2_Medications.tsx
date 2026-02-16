@@ -82,12 +82,12 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
                                 key={med.medication_id}
                                 className="bg-[#14b8a6] border border-[#0d9488] rounded-full px-4 py-2 flex items-center gap-2"
                             >
-                                <span className="text-sm text-white font-medium">
+                                <span className="text-sm text-slate-300 font-medium">
                                     {med.medication_name}
                                 </span>
                                 <button
                                     onClick={() => toggleMedication(med.medication_id)}
-                                    className="text-white hover:text-[#f8fafc] transition-colors"
+                                    className="text-slate-300 hover:text-[#f8fafc] transition-colors"
                                     aria-label={`Remove ${med.medication_name}`}
                                 >
                                     <X className="w-4 h-4" />
@@ -113,14 +113,14 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
                                 className={`
                                     relative px-4 py-3 rounded-lg font-medium text-sm transition-all
                                     ${isSelected
-                                        ? 'bg-[#14b8a6] text-white border-2 border-[#0d9488] shadow-lg shadow-[#14b8a6]/20'
+                                        ? 'bg-[#14b8a6] text-slate-300 border-2 border-[#0d9488] shadow-lg shadow-[#14b8a6]/20'
                                         : 'bg-[#374151] text-slate-300 border border-[#4b5563] hover:bg-[#4b5563] hover:scale-105'
                                     }
                                 `}
                                 aria-pressed={isSelected}
                             >
                                 {isSelected && (
-                                    <Check className="absolute top-2 right-2 w-4 h-4 text-white" />
+                                    <Check className="absolute top-2 right-2 w-4 h-4 text-slate-300" />
                                 )}
                                 <div className="font-semibold">{med.medication_name}</div>
                                 {med.brand_name && (
@@ -174,14 +174,14 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
                                                     className={`
                                                         relative px-3 py-2 rounded text-left text-sm transition-all
                                                         ${isSelected
-                                                            ? 'bg-[#14b8a6] text-white'
+                                                            ? 'bg-[#14b8a6] text-slate-300'
                                                             : 'bg-[#374151] text-slate-300 hover:bg-[#4b5563]'
                                                         }
                                                     `}
                                                     aria-pressed={isSelected}
                                                 >
                                                     {isSelected && (
-                                                        <Check className="absolute top-2 right-2 w-3 h-3 text-white" />
+                                                        <Check className="absolute top-2 right-2 w-3 h-3 text-slate-300" />
                                                     )}
                                                     <div className="font-medium">{med.medication_name}</div>
                                                     {med.brand_name && (

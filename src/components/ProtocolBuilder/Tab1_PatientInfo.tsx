@@ -1,4 +1,5 @@
 import React from 'react';
+import { Check } from 'lucide-react';
 
 interface ButtonGroupOption {
     value: string;
@@ -14,23 +15,49 @@ interface ButtonGroupProps {
 }
 
 const ButtonGroup: React.FC<ButtonGroupProps> = ({ label, options, value, onChange, required }) => {
+    const handleKeyDown = (e: React.KeyboardEvent, optionValue: string) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onChange(optionValue);
+        }
+    };
+
+    const isIncomplete = required && !value;
+
     return (
         <div className="mb-6">
-            <label className="block text-sm font-medium text-[#f8fafc] mb-3">
-                {label} {required && <span className="text-[#ef4444]">*</span>}
+            <label className="block text-sm font-medium text-[#f8fafc] mb-3 flex items-center gap-2">
+                {label}
+                {required && (
+                    <span className={`text-[#ef4444] ${isIncomplete ? 'animate-pulse' : ''}`}>
+                        *
+                    </span>
+                )}
+                {value && (
+                    <span className="text-[#10b981] text-xs flex items-center gap-1 font-semibold">
+                        <Check className="w-3.5 h-3.5" /> Complete
+                    </span>
+                )}
             </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            <div className={`
+                grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 
+                p-3 rounded-lg transition-all duration-300
+                ${isIncomplete ? 'bg-[#ef4444]/5 border border-[#ef4444]/20' : 'bg-transparent border border-transparent'}
+            `}>
                 {options.map((option) => (
                     <button
                         key={option.value}
                         onClick={() => onChange(option.value)}
+                        onKeyDown={(e) => handleKeyDown(e, option.value)}
                         className={`
-              px-4 py-3 rounded-lg font-medium transition-all text-sm
+              px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm
+              focus:outline-none focus:ring-2 focus:ring-[#14b8a6] focus:ring-offset-2 focus:ring-offset-[#020408]
               ${value === option.value
-                                ? 'bg-[#14b8a6] text-white border-2 border-[#14b8a6]'
-                                : 'bg-[#020408] text-[#94a3b8] border-2 border-[#1e293b] hover:border-[#14b8a6]/50'
+                                ? 'bg-[#14b8a6] text-slate-300 border-2 border-[#14b8a6] shadow-lg shadow-[#14b8a6]/20 scale-105'
+                                : 'bg-[#020408] text-[#94a3b8] border-2 border-[#1e293b] hover:border-[#14b8a6]/50 hover:scale-105'
                             }
             `}
+                        aria-pressed={value === option.value}
                     >
                         {option.label}
                     </button>

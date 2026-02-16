@@ -46,12 +46,12 @@ const UpdateCredentialsModal: React.FC<{
         <div className="p-8 sm:p-10 space-y-8">
           <div className="flex items-center justify-between border-b border-slate-800 pb-6">
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tighter">Credential Registry</h2>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-300 tracking-tighter">Credential Registry</h2>
               <p className="text-[11px] font-black text-primary uppercase tracking-[0.3em]">Update regulatory identifiers</p>
             </div>
             <button
               onClick={onClose}
-              className="size-10 sm:size-12 flex items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 text-slate-500 hover:text-white hover:bg-slate-800 transition-all"
+              className="size-10 sm:size-12 flex items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 text-slate-3000 hover:text-slate-200 hover:bg-slate-800 transition-all"
             >
               <span className="material-symbols-outlined">close</span>
             </button>
@@ -68,16 +68,16 @@ const UpdateCredentialsModal: React.FC<{
                 </button>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">Title</label>
+                    <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest ml-1">Title</label>
                     <input
                       type="text"
                       value={cred.title}
                       onChange={(e) => handleChange(i, 'title', e.target.value)}
-                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-[11px] font-bold text-white focus:ring-1 focus:ring-primary"
+                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-[11px] font-bold text-slate-300 focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">ID / Number</label>
+                    <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest ml-1">ID / Number</label>
                     <input
                       type="text"
                       value={cred.id}
@@ -86,16 +86,16 @@ const UpdateCredentialsModal: React.FC<{
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">Expiration</label>
+                    <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest ml-1">Expiration</label>
                     <input
                       type="text"
                       value={cred.date}
                       onChange={(e) => handleChange(i, 'date', e.target.value)}
-                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-[11px] font-bold text-white focus:ring-1 focus:ring-primary"
+                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-[11px] font-bold text-slate-300 focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">Material Icon</label>
+                    <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest ml-1">Material Icon</label>
                     <input
                       type="text"
                       value={cred.icon}
@@ -111,14 +111,14 @@ const UpdateCredentialsModal: React.FC<{
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               onClick={handleAdd}
-              className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-black rounded-2xl uppercase tracking-widest transition-all border border-slate-800 flex items-center justify-center gap-2"
+              className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-slate-300 text-[11px] font-black rounded-2xl uppercase tracking-widest transition-all border border-slate-800 flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined text-lg">add_circle</span>
               Add Credential
             </button>
             <button
               onClick={() => onSave(localCreds)}
-              className="flex-1 py-4 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-2xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20"
+              className="flex-1 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-[11px] font-black rounded-2xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20"
             >
               Commit Changes
             </button>
@@ -153,7 +153,7 @@ const ClinicianProfile: React.FC = () => {
 
   if (!clinician) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-8 bg-[#0e1117] text-slate-500">
+      <div className="h-full flex flex-col items-center justify-center p-8 bg-[#0e1117] text-slate-3000">
         <span className="material-symbols-outlined text-6xl mb-4 opacity-20">person_off</span>
         <h2 className="text-xl font-black tracking-tight uppercase">Practitioner Not Found</h2>
         <button onClick={() => navigate('/clinicians')} className="mt-6 text-primary font-bold hover:underline">Return to Directory</button>
@@ -179,13 +179,13 @@ const ClinicianProfile: React.FC = () => {
         {/* Header HUD */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
           <div className="space-y-2">
-            <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-none">Practitioner Profile</h1>
-            <p className="text-slate-500 font-medium text-sm sm:text-lg">Manage professional identity, credentials, and research output.</p>
+            <h1 className="text-4xl sm:text-6xl font-black text-slate-200 tracking-tighter leading-none">Practitioner Profile</h1>
+            <p className="text-slate-3000 font-medium text-sm sm:text-lg">Manage professional identity, credentials, and research output.</p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/profile/edit')}
-              className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-blue-600 border border-primary/30 rounded-2xl text-[11px] font-black text-white uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
+              className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-blue-600 border border-primary/30 rounded-2xl text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
             >
               <span className="material-symbols-outlined text-lg">edit</span>
               Edit Profile
@@ -212,8 +212,8 @@ const ClinicianProfile: React.FC = () => {
                   <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">Network Trust Score</h3>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-white">{reputation.score}</span>
-                  <span className="text-sm font-bold text-slate-500">/ 100</span>
+                  <span className="text-4xl font-black text-slate-300">{reputation.score}</span>
+                  <span className="text-sm font-bold text-slate-3000">/ 100</span>
                 </div>
                 <div className="w-full h-1.5 bg-slate-800 rounded-full mt-4 overflow-hidden">
                   <div className="h-full bg-emerald-500 w-[98%] shadow-[0_0_10px_#10b981]"></div>
@@ -235,8 +235,8 @@ const ClinicianProfile: React.FC = () => {
                   <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-widest">Data Protocols Shared</h3>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-white">{reputation.contributions}</span>
-                  <span className="text-sm font-bold text-slate-500">Records</span>
+                  <span className="text-4xl font-black text-slate-300">{reputation.contributions}</span>
+                  <span className="text-sm font-bold text-slate-3000">Records</span>
                 </div>
                 <div className="flex items-center gap-2 mt-4">
                   <span className="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-[11px] font-bold text-indigo-300 uppercase">
@@ -260,8 +260,8 @@ const ClinicianProfile: React.FC = () => {
                   <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Community Impact</h3>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-white">{reputation.impact}</span>
-                  <span className="text-sm font-bold text-slate-500">Rank</span>
+                  <span className="text-4xl font-black text-slate-300">{reputation.impact}</span>
+                  <span className="text-sm font-bold text-slate-3000">Rank</span>
                 </div>
                 <p className="text-[11px] text-slate-400 mt-4 leading-relaxed">
                   Protocols authored by this node are frequently cited in global safety reviews.
@@ -278,18 +278,18 @@ const ClinicianProfile: React.FC = () => {
 
               <div className="relative">
                 <div className="size-40 sm:size-48 rounded-[2.5rem] bg-cover bg-center border-4 border-slate-800 shadow-2xl transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url(${clinician.imageUrl})` }}></div>
-                <div className="absolute -bottom-2 -right-2 size-10 rounded-2xl bg-clinical-green flex items-center justify-center text-white shadow-lg ring-4 ring-[#111827]">
+                <div className="absolute -bottom-2 -right-2 size-10 rounded-2xl bg-clinical-green flex items-center justify-center text-slate-300 shadow-lg ring-4 ring-[#111827]">
                   <span className="material-symbols-outlined text-2xl font-black">check</span>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <h2 className="text-3xl font-black text-white tracking-tight leading-none">{clinician.name}</h2>
-                <p className="text-sm font-bold text-slate-500 italic">{clinician.education} — {clinician.role}</p>
+                <h2 className="text-3xl font-black text-slate-200 tracking-tight leading-none">{clinician.name}</h2>
+                <p className="text-sm font-bold text-slate-3000 italic">{clinician.education} — {clinician.role}</p>
                 <div className="pt-2">
                   <span className={`px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest border transition-colors ${clinician.status === 'Available' ? 'bg-clinical-green/10 text-clinical-green border-clinical-green/20' :
                     clinician.status === 'In Session' ? 'bg-accent-amber/10 text-accent-amber border-accent-amber/20' :
-                      'bg-slate-800 text-slate-500 border-slate-700'
+                      'bg-slate-800 text-slate-3000 border-slate-700'
                     }`}>
                     {clinician.status}
                   </span>
@@ -319,7 +319,7 @@ const ClinicianProfile: React.FC = () => {
 
               <div className="w-full space-y-6 text-left">
                 <div className="flex items-center gap-4">
-                  <div className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
+                  <div className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-3000">
                     <span className="material-symbols-outlined text-lg">badge</span>
                   </div>
                   <div className="flex flex-col">
@@ -329,7 +329,7 @@ const ClinicianProfile: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
+                  <div className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-3000">
                     <span className="material-symbols-outlined text-lg">mail</span>
                   </div>
                   <div className="flex flex-col">
@@ -339,7 +339,7 @@ const ClinicianProfile: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
+                  <div className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-3000">
                     <span className="material-symbols-outlined text-lg">location_on</span>
                   </div>
                   <div className="flex flex-col">
@@ -351,7 +351,7 @@ const ClinicianProfile: React.FC = () => {
 
               <div className="w-full pt-4 space-y-3">
                 <div className="flex justify-between items-center text-[11px] font-black uppercase tracking-widest">
-                  <span className="text-slate-500">Profile Completeness</span>
+                  <span className="text-slate-3000">Profile Completeness</span>
                   <span className="text-primary">85%</span>
                 </div>
                 <div className="w-full h-2 bg-slate-800/60 rounded-full overflow-hidden">
@@ -366,7 +366,7 @@ const ClinicianProfile: React.FC = () => {
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-primary text-2xl">verified_user</span>
-                    <h3 className="text-xl font-black text-white tracking-tight">Credentials</h3>
+                    <h3 className="text-xl font-black text-slate-200 tracking-tight">Credentials</h3>
                   </div>
                   <span className="px-3 py-1 bg-clinical-green/10 text-clinical-green border border-clinical-green/20 rounded-lg text-[11px] font-black uppercase tracking-widest">All Active</span>
                 </div>
@@ -375,19 +375,19 @@ const ClinicianProfile: React.FC = () => {
                   {credentials.map((cred, i) => (
                     <div key={i} className="group flex items-center justify-between p-5 bg-slate-950/60 border border-slate-800 hover:border-slate-700 rounded-2xl transition-all cursor-pointer">
                       <div className="flex items-center gap-5">
-                        <div className="size-12 rounded-xl bg-slate-900 flex items-center justify-center text-primary border border-slate-800 group-hover:bg-primary group-hover:text-white transition-all">
+                        <div className="size-12 rounded-xl bg-slate-900 flex items-center justify-center text-primary border border-slate-800 group-hover:bg-primary group-hover:text-slate-200 transition-all">
                           <span className="material-symbols-outlined text-xl">{cred.icon}</span>
                         </div>
                         <div className="flex flex-col">
-                          <h4 className="text-sm font-black text-white leading-tight mb-1">{cred.title}</h4>
-                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{cred.id}</span>
+                          <h4 className="text-sm font-black text-slate-300 leading-tight mb-1">{cred.title}</h4>
+                          <span className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest">{cred.id}</span>
                           <div className="flex items-center gap-2 mt-2">
                             <span className="text-[11px] font-black text-slate-700 uppercase tracking-tighter">Valid Until</span>
                             <span className="text-[11px] font-mono font-black text-slate-300 bg-slate-800 px-2 py-0.5 rounded">{cred.date}</span>
                           </div>
                         </div>
                       </div>
-                      <button className="material-symbols-outlined text-slate-700 hover:text-white transition-colors">visibility</button>
+                      <button className="material-symbols-outlined text-slate-700 hover:text-slate-200 transition-colors">visibility</button>
                     </div>
                   ))}
                   {credentials.length === 0 && (
@@ -400,7 +400,7 @@ const ClinicianProfile: React.FC = () => {
                 <div className="mt-auto pt-10">
                   <button
                     onClick={() => setIsUpdateModalOpen(true)}
-                    className="w-full py-5 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-[1.5rem] uppercase tracking-[0.25em] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group active:scale-95"
+                    className="w-full py-5 bg-primary hover:bg-blue-600 text-slate-300 text-[11px] font-black rounded-[1.5rem] uppercase tracking-[0.25em] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group active:scale-95"
                   >
                     <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">edit_note</span>
                     Update credentials
@@ -414,12 +414,12 @@ const ClinicianProfile: React.FC = () => {
               <div className="bg-[#111827]/40 border border-slate-800 rounded-[3rem] p-10 h-full backdrop-blur-xl shadow-2xl flex flex-col">
                 <div className="flex items-center gap-3 mb-8">
                   <span className="material-symbols-outlined text-primary text-2xl">biotech</span>
-                  <h3 className="text-xl font-black text-white tracking-tight">Research Output</h3>
+                  <h3 className="text-xl font-black text-slate-200 tracking-tight">Research Output</h3>
                 </div>
 
                 <div className="space-y-8">
                   <div className="space-y-3">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Focus Areas</label>
+                    <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Focus Areas</label>
                     <div className="flex flex-wrap gap-2">
                       {clinician.tags.map(tag => (
                         <span key={tag} className="px-3 py-1 bg-slate-900 text-slate-300 border border-slate-800 rounded-full text-[11px] font-black uppercase tracking-widest hover:border-primary/50 cursor-default transition-all">
@@ -438,7 +438,7 @@ const ClinicianProfile: React.FC = () => {
 
                   <div className="space-y-5">
                     <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Recent Publications</label>
+                      <label className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Recent Publications</label>
                       <button className="text-[11px] font-black text-primary uppercase tracking-widest hover:underline">View All</button>
                     </div>
 
@@ -449,7 +449,7 @@ const ClinicianProfile: React.FC = () => {
                             <span className="material-symbols-outlined text-lg">article</span>
                           </div>
                           <div className="min-w-0">
-                            <h5 className="text-[12px] font-black text-slate-200 leading-tight group-hover:text-white transition-colors line-clamp-2">{pub.title}</h5>
+                            <h5 className="text-[12px] font-black text-slate-200 leading-tight group-hover:text-slate-200 transition-colors line-clamp-2">{pub.title}</h5>
                             <p className="text-[11px] font-bold text-slate-600 mt-1 uppercase tracking-widest truncate">{pub.source} • {pub.year}</p>
                           </div>
                         </div>

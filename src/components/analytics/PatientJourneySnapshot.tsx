@@ -34,20 +34,20 @@ const CustomTooltip = ({ active, payload }: any) => {
         </div>
 
         <div className="space-y-1">
-          <p className="text-xs font-bold text-white leading-tight">{data.label}</p>
+          <p className="text-xs font-bold text-slate-300 leading-tight">{data.label}</p>
           {data.score !== null ? (
             <div className="flex justify-between gap-4 mt-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Score:</span>
+              <span className="text-[10px] text-slate-3000 font-bold uppercase tracking-wide">Score:</span>
               <span className="text-[10px] text-primary font-mono font-black">{data.score} / 27</span>
             </div>
           ) : (
             <div className="flex justify-between gap-4 mt-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Value:</span>
+              <span className="text-[10px] text-slate-3000 font-bold uppercase tracking-wide">Value:</span>
               <span className="text-[10px] text-slate-300 font-mono font-bold">{data.value}</span>
             </div>
           )}
           {data.details && (
-            <p className="text-[10px] text-slate-500 italic mt-2 border-t border-slate-800 pt-2 leading-relaxed max-w-[200px]">
+            <p className="text-[10px] text-slate-3000 italic mt-2 border-t border-slate-800 pt-2 leading-relaxed max-w-[200px]">
               "{data.details}"
             </p>
           )}
@@ -140,9 +140,9 @@ const PatientJourneySnapshot: React.FC = () => {
             <div className="size-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
               <FileText size={18} />
             </div>
-            <h3 className="text-lg font-black text-white tracking-tight">Clinical Journey</h3>
+            <h3 className="text-lg font-black text-slate-200 tracking-tight">Clinical Journey</h3>
           </div>
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Intervention Timeline & Outcome (PHQ-9)</p>
+          <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Intervention Timeline & Outcome (PHQ-9)</p>
         </div>
 
         <div className="group/info relative">
@@ -208,19 +208,19 @@ const PatientJourneySnapshot: React.FC = () => {
       <div className="mt-2 pt-4 border-t border-slate-800 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-cyan-500"></div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Dosing</span>
+          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Dosing</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-indigo-500"></div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Integration</span>
+          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Integration</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-amber-500"></div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Safety Check</span>
+          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Safety Check</span>
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <div className="w-4 h-0.5 bg-blue-500"></div>
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Symptom Score</span>
+          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Symptom Score</span>
         </div>
       </div>
 

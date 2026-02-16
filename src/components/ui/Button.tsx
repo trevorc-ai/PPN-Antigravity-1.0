@@ -59,11 +59,11 @@ export const Button: React.FC<ButtonProps> = ({
 
     // Variant styles
     const variantStyles: Record<ButtonVariant, string> = {
-        primary: 'bg-primary hover:bg-blue-600 text-white shadow-lg shadow-primary/20 focus:ring-primary',
-        secondary: 'bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-200 hover:text-white hover:bg-slate-800 focus:ring-slate-700',
+        primary: 'bg-primary hover:bg-blue-600 text-slate-300 shadow-lg shadow-primary/20 focus:ring-primary',
+        secondary: 'bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-200 hover:text-slate-200 hover:bg-slate-800 focus:ring-slate-700',
         danger: 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 focus:ring-red-500',
-        ghost: 'bg-transparent text-slate-400 hover:text-white hover:bg-slate-800/50 focus:ring-slate-700',
-        outline: 'bg-transparent border-2 border-slate-700 text-slate-300 hover:border-primary hover:text-white focus:ring-slate-700'
+        ghost: 'bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 focus:ring-slate-700',
+        outline: 'bg-transparent border-2 border-slate-700 text-slate-300 hover:border-primary hover:text-slate-200 focus:ring-slate-700'
     };
 
     // Size styles

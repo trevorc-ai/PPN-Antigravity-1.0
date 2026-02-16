@@ -8,7 +8,6 @@ import SubstanceCatalog from './pages/SubstanceCatalog';
 import SubstanceMonograph from './pages/SubstanceMonograph';
 import InteractionChecker from './pages/InteractionChecker';
 import AuditLogs from './pages/AuditLogs';
-import ProtocolBuilder from './pages/ProtocolBuilder';
 import { MyProtocols } from './pages/MyProtocols';
 import ProtocolDetail from './pages/ProtocolDetail';
 import ClinicianDirectory from './pages/ClinicianDirectory';
@@ -35,12 +34,21 @@ import Landing from './pages/Landing';
 import PhysicsDemo from './pages/PhysicsDemo';
 import HiddenComponentsShowcase from './pages/HiddenComponentsShowcase';
 import ComponentShowcase from './pages/ComponentShowcase';
+import MolecularVisualizationDemo from './pages/MolecularVisualizationDemo';
+import IsometricMoleculesDemo from './pages/IsometricMoleculesDemo';
+import MoleculeTest from './pages/MoleculeTest';
+import ArcOfCareDemo from './pages/ArcOfCareDemo';
+import ArcOfCarePhase2Demo from './pages/ArcOfCarePhase2Demo';
+import ArcOfCarePhase3Demo from './pages/ArcOfCarePhase3Demo';
+import ArcOfCareDashboard from './pages/ArcOfCareDashboard';
+import ArcOfCareGodView from './pages/ArcOfCareGodView';
+import MEQ30Page from './pages/MEQ30Page';
+import AdaptiveAssessmentPage from './pages/AdaptiveAssessmentPage';
 import Checkout from './pages/Checkout';
 import BillingPortal from './pages/BillingPortal';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
-import RegulatoryMapPage from './pages/deep-dives/RegulatoryMapPage';
 import ClinicPerformancePage from './pages/deep-dives/ClinicPerformancePage';
 import PatientConstellationPage from './pages/deep-dives/PatientConstellationPage';
 import MolecularPharmacologyPage from './pages/deep-dives/MolecularPharmacologyPage';
@@ -114,7 +122,7 @@ const ProtectedLayout: React.FC<{
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background-dark text-slate-100 selection:bg-primary/30 selection:text-white">
+    <div className="flex h-screen overflow-hidden bg-background-dark text-slate-300 selection:bg-primary/30 selection:text-slate-300">
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -177,6 +185,16 @@ const AppContent: React.FC = () => {
         <Route path="/vibe-check" element={<PhysicsDemo />} />
         <Route path="/hidden-components" element={<HiddenComponentsShowcase />} />
         <Route path="/component-showcase" element={<ComponentShowcase />} />
+        <Route path="/molecules" element={<MolecularVisualizationDemo />} />
+        <Route path="/isometric-molecules" element={<IsometricMoleculesDemo />} />
+        <Route path="/molecule-test" element={<MoleculeTest />} />
+        <Route path="/arc-of-care" element={<ArcOfCareDemo />} />
+        <Route path="/arc-of-care-phase2" element={<ArcOfCarePhase2Demo />} />
+        <Route path="/arc-of-care-phase3" element={<ArcOfCarePhase3Demo />} />
+        <Route path="/arc-of-care-dashboard" element={<ArcOfCareDashboard />} />
+        <Route path="/arc-of-care-god-view" element={<ArcOfCareGodView />} /> {/* Legacy route */}
+        <Route path="/meq30" element={<MEQ30Page />} />
+        <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -206,9 +224,11 @@ const AppContent: React.FC = () => {
           <Route path="/audit" element={<AuditLogs />} />
           <Route path="/audit" element={<AuditLogs />} />
 
+          {/* WELLNESS JOURNEY */}
+          <Route path="/wellness-journey" element={<ArcOfCareGodView />} />
+
           {/* PROTOCOL BUILDER */}
           <Route path="/protocols" element={<MyProtocols />} />
-          <Route path="/protocol-builder" element={<ProtocolBuilder />} />
           <Route path="/protocol/:id" element={<ProtocolDetail />} />
           <Route path="/clinicians" element={<ClinicianDirectory />} />
           <Route path="/clinician/:id" element={<ClinicianProfile />} />
@@ -220,7 +240,6 @@ const AppContent: React.FC = () => {
 
           {/* Deep Dives */}
           <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
-          <Route path="/deep-dives/regulatory-map" element={<RegulatoryMapPage />} />
           <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
           <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
           <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacologyPage />} />
@@ -229,10 +248,10 @@ const AppContent: React.FC = () => {
           <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
 
           <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Logout</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out of Node</button></div>} />
-        </Route>
 
-        {/* Global Catch-all Redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch-all for undefined protected routes */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Route>
       </Routes>
     </Router>
   );

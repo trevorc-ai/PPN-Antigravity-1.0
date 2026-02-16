@@ -149,7 +149,7 @@ const DataExport: React.FC = () => {
                 <Section spacing="tight" className="border-b border-slate-800 pb-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
-                            <h1 className="text-4xl font-black text-white tracking-tight">Data Export Manager</h1>
+                            <h1 className="text-4xl font-black text-slate-200 tracking-tight">Data Export Manager</h1>
                             <p className="text-slate-400 text-lg mt-2">
                                 Generate de-identified research datasets for outcomes benchmarking and risk surveillance.
                             </p>
@@ -184,13 +184,13 @@ const DataExport: React.FC = () => {
                             <div className="card-glass rounded-3xl p-8">
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className="material-symbols-outlined text-3xl text-primary">download</span>
-                                    <h2 className="text-xl font-black text-white">New Export</h2>
+                                    <h2 className="text-xl font-black text-slate-200">New Export</h2>
                                 </div>
 
                                 <div className="space-y-6">
                                     {/* Date Range */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-xs font-black text-slate-3000 uppercase tracking-widest mb-2 block">
                                             Date Range
                                         </label>
                                         <div className="grid grid-cols-2 gap-3">
@@ -209,13 +209,13 @@ const DataExport: React.FC = () => {
 
                                     {/* Substance Protocol */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-xs font-black text-slate-3000 uppercase tracking-widest mb-2 block">
                                             Substance Protocol
                                         </label>
                                         <select
                                             value={config.substanceId}
                                             onChange={(e) => setConfig({ ...config, substanceId: e.target.value })}
-                                            className="w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-white focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
+                                            className="w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
                                         >
                                             <option value="all">All Protocols</option>
                                             <option value="psilocybin">Psilocybin</option>
@@ -227,7 +227,7 @@ const DataExport: React.FC = () => {
 
                                     {/* Clinical Indication */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-xs font-black text-slate-3000 uppercase tracking-widest mb-2 block">
                                             Clinical Indication
                                         </label>
                                         <div className="flex flex-wrap gap-2">
@@ -236,7 +236,7 @@ const DataExport: React.FC = () => {
                                                     key={indication}
                                                     onClick={() => handleIndicationToggle(indication)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${config.indications.includes(indication)
-                                                        ? 'bg-primary text-white border border-primary'
+                                                        ? 'bg-primary text-slate-300 border border-primary'
                                                         : 'bg-slate-900 text-slate-400 border border-slate-800 hover:border-slate-700'
                                                         }`}
                                                 >
@@ -248,7 +248,7 @@ const DataExport: React.FC = () => {
 
                                     {/* Output Format */}
                                     <div>
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 block">
+                                        <label className="text-xs font-black text-slate-3000 uppercase tracking-widest mb-2 block">
                                             Output Format
                                         </label>
                                         <div className="grid grid-cols-3 gap-3">
@@ -272,7 +272,7 @@ const DataExport: React.FC = () => {
                                     <button
                                         onClick={handleGenerateExport}
                                         disabled={isGenerating}
-                                        className="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-600 text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                        className="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-300 py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                                     >
                                         {isGenerating ? (
                                             <>
@@ -305,7 +305,7 @@ const DataExport: React.FC = () => {
 
                                     {/* PII Warning */}
                                     <div className="pt-4 border-t border-slate-800">
-                                        <div className="flex items-start gap-2 text-xs text-slate-500">
+                                        <div className="flex items-start gap-2 text-xs text-slate-3000">
                                             <AlertCircle size={14} className="mt-0.5 shrink-0" />
                                             <p>
                                                 <span className="font-bold text-red-400">PII Warning:</span> All exports are logged.
@@ -323,14 +323,14 @@ const DataExport: React.FC = () => {
                         <Section spacing="default">
                             <div className="card-glass rounded-3xl p-8">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-xl font-black text-white">Recent Exports</h2>
+                                    <h2 className="text-xl font-black text-slate-200">Recent Exports</h2>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             placeholder="Search by file ID..."
-                                            className="bg-[#0a0c10] border border-slate-800 rounded-lg px-4 py-2 pl-10 text-sm font-medium text-white focus:outline-none focus:border-primary transition-colors w-64"
+                                            className="bg-[#0a0c10] border border-slate-800 rounded-lg px-4 py-2 pl-10 text-sm font-medium text-slate-300 focus:outline-none focus:border-primary transition-colors w-64"
                                         />
-                                        <span className="material-symbols-outlined absolute left-3 top-2 text-slate-500 text-lg">search</span>
+                                        <span className="material-symbols-outlined absolute left-3 top-2 text-slate-3000 text-lg">search</span>
                                     </div>
                                 </div>
 
@@ -339,11 +339,11 @@ const DataExport: React.FC = () => {
                                     <table className="w-full">
                                         <thead>
                                             <tr className="border-b border-slate-800">
-                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">File Name</th>
-                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Filters</th>
-                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Generated</th>
-                                                <th className="text-center py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Count</th>
-                                                <th className="text-center py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Actions</th>
+                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">File Name</th>
+                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Filters</th>
+                                                <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Generated</th>
+                                                <th className="text-center py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Count</th>
+                                                <th className="text-center py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -353,8 +353,8 @@ const DataExport: React.FC = () => {
                                                         <div className="flex items-center gap-3">
                                                             {getStatusIcon(record.status)}
                                                             <div>
-                                                                <div className="text-sm font-bold text-white">{record.fileName}</div>
-                                                                <div className="text-xs text-slate-500 font-mono">ID: {record.id}</div>
+                                                                <div className="text-sm font-bold text-slate-300">{record.fileName}</div>
+                                                                <div className="text-xs text-slate-3000 font-mono">ID: {record.id}</div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -372,7 +372,7 @@ const DataExport: React.FC = () => {
                                                     </td>
                                                     <td className="py-4 px-4 text-center">
                                                         {record.status === 'complete' ? (
-                                                            <span className="text-sm font-black text-white">{record.count.toLocaleString()}</span>
+                                                            <span className="text-sm font-black text-slate-300">{record.count.toLocaleString()}</span>
                                                         ) : (
                                                             <span className="text-sm text-slate-600">--</span>
                                                         )}
@@ -385,7 +385,7 @@ const DataExport: React.FC = () => {
                                                                         className="p-2 hover:bg-slate-800 rounded-lg transition-colors group"
                                                                         title="Preview"
                                                                     >
-                                                                        <Eye className="text-slate-400 group-hover:text-white" size={16} />
+                                                                        <Eye className="text-slate-400 group-hover:text-slate-200" size={16} />
                                                                     </button>
                                                                     <button
                                                                         className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group"
@@ -410,14 +410,14 @@ const DataExport: React.FC = () => {
 
                                 {/* Pagination */}
                                 <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-800">
-                                    <div className="text-xs text-slate-500">
-                                        Showing <span className="font-bold text-white">1-4</span> of <span className="font-bold text-white">28</span> exports
+                                    <div className="text-xs text-slate-3000">
+                                        Showing <span className="font-bold text-slate-300">1-4</span> of <span className="font-bold text-slate-300">28</span> exports
                                     </div>
                                     <div className="flex gap-2">
                                         <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-400 rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">
                                             Previous
                                         </button>
-                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-white rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">
+                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">
                                             Next
                                         </button>
                                     </div>

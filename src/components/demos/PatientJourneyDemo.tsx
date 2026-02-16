@@ -26,7 +26,7 @@ const PatientJourneyDemo: React.FC = () => {
         <div className="w-full h-full bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Patient Progress Timeline</p>
+                    <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Patient Progress Timeline</p>
                     <p className="text-[10px] text-slate-600 font-medium mt-1">PHQ-9 Depression Score (Lower is Better)</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -99,15 +99,15 @@ const PatientJourneyDemo: React.FC = () => {
 
             <div className="mt-4 pt-4 border-t border-slate-800/50 grid grid-cols-3 gap-4">
                 <div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Baseline</p>
+                    <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">Baseline</p>
                     <p className="text-lg font-black text-red-400">21 (Severe)</p>
                 </div>
                 <div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Current</p>
+                    <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">Current</p>
                     <p className="text-lg font-black text-emerald-400">8 (Mild)</p>
                 </div>
                 <div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Improvement</p>
+                    <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">Improvement</p>
                     <p className="text-lg font-black text-primary">-62%</p>
                 </div>
             </div>

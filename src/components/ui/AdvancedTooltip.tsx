@@ -225,7 +225,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                                 </div>
                                 <button
                                     onClick={() => setIsDetailsOpen(false)}
-                                    className="text-slate-500 hover:text-white transition-colors"
+                                    className="text-slate-3000 hover:text-slate-200 transition-colors"
                                 >
                                     <X size={16} />
                                 </button>
@@ -281,7 +281,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
             {children}
             {/* Keyboard Hint */}
             {isFocused && !isVisible && (
-                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-blue-500 text-white text-[10px] px-1 rounded">?</div>
+                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-blue-500 text-slate-300 text-[10px] px-1 rounded">?</div>
             )}
 
             {isVisible && (

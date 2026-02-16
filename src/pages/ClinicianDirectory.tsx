@@ -32,16 +32,16 @@ const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => voi
 
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start">
-            <h4 className="text-base font-bold text-white truncate hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)}>
+            <h4 className="text-base font-bold text-slate-300 truncate hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)}>
               {practitioner.name}
             </h4>
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider bg-slate-900 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
+            <span className="text-[10px] font-black text-slate-3000 uppercase tracking-wider bg-slate-900 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
               {practitioner.verificationLevel || 'L4'}
             </span>
           </div>
           <p className="text-xs text-primary font-medium truncate mt-0.5">{practitioner.role}</p>
 
-          <div className="flex items-center gap-1 mt-2 text-slate-500">
+          <div className="flex items-center gap-1 mt-2 text-slate-3000">
             <span className="material-symbols-outlined text-[14px]">location_on</span>
             <span className="text-[11px] font-medium truncate uppercase tracking-wide">{practitioner.location}</span>
           </div>
@@ -52,13 +52,13 @@ const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => voi
       <div className="flex gap-2 mt-auto pt-4 border-t border-slate-800/50">
         <button
           onClick={() => navigate(`/clinician/${practitioner.id}`)}
-          className="flex-1 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-white border border-blue-500/20 hover:border-blue-500/50 text-xs font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-slate-200 border border-blue-500/20 hover:border-blue-500/50 text-xs font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2"
         >
           Profile
         </button>
         <button
           onClick={() => onMessage(practitioner)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500/50 rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-500/20"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-slate-300 border border-blue-500/50 rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-500/20"
           title="Send Message"
         >
           <span className="material-symbols-outlined text-lg">chat_bubble</span>
@@ -128,13 +128,13 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
       <div className="flex flex-col h-full">
         <div className="p-6 sm:p-8 border-b border-white/5 bg-slate-900/50">
           <div className="flex items-center justify-between mb-6">
-            <button onClick={onClose} className="p-2.5 hover:bg-white/5 rounded-full text-slate-500 hover:text-white transition-all">
+            <button onClick={onClose} className="p-2.5 hover:bg-white/5 rounded-full text-slate-3000 hover:text-slate-200 transition-all">
               <span className="material-symbols-outlined">close</span>
             </button>
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2.5">
                 <span className="size-2 rounded-full bg-clinical-green animate-pulse"></span>
-                <span className="text-[11px] font-black text-white uppercase tracking-widest">Secure Link</span>
+                <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Secure Link</span>
               </div>
             </div>
             <div className="size-10"></div>
@@ -149,7 +149,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
               )}
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-black text-white leading-tight">{practitioner.name}</h3>
+              <h3 className="text-lg sm:text-xl font-black text-slate-200 leading-tight">{practitioner.name}</h3>
               <p className="text-[11px] font-bold text-primary uppercase tracking-widest">{practitioner.role}</p>
             </div>
           </div>
@@ -159,12 +159,12 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
           {chatHistory.map((msg) => (
             <div key={msg.id} className={`flex flex-col ${msg.sender === 'Me' ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[85%] p-4 rounded-3xl text-[13px] shadow-lg ${msg.sender === 'Me'
-                ? 'bg-primary/20 border border-primary/30 text-white rounded-tr-none'
+                ? 'bg-primary/20 border border-primary/30 text-slate-300 rounded-tr-none'
                 : 'bg-slate-800/50 border border-white/5 text-slate-300 rounded-tl-none'
                 }`}>
                 <p className="leading-relaxed">{msg.text}</p>
                 <div className="flex items-center gap-2 mt-2.5 justify-end opacity-40">
-                  <span className="text-[11px] font-mono text-white uppercase">{msg.timestamp}</span>
+                  <span className="text-[11px] font-mono text-slate-300 uppercase">{msg.timestamp}</span>
                 </div>
               </div>
             </div>
@@ -178,7 +178,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Secure message..."
-                className="w-full bg-slate-950 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:ring-1 focus:ring-primary transition-all resize-none h-24 placeholder:text-slate-700"
+                className="w-full bg-slate-950 border border-white/10 rounded-2xl px-5 py-4 text-sm text-slate-300 focus:ring-1 focus:ring-primary transition-all resize-none h-24 placeholder:text-slate-700"
               />
               <button
                 type="button"
@@ -193,7 +193,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
             </div>
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-blue-600 text-white font-black py-4 rounded-2xl text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-primary/10 active:scale-95"
+              className="w-full bg-primary hover:bg-blue-600 text-slate-300 font-black py-4 rounded-2xl text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-primary/10 active:scale-95"
             >
               Dispatch
             </button>
@@ -232,23 +232,23 @@ const ClinicianDirectory: React.FC = () => {
   });
 
   return (
-    <PageContainer className="min-h-full bg-background-dark">
+    <PageContainer className="min-h-full bg-[#0e1117]">
       <Section spacing="default" className="flex-1">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
           <div className="space-y-1">
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-white">Practitioners</h1>
-            <p className="text-slate-500 text-[11px] sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-slate-200">Practitioners</h1>
+            <p className="text-slate-3000 text-[11px] sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
           </div>
 
           <div className="hidden sm:flex items-center gap-3 bg-slate-900/60 border border-slate-800 p-2.5 rounded-2xl shadow-2xl backdrop-blur-xl">
             <div className="relative">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-3000 text-lg">search</span>
               <input
                 type="text"
                 placeholder="Search identity..."
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
-                className="bg-transparent border-none rounded-xl pl-11 pr-5 h-10 text-xs font-bold text-white focus:ring-1 focus:ring-primary w-48"
+                className="bg-transparent border-none rounded-xl pl-11 pr-5 h-10 text-xs font-bold text-slate-300 focus:ring-1 focus:ring-primary w-48"
               />
             </div>
             <select
@@ -271,18 +271,18 @@ const ClinicianDirectory: React.FC = () => {
 
           <div className="flex sm:hidden w-full gap-3">
             <div className="relative flex-1">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-3000 text-lg">search</span>
               <input
                 type="text"
                 placeholder="Search name..."
                 value={searchName}
                 onChange={(e) => setSearchName(e.target.value)}
-                className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl pl-12 pr-5 h-14 text-sm font-bold text-white focus:ring-1 focus:ring-primary"
+                className="w-full bg-slate-900/80 border border-slate-800 rounded-2xl pl-12 pr-5 h-14 text-sm font-bold text-slate-300 focus:ring-1 focus:ring-primary"
               />
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`size-14 flex items-center justify-center rounded-2xl border transition-all ${showFilters ? 'bg-primary border-primary text-white' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
+              className={`size-14 flex items-center justify-center rounded-2xl border transition-all ${showFilters ? 'bg-primary border-primary text-slate-300' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
             >
               <span className="material-symbols-outlined">filter_list</span>
             </button>
@@ -322,7 +322,7 @@ const ClinicianDirectory: React.FC = () => {
           {filteredPractitioners.length === 0 && (
             <div className="col-span-full py-24 text-center space-y-5 bg-slate-900/20 rounded-[4rem] border-2 border-dashed border-slate-800/50">
               <span className="material-symbols-outlined text-6xl text-slate-700 opacity-20">person_off</span>
-              <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[11px]">Zero Registry Hits</p>
+              <p className="text-slate-3000 font-black uppercase tracking-[0.3em] text-[11px]">Zero Registry Hits</p>
             </div>
           )}
         </div>

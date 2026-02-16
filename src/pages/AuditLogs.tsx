@@ -40,9 +40,9 @@ const AuditLogs: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-primary text-5xl font-black">history_edu</span>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-white uppercase">Audit Logs</h1>
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-200 uppercase">Audit Logs</h1>
           </div>
-          <p className="text-slate-500 text-sm font-bold tracking-[0.2em] uppercase">
+          <p className="text-slate-3000 text-sm font-bold tracking-[0.2em] uppercase">
             Institutional Research Ledger • <span className="text-emerald-500">Node Synchronized</span>
           </p>
         </div>
@@ -53,8 +53,8 @@ const AuditLogs: React.FC = () => {
               key={filter}
               onClick={() => setActiveFilter(filter)}
               className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${activeFilter === filter
-                ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                : 'text-slate-500 hover:text-slate-300'
+                ? 'bg-primary text-slate-300 shadow-lg shadow-primary/20'
+                : 'text-slate-3000 hover:text-slate-300'
                 }`}
             >
               {filter}
@@ -68,7 +68,7 @@ const AuditLogs: React.FC = () => {
           <div className="overflow-x-auto custom-scrollbar flex-1">
             <table className="w-full text-left border-collapse min-w-[1200px]">
               <thead className="bg-black/40 sticky top-0 z-10 border-b border-slate-800">
-                <tr className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">
+                <tr className="text-sm font-black uppercase tracking-[0.3em] text-slate-3000">
                   <th className="px-10 py-8">Timestamp (UTC)</th>
                   <th className="px-10 py-8">Practitioner</th>
                   <th className="px-10 py-8 w-2/5">Activity Event Log</th>
@@ -80,7 +80,7 @@ const AuditLogs: React.FC = () => {
                 {filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-white/[0.03] transition-all group border-b border-slate-800/30">
                     <td className="px-10 py-6">
-                      <span className="text-sm font-mono text-slate-500">{log.timestamp.split(' ')[0]}</span>
+                      <span className="text-sm font-mono text-slate-3000">{log.timestamp.split(' ')[0]}</span>
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex flex-col gap-1">
@@ -138,15 +138,15 @@ const AuditLogs: React.FC = () => {
               <div className="h-6 w-px bg-slate-800"></div>
               <div className="flex items-center gap-3">
                 <div className="size-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></div>
-                <span className="text-sm font-mono text-slate-500 uppercase tracking-widest">Global Uplink: Stable</span>
+                <span className="text-sm font-mono text-slate-3000 uppercase tracking-widest">Global Uplink: Stable</span>
               </div>
             </div>
 
             <div className="flex gap-4">
-              <button className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-400 hover:text-white rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
+              <button className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
                 Export Parquet
               </button>
-              <button className="px-8 py-3 bg-primary hover:bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-primary/30 transition-all active:scale-95">
+              <button className="px-8 py-3 bg-primary hover:bg-blue-600 text-slate-300 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-primary/30 transition-all active:scale-95">
                 Verify Node Integrity
               </button>
             </div>

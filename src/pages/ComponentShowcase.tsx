@@ -36,7 +36,7 @@ const ComponentShowcase: React.FC = () => {
             <Section spacing="tight">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-5xl font-black tracking-tighter text-white">
+                        <h1 className="text-5xl font-black tracking-tighter text-slate-200">
                             Component Showcase
                         </h1>
                         <p className="text-slate-400 text-xl mt-2">
@@ -53,8 +53,8 @@ const ComponentShowcase: React.FC = () => {
 
             {/* USER_REVIEW COMPONENTS */}
             <Section spacing="default">
-                <h2 className="text-3xl font-black text-white mb-6 flex items-center gap-3">
-                    <span className="px-3 py-1 bg-indigo-600 text-white text-sm rounded-lg">
+                <h2 className="text-3xl font-black text-slate-200 mb-6 flex items-center gap-3">
+                    <span className="px-3 py-1 bg-indigo-600 text-slate-300 text-sm rounded-lg">
                         USER_REVIEW
                     </span>
                     Components from Work Orders
@@ -63,7 +63,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* WO_003: Dosage Calculator */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">WO_003: Dosage Calculator</h3>
+                        <h3 className="text-xl font-black text-slate-200">WO_003: Dosage Calculator</h3>
                         <p className="text-sm text-slate-400 font-mono">Potency Normalizer Calculator</p>
                     </div>
                     <div className="bg-black border border-slate-800 rounded-2xl p-8">
@@ -74,7 +74,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* WO_004: Crisis Logger */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">WO_004: Crisis Logger</h3>
+                        <h3 className="text-xl font-black text-slate-200">WO_004: Crisis Logger</h3>
                         <p className="text-sm text-slate-400 font-mono">Tactical Incident Logging Interface</p>
                     </div>
                     <div className="bg-black border border-slate-800 rounded-2xl p-8">
@@ -88,7 +88,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* WO_005: Blind Vetting */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">WO_005: Blind Vetting Scanner</h3>
+                        <h3 className="text-xl font-black text-slate-200">WO_005: Blind Vetting Scanner</h3>
                         <p className="text-sm text-slate-400 font-mono">Client Security Check Terminal</p>
                     </div>
                     <div className="bg-[#0a0a0a] border border-slate-800 rounded-2xl p-8">
@@ -99,7 +99,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* WO_008: Profile Edit */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">WO_008: Profile Edit</h3>
+                        <h3 className="text-xl font-black text-slate-200">WO_008: Profile Edit</h3>
                         <p className="text-sm text-slate-400 font-mono">User Profile Editing & Partner Tiers</p>
                     </div>
                     <div className="bg-[#0e1117] border border-slate-800 rounded-2xl overflow-hidden">
@@ -110,8 +110,8 @@ const ComponentShowcase: React.FC = () => {
 
             {/* ANALYTICS COMPONENTS */}
             <Section spacing="default">
-                <h2 className="text-3xl font-black text-white mb-6 flex items-center gap-3">
-                    <span className="px-3 py-1 bg-emerald-600 text-white text-sm rounded-lg">
+                <h2 className="text-3xl font-black text-slate-200 mb-6 flex items-center gap-3">
+                    <span className="px-3 py-1 bg-emerald-600 text-slate-300 text-sm rounded-lg">
                         ANALYTICS
                     </span>
                     Charts from Analytics Page
@@ -120,7 +120,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Clinic Performance Radar */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Clinic Performance Radar</h3>
+                        <h3 className="text-xl font-black text-slate-200">Clinic Performance Radar</h3>
                         <p className="text-sm text-slate-400 font-mono">Clinic metrics vs Network Average</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -131,7 +131,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Patient Constellation */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Patient Galaxy</h3>
+                        <h3 className="text-xl font-black text-slate-200">Patient Galaxy</h3>
                         <p className="text-sm text-slate-400 font-mono">Outcomes clustering analysis</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -142,7 +142,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Protocol Efficiency */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Protocol ROI</h3>
+                        <h3 className="text-xl font-black text-slate-200">Protocol ROI</h3>
                         <p className="text-sm text-slate-400 font-mono">Financial efficiency modeling</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -153,7 +153,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Molecular Pharmacology */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Molecular Bridge</h3>
+                        <h3 className="text-xl font-black text-slate-200">Molecular Bridge</h3>
                         <p className="text-sm text-slate-400 font-mono">Receptor affinity profiles</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -164,7 +164,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Metabolic Risk Gauge */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Genomic Safety</h3>
+                        <h3 className="text-xl font-black text-slate-200">Genomic Safety</h3>
                         <p className="text-sm text-slate-400 font-mono">CYP450 metabolic risk analysis</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -175,7 +175,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Safety Benchmark */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Safety Performance Benchmark</h3>
+                        <h3 className="text-xl font-black text-slate-200">Safety Performance Benchmark</h3>
                         <p className="text-sm text-slate-400 font-mono">Adverse event rate vs network average</p>
                     </div>
                     <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
@@ -186,8 +186,8 @@ const ComponentShowcase: React.FC = () => {
 
             {/* DEEP-DIVE ORPHAN COMPONENTS */}
             <Section spacing="default">
-                <h2 className="text-3xl font-black text-white mb-6 flex items-center gap-3">
-                    <span className="px-3 py-1 bg-purple-600 text-white text-sm rounded-lg">
+                <h2 className="text-3xl font-black text-slate-200 mb-6 flex items-center gap-3">
+                    <span className="px-3 py-1 bg-purple-600 text-slate-300 text-sm rounded-lg">
                         DEEP-DIVES
                     </span>
                     Orphan Components from Deep-Dive Pages
@@ -196,7 +196,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Regulatory Mosaic */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Regulatory Mosaic</h3>
+                        <h3 className="text-xl font-black text-slate-200">Regulatory Mosaic</h3>
                         <p className="text-sm text-slate-400 font-mono">From RegulatoryMapPage</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -207,7 +207,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Patient Journey Snapshot */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Patient Journey Snapshot</h3>
+                        <h3 className="text-xl font-black text-slate-200">Patient Journey Snapshot</h3>
                         <p className="text-sm text-slate-400 font-mono">From PatientJourneyPage</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -218,7 +218,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Revenue Forensics */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Revenue Forensics</h3>
+                        <h3 className="text-xl font-black text-slate-200">Revenue Forensics</h3>
                         <p className="text-sm text-slate-400 font-mono">From RevenueAuditPage</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -229,7 +229,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Confidence Cone */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Confidence Cone</h3>
+                        <h3 className="text-xl font-black text-slate-200">Confidence Cone</h3>
                         <p className="text-sm text-slate-400 font-mono">From ComparativeEfficacyPage</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -240,7 +240,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Safety Risk Matrix */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Safety Risk Matrix</h3>
+                        <h3 className="text-xl font-black text-slate-200">Safety Risk Matrix</h3>
                         <p className="text-sm text-slate-400 font-mono">From RiskMatrixPage</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -251,7 +251,7 @@ const ComponentShowcase: React.FC = () => {
                 {/* Patient Flow Sankey */}
                 <div className="mb-12">
                     <div className="mb-4">
-                        <h3 className="text-xl font-black text-white">Patient Flow Sankey</h3>
+                        <h3 className="text-xl font-black text-slate-200">Patient Flow Sankey</h3>
                         <p className="text-sm text-slate-400 font-mono">From PatientRetentionPage</p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -262,7 +262,7 @@ const ComponentShowcase: React.FC = () => {
 
             {/* Footer */}
             <Section spacing="tight">
-                <div className="text-center text-slate-500 text-sm">
+                <div className="text-center text-slate-3000 text-sm">
                     <p>Component Showcase • Testing Environment • {new Date().toLocaleDateString()}</p>
                     <p className="mt-2">Navigate to <span className="font-mono text-indigo-400">http://localhost:3000/#/component-showcase</span></p>
                 </div>

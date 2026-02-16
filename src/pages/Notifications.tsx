@@ -141,8 +141,8 @@ const Notifications: React.FC = () => {
         <div className="flex-1 space-y-8">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-4xl font-black tracking-tight text-white">Notifications</h1>
-              <p className="text-slate-500 text-sm font-medium">Manage urgent clinical alerts and system updates.</p>
+              <h1 className="text-4xl font-black tracking-tight text-slate-200">Notifications</h1>
+              <p className="text-slate-3000 text-sm font-medium">Manage urgent clinical alerts and system updates.</p>
             </div>
             <button className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-xl text-[11px] font-black text-slate-300 uppercase tracking-widest transition-all">
               <span className="material-symbols-outlined text-lg">check_circle</span>
@@ -157,7 +157,7 @@ const Notifications: React.FC = () => {
                 onClick={() => setActiveTab(tab as any)}
                 className={`px-6 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeTab === tab
                   ? 'bg-accent-amber text-black shadow-lg shadow-accent-amber/10'
-                  : 'text-slate-500 hover:text-white'
+                  : 'text-slate-3000 hover:text-slate-200'
                   }`}
               >
                 {tab}
@@ -180,16 +180,16 @@ const Notifications: React.FC = () => {
                 <div className="p-6 flex gap-6">
                   <div className={`size-12 rounded-xl flex items-center justify-center shrink-0 border border-white/5 ${notif.type === 'critical' ? 'bg-accent-amber/10 text-accent-amber' :
                     notif.type === 'system' ? 'bg-primary/10 text-primary' :
-                      'bg-slate-800/50 text-slate-500'
+                      'bg-slate-800/50 text-slate-3000'
                     }`}>
                     <span className="material-symbols-outlined text-2xl">{getIcon(notif.type)}</span>
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-base font-bold text-white tracking-tight">{notif.title}</h3>
+                      <h3 className="text-base font-bold text-slate-200 tracking-tight">{notif.title}</h3>
                       <div className="flex items-center gap-3">
-                        <span className="text-[11px] font-mono text-slate-500">{notif.timestamp}</span>
+                        <span className="text-[11px] font-mono text-slate-3000">{notif.timestamp}</span>
                         {notif.isUnread && (
                           <div className="size-2 bg-accent-amber rounded-full shadow-[0_0_8px_#f59e0b]"></div>
                         )}
@@ -207,7 +207,7 @@ const Notifications: React.FC = () => {
                             <span className="material-symbols-outlined text-sm text-slate-600">
                               {meta.label === 'Trial' ? 'biotech' : meta.label === 'Site' ? 'location_on' : meta.label === 'Date' ? 'calendar_today' : 'groups'}
                             </span>
-                            <span className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">{meta.label}:</span>
+                            <span className="text-[11px] text-slate-3000 font-bold uppercase tracking-widest">{meta.label}:</span>
                             <span className="text-[11px] text-slate-300 font-bold">{meta.value}</span>
                           </div>
                         ))}
@@ -216,14 +216,14 @@ const Notifications: React.FC = () => {
                       {notif.actionLabel && (
                         <button
                           onClick={() => handleAction(notif)}
-                          className="flex items-center gap-2 text-accent-amber hover:text-white text-[11px] font-black uppercase tracking-[0.2em] transition-all ml-auto"
+                          className="flex items-center gap-2 text-accent-amber hover:text-slate-200 text-[11px] font-black uppercase tracking-[0.2em] transition-all ml-auto"
                         >
                           {notif.actionLabel}
                           <span className="material-symbols-outlined text-sm">{notif.actionIcon}</span>
                         </button>
                       )}
                       {!notif.actionLabel && notif.type === 'system' && (
-                        <button className="material-symbols-outlined text-slate-700 hover:text-white transition-colors ml-auto">more_horiz</button>
+                        <button className="material-symbols-outlined text-slate-700 hover:text-slate-200 transition-colors ml-auto">more_horiz</button>
                       )}
                     </div>
                   </div>
@@ -233,7 +233,7 @@ const Notifications: React.FC = () => {
           </div>
 
           <div className="flex justify-center pt-4">
-            <button className="text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] hover:text-white transition-colors">Load older notifications</button>
+            <button className="text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] hover:text-slate-200 transition-colors">Load older notifications</button>
           </div>
         </div>
 
@@ -244,7 +244,7 @@ const Notifications: React.FC = () => {
               <div className="size-10 rounded-xl bg-accent-amber/10 flex items-center justify-center text-accent-amber border border-accent-amber/20">
                 <span className="material-symbols-outlined text-2xl">settings_input_component</span>
               </div>
-              <h2 className="text-xl font-black text-white tracking-tight">Preferences</h2>
+              <h2 className="text-xl font-black text-slate-200 tracking-tight">Preferences</h2>
             </div>
 
             <div className="space-y-8">
@@ -259,7 +259,7 @@ const Notifications: React.FC = () => {
                   <div key={pref.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-[11px] font-bold text-slate-200">{pref.label}</p>
-                      <p className="text-[11px] text-slate-500">{pref.sub}</p>
+                      <p className="text-[11px] text-slate-3000">{pref.sub}</p>
                     </div>
                     <button
                       onClick={() => setPreferences(prev => ({ ...prev, [pref.id]: !prev[pref.id as keyof typeof prev] }))}
@@ -281,7 +281,7 @@ const Notifications: React.FC = () => {
                       onChange={() => setPreferences(p => ({ ...p, email: !p.email }))}
                       className="size-4 bg-slate-800 border-slate-700 rounded text-accent-amber focus:ring-accent-amber/40"
                     />
-                    <span className="text-[11px] font-black text-slate-400 group-hover:text-white uppercase tracking-widest">Email</span>
+                    <span className="text-[11px] font-black text-slate-400 group-hover:text-slate-200 uppercase tracking-widest">Email</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer group">
                     <input
@@ -290,7 +290,7 @@ const Notifications: React.FC = () => {
                       onChange={() => setPreferences(p => ({ ...p, push: !p.push }))}
                       className="size-4 bg-slate-800 border-slate-700 rounded text-accent-amber focus:ring-accent-amber/40"
                     />
-                    <span className="text-[11px] font-black text-slate-400 group-hover:text-white uppercase tracking-widest">Push</span>
+                    <span className="text-[11px] font-black text-slate-400 group-hover:text-slate-200 uppercase tracking-widest">Push</span>
                   </label>
                 </div>
               </div>
@@ -304,11 +304,11 @@ const Notifications: React.FC = () => {
             </div>
 
             <div className="relative z-10 space-y-4">
-              <h3 className="text-xl font-black text-white tracking-tight">Need Help?</h3>
+              <h3 className="text-xl font-black text-slate-200 tracking-tight">Need Help?</h3>
               <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
                 Contact the Research IT Support team for issues with receiving notifications.
               </p>
-              <button className="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] font-black text-white uppercase tracking-widest rounded-xl transition-all">
+              <button className="w-full sm:w-auto px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] font-black text-slate-300 uppercase tracking-widest rounded-xl transition-all">
                 Contact Support
               </button>
             </div>

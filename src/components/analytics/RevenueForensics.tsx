@@ -11,9 +11,9 @@ export default function RevenueForensics() {
 
             <div className="flex-1 flex flex-col justify-center gap-4">
                 <div>
-                    <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block mb-1">Potential Capture</span>
+                    <span className="text-[10px] font-mono text-slate-3000 uppercase tracking-wider block mb-1">Potential Capture</span>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-black text-white tracking-tighter">$14,040</span>
+                        <span className="text-3xl font-black text-slate-300 tracking-tighter">$14,040</span>
                         <span className="text-[10px] font-bold text-emerald-500">+12.4%</span>
                     </div>
                     <p className="text-[10px] text-slate-400 font-medium mt-1">Derived from 312 billable hours</p>
@@ -33,8 +33,8 @@ export default function RevenueForensics() {
 
             <div className="mt-4 pt-3 border-t border-slate-800/50">
                 <div className="flex items-center gap-2 mb-1.5">
-                    <Database className="w-3 h-3 text-slate-500" />
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Scan Query</span>
+                    <Database className="w-3 h-3 text-slate-3000" />
+                    <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Scan Query</span>
                 </div>
                 <div className="bg-[#0a0c10] rounded-lg p-2 border border-slate-800 font-mono text-[10px] text-slate-400 leading-relaxed overflow-x-auto">
                     SELECT * FROM clinical_logs WHERE duration &gt; 120

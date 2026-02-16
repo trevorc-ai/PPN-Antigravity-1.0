@@ -152,7 +152,7 @@ const InteractionChecker: React.FC = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate('/catalog')}
-        className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-6 group"
+        className="flex items-center gap-2 text-slate-3000 hover:text-slate-200 transition-colors mb-6 group"
       >
         <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
         <span className="text-[10px] font-black uppercase tracking-widest">Return to Catalog</span>
@@ -165,15 +165,15 @@ const InteractionChecker: React.FC = () => {
               <span className="material-symbols-outlined text-3xl">security</span>
             </div>
             <div>
-              <h1 className="text-4xl font-black text-white tracking-tighter">Interaction Checker</h1>
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
+              <h1 className="text-4xl font-black text-slate-200 tracking-tighter">Interaction Checker</h1>
+              <p className="text-slate-3000 text-[10px] font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={handleClear}
-            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-500 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-3000 hover:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
           >
             Reset Analysis
           </button>
@@ -183,15 +183,15 @@ const InteractionChecker: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Input: Psychedelic */}
         <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
+          <label className="text-[10px] font-black text-slate-3000 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
           <div className="relative group">
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 group-focus-within:text-primary transition-colors">
+            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-3000 group-focus-within:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">biotech</span>
             </div>
             <select
               value={selectedPsychedelic}
               onChange={(e) => setSelectedPsychedelic(e.target.value)}
-              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-white focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
+              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
             >
               <option value="">Select Controlled Substance...</option>
               {PSYCHEDELICS.map(p => <option key={p} value={p}>{p.toUpperCase()}</option>)}
@@ -208,15 +208,15 @@ const InteractionChecker: React.FC = () => {
 
         {/* Input: Medication */}
         <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
+          <label className="text-[10px] font-black text-slate-3000 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
           <div className="relative group">
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 group-focus-within:text-primary transition-colors">
+            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-3000 group-focus-within:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">dataset</span>
             </div>
             <select
               value={selectedMedication}
               onChange={(e) => setSelectedMedication(e.target.value)}
-              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-white focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
+              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
             >
               <option value="">Select Interactor...</option>
               {MEDICATIONS_LIST.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
@@ -230,7 +230,7 @@ const InteractionChecker: React.FC = () => {
           <div className="px-2">
             <button
               onClick={handleRequestAgent}
-              className="text-[10px] font-bold text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2 group"
+              className="text-[10px] font-bold text-primary hover:text-slate-200 uppercase tracking-widest transition-colors flex items-center gap-2 group"
             >
               <span>Agent not listed? Request institutional database update.</span>
               <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">arrow_forward</span>
@@ -244,7 +244,7 @@ const InteractionChecker: React.FC = () => {
         {!analysisResult ? (
           <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-[3rem] space-y-6 opacity-40">
             <span className="material-symbols-outlined text-7xl text-slate-700">query_stats</span>
-            <p className="text-slate-500 font-black text-[11px] uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
+            <p className="text-slate-3000 font-black text-[11px] uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
           </div>
         ) : (
           <div
@@ -260,7 +260,7 @@ const InteractionChecker: React.FC = () => {
               {/* Combination Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/10 pb-8 mb-8">
                 <div>
-                  <h2 className="text-3xl font-black text-white tracking-tight flex items-center flex-wrap gap-2">
+                  <h2 className="text-3xl font-black text-slate-200 tracking-tight flex items-center flex-wrap gap-2">
                     {analysisResult.substance}
                     <span className="text-slate-600 mx-3">+</span>
                     {analysisResult.interactor}
@@ -283,7 +283,7 @@ const InteractionChecker: React.FC = () => {
                   </div>
                   <div>
                     <h3 className={`text-4xl font-black tracking-tighter ${styles?.text}`}>{styles?.label}</h3>
-                    <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest mt-1">
+                    <p className="text-[10px] font-mono font-black text-slate-3000 uppercase tracking-widest mt-1">
                       Risk Level: {analysisResult.riskLevel} / 10 • Severity: {analysisResult.severity}
                     </p>
                   </div>
@@ -312,7 +312,7 @@ const InteractionChecker: React.FC = () => {
                 <div className="lg:col-span-5 flex flex-col justify-end">
                   <div className="bg-black/60 border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
                     <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol Sync Status</span>
+                      <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Protocol Sync Status</span>
                       <span className="text-[10px] font-mono text-clinical-green font-black uppercase">Active</span>
                     </div>
                     <div className="space-y-2">
@@ -321,7 +321,7 @@ const InteractionChecker: React.FC = () => {
                     </div>
                     {analysisResult.sourceUrl && (
                       <div className="flex items-center gap-2">
-                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] font-black text-primary hover:text-white uppercase tracking-widest flex items-center gap-1 transition-colors">
+                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] font-black text-primary hover:text-slate-200 uppercase tracking-widest flex items-center gap-1 transition-colors">
                           Source: {analysisResult.source}
                           <span className="material-symbols-outlined text-xs">open_in_new</span>
                         </a>
@@ -346,8 +346,8 @@ const InteractionChecker: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">clinical_notes</span>
           </div>
           <div className="space-y-2">
-            <h3 className="text-xs font-black text-white uppercase tracking-widest">Registry Methodology</h3>
-            <p className="text-[12px] text-slate-500 leading-relaxed font-medium italic">
+            <h3 className="text-xs font-black text-slate-200 uppercase tracking-widest">Registry Methodology</h3>
+            <p className="text-[12px] text-slate-3000 leading-relaxed font-medium italic">
               Interaction data is synthesized from peer-reviewed literature, clinical trial reports (2024-2025), and anonymized practitioner observations. All data points are validated by the institutional Lead Investigator node before ledger entry.
             </p>
             <div className="flex items-center gap-4 pt-2">

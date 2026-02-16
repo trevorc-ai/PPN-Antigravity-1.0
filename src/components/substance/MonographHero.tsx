@@ -39,10 +39,10 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                     </div>
 
                     <div className="space-y-4">
-                        <h1 className="text-5xl sm:text-7xl font-black text-white tracking-tighter leading-[0.85] transition-all duration-700 hover:tracking-normal cursor-default">
+                        <h1 className="text-5xl sm:text-7xl font-black text-slate-200 tracking-tighter leading-[0.85] transition-all duration-700 hover:tracking-normal cursor-default">
                             {substance.name}
                         </h1>
-                        <p className="text-lg sm:text-2xl font-bold text-slate-500 font-mono tracking-tight leading-relaxed max-w-3xl mx-auto lg:mx-0">
+                        <p className="text-lg sm:text-2xl font-bold text-slate-3000 font-mono tracking-tight leading-relaxed max-w-3xl mx-auto lg:mx-0">
                             {substance.chemicalName}
                         </p>
                     </div>
@@ -53,14 +53,14 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                             <div className="flex -space-x-3">
                                 {[1, 2, 3, 4].map(i => (
                                     <div key={i} className="size-10 rounded-full bg-slate-900 border-2 border-[#05070a] flex items-center justify-center shadow-xl">
-                                        <span className="material-symbols-outlined text-slate-500 text-sm">shield_with_heart</span>
+                                        <span className="material-symbols-outlined text-slate-3000 text-sm">shield_with_heart</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
                         <div className="h-10 w-px bg-white/5 hidden sm:block"></div>
                         <p className="text-sm font-black text-slate-400 uppercase tracking-widest leading-tight">
-                            <span className="text-white">Live Search Enriched</span><br />Institutional Research Node
+                            <span className="text-slate-300">Live Search Enriched</span><br />Institutional Research Node
                         </p>
                     </div>
                 </div>
@@ -91,11 +91,11 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                     <div className="w-full lg:w-80 bg-slate-900/60 backdrop-blur-3xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative group overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-10 transition-opacity"></div>
                         <div className="flex items-center justify-between mb-4">
-                            <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Aggregate Efficacy</p>
+                            <p className="text-sm font-black text-slate-3000 uppercase tracking-widest">Aggregate Efficacy</p>
                             <span className="text-sm font-mono text-clinical-green font-black">NODE_SIGMA</span>
                         </div>
                         <div className="flex items-baseline gap-2 mb-6">
-                            <span className="text-5xl font-black text-white tracking-tighter">{(substance.efficacy * 100).toFixed(1)}</span>
+                            <span className="text-5xl font-black text-slate-300 tracking-tighter">{(substance.efficacy * 100).toFixed(1)}</span>
                             <span className="text-2xl font-black text-clinical-green tracking-tighter">%</span>
                         </div>
                         <div className="w-full bg-slate-800/50 h-2 rounded-full overflow-hidden">

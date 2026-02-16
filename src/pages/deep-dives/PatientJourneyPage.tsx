@@ -3,7 +3,7 @@ import PatientJourneySnapshot from '../../components/analytics/PatientJourneySna
 
 const PatientJourney: React.FC = () => {
     return (
-        <div className="p-8 min-h-screen bg-[#05070a] text-white">
+        <div className="p-8 min-h-screen bg-[#05070a] text-slate-300">
             <div className="border-b border-slate-800 pb-6 mb-8">
                 <h1 className="text-5xl font-black tracking-tighter mb-2">Patient Journey</h1>
                 <p className="text-slate-400 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">

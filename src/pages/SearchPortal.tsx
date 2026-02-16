@@ -33,10 +33,10 @@ const CATEGORIES: { label: SearchCategory; icon: string }[] = [
 const SectionHeader: React.FC<{ title: string; icon: string; count: number; onSeeAll?: () => void }> = ({ title, icon, count, onSeeAll }) => (
   <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
     <div className="flex items-center gap-3">
-      <div className="size-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500">
+      <div className="size-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-3000">
         <span className="material-symbols-outlined text-sm">{icon}</span>
       </div>
-      <h3 className="text-sm font-black text-white tracking-tight">{title}</h3>
+      <h3 className="text-sm font-black text-slate-200 tracking-tight">{title}</h3>
       <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[11px] font-mono text-slate-400 font-bold">{count}</span>
     </div>
     {onSeeAll && (
@@ -92,9 +92,9 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
         <div className="flex flex-col justify-center min-w-0 pr-4">
           <div className="flex items-center gap-2 mb-1">
             <span className={`size-1.5 rounded-full ${res.status === 'Active' ? 'bg-clinical-green animate-pulse' : 'bg-slate-600'}`}></span>
-            <h4 className="text-sm font-black text-white tracking-tight truncate">{cardTitle}</h4>
+            <h4 className="text-sm font-black text-slate-300 tracking-tight truncate">{cardTitle}</h4>
           </div>
-          <p className="text-[12px] font-bold text-slate-500 tracking-wide pl-3.5">{cardSubtitle}</p>
+          <p className="text-[12px] font-bold text-slate-3000 tracking-wide pl-3.5">{cardSubtitle}</p>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
@@ -119,11 +119,11 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
       {/* Header: Clinical Context First */}
       <div className="flex justify-between items-start relative z-10">
         <div className="space-y-1">
-          <h4 className="text-xl font-black text-white tracking-tight leading-tight">{cardTitle}</h4>
-          <p className="text-[11px] font-medium text-slate-500">{cardSubtitle}</p>
+          <h4 className="text-xl font-black text-slate-300 tracking-tight leading-tight">{cardTitle}</h4>
+          <p className="text-[11px] font-medium text-slate-3000">{cardSubtitle}</p>
         </div>
         {/* Patient ID as Discrete Badge */}
-        <span className="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono font-bold text-slate-500">
+        <span className="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono font-bold text-slate-3000">
           {res.id}
         </span>
       </div>
@@ -131,7 +131,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
       {/* Efficacy Metric (The "Clinical HUD") */}
       <div className="space-y-3 relative z-10">
         <div className="flex justify-between items-end">
-          <span className="text-[11px] font-medium text-slate-500">Efficacy ({outcomeType})</span>
+          <span className="text-[11px] font-medium text-slate-3000">Efficacy ({outcomeType})</span>
           <span className={`text-2xl font-black ${isResponder ? 'text-clinical-green' : 'text-slate-400'}`}>
             ▼ {delta} pts
           </span>
@@ -188,12 +188,12 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
           {sub.imageUrl ? (
             <img src={sub.imageUrl} alt={sub.name} className="w-full h-full object-contain" style={{ mixBlendMode: 'screen', opacity: 0.9 }} />
           ) : (
-            <span className="material-symbols-outlined text-2xl text-slate-500">biotech</span>
+            <span className="material-symbols-outlined text-2xl text-slate-3000">biotech</span>
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h4 className="text-sm font-black text-white truncate group-hover:text-primary transition-colors">{sub.name}</h4>
-          <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{sub.class}</p>
+          <h4 className="text-sm font-black text-slate-300 truncate group-hover:text-primary transition-colors">{sub.name}</h4>
+          <p className="text-[11px] text-slate-3000 font-medium truncate mt-0.5">{sub.class}</p>
           <div className="flex items-center gap-2 mt-2">
             <span className="text-[11px] font-mono text-clinical-green bg-clinical-green/10 px-1.5 py-0.5 rounded border border-clinical-green/20">{(sub.efficacy * 100).toFixed(0)}% Eff.</span>
           </div>
@@ -212,7 +212,7 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
         <div className="px-2 py-1 rounded-lg text-[11px] font-bold border bg-purple-500/10 text-purple-400 border-purple-500/20">
           Substance
         </div>
-        <span className="text-[12px] font-medium text-slate-500">{sub.schedule}</span>
+        <span className="text-[12px] font-medium text-slate-3000">{sub.schedule}</span>
       </div>
 
       <div className="flex items-center gap-4 relative z-10">
@@ -220,19 +220,19 @@ const SubstanceCard: React.FC<{ sub: Substance; variant?: 'compact' | 'full' }> 
           {sub.imageUrl ? (
             <img src={sub.imageUrl} alt={sub.name} className="w-full h-full object-contain" style={{ mixBlendMode: 'screen', opacity: 0.9 }} />
           ) : (
-            <span className="material-symbols-outlined text-2xl text-slate-500">biotech</span>
+            <span className="material-symbols-outlined text-2xl text-slate-3000">biotech</span>
           )}
         </div>
         <div className="min-w-0">
-          <h4 className="text-lg font-black text-white truncate group-hover:text-primary transition-colors">{sub.name}</h4>
-          <p className="text-[11px] text-slate-500 font-medium truncate">{sub.class}</p>
+          <h4 className="text-lg font-black text-slate-300 truncate group-hover:text-primary transition-colors">{sub.name}</h4>
+          <p className="text-[11px] text-slate-3000 font-medium truncate">{sub.class}</p>
         </div>
       </div>
 
       <div className="pt-3 mt-auto">
         <div className="w-full h-px bg-slate-800/50 mb-3"></div>
         <div className="flex justify-between items-center">
-          <span className="text-[11px] font-medium text-slate-500">Efficacy</span>
+          <span className="text-[11px] font-medium text-slate-3000">Efficacy</span>
           <span className="text-[11px] font-mono font-bold text-clinical-green">{(sub.efficacy * 100).toFixed(0)}%</span>
         </div>
       </div>
@@ -253,12 +253,12 @@ const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }>
           {clin.imageUrl ? (
             <img src={clin.imageUrl} alt={clin.name} className="w-full h-full object-cover" />
           ) : (
-            <span className="material-symbols-outlined text-2xl text-slate-500">groups</span>
+            <span className="material-symbols-outlined text-2xl text-slate-3000">groups</span>
           )}
         </div>
         <div className="min-w-0">
-          <h4 className="text-sm font-black text-white truncate group-hover:text-primary transition-colors">{clin.name}</h4>
-          <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{clin.role}</p>
+          <h4 className="text-sm font-black text-slate-300 truncate group-hover:text-primary transition-colors">{clin.name}</h4>
+          <p className="text-[11px] text-slate-3000 font-medium truncate mt-0.5">{clin.role}</p>
           <div className="flex items-center gap-1 mt-1.5">
             <span className="material-symbols-outlined text-xs text-primary">verified</span>
             <span className="text-[11px] font-medium text-slate-400">Verified</span>
@@ -286,12 +286,12 @@ const ClinicianCard: React.FC<{ clin: Clinician; variant?: 'compact' | 'full' }>
           {clin.imageUrl ? (
             <img src={clin.imageUrl} alt={clin.name} className="w-full h-full object-cover" />
           ) : (
-            <span className="material-symbols-outlined text-2xl text-slate-500">groups</span>
+            <span className="material-symbols-outlined text-2xl text-slate-3000">groups</span>
           )}
         </div>
         <div className="min-w-0">
-          <h4 className="text-lg font-black text-white truncate group-hover:text-primary transition-colors">{clin.name}</h4>
-          <p className="text-[12px] text-slate-500 font-medium truncate">{clin.role}</p>
+          <h4 className="text-lg font-black text-slate-300 truncate group-hover:text-primary transition-colors">{clin.name}</h4>
+          <p className="text-[12px] text-slate-3000 font-medium truncate">{clin.role}</p>
         </div>
       </div>
 
@@ -472,7 +472,7 @@ const SearchPortal: React.FC = () => {
               <span className="material-symbols-outlined text-2xl">auto_awesome</span>
             </div>
             <div className="space-y-1">
-              <h1 className="text-5xl font-black tracking-tighter mb-4 text-white">
+              <h1 className="text-5xl font-black tracking-tighter mb-4 text-slate-200">
                 PPN Research Portal
               </h1>
               <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">Search and analyze de-identified treatment protocols across the global network</p>
@@ -500,7 +500,7 @@ const SearchPortal: React.FC = () => {
                 className="
                   w-full h-16 sm:h-24 pl-12 pr-14 py-4
                   bg-slate-900/50 border-2 border-slate-700 rounded-[2.5rem]
-                  text-white placeholder-slate-500
+                  text-slate-300 placeholder-slate-500
                   focus:outline-none focus:border-primary/50 focus:bg-slate-900/70 focus:rounded-[2.5rem]
                   transition-all duration-300
                   text-lg font-bold
@@ -509,13 +509,13 @@ const SearchPortal: React.FC = () => {
 
               {/* Search Button (RIGHT side) */}
               <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-primary rounded-xl hover:bg-blue-600 transition-colors">
-                <span className="material-symbols-outlined text-white">search</span>
+                <span className="material-symbols-outlined text-slate-300">search</span>
               </button>
 
               {/* Filter Toggle Button */}
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className={`absolute right-16 top-1/2 -translate-y-1/2 size-12 flex items-center justify-center rounded-full border transition-all z-10 ${isFilterOpen ? 'bg-primary border-primary text-white' : 'bg-[#111418] border-slate-800 text-slate-400 hover:border-slate-700'}`}
+                className={`absolute right-16 top-1/2 -translate-y-1/2 size-12 flex items-center justify-center rounded-full border transition-all z-10 ${isFilterOpen ? 'bg-primary border-primary text-slate-300' : 'bg-[#111418] border-slate-800 text-slate-400 hover:border-slate-700'}`}
                 title="Toggle Advanced Filters"
               >
                 <span className="material-symbols-outlined text-2xl">tune</span>
@@ -531,7 +531,7 @@ const SearchPortal: React.FC = () => {
                 <button
                   key={cat.label}
                   onClick={() => handleCategoryChange(cat.label)}
-                  className={`px-5 py-2 rounded-full text-[11px] font-bold transition-all border flex items-center gap-2 ${isActive ? 'bg-slate-800 text-white border-slate-700 shadow-lg' : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900'
+                  className={`px-5 py-2 rounded-full text-[11px] font-bold transition-all border flex items-center gap-2 ${isActive ? 'bg-slate-800 text-slate-300 border-slate-700 shadow-lg' : 'bg-transparent text-slate-3000 border-transparent hover:bg-slate-900'
                     }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">{cat.icon}</span>
@@ -553,8 +553,8 @@ const SearchPortal: React.FC = () => {
         `}>
           <div className="h-full overflow-y-auto custom-scrollbar p-6 space-y-8 pb-20 w-72 lg:w-80">
             <div className="flex items-center justify-between lg:hidden mb-2">
-              <h3 className="text-sm font-black text-white">Filters</h3>
-              <button onClick={() => setIsFilterOpen(false)} className="p-2 text-slate-500 hover:text-white">
+              <h3 className="text-sm font-black text-slate-200">Filters</h3>
+              <button onClick={() => setIsFilterOpen(false)} className="p-2 text-slate-3000 hover:text-slate-200">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -565,7 +565,7 @@ const SearchPortal: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-medium text-slate-500 flex items-center gap-2">
+              <label className="text-[11px] font-medium text-slate-3000 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">location_on</span> Setting
               </label>
               <div className="flex flex-col gap-2">
@@ -575,7 +575,7 @@ const SearchPortal: React.FC = () => {
                     onClick={() => setFilters(prev => ({ ...prev, setting: opt }))}
                     className={`py-2.5 px-3 rounded-lg text-[11px] font-medium border text-left transition-all ${filters.setting === opt
                       ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300'
-                      : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:border-slate-700'
+                      : 'bg-slate-900/50 border-slate-800 text-slate-3000 hover:border-slate-700'
                       }`}
                   >
                     {opt}
@@ -585,7 +585,7 @@ const SearchPortal: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-medium text-slate-500 flex items-center gap-2">
+              <label className="text-[11px] font-medium text-slate-3000 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">science</span> Substance
               </label>
               <div className="flex flex-col gap-2">
@@ -595,7 +595,7 @@ const SearchPortal: React.FC = () => {
                     onClick={() => setFilters(prev => ({ ...prev, substance: opt }))}
                     className={`py-2.5 px-4 rounded-lg text-[11px] font-medium text-left border transition-all flex justify-between items-center ${filters.substance === opt
                       ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                      : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:border-slate-700'
+                      : 'bg-slate-900/50 border-slate-800 text-slate-3000 hover:border-slate-700'
                       }`}
                   >
                     {opt}
@@ -606,7 +606,7 @@ const SearchPortal: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[10px] font-medium text-slate-500 flex items-center gap-2">
+              <label className="text-[10px] font-medium text-slate-3000 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">trending_down</span> Min. Efficacy
               </label>
               <div className="flex flex-col gap-2">
@@ -615,8 +615,8 @@ const SearchPortal: React.FC = () => {
                     key={opt}
                     onClick={() => setFilters(prev => ({ ...prev, minEfficacy: opt }))}
                     className={`py-2.5 px-3 rounded-lg text-[10px] font-medium border text-left transition-all ${filters.minEfficacy === opt
-                      ? 'bg-primary/20 border-primary text-white shadow-lg'
-                      : 'bg-slate-900/50 border-slate-800 text-slate-500 hover:border-slate-700'
+                      ? 'bg-primary/20 border-primary text-slate-300 shadow-lg'
+                      : 'bg-slate-900/50 border-slate-800 text-slate-3000 hover:border-slate-700'
                       }`}
                   >
                     {opt}
@@ -625,7 +625,7 @@ const SearchPortal: React.FC = () => {
               </div>
             </div>
 
-            <button onClick={handleReset} className="lg:hidden w-full py-3 border border-slate-800 hover:bg-slate-800 rounded-xl text-[12px] font-bold text-slate-500 hover:text-white transition-all">
+            <button onClick={handleReset} className="lg:hidden w-full py-3 border border-slate-800 hover:bg-slate-800 rounded-xl text-[12px] font-bold text-slate-3000 hover:text-slate-200 transition-all">
               Reset Filters
             </button>
           </div>
@@ -689,7 +689,7 @@ const SearchPortal: React.FC = () => {
                       {/* Subtle Header - No Box */}
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-sm font-bold text-slate-400">Research Results</h3>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-3000">
                           {substanceResults.length + patientResults.length + clinicianResults.length} nodes
                         </span>
                       </div>
@@ -732,7 +732,7 @@ const SearchPortal: React.FC = () => {
                         {substanceResults.length > 3 && (
                           <button
                             onClick={() => handleCategoryChange('Substances')}
-                            className="text-xs text-slate-500 hover:text-primary transition-colors"
+                            className="text-xs text-slate-3000 hover:text-primary transition-colors"
                           >
                             View all {substanceResults.length} substances →
                           </button>
@@ -740,7 +740,7 @@ const SearchPortal: React.FC = () => {
                         {patientResults.length > 3 && (
                           <button
                             onClick={() => handleCategoryChange('Patients')}
-                            className="text-xs text-slate-500 hover:text-primary transition-colors"
+                            className="text-xs text-slate-3000 hover:text-primary transition-colors"
                           >
                             View all {patientResults.length} patients →
                           </button>
@@ -748,7 +748,7 @@ const SearchPortal: React.FC = () => {
                         {clinicianResults.length > 3 && (
                           <button
                             onClick={() => handleCategoryChange('Clinicians')}
-                            className="text-xs text-slate-500 hover:text-primary transition-colors"
+                            className="text-xs text-slate-3000 hover:text-primary transition-colors"
                           >
                             View all {clinicianResults.length} clinicians →
                           </button>
@@ -763,7 +763,7 @@ const SearchPortal: React.FC = () => {
                       <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
                         <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
                       </div>
-                      <p className="text-slate-500 font-medium text-[11px]">No registry nodes found matching criteria.</p>
+                      <p className="text-slate-3000 font-medium text-[11px]">No registry nodes found matching criteria.</p>
                       <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
                     </div>
                   )}
@@ -791,7 +791,7 @@ const SearchPortal: React.FC = () => {
                         <div className="size-20 bg-slate-900/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-800">
                           <span className="material-symbols-outlined text-3xl text-slate-700">filter_list_off</span>
                         </div>
-                        <p className="text-slate-500 font-medium text-[11px]">No registry nodes found in this category.</p>
+                        <p className="text-slate-3000 font-medium text-[11px]">No registry nodes found in this category.</p>
                         <button onClick={handleReset} className="mt-4 text-primary text-xs font-bold hover:underline">Clear Filters</button>
                       </div>
                     )}

@@ -36,7 +36,7 @@ const getTierConfig = (tier: string) => {
                 borderColor: 'border-slate-700',
                 textColor: 'text-slate-400',
                 icon: Gift,
-                iconColor: 'text-slate-500'
+                iconColor: 'text-slate-3000'
             };
     }
 };

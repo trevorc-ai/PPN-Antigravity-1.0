@@ -167,14 +167,14 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
           </span>
           <button
             onClick={onComplete}
-            className="text-[11px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-all"
+            className="text-[11px] font-black text-slate-3000 hover:text-slate-200 uppercase tracking-widest transition-all"
           >
             Skip
           </button>
         </div>
 
         <div className="space-y-1.5">
-          <h3 className="text-lg font-black text-white tracking-tight leading-none">{step.title}</h3>
+          <h3 className="text-lg font-black text-slate-200 tracking-tight leading-none">{step.title}</h3>
           <p className="text-[12px] text-slate-400 font-medium leading-relaxed">
             {step.description}
           </p>
@@ -191,7 +191,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
           </div>
           <button
             onClick={handleNext}
-            className="px-6 py-2.5 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2 group/btn"
+            className="px-6 py-2.5 bg-primary hover:bg-blue-600 text-slate-300 text-[11px] font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2 group/btn"
           >
             {currentStep === TOUR_STEPS.length - 1 ? 'Finish' : 'Next'}
             <span className="material-symbols-outlined text-sm group-hover/btn:translate-x-0.5 transition-transform">arrow_forward</span>

@@ -42,7 +42,7 @@ const ForgotPassword: React.FC = () => {
                 {/* Back button */}
                 <button
                     onClick={() => navigate('/login')}
-                    className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest group"
+                    className="mb-6 flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors text-sm font-bold uppercase tracking-widest group"
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     Back to Login
@@ -56,7 +56,7 @@ const ForgotPassword: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 mb-4">
                                     <Mail className="w-8 h-8 text-primary" />
                                 </div>
-                                <h1 className="text-3xl font-black tracking-tight text-white mb-2">
+                                <h1 className="text-3xl font-black tracking-tight text-slate-200 mb-2">
                                     Reset Your Password
                                 </h1>
                                 <p className="text-slate-400 text-sm font-medium">
@@ -76,7 +76,7 @@ const ForgotPassword: React.FC = () => {
 
                                 {/* Email field */}
                                 <div className="space-y-2">
-                                    <label htmlFor="email" className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                    <label htmlFor="email" className="block text-[10px] font-bold text-slate-3000 uppercase tracking-widest">
                                         Email Address
                                     </label>
                                     <input
@@ -86,7 +86,7 @@ const ForgotPassword: React.FC = () => {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="your.email@clinic.com"
                                         required
-                                        className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                        className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-slate-300 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                     />
                                 </div>
 
@@ -94,7 +94,7 @@ const ForgotPassword: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full px-6 py-3 bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-white font-black text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                                    className="w-full px-6 py-3 bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-slate-300 font-black text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
                                 >
                                     {loading ? (
                                         <>
@@ -112,7 +112,7 @@ const ForgotPassword: React.FC = () => {
 
                             {/* Footer */}
                             <div className="mt-6 text-center">
-                                <p className="text-xs text-slate-500 font-medium">
+                                <p className="text-xs text-slate-3000 font-medium">
                                     Remember your password?{' '}
                                     <button
                                         onClick={() => navigate('/login')}
@@ -130,20 +130,20 @@ const ForgotPassword: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-4">
                                     <CheckCircle className="w-8 h-8 text-emerald-400" />
                                 </div>
-                                <h2 className="text-2xl font-black tracking-tight text-white mb-3">
+                                <h2 className="text-2xl font-black tracking-tight text-slate-200 mb-3">
                                     Check Your Email
                                 </h2>
                                 <p className="text-slate-400 text-sm font-medium mb-6 max-w-sm mx-auto">
-                                    We've sent a password recovery link to <span className="text-white font-bold">{email}</span>
+                                    We've sent a password recovery link to <span className="text-slate-300 font-bold">{email}</span>
                                 </p>
-                                <div className="space-y-3 text-xs text-slate-500 font-medium mb-8">
+                                <div className="space-y-3 text-xs text-slate-3000 font-medium mb-8">
                                     <p>• Click the link in the email to reset your password</p>
                                     <p>• The link will expire in 1 hour</p>
                                     <p>• Check your spam folder if you don't see it</p>
                                 </div>
                                 <button
                                     onClick={() => navigate('/login')}
-                                    className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm uppercase tracking-widest rounded-xl transition-all"
+                                    className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black text-sm uppercase tracking-widest rounded-xl transition-all"
                                 >
                                     Return to Login
                                 </button>

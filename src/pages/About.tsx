@@ -7,7 +7,7 @@ const About: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-full bg-[#05070a] text-slate-100 font-sans animate-in fade-in duration-700 pb-20 overflow-x-hidden">
+    <div className="min-h-full bg-[#05070a] text-slate-300 font-sans animate-in fade-in duration-700 pb-20 overflow-x-hidden">
       {/* Hero Section */}
       <div className="relative py-20 sm:py-32 border-b border-white/5 bg-[#080a0f]">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
@@ -18,7 +18,7 @@ const About: React.FC = () => {
             <span className="material-symbols-outlined text-sm">info</span>
             Institutional Identity
           </div>
-          <h1 className="text-5xl sm:text-8xl font-black tracking-tighter text-white leading-none">
+          <h1 className="text-5xl sm:text-8xl font-black tracking-tighter text-slate-200 leading-none">
             Advancing the <br />
             <span className="text-gradient-primary">Science</span> of Psychedelic Therapy.
           </h1>
@@ -33,7 +33,7 @@ const About: React.FC = () => {
         {/* Mission & Vision */}
         <Section spacing="default" className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-200 leading-tight">
               A <span className="text-gradient-primary">Unified</span> Framework for <br />Clinical Excellence.
             </h2>
             <div className="space-y-6 text-slate-400 text-base leading-relaxed font-medium">
@@ -47,7 +47,7 @@ const About: React.FC = () => {
             <div className="pt-4">
               <button
                 onClick={() => navigate('/advanced-search')}
-                className="px-8 py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95"
+                className="px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95"
               >
                 Access Research Portal
               </button>
@@ -58,20 +58,20 @@ const About: React.FC = () => {
             <div className="relative bg-[#111418]/60 border border-slate-800 rounded-[3rem] p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
               <div className="grid grid-cols-2 gap-6">
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                  <span className="text-3xl font-black text-white">12k+</span>
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>
+                  <span className="text-3xl font-black text-slate-300">12k+</span>
+                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Enrolled Subjects</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                   <span className="text-3xl font-black text-clinical-green">04</span>
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Global Hubs</p>
+                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Global Hubs</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                   <span className="text-3xl font-black text-primary">85%</span>
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Avg. Outcome Lift</p>
+                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Avg. Outcome Lift</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                   <span className="text-3xl font-black text-accent-amber">99.9%</span>
-                  <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Data Integrity</p>
+                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Data Integrity</p>
                 </div>
               </div>
             </div>
@@ -83,7 +83,7 @@ const About: React.FC = () => {
           <div className="text-center space-y-8">
             <h3 className="text-[11px] font-black text-primary tracking-[0.4em] uppercase tracking-[0.8em]">Our Principles</h3>
             <div className="max-w-2xl mx-auto border-[1px] border-primary/30 rounded-xl p-8 backdrop-blur-sm shadow-xl">
-              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+              <h2 className="text-3xl sm:text-5xl font-black text-slate-200 tracking-tight">
                 <span className="text-gradient-primary">Built</span> for Regulatory Rigor.
               </h2>
             </div>
@@ -113,8 +113,8 @@ const About: React.FC = () => {
                 <div className={`size-16 rounded-2xl bg-slate-950 flex items-center justify-center border border-slate-800 group-hover:scale-110 transition-transform ${principle.color}`}>
                   <span className="material-symbols-outlined text-3xl">{principle.icon}</span>
                 </div>
-                <h4 className="text-xl font-black text-white tracking-tight">{principle.title}</h4>
-                <p className="text-sm text-slate-500 font-medium leading-relaxed">{principle.desc}</p>
+                <h4 className="text-xl font-black text-slate-300 tracking-tight">{principle.title}</h4>
+                <p className="text-sm text-slate-3000 font-medium leading-relaxed">{principle.desc}</p>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ const About: React.FC = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
           <div className="space-y-4 max-w-2xl relative z-10">
-            <h2 className="text-4xl sm:text-6xl font-black text-white tracking-tighter leading-tight">
+            <h2 className="text-4xl sm:text-6xl font-black text-slate-200 tracking-tighter leading-tight">
               The Global <span className="text-gradient-purple">Psychedelic Practitioner</span> Network.
             </h2>
             <p className="text-slate-400 font-medium text-lg leading-relaxed">
@@ -137,10 +137,10 @@ const About: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl relative z-10">
             {['Baltimore', 'London', 'Zurich', 'Palo Alto'].map(loc => (
               <div key={loc} className="space-y-2">
-                <p className="text-2xl font-black text-white">{loc}</p>
+                <p className="text-2xl font-black text-slate-300">{loc}</p>
                 <div className="flex items-center justify-center gap-2">
                   <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                  <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
+                  <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Active Practitioner</span>
                 </div>
               </div>
             ))}
@@ -150,10 +150,10 @@ const About: React.FC = () => {
         {/* CTA Section */}
         <Section spacing="default" className="flex flex-col items-center space-y-10 py-10">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-black text-slate-200 tracking-tight leading-tight">
               <span className="text-gradient-primary">Access</span> the Discovery Network.
             </h2>
-            <p className="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
+            <p className="text-slate-3000 font-medium max-w-lg mx-auto leading-relaxed">
               Qualified practitioners and research institutions are invited to apply for institutional node access.
             </p>
           </div>

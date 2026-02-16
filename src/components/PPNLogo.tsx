@@ -23,7 +23,7 @@ export const PPNLogo: React.FC<PPNLogoProps> = ({
     return (
         <div className={`flex flex-col items-center gap-4 ${className}`} style={{ width: container }}>
             {/* PPN Text */}
-            <h1 className={`${text} font-black tracking-[0.15em] text-slate-900 dark:text-white`}>
+            <h1 className={`${text} font-black tracking-[0.15em] text-slate-900 dark:text-slate-300`}>
                 PPN
             </h1>
 

@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload, overhead }: any) => {
 
         return (
             <div className="bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-2xl z-50 min-w-[200px]">
-                <h4 className="font-black text-white text-sm mb-2">{data.name}</h4>
+                <h4 className="font-black text-slate-300 text-sm mb-2">{data.name}</h4>
                 <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
                         <span className="text-slate-400">Revenue:</span>
@@ -84,7 +84,7 @@ export default function ProtocolEfficiency() {
             {/* HEADER */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div title="Forecasting financial efficiency and margin analysis for selected protocols">
-                    <h2 className="text-xl font-black text-white tracking-tighter flex items-center gap-2">
+                    <h2 className="text-xl font-black text-slate-200 tracking-tighter flex items-center gap-2">
                         <Calculator className="text-indigo-500" />
                         Protocol ROI Engine
                     </h2>
@@ -98,8 +98,8 @@ export default function ProtocolEfficiency() {
                         <DollarSign className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div className="flex-1">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1" title="Adjust the estimated hourly operational cost to see impact on margin">
-                            Est. Hourly Overhead: <span className="text-white">${overhead}</span>
+                        <label className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-1" title="Adjust the estimated hourly operational cost to see impact on margin">
+                            Est. Hourly Overhead: <span className="text-slate-300">${overhead}</span>
                         </label>
                         <input
                             type="range"
@@ -166,7 +166,7 @@ export default function ProtocolEfficiency() {
                             <TrendingUp className="w-4 h-4 text-indigo-400" />
                             <h3 className="text-xs font-black text-indigo-300 uppercase tracking-widest">Efficiency Forecast</h3>
                         </div>
-                        <p className="text-3xl font-black text-white tracking-tight">
+                        <p className="text-3xl font-black text-slate-300 tracking-tight">
                             ${totalPotentialProfit.toLocaleString()}
                         </p>
                         <p className="text-xs text-indigo-400/60 font-medium mt-1">
@@ -180,7 +180,7 @@ export default function ProtocolEfficiency() {
                                     <div className={`text-xs font-black w-4 text-slate-600`}>#{i + 1}</div>
                                     <div>
                                         <div className="text-xs font-bold text-slate-200">{p.name}</div>
-                                        <div className="text-xs text-slate-500">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
+                                        <div className="text-xs text-slate-3000">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
                                     </div>
                                 </div>
                                 <div className={`text-xs font-mono font-bold ${p.profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>

@@ -26,11 +26,11 @@ const ConnectFeedButton: React.FC<ConnectFeedButtonProps> = ({ className = '', o
 
             {/* Icon Box */}
             <div className="p-1.5 bg-white/20 rounded-lg backdrop-blur-sm group-hover:bg-white/30 transition-colors">
-                <Rss className="w-4 h-4 text-white" />
+                <Rss className="w-4 h-4 text-slate-300" />
             </div>
 
             {/* Text */}
-            <span className="font-bold text-sm text-white tracking-wide uppercase">
+            <span className="font-bold text-sm text-slate-300 tracking-wide uppercase">
                 Connect Your Blog/Feed
             </span>
         </button>

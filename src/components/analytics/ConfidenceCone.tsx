@@ -18,7 +18,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Day {label}</p>
+        <p className="text-[10px] font-black text-slate-3000 uppercase tracking-widest mb-2">Day {label}</p>
         {payload.map((p: any, i: number) => {
           // Skip the confidence interval array in the tooltip for cleaner UI
           if (p.name === 'Confidence Interval') return null;
@@ -28,12 +28,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
               <span className="text-xs font-bold text-slate-300">
                 {p.name === 'userScore' ? 'Patient Score' : 'Community Mean'}:
               </span>
-              <span className="text-xs font-mono font-black text-white">{p.value}</span>
+              <span className="text-xs font-mono font-black text-slate-300">{p.value}</span>
             </div>
           );
         })}
         <div className="mt-2 pt-2 border-t border-slate-800">
-           <p className="text-[10px] text-slate-500">PHQ-9 Severity Index</p>
+           <p className="text-[10px] text-slate-3000">PHQ-9 Severity Index</p>
         </div>
       </div>
     );
@@ -61,9 +61,9 @@ const ConfidenceCone: React.FC = () => {
             <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
               <TrendingDown size={18} />
             </div>
-            <h3 className="text-lg font-black text-white tracking-tight">Predictive Trajectory</h3>
+            <h3 className="text-lg font-black text-slate-200 tracking-tight">Predictive Trajectory</h3>
           </div>
-          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Patient vs. Aggregate (N=14k)</p>
+          <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Patient vs. Aggregate (N=14k)</p>
         </div>
         <div className="group/info relative">
           <Info size={16} className="text-slate-600 hover:text-slate-400 transition-colors cursor-help" />

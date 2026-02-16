@@ -38,7 +38,7 @@ export const GlassInput: React.FC<GlassInputProps> = ({
             bg-white/5
             border-2 border-white/20
             rounded-xl
-            text-white placeholder-slate-400
+            text-slate-300 placeholder-slate-400
             focus:outline-none 
             focus:border-indigo-400/60
             focus:bg-white/8

@@ -67,7 +67,16 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                 <select
                     value={formData.indication_id || ''}
                     onChange={(e) => onChange('indication_id', parseInt(e.target.value))}
-                    className="w-full bg-[#020408] border border-[#1e293b] rounded-lg px-4 py-3 text-[#f8fafc] focus:border-[#14b8a6] focus:outline-none"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.currentTarget.click();
+                        }
+                    }}
+                    className={`w-full bg-[#020408] rounded-lg px-4 py-3 text-[#f8fafc] focus:outline-none transition-all duration-200
+                        ${!formData.indication_id
+                            ? 'border-2 border-[#ef4444]/30 focus:border-[#14b8a6]'
+                            : 'border-2 border-[#1e293b] focus:border-[#14b8a6]'}
+                    `}
                 >
                     <option value="">Select indication...</option>
                     {indications.map((ind) => (
@@ -94,7 +103,16 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                 <select
                     value={formData.substance_id || ''}
                     onChange={(e) => onChange('substance_id', parseInt(e.target.value))}
-                    className="w-full bg-[#020408] border border-[#1e293b] rounded-lg px-4 py-3 text-[#f8fafc] focus:border-[#14b8a6] focus:outline-none"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.currentTarget.click();
+                        }
+                    }}
+                    className={`w-full bg-[#020408] rounded-lg px-4 py-3 text-[#f8fafc] focus:outline-none transition-all duration-200
+                        ${!formData.substance_id
+                            ? 'border-2 border-[#ef4444]/30 focus:border-[#14b8a6]'
+                            : 'border-2 border-[#1e293b] focus:border-[#14b8a6]'}
+                    `}
                 >
                     <option value="">Select substance...</option>
                     {substances.map((sub) => (
@@ -145,7 +163,16 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                 <select
                     value={formData.route_id || ''}
                     onChange={(e) => onChange('route_id', parseInt(e.target.value))}
-                    className="w-full bg-[#020408] border border-[#1e293b] rounded-lg px-4 py-3 text-[#f8fafc] focus:border-[#14b8a6] focus:outline-none"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.currentTarget.click();
+                        }
+                    }}
+                    className={`w-full bg-[#020408] rounded-lg px-4 py-3 text-[#f8fafc] focus:outline-none transition-all duration-200
+                        ${!formData.route_id
+                            ? 'border-2 border-[#ef4444]/30 focus:border-[#14b8a6]'
+                            : 'border-2 border-[#1e293b] focus:border-[#14b8a6]'}
+                    `}
                 >
                     <option value="">Select route...</option>
                     {routes.map((route) => (

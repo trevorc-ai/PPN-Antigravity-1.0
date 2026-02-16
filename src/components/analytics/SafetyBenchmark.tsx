@@ -17,7 +17,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900 border border-slate-700 rounded px-3 py-2">
-                <p className="text-white text-sm font-medium">{payload[0].payload.name}</p>
+                <p className="text-slate-300 text-sm font-medium">{payload[0].payload.name}</p>
                 <p className="text-slate-300 text-xs">{payload[0].value} events per 1000 patients</p>
             </div>
         );
@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 export default function SafetyBenchmark() {
     return (
         <div className="bg-[#0f1218] border border-slate-800 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Safety Benchmark</h3>
+            <h3 className="text-lg font-semibold text-slate-200 mb-4">Safety Benchmark</h3>
 
             <div className="h-32">
                 <ResponsiveContainer width="100%" height="100%">

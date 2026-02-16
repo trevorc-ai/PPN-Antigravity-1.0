@@ -19,7 +19,7 @@ const WorkflowChaosPage: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <PageContainer className="min-h-screen bg-[#05070a] text-white">
+        <PageContainer className="min-h-screen bg-[#05070a] text-slate-300">
             {/* Hero Section */}
             <Section spacing="tight" className="pt-20 pb-12 text-center">
                 <motion.div
@@ -31,7 +31,7 @@ const WorkflowChaosPage: React.FC = () => {
                         <ServerCrash className="w-4 h-4" />
                         Operational Inefficiency
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-black tracking-tighter text-white mb-6 leading-[0.9]">
+                    <h1 className="text-5xl sm:text-7xl font-black tracking-tighter text-slate-200 mb-6 leading-[0.9]">
                         The End of <br />
                         <span className="text-gradient-primary">Fragmented Care.</span>
                     </h1>
@@ -60,8 +60,8 @@ const WorkflowChaosPage: React.FC = () => {
                         >
                             <tool.icon className={`w-8 h-8 ${tool.color}`} />
                             <div>
-                                <h3 className="text-sm font-black text-white">{tool.name}</h3>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{tool.desc}</p>
+                                <h3 className="text-sm font-black text-slate-200">{tool.name}</h3>
+                                <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">{tool.desc}</p>
                             </div>
                         </motion.div>
                     ))}
@@ -80,7 +80,7 @@ const WorkflowChaosPage: React.FC = () => {
 
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div className="space-y-8">
-                            <h2 className="text-4xl font-black tracking-tight text-white">
+                            <h2 className="text-4xl font-black tracking-tight text-slate-200">
                                 The <span className="text-gradient-primary">Practice OS</span> Solution.
                             </h2>
                             <p className="text-lg text-slate-400 font-medium leading-relaxed">
@@ -120,9 +120,9 @@ const WorkflowChaosPage: React.FC = () => {
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="text-center space-y-2">
                                         <div className="w-16 h-16 bg-primary rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-primary/30">
-                                            <Layers className="w-8 h-8 text-white" />
+                                            <Layers className="w-8 h-8 text-slate-300" />
                                         </div>
-                                        <p className="text-2xl font-black text-white">Unified Core</p>
+                                        <p className="text-2xl font-black text-slate-300">Unified Core</p>
                                     </div>
                                 </div>
                             </div>

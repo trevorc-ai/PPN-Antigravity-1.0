@@ -5,6 +5,7 @@ import ConnectFeedButton from '../components/ui/ConnectFeedButton';
 
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
+import RegulatoryMosaic from '../components/analytics/RegulatoryMosaic';
 
 
 const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
@@ -20,12 +21,12 @@ const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
 
       <div className="absolute top-8 left-8 flex gap-2 z-10">
         <span className="px-3 py-1 bg-accent-amber text-black text-[11px] font-black uppercase tracking-widest rounded shadow-lg shadow-accent-amber/20">Breakthrough</span>
-        <span className="px-3 py-1 bg-primary text-white text-[11px] font-black uppercase tracking-widest rounded shadow-lg shadow-primary/20">Phase III</span>
+        <span className="px-3 py-1 bg-primary text-slate-300 text-[11px] font-black uppercase tracking-widest rounded shadow-lg shadow-primary/20">Phase III</span>
       </div>
 
       <div className="absolute bottom-10 left-10 right-10 z-10 space-y-4 max-w-3xl">
         <p className="text-slate-400 text-[11px] font-mono uppercase tracking-[0.3em] font-bold">Published May 14, 2024</p>
-        <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tighter leading-[1.1]">
+        <h2 className="text-4xl sm:text-5xl font-black text-slate-200 tracking-tighter leading-[1.1]">
           FDA Approves Landmark Phase III Trial for PPN-04 Compound
         </h2>
         <p className="text-slate-300 text-sm sm:text-lg font-medium leading-relaxed max-w-2xl opacity-80">
@@ -59,18 +60,18 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
             }`}>
             {article.category}
           </span>
-          <span className="text-[11px] font-mono text-slate-500 uppercase tracking-widest">{article.timestamp}</span>
+          <span className="text-[11px] font-mono text-slate-3000 uppercase tracking-widest">{article.timestamp}</span>
         </div>
       </div>
 
       <div className="p-8 flex flex-col flex-1 gap-4">
-        <h3 className="text-xl font-black text-slate-100 group-hover:text-white leading-tight tracking-tight transition-colors">
+        <h3 className="text-xl font-black text-slate-300 group-hover:text-slate-200 leading-tight tracking-tight transition-colors">
           {article.title}
         </h3>
-        <p className="text-sm text-slate-500 leading-relaxed font-medium line-clamp-3">
+        <p className="text-sm text-slate-3000 leading-relaxed font-medium line-clamp-3">
           {article.summary}
         </p>
-        <button className="mt-auto flex items-center gap-2 text-[11px] font-black text-primary hover:text-white uppercase tracking-[0.2em] transition-all group/btn">
+        <button className="mt-auto flex items-center gap-2 text-[11px] font-black text-primary hover:text-slate-200 uppercase tracking-[0.2em] transition-all group/btn">
           Read Research
           <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
         </button>
@@ -85,6 +86,7 @@ const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [goodNewsOnly, setGoodNewsOnly] = useState(true); // Default to Smart Filter ON
   const [sortBy, setSortBy] = useState<'recent' | 'cited'>('recent');
+  const [selectedStateFilter, setSelectedStateFilter] = useState<string | null>(null);
 
   const categories = ['All', 'Regulation', 'Clinical Trials', 'Industry'];
 
@@ -92,6 +94,18 @@ const News: React.FC = () => {
     const currentIndex = categories.indexOf(selectedCategory);
     const nextIndex = (currentIndex + 1) % categories.length;
     setSelectedCategory(categories[nextIndex]);
+  };
+
+  // Handler for state selection from regulatory grid
+  const handleStateSelect = (stateCode: string) => {
+    // Map state codes to state names for search
+    const stateNames: Record<string, string> = {
+      'OR': 'Oregon', 'CO': 'Colorado', 'CA': 'California', 'WA': 'Washington',
+      'TX': 'Texas', 'NY': 'New York', 'FL': 'Florida', 'MA': 'Massachusetts',
+      'MI': 'Michigan', 'AZ': 'Arizona', 'NV': 'Nevada', 'CT': 'Connecticut'
+    };
+    setSelectedStateFilter(stateCode);
+    setSearchQuery(stateNames[stateCode] || stateCode);
   };
 
   // Filter logic
@@ -132,11 +146,39 @@ const News: React.FC = () => {
         {/* Main Feed Section */}
         <div className="flex-1 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <h1 className="text-5xl font-black tracking-tighter text-white">
-              News Feed
+            <h1 className="text-5xl font-black tracking-tighter text-slate-200">
+              Intelligence Hub
             </h1>
             <ConnectFeedButton />
           </div>
+
+          {/* Regulatory Mosaic - Integrated from standalone page */}
+          <div className="mb-10">
+            <RegulatoryMosaic
+              onStateSelect={handleStateSelect}
+              externalSelectedState={selectedStateFilter}
+              showDetailPanel={false}
+            />
+          </div>
+
+          {/* State Filter Indicator */}
+          {selectedStateFilter && (
+            <div className="flex items-center gap-3 p-4 bg-primary/10 border border-primary/30 rounded-2xl">
+              <span className="material-symbols-outlined text-primary">filter_alt</span>
+              <span className="text-sm font-bold text-slate-300">
+                Showing news for: {searchQuery}
+              </span>
+              <button
+                onClick={() => {
+                  setSelectedStateFilter(null);
+                  setSearchQuery('');
+                }}
+                className="ml-auto text-xs font-black text-slate-400 hover:text-slate-200 uppercase tracking-widest transition-colors"
+              >
+                Clear Filter
+              </button>
+            </div>
+          )}
 
           {articles.length > 0 && <FeatureArticle article={articles[0]} />}
 
@@ -145,14 +187,14 @@ const News: React.FC = () => {
             <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
               <button
                 onClick={() => setSortBy('recent')}
-                className={`px-5 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                className={`px-5 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-200'}`}
               >
                 <span className="material-symbols-outlined text-sm">schedule</span>
                 Most Recent
               </button>
               <button
                 onClick={() => setSortBy('cited')}
-                className={`px-5 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                className={`px-5 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-200'}`}
               >
                 <span className="material-symbols-outlined text-sm">star</span>
                 Most Cited
@@ -161,7 +203,7 @@ const News: React.FC = () => {
 
             <button
               onClick={cycleCategory}
-              className={`px-4 py-2.5 border rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-400 hover:text-white'}`}
+              className={`px-4 py-2.5 border rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-400 hover:text-slate-200'}`}
             >
               {selectedCategory === 'All' ? 'Compound Type' : selectedCategory}
               <span className="material-symbols-outlined text-base">expand_more</span>
@@ -174,7 +216,7 @@ const News: React.FC = () => {
                 placeholder="Search research..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 bg-black/40 border border-slate-800 rounded-xl pl-12 pr-4 text-sm font-bold text-white focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all"
+                className="w-full h-11 bg-black/40 border border-slate-800 rounded-xl pl-12 pr-4 text-sm font-bold text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all"
               />
             </div>
           </div>
@@ -182,7 +224,7 @@ const News: React.FC = () => {
           <div className="space-y-6 pt-4">
             <div className="flex items-center gap-3">
               <div className="w-1 h-6 bg-primary rounded-full"></div>
-              <h2 className="text-2xl font-black text-white tracking-tighter">News Feed</h2>
+              <h2 className="text-2xl font-black text-slate-200 tracking-tighter">News Feed</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {filteredNews.map(article => (
@@ -206,7 +248,7 @@ const News: React.FC = () => {
                 <button
                   key={tag}
                   onClick={() => setSearchQuery(tag.replace('#', ''))}
-                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-[11px] font-black text-slate-400 hover:text-white hover:border-primary/50 transition-all uppercase tracking-widest"
+                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-[11px] font-black text-slate-400 hover:text-slate-200 hover:border-primary/50 transition-all uppercase tracking-widest"
                 >
                   {tag}
                 </button>
@@ -221,9 +263,9 @@ const News: React.FC = () => {
                 <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                   <span className="material-symbols-outlined text-xl">mail</span>
                 </div>
-                <h3 className="text-sm font-black text-white tracking-[0.2em]">Weekly Briefing</h3>
+                <h3 className="text-sm font-black text-slate-200 tracking-[0.2em]">Weekly Briefing</h3>
               </div>
-              <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
+              <p className="text-[11px] text-slate-3000 leading-relaxed font-medium">
                 Get the most critical clinical updates delivered to your inbox every Monday morning.
               </p>
             </div>
@@ -231,9 +273,9 @@ const News: React.FC = () => {
               <input
                 type="email"
                 placeholder="professional@clinic.com"
-                className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-white focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
+                className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
               />
-              <button className="w-full py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
+              <button className="w-full py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
                 Subscribe Now
               </button>
               <p className="text-[10px] text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>
@@ -249,8 +291,8 @@ const News: React.FC = () => {
             <div className="space-y-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-end">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Active Trials</span>
-                  <span className="text-[12px] font-mono font-black text-white">124</span>
+                  <span className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest">Active Trials</span>
+                  <span className="text-[12px] font-mono font-black text-slate-300">124</span>
                 </div>
                 <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
                   <div className="h-full bg-primary" style={{ width: '82%' }}></div>
@@ -259,8 +301,8 @@ const News: React.FC = () => {
 
               <div className="space-y-3">
                 <div className="flex justify-between items-end">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Peer Reviews</span>
-                  <span className="text-[12px] font-mono font-black text-white">8,402</span>
+                  <span className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest">Peer Reviews</span>
+                  <span className="text-[12px] font-mono font-black text-slate-300">8,402</span>
                 </div>
                 <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
                   <div className="h-full bg-accent-orange" style={{ width: '45%', backgroundColor: '#f97316' }}></div>
@@ -272,7 +314,7 @@ const News: React.FC = () => {
           {/* Professional Context Node */}
           <div className="p-6 bg-slate-900/40 border border-slate-800/60 rounded-3xl flex items-center gap-5">
             <div className="size-12 rounded-2xl bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700">
-              <span className="material-symbols-outlined text-slate-500">verified</span>
+              <span className="material-symbols-outlined text-slate-3000">verified</span>
             </div>
             <div className="flex flex-col">
               <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Source Context</span>

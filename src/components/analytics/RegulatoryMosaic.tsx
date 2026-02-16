@@ -12,6 +12,14 @@ interface StateRegulation {
     color: string;
 }
 
+// Props for external control (filter synchronization)
+interface RegulatoryMosaicProps {
+    onStateSelect?: (stateCode: string) => void;
+    highlightedStates?: string[];
+    externalSelectedState?: string | null;
+    showDetailPanel?: boolean;
+}
+
 const STATE_DATA: Record<string, StateRegulation> = {
     OR: { code: 'OR', name: 'Oregon', status: 'Legal (Regulated)', license: 'Facilitator Required', keyForm: 'Consent for Touch', color: 'bg-[#5B8FA3]' },
     CO: { code: 'CO', name: 'Colorado', status: 'Decriminalized', license: 'Pending Regulations', color: 'bg-[#7BA05B]' },
@@ -27,9 +35,25 @@ const STATE_DATA: Record<string, StateRegulation> = {
     CT: { code: 'CT', name: 'Connecticut', status: 'Medical Only', license: 'Research Protocol', color: 'bg-[#4A6B8A]' },
 };
 
-export default function RegulatoryMosaic() {
+export default function RegulatoryMosaic({
+    onStateSelect,
+    highlightedStates = [],
+    externalSelectedState,
+    showDetailPanel = true
+}: RegulatoryMosaicProps = {}) {
     const navigate = useNavigate();
-    const [selectedState, setSelectedState] = useState<string | null>('OR');
+    const [internalSelectedState, setInternalSelectedState] = useState<string | null>('OR');
+
+    // Use external state if provided, otherwise use internal state
+    const selectedState = externalSelectedState !== undefined ? externalSelectedState : internalSelectedState;
+
+    const handleStateClick = (stateCode: string) => {
+        if (onStateSelect) {
+            onStateSelect(stateCode);
+        } else {
+            setInternalSelectedState(stateCode);
+        }
+    };
 
     const stateData = selectedState ? STATE_DATA[selectedState] : null;
 
@@ -38,11 +62,11 @@ export default function RegulatoryMosaic() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6 shrink-0">
                 <div>
-                    <h3 className="text-lg font-black text-white uppercase tracking-tighter flex items-center gap-2">
+                    <h3 className="text-lg font-black text-slate-200 uppercase tracking-tighter flex items-center gap-2">
                         <Map className="w-5 h-5 text-indigo-500" />
                         Regulatory Mosaic (Grid View)
                     </h3>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">
                         Navigating Legal Complexity • State-by-State Status
                     </p>
                 </div>
@@ -73,9 +97,11 @@ export default function RegulatoryMosaic() {
                     {Object.values(STATE_DATA).map((state) => (
                         <button
                             key={state.code}
-                            onClick={() => setSelectedState(state.code)}
+                            onClick={() => handleStateClick(state.code)}
                             className={`group relative p-4 rounded-xl border-2 transition-all text-left overflow-hidden ${selectedState === state.code
-                                    ? 'border-indigo-400 bg-slate-800/90 shadow-[0_0_30px_rgba(99,102,241,0.4)] scale-[1.02]'
+                                ? 'border-indigo-400 bg-slate-800/90 shadow-[0_0_30px_rgba(99,102,241,0.4)] scale-[1.02]'
+                                : highlightedStates.length > 0 && !highlightedStates.includes(state.code)
+                                    ? 'border-slate-700/30 bg-slate-800/20 opacity-40'
                                     : 'border-slate-700/50 bg-slate-800/40 hover:border-slate-600 hover:bg-slate-800/60 hover:shadow-lg'
                                 }`}
                         >
@@ -85,9 +111,9 @@ export default function RegulatoryMosaic() {
 
                             {/* State code */}
                             <div className="flex justify-between items-start mb-2 mt-1">
-                                <span className="text-3xl font-black text-white drop-shadow-lg">{state.code}</span>
+                                <span className="text-3xl font-black text-slate-300 drop-shadow-lg">{state.code}</span>
                                 {state.status.includes('Legal') && <CheckCircle className="w-5 h-5 text-emerald-400" />}
-                                {state.status === 'Illegal' && <Lock className="w-5 h-5 text-slate-500" />}
+                                {state.status === 'Illegal' && <Lock className="w-5 h-5 text-slate-3000" />}
                             </div>
 
                             {/* State name */}
@@ -95,10 +121,10 @@ export default function RegulatoryMosaic() {
 
                             {/* Status badge */}
                             <p className={`text-[10px] font-mono ${state.status.includes('Legal') ? 'text-emerald-400' :
-                                    state.status === 'Decriminalized' ? 'text-green-400' :
-                                        state.status === 'Medical Only' ? 'text-blue-400' :
-                                            state.status === 'Pending' ? 'text-amber-400' :
-                                                'text-slate-500'
+                                state.status === 'Decriminalized' ? 'text-green-400' :
+                                    state.status === 'Medical Only' ? 'text-blue-400' :
+                                        state.status === 'Pending' ? 'text-amber-400' :
+                                            'text-slate-3000'
                                 }`}>
                                 {state.status}
                             </p>
@@ -106,21 +132,21 @@ export default function RegulatoryMosaic() {
                     ))}
                 </div>
 
-                {/* Selected State Detail Panel */}
-                {stateData && (
+                {/* Selected State Detail Panel - Conditional */}
+                {showDetailPanel && stateData && (
                     <div className="w-80 shrink-0 flex flex-col gap-4">
                         {/* State Header */}
                         <div className="p-5 bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-2xl shadow-black/50">
                             <div className="flex justify-between items-start mb-3">
                                 <div>
-                                    <h4 className="text-2xl font-black text-white uppercase mb-1">{stateData.name}</h4>
-                                    <span className="text-xs text-slate-500 font-mono">{stateData.code}</span>
+                                    <h4 className="text-2xl font-black text-slate-300 uppercase mb-1">{stateData.name}</h4>
+                                    <span className="text-xs text-slate-3000 font-mono">{stateData.code}</span>
                                 </div>
                                 <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase border ${stateData.status.includes('Legal') ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' :
-                                        stateData.status === 'Decriminalized' ? 'bg-green-500/10 border-green-500/30 text-green-400' :
-                                            stateData.status === 'Medical Only' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' :
-                                                stateData.status === 'Pending' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' :
-                                                    'bg-slate-500/10 border-slate-500/30 text-slate-400'
+                                    stateData.status === 'Decriminalized' ? 'bg-green-500/10 border-green-500/30 text-green-400' :
+                                        stateData.status === 'Medical Only' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' :
+                                            stateData.status === 'Pending' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' :
+                                                'bg-slate-500/10 border-slate-500/30 text-slate-400'
                                     }`}>
                                     {stateData.status}
                                 </span>
@@ -129,7 +155,7 @@ export default function RegulatoryMosaic() {
                             {/* Details */}
                             <div className="space-y-3 pt-3 border-t border-slate-700">
                                 <div>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                                    <span className="text-[10px] font-bold text-slate-3000 uppercase tracking-wider block mb-1">
                                         License Requirement
                                     </span>
                                     <span className="text-sm font-medium text-slate-300">{stateData.license}</span>
@@ -137,7 +163,7 @@ export default function RegulatoryMosaic() {
 
                                 {stateData.keyForm && (
                                     <div>
-                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                                        <span className="text-[10px] font-bold text-slate-3000 uppercase tracking-wider block mb-1">
                                             Key Form
                                         </span>
                                         <span className="text-sm font-medium text-indigo-400">{stateData.keyForm}</span>
@@ -148,7 +174,7 @@ export default function RegulatoryMosaic() {
                             {/* View News Button */}
                             <button
                                 onClick={() => navigate(`/news?search=${stateData.name}`)}
-                                className="w-full mt-4 px-4 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-lg text-xs font-bold text-primary hover:text-white uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                                className="w-full mt-4 px-4 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-lg text-xs font-bold text-primary hover:text-slate-200 uppercase tracking-widest transition-all flex items-center justify-center gap-2"
                             >
                                 <ExternalLink className="w-3.5 h-3.5" />
                                 View {stateData.code} News
@@ -162,7 +188,7 @@ export default function RegulatoryMosaic() {
                                 <p className="text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-0.5">
                                     System Status
                                 </p>
-                                <p className="text-[10px] text-slate-500 leading-tight">
+                                <p className="text-[10px] text-slate-3000 leading-tight">
                                     Monitoring 52 legislative bodies for regulatory changes.
                                 </p>
                             </div>

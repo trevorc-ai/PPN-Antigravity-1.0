@@ -85,7 +85,7 @@ export const SubmissionSuccessScreen: React.FC<SubmissionSuccessScreenProps> = (
 
                     <button
                         onClick={onTrackAnother}
-                        className="flex-1 bg-[#14b8a6] hover:bg-[#0d9488] text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                        className="flex-1 bg-[#14b8a6] hover:bg-[#0d9488] text-slate-300 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
                     >
                         <Plus className="w-4 h-4" />
                         Track Another Patient

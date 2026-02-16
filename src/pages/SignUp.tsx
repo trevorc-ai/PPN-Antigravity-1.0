@@ -61,9 +61,9 @@ const SignUp = () => {
                 {/* Header */}
                 <div className="p-8 text-center border-b border-slate-800/50">
                     <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(79,70,229,0.3)]">
-                        <Stethoscope className="w-6 h-6 text-white" />
+                        <Stethoscope className="w-6 h-6 text-slate-300" />
                     </div>
-                    <h1 className="text-2xl font-black text-white tracking-tight mb-2">Join the Network</h1>
+                    <h1 className="text-2xl font-black text-slate-200 tracking-tight mb-2">Join the Network</h1>
                     <p className="text-slate-400 text-xs font-medium uppercase tracking-widest">
                         Practitioner Registration
                     </p>
@@ -82,16 +82,16 @@ const SignUp = () => {
                     <div className="space-y-4">
                         {/* Email */}
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Email Address</label>
+                            <label className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">Email Address</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Mail className="h-4 w-4 text-slate-500" />
+                                    <Mail className="h-4 w-4 text-slate-3000" />
                                 </div>
                                 <input
                                     name="email"
                                     type="email"
                                     required
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 placeholder-slate-600"
+                                    className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 placeholder-slate-600"
                                     placeholder="name@clinic.com"
                                     value={formData.email}
                                     onChange={handleChange}
@@ -101,17 +101,17 @@ const SignUp = () => {
 
                         {/* Password */}
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Password</label>
+                            <label className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">Password</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-4 w-4 text-slate-500" />
+                                    <Lock className="h-4 w-4 text-slate-3000" />
                                 </div>
                                 <input
                                     name="password"
                                     type="password"
                                     required
                                     minLength={6}
-                                    className="w-full bg-slate-900/50 border border-slate-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 placeholder-slate-600"
+                                    className="w-full bg-slate-900/50 border border-slate-700 text-slate-300 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 p-2.5 placeholder-slate-600"
                                     placeholder="••••••••"
                                     value={formData.password}
                                     onChange={handleChange}
@@ -123,7 +123,7 @@ const SignUp = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full flex items-center justify-center gap-2 text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-bold rounded-xl text-sm px-5 py-3.5 mr-2 mb-2 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+                        className="w-full flex items-center justify-center gap-2 text-slate-300 bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 font-bold rounded-xl text-sm px-5 py-3.5 mr-2 mb-2 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-4"
                     >
                         {loading ? (
                             <>
@@ -139,7 +139,7 @@ const SignUp = () => {
                     </button>
 
                     <div className="text-center pt-2">
-                        <Link to="/login" className="text-xs text-slate-500 hover:text-indigo-400 font-bold uppercase tracking-widest transition-colors">
+                        <Link to="/login" className="text-xs text-slate-3000 hover:text-indigo-400 font-bold uppercase tracking-widest transition-colors">
                             Already have an account? Sign In
                         </Link>
                     </div>
