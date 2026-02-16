@@ -1,12 +1,13 @@
 ---
 id: WO-054
-status: 00_INBOX
+status: 02_DESIGN
 priority: P1 (Critical)
 category: Feature / Data Visualization / Backend
-owner: PENDING_LEAD_ASSIGNMENT
+owner: DESIGNER
 failure_count: 0
 created_date: 2026-02-16T10:51:44-08:00
 estimated_complexity: 10/10
+estimated_timeline: 6-10 weeks
 ---
 
 # User Request
@@ -731,3 +732,128 @@ This is a **high-complexity, high-impact feature** that requires:
 
 **Risk:** Scope creep
 **Mitigation:** Strict non-goals list, phased implementation plan
+
+---
+
+## 🏗️ LEAD ARCHITECTURE
+
+### Strategic Overview
+
+This is a **flagship feature** - the most complex work order in the system (10/10 complexity). This requires:
+- Multi-agent coordination (DESIGNER → SOOP → BUILDER → INSPECTOR)
+- 6-10 week timeline
+- Rigorous data discipline
+- Legal/ethical guardrails
+- Phased implementation with validation gates
+
+### Routing Decision
+
+This ticket is **too large** to assign directly to BUILDER. We need **DESIGNER first** to create:
+1. UI/UX design specs for all 4 core visualizations
+2. Component architecture and interaction patterns
+3. Visual design system for pharmacology module
+4. Accessibility strategy (color-blind safe, WCAG AAA)
+
+**DESIGNER's deliverables will become the blueprint for SOOP (data model) and BUILDER (implementation).**
+
+### Phased Implementation Strategy
+
+**Phase 1: Design & Architecture (DESIGNER)** ← **CURRENT PHASE**
+- Create UI/UX specs for:
+  - Target Fingerprint Heatmap
+  - Ranked Targets Bar Chart
+  - Time Course Timeline
+  - Mechanism Map
+  - Evidence Drawer
+  - Compare View
+- Define visual design system (colors, typography, spacing)
+- Create accessibility strategy
+- Design therapist vs patient view modes
+- **Deliverable:** Design specs document + mockups
+
+**Phase 2: Data Model & Backend (SOOP)**
+- Design database schema for all entities
+- Create FastAPI endpoints
+- Build validation system
+- Implement unit conversion utilities
+- Create starter dataset for 2 substances (psilocybin + ketamine)
+- **Deliverable:** Working API + migration scripts
+
+**Phase 3: Frontend Implementation (BUILDER)**
+- Build React components per DESIGNER specs
+- Integrate with SOOP's API
+- Implement all visualizations
+- Build evidence drawer and citation system
+- **Deliverable:** Working frontend
+
+**Phase 4: QA & Compliance (INSPECTOR)**
+- Accessibility audit (WCAG AAA)
+- Legal/ethical compliance review
+- Data integrity verification
+- Performance testing
+- **Deliverable:** Production approval
+
+### Critical Architectural Decisions
+
+**1. Design-First Approach**
+This is NOT a "build and iterate" project. The visualizations must be:
+- Scientifically rigorous
+- Legally defensible
+- Accessibility compliant
+- Color-blind safe
+
+**DESIGNER must create the blueprint before any code is written.**
+
+**2. Data Integrity is Non-Negotiable**
+Every data point must have:
+- Citation
+- Confidence score
+- Measurement type
+- Uncertainty notes
+
+**SOOP must build validation that enforces this at the database level.**
+
+**3. No Medical Advice**
+Every UI must include disclaimers:
+- "Educational content only. Not medical advice."
+- "Receptor binding does not predict outcomes for an individual."
+- "Evidence quality varies. Check citations and confidence."
+
+**INSPECTOR must verify all guardrail copy before production.**
+
+### Handoff to DESIGNER
+
+**DESIGNER:** This is the most complex design task in the system. Your deliverables will guide the entire implementation.
+
+**Your Task:**
+1. Read the entire ticket (all 734 lines)
+2. Create design specs for all 7 core components
+3. Define visual design system for pharmacology module
+4. Create accessibility strategy (color-blind safe, WCAG AAA)
+5. Design therapist vs patient view modes
+6. Create mockups/wireframes for all pages
+
+**Key Design Constraints:**
+- ✅ Color cannot imply clinical "good" or "bad"
+- ✅ Confidence must be visually separate from intensity
+- ✅ Missing data must show as "no data" (not zero)
+- ✅ Every data point must be clickable to show evidence
+- ✅ Must work without color alone (patterns, icons, labels)
+- ✅ Minimum 12px font size everywhere
+
+**Deliverable Format:**
+Create a new section in this ticket titled `## DESIGNER DELIVERABLES` with:
+1. Component design specs (all 7 components)
+2. Visual design system (colors, typography, spacing)
+3. Accessibility strategy
+4. Therapist vs Patient view mode designs
+5. Mockups/wireframes (can use generate_image tool)
+
+**When complete:** Move ticket to `04_QA` for LEAD review before proceeding to Phase 2 (SOOP).
+
+**Estimated Time:** 2-3 weeks
+
+---
+
+**LEAD STATUS:** ✅ Architecture complete. Routed to DESIGNER for Phase 1 (Design & Architecture).
+

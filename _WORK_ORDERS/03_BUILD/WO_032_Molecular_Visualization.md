@@ -4,14 +4,14 @@ title: Implement High-Performance Molecular Visualization
 type: FEATURE
 category: Feature
 priority: HIGH
-status: INBOX
+status: 03_BUILD
 created: 2026-02-15T00:31:20-08:00
 requested_by: Trevor Calton
-assigned_to: DESIGNER
+assigned_to: BUILDER
 estimated_complexity: 7/10
-failure_count: 0
-owner: BUILDER
-status: 03_BUILD
+failure_count: 2
+triage_reason: Component created but never integrated or tested
+retriage_date: 2026-02-16T12:26:00-08:00
 ---
 
 # Work Order: Implement High-Performance Molecular Visualization
@@ -315,3 +315,139 @@ See `src/components/science/README.md` for:
 - Performance optimization tips
 - Accessibility features
 - Integration examples
+
+---
+
+## 🔄 LEAD RETRIAGE ARCHITECTURE
+
+**Retriage Date:** 2026-02-16T12:26:00-08:00  
+**Reason for Retriage:** Component reportedly created but never verified, integrated, or tested
+
+### Root Cause Analysis
+
+According to the ticket notes (lines 209-318), BUILDER claims to have:
+- Created `MoleculeViewer.tsx` component (320 lines)
+- Added 3Dmol.js via CDN to `index.html`
+- Created README with documentation
+- Implemented all acceptance criteria
+
+**HOWEVER:** The ticket is in TRIAGE, which means either:
+1. The component was never actually created
+2. The component exists but doesn't work
+3. The component works but was never integrated
+4. INSPECTOR rejected it for performance/security reasons
+
+### New Strategy: Verify-Test-Integrate
+
+**Phase 1: File Verification (BUILDER)**
+1. Check if `src/components/science/MoleculeViewer.tsx` exists
+2. Check if `src/components/science/README.md` exists
+3. Check if `index.html` has 3Dmol.js CDN script
+4. Report findings
+
+**Phase 2: Component Testing (BUILDER)**
+If files exist:
+1. Create a test page to verify the component works
+2. Test with a simple SMILES string (e.g., psilocybin)
+3. Verify lazy-loading works
+4. Check for console errors
+5. Test performance with multiple molecules
+
+**Phase 3: Integration (BUILDER)**
+If component works:
+1. Add `smilesString` field to substance type definition
+2. Integrate into `SubstanceDetail.tsx`
+3. Add placeholder images for common substances
+4. Test end-to-end
+
+**Phase 4: Security Review (INSPECTOR)**
+- Review CDN loading (security concern)
+- Verify no external script injection
+- Check performance implications
+
+### Critical Architectural Decision
+
+**CDN LOADING IS A SECURITY RISK.**
+
+The ticket notes say 3Dmol.js was loaded via CDN in `index.html`. This violates our security policy: "No external script loading from untrusted CDNs."
+
+**NEW REQUIREMENT:** Install 3Dmol.js via npm, not CDN.
+
+```bash
+npm install 3dmol
+```
+
+If the component exists and uses CDN, it MUST be refactored to use the npm package.
+
+### Handoff to BUILDER
+
+**BUILDER:** Your task is multi-phase verification and remediation:
+
+**Step 1: Verify Files Exist**
+```bash
+ls -la src/components/science/MoleculeViewer.tsx
+ls -la src/components/science/README.md
+grep "3dmol" index.html
+```
+
+**Step 2: Report Findings**
+Add a section titled `## BUILDER RETRIAGE REPORT` with:
+- Do the files exist? (yes/no)
+- If yes, does the component import 3Dmol correctly?
+- Is 3Dmol loaded via CDN or npm?
+- Are there any console errors when testing?
+
+**Step 3: Remediation (if needed)**
+- If CDN is used → Refactor to use npm package
+- If component doesn't exist → Create it (follow original spec)
+- If component broken → Fix it
+
+**Step 4: Integration**
+- Add to SubstanceDetail page
+- Test with real substance data
+- Verify performance
+
+**Step 5: Move to QA**
+When complete, move ticket to `04_QA` for INSPECTOR security review.
+
+### Security Constraints (NON-NEGOTIABLE)
+
+**MUST:**
+- ✅ Use npm package (`npm install 3dmol`)
+- ✅ Import via ES modules
+- ✅ No CDN script tags in HTML
+
+**MUST NOT:**
+- ❌ Load 3Dmol from CDN
+- ❌ Use external script injection
+- ❌ Load untrusted external resources
+
+### Performance Constraints
+
+**MUST:**
+- ✅ Lazy-load WebGL contexts
+- ✅ Use Intersection Observer
+- ✅ Maintain 60fps with multiple molecules
+- ✅ Graceful fallback for errors
+
+### Testing Checklist
+
+- [ ] Files exist and are properly structured
+- [ ] 3Dmol loaded via npm (not CDN)
+- [ ] Component renders without errors
+- [ ] Lazy-loading works (hover/tap activation)
+- [ ] Auto-rotate works
+- [ ] Click-drag rotation works
+- [ ] Scroll zoom works
+- [ ] Graceful fallback for missing SMILES
+- [ ] Multiple molecules don't cause lag
+- [ ] Accessibility (ARIA labels, keyboard nav)
+- [ ] Integrated into SubstanceDetail page
+- [ ] No console errors
+
+**Estimated Time:** 2-3 hours (including CDN → npm refactor if needed)
+
+---
+
+**LEAD STATUS:** ✅ Retriage complete. Routed to BUILDER for verify-test-integrate approach with security remediation.
+

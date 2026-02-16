@@ -1,9 +1,9 @@
 ---
 id: WO-055
-status: 00_INBOX
+status: 03_BUILD
 priority: P2 (High)
 category: UI/UX / Layout Improvements
-owner: PENDING_LEAD_ASSIGNMENT
+owner: BUILDER
 failure_count: 0
 created_date: 2026-02-16T11:56:42-08:00
 ---
@@ -255,3 +255,56 @@ This is a **layout refinement and visual consistency** task. The goal is to:
 3. Differentiate filter buttons from navigation buttons for better UX
 
 All functionality must be preserved - this is purely a visual/layout improvement.
+
+---
+
+## 🏗️ LEAD ARCHITECTURE
+
+### Strategic Overview
+
+This is a **straightforward layout and styling refinement** task based on clear user instructions. All changes are CSS/layout only - no logic modifications.
+
+### Implementation Strategy
+
+**3 independent fixes:**
+1. Remove "Quick Insights" section from sidebar
+2. Fix substance cards grid balance
+3. Restyle filter buttons
+
+**Estimated Complexity:** Medium (3-4 sections to modify)
+
+### Handoff to BUILDER
+
+**BUILDER:** Execute the 3 fixes described in the user's verbatim instructions:
+
+**Fix 1: Remove Quick Insights (Lines 146-197)**
+- Delete entire section
+- Move "Drug Safety Matrix" up
+- Align top of sidebar with top of substance cards
+
+**Fix 2: Fix Grid Balance**
+- Review page container (`!max-w-7xl` may be causing left-bias)
+- Ensure substance cards grid is centered with `mx-auto` if needed
+- Match container patterns from other pages
+- Test responsive layout at all breakpoints
+
+**Fix 3: Restyle Filter Buttons (Lines 122-132)**
+- Replace primary blue with slate/gray
+- Active: `bg-slate-700 border-slate-600 text-slate-200`
+- Inactive: `bg-slate-900/50 border-slate-800 text-slate-400 hover:bg-slate-800`
+- Remove blue glow effect
+
+**Testing:**
+- [ ] Quick Insights removed, sidebar aligned
+- [ ] Cards grid centered and balanced
+- [ ] Filter buttons styled distinctly from navigation
+- [ ] Responsive at all breakpoints
+- [ ] No console errors
+
+**When complete:** Move to `04_QA`
+
+**Estimated Time:** 45-60 minutes
+
+---
+
+**LEAD STATUS:** ✅ Architecture complete. Routed to BUILDER for implementation.

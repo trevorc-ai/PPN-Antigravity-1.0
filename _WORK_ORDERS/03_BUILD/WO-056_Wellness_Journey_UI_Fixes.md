@@ -1,9 +1,9 @@
 ---
 id: WO-056
-status: 00_INBOX
+status: 03_BUILD
 priority: P2 (High)
 category: UI/UX / Accessibility / Layout
-owner: PENDING_LEAD_ASSIGNMENT
+owner: BUILDER
 failure_count: 0
 created_date: 2026-02-16T12:16:03-08:00
 ---
@@ -332,3 +332,71 @@ All functionality must be preserved - this is purely a visual/accessibility impr
 ## Estimated Complexity
 
 **4/10** - Straightforward CSS and layout fixes, but requires careful audit of all font sizes throughout the file.
+
+---
+
+## 🏗️ LEAD ARCHITECTURE
+
+### Strategic Overview
+
+This is an **accessibility and UX refinement** task with 4 independent fixes. Priority is WCAG AAA compliance (12px minimum fonts).
+
+### Implementation Strategy
+
+**4 independent fixes:**
+1. Grid items: Make emoji + score inline horizontal
+2. Font size audit: Replace all violations with 12px minimum
+3. Export PDF button: Restyle to match theme
+4. Afterglow chart: Reduce padding, improve axis labels
+
+**Files to modify:**
+- `src/pages/ArcOfCareGodView.tsx` (fixes 1-3)
+- `src/components/arc-of-care/SymptomDecayCurve.tsx` (fix 4)
+
+### Handoff to BUILDER
+
+**BUILDER:** Execute the 4 fixes described in the user's verbatim instructions:
+
+**Fix 1: Grid Items Inline Horizontal (Lines 205-257)**
+- Change from vertical stack to horizontal flex
+- Emoji and score on same line: `😰 21`
+- Center-justify content
+- Apply to all 4 grid items (PHQ-9, GAD-7, ACE, Expectancy)
+
+**Fix 2: Font Size Audit (CRITICAL - WCAG AAA)**
+- Search entire file for font size violations:
+  ```bash
+  grep -n "text-\[10px\]" src/pages/ArcOfCareGodView.tsx
+  grep -n "text-\[11px\]" src/pages/ArcOfCareGodView.tsx
+  grep -n "text-\[9px\]" src/pages/ArcOfCareGodView.tsx
+  ```
+- Replace ALL instances with `text-xs` (12px minimum)
+- NO EXCEPTIONS - this is accessibility compliance
+
+**Fix 3: Export PDF Button (Lines 175-178)**
+- Replace emerald green with slate/gray
+- New styling: `bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200 font-bold text-xs`
+- Ensure color-blind accessible
+
+**Fix 4: Afterglow Chart (`SymptomDecayCurve.tsx`)**
+- Reduce container padding (p-4 instead of p-6/p-8)
+- Increase chart margin for labels
+- Ensure axis labels ≥ 12px
+- Improve axis label colors for contrast
+- Adjust positioning for better UX
+
+**Testing:**
+- [ ] Grid items display inline horizontal, centered
+- [ ] NO fonts < 12px anywhere (run grep to verify)
+- [ ] Export PDF button matches theme
+- [ ] Chart larger with readable axis labels
+- [ ] Responsive at all breakpoints
+- [ ] No console errors
+
+**When complete:** Move to `04_QA`
+
+**Estimated Time:** 60-90 minutes (font audit is time-consuming)
+
+---
+
+**LEAD STATUS:** ✅ Architecture complete. Routed to BUILDER for implementation.
