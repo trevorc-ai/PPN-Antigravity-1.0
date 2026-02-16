@@ -585,24 +585,27 @@ const SearchPortal: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <label className="text-[11px] font-medium text-slate-3000 flex items-center gap-2">
+              <label className="text-xs font-medium text-slate-3000 flex items-center gap-2">
                 <span className="material-symbols-outlined text-sm">science</span> Substance
               </label>
-              <div className="flex flex-col gap-2">
+              <select
+                value={filters.substance}
+                onChange={(e) => setFilters(prev => ({ ...prev, substance: e.target.value }))}
+                className="w-full py-3 px-4 rounded-lg text-xs font-medium bg-slate-900/50 border border-slate-800 text-slate-300 hover:border-slate-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                  backgroundPosition: 'right 0.5rem center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '1.5em 1.5em',
+                  paddingRight: '2.5rem'
+                }}
+              >
                 {SUBSTANCE_OPTIONS.map(opt => (
-                  <button
-                    key={opt}
-                    onClick={() => setFilters(prev => ({ ...prev, substance: opt }))}
-                    className={`py-2.5 px-4 rounded-lg text-[11px] font-medium text-left border transition-all flex justify-between items-center ${filters.substance === opt
-                      ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
-                      : 'bg-slate-900/50 border-slate-800 text-slate-3000 hover:border-slate-700'
-                      }`}
-                  >
+                  <option key={opt} value={opt} className="bg-slate-900 text-slate-300">
                     {opt}
-                    {filters.substance === opt && <span className="material-symbols-outlined text-sm">check</span>}
-                  </button>
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
 
             <div className="space-y-3">
