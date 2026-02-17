@@ -1346,3 +1346,317 @@ All other pages in the application follow this consistent structure:
 **Ready for BUILDER handoff with updated specifications.**
 
 ---
+
+## 🔄 **USER FEEDBACK & DESIGN REVISIONS**
+
+**Feedback Date:** 2026-02-16T16:24:38-08:00  
+**Status:** Design specifications updated based on user input
+
+### **Key Decisions:**
+
+1. ✅ **PageContainer/Section Adoption** - APPROVED
+2. ✅ **Color-Coded Phase Cards** - PRESERVE (critical UX wayfinding)
+3. ✅ **Typography Standardization** - APPROVED
+4. 🎨 **Deep Blue Background** - **THIS IS THE CORRECT DESIGN SYSTEM**
+   - Wellness Journey background is CORRECT
+   - All other pages need to be updated to match (see WO-063)
+5. 💡 **Tabbed Interface** - RECOMMENDED for progressive disclosure
+
+---
+
+### 🎨 **REVISED: Background Color Strategy**
+
+**CORRECTION:** The deep blue gradient on Wellness Journey is the **intended design system**, not a violation.
+
+**Correct Background (Wellness Journey):**
+```tsx
+bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]
+```
+
+**Incorrect Background (Other Pages):**
+```tsx
+bg-[#0e1117]  // ❌ Too black, needs to be updated
+bg-[#080a0f]  // ❌ Too black, needs to be updated
+```
+
+**Action Items:**
+- ✅ **WO-056:** PRESERVE the deep blue background on Wellness Journey
+- 📋 **WO-063:** Update ALL other pages to use deep blue background (new work order)
+
+---
+
+### 🎨 **REVISED: Color-Coded Phase Cards**
+
+**User Feedback:** "Each card represents a different stage of the wellness journey, so I'm actually OK with them being different colors because if they were all the same color, then that would add a step of friction for the provider."
+
+**Design Analysis:** ✅ **CORRECT - This is intentional visual wayfinding**
+
+**Color Psychology & UX:**
+- 🔴 **Red/Amber (Preparation)** - Caution, assessment, baseline state
+- 🟠 **Amber/Orange (Dosing)** - Active, transformative, peak experience  
+- 🟢 **Emerald/Green (Integration)** - Growth, healing, sustained benefit
+
+**Decision:** **PRESERVE color-coded cards** - Do NOT make them uniform
+
+**Updated Fix #5:**
+- Keep gradient backgrounds: `bg-gradient-to-br from-red-500/10 to-red-900/10`
+- Only update border radius and padding for consistency
+- Do NOT change to uniform `card-glass` styling
+
+---
+
+### 💡 **NEW RECOMMENDATION: Tabbed Interface**
+
+**Current State:** All 3 phases displayed simultaneously in vertical layout
+
+**Problem:**
+- Information overload for practitioners
+- Must scroll through irrelevant phases
+- Hard to focus on current phase
+- Poor mobile/tablet experience
+
+**Proposed Solution:** **Progressive Disclosure via Tabs**
+
+#### **Visual Design:**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Complete Wellness Journey                    [Export PDF]   │
+│  Patient: PT-KXMR9W2P • 6-Month Journey                      │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
+│  │ 1️⃣ Preparation│ │ 2️⃣ Dosing    │ │ 3️⃣ Integration│           │
+│  │   ACTIVE    │ │   Session   │ │             │           │
+│  └─────────────┘ └─────────────┘ └─────────────┘           │
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │                                                        │ │
+│  │         PHASE 1: PREPARATION CONTENT                   │ │
+│  │                                                        │ │
+│  │  Grid items, AI insights, benchmarks, etc.            │ │
+│  │                                                        │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                                                              │
+│  [← Previous Phase]                    [Next Phase: Dosing →]│
+└──────────────────────────────────────────────────────────────┘
+```
+
+#### **Tab States:**
+
+**Active Tab:**
+```tsx
+<button className="px-6 py-4 bg-red-500/20 border-2 border-red-500 rounded-t-2xl text-red-300 font-bold">
+  <div className="flex items-center gap-3">
+    <Calendar className="w-5 h-5" />
+    <div className="text-left">
+      <div className="text-xs uppercase tracking-wide">Phase 1</div>
+      <div className="text-base font-black">Preparation</div>
+    </div>
+  </div>
+</button>
+```
+
+**Completed Tab:**
+```tsx
+<button className="px-6 py-4 bg-slate-800/40 border border-slate-700 rounded-t-2xl text-slate-400 hover:text-slate-300">
+  <div className="flex items-center gap-3">
+    <CheckCircle className="w-5 h-5 text-emerald-400" />
+    <div className="text-left">
+      <div className="text-xs uppercase tracking-wide">Phase 1</div>
+      <div className="text-sm font-semibold">Preparation ✓</div>
+    </div>
+  </div>
+</button>
+```
+
+**Future/Disabled Tab:**
+```tsx
+<button disabled className="px-6 py-4 bg-slate-900/20 border border-slate-800 rounded-t-2xl text-slate-600 cursor-not-allowed opacity-50">
+  <div className="flex items-center gap-3">
+    <Activity className="w-5 h-5" />
+    <div className="text-left">
+      <div className="text-xs uppercase tracking-wide">Phase 2</div>
+      <div className="text-sm font-semibold">Dosing Session</div>
+    </div>
+  </div>
+</button>
+```
+
+#### **Benefits:**
+
+1. ✅ **Progressive Disclosure** - Show only relevant phase
+2. ✅ **Reduced Cognitive Load** - Focus on current task
+3. ✅ **Faster Navigation** - Click tab instead of scrolling
+4. ✅ **Mobile-Friendly** - Much better on tablets (768px)
+5. ✅ **Workflow Alignment** - Matches actual practitioner workflow
+6. ✅ **Visual Hierarchy** - Clear phase progression
+7. ✅ **Accessibility** - Keyboard navigation, ARIA labels
+
+#### **Implementation Notes:**
+
+**State Management:**
+```tsx
+const [activePhase, setActivePhase] = useState<1 | 2 | 3>(1);
+const [completedPhases, setCompletedPhases] = useState<number[]>([]);
+```
+
+**Tab Navigation:**
+```tsx
+<div className="flex gap-2 border-b border-slate-800">
+  {[
+    { id: 1, label: 'Preparation', icon: Calendar, color: 'red' },
+    { id: 2, label: 'Dosing Session', icon: Activity, color: 'amber' },
+    { id: 3, label: 'Integration', icon: TrendingUp, color: 'emerald' }
+  ].map(phase => (
+    <TabButton
+      key={phase.id}
+      active={activePhase === phase.id}
+      completed={completedPhases.includes(phase.id)}
+      disabled={!completedPhases.includes(phase.id - 1) && phase.id > 1}
+      onClick={() => setActivePhase(phase.id)}
+      {...phase}
+    />
+  ))}
+</div>
+```
+
+**Content Rendering:**
+```tsx
+{activePhase === 1 && <PreparationPhase />}
+{activePhase === 2 && <DosingSessionPhase />}
+{activePhase === 3 && <IntegrationPhase />}
+```
+
+**Responsive Behavior:**
+- **Desktop (1024px+):** Horizontal tabs with full labels
+- **Tablet (768px):** Horizontal tabs with icons + short labels
+- **Mobile (375px):** Vertical stacked tabs or dropdown selector
+
+---
+
+### 📋 **UPDATED FIX #5: Layout Consistency**
+
+**Changes from original specification:**
+
+1. ✅ **PRESERVE deep blue background gradient** (this is correct)
+2. ✅ **PRESERVE color-coded phase cards** (intentional UX)
+3. ✅ Adopt PageContainer/Section wrappers
+4. ✅ Standardize typography
+5. ✅ Update border radius (`rounded-2xl` → `rounded-3xl`)
+6. ✅ Update padding (`p-5` → `p-6`)
+7. ✅ Update spacing (`space-y-2.5` → `space-y-4`)
+8. 💡 **RECOMMEND tabbed interface** (optional enhancement)
+
+**Revised Changes Required:**
+
+1. **Wrap in PageContainer (PRESERVE background):**
+   ```tsx
+   // Line 154 - REPLACE
+   <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+   
+   // WITH
+   <PageContainer width="wide" padding="default" className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
+   ```
+
+2. **Wrap content in Section:**
+   ```tsx
+   // Line 156 - REPLACE
+   <div className="max-w-[1600px] mx-auto space-y-6">
+   
+   // WITH
+   <Section spacing="tight">
+   ```
+
+3. **Update header typography:**
+   ```tsx
+   // Line 161 - REPLACE
+   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-200 tracking-tight">
+   
+   // WITH
+   <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+   ```
+
+4. **Standardize card styling (PRESERVE gradients):**
+   ```tsx
+   // Line 186 - REPLACE
+   <div className="bg-gradient-to-br from-red-500/10 to-red-900/10 border-2 border-red-500/50 rounded-2xl p-5 space-y-2.5">
+   
+   // WITH
+   <div className="bg-gradient-to-br from-red-500/10 to-red-900/10 border-2 border-red-500/50 rounded-3xl p-6 space-y-4">
+   ```
+
+5. **Standardize grid item cards:**
+   ```tsx
+   // Line 212 - REPLACE
+   <div className="p-4 bg-slate-900/40 rounded-lg...">
+   
+   // WITH
+   <div className="p-4 bg-slate-900/40 rounded-2xl...">
+   ```
+
+6. **Update bottom status bar:**
+   ```tsx
+   // Line 623 - REPLACE
+   <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+   
+   // WITH
+   <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
+   ```
+
+---
+
+### ✅ **FINAL ACCEPTANCE CRITERIA**
+
+#### Layout Consistency
+- [ ] Page uses `<PageContainer width="wide">` wrapper
+- [ ] Content uses `<Section spacing="tight">` wrapper
+- [ ] **Deep blue background PRESERVED** ✅
+- [ ] Max-width managed by PageContainer
+
+#### Color-Coded Phase Cards
+- [ ] **Red gradient PRESERVED** for Preparation phase ✅
+- [ ] **Amber gradient PRESERVED** for Dosing Session phase ✅
+- [ ] **Emerald gradient PRESERVED** for Integration phase ✅
+- [ ] Border radius updated to `rounded-3xl`
+- [ ] Padding updated to `p-6`
+- [ ] Spacing updated to `space-y-4`
+
+#### Typography Consistency
+- [ ] H1 uses `text-4xl sm:text-5xl font-black text-white`
+- [ ] H1 uses `tracking-tight`
+- [ ] Subtitle uses `text-sm text-slate-400`
+
+#### Tabbed Interface (OPTIONAL - RECOMMENDED)
+- [ ] Consider implementing tabbed navigation for phases
+- [ ] Progressive disclosure reduces cognitive load
+- [ ] Mobile-friendly tab design
+
+---
+
+### 🎨 **FINAL DESIGN SIGN-OFF**
+
+**Designer:** DESIGNER  
+**Date:** 2026-02-16T16:24:38-08:00  
+**Status:** ✅ **Design specifications finalized with user feedback**
+
+**Summary:**
+- Fix #1 (Grid Items): ✅ Already correct
+- Fix #2 (Font Sizes): ❗ Required
+- Fix #3 (Export Button): ✅ Already correct
+- Fix #4 (Chart): ⚠️ Required
+- Fix #5 (Layout): ⚠️ Required (REVISED - preserve background & colors)
+- **Recommendation:** 💡 Tabbed interface for progressive disclosure
+
+**Estimated Implementation Time:** 90-120 minutes
+- Layout refactoring: 30 minutes (PageContainer/Section)
+- Font size audit: 30 minutes
+- Card styling updates: 15 minutes (border radius, padding, spacing)
+- Chart improvements: 15 minutes
+- Testing: 20 minutes
+
+**Optional Enhancement:** Tabbed interface (+60-90 minutes)
+
+**Ready for BUILDER implementation.**
+
+---
