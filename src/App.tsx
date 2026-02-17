@@ -124,7 +124,7 @@ const ProtectedLayout: React.FC<{
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background-dark text-slate-300 selection:bg-primary/30 selection:text-slate-300">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 selection:bg-primary/30 selection:text-slate-300">
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -138,7 +138,7 @@ const ProtectedLayout: React.FC<{
           onStartTour={() => setShowTour(true)}
         />
         <Breadcrumbs />
-        <main className="flex-1 overflow-y-auto custom-scrollbar bg-[#0e1117]">
+        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent">
           {showTour && <GuidedTour onComplete={completeTour} />}
           <Outlet />
           <Footer />
