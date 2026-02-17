@@ -978,3 +978,371 @@ const padding = { top: 30, right: 30, bottom: 50, left: 50 };
 **Ready for BUILDER handoff.**
 
 ---
+
+## 🔍 LAYOUT CONSISTENCY AUDIT (CRITICAL FINDINGS)
+
+**Audit Date:** 2026-02-16T16:16:39-08:00  
+**Auditor:** DESIGNER  
+**Scope:** Wellness Journey page vs. Application Design System
+
+### 📊 EXECUTIVE SUMMARY
+
+After reviewing Dashboard, MyProtocols, SubstanceMonograph, and other pages, I've identified **critical layout inconsistencies** on the Wellness Journey page that violate the established design system.
+
+**Status:** 🚨 **MAJOR INCONSISTENCIES FOUND**
+
+---
+
+### 🎯 APPLICATION DESIGN SYSTEM (ESTABLISHED PATTERN)
+
+All other pages in the application follow this consistent structure:
+
+#### **Standard Page Structure:**
+
+```tsx
+<PageContainer width="default|wide" padding="default">  // ✅ Centralized layout
+  <Section spacing="tight|default">                     // ✅ Consistent spacing
+    {/* Page header */}
+    <h1 className="text-4xl sm:text-5xl font-black">   // ✅ Consistent typography
+    
+    {/* Content sections */}
+    <div className="card-glass rounded-3xl p-6">        // ✅ Consistent cards
+  </Section>
+</PageContainer>
+```
+
+#### **Key Design Tokens:**
+
+| Element | Standard Value | Used By |
+|---------|---------------|---------|
+| **Max Width** | `max-w-7xl` (1280px) or `max-w-[1600px]` | Dashboard, MyProtocols, SubstanceMonograph |
+| **Horizontal Padding** | `px-6 sm:px-8 xl:px-10` | PageContainer component |
+| **Vertical Spacing** | `space-y-6` to `space-y-12` | Section component |
+| **Card Style** | `card-glass rounded-3xl` | All pages |
+| **Border Radius** | `rounded-2xl` to `rounded-3xl` | All pages |
+| **Typography Scale** | `text-4xl sm:text-5xl font-black` (H1) | All pages |
+| **Background** | `bg-[#0e1117]` or `bg-[#080a0f]` | All pages |
+
+---
+
+### ⚠️ WELLNESS JOURNEY VIOLATIONS
+
+**File:** `src/pages/ArcOfCareGodView.tsx`
+
+#### **VIOLATION #1: No PageContainer Wrapper**
+
+**Current (Lines 154-156):**
+```tsx
+<div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+  <div className="max-w-[1600px] mx-auto space-y-6">
+```
+
+**Problem:**
+- ❌ Does NOT use `<PageContainer>` component
+- ❌ Custom padding (`p-4 sm:p-6 lg:p-8`) instead of standard (`px-6 sm:px-8 xl:px-10`)
+- ❌ Custom max-width (`max-w-[1600px]`) hardcoded instead of using `width="wide"` prop
+- ❌ Custom background gradient instead of standard `bg-[#0e1117]`
+
+**Impact:**
+- Inconsistent spacing on mobile/tablet/desktop
+- Doesn't match other pages' width constraints
+- Breaks visual continuity when navigating between pages
+
+**Correct Pattern:**
+```tsx
+<PageContainer width="wide" padding="default" className="min-h-screen bg-[#0e1117]">
+  <Section spacing="tight">
+    {/* Content */}
+  </Section>
+</PageContainer>
+```
+
+---
+
+#### **VIOLATION #2: Inconsistent Card Styling**
+
+**Current (Line 186):**
+```tsx
+<div className="bg-gradient-to-br from-red-500/10 to-red-900/10 border-2 border-red-500/50 rounded-2xl p-5 space-y-2.5">
+```
+
+**Problem:**
+- ❌ Uses `rounded-2xl` instead of standard `rounded-3xl`
+- ❌ Uses `border-2` instead of standard `border`
+- ❌ Uses `p-5` instead of standard `p-6`
+- ❌ Uses gradient backgrounds instead of `card-glass` utility
+- ❌ Uses `space-y-2.5` (non-standard) instead of `space-y-4` or `space-y-6`
+
+**Standard Pattern (Dashboard, Line 279):**
+```tsx
+<div className="card-glass rounded-3xl p-6 border-2 border-slate-800">
+```
+
+**Impact:**
+- Cards feel "off" compared to other pages
+- Subtle visual inconsistency reduces professional polish
+- Harder to maintain (custom styles vs. design system)
+
+---
+
+#### **VIOLATION #3: Typography Inconsistency**
+
+**Current Header (Lines 161-166):**
+```tsx
+<h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-200 tracking-tight">
+  Complete Wellness Journey
+</h1>
+<p className="text-slate-400 mt-2 text-sm sm:text-base">
+  Patient: {journey.patientId} • 6-Month Journey
+</p>
+```
+
+**Problem:**
+- ❌ Uses `text-3xl sm:text-4xl lg:text-5xl` (3 breakpoints) instead of standard `text-4xl sm:text-5xl` (2 breakpoints)
+- ❌ Uses `text-slate-200` instead of standard `text-white` or `text-slate-300`
+- ❌ Subtitle uses `text-sm sm:text-base` instead of consistent small text
+
+**Standard Pattern (Dashboard, Line 163):**
+```tsx
+<h1 className="text-5xl font-black tracking-tighter text-slate-200">
+  Dashboard
+</h1>
+```
+
+**Standard Pattern (MyProtocols, Line 129):**
+```tsx
+<h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-white">
+  My Protocols
+</h1>
+```
+
+---
+
+#### **VIOLATION #4: Spacing Inconsistency**
+
+**Current (Line 156):**
+```tsx
+<div className="max-w-[1600px] mx-auto space-y-6">
+```
+
+**Problem:**
+- ❌ Uses `space-y-6` directly instead of `<Section spacing="tight">`
+- ❌ Doesn't leverage the Section component's standardized spacing
+
+**Standard Pattern (Dashboard, Lines 150-153):**
+```tsx
+<PageContainer className="min-h-screen bg-[#0e1117] text-slate-300 flex flex-col gap-8">
+  <Section spacing="tight" className="flex flex-col md:flex-row justify-between...">
+```
+
+---
+
+#### **VIOLATION #5: Grid Item Padding**
+
+**Current (Line 212):**
+```tsx
+<div className="p-4 bg-slate-900/40 rounded-lg...">
+```
+
+**Problem:**
+- ❌ Uses `rounded-lg` instead of standard `rounded-2xl` or `rounded-3xl`
+- ❌ Uses `p-4` which is inconsistent with other card padding
+
+**Standard Pattern (Dashboard, Line 134):**
+```tsx
+<div className="card-glass flex items-center gap-4 p-4 rounded-2xl h-full">
+```
+
+---
+
+### 📋 COMPREHENSIVE FIX RECOMMENDATIONS
+
+#### **FIX #5: Adopt PageContainer + Section Layout (NEW - CRITICAL)**
+
+**Priority:** 🔴 **P1 - Critical** (breaks design system consistency)
+
+**Current Structure:**
+```tsx
+<div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+  <div className="max-w-[1600px] mx-auto space-y-6">
+    {/* Content */}
+  </div>
+</div>
+```
+
+**Recommended Structure:**
+```tsx
+<PageContainer 
+  width="wide" 
+  padding="default" 
+  className="min-h-screen bg-[#0e1117]"
+>
+  <Section spacing="tight">
+    {/* Header */}
+    <div className="flex items-start justify-between">
+      <div>
+        <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+          Complete Wellness Journey
+        </h1>
+        <p className="text-slate-400 mt-2 text-sm">
+          Patient: {journey.patientId} • 6-Month Journey
+        </p>
+      </div>
+      {/* Export PDF button */}
+    </div>
+
+    {/* 3-Phase Timeline */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Phase cards */}
+    </div>
+
+    {/* Bottom Status Bar */}
+    <div className="card-glass rounded-3xl p-6">
+      {/* Status content */}
+    </div>
+
+    {/* Global Disclaimer */}
+  </Section>
+</PageContainer>
+```
+
+**Changes Required:**
+
+1. **Wrap entire page in `<PageContainer>`:**
+   ```tsx
+   // Line 154 - REPLACE
+   <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+   
+   // WITH
+   <PageContainer width="wide" padding="default" className="min-h-screen bg-[#0e1117]">
+   ```
+
+2. **Wrap content in `<Section>`:**
+   ```tsx
+   // Line 156 - REPLACE
+   <div className="max-w-[1600px] mx-auto space-y-6">
+   
+   // WITH
+   <Section spacing="tight">
+   ```
+
+3. **Update header typography:**
+   ```tsx
+   // Line 161 - REPLACE
+   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-200 tracking-tight">
+   
+   // WITH
+   <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+   ```
+
+4. **Standardize card styling:**
+   ```tsx
+   // Line 186 - REPLACE
+   <div className="bg-gradient-to-br from-red-500/10 to-red-900/10 border-2 border-red-500/50 rounded-2xl p-5 space-y-2.5">
+   
+   // WITH
+   <div className="card-glass border-2 border-red-500/50 rounded-3xl p-6 space-y-4 bg-gradient-to-br from-red-500/10 to-red-900/10">
+   ```
+
+5. **Standardize grid item cards:**
+   ```tsx
+   // Line 212 - REPLACE
+   <div className="p-4 bg-slate-900/40 rounded-lg...">
+   
+   // WITH
+   <div className="p-4 bg-slate-900/40 rounded-2xl...">
+   ```
+
+6. **Update bottom status bar:**
+   ```tsx
+   // Line 623 - REPLACE
+   <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+   
+   // WITH
+   <div className="card-glass rounded-3xl p-6">
+   ```
+
+---
+
+### ✅ UPDATED ACCEPTANCE CRITERIA
+
+#### Layout Consistency (NEW)
+- [ ] Page uses `<PageContainer width="wide">` wrapper
+- [ ] Content uses `<Section spacing="tight">` wrapper
+- [ ] No custom padding on root container
+- [ ] Max-width managed by PageContainer, not hardcoded
+- [ ] Background color matches standard `bg-[#0e1117]`
+
+#### Typography Consistency (NEW)
+- [ ] H1 uses `text-4xl sm:text-5xl font-black text-white`
+- [ ] H1 uses `tracking-tight` not `tracking-tighter`
+- [ ] Subtitle uses consistent `text-sm text-slate-400`
+
+#### Card Styling Consistency (NEW)
+- [ ] Phase cards use `rounded-3xl` not `rounded-2xl`
+- [ ] Phase cards use `p-6` not `p-5`
+- [ ] Grid items use `rounded-2xl` not `rounded-lg`
+- [ ] Bottom status bar uses `card-glass rounded-3xl`
+- [ ] Spacing uses standard increments (`space-y-4`, `space-y-6`) not `space-y-2.5`
+
+#### Visual Quality (EXISTING)
+- [ ] All 4 metric cards display emoji + score inline horizontal
+- [ ] Cards maintain consistent spacing and alignment
+- [ ] Visual hierarchy clear: emoji + score → label
+
+#### Accessibility (EXISTING - WCAG AAA)
+- [ ] **ZERO fonts below 12px** (run grep verification)
+- [ ] All text meets 4.5:1 contrast ratio minimum
+- [ ] Export PDF button has multiple visual cues (icon + text + border)
+- [ ] Chart axis labels readable at 12px minimum
+
+#### Chart Optimization (EXISTING)
+- [ ] Chart feels more spacious (padding reduced)
+- [ ] Axis labels clearly visible with improved contrast
+- [ ] All chart text meets 12px minimum
+- [ ] Responsive behavior maintained
+
+#### Responsive Design (EXISTING)
+- [ ] Test at 375px (mobile) - cards stack properly
+- [ ] Test at 768px (tablet) - grid adapts
+- [ ] Test at 1024px (desktop) - optimal layout
+- [ ] Test at 1440px (large desktop) - matches other pages' width
+
+#### Browser Testing (EXISTING)
+- [ ] Chrome/Edge - all features work
+- [ ] Firefox - all features work
+- [ ] Safari - all features work
+- [ ] No console errors or warnings
+
+---
+
+### 🎨 UPDATED DESIGN SIGN-OFF
+
+**Designer:** DESIGNER  
+**Date:** 2026-02-16T16:16:39-08:00  
+**Status:** ⚠️ **Design specifications updated - CRITICAL layout fixes added**
+
+**Summary:**
+- Fix #1 (Grid Items): ✅ Already implemented correctly
+- Fix #2 (Font Sizes): ❗ Requires audit and replacement
+- Fix #3 (Export Button): ✅ Already implemented correctly
+- Fix #4 (Chart): ⚠️ Requires padding and contrast improvements
+- **Fix #5 (Layout Consistency): 🚨 CRITICAL - Requires PageContainer/Section adoption**
+
+**Estimated Implementation Time:** 90-120 minutes (increased from 45-60 minutes)
+- Font size audit: 30 minutes (thorough search and replace)
+- Chart improvements: 15 minutes (padding and color adjustments)
+- **Layout refactoring: 30 minutes (PageContainer/Section adoption)**
+- **Card styling updates: 15 minutes (rounded-3xl, p-6, etc.)**
+- Testing: 20 minutes (responsive and browser testing)
+
+**Priority Order:**
+1. **Fix #5 (Layout)** - Critical for design system consistency
+2. **Fix #2 (Fonts)** - Critical for accessibility
+3. **Fix #4 (Chart)** - Important for UX
+4. **Fix #1 (Grid)** - Already correct, verify only
+5. **Fix #3 (Button)** - Already correct, verify only
+
+**Ready for BUILDER handoff with updated specifications.**
+
+---
