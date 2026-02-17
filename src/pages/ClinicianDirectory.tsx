@@ -232,7 +232,7 @@ const ClinicianDirectory: React.FC = () => {
   });
 
   return (
-    <PageContainer className="min-h-full bg-[#0e1117]">
+    <PageContainer className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
       <Section spacing="default" className="flex-1">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
           <div className="space-y-1">

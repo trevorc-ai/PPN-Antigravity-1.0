@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 
 /**
- * Unified Arc of Care Dashboard
+ * Unified Wellness Journey Dashboard
  * 
  * Complete patient journey across all 3 phases:
  * - Phase 1: Protocol Builder (Pre-Session)
@@ -131,7 +131,7 @@ const ArcOfCareDashboard: React.FC = () => {
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-200">
-                                Arc of Care
+                                Wellness Journey
                             </h1>
                             <p className="text-sm sm:text-base text-slate-400 mt-1">
                                 Complete Patient Journey Dashboard

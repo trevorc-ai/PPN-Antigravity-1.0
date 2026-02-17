@@ -19,7 +19,7 @@ const WorkflowChaosPage: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <PageContainer className="min-h-screen bg-[#05070a] text-slate-300">
+        <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300">
             {/* Hero Section */}
             <Section spacing="tight" className="pt-20 pb-12 text-center">
                 <motion.div

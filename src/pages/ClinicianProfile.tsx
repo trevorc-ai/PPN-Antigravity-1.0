@@ -153,7 +153,7 @@ const ClinicianProfile: React.FC = () => {
 
   if (!clinician) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-8 bg-[#0e1117] text-slate-3000">
+      <div className="h-full flex flex-col items-center justify-center p-8 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-3000">
         <span className="material-symbols-outlined text-6xl mb-4 opacity-20">person_off</span>
         <h2 className="text-xl font-black tracking-tight uppercase">Practitioner Not Found</h2>
         <button onClick={() => navigate('/clinicians')} className="mt-6 text-primary font-bold hover:underline">Return to Directory</button>

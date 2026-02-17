@@ -1,7 +1,7 @@
 /**
- * Arc of Care Components - All Phases
+ * Wellness Journey Components - All Phases
  * 
- * These components are part of the comprehensive Arc of Care system (WO_042)
+ * These components are part of the comprehensive Wellness Journey system (WO_042)
  * that tracks patient journeys across three phases:
  * 1. Preparation (Protocol Builder)
  * 2. Dosing (Session Logger)

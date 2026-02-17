@@ -20,20 +20,24 @@ interface InteractionCheckerProps {
     substanceId: number | null;
     medicationIds: number[];
     onInteractionFound?: (interactions: Interaction[]) => void;
+    onAcknowledgmentChange?: (acknowledged: boolean) => void;
 }
 
 export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
     substanceId,
     medicationIds,
-    onInteractionFound
+    onInteractionFound,
+    onAcknowledgmentChange
 }) => {
     const [interactions, setInteractions] = useState<Interaction[]>([]);
     const [loading, setLoading] = useState(false);
+    const [acknowledged, setAcknowledged] = useState(false);
 
     useEffect(() => {
         const checkInteractions = async () => {
             if (!substanceId || medicationIds.length === 0) {
                 setInteractions([]);
+                setAcknowledged(false);
                 return;
             }
 
@@ -59,6 +63,9 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
 
                 setInteractions(enrichedData);
                 onInteractionFound?.(enrichedData);
+
+                // Reset acknowledgment when interactions change
+                setAcknowledged(false);
             } catch (error) {
                 console.error('Error checking interactions:', error);
             } finally {
@@ -87,6 +94,12 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
     const severeInteractions = interactions.filter(i => i.interaction_severity === 'SEVERE');
     const moderateInteractions = interactions.filter(i => i.interaction_severity === 'MODERATE');
     const mildInteractions = interactions.filter(i => i.interaction_severity === 'MILD');
+
+    // Handle acknowledgment change
+    const handleAcknowledgmentChange = (checked: boolean) => {
+        setAcknowledged(checked);
+        onAcknowledgmentChange?.(checked);
+    };
 
     return (
         <div className="space-y-3" role="alert" aria-live="assertive">
@@ -149,6 +162,25 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                     </div>
                 </div>
             ))}
+
+            {/* Safety Acknowledgment for SEVERE Interactions */}
+            {severeInteractions.length > 0 && (
+                <div className="bg-red-500/10 border-2 border-red-500 rounded-lg p-4 mt-4">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={acknowledged}
+                            onChange={(e) => handleAcknowledgmentChange(e.target.checked)}
+                            className="mt-1 w-4 h-4 rounded border-red-500 text-red-500 focus:ring-red-500 focus:ring-offset-0 focus:ring-2 bg-slate-900 cursor-pointer"
+                            aria-required="true"
+                            aria-label="Acknowledge contraindication risks"
+                        />
+                        <span className="text-sm text-slate-300 leading-relaxed">
+                            <strong className="text-red-400">I understand the risks</strong> and choose to proceed with this protocol despite the contraindication(s) listed above.
+                        </span>
+                    </label>
+                </div>
+            )}
 
             {/* Moderate Interactions */}
             {moderateInteractions.map((interaction, index) => (

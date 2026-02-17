@@ -62,7 +62,7 @@ src/
 ### Phase A: Core Integration ✅
 
 #### 1. **Terminology Update**
-- ✅ Renamed "Arc of Care" to "Wellness Journey" across all UI elements
+- ✅ Renamed "Wellness Journey" to "Wellness Journey" across all UI elements
 - ✅ Updated page titles, headings, and navigation labels
 - ✅ Maintained backwards compatibility with legacy routes
 
@@ -350,7 +350,7 @@ const handleAssessmentComplete = (scores: { meq: number; edi: number; ceq: numbe
 
 ### v1.0 (February 16, 2026)
 - ✅ Initial release
-- ✅ Renamed "Arc of Care" to "Wellness Journey"
+- ✅ Renamed "Wellness Journey" to "Wellness Journey"
 - ✅ Integrated adaptive assessment modal
 - ✅ Added sidebar navigation
 - ✅ Implemented visual polish (Quick Wins)

@@ -19,14 +19,13 @@ import {
     AdverseEventForm,
     SafetyEventObservationsForm,
     RescueProtocolForm,
-    // Phase 3
+    // Phase 3 - PHI-Safe Forms Only
     DailyPulseCheckForm,
     LongitudinalAssessmentForm,
-    IntegrationSessionNotesForm,
-    IntegrationInsightsForm,
-    // Ongoing Safety
-    OngoingSafetyMonitoringForm,
-    ProgressNotesForm
+    StructuredIntegrationSessionForm,
+    BehavioralChangeTrackerForm,
+    // Ongoing Safety - PHI-Safe Forms Only
+    StructuredSafetyCheckForm
 } from '../components/arc-of-care-forms';
 
 /**
@@ -46,14 +45,14 @@ interface FormDefinition {
 }
 
 const FORMS: FormDefinition[] = [
-    // Phase 1: Preparation
+    // Phase 1: Preparation (5 forms - All Compliant)
     { id: 'mental-health', name: 'Mental Health Screening', component: MentalHealthScreeningForm, phase: 'Phase 1: Preparation' },
     { id: 'set-setting', name: 'Set & Setting', component: SetAndSettingForm, phase: 'Phase 1: Preparation' },
     { id: 'baseline-physiology', name: 'Baseline Physiology', component: BaselinePhysiologyForm, phase: 'Phase 1: Preparation' },
     { id: 'baseline-observations', name: 'Baseline Observations', component: BaselineObservationsForm, phase: 'Phase 1: Preparation' },
     { id: 'consent', name: 'Informed Consent', component: ConsentForm, phase: 'Phase 1: Preparation' },
 
-    // Phase 2: Dosing Session
+    // Phase 2: Dosing Session (9 forms - All Compliant)
     { id: 'dosing-protocol', name: 'Dosing Protocol', component: DosingProtocolForm, phase: 'Phase 2: Dosing Session' },
     { id: 'session-vitals', name: 'Session Vitals', component: SessionVitalsForm, phase: 'Phase 2: Dosing Session' },
     { id: 'session-timeline', name: 'Session Timeline', component: SessionTimelineForm, phase: 'Phase 2: Dosing Session' },
@@ -64,15 +63,14 @@ const FORMS: FormDefinition[] = [
     { id: 'safety-observations', name: 'Safety Event Observations', component: SafetyEventObservationsForm, phase: 'Phase 2: Dosing Session' },
     { id: 'rescue-protocol', name: 'Rescue Protocol', component: RescueProtocolForm, phase: 'Phase 2: Dosing Session' },
 
-    // Phase 3: Integration
+    // Phase 3: Integration (4 forms - 100% PHI-Safe)
     { id: 'daily-pulse', name: 'Daily Pulse Check', component: DailyPulseCheckForm, phase: 'Phase 3: Integration' },
     { id: 'longitudinal', name: 'Longitudinal Assessment', component: LongitudinalAssessmentForm, phase: 'Phase 3: Integration' },
-    { id: 'integration-notes', name: 'Integration Session Notes', component: IntegrationSessionNotesForm, phase: 'Phase 3: Integration' },
-    { id: 'insights', name: 'Integration Insights', component: IntegrationInsightsForm, phase: 'Phase 3: Integration' },
+    { id: 'structured-integration', name: 'Structured Integration Session', component: StructuredIntegrationSessionForm, phase: 'Phase 3: Integration' },
+    { id: 'behavioral-tracker', name: 'Behavioral Change Tracker', component: BehavioralChangeTrackerForm, phase: 'Phase 3: Integration' },
 
-    // Ongoing Safety
-    { id: 'safety-monitoring', name: 'Ongoing Safety Monitoring', component: OngoingSafetyMonitoringForm, phase: 'Ongoing Safety' },
-    { id: 'progress-notes', name: 'Progress Notes', component: ProgressNotesForm, phase: 'Ongoing Safety' }
+    // Ongoing Safety (1 form - 100% PHI-Safe)
+    { id: 'structured-safety', name: 'Structured Safety Check', component: StructuredSafetyCheckForm, phase: 'Ongoing Safety' }
 ];
 
 const FormsShowcase: React.FC = () => {
@@ -97,7 +95,11 @@ const FormsShowcase: React.FC = () => {
                 <div className="w-80 bg-slate-900/60 backdrop-blur-xl border-r border-slate-700/50 overflow-y-auto custom-scrollbar">
                     <div className="p-6 border-b border-slate-700/50">
                         <h1 className="text-2xl font-black text-slate-200">Arc of Care Forms</h1>
-                        <p className="text-slate-400 text-sm mt-1">20 Modular Components</p>
+                        <p className="text-slate-400 text-sm mt-1">19 PHI-Safe Components</p>
+                        <div className="mt-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-2">
+                            <p className="text-xs font-bold text-emerald-400">✓ 100% COMPLIANT</p>
+                            <p className="text-xs text-emerald-300 mt-0.5">Zero free-text inputs</p>
+                        </div>
                     </div>
 
                     <div className="p-4 space-y-6">
@@ -118,8 +120,8 @@ const FormsShowcase: React.FC = () => {
                                                     key={form.id}
                                                     onClick={() => setSelectedFormId(form.id)}
                                                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all ${isSelected
-                                                            ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
-                                                            : 'text-slate-300 hover:bg-slate-800/50'
+                                                        ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                                                        : 'text-slate-300 hover:bg-slate-800/50'
                                                         }`}
                                                 >
                                                     <span className="text-sm font-medium">{form.name}</span>

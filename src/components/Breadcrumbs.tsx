@@ -29,6 +29,8 @@ const Breadcrumbs: React.FC = () => {
     notifications: 'Node Alerts',
     settings: 'Settings',
     'advanced-search': 'Global Research Search',
+    'wellness-journey': 'Wellness Journey',
+    'arc-of-care-god-view': 'Wellness Journey', // Legacy route
     pricing: 'Membership Tiers',
     contribution: 'Give-to-Get Model',
     login: 'Authentication Gate',

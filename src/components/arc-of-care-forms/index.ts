@@ -69,9 +69,21 @@ export type { IntegrationSessionNotesData } from './phase-3-integration/Integrat
 export { default as IntegrationInsightsForm } from './phase-3-integration/IntegrationInsightsForm';
 export type { IntegrationInsightsData } from './phase-3-integration/IntegrationInsightsForm';
 
+// NEW: Structured Replacement Forms (100% PHI-Safe)
+export { default as StructuredIntegrationSessionForm } from './phase-3-integration/StructuredIntegrationSessionForm';
+export type { StructuredIntegrationSessionData } from './phase-3-integration/StructuredIntegrationSessionForm';
+
+export { default as BehavioralChangeTrackerForm } from './phase-3-integration/BehavioralChangeTrackerForm';
+export type { BehavioralChangeData } from './phase-3-integration/BehavioralChangeTrackerForm';
+
 // ========== ONGOING SAFETY (2 forms) ==========
 export { default as OngoingSafetyMonitoringForm } from './ongoing-safety/OngoingSafetyMonitoringForm';
 export type { OngoingSafetyMonitoringData } from './ongoing-safety/OngoingSafetyMonitoringForm';
 
 export { default as ProgressNotesForm } from './ongoing-safety/ProgressNotesForm';
 export type { ProgressNotesData } from './ongoing-safety/ProgressNotesForm';
+
+// NEW: Structured Safety Check (100% PHI-Safe)
+export { default as StructuredSafetyCheckForm } from './ongoing-safety/StructuredSafetyCheckForm';
+export type { StructuredSafetyCheckData } from './ongoing-safety/StructuredSafetyCheckForm';
+

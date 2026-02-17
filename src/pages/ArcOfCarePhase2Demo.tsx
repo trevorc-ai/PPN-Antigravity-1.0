@@ -7,7 +7,7 @@ import RescueProtocolChecklist from '../components/arc-of-care/RescueProtocolChe
 import { Play, Pause, StopCircle, AlertTriangle } from 'lucide-react';
 
 /**
- * Arc of Care Demo - Phase 2: Session Logger
+ * Wellness Journey Demo - Phase 2: Session Logger
  * 
  * Real-time session monitoring during psychedelic-assisted therapy
  * Part of WO_042
@@ -116,7 +116,7 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <h1 className="text-5xl font-black text-slate-200 tracking-tight">
-                        Arc of Care - Phase 2
+                        Wellness Journey - Phase 2
                     </h1>
                     <p className="text-lg text-slate-400 max-w-3xl mx-auto">
                         Session Logger: Real-Time Monitoring During Psychedelic-Assisted Therapy

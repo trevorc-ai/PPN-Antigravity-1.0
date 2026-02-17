@@ -68,6 +68,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             title: 'Core Research',
             items: [
                 { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
+                { label: 'Wellness Journey', icon: 'psychology', path: '/arc-of-care-god-view' },
                 { label: 'News', icon: 'newspaper', path: '/news' },
                 { label: 'Practitioners', icon: 'groups', path: '/clinicians' },
                 { label: 'Substances', icon: 'biotech', path: '/catalog' },
@@ -136,7 +137,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                             </h1>
                             <div className="flex items-center gap-1">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                <p className="text-slate-400 text-[10px] font-bold tracking-wider">ONLINE</p>
+                                <p className="text-slate-400 text-xs font-bold tracking-wider">ONLINE</p>
                             </div>
                         </div>
                     </Link>

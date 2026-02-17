@@ -1,7 +1,7 @@
 /**
- * Arc of Care API Hook
+ * Wellness Journey API Hook
  * 
- * React hook for Arc of Care API calls with loading/error states
+ * React hook for Wellness Journey API calls with loading/error states
  * Part of WO_042
  */
 

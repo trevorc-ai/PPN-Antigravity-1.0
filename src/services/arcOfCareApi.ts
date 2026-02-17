@@ -1,7 +1,7 @@
 /**
- * Arc of Care API Service
+ * Wellness Journey API Service
  * 
- * Handles all API calls for the Arc of Care system (WO_042)
+ * Handles all API calls for the Wellness Journey system (WO_042)
  * Phase 1: Protocol Builder
  * Phase 2: Session Logger  
  * Phase 3: Integration Tracker

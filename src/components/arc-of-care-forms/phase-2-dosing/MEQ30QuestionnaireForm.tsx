@@ -159,8 +159,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                                         key={option.value}
                                         onClick={() => updateResponse(question.number, option.value)}
                                         className={`flex-1 min-w-[80px] px-3 py-2 rounded-lg font-medium text-sm transition-all ${data.responses[question.number] === option.value
-                                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-                                                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                            ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                             }`}
                                     >
                                         <div className="text-center">

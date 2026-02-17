@@ -48,7 +48,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-full bg-[#05070a] text-slate-300 font-sans animate-in fade-in duration-700 pb-24 overflow-x-hidden">
+    <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 font-sans animate-in fade-in duration-700 pb-24 overflow-x-hidden">
       {/* HEADER */}
       <div className="h-16 bg-[#0a0c10]/90 border-b border-white/5 flex items-center justify-between px-4 sm:px-8 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-4">
@@ -82,7 +82,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
       </div>
 
       {/* HERO */}
-      <div className="relative py-20 sm:py-32 bg-[#080a0f] border-b border-white/5 overflow-hidden">
+      <div className="relative py-20 sm:py-32 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] border-b border-white/5 overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[700px] bg-primary/10 rounded-full blur-[160px] pointer-events-none"></div>
 

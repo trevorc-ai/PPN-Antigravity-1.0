@@ -6,7 +6,7 @@ import RedAlertPanel from '../components/arc-of-care/RedAlertPanel';
 import { Calendar, TrendingDown, AlertTriangle, CheckCircle } from 'lucide-react';
 
 /**
- * Arc of Care Demo - Phase 3: Integration Tracker
+ * Wellness Journey Demo - Phase 3: Integration Tracker
  * 
  * Longitudinal care tracking post-session
  * Part of WO_042
@@ -83,7 +83,7 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <h1 className="text-5xl font-black text-slate-200 tracking-tight">
-                        Arc of Care - Phase 3
+                        Wellness Journey - Phase 3
                     </h1>
                     <p className="text-lg text-slate-400 max-w-3xl mx-auto">
                         Integration Tracker: Longitudinal Care & Symptom Monitoring

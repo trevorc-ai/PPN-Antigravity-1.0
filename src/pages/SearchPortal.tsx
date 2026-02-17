@@ -456,14 +456,14 @@ const SearchPortal: React.FC = () => {
 
   // --- RENDER ---
   return (
-    <div className="min-h-screen flex flex-col bg-[#05070a] relative overflow-hidden animate-in fade-in duration-1000">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] relative overflow-hidden animate-in fade-in duration-1000">
 
       {/* Dynamic Background Blobs */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-[140px] pointer-events-none animate-pulse"></div>
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
 
       {/* CLEAN & GLOWING HERO SECTION */}
-      <section className="relative pt-20 pb-12 px-6 sm:px-10 z-10 border-b border-white/5 bg-[#05070a]">
+      <section className="relative pt-20 pb-12 px-6 sm:px-10 z-10 border-b border-white/5 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
         <div className="max-w-3xl mx-auto flex flex-col items-center text-center space-y-10 relative z-10">
 
           {/* Title Block */}

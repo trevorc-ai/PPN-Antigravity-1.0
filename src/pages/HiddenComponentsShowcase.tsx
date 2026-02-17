@@ -172,14 +172,14 @@ const HiddenComponentsShowcase: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* 5. Arc of Care - Set & Setting Card */}
+                    {/* 5. Wellness Journey - Set & Setting Card */}
                     <div className="space-y-4 lg:col-span-2">
                         <div className="flex items-center gap-3">
                             <div className="size-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                                 <span className="text-emerald-400 font-black">5</span>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-200">Arc of Care - Phase 1</h2>
+                                <h2 className="text-2xl font-black text-slate-200">Wellness Journey - Phase 1</h2>
                                 <p className="text-sm text-slate-300">Set & Setting Analysis (WO_042)</p>
                             </div>
                         </div>

@@ -143,7 +143,7 @@ const DataExport: React.FC = () => {
     };
 
     return (
-        <div className="p-6 sm:p-10 min-h-screen bg-[#05070a]">
+        <div className="p-6 sm:p-10 min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
             <PageContainer width="wide">
                 {/* Header */}
                 <Section spacing="tight" className="border-b border-slate-800 pb-8">

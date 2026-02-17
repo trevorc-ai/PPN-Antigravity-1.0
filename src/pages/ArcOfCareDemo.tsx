@@ -6,7 +6,7 @@ import RequestNewOptionModal from '../components/common/RequestNewOptionModal';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 
 /**
- * Arc of Care Demo - Phase 1: Protocol Builder
+ * Wellness Journey Demo - Phase 1: Protocol Builder
  * 
  * Demonstrates baseline assessment submission and augmented intelligence
  * Part of WO_042
@@ -63,7 +63,7 @@ const ArcOfCareDemo: React.FC = () => {
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <h1 className="text-5xl font-black text-slate-200 tracking-tight">
-                        Arc of Care - Phase 1
+                        Wellness Journey - Phase 1
                     </h1>
                     <p className="text-lg text-slate-400 max-w-3xl mx-auto">
                         Protocol Builder: Baseline Assessment & Augmented Intelligence

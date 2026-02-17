@@ -161,15 +161,15 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] pb-4 text-slate-300">
-                Global Psychedelic <br />
-                <span className="text-gradient-primary inline-block pb-1">Practitioner Network</span>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] pb-4 text-slate-300">
+                Stop Practicing in Isolation.<br />
+                Join the Global Psychedelic <span className="text-gradient-primary inline-block pb-1">Practitioner Alliance</span>.
               </h1>
               <p className="text-lg sm:text-xl text-slate-400 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
-                The Practice Operating System for Psychedelic Therapy. Unify safety, outcomes, and compliance into a single secure platform.
+                The only platform that unifies safety surveillance, outcomes tracking, and peer benchmarking—so you can practice with confidence, not guesswork.
               </p>
-              <p className="text-lg text-slate-300 max-w-2xl lg:mx-0 mx-auto font-medium tracking-wide">
-                Augmented intelligence for the global psychedelic wellness community.
+              <p className="text-base text-slate-400 max-w-2xl lg:mx-0 mx-auto font-medium">
+                Built for practitioners who refuse to compromise on safety or evidence. Trusted by 840+ clinicians across 14 institutional sites.
               </p>
             </motion.div>
 
@@ -191,22 +191,35 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 w-full max-w-md lg:mx-0 mx-auto"
+              className="space-y-4 w-full max-w-md lg:mx-0 mx-auto"
             >
-              <button
-                onClick={() => navigate('/login')}
-                className="flex-1 px-8 py-5 bg-primary hover:bg-blue-600 text-slate-300 text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
-              >
-                Access Portal
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="flex-1 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95"
+                >
+                  Start Free Trial
+                </button>
 
-              <button
-                onClick={() => navigate('/signup')}
-                className="flex-1 px-8 py-5 bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-200 hover:text-slate-200 text-[13px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all hover:bg-slate-800 active:scale-95"
-              >
-                Request Access
-              </button>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="flex-1 px-6 py-4 bg-transparent border-2 border-slate-600 hover:border-slate-500 text-slate-300 text-base font-semibold rounded-xl transition-all hover:bg-slate-900/50 active:scale-95"
+                >
+                  Watch Demo (2 min)
+                </button>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>No credit card required</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  <span>Full access for 14 days</span>
+                </div>
+              </div>
             </motion.div>
 
 
@@ -264,16 +277,27 @@ const Landing: React.FC = () => {
           <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-center text-center space-y-10">
             {/* Background effects */}
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-purple-500/20 rounded-full blur-[120px] pointer-events-none"></div>
 
             {/* Heading */}
-            <div className="space-y-4 max-w-2xl relative z-10">
-              <h2 className="text-4xl sm:text-6xl font-black text-slate-200 tracking-tighter leading-tight">
+            <div className="space-y-6 max-w-3xl relative z-10">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-200 tracking-tighter leading-tight">
                 The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
               </h2>
-              <p className="text-slate-400 font-medium text-lg leading-relaxed">
-                PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
+              <p className="text-2xl sm:text-3xl font-medium text-slate-400 tracking-tight">
+                Where Evidence Meets Experience.
               </p>
+              <div className="space-y-4 text-lg text-slate-400 leading-relaxed font-medium max-w-2xl mx-auto">
+                <p>
+                  PPN is not a social network. It's a professional alliance of 840+ licensed clinicians who share one goal: prove that psychedelic therapy works—safely, consistently, and at scale.
+                </p>
+                <p>
+                  By pooling de-identified outcomes data across 14 institutional sites, we're building the evidence base that unlocks insurance coverage, reduces malpractice risk, and elevates the entire field.
+                </p>
+                <p className="text-xl font-semibold text-slate-300">
+                  You don't have to build this alone. Join the Alliance.
+                </p>
+              </div>
             </div>
 
             {/* City Grid */}

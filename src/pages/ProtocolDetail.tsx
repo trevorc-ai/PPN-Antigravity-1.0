@@ -20,7 +20,7 @@ const ProtocolDetail: React.FC = () => {
 
   if (!record) {
     return (
-      <div className="min-h-full bg-[#020408] flex items-center justify-center animate-in fade-in duration-500">
+      <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] flex items-center justify-center animate-in fade-in duration-500">
         <div className="text-center space-y-8">
           <div className="size-24 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto shadow-2xl">
             <span className="material-symbols-outlined text-5xl text-slate-700">person_off</span>
@@ -73,7 +73,7 @@ const ProtocolDetail: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-full bg-[#020408] text-slate-300 p-4 sm:p-8 animate-in fade-in duration-700 relative overflow-hidden print:bg-white print:text-black print:p-0 print:overflow-visible font-sans">
+    <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 p-4 sm:p-8 animate-in fade-in duration-700 relative overflow-hidden print:bg-white print:text-black print:p-0 print:overflow-visible font-sans">
 
       {/* Print-Specific Styles to force high contrast */}
       <style>{`

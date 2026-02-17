@@ -34,7 +34,7 @@ const AuditLogs: React.FC = () => {
   }, [activeFilter]);
 
   return (
-    <PageContainer width="wide" className="h-full flex flex-col gap-8 animate-in fade-in duration-500 bg-[#020408]">
+    <PageContainer width="wide" className="h-full flex flex-col gap-8 animate-in fade-in duration-500 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 pt-6 sm:pt-10 px-6 sm:px-0">
         <div className="space-y-2">

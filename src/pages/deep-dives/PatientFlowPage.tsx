@@ -15,7 +15,7 @@ const PatientFlowPage: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-[#05070a] p-6">
+        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-6">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Page Header */}
                 <div className="border-b border-slate-800 pb-8">

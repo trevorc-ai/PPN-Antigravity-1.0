@@ -12,7 +12,7 @@
 1. **Survey Fatigue** - 64 total questions administered post-session
 2. **No Visual Feedback Loop** - Patient doesn't see correlation to baseline
 3. **No Adaptive Assessment** - Everyone gets full battery regardless of need
-4. **No Integration with Arc of Care** - Assessments feel disconnected from journey
+4. **No Integration with Wellness Journey** - Assessments feel disconnected from journey
 
 ---
 
@@ -104,11 +104,11 @@
 **Implementation:**
 1. Create `AssessmentResults.tsx` component
 2. Add correlation logic (MEQ + Baseline → Predicted Outcome)
-3. Integrate with God View (show updated Arc of Care)
+3. Integrate with God View (show updated Wellness Journey)
 
 ---
 
-### **Phase 4: Integration with Arc of Care** 🎯 CRITICAL
+### **Phase 4: Integration with Wellness Journey** 🎯 CRITICAL
 **Problem:** Assessments feel like "homework" instead of part of the healing journey.
 
 **Solution: Seamless Journey Integration**
@@ -178,7 +178,7 @@ Phase 3 card unlocks (Integration begins)
 **Target State:**
 - ✅ Adaptive (Quick Mode for 80% of patients)
 - ✅ Contextual (Shows correlation to baseline)
-- ✅ Integrated (Part of Arc of Care, not separate)
+- ✅ Integrated (Part of Wellness Journey, not separate)
 - ✅ Engaging (Visual feedback, gamification)
 - ✅ Sustainable (Pulse checks prevent drop-off)
 

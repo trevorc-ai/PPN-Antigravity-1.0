@@ -62,7 +62,7 @@ const SafetySurveillancePage: React.FC = () => {
     };
 
     return (
-        <PageContainer className="min-h-screen bg-[#05070a] text-slate-300">
+        <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300">
             {/* Header */}
             <Section spacing="tight" className="border-b border-slate-800 pb-8">
                 <div className="flex items-center gap-3 mb-2">

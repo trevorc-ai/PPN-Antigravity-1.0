@@ -7,9 +7,9 @@ const About: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-full bg-[#05070a] text-slate-300 font-sans animate-in fade-in duration-700 pb-20 overflow-x-hidden">
+    <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 font-sans animate-in fade-in duration-700 pb-20 overflow-x-hidden">
       {/* Hero Section */}
-      <div className="relative py-20 sm:py-32 border-b border-white/5 bg-[#080a0f]">
+      <div className="relative py-20 sm:py-32 border-b border-white/5 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none"></div>
 

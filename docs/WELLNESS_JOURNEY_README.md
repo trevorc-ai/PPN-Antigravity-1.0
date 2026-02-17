@@ -67,7 +67,7 @@
 ## 📊 Feature Status
 
 ### Phase A: Core Integration ✅ **COMPLETE**
-- [x] Terminology update ("Arc of Care" → "Wellness Journey")
+- [x] Terminology update ("Wellness Journey" → "Wellness Journey")
 - [x] Assessment modal integration
 - [x] Navigation enhancement
 - [x] Visual polish (Quick Wins)

@@ -45,7 +45,7 @@ interface Alert {
  * - Active alerts
  * - Rescue protocol checklist
  * 
- * Part of Arc of Care system (WO_042)
+ * Part of Wellness Journey system (WO_042)
  */
 const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
     sessionId,

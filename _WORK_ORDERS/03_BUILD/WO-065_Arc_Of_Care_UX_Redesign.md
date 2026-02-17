@@ -1,9 +1,9 @@
 ---
 id: WO-065
-status: 03_BUILD
+status: 04_QA
 priority: P0 (CRITICAL)
 category: UX / Accessibility / Performance
-owner: BUILDER
+owner: INSPECTOR
 failure_count: 0
 created_date: 2026-02-16T18:44:00-08:00
 design_completed: 2026-02-16T18:54:00-08:00
@@ -11,7 +11,7 @@ marketer_reviewed: 2026-02-16T19:04:00-08:00
 estimated_hours: 16-20 hours
 ---
 
-# Arc of Care UI/UX Redesign
+# Wellness Journey UI/UX Redesign
 
 **Date:** 2026-02-16  
 **Designer:** DESIGNER  
@@ -21,7 +21,7 @@ estimated_hours: 16-20 hours
 
 ## 🎯 BUILDER TASK SUMMARY
 
-**Your Mission:** Make the Arc of Care page immediately intuitive so providers know exactly what to do when they land on it.
+**Your Mission:** Make the Wellness Journey page immediately intuitive so providers know exactly what to do when they land on it.
 
 **Files to Modify:**
 1. `src/pages/ArcOfCareGodView.tsx` - Add hero section, enhanced phase indicator, onboarding modal
@@ -50,7 +50,7 @@ estimated_hours: 16-20 hours
 
 ## 🚨 EXECUTIVE SUMMARY
 
-**Problem:** The Arc of Care pages are not immediately intuitive. Users don't know where to start or what to do when they land on the page.
+**Problem:** The Wellness Journey pages are not immediately intuitive. Users don't know where to start or what to do when they land on the page.
 
 **Root Cause:** Lack of clear onboarding, ambiguous CTAs, and missing context about the 3-phase workflow.
 
@@ -70,7 +70,7 @@ estimated_hours: 16-20 hours
 
 #### **Issue #1: No Onboarding or Context (SEVERITY: CRITICAL)**
 **Problem:**
-- User lands on page with NO explanation of what "Arc of Care" means
+- User lands on page with NO explanation of what "Wellness Journey" means
 - No visual guide showing the 3-phase workflow
 - No indication of what actions are expected
 
@@ -192,7 +192,7 @@ estimated_hours: 16-20 hours
           Start with Phase 1: Preparation
         </button>
         
-        <AdvancedTooltip content="Learn how the Arc of Care workflow helps you provide better patient outcomes" tier="standard">
+        <AdvancedTooltip content="Learn how the Wellness Journey workflow helps you provide better patient outcomes" tier="standard">
           <button className="px-6 py-4 border-2 border-slate-600 hover:border-slate-500 text-slate-300 font-semibold rounded-xl transition-colors flex items-center gap-2">
             <HelpCircle className="w-5 h-5" />
             How it Works
@@ -428,7 +428,7 @@ estimated_hours: 16-20 hours
           <Sparkles className="w-10 h-10 text-emerald-400" />
         </div>
         <h2 className="text-4xl font-black text-white mb-3">
-          Welcome to the Arc of Care
+          Welcome to the Wellness Journey
         </h2>
         <p className="text-slate-300 text-lg">
           Your complete patient journey dashboard for psychedelic-assisted therapy
@@ -479,7 +479,7 @@ estimated_hours: 16-20 hours
       
       {/* Key Benefits */}
       <div className="bg-slate-800/50 rounded-2xl p-6 mb-8">
-        <h3 className="text-lg font-black text-white mb-4">Why Use Arc of Care?</h3>
+        <h3 className="text-lg font-black text-white mb-4">Why Use Wellness Journey?</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-start gap-3">
             <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
@@ -575,7 +575,7 @@ estimated_hours: 16-20 hours
   target="_blank"
   className="text-sm text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1"
 >
-  Learn more about Arc of Care
+  Learn more about Wellness Journey
   <ExternalLink className="w-4 h-4" />
 </a>
 ```
@@ -605,7 +605,7 @@ estimated_hours: 16-20 hours
   {/* Secondary Actions */}
   <div className="flex items-center gap-3">
     <AdvancedTooltip
-      content="View detailed help documentation for Arc of Care"
+      content="View detailed help documentation for Wellness Journey"
       tier="micro"
     >
       <button className="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition-colors">
@@ -862,7 +862,7 @@ Providers don't understand the workflow, so they don't use the tool consistently
 **Provider Actions:**
 1. **Send Patient Pre-Fill Form** (NEW - see below)
    - Patient completes PHQ-9, GAD-7, ACE, Expectancy at home
-   - Data auto-populates into Arc of Care
+   - Data auto-populates into Wellness Journey
    - Provider reviews and confirms
 
 2. **Review Baseline Assessment** (Phase 1)
@@ -1103,7 +1103,7 @@ Providers waste time manually entering baseline data during appointments.
 
 **Step 1: Provider Sends Form**
 ```tsx
-{/* In Arc of Care dashboard */}
+{/* In Wellness Journey dashboard */}
 <button 
   onClick={() => sendPatientIntakeForm(patientEmail)}
   className="px-6 py-3 bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-xl"
@@ -1336,7 +1336,7 @@ CREATE TABLE patient_intake_forms (
 
 **Current State:**
 - Onboarding modal shows benefits but no validation
-- Users see "Why Use Arc of Care?" with 4 key benefits
+- Users see "Why Use Wellness Journey?" with 4 key benefits
 - No testimonials or stats to validate claims
 
 **Recommendation:**
@@ -1514,7 +1514,7 @@ Make the CTA more specific to the use case:
 ---
 
 **MARKETER NOTES:**
-- This is the "Killer App" - the Arc of Care is the core value proposition
+- This is the "Killer App" - the Wellness Journey is the core value proposition
 - Current design solves all critical UX issues (onboarding, CTA, hierarchy, progressive disclosure, contextual help)
 - Minor suggestions are marketing enhancements (social proof, quantified benefits, specific CTAs)
 - Priority is to ship fast and iterate based on real user feedback

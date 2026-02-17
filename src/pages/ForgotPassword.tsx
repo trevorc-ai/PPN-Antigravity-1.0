@@ -31,7 +31,7 @@ const ForgotPassword: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#05070a] flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] flex items-center justify-center p-6 relative overflow-hidden">
             {/* Background gradient effects */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5"></div>
             <div className="absolute top-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>

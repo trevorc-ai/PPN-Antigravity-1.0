@@ -171,8 +171,8 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
                                 <label
                                     key={grade.value}
                                     className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${data.severity_grade === grade.value
-                                            ? getSeverityColor(grade.value)
-                                            : 'bg-slate-800/30 border border-slate-700/50 hover:border-slate-600'
+                                        ? getSeverityColor(grade.value)
+                                        : 'bg-slate-800/30 border border-slate-700/50 hover:border-slate-600'
                                         }`}
                                 >
                                     <input
@@ -249,7 +249,7 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
                                     />
                                     <button
                                         onClick={() => updateField('resolved_at', new Date().toISOString().slice(0, 16))}
-                                        className="px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-all"
+                                        className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-all"
                                     >
                                         Now
                                     </button>

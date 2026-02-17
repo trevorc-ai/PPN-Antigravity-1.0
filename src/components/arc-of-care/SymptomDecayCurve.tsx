@@ -55,7 +55,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
     const { width, height } = dimensions;
 
     // Chart dimensions
-    const padding = { top: 40, right: 40, bottom: 60, left: 60 };
+    const padding = { top: 30, right: 30, bottom: 50, left: 50 };
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
 
@@ -179,7 +179,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
             </div>
 
             {/* Chart */}
-            <div ref={containerRef} className="relative bg-slate-900/40 rounded-lg p-4 w-full">
+            <div ref={containerRef} className="relative bg-slate-900/40 rounded-lg p-3 w-full">
                 <svg
                     width="100%"
                     height="100%"
@@ -233,7 +233,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                                     y={yScale(value)}
                                     textAnchor="end"
                                     dominantBaseline="middle"
-                                    className="text-xs fill-slate-500"
+                                    className="text-xs fill-slate-400"
                                 >
                                     {value}
                                 </text>
@@ -256,7 +256,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                                     x={xScale(milestone.day)}
                                     y={chartHeight + 20}
                                     textAnchor="middle"
-                                    className="text-xs fill-slate-400"
+                                    className="text-xs fill-slate-300"
                                 >
                                     {milestone.label}
                                 </text>
@@ -378,7 +378,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                             x={chartWidth / 2}
                             y={chartHeight + 45}
                             textAnchor="middle"
-                            className="text-sm fill-slate-400 font-semibold"
+                            className="text-sm fill-slate-300 font-semibold"
                         >
                             Days Post-Session
                         </text>
@@ -387,7 +387,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                             y={-45}
                             textAnchor="middle"
                             transform={`rotate(-90, -${chartHeight / 2}, -45)`}
-                            className="text-sm fill-slate-400 font-semibold"
+                            className="text-sm fill-slate-300 font-semibold"
                         >
                             PHQ-9 Score
                         </text>

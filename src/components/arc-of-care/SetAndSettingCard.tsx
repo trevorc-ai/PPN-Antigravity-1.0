@@ -23,7 +23,7 @@ interface SetAndSettingCardProps {
  * - GAD-7 anxiety severity
  * - Predicted integration needs
  * 
- * Part of Arc of Care system (WO_042)
+ * Part of Wellness Journey system (WO_042)
  */
 const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
     expectancyScale,
