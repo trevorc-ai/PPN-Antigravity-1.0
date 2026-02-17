@@ -16,126 +16,84 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#020408] border-t border-white/5 pt-32 pb-10 mt-24">
-      <div className="max-w-[1600px] mx-auto px-6 sm:px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+    <footer className="bg-[#020408] border-t border-white/5 pt-16 pb-8 mt-24">
+      <div className="max-w-[1600px] mx-auto px-6 sm:px-10">
 
-        {/* Column 1: Brand */}
-        <div className="space-y-6">
-          {/* PPN Portal Logo - Matching Landing Page Style */}
-          <div className="flex items-baseline gap-0 cursor-default">
-            <span className="text-3xl font-black tracking-tight text-slate-300 leading-none">PPN</span>
-            <span className="text-3xl font-black tracking-tight text-primary leading-none">Portal</span>
+        {/* Main Footer Content - Simplified 3 Column Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+
+          {/* Column 1: Brand */}
+          <div className="space-y-4">
+            {/* PPN Portal Logo */}
+            <div className="flex items-baseline gap-0 cursor-default">
+              <span className="text-3xl font-black tracking-tight text-slate-300 leading-none">PPN</span>
+              <span className="text-3xl font-black tracking-tight text-primary leading-none">Portal</span>
+            </div>
+
+            <p className="text-sm text-slate-500 leading-relaxed font-medium max-w-xs">
+              The institutional standard for outcomes tracking and safety surveillance in psychedelic therapy.
+            </p>
           </div>
 
-          <p className="text-sm text-slate-400 leading-relaxed font-medium max-w-xs">
-            The institutional standard for outcomes tracking and safety surveillance in psychedelic therapy.
+          {/* Column 2: Quick Links */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-bold text-slate-400 tracking-wider uppercase">Quick Links</h4>
+            <ul className="space-y-3">
+              {[
+                { label: 'Dashboard', path: '/dashboard' },
+                { label: 'My Protocols', path: '/protocols' },
+                { label: 'Analytics', path: '/analytics' },
+                { label: 'Membership Tiers', action: handlePricingAction }
+              ].map((item) => (
+                <li key={item.label}>
+                  <button
+                    onClick={item.action || (() => navigate(item.path || '#'))}
+                    className="text-sm text-slate-500 hover:text-slate-300 transition-colors font-medium"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 3: Compliance */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-bold text-slate-400 tracking-wider uppercase">Compliance</h4>
+            <div className="flex flex-wrap gap-2">
+              {['HIPAA', 'GDPR', 'SOC2'].map(badge => (
+                <div key={badge} className="px-3 py-1.5 bg-slate-900/50 border border-slate-800 rounded-lg">
+                  <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">{badge}</span>
+                </div>
+              ))}
+            </div>
+            <ul className="space-y-3 pt-2">
+              <li><button className="text-sm text-slate-500 hover:text-slate-300 transition-colors font-medium">Privacy Policy</button></li>
+              <li><button className="text-sm text-slate-500 hover:text-slate-300 transition-colors font-medium">Terms of Service</button></li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Medical Disclaimer - Simplified */}
+        <div className="mb-8">
+          <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 flex items-start gap-3">
+            <span className="material-symbols-outlined text-amber-400/80 text-xl flex-shrink-0" aria-hidden="true">
+              warning
+            </span>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              <span className="font-bold text-amber-400/90">Medical Disclaimer:</span> This is for informational purposes only. For medical advice or diagnosis, consult a professional.
+            </p>
+          </div>
+        </div>
+
+        {/* Legal Banner - Simplified */}
+        <div className="border-t border-white/[0.03] pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-slate-600 text-center md:text-left">
+            © 2025 Psychedelic Practitioners Network. All Rights Reserved.
           </p>
-
           <div className="flex items-center gap-4">
-            {['hub', 'public', 'psychology', 'database'].map(icon => (
-              <div key={icon} className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary transition-all cursor-pointer group shadow-lg">
-                <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">{icon}</span>
-              </div>
-            ))}
+            <span className="text-xs font-mono text-slate-700">v1.5.2</span>
           </div>
-        </div>
-
-        {/* Column 2: Portal Nodes */}
-        <div className="space-y-6">
-          <h4 className="text-[11px] font-black text-slate-300 tracking-[0.4em]">Portal Nodes</h4>
-          <ul className="space-y-4">
-            {['Research Directory', 'Clinical Registry', 'Protocol Architect', 'Membership Tiers', 'Network Identity'].map((item) => (
-              <li key={item}>
-                <button
-                  onClick={item === 'Membership Tiers' ? handlePricingAction : undefined}
-                  className="text-[13px] text-slate-3000 hover:text-primary transition-colors font-medium flex items-center gap-3 group"
-                >
-                  <div className="size-1 bg-slate-800 rounded-full group-hover:bg-primary group-hover:scale-150 transition-all"></div>
-                  {item}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Column 3: Regulatory Framework */}
-        <div className="space-y-6">
-          <h4 className="text-[11px] font-black text-slate-300 tracking-[0.4em]">Regulatory</h4>
-          <div className="grid grid-cols-2 gap-3">
-            {['HIPAA', 'GDPR', 'SOC2', 'FDA-BTI'].map(badge => (
-              <div key={badge} className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl flex items-center justify-center">
-                <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest">{badge}</span>
-              </div>
-            ))}
-          </div>
-          <ul className="space-y-4 pt-2">
-            <li><button className="text-[12px] text-slate-400 hover:text-slate-200 transition-colors font-bold underline decoration-slate-800 underline-offset-4">Institutional Disclosures</button></li>
-            <li><button className="text-[12px] text-slate-400 hover:text-slate-200 transition-colors font-bold underline decoration-slate-800 underline-offset-4">Privacy Framework</button></li>
-          </ul>
-        </div>
-
-        {/* Column 4: System Telemetry */}
-        <div className="space-y-6">
-          <h4 className="text-[11px] font-black text-slate-300 tracking-[0.4em]">Node Telemetry</h4>
-          <div className="bg-[#0a0c12] border border-white/5 rounded-3xl p-6 space-y-6 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-3 opacity-5">
-              <span className="material-symbols-outlined text-4xl">cloud_sync</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="relative flex size-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-clinical-green opacity-75"></span>
-                <span className="relative inline-flex rounded-full size-2 bg-clinical-green"></span>
-              </div>
-              <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.2em]">Global Hub Online</span>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Network Latency</span>
-                <span className="text-[11px] font-mono text-slate-300 font-black tracking-tighter">14.2ms</span>
-              </div>
-              <div className="h-1 bg-slate-900 rounded-full overflow-hidden">
-                <div className="h-full bg-primary shadow-[0_0_8px_#2b74f3]" style={{ width: '92%' }}></div>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center text-[11px] font-mono text-slate-700 uppercase tracking-widest">
-              <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[11px]">lock</span> AES_256</span>
-              <span>SHA-256_SYNC</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Medical Disclaimer */}
-      <div className="max-w-[1600px] mx-auto px-6 sm:px-10 mt-16">
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6 flex items-start gap-4">
-          <span className="material-symbols-outlined text-amber-400 text-2xl flex-shrink-0" aria-hidden="true">
-            warning
-          </span>
-          <div>
-            <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-2" role="heading" aria-level={2}>
-              Medical Disclaimer
-            </p>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              This is for informational purposes only. For medical advice or diagnosis, consult a professional.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Legal Banner */}
-      <div className="max-w-[1600px] mx-auto px-6 sm:px-10 border-t border-white/[0.03] pt-10 flex flex-col md:flex-row items-center justify-between gap-8">
-        <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] text-center md:text-left">
-          © 2025 Psychedelic Practitioners Network. Institutional Access Nodes Verified. All Rights Reserved.
-        </p>
-        <div className="flex items-center gap-6">
-          <div className="px-4 py-1.5 bg-slate-900/80 border border-slate-800 rounded-lg text-[11px] font-mono text-slate-3000 font-bold uppercase tracking-widest">
-            v1.5.2_PRODUCTION
-          </div>
-          <button className="text-[11px] font-black text-slate-600 hover:text-slate-400 uppercase tracking-widest transition-colors">
-            Jurisdiction Notice
-          </button>
         </div>
       </div>
     </footer>
