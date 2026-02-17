@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface SectionProps {
+interface SectionProps extends React.HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
     spacing?: 'tight' | 'default' | 'spacious';
     className?: string;
@@ -9,7 +9,8 @@ interface SectionProps {
 export const Section = ({
     children,
     spacing = 'default',
-    className = ''
+    className = '',
+    ...rest
 }: SectionProps) => {
     const spacingClasses = {
         tight: 'space-y-6',
@@ -18,7 +19,7 @@ export const Section = ({
     };
 
     return (
-        <div className={`${spacingClasses[spacing]} ${className}`}>
+        <div className={`${spacingClasses[spacing]} ${className}`} {...rest}>
             {children}
         </div>
     );

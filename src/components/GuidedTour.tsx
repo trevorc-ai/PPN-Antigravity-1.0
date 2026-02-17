@@ -12,34 +12,34 @@ interface TourStep {
 
 const TOUR_STEPS: TourStep[] = [
   {
-    title: 'Analyze Protocols',
-    description: 'View real-time safety insights and outcomes across your patient cohort.',
-    selector: '#tour-telemetry-hud',
+    title: 'Welcome to Your Command Center',
+    description: 'This is your Dashboard—your home base for tracking protocols, safety alerts, and clinic performance.',
+    selector: '[data-tour="dashboard-header"]',
     preferredPosition: 'bottom'
   },
   {
-    title: 'Build Evidence-Based Protocols',
-    description: 'Create custom treatment plans with built-in safety checks and substance guidance.',
-    selector: 'aside',
+    title: 'Log Your First Patient Journey',
+    description: 'The Wellness Journey tracks the complete arc of care—from preparation to integration. Click here to create your first protocol.',
+    selector: 'a[href="/wellness-journey"]',
     preferredPosition: 'right'
   },
   {
-    title: 'Track Substance Affinity',
-    description: 'Monitor receptor binding profiles and predict potential interactions.',
-    selector: '#tour-search-node',
-    preferredPosition: 'bottom'
+    title: 'Prevent Dangerous Interactions',
+    description: 'The Interaction Checker scans for dangerous drug combinations like Serotonin Syndrome. Try it now.',
+    selector: '[data-tour="interaction-checker"]',
+    preferredPosition: 'top'
   },
   {
-    title: 'Stay Informed',
-    description: 'Receive urgent safety alerts and protocol updates in real-time.',
-    selector: '#tour-notifications',
-    preferredPosition: 'left'
+    title: 'Access Evidence-Based Guidance',
+    description: 'The Substance Catalog provides dosing guidelines, contraindications, and safety protocols for 50+ substances.',
+    selector: 'a[href="/catalog"]',
+    preferredPosition: 'right'
   },
   {
-    title: 'Get Expert Support',
-    description: 'Access help, FAQs, and community resources anytime you need them.',
-    selector: '#tour-help-node',
-    preferredPosition: 'left'
+    title: 'We\'re Here to Help',
+    description: 'Access FAQs, video tutorials, and live support from the Help Center. You can restart this tour anytime.',
+    selector: 'a[href="/help"]',
+    preferredPosition: 'right'
   }
 ];
 
@@ -61,52 +61,73 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
   const updatePosition = useCallback(() => {
     const el = document.querySelector(step.selector);
     if (el) {
+      // Auto-scroll to element if it's not in viewport
       const rect = el.getBoundingClientRect();
-      setTargetRect(rect);
+      const isInViewport = (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= window.innerHeight &&
+        rect.right <= window.innerWidth
+      );
 
-      const gap = 16;
-      const cardWidth = 300;
-      const cardHeight = 160;
-      let top = 0;
-      let left = 0;
-
-      // Smart Positioning Engine
-      let position = step.preferredPosition;
-
-      // Vertical flip check
-      if (position === 'bottom' && rect.bottom + gap + cardHeight > window.innerHeight) position = 'top';
-      if (position === 'top' && rect.top - gap - cardHeight < 0) position = 'bottom';
-
-      // Horizontal flip check
-      if (position === 'right' && rect.right + gap + cardWidth > window.innerWidth) position = 'left';
-      if (position === 'left' && rect.left - gap - cardWidth < 0) position = 'right';
-
-      if (position === 'bottom') {
-        top = rect.bottom + gap;
-        left = rect.left + (rect.width / 2) - (cardWidth / 2);
-      } else if (position === 'top') {
-        top = rect.top - cardHeight - gap;
-        left = rect.left + (rect.width / 2) - (cardWidth / 2);
-      } else if (position === 'right') {
-        top = rect.top;
-        left = rect.right + gap;
-      } else if (position === 'left') {
-        top = rect.top;
-        left = rect.left - cardWidth - gap;
+      if (!isInViewport) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Wait for scroll to complete before positioning
+        setTimeout(() => {
+          const updatedRect = el.getBoundingClientRect();
+          positionTourCard(updatedRect);
+        }, 300);
+      } else {
+        positionTourCard(rect);
       }
-
-      // Screen Boundary Safety
-      if (left < 10) left = 10;
-      if (left + cardWidth > window.innerWidth - 10) left = window.innerWidth - cardWidth - 10;
-      if (top < 80) top = 80;
-      if (top + cardHeight > window.innerHeight - 10) top = window.innerHeight - cardHeight - 10;
-
-      setPopoverStyle({ top, left });
-      setIsVisible(true);
     } else {
       setIsVisible(false);
     }
   }, [step]);
+
+  const positionTourCard = (rect: DOMRect) => {
+    setTargetRect(rect);
+
+    const gap = 32; // Increased gap for better separation from target
+    const cardWidth = 300;
+    const cardHeight = 160;
+    let top = 0;
+    let left = 0;
+
+    // Smart Positioning Engine
+    let position = step.preferredPosition;
+
+    // Vertical flip check
+    if (position === 'bottom' && rect.bottom + gap + cardHeight > window.innerHeight) position = 'top';
+    if (position === 'top' && rect.top - gap - cardHeight < 0) position = 'bottom';
+
+    // Horizontal flip check
+    if (position === 'right' && rect.right + gap + cardWidth > window.innerWidth) position = 'left';
+    if (position === 'left' && rect.left - gap - cardWidth < 0) position = 'right';
+
+    if (position === 'bottom') {
+      top = rect.bottom + gap;
+      left = rect.left + (rect.width / 2) - (cardWidth / 2);
+    } else if (position === 'top') {
+      top = rect.top - cardHeight - gap;
+      left = rect.left + (rect.width / 2) - (cardWidth / 2);
+    } else if (position === 'right') {
+      top = rect.top;
+      left = rect.right + gap;
+    } else if (position === 'left') {
+      top = rect.top;
+      left = rect.left - cardWidth - gap;
+    }
+
+    // Screen Boundary Safety
+    if (left < 10) left = 10;
+    if (left + cardWidth > window.innerWidth - 10) left = window.innerWidth - cardWidth - 10;
+    if (top < 80) top = 80;
+    if (top + cardHeight > window.innerHeight - 10) top = window.innerHeight - cardHeight - 10;
+
+    setPopoverStyle({ top, left });
+    setIsVisible(true);
+  };
 
   useEffect(() => {
     if (currentStep === 0 && location.pathname !== '/dashboard') {
@@ -144,14 +165,14 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
         onClick={onComplete}
       />
 
-      {/* Target Highlighter (Dual Glow #1) */}
+      {/* Target Highlighter (Blue Border) */}
       <div
-        className="absolute transition-all duration-300 ease-out border-2 border-primary rounded-xl shadow-[0_0_15px_rgba(43,116,243,0.5)] z-[10000]"
+        className="absolute transition-all duration-300 ease-out border-[3px] border-primary rounded-xl shadow-[0_0_20px_rgba(43,116,243,0.6)] z-[10000] pointer-events-none"
         style={{
-          top: targetRect.top - 4,
-          left: targetRect.left - 4,
-          width: targetRect.width + 8,
-          height: targetRect.height + 8,
+          top: targetRect.top - 6,
+          left: targetRect.left - 6,
+          width: targetRect.width + 12,
+          height: targetRect.height + 12,
         }}
       />
 

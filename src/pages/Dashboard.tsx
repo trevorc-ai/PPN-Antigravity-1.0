@@ -147,10 +147,10 @@ export default function Dashboard() {
   const { protocols, loading: protocolsLoading } = usePractitionerProtocols();
 
   return (
-    <PageContainer className="min-h-screen bg-[#0e1117] text-slate-300 flex flex-col gap-8">
+    <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 flex flex-col gap-8">
 
       {/* HEADER SECTION */}
-      <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">
+      <Section spacing="tight" data-tour="dashboard-header" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -197,7 +197,7 @@ export default function Dashboard() {
             {/* Search Button */}
             <button
               onClick={() => navigate('/advanced-search')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-primary rounded-xl hover:bg-blue-600 transition-colors"
+              className="absolute left-auto right-2 top-1/2 -translate-y-1/2 p-3 bg-primary rounded-xl hover:bg-blue-600 transition-colors z-20"
             >
               <span className="material-symbols-outlined text-slate-300">search</span>
             </button>
@@ -344,6 +344,7 @@ export default function Dashboard() {
         <h2 className="text-xl font-black text-slate-200 tracking-tight mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <button
+            data-tour="wellness-journey"
             onClick={() => navigate('/wellness-journey')}
             className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-slate-200 border border-indigo-500/20 hover:border-indigo-500 transition-all active:scale-95 cursor-pointer"
           >
@@ -358,6 +359,7 @@ export default function Dashboard() {
             <span className="text-sm font-black uppercase tracking-wider">Analytics</span>
           </button>
           <button
+            data-tour="interaction-checker"
             onClick={() => navigate('/interactions')}
             className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-200 border border-amber-500/20 hover:border-amber-500 transition-all active:scale-95 cursor-pointer"
           >

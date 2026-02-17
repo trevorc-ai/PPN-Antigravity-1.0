@@ -24,13 +24,12 @@ const navSections: NavSection[] = [
     title: 'Core',
     items: [
       { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
-      { label: 'Analytics', icon: 'analytics', path: '/analytics' },
     ],
   },
   {
     title: 'Clinical Tools',
     items: [
-      { label: 'Wellness Journey', icon: 'healing', path: '/wellness-journey' },
+      { label: 'Wellness Journey', icon: 'psychology', path: '/arc-of-care-god-view' },
       { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
       { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
     ],
@@ -81,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h1 className="text-sm font-black text-white tracking-tight">PPN Portal</h1>
-              <p className="text-[9px] font-mono text-slate-500 uppercase tracking-wider">Research v2.4</p>
+              <p className="text-xs font-mono text-slate-500 uppercase tracking-wider">Research v2.4</p>
             </div>
           </div>
           <button
@@ -93,53 +92,67 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-6">
-          {navSections.map((section) => (
-            <div key={section.title}>
-              <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 px-3">
-                {section.title}
-              </h3>
-              <ul className="space-y-1">
-                {section.items.map((item) => (
-                  <li key={item.path}>
-                    <NavLink
-                      to={item.path}
-                      onClick={() => {
-                        if (window.innerWidth < 1024) onClose();
-                      }}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
-                          ? 'bg-primary/30 text-white ring-2 ring-primary shadow-lg shadow-primary/20'
-                          : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-                        }`
-                      }
-                    >
-                      {({ isActive }) => (
-                        <>
-                          {isActive && (
-                            <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full" />
+        <nav className="overflow-y-auto p-4">
+          <div className="space-y-6">
+            {navSections.map((section) => (
+              <div key={section.title}>
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 px-3">
+                  {section.title}
+                </h3>
+                <ul className="space-y-1">
+                  {section.items.map((item) => {
+                    // Map tour data attributes to specific navigation items
+                    const tourDataMap: Record<string, string> = {
+                      '/wellness-journey': 'wellness-journey',
+                      '/arc-of-care-god-view': 'wellness-journey',
+                      '/interactions': 'interaction-checker',
+                      '/catalog': 'substance-catalog',
+                      '/help': 'help-faq'
+                    };
+
+                    return (
+                      <li key={item.path}>
+                        <NavLink
+                          to={item.path}
+                          data-tour={tourDataMap[item.path]}
+                          onClick={() => {
+                            if (window.innerWidth < 1024) onClose();
+                          }}
+                          className={({ isActive }) =>
+                            `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
+                              ? 'bg-primary/30 text-white ring-2 ring-primary shadow-lg shadow-primary/20'
+                              : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            }`
+                          }
+                        >
+                          {({ isActive }) => (
+                            <>
+                              {isActive && (
+                                <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full" />
+                              )}
+                              <span
+                                className={`material-symbols-outlined text-lg ${isActive ? 'text-primary' : ''
+                                  }`}
+                              >
+                                {item.icon}
+                              </span>
+                              <span className="text-base font-bold tracking-wide">{item.label}</span>
+                            </>
                           )}
-                          <span
-                            className={`material-symbols-outlined text-lg ${isActive ? 'text-primary' : ''
-                              }`}
-                          >
-                            {item.icon}
-                          </span>
-                          <span className="text-base font-bold tracking-wide">{item.label}</span>
-                        </>
-                      )}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                        </NavLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
         </nav>
 
         {/* Footer */}
         <div className="p-4 border-t border-slate-800">
           <div className="bg-slate-900/50 rounded-xl p-3 space-y-1">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+            <p className="text-xs font-black text-slate-500 uppercase tracking-widest">
               System Status
             </p>
             <div className="flex items-center gap-2">
