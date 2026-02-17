@@ -41,11 +41,13 @@ import ArcOfCareDemo from './pages/ArcOfCareDemo';
 import ArcOfCarePhase2Demo from './pages/ArcOfCarePhase2Demo';
 import ArcOfCarePhase3Demo from './pages/ArcOfCarePhase3Demo';
 import ArcOfCareDashboard from './pages/ArcOfCareDashboard';
-import ArcOfCareGodView from './pages/ArcOfCareGodView';
+import WellnessJourney from './pages/WellnessJourney';
 import MEQ30Page from './pages/MEQ30Page';
 import AdaptiveAssessmentPage from './pages/AdaptiveAssessmentPage';
 import Checkout from './pages/Checkout';
 import BillingPortal from './pages/BillingPortal';
+import PartnerDemoHub from './pages/PartnerDemoHub';
+import FormsShowcase from './pages/FormsShowcase';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Verified Deep Dives
@@ -128,7 +130,7 @@ const ProtectedLayout: React.FC<{
         onClose={() => setIsSidebarOpen(false)}
         isLocked={false}
       />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
         <TopHeader
           onMenuClick={() => setIsSidebarOpen(true)}
           onLogout={onLogout}
@@ -192,7 +194,6 @@ const AppContent: React.FC = () => {
         <Route path="/arc-of-care-phase2" element={<ArcOfCarePhase2Demo />} />
         <Route path="/arc-of-care-phase3" element={<ArcOfCarePhase3Demo />} />
         <Route path="/arc-of-care-dashboard" element={<ArcOfCareDashboard />} />
-        <Route path="/arc-of-care-god-view" element={<ArcOfCareGodView />} /> {/* Legacy route */}
         <Route path="/meq30" element={<MEQ30Page />} />
         <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
@@ -201,6 +202,7 @@ const AppContent: React.FC = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/billing" element={<BillingPortal />} />
+        <Route path="/partner-demo" element={<PartnerDemoHub />} />
 
         {/* Protected Routes */}
         <Route element={
@@ -224,8 +226,9 @@ const AppContent: React.FC = () => {
           <Route path="/audit" element={<AuditLogs />} />
           <Route path="/audit" element={<AuditLogs />} />
 
-          {/* WELLNESS JOURNEY */}
-          <Route path="/wellness-journey" element={<ArcOfCareGodView />} />
+          {/* WELLNESS JOURNEY / ARC OF CARE */}
+          <Route path="/arc-of-care-god-view" element={<WellnessJourney />} />
+          <Route path="/wellness-journey" element={<WellnessJourney />} /> {/* Alias */}
 
           {/* PROTOCOL BUILDER */}
           <Route path="/protocols" element={<MyProtocols />} />
@@ -237,6 +240,9 @@ const AppContent: React.FC = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/profile/edit" element={<ProfileEdit />} />
           <Route path="/data-export" element={<DataExport />} />
+
+          {/* Forms Showcase - Testing Page for Arc of Care Forms */}
+          <Route path="/forms-showcase" element={<FormsShowcase />} />
 
           {/* Deep Dives */}
           <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
