@@ -74,7 +74,7 @@ const SafetyEventObservationsForm: React.FC<SafetyEventObservationsFormProps> = 
     return (
         <div className="max-w-5xl mx-auto space-y-6">
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                     <Shield className="w-7 h-7 text-green-400" />
                     Safety Event Observations
                 </h2>
@@ -94,7 +94,7 @@ const SafetyEventObservationsForm: React.FC<SafetyEventObservationsFormProps> = 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {Object.entries(OBSERVATION_CATEGORIES).map(([category, observations]) => (
                     <div key={category} className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-5 space-y-4">
-                        <h3 className="text-sm font-bold text-slate-200">{category}</h3>
+                        <h3 className="text-sm font-bold text-slate-300">{category}</h3>
                         <div className="space-y-3">
                             {observations.map((obs) => (
                                 <label key={obs.id} className="flex items-center gap-3 cursor-pointer">

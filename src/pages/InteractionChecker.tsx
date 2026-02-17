@@ -152,7 +152,7 @@ const InteractionChecker: React.FC = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate('/catalog')}
-        className="flex items-center gap-2 text-slate-3000 hover:text-slate-200 transition-colors mb-6 group"
+        className="flex items-center gap-2 text-slate-3000 hover:text-slate-300 transition-colors mb-6 group"
       >
         <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
         <span className="text-[10px] font-black uppercase tracking-widest">Return to Catalog</span>
@@ -165,7 +165,7 @@ const InteractionChecker: React.FC = () => {
               <span className="material-symbols-outlined text-3xl">security</span>
             </div>
             <div>
-              <h1 className="text-4xl font-black text-slate-200 tracking-tighter">Interaction Checker</h1>
+              <h1 className="text-4xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Interaction Checker</h1>
               <p className="text-slate-3000 text-[10px] font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
             </div>
           </div>
@@ -173,7 +173,7 @@ const InteractionChecker: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleClear}
-            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-3000 hover:text-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-3000 hover:text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
           >
             Reset Analysis
           </button>
@@ -191,7 +191,7 @@ const InteractionChecker: React.FC = () => {
             <select
               value={selectedPsychedelic}
               onChange={(e) => setSelectedPsychedelic(e.target.value)}
-              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
+              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all" style={{ color: '#8B9DC3' }}
             >
               <option value="">Select Controlled Substance...</option>
               {PSYCHEDELICS.map(p => <option key={p} value={p}>{p.toUpperCase()}</option>)}
@@ -216,7 +216,7 @@ const InteractionChecker: React.FC = () => {
             <select
               value={selectedMedication}
               onChange={(e) => setSelectedMedication(e.target.value)}
-              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all"
+              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all" style={{ color: '#8B9DC3' }}
             >
               <option value="">Select Interactor...</option>
               {MEDICATIONS_LIST.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
@@ -230,7 +230,7 @@ const InteractionChecker: React.FC = () => {
           <div className="px-2">
             <button
               onClick={handleRequestAgent}
-              className="text-[10px] font-bold text-primary hover:text-slate-200 uppercase tracking-widest transition-colors flex items-center gap-2 group"
+              className="text-[10px] font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2 group"
             >
               <span>Agent not listed? Request institutional database update.</span>
               <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">arrow_forward</span>
@@ -260,7 +260,7 @@ const InteractionChecker: React.FC = () => {
               {/* Combination Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/10 pb-8 mb-8">
                 <div>
-                  <h2 className="text-3xl font-black text-slate-200 tracking-tight flex items-center flex-wrap gap-2">
+                  <h2 className="text-3xl font-black tracking-tight flex items-center flex-wrap gap-2" style={{ color: '#9DAEC8' }}>
                     {analysisResult.substance}
                     <span className="text-slate-600 mx-3">+</span>
                     {analysisResult.interactor}
@@ -268,7 +268,7 @@ const InteractionChecker: React.FC = () => {
                 </div>
                 <button
                   onClick={handlePrint}
-                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-200 text-[10px] font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
+                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white text-[10px] font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
                 >
                   <span className="material-symbols-outlined text-lg">print</span>
                   Print / Save Results
@@ -293,16 +293,16 @@ const InteractionChecker: React.FC = () => {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 <div className="lg:col-span-7 space-y-8">
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Clinical Description</h3>
-                    <p className="text-xl sm:text-2xl font-bold text-slate-200 leading-relaxed">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Clinical Description</h3>
+                    <p className="text-xl sm:text-2xl font-bold leading-relaxed" style={{ color: '#8B9DC3' }}>
                       "{analysisResult.description}"
                     </p>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Mechanism of Interaction</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Mechanism of Interaction</h3>
                     <div className="p-6 bg-black/40 border border-white/5 rounded-2xl">
-                      <p className="text-base font-medium text-slate-300 leading-relaxed">
+                      <p className="text-base font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>
                         {analysisResult.mechanism}
                       </p>
                     </div>
@@ -317,11 +317,11 @@ const InteractionChecker: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
-                      <p className="text-base font-mono font-black text-slate-400">{analysisResult.id} // SECURE_NODE_0x7</p>
+                      <p className="text-base font-mono font-black" style={{ color: '#8B9DC3' }}>{analysisResult.id} // SECURE_NODE_0x7</p>
                     </div>
                     {analysisResult.sourceUrl && (
                       <div className="flex items-center gap-2">
-                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] font-black text-primary hover:text-slate-200 uppercase tracking-widest flex items-center gap-1 transition-colors">
+                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors">
                           Source: {analysisResult.source}
                           <span className="material-symbols-outlined text-xs">open_in_new</span>
                         </a>
@@ -332,7 +332,7 @@ const InteractionChecker: React.FC = () => {
               </div>
 
               {/* Legal Footer */}
-              <div className="mt-8 pt-6 border-t border-white/5 text-xs text-slate-400 font-medium leading-relaxed">
+              <div className="mt-8 pt-6 border-t border-white/5 text-xs font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>
                 DISCLAIMER: This tool is for educational and harm reduction purposes only. It does not constitute medical advice. Independent verification is required.
               </div>
             </div>
@@ -346,7 +346,7 @@ const InteractionChecker: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">clinical_notes</span>
           </div>
           <div className="space-y-2">
-            <h3 className="text-xs font-black text-slate-200 uppercase tracking-widest">Registry Methodology</h3>
+            <h3 className="text-xs font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Registry Methodology</h3>
             <p className="text-[12px] text-slate-3000 leading-relaxed font-medium italic">
               Interaction data is synthesized from peer-reviewed literature, clinical trial reports (2024-2025), and anonymized practitioner observations. All data points are validated by the institutional Lead Investigator node before ledger entry.
             </p>

@@ -23,11 +23,11 @@ export const PreviewPanel = ({ protocol, networkStats, timeSaved, onSave, isVali
 
         <div className="space-y-4">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Date</span>
+            <span className="text-slate-300">Date</span>
             <span className="font-mono text-slate-300">{protocol.session_date.toLocaleDateString()}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Status</span>
+            <span className="text-slate-300">Status</span>
             <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-500/30">DRAFTING</span>
           </div>
 

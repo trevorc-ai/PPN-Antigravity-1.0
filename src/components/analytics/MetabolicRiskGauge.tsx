@@ -57,11 +57,11 @@ export default function MetabolicRiskGauge() {
 
             {/* HEADER */}
             <div className="relative z-10" title="Assessing toxicity risk interactions using patient CYP450 genomic markers">
-                <h2 className="text-xl font-black text-slate-200 tracking-tighter flex items-center gap-2">
+                <h2 className="text-xl font-black text-slate-300 tracking-tighter flex items-center gap-2">
                     <Gauge className="text-indigo-500" />
                     Metabolic Risk Gauge
                 </h2>
-                <p className="text-xs text-slate-400 font-medium mt-1">
+                <p className="text-xs text-slate-300 font-medium mt-1">
                     CYP450 Genomic Safety Check.
                 </p>
             </div>

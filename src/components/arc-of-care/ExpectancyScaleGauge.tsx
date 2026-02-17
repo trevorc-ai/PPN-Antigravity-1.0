@@ -57,7 +57,7 @@ const ExpectancyScaleGauge: React.FC<ExpectancyScaleGaugeProps> = ({ score }) =>
                 <div className="flex items-center gap-2">
                     <Icon className={`w-5 h-5 ${colors.text}`} />
                     <span className={`text-2xl font-bold ${colors.text}`}>{clampedScore}</span>
-                    <span className="text-slate-400 text-sm">/100</span>
+                    <span className="text-slate-300 text-sm">/100</span>
                 </div>
                 <div className={`px-3 py-1 rounded-full ${colors.bg}/10 border border-${interpretation.color}-500/20`}>
                     <span className={`text-sm font-medium ${colors.text}`}>{interpretation.label}</span>

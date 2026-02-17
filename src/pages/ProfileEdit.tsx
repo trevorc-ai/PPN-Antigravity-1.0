@@ -137,7 +137,7 @@ const ProfileEdit: React.FC = () => {
             <PageContainer className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-                    <p className="text-slate-400">Loading profile...</p>
+                    <p className="text-slate-300">Loading profile...</p>
                 </div>
             </PageContainer>
         );
@@ -150,14 +150,14 @@ const ProfileEdit: React.FC = () => {
                 <div className="flex items-center gap-4 mb-8">
                     <button
                         onClick={handleCancel}
-                        className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-200 transition-all"
+                        className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 hover:text-slate-300 transition-all"
                         aria-label="Go back"
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-200 tracking-tight">Edit Profile</h1>
-                        <p className="text-sm text-slate-400 mt-1">Update your display name, specialty, and privacy settings</p>
+                        <h1 className="text-3xl font-black text-slate-300 tracking-tight">Edit Profile</h1>
+                        <p className="text-sm text-slate-300 mt-1">Update your display name, specialty, and privacy settings</p>
                     </div>
                 </div>
 
@@ -234,7 +234,7 @@ const ProfileEdit: React.FC = () => {
                                     <label htmlFor="is_profile_public" className="block text-sm font-bold text-slate-300 cursor-pointer">
                                         Make my profile public
                                     </label>
-                                    <p className="text-xs text-slate-400 mt-1">
+                                    <p className="text-xs text-slate-300 mt-1">
                                         Allow other practitioners in the network to view your profile and credentials
                                     </p>
                                 </div>
@@ -255,7 +255,7 @@ const ProfileEdit: React.FC = () => {
                                 type="button"
                                 onClick={handleCancel}
                                 disabled={saving}
-                                className="px-6 py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 hover:text-slate-200 font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                                className="px-6 py-3 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 hover:text-slate-300 font-bold rounded-xl transition-all flex items-center justify-center gap-2"
                             >
                                 <X className="w-5 h-5" />
                                 Cancel

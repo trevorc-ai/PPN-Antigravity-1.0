@@ -25,8 +25,8 @@ const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
       </div>
 
       <div className="absolute bottom-10 left-10 right-10 z-10 space-y-4 max-w-3xl">
-        <p className="text-slate-400 text-xs font-mono uppercase tracking-[0.3em] font-bold">Published May 14, 2024</p>
-        <h2 className="text-4xl sm:text-5xl font-black text-slate-200 tracking-tighter leading-[1.1]">
+        <p className="text-slate-300 text-xs font-mono uppercase tracking-[0.3em] font-bold">Published May 14, 2024</p>
+        <h2 className="text-4xl sm:text-5xl font-black text-slate-300 tracking-tighter leading-[1.1]">
           FDA Approves Landmark Phase III Trial for PPN-04 Compound
         </h2>
         <p className="text-slate-300 text-sm sm:text-lg font-medium leading-relaxed max-w-2xl opacity-80">
@@ -56,7 +56,7 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
         <div className="absolute bottom-4 left-6 flex items-center gap-3">
           <span className={`px-2 py-1 text-xs font-black uppercase tracking-widest rounded border ${article.category === 'Regulation' ? 'bg-primary/20 text-primary border-primary/30' :
             article.category === 'Clinical Trials' ? 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20' :
-              article.category === 'Network' ? 'text-clinical-green bg-clinical-green/10 border-clinical-green/20' : 'text-slate-400 bg-slate-800/20 border-slate-700'
+              article.category === 'Network' ? 'text-clinical-green bg-clinical-green/10 border-clinical-green/20' : 'text-slate-300 bg-slate-800/20 border-slate-700'
             }`}>
             {article.category}
           </span>
@@ -65,13 +65,13 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
       </div>
 
       <div className="p-8 flex flex-col flex-1 gap-4">
-        <h3 className="text-xl font-black text-slate-300 group-hover:text-slate-200 leading-tight tracking-tight transition-colors">
+        <h3 className="text-xl font-black text-slate-300 group-hover:text-slate-300 leading-tight tracking-tight transition-colors">
           {article.title}
         </h3>
         <p className="text-sm text-slate-3000 leading-relaxed font-medium line-clamp-3">
           {article.summary}
         </p>
-        <button className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-200 uppercase tracking-[0.2em] transition-all group/btn">
+        <button className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-300 uppercase tracking-[0.2em] transition-all group/btn">
           Read Research
           <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
         </button>
@@ -146,7 +146,7 @@ const News: React.FC = () => {
         {/* Main Feed Section */}
         <div className="flex-1 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
-            <h1 className="text-5xl font-black tracking-tighter text-slate-200">
+            <h1 className="text-5xl font-black tracking-tighter text-slate-300">
               Intelligence Hub
             </h1>
             <ConnectFeedButton />
@@ -173,7 +173,7 @@ const News: React.FC = () => {
                   setSelectedStateFilter(null);
                   setSearchQuery('');
                 }}
-                className="ml-auto text-xs font-black text-slate-400 hover:text-slate-200 uppercase tracking-widest transition-colors"
+                className="ml-auto text-xs font-black text-slate-300 hover:text-slate-300 uppercase tracking-widest transition-colors"
               >
                 Clear Filter
               </button>
@@ -187,14 +187,14 @@ const News: React.FC = () => {
             <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
               <button
                 onClick={() => setSortBy('recent')}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-200'}`}
+                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-300'}`}
               >
                 <span className="material-symbols-outlined text-sm">schedule</span>
                 Most Recent
               </button>
               <button
                 onClick={() => setSortBy('cited')}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-200'}`}
+                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-300'}`}
               >
                 <span className="material-symbols-outlined text-sm">star</span>
                 Most Cited
@@ -203,7 +203,7 @@ const News: React.FC = () => {
 
             <button
               onClick={cycleCategory}
-              className={`px-4 py-2.5 border rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-400 hover:text-slate-200'}`}
+              className={`px-4 py-2.5 border rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-300 hover:text-slate-300'}`}
             >
               {selectedCategory === 'All' ? 'Compound Type' : selectedCategory}
               <span className="material-symbols-outlined text-base">expand_more</span>
@@ -224,7 +224,7 @@ const News: React.FC = () => {
           <div className="space-y-6 pt-6">
             <div className="flex items-center gap-3">
               <div className="w-1 h-6 bg-primary rounded-full"></div>
-              <h2 className="text-2xl font-black text-slate-200 tracking-tighter">News Feed</h2>
+              <h2 className="text-2xl font-black text-slate-300 tracking-tighter">News Feed</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {filteredNews.map(article => (
@@ -239,7 +239,7 @@ const News: React.FC = () => {
 
           {/* Trending Topics */}
           <section className="space-y-6">
-            <div className="flex items-center gap-2 text-slate-400">
+            <div className="flex items-center gap-2 text-slate-300">
               <span className="material-symbols-outlined text-lg">trending_up</span>
               <h3 className="text-xs font-black tracking-[0.2em]">Trending Topics</h3>
             </div>
@@ -248,7 +248,7 @@ const News: React.FC = () => {
                 <button
                   key={tag}
                   onClick={() => setSearchQuery(tag.replace('#', ''))}
-                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-xs font-bold text-slate-400 hover:text-slate-200 hover:border-primary/50 transition-all tracking-wide"
+                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-xs font-bold text-slate-300 hover:text-slate-300 hover:border-primary/50 transition-all tracking-wide"
                 >
                   {tag}
                 </button>
@@ -263,7 +263,7 @@ const News: React.FC = () => {
                 <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                   <span className="material-symbols-outlined text-xl">mail</span>
                 </div>
-                <h3 className="text-sm font-black text-slate-200 tracking-[0.2em]">Weekly Briefing</h3>
+                <h3 className="text-sm font-black text-slate-300 tracking-[0.2em]">Weekly Briefing</h3>
               </div>
               <p className="text-xs text-slate-3000 leading-relaxed font-medium">
                 Get the most critical clinical updates delivered to your inbox every Monday morning.
@@ -285,7 +285,7 @@ const News: React.FC = () => {
           {/* Portal Metrics */}
           <section className="bg-[#1c222d]/30 border border-slate-800 rounded-[2.5rem] p-10 space-y-8">
             <div className="space-y-1">
-              <h3 className="text-xs font-black text-slate-200 uppercase tracking-[0.2em]">Portal Metrics</h3>
+              <h3 className="text-xs font-black text-slate-300 uppercase tracking-[0.2em]">Portal Metrics</h3>
             </div>
 
             <div className="space-y-6">
@@ -317,7 +317,7 @@ const News: React.FC = () => {
               <span className="material-symbols-outlined text-slate-3000">verified</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Source Context</span>
+              <span className="text-xs font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Source Context</span>
               <span className="text-xs font-mono font-bold text-clinical-green uppercase">Verified Research Node</span>
             </div>
           </div>

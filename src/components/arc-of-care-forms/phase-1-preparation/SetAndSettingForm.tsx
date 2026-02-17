@@ -58,11 +58,11 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Sparkles className="w-7 h-7 text-cyan-400" />
                             Set & Setting
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Assess patient's mindset and belief in treatment efficacy before the session.
                         </p>
                     </div>
@@ -112,7 +112,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                         <div className="flex items-center justify-between">
                             <span className="text-slate-500 text-sm">Low (1)</span>
                             <div className="text-center">
-                                <p className="text-5xl font-black text-slate-200">
+                                <p className="text-5xl font-black text-slate-300">
                                     {data.treatment_expectancy ?? 50}
                                 </p>
                                 <p className="text-xs text-slate-500 mt-1">out of 100</p>
@@ -126,7 +126,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                                 <p className={`text-lg font-bold ${interpretation.color}`}>
                                     {interpretation.label}
                                 </p>
-                                <p className="text-slate-400 text-sm mt-1">
+                                <p className="text-slate-300 text-sm mt-1">
                                     {data.treatment_expectancy! < 33 && 'Patient may benefit from additional psychoeducation and rapport building.'}
                                     {data.treatment_expectancy! >= 33 && data.treatment_expectancy! < 67 && 'Patient has moderate confidence in treatment. Continue building therapeutic alliance.'}
                                     {data.treatment_expectancy! >= 67 && 'Patient has strong belief in treatment efficacy. Positive prognostic indicator.'}

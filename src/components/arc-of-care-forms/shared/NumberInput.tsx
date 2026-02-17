@@ -66,7 +66,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
                 type="button"
                 onClick={handleDecrement}
                 disabled={disabled || (min !== undefined && (value ?? 0) <= min)}
-                className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 hover:text-slate-200 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 hover:text-slate-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
                 <Minus className="w-4 h-4" />
             </button>
@@ -81,7 +81,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
                     step={step}
                     placeholder={placeholder}
                     disabled={disabled}
-                    className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-200 text-center font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getStatusColor()}`}
+                    className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 text-center font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getStatusColor()}`}
                 />
                 {unit && (
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none">
@@ -94,7 +94,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
                 type="button"
                 onClick={handleIncrement}
                 disabled={disabled || (max !== undefined && (value ?? 0) >= max)}
-                className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 hover:text-slate-200 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 hover:text-slate-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
                 <Plus className="w-4 h-4" />
             </button>

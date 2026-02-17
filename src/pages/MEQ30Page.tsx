@@ -68,7 +68,7 @@ const MEQ30Page: React.FC = () => {
         };
         return {
             label: 'Minimal Mystical Experience',
-            color: 'text-slate-400',
+            color: 'text-slate-300',
             bgColor: 'bg-slate-500/10',
             borderColor: 'border-slate-500/20',
             description: 'Limited mystical elements. Consider factors that may have influenced the experience.',
@@ -80,7 +80,7 @@ const MEQ30Page: React.FC = () => {
         const severityInfo = getSeverityInfo(finalScore);
 
         return (
-            <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+            <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
                 <div className="max-w-4xl mx-auto space-y-6">
                     {/* Success Header */}
                     <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-8 text-center">
@@ -112,21 +112,21 @@ const MEQ30Page: React.FC = () => {
 
                         {/* Subscale Breakdown (Optional) */}
                         <div className="mt-8 pt-8 border-t border-slate-700/50">
-                            <h3 className="text-slate-200 text-sm font-bold mb-4 text-center">
+                            <h3 className="text-slate-300 text-sm font-bold mb-4 text-center">
                                 What This Means
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                 <div className="p-3 bg-slate-900/40 rounded-lg">
-                                    <p className="text-slate-400 mb-1">Clinical Significance</p>
-                                    <p className="text-slate-200">
+                                    <p className="text-slate-300 mb-1">Clinical Significance</p>
+                                    <p className="text-slate-300">
                                         {finalScore >= 60
                                             ? 'Strongly predictive of sustained therapeutic benefit'
                                             : 'May benefit from additional integration sessions'}
                                     </p>
                                 </div>
                                 <div className="p-3 bg-slate-900/40 rounded-lg">
-                                    <p className="text-slate-400 mb-1">Next Steps</p>
-                                    <p className="text-slate-200">
+                                    <p className="text-slate-300 mb-1">Next Steps</p>
+                                    <p className="text-slate-300">
                                         {finalScore >= 60
                                             ? 'Continue with standard integration protocol'
                                             : 'Schedule follow-up with therapist to discuss experience'}
@@ -140,7 +140,7 @@ const MEQ30Page: React.FC = () => {
                     <div className="flex items-center justify-center gap-4">
                         <button
                             onClick={() => navigate('/arc-of-care-god-view')}
-                            className="flex items-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg font-medium transition-all"
+                            className="flex items-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition-all"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Back to Dashboard
@@ -150,7 +150,7 @@ const MEQ30Page: React.FC = () => {
                                 // TODO: Navigate to next assessment (EDI)
                                 alert('EDI assessment coming soon!');
                             }}
-                            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all"
+                            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all"
                         >
                             Continue to EDI Assessment
                         </button>
@@ -161,7 +161,7 @@ const MEQ30Page: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+        <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
             {/* Back Button */}
             <div className="max-w-4xl mx-auto mb-6">
                 <button

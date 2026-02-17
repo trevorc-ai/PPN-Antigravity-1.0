@@ -15,15 +15,15 @@ const PatientFlowPage: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-6">
+        <div className="min-h-screen bg-[#0a1628] p-6">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Page Header */}
                 <div className="border-b border-slate-800 pb-8">
                     <div className="flex items-center gap-4 mb-3">
                         <span className="material-symbols-outlined text-4xl text-primary">timeline</span>
-                        <h1 className="text-5xl font-black tracking-tighter text-slate-200">Patient Flow</h1>
+                        <h1 className="text-5xl font-black tracking-tighter text-slate-300">Patient Flow</h1>
                     </div>
-                    <p className="text-lg text-slate-400 font-medium">
+                    <p className="text-lg text-slate-300 font-medium">
                         Track patient progression through intake, consent, baseline, session, and follow-up stages
                     </p>
                 </div>
@@ -57,7 +57,7 @@ const PatientFlowPage: React.FC = () => {
                     filters.dateRange.start ||
                     filters.dateRange.end) && (
                         <div className="card-glass rounded-2xl p-6">
-                            <h4 className="text-sm font-black text-slate-400 tracking-widest uppercase mb-4">
+                            <h4 className="text-sm font-black text-slate-300 tracking-widest uppercase mb-4">
                                 Active Filters (Debug)
                             </h4>
                             <pre className="text-xs text-slate-300 font-mono bg-slate-900/50 p-4 rounded-xl overflow-x-auto">

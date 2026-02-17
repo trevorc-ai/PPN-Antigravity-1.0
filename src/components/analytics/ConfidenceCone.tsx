@@ -61,13 +61,13 @@ const ConfidenceCone: React.FC = () => {
             <div className="size-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 border border-blue-500/20">
               <TrendingDown size={18} />
             </div>
-            <h3 className="text-lg font-black text-slate-200 tracking-tight">Predictive Trajectory</h3>
+            <h3 className="text-lg font-black text-slate-300 tracking-tight">Predictive Trajectory</h3>
           </div>
           <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Patient vs. Aggregate (N=14k)</p>
         </div>
         <div className="group/info relative">
-          <Info size={16} className="text-slate-600 hover:text-slate-400 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-48 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-400 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50">
+          <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
+          <div className="absolute right-0 top-6 w-48 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50">
             Gray area represents the 95% Confidence Interval of the responding community cohort.
           </div>
         </div>
@@ -112,7 +112,7 @@ const ConfidenceCone: React.FC = () => {
                         className={`size-2 rounded-full ${entry.value === 'Confidence Interval' ? 'rounded-sm' : ''}`} 
                         style={{ backgroundColor: entry.color }}
                       ></div>
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{entry.value}</span>
+                      <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{entry.value}</span>
                     </div>
                   ))}
                 </div>

@@ -37,15 +37,15 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
         </div>
       )}
     </div>
-    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">{title}</h3>
-    <div className="text-4xl font-black text-slate-300 tracking-tight mb-1">{value}</div>
+    <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">{title}</h3>
+    <div className="text-4xl font-black tracking-tight mb-1" style={{ color: '#9DAEC8' }}>{value}</div>
     <div className="flex items-center gap-2 text-sm">
-      <span className={`font-bold ${change.startsWith('+') ? 'text-emerald-400' : 'text-slate-400'}`}>
+      <span className={`font-bold ${change.startsWith('+') ? 'text-emerald-400' : 'text-slate-300'}`}>
         {change}
       </span>
       <span className="text-slate-3000">vs last month</span>
     </div>
-    <div className="mt-2 text-sm text-slate-400">
+    <div className="mt-2 text-sm text-slate-300">
       {comparison}
     </div>
   </div>
@@ -70,7 +70,7 @@ const NextStepItem: React.FC<NextStepProps> = ({ number, text, link, urgent }) =
         }`}>
         {number}
       </div>
-      <span className="flex-1 text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
+      <span className="flex-1 text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors">
         {text}
       </span>
       <ArrowRight className="w-4 h-4 text-slate-3000 group-hover:text-indigo-400 transition-colors" />
@@ -107,12 +107,12 @@ const InsightCard: React.FC<InsightCardProps> = ({ title, value, subtext, icon: 
           <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
         </div>
         <div className="p-2 rounded-full bg-slate-900 border border-slate-800 group-hover:bg-slate-800 transition-colors">
-          <ArrowRight className="w-5 h-5 text-slate-3000 group-hover:text-slate-200" />
+          <ArrowRight className="w-5 h-5 text-slate-3000 group-hover:text-slate-300" />
         </div>
       </div>
 
       <div className="relative z-10">
-        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">{title}</h3>
+        <h3 className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-2">{title}</h3>
         <div className="text-2xl font-black text-slate-300 tracking-tight mb-2">{value}</div>
         <p className="text-xs font-medium text-slate-3000 leading-snug group-hover:text-slate-300 transition-colors">
           {subtext}
@@ -147,7 +147,7 @@ export default function Dashboard() {
   const { protocols, loading: protocolsLoading } = usePractitionerProtocols();
 
   return (
-    <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 flex flex-col gap-8">
+    <PageContainer className="min-h-screen bg-[#0a1628] text-slate-300 flex flex-col gap-8">
 
       {/* HEADER SECTION */}
       <Section spacing="tight" data-tour="dashboard-header" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">
@@ -160,7 +160,7 @@ export default function Dashboard() {
             <span className="text-xs font-medium text-slate-3000 font-mono">ID: 8842-ALPHA</span>
             <span className="text-xs font-medium text-slate-3000">Last updated: 2 min ago</span>
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-slate-200">
+          <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
             Dashboard
           </h1>
         </div>
@@ -203,7 +203,7 @@ export default function Dashboard() {
             </button>
           </div>
 
-          <p className="text-xs text-slate-400 text-center mt-3">
+          <p className="text-xs text-slate-300 text-center mt-3">
             AI-powered search across {protocols.length}+ protocols • Advanced filters • Real-time analysis
           </p>
         </div>
@@ -212,7 +212,7 @@ export default function Dashboard() {
       {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}
       <Section spacing="tight">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-black text-slate-200 tracking-tight">Your Clinic Performance</h2>
+          <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
           <span className="text-xs text-slate-3000 font-medium">This Month</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -256,12 +256,12 @@ export default function Dashboard() {
       <Section spacing="tight">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-black text-slate-200 tracking-tight">Safety Risk Assessment</h2>
-            <p className="text-sm text-slate-400 mt-1">Your protocols vs. network risk profile</p>
+            <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Safety Risk Assessment</h2>
+            <p className="text-sm text-slate-300 mt-1">Your protocols vs. network risk profile</p>
           </div>
           <button
             onClick={() => navigate('/deep-dives/risk-matrix')}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-indigo-500/50 text-sm font-bold text-slate-300 hover:text-slate-200 transition-all flex items-center gap-2"
+            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-indigo-500/50 text-sm font-bold text-slate-300 hover:text-slate-300 transition-all flex items-center gap-2"
           >
             View Detailed Analysis
             <ArrowRight className="w-4 h-4" />
@@ -272,7 +272,7 @@ export default function Dashboard() {
           <div className="card-glass rounded-3xl p-12 flex items-center justify-center">
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-4"></div>
-              <p className="text-sm text-slate-400">Loading safety data...</p>
+              <p className="text-sm text-slate-300">Loading safety data...</p>
             </div>
           </div>
         ) : protocols.length > 0 ? (
@@ -280,7 +280,7 @@ export default function Dashboard() {
             <SafetyRiskMatrix />
             {protocols.length > 0 && (
               <div className="mt-6 pt-6 border-t border-slate-800">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Your Active Protocols</p>
+                <p className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-3">Your Active Protocols</p>
                 <div className="flex flex-wrap gap-2">
                   {protocols.slice(0, 5).map((protocol, index) => (
                     <div
@@ -291,7 +291,7 @@ export default function Dashboard() {
                     </div>
                   ))}
                   {protocols.length > 5 && (
-                    <div className="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-slate-400">
+                    <div className="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300">
                       +{protocols.length - 5} more
                     </div>
                   )}
@@ -301,7 +301,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="card-glass rounded-3xl p-12 text-center">
-            <p className="text-slate-400 mb-2">No active protocols in the last 90 days</p>
+            <p className="text-slate-300 mb-2">No active protocols in the last 90 days</p>
             <p className="text-sm text-slate-3000">Log your first protocol to see safety risk assessment</p>
             <button
               onClick={() => navigate('/wellness-journey')}
@@ -317,7 +317,7 @@ export default function Dashboard() {
       <Section spacing="tight">
         <div className="flex items-center gap-3 mb-4">
           <CheckCircle className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-xl font-black text-slate-200 tracking-tight">Recommended Next Steps</h2>
+          <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Recommended Next Steps</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <NextStepItem
@@ -341,19 +341,19 @@ export default function Dashboard() {
 
       {/* QUICK ACTIONS */}
       <Section spacing="tight">
-        <h2 className="text-xl font-black text-slate-200 tracking-tight mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-black tracking-tight mb-4" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <button
             data-tour="wellness-journey"
             onClick={() => navigate('/wellness-journey')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-slate-200 border border-indigo-500/20 hover:border-indigo-500 transition-all active:scale-95 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-slate-300 border border-indigo-500/20 hover:border-indigo-500 transition-all active:scale-95 cursor-pointer"
           >
             <Plus className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Log Protocol</span>
           </button>
           <button
             onClick={() => navigate('/analytics')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-blue-500/10 hover:bg-blue-500 text-blue-300 hover:text-slate-200 border border-blue-500/20 hover:border-blue-500 transition-all active:scale-95 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-blue-500/10 hover:bg-blue-500 text-blue-300 hover:text-slate-300 border border-blue-500/20 hover:border-blue-500 transition-all active:scale-95 cursor-pointer"
           >
             <BarChart3 className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Analytics</span>
@@ -361,21 +361,21 @@ export default function Dashboard() {
           <button
             data-tour="interaction-checker"
             onClick={() => navigate('/interactions')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-200 border border-amber-500/20 hover:border-amber-500 transition-all active:scale-95 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-amber-500/10 hover:bg-amber-500 text-amber-300 hover:text-slate-300 border border-amber-500/20 hover:border-amber-500 transition-all active:scale-95 cursor-pointer"
           >
             <Activity className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Check Interactions</span>
           </button>
           <button
             onClick={() => navigate('/data-export')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-300 hover:text-slate-200 border border-emerald-500/20 hover:border-emerald-500 transition-all active:scale-95 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-300 hover:text-slate-300 border border-emerald-500/20 hover:border-emerald-500 transition-all active:scale-95 cursor-pointer"
           >
             <TrendingUp className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Export Data</span>
           </button>
           <button
             onClick={() => navigate('/deep-dives/clinic-performance')}
-            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-purple-500/10 hover:bg-purple-500 text-purple-300 hover:text-slate-200 border border-purple-500/20 hover:border-purple-500 transition-all active:scale-95 cursor-pointer"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl bg-purple-500/10 hover:bg-purple-500 text-purple-300 hover:text-slate-300 border border-purple-500/20 hover:border-purple-500 transition-all active:scale-95 cursor-pointer"
           >
             <Users className="w-6 h-6" />
             <span className="text-sm font-black uppercase tracking-wider">Benchmarks</span>
@@ -386,7 +386,7 @@ export default function Dashboard() {
       {/* NETWORK ACTIVITY (SECONDARY) */}
       <Section spacing="tight">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-black text-slate-200 tracking-tight">Network Activity</h2>
+          <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Network Activity</h2>
           <span className="text-xs text-slate-3000 font-medium">Last 7 Days</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

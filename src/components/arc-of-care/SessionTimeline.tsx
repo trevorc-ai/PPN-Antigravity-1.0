@@ -47,7 +47,7 @@ const SessionTimeline: React.FC<SessionTimelineProps> = ({ events }) => {
                 case 'mild':
                     return { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400', icon: 'text-blue-400' };
                 default:
-                    return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-400', icon: 'text-slate-400' };
+                    return { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-300', icon: 'text-slate-300' };
             }
         }
         if (event.eventType === 'intervention') {
@@ -60,7 +60,7 @@ const SessionTimeline: React.FC<SessionTimelineProps> = ({ events }) => {
         return (
             <div className="text-center py-12">
                 <Clock className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400 text-sm">No events logged yet</p>
+                <p className="text-slate-300 text-sm">No events logged yet</p>
                 <p className="text-slate-500 text-xs mt-1">Events will appear here as they occur</p>
             </div>
         );

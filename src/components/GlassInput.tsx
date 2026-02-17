@@ -23,7 +23,7 @@ export const GlassInput: React.FC<GlassInputProps> = ({
     return (
         <div className="glass-input-wrapper">
             {label && (
-                <label className="block text-sm font-bold text-slate-200 mb-2">
+                <label className="block text-sm font-bold text-slate-300 mb-2">
                     {label}
                 </label>
             )}
@@ -66,7 +66,7 @@ export const GlassInput: React.FC<GlassInputProps> = ({
             )}
 
             {helperText && !error && (
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-2 text-xs text-slate-300">
                     {helperText}
                 </p>
             )}

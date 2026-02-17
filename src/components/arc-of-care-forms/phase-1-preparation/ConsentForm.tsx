@@ -69,11 +69,11 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <FileCheck className="w-7 h-7 text-green-400" />
                             Informed Consent
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Document patient consent and authorization before proceeding with treatment.
                         </p>
                     </div>
@@ -114,7 +114,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                     onChange={(e) => setData(prev => ({ ...prev, consent_type: e.target.value }))}
                                     className="w-5 h-5 text-blue-500 border-slate-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
                                 />
-                                <span className="text-slate-200 font-medium">{type.label}</span>
+                                <span className="text-slate-300 font-medium">{type.label}</span>
                             </label>
                         ))}
                     </div>
@@ -133,10 +133,10 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             className="mt-1 w-6 h-6 rounded border-slate-600 bg-slate-800/50 text-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer"
                         />
                         <div className="flex-1">
-                            <p className="text-lg font-bold text-slate-200 group-hover:text-slate-100 transition-colors">
+                            <p className="text-lg font-bold text-slate-300 group-hover:text-slate-300 transition-colors">
                                 I confirm that informed consent has been obtained from the patient
                             </p>
-                            <p className="text-sm text-slate-400 mt-2">
+                            <p className="text-sm text-slate-300 mt-2">
                                 By checking this box, you certify that the patient has been fully informed of the treatment, risks, benefits, and alternatives, and has voluntarily agreed to proceed.
                             </p>
                         </div>
@@ -154,7 +154,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             type="datetime-local"
                             value={data.verification_datetime ?? ''}
                             onChange={(e) => setData(prev => ({ ...prev, verification_datetime: e.target.value }))}
-                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         />
                     </FormField>
                 )}

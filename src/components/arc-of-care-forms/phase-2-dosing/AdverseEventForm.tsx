@@ -3,6 +3,7 @@ import { AlertTriangle, Save, CheckCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { NumberInput } from '../shared/NumberInput';
 import { SegmentedControl } from '../shared/SegmentedControl';
+import { NowButton, RelativeTimeDisplay } from '../shared/NowButton';
 
 /**
  * AdverseEventForm - Adverse Event Reporting
@@ -27,6 +28,7 @@ interface AdverseEventFormProps {
     initialData?: AdverseEventData;
     patientId?: string;
     sessionId?: string;
+    doseTime?: Date; // Time when dose was administered (for relative time display)
 }
 
 const EVENT_TYPES = [
@@ -61,7 +63,8 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
     onSave,
     initialData = { resolved: false },
     patientId,
-    sessionId
+    sessionId,
+    doseTime
 }) => {
     const [data, setData] = useState<AdverseEventData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
@@ -155,7 +158,7 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
                         <select
                             value={data.event_type ?? ''}
                             onChange={(e) => updateField('event_type', e.target.value)}
-                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         >
                             <option value="">Select event type...</option>
                             {EVENT_TYPES.map(type => (
@@ -196,15 +199,19 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
                                 type="datetime-local"
                                 value={data.occurred_at ?? ''}
                                 onChange={(e) => updateField('occurred_at', e.target.value)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                             />
-                            <button
-                                onClick={() => updateField('occurred_at', new Date().toISOString().slice(0, 16))}
-                                className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all"
-                            >
-                                Now
-                            </button>
+                            <NowButton
+                                onSetNow={(timestamp) => updateField('occurred_at', timestamp.toISOString().slice(0, 16))}
+                            />
                         </div>
+                        {doseTime && data.occurred_at && (
+                            <RelativeTimeDisplay
+                                referenceTime={doseTime}
+                                currentTime={new Date(data.occurred_at)}
+                                label="after dose"
+                            />
+                        )}
                     </FormField>
 
                     {/* Intervention Type (conditional) */}
@@ -213,7 +220,7 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
                             <select
                                 value={data.intervention_type ?? ''}
                                 onChange={(e) => updateField('intervention_type', e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                             >
                                 <option value="">Select intervention...</option>
                                 {INTERVENTION_TYPES.map(type => (
@@ -232,7 +239,7 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
                                 onChange={(e) => updateField('resolved', e.target.checked)}
                                 className="w-5 h-5 rounded border-slate-600 bg-slate-800/50 text-emerald-500 focus:ring-2 focus:ring-emerald-500"
                             />
-                            <span className="text-slate-200 font-medium">Event Resolved</span>
+                            <span className="text-slate-300 font-medium">Event Resolved</span>
                         </label>
                     </div>
 
@@ -245,11 +252,11 @@ const AdverseEventForm: React.FC<AdverseEventFormProps> = ({
                                         type="datetime-local"
                                         value={data.resolved_at ?? ''}
                                         onChange={(e) => updateField('resolved_at', e.target.value)}
-                                        className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                        className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                     />
                                     <button
                                         onClick={() => updateField('resolved_at', new Date().toISOString().slice(0, 16))}
-                                        className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-all"
+                                        className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-slate-300 rounded-lg font-medium transition-all"
                                     >
                                         Now
                                     </button>

@@ -1,5 +1,5 @@
 body {
-  background: linear-gradient(to bottom, #0a1628 0%, #0d1b2a 50%, #05070a 100%);
+  background: #0a1628;
   background-attachment: fixed;
   color: #F5F5F0;
 }
@@ -143,33 +143,6 @@ select:focus-visible {
 
 /* 
   ========================================
-   TEXT BRIGHTNESS ENFORCEMENT (User req)
-  ========================================
-   MAXIMUM BRIGHTNESS: text-slate-200
-   Soften overly bright text for eye comfort
-   Date: 2026-02-16
-*/
-
-/* Replace text-white with text-slate-200 (softer) */
-.text-white {
-  color: rgb(226 232 240) !important;
-  /* slate-200 */
-}
-
-/* Replace text-slate-100 with text-slate-200 */
-.text-slate-100 {
-  color: rgb(226 232 240) !important;
-  /* slate-200 */
-}
-
-/* Soften text-slate-300 to text-slate-400 */
-.text-slate-300 {
-  color: rgb(148 163 184) !important;
-  /* slate-400 */
-}
-
-/* 
-  ========================================
    GLOBAL FONT SIZE ENFORCEMENT (User req)
   ========================================
    ABSOLUTE MINIMUM: 12px (no exceptions for body text)
@@ -285,3 +258,12 @@ svg tspan,
     background-color: #0f172a;
   }
 }
+
+/* 
+  ========================================
+   PROFESSIONAL COLOR PALETTE
+  ========================================
+   Systematic color replacements for accessibility
+   No CSS overrides - proper class replacements
+   Date: 2026-02-17
+*/

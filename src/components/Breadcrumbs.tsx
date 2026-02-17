@@ -61,13 +61,13 @@ const Breadcrumbs: React.FC = () => {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="px-6 sm:px-10 py-3.5 bg-[#0a0c10]/60 border-b border-white/[0.04] backdrop-blur-2xl flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap z-30 shadow-sm"
+      className="px-6 sm:px-10 py-3.5 bg-[#0a1628]/60 border-b border-white/[0.04] backdrop-blur-2xl flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap z-30 shadow-sm"
     >
       {/* Back Button - Only shows on deep pages (not Dashboard or Portal root) */}
       {location.pathname !== '/dashboard' && location.pathname !== '/advanced-search' && (
         <button
           onClick={() => navigate(-1)}
-          className="mr-4 pr-4 border-r border-white/10 hidden sm:flex items-center gap-1 text-[12px] font-black tracking-widest text-slate-3000 hover:text-primary transition-colors group"
+          className="mr-4 pr-4 border-r border-white/10 hidden sm:flex items-center gap-1 text-[12px] font-black tracking-widest text-slate-300 hover:text-primary transition-colors group"
         >
           <span className="material-symbols-outlined text-[15px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
           Back
@@ -77,7 +77,7 @@ const Breadcrumbs: React.FC = () => {
       <div className="flex items-center gap-2.5">
         <Link
           to="/advanced-search"
-          className={`flex items-center gap-2 text-xs font-black tracking-[0.2em] uppercase transition-all group ${isPortalActive ? 'text-primary' : 'text-slate-3000 hover:text-primary'
+          className={`flex items-center gap-2 text-xs font-black tracking-[0.2em] uppercase transition-all group ${isPortalActive ? 'text-primary' : 'text-slate-300 hover:text-primary'
             }`}
         >
           <div className={`size-5 rounded-md flex items-center justify-center transition-colors ${isPortalActive ? 'bg-primary/20 text-primary' : 'bg-slate-800 group-hover:bg-primary/20 group-hover:text-primary'
@@ -106,7 +106,7 @@ const Breadcrumbs: React.FC = () => {
               ) : (
                 <Link
                   to={to}
-                  className="text-xs font-black text-slate-400 tracking-widest uppercase hover:text-slate-200 transition-colors"
+                  className="text-xs font-black text-slate-300 tracking-widest uppercase hover:text-slate-300 transition-colors"
                 >
                   {label}
                 </Link>
@@ -124,12 +124,6 @@ const Breadcrumbs: React.FC = () => {
             </span>
           </>
         )}
-      </div>
-
-      {/* Decorative Network Pulse */}
-      <div className="ml-auto hidden sm:flex items-center gap-3 pl-4 border-l border-white/5 opacity-40">
-        <span className="text-[11px] font-mono text-slate-600 tracking-[0.3em]">Node_Status: Nominal</span>
-        <div className="size-1.5 rounded-full bg-clinical-green animate-pulse"></div>
       </div>
     </nav>
   );

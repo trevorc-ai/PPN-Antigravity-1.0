@@ -64,7 +64,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                   ${isActive
                                         ? `${phase.bgColor} border-2 ${phase.borderColor} ${phase.textColor} font-bold`
                                         : isCompleted
-                                            ? 'bg-slate-800/40 border border-slate-700 text-slate-400 hover:text-slate-300'
+                                            ? 'bg-slate-800/40 border border-slate-700 text-slate-300 hover:text-slate-300'
                                             : 'bg-slate-900/20 border border-slate-800 text-slate-600 cursor-not-allowed opacity-50'
                                     }
                 `}

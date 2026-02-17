@@ -28,7 +28,7 @@ const IngestionHub: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 bg-slate-900/60 border border-slate-800 rounded-xl flex items-center gap-3 shadow-xl backdrop-blur-md">
             <div className="size-2 rounded-full bg-clinical-green animate-pulse"></div>
-            <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-widest">Uplink: Nominal</span>
+            <span className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-widest">Uplink: Nominal</span>
           </div>
         </div>
       </Section>
@@ -44,7 +44,7 @@ const IngestionHub: React.FC = () => {
 
           <div className="space-y-6 relative z-10">
             <div className="space-y-1">
-              <h2 className="text-2xl font-black text-slate-200 tracking-tight">Legacy Chart OCR</h2>
+              <h2 className="text-2xl font-black text-slate-300 tracking-tight">Legacy Chart OCR</h2>
               <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Digital extraction from physical clinical records</p>
             </div>
 
@@ -83,7 +83,7 @@ const IngestionHub: React.FC = () => {
 
           <div className="space-y-8 relative z-10 h-full flex flex-col">
             <div className="space-y-1">
-              <h2 className="text-2xl font-black text-slate-200 tracking-tight">Neural Dictation</h2>
+              <h2 className="text-2xl font-black text-slate-300 tracking-tight">Neural Dictation</h2>
               <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Real-time voice-to-protocol synthesis</p>
             </div>
 
@@ -106,7 +106,7 @@ const IngestionHub: React.FC = () => {
               </div>
 
               <div className="text-center space-y-2">
-                <p className="text-sm font-black text-slate-200 uppercase tracking-widest">
+                <p className="text-sm font-black text-slate-300 uppercase tracking-widest">
                   {isRecording ? 'Capturing Session Audio...' : 'Initialize Dictation'}
                 </p>
                 <p className="text-[11px] text-slate-600 font-bold uppercase tracking-[0.3em]">Institutional HIPAA Buffer Active</p>
@@ -114,7 +114,7 @@ const IngestionHub: React.FC = () => {
             </div>
 
             <div className="flex gap-3">
-              <button className="flex-1 py-4 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-black text-slate-400 uppercase tracking-widest transition-all hover:text-slate-200">
+              <button className="flex-1 py-4 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-black text-slate-300 uppercase tracking-widest transition-all hover:text-slate-300">
                 Input Settings
               </button>
               <button className="flex-1 py-4 bg-primary hover:bg-blue-600 text-slate-300 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/10 transition-all active:scale-95">
@@ -131,7 +131,7 @@ const IngestionHub: React.FC = () => {
         <div className="px-8 py-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/20">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-primary">analytics</span>
-            <h3 className="text-base font-black text-slate-200 tracking-tight">Upload Queue</h3>
+            <h3 className="text-base font-black text-slate-300 tracking-tight">Upload Queue</h3>
           </div>
           <span className="text-[11px] font-mono text-slate-3000 uppercase tracking-widest">Sync_ID: 0x77AF</span>
         </div>
@@ -154,7 +154,7 @@ const IngestionHub: React.FC = () => {
                     <span className="text-sm font-mono font-black text-slate-300 tracking-tight">{job.id}</span>
                   </td>
                   <td className="px-8 py-5">
-                    <span className="text-sm font-bold text-slate-400 group-hover:text-slate-200 transition-colors uppercase">{job.source}</span>
+                    <span className="text-sm font-bold text-slate-300 group-hover:text-slate-300 transition-colors uppercase">{job.source}</span>
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-2">
@@ -183,7 +183,7 @@ const IngestionHub: React.FC = () => {
           <p className="text-[11px] font-bold text-slate-600 uppercase tracking-widest italic">
             Note: Records remain in pending state for 24h allowing for practitioner manual review before final registry sync.
           </p>
-          <button className="text-sm font-black text-primary hover:text-slate-200 uppercase tracking-widest transition-colors flex items-center gap-2">
+          <button className="text-sm font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2">
             View All Jobs
             <span className="material-symbols-outlined text-sm">arrow_forward</span>
           </button>

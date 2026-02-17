@@ -104,8 +104,8 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,rgba(43,116,243,0.15),transparent_70%)] pointer-events-none" />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 className="text-5xl font-bold text-slate-200 mb-6 tracking-tight">How can we help you?</h1>
-          <p className="text-slate-400 text-lg mb-10">Search for articles, clinical codes, or report system errors directly to our engineering team.</p>
+          <h1 className="text-5xl font-bold text-slate-300 mb-6 tracking-tight">How can we help you?</h1>
+          <p className="text-slate-300 text-lg mb-10">Search for articles, clinical codes, or report system errors directly to our engineering team.</p>
 
           <div className="relative max-w-2xl mx-auto">
             <input
@@ -126,7 +126,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
       <PageContainer width="default">
         {/* Topic Categories Section */}
         <Section spacing="default" className="mb-20">
-          <h2 className="text-xl font-semibold text-slate-200 mb-8 ml-1">Topic Categories</h2>
+          <h2 className="text-xl font-semibold text-slate-300 mb-8 ml-1">Topic Categories</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((cat, idx) => (
               <div
@@ -141,8 +141,8 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                   }`}>
                   {cat.icon}
                 </div>
-                <h3 className="text-slate-200 font-semibold text-lg mb-3">{cat.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed font-normal">{cat.desc}</p>
+                <h3 className="text-slate-300 font-semibold text-lg mb-3">{cat.title}</h3>
+                <p className="text-sm text-slate-300 leading-relaxed font-normal">{cat.desc}</p>
               </div>
             ))}
           </div>
@@ -153,7 +153,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
           {/* FAQ Column (8/12) */}
           <div className="col-span-1 lg:col-span-8">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-semibold text-slate-200 ml-1">
+              <h2 className="text-xl font-semibold text-slate-300 ml-1">
                 {selectedCategory === "All" ? "Top Frequently Asked Questions" : `${selectedCategory} Articles`}
               </h2>
               {selectedCategory !== "All" && (
@@ -174,11 +174,11 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                       onClick={() => setActiveFAQ(activeFAQ === idx ? null : idx)}
                       className="w-full text-left px-8 py-5 flex justify-between items-center hover:bg-slate-800/20 transition-colors"
                     >
-                      <span className="text-base font-medium text-slate-200">{faq.q}</span>
+                      <span className="text-base font-medium text-slate-300">{faq.q}</span>
                       <ChevronDown className={`text-slate-3000 transition-transform duration-300 ${activeFAQ === idx ? 'rotate-180' : ''}`} size={18} />
                     </button>
                     {activeFAQ === idx && (
-                      <div className="px-8 pb-6 text-sm text-slate-400 leading-relaxed border-t border-slate-800/40 pt-4">
+                      <div className="px-8 pb-6 text-sm text-slate-300 leading-relaxed border-t border-slate-800/40 pt-4">
                         <div className="mb-3">
                           <span className="text-[11px] font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded border border-primary/20">
                             {faq.category}
@@ -209,8 +209,8 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
           {/* Support Sidebar (4/12) */}
           <div className="col-span-1 lg:col-span-4 space-y-6">
             <div className="bg-[#0D121C] border border-slate-800 p-8 rounded-xl shadow-sm">
-              <h3 className="text-slate-200 font-semibold text-lg mb-2">Contact Support</h3>
-              <p className="text-sm text-slate-400 mb-8 leading-relaxed">Our team is available 24/7 for clinical emergencies and node assistance.</p>
+              <h3 className="text-slate-300 font-semibold text-lg mb-2">Contact Support</h3>
+              <p className="text-sm text-slate-300 mb-8 leading-relaxed">Our team is available 24/7 for clinical emergencies and node assistance.</p>
 
               <div className="space-y-3">
                 <button className="w-full flex items-center justify-center gap-3 bg-[#1A2233] hover:bg-slate-700 text-slate-300 py-3 rounded-lg text-sm font-medium transition-colors border border-slate-700/50">
@@ -233,7 +233,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               <div>
                 <div className="text-sm font-semibold text-slate-300">All Systems Operational</div>
                 <div className="text-[11px] text-slate-3000 mt-1 uppercase tracking-wider">
-                  Latency: <span className="text-slate-400">24ms</span> • Updated: <span className="text-slate-400">2m ago</span>
+                  Latency: <span className="text-slate-300">24ms</span> • Updated: <span className="text-slate-300">2m ago</span>
                 </div>
               </div>
             </div>

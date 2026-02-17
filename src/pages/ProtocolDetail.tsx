@@ -20,7 +20,7 @@ const ProtocolDetail: React.FC = () => {
 
   if (!record) {
     return (
-      <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] flex items-center justify-center animate-in fade-in duration-500">
+      <div className="min-h-full bg-[#0a1628] flex items-center justify-center animate-in fade-in duration-500">
         <div className="text-center space-y-8">
           <div className="size-24 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto shadow-2xl">
             <span className="material-symbols-outlined text-5xl text-slate-700">person_off</span>
@@ -73,7 +73,7 @@ const ProtocolDetail: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 p-4 sm:p-8 animate-in fade-in duration-700 relative overflow-hidden print:bg-white print:text-black print:p-0 print:overflow-visible font-sans">
+    <div className="min-h-full bg-[#0a1628] text-slate-300 p-4 sm:p-8 animate-in fade-in duration-700 relative overflow-hidden print:bg-white print:text-black print:p-0 print:overflow-visible font-sans">
 
       {/* Print-Specific Styles to force high contrast */}
       <style>{`
@@ -99,7 +99,7 @@ const ProtocolDetail: React.FC = () => {
         <div className="flex justify-between items-center print:hidden">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors group px-2 py-1"
+            className="flex items-center gap-2 text-slate-300 hover:text-slate-300 transition-colors group px-2 py-1"
           >
             <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
             <span className="text-xs font-bold uppercase tracking-widest">Back to Search</span>
@@ -107,7 +107,7 @@ const ProtocolDetail: React.FC = () => {
 
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 hover:text-slate-200 rounded-lg transition-all text-xs font-black uppercase tracking-widest"
+            className="flex items-center gap-2 px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 hover:text-slate-300 rounded-lg transition-all text-xs font-black uppercase tracking-widest"
           >
             <span className="material-symbols-outlined text-lg">print</span>
             Print Record
@@ -118,11 +118,11 @@ const ProtocolDetail: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-white/5 pb-8 print:border-black/10">
           <div className="space-y-1">
             <div className="flex items-center gap-4">
-              <h1 className="text-4xl font-black tracking-tight text-slate-200 print:text-black">
+              <h1 className="text-4xl font-black tracking-tight text-slate-300 print:text-black">
                 {record.demographics.patientHash ? record.demographics.patientHash.substring(0, 12) + '...' : 'ANONYMOUS'}
               </h1>
               <span className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border print:border-black print:text-black print:bg-transparent ${record.status === 'Active' ? 'bg-primary/20 text-primary border-primary/30' :
-                'bg-slate-800 text-slate-400 border-slate-700'
+                'bg-slate-800 text-slate-300 border-slate-700'
                 }`}>
                 {record.status}
               </span>
@@ -148,16 +148,16 @@ const ProtocolDetail: React.FC = () => {
                   <span className="material-symbols-outlined text-2xl">hexagon</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-200 uppercase tracking-[0.2em] print:text-black">Receptor Affinity Profile</h3>
+                  <h3 className="text-xl font-black text-slate-300 uppercase tracking-[0.2em] print:text-black">Receptor Affinity Profile</h3>
                   <AdvancedTooltip content="Comparative binding affinity logic: Target Substance vs. Endogenous Standard (Serotonin/Dopamine Baselne).">
-                    <Info className="text-slate-600 hover:text-slate-200 transition-colors cursor-help print:hidden" size={16} />
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
                 <div className="md:col-span-1 space-y-4">
-                  <p className="text-sm font-bold text-slate-400 leading-relaxed print:text-black">
+                  <p className="text-sm font-bold text-slate-300 leading-relaxed print:text-black">
                     <span className="text-slate-300 print:text-black">Micro-Pharmacology Analysis:</span> Visualizing the binding potency across critical safety and efficacy targets.
                   </p>
                   <ul className="space-y-3">
@@ -208,9 +208,9 @@ const ProtocolDetail: React.FC = () => {
                   <span className="material-symbols-outlined text-2xl">psychology_alt</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-200 uppercase tracking-[0.2em] print:text-black">Therapeutic Envelope</h3>
+                  <h3 className="text-xl font-black text-slate-300 uppercase tracking-[0.2em] print:text-black">Therapeutic Envelope</h3>
                   <AdvancedTooltip content="Environmental setting, support staff ratio, and integration time allocation.">
-                    <Info className="text-slate-600 hover:text-slate-200 transition-colors cursor-help print:hidden" size={16} />
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
               </div>
@@ -285,9 +285,9 @@ const ProtocolDetail: React.FC = () => {
                   <span className="material-symbols-outlined text-2xl">monitoring</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-200 uppercase tracking-[0.2em] print:text-black">EFFICACY TRAJECTORY (PHQ-9)</h3>
+                  <h3 className="text-xl font-black text-slate-300 uppercase tracking-[0.2em] print:text-black">EFFICACY TRAJECTORY (PHQ-9)</h3>
                   <AdvancedTooltip content="Longitudinal tracking of clinical outcome measures (e.g., PHQ-9) vs. baseline.">
-                    <Info className="text-slate-600 hover:text-slate-200 transition-colors cursor-help print:hidden" size={16} />
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
               </div>
@@ -315,7 +315,7 @@ const ProtocolDetail: React.FC = () => {
                     <span>High Distress</span>
                   </div>
                   <div className="pt-4 border-t border-slate-800/50 mt-auto print:border-gray-300">
-                    <span className="text-xs font-bold text-slate-400 block mb-1 uppercase tracking-widest print:text-black">Status</span>
+                    <span className="text-xs font-bold text-slate-300 block mb-1 uppercase tracking-widest print:text-black">Status</span>
                     <span className="text-base font-bold text-slate-300 print:text-black">{record.experience?.resolutionStatus}</span>
                   </div>
                 </div>
@@ -394,13 +394,13 @@ const ProtocolDetail: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Date</span>
-                    <span className="text-base font-mono font-bold text-slate-400 print:text-black">{record.protocol.startDate}</span>
+                    <span className="text-base font-mono font-bold text-slate-300 print:text-black">{record.protocol.startDate}</span>
                   </div>
                 </div>
 
                 <div className="pt-6 border-t border-slate-800/50 print:border-gray-300">
                   <label className="text-xs font-bold text-slate-600 uppercase tracking-widest block mb-2 print:text-black">Patient Hash</label>
-                  <div className="p-4 bg-black border border-slate-800 rounded-xl font-mono text-xs text-slate-400 break-all leading-relaxed print:bg-white print:border-black print:text-black">
+                  <div className="p-4 bg-black border border-slate-800 rounded-xl font-mono text-xs text-slate-300 break-all leading-relaxed print:bg-white print:border-black print:text-black">
                     {record.demographics.patientHash || record.id}
                   </div>
                 </div>
@@ -414,12 +414,12 @@ const ProtocolDetail: React.FC = () => {
               <div className="flex items-center gap-3 mb-8 relative z-10">
                 <span className="material-symbols-outlined text-3xl text-red-500 print:text-black">medical_services</span>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-black text-slate-200 uppercase tracking-widest print:text-black">Safety Monitor</h3>
+                  <h3 className="text-lg font-black text-slate-300 uppercase tracking-widest print:text-black">Safety Monitor</h3>
                   <AdvancedTooltip
                     content="Real-time monitoring of concomitant medications and adverse events."
                     side="bottom"
                   >
-                    <Info className="text-slate-600 hover:text-slate-200 transition-colors cursor-help print:hidden" size={14} />
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={14} />
                   </AdvancedTooltip>
                 </div>
               </div>
@@ -437,7 +437,7 @@ const ProtocolDetail: React.FC = () => {
                           className="w-full flex items-center justify-between px-5 py-4 bg-slate-900/50 border border-slate-700 hover:border-red-500/50 hover:bg-red-500/10 rounded-xl transition-all group print:bg-white print:border-black"
                           title="Run Interaction Analysis"
                         >
-                          <span className="text-sm font-bold text-slate-200 group-hover:text-red-200 print:text-black">{med}</span>
+                          <span className="text-sm font-bold text-slate-300 group-hover:text-red-200 print:text-black">{med}</span>
                           <span className="material-symbols-outlined text-slate-600 group-hover:text-red-400 text-lg print:hidden">science</span>
                         </button>
                       ))
@@ -484,7 +484,7 @@ const ProtocolDetail: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary">hub</span>
-                <h3 className="text-2xl font-black text-slate-200 uppercase tracking-tighter">Cohort Matches</h3>
+                <h3 className="text-2xl font-black text-slate-300 uppercase tracking-tighter">Cohort Matches</h3>
               </div>
               <p className="text-slate-3000 text-sm font-bold tracking-widest uppercase">Global Research Registry: Hive Mind Intelligence</p>
             </div>
@@ -510,7 +510,7 @@ const ProtocolDetail: React.FC = () => {
                       <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest block">Subject Reference</span>
                       <span className="text-sm font-mono font-black text-slate-300 uppercase">{caseItem.demographics.patientHash?.substring(0, 8) || caseItem.id}</span>
                     </div>
-                    <div className="px-3 py-1 bg-slate-800 rounded-lg text-[11px] font-black text-slate-400">
+                    <div className="px-3 py-1 bg-slate-800 rounded-lg text-[11px] font-black text-slate-300">
                       {caseItem.demographics.age}yr {caseItem.demographics.sex.charAt(0)}
                     </div>
                   </div>
@@ -518,7 +518,7 @@ const ProtocolDetail: React.FC = () => {
                   <div className="pt-4 border-t border-slate-800/50 space-y-3">
                     <div className="flex justify-between items-center text-xs">
                       <span className="font-bold text-slate-3000 uppercase tracking-widest">Protocol</span>
-                      <span className="font-black text-slate-200">{caseItem.protocol.substance}</span>
+                      <span className="font-black text-slate-300">{caseItem.protocol.substance}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="font-bold text-slate-3000 uppercase tracking-widest">Clinical Outcome</span>

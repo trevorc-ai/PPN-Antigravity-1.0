@@ -31,7 +31,7 @@ const ForgotPassword: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-[#0a1628] flex items-center justify-center p-6 relative overflow-hidden">
             {/* Background gradient effects */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5"></div>
             <div className="absolute top-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
@@ -42,7 +42,7 @@ const ForgotPassword: React.FC = () => {
                 {/* Back button */}
                 <button
                     onClick={() => navigate('/login')}
-                    className="mb-6 flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors text-sm font-bold uppercase tracking-widest group"
+                    className="mb-6 flex items-center gap-2 text-slate-300 hover:text-slate-300 transition-colors text-sm font-bold uppercase tracking-widest group"
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     Back to Login
@@ -56,10 +56,10 @@ const ForgotPassword: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 mb-4">
                                     <Mail className="w-8 h-8 text-primary" />
                                 </div>
-                                <h1 className="text-3xl font-black tracking-tight text-slate-200 mb-2">
+                                <h1 className="text-3xl font-black tracking-tight text-slate-300 mb-2">
                                     Reset Your Password
                                 </h1>
-                                <p className="text-slate-400 text-sm font-medium">
+                                <p className="text-slate-300 text-sm font-medium">
                                     Enter your email address and we'll send you a link to reset your password.
                                 </p>
                             </div>
@@ -130,10 +130,10 @@ const ForgotPassword: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-4">
                                     <CheckCircle className="w-8 h-8 text-emerald-400" />
                                 </div>
-                                <h2 className="text-2xl font-black tracking-tight text-slate-200 mb-3">
+                                <h2 className="text-2xl font-black tracking-tight text-slate-300 mb-3">
                                     Check Your Email
                                 </h2>
-                                <p className="text-slate-400 text-sm font-medium mb-6 max-w-sm mx-auto">
+                                <p className="text-slate-300 text-sm font-medium mb-6 max-w-sm mx-auto">
                                     We've sent a password recovery link to <span className="text-slate-300 font-bold">{email}</span>
                                 </p>
                                 <div className="space-y-3 text-xs text-slate-3000 font-medium mb-8">

@@ -63,8 +63,8 @@ const SignUp = () => {
                     <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(79,70,229,0.3)]">
                         <Stethoscope className="w-6 h-6 text-slate-300" />
                     </div>
-                    <h1 className="text-2xl font-black text-slate-200 tracking-tight mb-2">Join the Network</h1>
-                    <p className="text-slate-400 text-xs font-medium uppercase tracking-widest">
+                    <h1 className="text-2xl font-black text-slate-300 tracking-tight mb-2">Join the Network</h1>
+                    <p className="text-slate-300 text-xs font-medium uppercase tracking-widest">
                         Practitioner Registration
                     </p>
                 </div>

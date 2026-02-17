@@ -83,7 +83,7 @@ export const Checkout: FC = () => {
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-slate-200 mb-4">
+                    <h1 className="text-4xl font-bold text-slate-300 mb-4">
                         Choose Your Plan
                     </h1>
                     <p className="text-lg text-slate-300 mb-6">
@@ -96,7 +96,7 @@ export const Checkout: FC = () => {
                             onClick={() => setBillingInterval('monthly')}
                             className={`px-6 py-2 rounded-md font-semibold transition ${billingInterval === 'monthly'
                                 ? 'bg-emerald-500 text-slate-900'
-                                : 'text-slate-300 hover:text-slate-200'
+                                : 'text-slate-300 hover:text-slate-300'
                                 }`}
                         >
                             Monthly
@@ -105,7 +105,7 @@ export const Checkout: FC = () => {
                             onClick={() => setBillingInterval('annual')}
                             className={`px-6 py-2 rounded-md font-semibold transition ${billingInterval === 'annual'
                                 ? 'bg-emerald-500 text-slate-900'
-                                : 'text-slate-300 hover:text-slate-200'
+                                : 'text-slate-300 hover:text-slate-300'
                                 }`}
                         >
                             Annual
@@ -146,7 +146,7 @@ export const Checkout: FC = () => {
                                 )}
 
                                 {/* Tier Name */}
-                                <h2 className="text-2xl font-bold text-slate-200 mb-2">
+                                <h2 className="text-2xl font-bold text-slate-300 mb-2">
                                     {details.name}
                                 </h2>
 
@@ -157,7 +157,7 @@ export const Checkout: FC = () => {
                                             {price ? formatCurrency(price) : 'Custom'}
                                         </span>
                                         {price && (
-                                            <span className="text-lg text-slate-400">
+                                            <span className="text-lg text-slate-300">
                                                 /{billingInterval === 'monthly' ? 'mo' : 'mo'}
                                             </span>
                                         )}
@@ -167,7 +167,7 @@ export const Checkout: FC = () => {
                                             Save {formatCurrency(savings)}/year
                                         </p>
                                     )}
-                                    <p className="text-sm text-slate-400 mt-2">
+                                    <p className="text-sm text-slate-300 mt-2">
                                         {details.trialDays}-day free trial
                                     </p>
                                 </div>
@@ -202,14 +202,14 @@ export const Checkout: FC = () => {
                     >
                         {loading ? 'Processing...' : 'Start 14-Day Free Trial'}
                     </button>
-                    <p className="text-sm text-slate-400 mt-4">
+                    <p className="text-sm text-slate-300 mt-4">
                         No credit card required for trial. Cancel anytime.
                     </p>
                 </div>
 
                 {/* Enterprise CTA */}
                 <div className="mt-12 p-8 bg-slate-800/50 border border-slate-700 rounded-xl text-center">
-                    <h3 className="text-2xl font-bold text-slate-200 mb-2">
+                    <h3 className="text-2xl font-bold text-slate-300 mb-2">
                         Need Enterprise?
                     </h3>
                     <p className="text-slate-300 mb-6">

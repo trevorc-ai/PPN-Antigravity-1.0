@@ -125,8 +125,8 @@ const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
                             <Activity className="w-8 h-8 text-purple-400" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-200">Session Monitoring</h2>
-                            <p className="text-slate-400 text-sm">Patient: {patientId} | Session: #{sessionId}</p>
+                            <h2 className="text-2xl font-bold text-slate-300">Session Monitoring</h2>
+                            <p className="text-slate-300 text-sm">Patient: {patientId} | Session: #{sessionId}</p>
                         </div>
                     </div>
 
@@ -139,10 +139,10 @@ const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
                             side="left"
                         >
                             <div className="flex items-center gap-2 cursor-help">
-                                <Clock className="w-5 h-5 text-slate-400" />
+                                <Clock className="w-5 h-5 text-slate-300" />
                                 <div>
                                     <div className="text-3xl font-mono font-bold text-emerald-400">{elapsedTime}</div>
-                                    <div className="text-xs text-slate-400">Elapsed Time</div>
+                                    <div className="text-xs text-slate-300">Elapsed Time</div>
                                 </div>
                             </div>
                         </AdvancedTooltip>
@@ -162,7 +162,7 @@ const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
                         <div className="bg-red-900/20 backdrop-blur-xl border border-red-500/30 rounded-2xl p-4">
                             <div className="flex items-center gap-2 mb-3">
                                 <AlertTriangle className="w-5 h-5 text-red-400" />
-                                <h3 className="text-slate-200 font-semibold">Active Alerts</h3>
+                                <h3 className="text-slate-300 font-semibold">Active Alerts</h3>
                             </div>
                             <div className="space-y-2">
                                 {activeAlerts.map((alert) => (
@@ -194,10 +194,10 @@ const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
                 <div className="lg:col-span-2">
                     <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-slate-200 font-semibold text-lg">Session Timeline</h3>
+                            <h3 className="text-slate-300 font-semibold text-lg">Session Timeline</h3>
                             <button
                                 onClick={() => setShowEventModal(true)}
-                                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-slate-300 text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
                             >
                                 <Plus className="w-4 h-4" />
                                 Log Event
@@ -212,7 +212,7 @@ const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
             {/* Footer Actions */}
             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-slate-400 text-sm">
+                    <div className="flex items-center gap-2 text-slate-300 text-sm">
                         <CheckCircle className="w-4 h-4" />
                         <span>All systems monitoring</span>
                     </div>
@@ -220,7 +220,7 @@ const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
                     {onEndSession && (
                         <button
                             onClick={onEndSession}
-                            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+                            className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-300 font-medium rounded-lg transition-colors"
                         >
                             End Session
                         </button>

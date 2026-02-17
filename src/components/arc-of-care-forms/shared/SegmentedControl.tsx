@@ -40,8 +40,8 @@ export const SegmentedControl: React.FC<SegmentedControlProps> = ({
                         onClick={() => !disabled && onChange(option.value)}
                         disabled={disabled}
                         className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-all ${isSelected
-                                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                                ? 'bg-blue-500 text-slate-300 shadow-lg shadow-blue-500/20'
+                                : 'text-slate-300 hover:text-slate-300 hover:bg-slate-800/50'
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                         aria-pressed={isSelected}
                     >

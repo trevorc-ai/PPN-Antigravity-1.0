@@ -6,13 +6,13 @@ import { MoleculeViewer } from '../components/science';
  */
 const MoleculeTest: React.FC = () => {
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
             <div className="max-w-4xl mx-auto space-y-8">
-                <h1 className="text-4xl font-black text-slate-200 text-center">
+                <h1 className="text-4xl font-black text-slate-300 text-center">
                     Molecule Viewer Test
                 </h1>
 
-                <p className="text-slate-400 text-center">
+                <p className="text-slate-300 text-center">
                     Testing PubChem API integration with Psilocybin (CID: 10624)
                 </p>
 

@@ -53,11 +53,11 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                     <Heart className="w-7 h-7 text-pink-400" />
                     Daily Pulse Check
                 </h2>
-                <p className="text-slate-400 text-sm mt-2">
+                <p className="text-slate-300 text-sm mt-2">
                     Quick daily check-in to track your wellness journey.
                 </p>
             </div>
@@ -68,7 +68,7 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
                         type="date"
                         value={data.check_in_date ?? ''}
                         onChange={(e) => updateField('check_in_date', e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                     />
                 </FormField>
 

@@ -90,11 +90,11 @@ const MentalHealthScreeningForm: React.FC<MentalHealthScreeningFormProps> = ({
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Brain className="w-7 h-7 text-purple-400" />
                             Mental Health Screening
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Baseline psychological assessments to establish treatment eligibility and track outcomes.
                         </p>
                     </div>

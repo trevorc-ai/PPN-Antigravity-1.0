@@ -35,7 +35,7 @@ export const Section1_Indication: React.FC<Section1Props> = ({ selectedId, onSel
             `}
                     >
                         <div className="text-3xl mb-3 transform transition-transform group-hover:scale-110 duration-300">{ind.icon}</div>
-                        <div className={`font-bold transition-colors ${selectedId === ind.id ? 'text-slate-300' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                        <div className={`font-bold transition-colors ${selectedId === ind.id ? 'text-slate-300' : 'text-slate-300 group-hover:text-slate-300'}`}>
                             {ind.name}
                         </div>
                         {selectedId === ind.id && (

@@ -62,7 +62,7 @@ export default function RegulatoryMosaic({
             {/* Header */}
             <div className="flex items-center justify-between mb-6 shrink-0">
                 <div>
-                    <h3 className="text-lg font-black text-slate-200 uppercase tracking-tighter flex items-center gap-2">
+                    <h3 className="text-lg font-black text-slate-300 uppercase tracking-tighter flex items-center gap-2">
                         <Map className="w-5 h-5 text-indigo-500" />
                         Regulatory Mosaic (Grid View)
                     </h3>
@@ -85,7 +85,7 @@ export default function RegulatoryMosaic({
                     </span>
                     <span className="flex items-center gap-1.5">
                         <span className="size-2.5 bg-slate-600 rounded-full"></span>
-                        <span className="text-slate-400">Pending</span>
+                        <span className="text-slate-300">Pending</span>
                     </span>
                 </div>
             </div>
@@ -146,7 +146,7 @@ export default function RegulatoryMosaic({
                                     stateData.status === 'Decriminalized' ? 'bg-green-500/10 border-green-500/30 text-green-400' :
                                         stateData.status === 'Medical Only' ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' :
                                             stateData.status === 'Pending' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' :
-                                                'bg-slate-500/10 border-slate-500/30 text-slate-400'
+                                                'bg-slate-500/10 border-slate-500/30 text-slate-300'
                                     }`}>
                                     {stateData.status}
                                 </span>
@@ -174,7 +174,7 @@ export default function RegulatoryMosaic({
                             {/* View News Button */}
                             <button
                                 onClick={() => navigate(`/news?search=${stateData.name}`)}
-                                className="w-full mt-4 px-4 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-lg text-xs font-bold text-primary hover:text-slate-200 uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                                className="w-full mt-4 px-4 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-lg text-xs font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-all flex items-center justify-center gap-2"
                             >
                                 <ExternalLink className="w-3.5 h-3.5" />
                                 View {stateData.code} News

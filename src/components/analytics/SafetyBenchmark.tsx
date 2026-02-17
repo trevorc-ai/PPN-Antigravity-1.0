@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 export default function SafetyBenchmark() {
     return (
         <div className="bg-[#0f1218] border border-slate-800 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-slate-200 mb-4">Safety Benchmark</h3>
+            <h3 className="text-lg font-semibold text-slate-300 mb-4">Safety Benchmark</h3>
 
             <div className="h-32">
                 <ResponsiveContainer width="100%" height="100%">
@@ -54,7 +54,7 @@ export default function SafetyBenchmark() {
             </div>
 
             <div className="mt-4 pt-4 border-t border-slate-800">
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-300 leading-relaxed">
                     Your adverse event rate is <span className="text-emerald-400 font-semibold">67% lower</span> than national average.
                 </p>
             </div>

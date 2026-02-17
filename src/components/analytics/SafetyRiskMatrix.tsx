@@ -39,14 +39,14 @@ const SafetyRiskMatrix: React.FC = () => {
             <div className="size-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 border border-red-500/20">
               <ShieldAlert size={18} />
             </div>
-            <h3 className="text-lg font-black text-slate-200 tracking-tight">Pharmacovigilance Matrix</h3>
+            <h3 className="text-lg font-black text-slate-300 tracking-tight">Pharmacovigilance Matrix</h3>
           </div>
           <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Cross-Interaction Risk Map</p>
         </div>
 
         <div className="group/info relative">
-          <Info size={16} className="text-slate-600 hover:text-slate-400 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-400 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+          <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
+          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
             Heatmap indicating interaction severity levels (1-5). <span className="text-red-500 font-bold">Level 5</span> indicates absolute contraindication.
           </div>
         </div>
@@ -60,7 +60,7 @@ const SafetyRiskMatrix: React.FC = () => {
           <div className="col-span-1"></div> {/* Spacer for Row Labels */}
           {SUBSTANCES.map((sub) => (
             <div key={sub} className="flex items-end justify-center pb-2">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest -rotate-45 sm:rotate-0 origin-bottom-left sm:origin-center translate-y-2 sm:translate-y-0 whitespace-nowrap">
+              <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest -rotate-45 sm:rotate-0 origin-bottom-left sm:origin-center translate-y-2 sm:translate-y-0 whitespace-nowrap">
                 {sub.split('-')[0]}
               </span>
             </div>
@@ -95,7 +95,7 @@ const SafetyRiskMatrix: React.FC = () => {
                           {sub} + {med}
                         </span>
                       </div>
-                      <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
+                      <p className="text-[10px] text-slate-300 font-medium leading-relaxed">
                         {desc}
                       </p>
                     </div>

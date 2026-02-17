@@ -41,7 +41,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
                         <CheckCircle className="w-6 h-6 text-emerald-400" />
-                        <h3 className="text-lg font-black text-slate-200">Compliance</h3>
+                        <h3 className="text-lg font-black text-slate-300">Compliance</h3>
                     </div>
 
                     <div className="space-y-4">
@@ -52,7 +52,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         >
                             <div className="cursor-help">
                                 <div className="flex items-center justify-between mb-2">
-                                    <div className="text-sm text-slate-400">Daily Pulse Checks</div>
+                                    <div className="text-sm text-slate-300">Daily Pulse Checks</div>
                                     <div className="text-sm font-bold text-emerald-400">{journey.integration.pulseCheckCompliance}%</div>
                                 </div>
                                 <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
@@ -68,7 +68,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         >
                             <div className="cursor-help">
                                 <div className="flex items-center justify-between mb-2">
-                                    <div className="text-sm text-slate-400">Weekly PHQ-9</div>
+                                    <div className="text-sm text-slate-300">Weekly PHQ-9</div>
                                     <div className="text-sm font-bold text-emerald-400">{journey.integration.phq9Compliance}%</div>
                                 </div>
                                 <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
@@ -92,16 +92,16 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
                         <TrendingUp className="w-6 h-6 text-blue-400" />
-                        <h3 className="text-lg font-black text-slate-200">Quality of Life</h3>
+                        <h3 className="text-lg font-black text-slate-300">Quality of Life</h3>
                     </div>
 
                     <div className="space-y-3">
                         <div className="p-3 bg-slate-800/40 rounded-xl">
-                            <div className="text-sm text-slate-400 mb-1">WHOQOL-BREF</div>
+                            <div className="text-sm text-slate-300 mb-1">WHOQOL-BREF</div>
                             <div className="text-2xl font-black text-emerald-400">68 → 82 (+21%)</div>
                         </div>
 
-                        <div className="text-sm text-slate-400 uppercase tracking-wide mb-2">Behavioral Changes:</div>
+                        <div className="text-sm text-slate-300 uppercase tracking-wide mb-2">Behavioral Changes:</div>
                         <div className="space-y-2">
                             {journey.integration.behavioralChanges.map((change: string, index: number) => (
                                 <div key={index} className="flex items-center gap-2 text-sm text-slate-300">
@@ -117,17 +117,17 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
                         <CheckCircle className="w-6 h-6 text-emerald-400" />
-                        <h3 className="text-lg font-black text-slate-200">Status</h3>
+                        <h3 className="text-lg font-black text-slate-300">Status</h3>
                     </div>
 
                     <div className="space-y-4">
                         <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
                             <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
                             <div className="text-sm font-bold text-emerald-300">No active alerts ✓</div>
-                            <div className="text-sm text-slate-400 mt-1">Patient is stable and progressing well</div>
+                            <div className="text-sm text-slate-300 mt-1">Patient is stable and progressing well</div>
                         </div>
 
-                        <div className="text-sm text-slate-400 uppercase tracking-wide">Next Steps:</div>
+                        <div className="text-sm text-slate-300 uppercase tracking-wide">Next Steps:</div>
                         <div className="space-y-2">
                             <div className="flex items-start gap-2 p-2 bg-slate-800/40 rounded-lg">
                                 <span className="text-sm text-slate-300">📅 Schedule PHQ-9 at Day 60</span>
@@ -143,7 +143,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
                         <span className="text-2xl">💡</span>
-                        <h3 className="text-lg font-black text-slate-200">Personalized Insight</h3>
+                        <h3 className="text-lg font-black text-slate-300">Personalized Insight</h3>
                     </div>
 
                     <div className="p-4 bg-gradient-to-br from-amber-500/10 to-amber-900/10 border border-amber-500/20 rounded-2xl">

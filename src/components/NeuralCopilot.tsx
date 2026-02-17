@@ -179,7 +179,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
           <button
             type="submit"
             disabled={isAnalyzing || !query.trim()}
-            className="absolute right-2 top-1/2 -translate-y-1/2 size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-slate-200 transition-all shadow-xl active:scale-90 disabled:opacity-20"
+            className="absolute right-2 top-1/2 -translate-y-1/2 size-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-slate-300 transition-all shadow-xl active:scale-90 disabled:opacity-20"
           >
             <Sparkles className="size-5" />
           </button>

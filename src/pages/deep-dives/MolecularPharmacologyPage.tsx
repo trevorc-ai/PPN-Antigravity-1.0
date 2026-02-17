@@ -10,7 +10,7 @@ const MolecularPharmacologyPage = () => {
             <Section>
                 <div className="border-b border-slate-800 pb-6">
                     <h1 className="text-5xl font-black tracking-tighter mb-2">Molecular Pharmacology</h1>
-                    <p className="text-slate-400 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">
+                    <p className="text-slate-300 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">
                         This section details the chemical structure and biological effects of substances. It explains how molecules interact with the brain's receptors to produce therapeutic effects.
                     </p>
                 </div>

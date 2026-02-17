@@ -21,11 +21,11 @@ const ClinicRadarDemo: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-primary"></div>
-                        <span className="text-[10px] font-bold text-slate-400">Your Clinic</span>
+                        <span className="text-[10px] font-bold text-slate-300">Your Clinic</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-slate-600"></div>
-                        <span className="text-[10px] font-bold text-slate-400">Network Avg</span>
+                        <span className="text-[10px] font-bold text-slate-300">Network Avg</span>
                     </div>
                 </div>
             </div>

@@ -35,7 +35,7 @@ const PricingCard: React.FC<{
       <span className="text-[11px] font-black text-primary tracking-[0.2em]">{type}</span>
       {tag && <span className="px-3 py-1 rounded-xl bg-accent-amber/10 text-accent-amber border border-accent-amber/20 text-[11px] font-black tracking-widest">{tag}</span>}
     </div>
-    <h3 className="text-3xl font-black text-slate-200 tracking-tight mb-8">{title}</h3>
+    <h3 className="text-3xl font-black text-slate-300 tracking-tight mb-8">{title}</h3>
 
     <div className="mb-10">
       <div className="flex items-baseline gap-1.5">
@@ -83,13 +83,13 @@ const NewsSnippet: React.FC<{ title: string; category: string; time: string }> =
   <div className="py-4 border-b border-slate-800/40 last:border-none group cursor-pointer hover:bg-white/[0.02] -mx-4 px-4 rounded-2xl transition-colors h-auto">
     <div className="flex items-center gap-3 mb-2">
       <span className={`px-2 py-1 rounded-lg text-[11px] font-black tracking-widest ${category === 'Regulatory' ? 'bg-primary/10 text-primary border border-primary/20' :
-        'bg-slate-800 text-slate-400 border border-slate-700'
+        'bg-slate-800 text-slate-300 border border-slate-700'
         }`}>
         {category}
       </span>
       <span className="text-[11px] font-mono text-slate-600 tracking-widest">{time}</span>
     </div>
-    <h4 className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors line-clamp-1 leading-tight tracking-tight">{title}</h4>
+    <h4 className="text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors line-clamp-1 leading-tight tracking-tight">{title}</h4>
   </div>
 );
 
@@ -123,7 +123,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <span className="material-symbols-outlined font-black text-xl">verified_user</span>
                 <span className="text-[11px] font-black tracking-[0.5em]">Encrypted Network Psychedelic Practitioner: 0x7</span>
               </div>
-              <h1 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-200 leading-[1.0]">
+              <h1 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-300 leading-[1.0]">
                 Psychedelic <br />
                 Practitioners <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Network (PPN)</span>
@@ -182,7 +182,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
         {/* Right Sidebar Login Panel */}
         <aside id="secure-access-node" className="w-full lg:w-[500px] bg-[#0a0c10]/80 backdrop-blur-3xl border-l border-white/5 flex flex-col p-10 sm:p-24 justify-center relative shadow-2xl z-20">
           <div className="space-y-4 mb-12">
-            <h2 className="text-5xl font-black text-slate-200 tracking-tighter">Secure Access</h2>
+            <h2 className="text-5xl font-black text-slate-300 tracking-tighter">Secure Access</h2>
             <p className="text-slate-3000 font-bold text-[11px] tracking-[0.3em]">Institutional Verification Psychedelic Practitioner</p>
           </div>
 
@@ -193,11 +193,11 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                   <span className="material-symbols-outlined text-2xl">lock</span>
                 </div>
                 <div>
-                  <h3 className="text-slate-200 font-black tracking-widest text-[14px]">Restricted Node</h3>
+                  <h3 className="text-slate-300 font-black tracking-widest text-[14px]">Restricted Node</h3>
                   <p className="text-slate-3000 text-[11px] font-bold mt-1">Authorized Personnel Only</p>
                 </div>
               </div>
-              <p className="text-slate-400 text-[12px] font-medium leading-relaxed">
+              <p className="text-slate-300 text-[12px] font-medium leading-relaxed">
                 Access to the PPN Research Portal requires a verified practitioner credential. Sessions are logged and audited.
               </p>
               <button
@@ -209,7 +209,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               </button>
               <button
                 onClick={() => navigate('/login?tab=request')}
-                className="w-full py-4 bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200 text-sm font-black rounded-xl tracking-[0.2em] transition-all"
+                className="w-full py-4 bg-transparent border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-slate-300 text-sm font-black rounded-xl tracking-[0.2em] transition-all"
               >
                 Request Access
               </button>
@@ -271,11 +271,11 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <span className="material-symbols-outlined text-lg">info</span>
             Registry ID: 0x9921-PPN
           </div>
-          <h2 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-200 leading-none">
+          <h2 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-300 leading-none">
             Advancing the <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Science</span> of Psychedelic Therapy.
           </h2>
-          <p className="max-w-3xl mx-auto text-slate-400 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
+          <p className="max-w-3xl mx-auto text-slate-300 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
             PPN is a secure, cross-node clinical network dedicated to the rigorous study and safe implementation of psychedelic-assisted therapies.
           </p>
         </PageContainer>
@@ -287,12 +287,12 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="border-[1.5px] border-primary/30 rounded-[2.5rem] p-12 sm:p-20 bg-slate-900/5 backdrop-blur-sm relative z-10 overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
               <div className="space-y-10">
-                <h3 className="text-4xl sm:text-7xl font-black tracking-tighter text-slate-200 leading-none">
+                <h3 className="text-4xl sm:text-7xl font-black tracking-tighter text-slate-300 leading-none">
                   A <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Unified</span> <br />
                   Framework for <br />
                   Excellence.
                 </h3>
-                <div className="space-y-8 text-slate-400 text-xl leading-relaxed font-medium opacity-80">
+                <div className="space-y-8 text-slate-300 text-xl leading-relaxed font-medium opacity-80">
                   <p>Founded on the principles of open collaboration and radical data integrity, the Psychedelic Practitioners Network (PPN) bridge the gap between discovery and clinical practice.</p>
                   <p>We believe that the future of mental health requires a high-fidelity infrastructure capable of tracking long-term outcomes, managing complex substance interactions, and facilitating secure practitioner knowledge exchange.</p>
                 </div>
@@ -334,7 +334,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="text-center space-y-12">
             <h3 className="text-sm font-black text-primary tracking-[0.8em]">Core Principles</h3>
             <div className="max-w-3xl mx-auto border-[1.5px] border-primary/40 rounded-2xl p-10 backdrop-blur-sm shadow-[0_0_30px_rgba(43,116,243,0.1)]">
-              <h2 className="text-4xl sm:text-7xl font-black text-slate-200 tracking-tight leading-none">
+              <h2 className="text-4xl sm:text-7xl font-black text-slate-300 tracking-tight leading-none">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Built</span> for Regulatory Rigor.
               </h2>
             </div>
@@ -382,12 +382,12 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none"></div>
 
             <div className="space-y-8 max-w-3xl relative z-10">
-              <h2 className="text-4xl sm:text-8xl font-black text-slate-200 tracking-tighter leading-none">
+              <h2 className="text-4xl sm:text-8xl font-black text-slate-300 tracking-tighter leading-none">
                 The Global <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Psychedelic Practitioner</span> <br />
                 Network.
               </h2>
-              <p className="text-slate-400 font-medium text-xl sm:text-2xl leading-relaxed opacity-80">
+              <p className="text-slate-300 font-medium text-xl sm:text-2xl leading-relaxed opacity-80">
                 PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
               </p>
             </div>
@@ -415,7 +415,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               <span className="material-symbols-outlined text-lg">payments</span>
               Membership Framework
             </div>
-            <h2 className="text-4xl sm:text-8xl font-black text-slate-200 tracking-tighter leading-none">
+            <h2 className="text-4xl sm:text-8xl font-black text-slate-300 tracking-tighter leading-none">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Access</span> the Network.
             </h2>
             <p className="max-w-2xl mx-auto text-slate-3000 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
@@ -482,7 +482,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
         <PageContainer width="narrow" className="text-center space-y-16 relative z-10">
           <div className="space-y-6">
-            <h2 className="text-5xl sm:text-8xl font-black text-slate-200 tracking-tighter leading-none">Join the Cooperative.</h2>
+            <h2 className="text-5xl sm:text-8xl font-black text-slate-300 tracking-tighter leading-none">Join the Cooperative.</h2>
             <p className="text-slate-3000 font-medium text-xl sm:text-3xl leading-relaxed max-w-3xl mx-auto opacity-80">
               Qualified practitioners and research institutions are invited to apply for institutional access.
             </p>

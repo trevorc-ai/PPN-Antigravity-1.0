@@ -33,7 +33,7 @@ const SimpleSearch: React.FC = () => {
             <span className="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">auto_awesome</span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300">PPN Research Portal</h1>
-          <p className="text-slate-400 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">
+          <p className="text-slate-300 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">
             Access the unified clinical database for high-fidelity molecular research and protocol discovery.
           </p>
         </div>
@@ -64,7 +64,7 @@ const SimpleSearch: React.FC = () => {
             <button
               key={link.label}
               onClick={() => navigate(link.path)}
-              className="px-6 py-3 bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-primary/30 rounded-full text-sm font-black text-slate-400 hover:text-slate-200 transition-all flex items-center gap-3 shadow-lg group/link"
+              className="px-6 py-3 bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-primary/30 rounded-full text-sm font-black text-slate-300 hover:text-slate-300 transition-all flex items-center gap-3 shadow-lg group/link"
             >
               <span className="material-symbols-outlined text-lg group-hover:link:text-primary transition-colors">{link.icon}</span>
               <span className="tracking-widest">{link.label}</span>

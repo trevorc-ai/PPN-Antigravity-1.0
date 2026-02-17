@@ -69,7 +69,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
             )}
 
             {value && (
-                <span className="text-slate-400 text-sm font-medium">
+                <span className="text-slate-300 text-sm font-medium">
                     {value}/{max}
                 </span>
             )}

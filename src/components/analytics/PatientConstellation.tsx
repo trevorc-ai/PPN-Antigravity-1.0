@@ -152,17 +152,17 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
         <div className="bg-[#0f1218] border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative">
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 text-slate-3000 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors z-10"
+                className="absolute top-4 right-4 p-2 text-slate-3000 hover:text-slate-300 hover:bg-slate-800 rounded-lg transition-colors z-10"
             >
                 <X className="w-5 h-5" />
             </button>
 
             {/* Modal Content Wrapper */}
             <div className="px-6 pt-6 pb-2">
-                <h3 className="text-xl font-black text-slate-200 uppercase tracking-tight flex items-center gap-2">
+                <h3 className="text-xl font-black text-slate-300 uppercase tracking-tight flex items-center gap-2">
                     {patient.id}
                 </h3>
-                <p className="text-xs text-slate-400 font-mono mt-1">
+                <p className="text-xs text-slate-300 font-mono mt-1">
                     {patient.details.age}y {patient.details.sex} • {patient.details.diagnosis}
                 </p>
             </div>
@@ -215,7 +215,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                     </div>
                     <div>
                         <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Clinician Notes</span>
-                        <p className="text-xs text-slate-400 italic leading-relaxed border-l-2 border-slate-700 pl-3">
+                        <p className="text-xs text-slate-300 italic leading-relaxed border-l-2 border-slate-700 pl-3">
                             "{patient.details.clinician_notes}"
                         </p>
                     </div>
@@ -245,14 +245,14 @@ export default function PatientConstellation() {
                         <Search className="w-5 h-5 text-indigo-500" />
                     </div>
                     <div title="Scatter plot visualizing patient outcomes based on treatment resistance and symptom severity">
-                        <h3 className="text-lg font-black text-slate-200 tracking-tight">Patient Galaxy Analysis</h3>
-                        <p className="text-xs text-slate-400 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
+                        <h3 className="text-lg font-black text-slate-300 tracking-tight">Patient Galaxy Analysis</h3>
+                        <p className="text-xs text-slate-300 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
                     </div>
                 </div>
 
                 <button
                     onClick={() => setShowGuide(!showGuide)}
-                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-3000 hover:text-slate-200 transition-colors"
+                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-3000 hover:text-slate-300 transition-colors"
                     title="How to read this chart"
                 >
                     <Info className="w-5 h-5" />
@@ -265,9 +265,9 @@ export default function PatientConstellation() {
                     <h4 className="text-xs font-black text-slate-300 uppercase tracking-widest mb-2 flex items-center gap-2">
                         <Lightbulb className="w-3 h-3 text-amber-400" /> Interpreting the Galaxy
                     </h4>
-                    <ul className="space-y-3 text-[11px] text-slate-400 leading-relaxed">
-                        <li><strong className="text-slate-200">X-Axis (Resistance):</strong> Treatment Resistance Score (Count of prior failed trials).</li>
-                        <li><strong className="text-slate-200">Y-Axis (Severity):</strong> Current Symptom Load (PHQ-9 / CAPS-5). Top = Severe.</li>
+                    <ul className="space-y-3 text-[11px] text-slate-300 leading-relaxed">
+                        <li><strong className="text-slate-300">X-Axis (Resistance):</strong> Treatment Resistance Score (Count of prior failed trials).</li>
+                        <li><strong className="text-slate-300">Y-Axis (Severity):</strong> Current Symptom Load (PHQ-9 / CAPS-5). Top = Severe.</li>
                         <li><strong className="text-emerald-400">Green Nodes:</strong> "Responder" Cohort (Remission Achieved). Click to analyze protocol & duration.</li>
                     </ul>
                 </div>
@@ -296,8 +296,8 @@ export default function PatientConstellation() {
                                     return (
                                         <div className="bg-slate-900/95 backdrop-blur border border-slate-700 p-3 rounded-lg shadow-xl z-50">
                                             <p className="text-slate-300 font-bold text-xs mb-1">{data.id}</p>
-                                            <p className="text-xs text-slate-400">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
-                                            <p className="text-xs text-slate-400">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
+                                            <p className="text-xs text-slate-300">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
+                                            <p className="text-xs text-slate-300">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
                                         </div>
                                     );
                                 }

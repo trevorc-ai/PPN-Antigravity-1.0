@@ -41,8 +41,8 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <Brain className="w-6 h-6 text-emerald-400" />
                     </div>
                     <div>
-                        <h3 className="text-slate-200 text-lg font-semibold">Set & Setting Analysis</h3>
-                        <p className="text-slate-400 text-sm">Baseline psychological profile</p>
+                        <h3 className="text-slate-300 text-lg font-semibold">Set & Setting Analysis</h3>
+                        <p className="text-slate-300 text-sm">Baseline psychological profile</p>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                     side="left"
                 >
                     <div className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors cursor-help">
-                        <Shield className="w-5 h-5 text-slate-400" />
+                        <Shield className="w-5 h-5 text-slate-300" />
                     </div>
                 </AdvancedTooltip>
             </div>
@@ -64,7 +64,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
                         <Heart className="w-4 h-4 text-blue-400" />
-                        <h4 className="text-slate-200 text-sm font-medium">Treatment Expectancy</h4>
+                        <h4 className="text-slate-300 text-sm font-medium">Treatment Expectancy</h4>
                         <AdvancedTooltip
                             content="Treatment expectancy measures how much the patient believes the therapy will help them. Higher belief (>70) correlates with 25% better outcomes due to positive placebo effects."
                             type="info"
@@ -72,7 +72,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                             title="Why Expectancy Matters"
                             side="top"
                         >
-                            <div className="text-slate-400 hover:text-slate-300 cursor-help">
+                            <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                 </svg>
@@ -86,7 +86,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
                         <Shield className="w-4 h-4 text-amber-400" />
-                        <h4 className="text-slate-200 text-sm font-medium">ACE Score</h4>
+                        <h4 className="text-slate-300 text-sm font-medium">ACE Score</h4>
                         <AdvancedTooltip
                             content="Adverse Childhood Experiences (ACE) score measures childhood trauma (0-10). Higher scores indicate lower baseline resilience and may require additional integration support."
                             type="warning"
@@ -94,7 +94,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                             title="Understanding ACE"
                             side="top"
                         >
-                            <div className="text-slate-400 hover:text-slate-300 cursor-help">
+                            <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                 </svg>
@@ -108,7 +108,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
                         <Brain className="w-4 h-4 text-purple-400" />
-                        <h4 className="text-slate-200 text-sm font-medium">Anxiety Severity (GAD-7)</h4>
+                        <h4 className="text-slate-300 text-sm font-medium">Anxiety Severity (GAD-7)</h4>
                         <AdvancedTooltip
                             content="Generalized Anxiety Disorder scale (0-21). Scores >10 predict a 45% likelihood of challenging experiences during the session. Anxiolytic support may be beneficial."
                             type="warning"
@@ -116,7 +116,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                             title="GAD-7 Clinical Significance"
                             side="top"
                         >
-                            <div className="text-slate-400 hover:text-slate-300 cursor-help">
+                            <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                 </svg>
@@ -130,7 +130,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-emerald-400" />
-                        <h4 className="text-slate-200 text-sm font-medium">Predicted Integration Needs</h4>
+                        <h4 className="text-slate-300 text-sm font-medium">Predicted Integration Needs</h4>
                         <AdvancedTooltip
                             content="Based on baseline risk factors (ACE, GAD-7, Expectancy), this algorithm predicts the optimal number and frequency of integration sessions for sustained benefit."
                             type="info"
@@ -138,7 +138,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                             title="Integration Prediction Algorithm"
                             side="top"
                         >
-                            <div className="text-slate-400 hover:text-slate-300 cursor-help">
+                            <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                 </svg>
@@ -159,7 +159,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 <div className="mt-6 pt-6 border-t border-slate-700/50">
                     <button
                         onClick={onScheduleSessions}
-                        className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                        className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-300 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
                     >
                         <Calendar className="w-5 h-5" />
                         Schedule Integration Sessions

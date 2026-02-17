@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md z-50">
         <div className="flex items-center gap-2 mb-2 border-b border-slate-700/50 pb-2">
-          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">{data.displayDate}</span>
+          <span className="text-[10px] font-mono text-slate-300 uppercase tracking-widest">{data.displayDate}</span>
           {isEvent && (
             <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded ${data.type === 'dose' ? 'bg-cyan-500/10 text-cyan-500' :
                 data.type === 'safety' ? 'bg-amber-500/10 text-amber-500' :
@@ -140,14 +140,14 @@ const PatientJourneySnapshot: React.FC = () => {
             <div className="size-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
               <FileText size={18} />
             </div>
-            <h3 className="text-lg font-black text-slate-200 tracking-tight">Clinical Journey</h3>
+            <h3 className="text-lg font-black text-slate-300 tracking-tight">Clinical Journey</h3>
           </div>
           <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Intervention Timeline & Outcome (PHQ-9)</p>
         </div>
 
         <div className="group/info relative">
-          <Info size={16} className="text-slate-600 hover:text-slate-400 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-400 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+          <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
+          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
             Composed chart correlating symptom scores (Line) with discrete clinical events (Timeline Dots).
           </div>
         </div>

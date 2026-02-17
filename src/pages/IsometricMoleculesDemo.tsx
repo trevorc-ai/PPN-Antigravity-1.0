@@ -60,17 +60,17 @@ const IsometricMoleculesDemo: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
             <div className="max-w-7xl mx-auto space-y-12">
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <div className="flex items-center justify-center gap-3 mb-4">
                         <Sparkles className="w-12 h-12 text-emerald-400" />
-                        <h1 className="text-5xl font-black text-slate-200 tracking-tight">
+                        <h1 className="text-5xl font-black text-slate-300 tracking-tight">
                             Isometric Molecules
                         </h1>
                     </div>
-                    <p className="text-lg text-slate-400 max-w-3xl mx-auto">
+                    <p className="text-lg text-slate-300 max-w-3xl mx-auto">
                         3D isometric projection using CSS transforms • Hover for interactive tilt effects
                     </p>
                     <div className="flex items-center justify-center gap-6 text-sm text-slate-500">
@@ -121,7 +121,7 @@ const IsometricMoleculesDemo: React.FC = () => {
 
                 {/* Technical Details */}
                 <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8">
-                    <h2 className="text-2xl font-bold text-slate-200 mb-6">Technical Details</h2>
+                    <h2 className="text-2xl font-bold text-slate-300 mb-6">Technical Details</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
@@ -162,7 +162,7 @@ const IsometricMoleculesDemo: React.FC = () => {
 
                 {/* Implementation */}
                 <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8">
-                    <h2 className="text-2xl font-bold text-slate-200 mb-4">Usage Example</h2>
+                    <h2 className="text-2xl font-bold text-slate-300 mb-4">Usage Example</h2>
 
                     <pre className="bg-slate-800/50 border border-slate-700/30 rounded-lg p-4 overflow-x-auto">
                         <code className="text-sm text-slate-300">{`import { IsometricMolecule } from '../components/science';
@@ -179,7 +179,7 @@ const IsometricMoleculesDemo: React.FC = () => {
 
                     <div className="mt-6 space-y-3">
                         <h3 className="text-slate-300 font-semibold">Props:</h3>
-                        <ul className="text-slate-400 text-sm space-y-2">
+                        <ul className="text-slate-300 text-sm space-y-2">
                             <li><code className="text-emerald-400 bg-slate-800/50 px-1.5 py-0.5 rounded">image</code> - Path to molecule image</li>
                             <li><code className="text-emerald-400 bg-slate-800/50 px-1.5 py-0.5 rounded">name</code> - Molecule name</li>
                             <li><code className="text-emerald-400 bg-slate-800/50 px-1.5 py-0.5 rounded">formula</code> - Chemical formula (optional)</li>
@@ -192,7 +192,7 @@ const IsometricMoleculesDemo: React.FC = () => {
 
                 {/* Note */}
                 <div className="text-center">
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-slate-300">
                         Component: <code className="text-emerald-400">src/components/science/IsometricMolecule.tsx</code>
                     </p>
                 </div>

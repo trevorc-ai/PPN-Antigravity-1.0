@@ -122,7 +122,7 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                         <p className="text-xs text-slate-300">
                             <span className="font-bold text-emerald-400">{data.sessionsWithFollowup}</span> with follow-up
                         </p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-300">
                             out of {data.totalSessions} total sessions
                         </p>
                     </div>
@@ -145,7 +145,7 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
             <div className={`card-glass rounded-3xl p-8 h-[500px] flex items-center justify-center ${className}`}>
                 <div className="text-center space-y-4">
                     <span className="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span>
-                    <p className="text-sm font-medium text-slate-400">Loading compliance data...</p>
+                    <p className="text-sm font-medium text-slate-300">Loading compliance data...</p>
                 </div>
             </div>
         );
@@ -158,7 +158,7 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-4xl text-red-400">error</span>
                     <div>
                         <p className="text-sm font-bold text-red-400 mb-1">Error Loading Data</p>
-                        <p className="text-xs text-slate-400">{error}</p>
+                        <p className="text-xs text-slate-300">{error}</p>
                     </div>
                 </div>
             </div>
@@ -172,7 +172,7 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-6xl text-slate-600">show_chart</span>
                     <div>
                         <p className="text-lg font-black text-slate-300 mb-2">No Data Available</p>
-                        <p className="text-sm text-slate-400 max-w-md">
+                        <p className="text-sm text-slate-300 max-w-md">
                             {filters.siteIds.length > 0 || filters.dateRange.start
                                 ? 'No compliance data found for selected filters. Try adjusting your filters or note that small-cell suppression hides months with fewer than 10 sessions.'
                                 : 'No follow-up compliance data found. This view requires at least 10 sessions per month.'}
@@ -196,8 +196,8 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-3xl text-primary">show_chart</span>
                     <div>
-                        <h3 className="text-xl font-black text-slate-200">Follow-up Compliance</h3>
-                        <p className="text-xs text-slate-400 font-medium">Completion rates over time</p>
+                        <h3 className="text-xl font-black text-slate-300">Follow-up Compliance</h3>
+                        <p className="text-xs text-slate-300 font-medium">Completion rates over time</p>
                     </div>
                 </div>
 
@@ -273,19 +273,19 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                 <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-emerald-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">≥80% (Excellent)</span>
+                        <span className="text-xs text-slate-300 font-medium">≥80% (Excellent)</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-blue-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">60-79% (Good)</span>
+                        <span className="text-xs text-slate-300 font-medium">60-79% (Good)</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-amber-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">40-59% (Fair)</span>
+                        <span className="text-xs text-slate-300 font-medium">40-59% (Fair)</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-red-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">&lt;40% (Needs Improvement)</span>
+                        <span className="text-xs text-slate-300 font-medium">&lt;40% (Needs Improvement)</span>
                     </div>
                 </div>
             </div>
@@ -307,10 +307,10 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                 <div className="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800">
                     <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">Trend</p>
                     <div className="flex items-center justify-center gap-1">
-                        <p className={`text-lg font-black ${trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                        <p className={`text-lg font-black ${trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : 'text-slate-300'}`}>
                             {trend > 0 ? '+' : ''}{Math.round(trend * 10) / 10}%
                         </p>
-                        <span className={`material-symbols-outlined text-sm ${trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                        <span className={`material-symbols-outlined text-sm ${trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : 'text-slate-300'}`}>
                             {trend > 0 ? 'arrow_upward' : trend < 0 ? 'arrow_downward' : 'remove'}
                         </span>
                     </div>

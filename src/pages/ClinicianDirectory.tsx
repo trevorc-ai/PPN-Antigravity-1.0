@@ -52,7 +52,7 @@ const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => voi
       <div className="flex gap-2 mt-auto pt-4 border-t border-slate-800/50">
         <button
           onClick={() => navigate(`/clinician/${practitioner.id}`)}
-          className="flex-1 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-slate-200 border border-blue-500/20 hover:border-blue-500/50 text-xs font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-slate-300 border border-blue-500/20 hover:border-blue-500/50 text-xs font-bold rounded-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2"
         >
           Profile
         </button>
@@ -128,7 +128,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
       <div className="flex flex-col h-full">
         <div className="p-6 sm:p-8 border-b border-white/5 bg-slate-900/50">
           <div className="flex items-center justify-between mb-6">
-            <button onClick={onClose} className="p-2.5 hover:bg-white/5 rounded-full text-slate-3000 hover:text-slate-200 transition-all">
+            <button onClick={onClose} className="p-2.5 hover:bg-white/5 rounded-full text-slate-3000 hover:text-slate-300 transition-all">
               <span className="material-symbols-outlined">close</span>
             </button>
             <div className="flex flex-col items-center">
@@ -149,7 +149,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
               )}
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-black text-slate-200 leading-tight">{practitioner.name}</h3>
+              <h3 className="text-lg sm:text-xl font-black text-slate-300 leading-tight">{practitioner.name}</h3>
               <p className="text-[11px] font-bold text-primary uppercase tracking-widest">{practitioner.role}</p>
             </div>
           </div>
@@ -232,11 +232,11 @@ const ClinicianDirectory: React.FC = () => {
   });
 
   return (
-    <PageContainer className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
+    <PageContainer className="min-h-full bg-[#0a1628]">
       <Section spacing="default" className="flex-1">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
           <div className="space-y-1">
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-slate-200">Practitioners</h1>
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-slate-300">Practitioners</h1>
             <p className="text-slate-3000 text-[11px] sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
           </div>
 
@@ -254,7 +254,7 @@ const ClinicianDirectory: React.FC = () => {
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-[11px] font-black text-slate-400 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
+              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-[11px] font-black text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
             >
               <option value="All">All Roles</option>
               {roles.filter(r => r !== 'All').map(r => <option key={r} value={r}>{r}</option>)}
@@ -262,7 +262,7 @@ const ClinicianDirectory: React.FC = () => {
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-[11px] font-black text-slate-400 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
+              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-[11px] font-black text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
             >
               <option value="All">Global Nodes</option>
               {locations.filter(l => l !== 'All').map(l => <option key={l} value={l}>{l}</option>)}
@@ -282,7 +282,7 @@ const ClinicianDirectory: React.FC = () => {
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`size-14 flex items-center justify-center rounded-2xl border transition-all ${showFilters ? 'bg-primary border-primary text-slate-300' : 'bg-slate-900 border-slate-800 text-slate-400'}`}
+              className={`size-14 flex items-center justify-center rounded-2xl border transition-all ${showFilters ? 'bg-primary border-primary text-slate-300' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
             >
               <span className="material-symbols-outlined">filter_list</span>
             </button>

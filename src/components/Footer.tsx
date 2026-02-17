@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             {/* PPN Portal Logo */}
             <div className="flex items-baseline gap-1 cursor-default">
-              <span className="text-3xl font-black tracking-tight text-slate-400 leading-none">PPN</span>
+              <span className="text-3xl font-black tracking-tight text-slate-300 leading-none">PPN</span>
               <span className="text-3xl font-black tracking-tight text-primary leading-none">Portal</span>
             </div>
 
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
 
           {/* Column 2: Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-slate-400 tracking-wider uppercase">Quick Links</h4>
+            <h4 className="text-xs font-bold text-slate-300 tracking-wider uppercase">Quick Links</h4>
             <ul className="space-y-3">
               {[
                 { label: 'Dashboard', path: '/dashboard' },
@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
 
           {/* Column 3: Compliance */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold text-slate-400 tracking-wider uppercase">Compliance</h4>
+            <h4 className="text-xs font-bold text-slate-300 tracking-wider uppercase">Compliance</h4>
             <div className="flex flex-wrap gap-2">
               {['HIPAA', 'GDPR', 'SOC2'].map(badge => (
                 <div key={badge} className="px-3 py-1.5 bg-slate-900/50 border border-slate-800 rounded-lg">
@@ -80,7 +80,7 @@ const Footer: React.FC = () => {
             <span className="material-symbols-outlined text-amber-400/80 text-xl flex-shrink-0" aria-hidden="true">
               warning
             </span>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-300 leading-relaxed">
               <span className="font-bold text-amber-400/90">Medical Disclaimer:</span> This is for informational purposes only. For medical advice or diagnosis, consult a professional.
             </p>
           </div>

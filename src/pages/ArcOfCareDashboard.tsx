@@ -124,16 +124,16 @@ const ArcOfCareDashboard: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
+        <div className="min-h-screen bg-[#0a1628]">
             {/* Header */}
             <div className="bg-slate-900/40 backdrop-blur-xl border-b border-slate-700/50 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-200">
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-300">
                                 Wellness Journey
                             </h1>
-                            <p className="text-sm sm:text-base text-slate-400 mt-1">
+                            <p className="text-sm sm:text-base text-slate-300 mt-1">
                                 Complete Patient Journey Dashboard
                             </p>
                         </div>
@@ -145,8 +145,8 @@ const ArcOfCareDashboard: React.FC = () => {
                                     key={phase.id}
                                     onClick={() => setActivePhase(phase.id as 1 | 2 | 3)}
                                     className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${activePhase === phase.id
-                                            ? `bg-${phase.color}-500 text-white`
-                                            : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50'
+                                            ? `bg-${phase.color}-500 text-slate-300`
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
                                         }`}
                                 >
                                     <phase.icon className="w-4 h-4 inline mr-2" />
@@ -171,13 +171,13 @@ const ArcOfCareDashboard: React.FC = () => {
                                                     'bg-slate-800 border-2 border-slate-700'
                                             }`}>
                                             {phase.status === 'complete' ? (
-                                                <CheckCircle className={`w-5 h-5 sm:w-6 sm:h-6 text-white`} />
+                                                <CheckCircle className={`w-5 h-5 sm:w-6 sm:h-6 text-slate-300`} />
                                             ) : (
                                                 <phase.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${phase.status === 'active' ? `text-${phase.color}-400` : 'text-slate-500'
                                                     }`} />
                                             )}
                                         </div>
-                                        <span className={`text-xs sm:text-sm font-medium ${activePhase === phase.id ? 'text-slate-200' : 'text-slate-500'
+                                        <span className={`text-xs sm:text-sm font-medium ${activePhase === phase.id ? 'text-slate-300' : 'text-slate-500'
                                             }`}>
                                             Phase {phase.id}
                                         </span>
@@ -212,7 +212,7 @@ const ArcOfCareDashboard: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Input Panel */}
                             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 sm:p-6">
-                                <h2 className="text-xl sm:text-2xl font-bold text-slate-200 mb-4 sm:mb-6">Baseline Assessment</h2>
+                                <h2 className="text-xl sm:text-2xl font-bold text-slate-300 mb-4 sm:mb-6">Baseline Assessment</h2>
 
                                 {/* Sliders */}
                                 <div className="space-y-4 sm:space-y-6">
@@ -281,7 +281,7 @@ const ArcOfCareDashboard: React.FC = () => {
 
                                     <button
                                         onClick={() => handlePhaseComplete(1)}
-                                        className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors"
+                                        className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-slate-300 font-medium rounded-lg transition-colors"
                                     >
                                         Complete Assessment
                                     </button>
@@ -344,7 +344,7 @@ const ArcOfCareDashboard: React.FC = () => {
 
                         <button
                             onClick={() => handlePhaseComplete(2)}
-                            className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+                            className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-slate-300 font-medium rounded-lg transition-colors"
                         >
                             Complete Session
                         </button>
@@ -384,14 +384,14 @@ const ArcOfCareDashboard: React.FC = () => {
                             <PulseCheckWidget onSubmit={() => { }} />
 
                             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 sm:p-6">
-                                <h3 className="text-slate-200 text-lg font-semibold mb-4">Progress Stats</h3>
+                                <h3 className="text-slate-300 text-lg font-semibold mb-4">Progress Stats</h3>
                                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
                                     <div className="bg-slate-800/50 rounded-lg p-3 sm:p-4">
-                                        <p className="text-slate-400 text-xs mb-1">Days Post-Session</p>
+                                        <p className="text-slate-300 text-xs mb-1">Days Post-Session</p>
                                         <p className="text-2xl sm:text-3xl font-bold text-emerald-400">183</p>
                                     </div>
                                     <div className="bg-slate-800/50 rounded-lg p-3 sm:p-4">
-                                        <p className="text-slate-400 text-xs mb-1">PHQ-9 Improvement</p>
+                                        <p className="text-slate-300 text-xs mb-1">PHQ-9 Improvement</p>
                                         <p className="text-2xl sm:text-3xl font-bold text-blue-400">96%</p>
                                     </div>
                                 </div>

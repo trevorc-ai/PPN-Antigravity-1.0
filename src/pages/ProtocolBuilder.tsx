@@ -241,7 +241,7 @@ export const ProtocolBuilder = () => {
   const showClinicalInsights = !!(formData.patient_age && formData.patient_sex && formData.indication_id && formData.substance_id);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#020408] via-[#0a0e1a] to-[#020408] p-6">
+    <div className="min-h-screen bg-[#0a1628] p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header with Back Button */}
         <div className="mb-6">
@@ -287,10 +287,10 @@ export const ProtocolBuilder = () => {
           {/* Left Column: Form (70%) */}
           <div className="space-y-6">
             {/* Section 1: Patient Information */}
-            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
+            <div className="bg-[#0a1628]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#14b8a6] to-[#0d9488] flex items-center justify-center shadow-lg shadow-[#14b8a6]/30">
-                  <span className="text-xl font-black text-slate-300">1</span>
+                  <span className="text-xl font-black text-white">1</span>
                 </div>
                 <h2 className="text-3xl font-black bg-gradient-to-r from-[#f8fafc] to-[#cbd5e1] bg-clip-text text-transparent">
                   Patient Information
@@ -311,10 +311,10 @@ export const ProtocolBuilder = () => {
             </div>
 
             {/* Section 2: Concomitant Medications */}
-            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
+            <div className="bg-[#0a1628]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#14b8a6] to-[#0d9488] flex items-center justify-center shadow-lg shadow-[#14b8a6]/30">
-                  <span className="text-xl font-black text-slate-300">2</span>
+                  <span className="text-xl font-black text-white">2</span>
                 </div>
                 <h2 className="text-3xl font-black bg-gradient-to-r from-[#f8fafc] to-[#cbd5e1] bg-clip-text text-transparent">
                   Concomitant Medications
@@ -327,10 +327,10 @@ export const ProtocolBuilder = () => {
             </div>
 
             {/* Section 3: Protocol Details */}
-            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
+            <div className="bg-[#0a1628]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 hover:border-[#14b8a6]/30 transition-all duration-300">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#14b8a6] to-[#0d9488] flex items-center justify-center shadow-lg shadow-[#14b8a6]/30">
-                  <span className="text-xl font-black text-slate-300">3</span>
+                  <span className="text-xl font-black text-white">3</span>
                 </div>
                 <h2 className="text-3xl font-black bg-gradient-to-r from-[#f8fafc] to-[#cbd5e1] bg-clip-text text-transparent">
                   Protocol Details
@@ -353,7 +353,7 @@ export const ProtocolBuilder = () => {
             </div>
 
             {/* Submit Section */}
-            <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20">
+            <div className="bg-[#0a1628]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20">
               <div className="flex flex-col items-end gap-4">
                 {/* Missing Fields Alert */}
                 {!isFormComplete() && (
@@ -385,7 +385,7 @@ export const ProtocolBuilder = () => {
                     px-10 py-5 rounded-xl font-black text-lg
                     flex items-center gap-3 transition-all duration-300
                     ${isFormComplete()
-                      ? 'bg-gradient-to-r from-[#14b8a6] to-[#0d9488] hover:from-[#0d9488] hover:to-[#0a7a6a] text-slate-300 shadow-2xl shadow-[#14b8a6]/40 hover:shadow-[#14b8a6]/60 hover:scale-105 border-2 border-[#14b8a6]/50'
+                      ? 'bg-gradient-to-r from-[#14b8a6] to-[#0d9488] hover:from-[#0d9488] hover:to-[#0a7a6a] text-white shadow-2xl shadow-[#14b8a6]/40 hover:shadow-[#14b8a6]/60 hover:scale-105 border-2 border-[#14b8a6]/50'
                       : 'bg-[#1e293b] text-[#64748b] cursor-not-allowed border-2 border-[#1e293b]'
                     }
                   `}
@@ -412,7 +412,7 @@ export const ProtocolBuilder = () => {
                   dosageMg={formData.dosage_mg}
                 />
               ) : (
-                <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 text-center shadow-2xl shadow-black/20">
+                <div className="bg-[#0a1628]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 text-center shadow-2xl shadow-black/20">
                   <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#14b8a6]/20 to-[#0d9488]/20 border-2 border-[#14b8a6]/30 flex items-center justify-center">
                     <Sparkles className="w-10 h-10 text-[#14b8a6]" />
                   </div>

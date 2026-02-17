@@ -57,12 +57,12 @@ const SafetySurveillancePage: React.FC = () => {
             case 'G2': return 'bg-blue-500/10 border-blue-500/20 text-blue-400';
             case 'G3': return 'bg-amber-500/10 border-amber-500/20 text-amber-400';
             case 'G4': return 'bg-red-500/10 border-red-500/20 text-red-400';
-            default: return 'bg-slate-500/10 border-slate-500/20 text-slate-400';
+            default: return 'bg-slate-500/10 border-slate-500/20 text-slate-300';
         }
     };
 
     return (
-        <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300">
+        <PageContainer className="min-h-screen bg-[#0a1628] text-slate-300">
             {/* Header */}
             <Section spacing="tight" className="border-b border-slate-800 pb-8">
                 <div className="flex items-center gap-3 mb-2">
@@ -74,7 +74,7 @@ const SafetySurveillancePage: React.FC = () => {
                 <h1 className="text-5xl font-black tracking-tighter">
                     <span className="text-gradient-primary">Safety</span> Surveillance Matrix
                 </h1>
-                <p className="text-slate-400 text-lg font-medium mt-2 max-w-3xl">
+                <p className="text-slate-300 text-lg font-medium mt-2 max-w-3xl">
                     Real-time detection of adverse events and contraindication spikes across the network.
                 </p>
             </Section>
@@ -114,7 +114,7 @@ const SafetySurveillancePage: React.FC = () => {
                             <TrendingDown className="w-5 h-5 text-red-400" />
                             <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Serious Events (SAE)</p>
                         </div>
-                        <p className="text-4xl font-black text-slate-400">0</p>
+                        <p className="text-4xl font-black text-slate-300">0</p>
                         <p className="text-xs text-slate-600 font-medium mt-1">No G4/G5 events</p>
                     </div>
                 </div>
@@ -127,7 +127,7 @@ const SafetySurveillancePage: React.FC = () => {
                     <div className="lg:col-span-2 card-glass p-8 rounded-3xl">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h2 className="text-2xl font-black text-slate-200 tracking-tight">Risk Heatmap</h2>
+                                <h2 className="text-2xl font-black text-slate-300 tracking-tight">Risk Heatmap</h2>
                                 <p className="text-sm text-slate-3000 font-medium mt-1">Frequency × Severity Matrix</p>
                             </div>
                             <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs font-black text-emerald-400 uppercase">
@@ -195,7 +195,7 @@ const SafetySurveillancePage: React.FC = () => {
 
                     {/* Donut Chart (1/3 width) */}
                     <div className="card-glass p-8 rounded-3xl">
-                        <h2 className="text-xl font-black text-slate-200 tracking-tight mb-2">Severity Distribution</h2>
+                        <h2 className="text-xl font-black text-slate-300 tracking-tight mb-2">Severity Distribution</h2>
                         <p className="text-sm text-slate-3000 font-medium mb-6">Event breakdown by grade</p>
 
                         <div role="img" aria-label="Donut chart showing safety event severity distribution: 245 Grade 1 Mild events, 120 Grade 2 Moderate events, 38 Grade 3 Severe events, 4 Grade 4 Life-threatening events, and 0 Grade 5 Fatal events">
@@ -232,7 +232,7 @@ const SafetySurveillancePage: React.FC = () => {
                                 <div key={i} className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 rounded" style={{ backgroundColor: item.color }}></div>
-                                        <span className="text-xs font-bold text-slate-400">{item.name}</span>
+                                        <span className="text-xs font-bold text-slate-300">{item.name}</span>
                                     </div>
                                     <span className="text-sm font-black text-slate-300">{item.value}</span>
                                 </div>
@@ -253,7 +253,7 @@ const SafetySurveillancePage: React.FC = () => {
                 <div className="card-glass p-8 rounded-3xl">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className="text-2xl font-black text-slate-200 tracking-tight">Recent Safety Events</h2>
+                            <h2 className="text-2xl font-black text-slate-300 tracking-tight">Recent Safety Events</h2>
                             <p className="text-sm text-slate-3000 font-medium mt-1">Last 7 days</p>
                         </div>
                         <button className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/20 text-primary text-xs font-black rounded-xl uppercase tracking-widest transition-all">
@@ -288,7 +288,7 @@ const SafetySurveillancePage: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <span className="text-sm font-medium text-slate-400">{event.substance}</span>
+                                            <span className="text-sm font-medium text-slate-300">{event.substance}</span>
                                         </td>
                                         <td className="py-4 px-4">
                                             <span className="text-sm font-medium text-slate-3000">{event.date}</span>

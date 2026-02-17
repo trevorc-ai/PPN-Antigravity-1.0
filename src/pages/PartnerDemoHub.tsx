@@ -304,9 +304,9 @@ const PartnerDemoHub: React.FC = () => {
             case 'Enterprise':
                 return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
             case 'Demo':
-                return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+                return 'bg-slate-500/10 text-slate-300 border-slate-500/20';
             default:
-                return 'bg-slate-500/10 text-slate-400 border-slate-500/20';
+                return 'bg-slate-500/10 text-slate-300 border-slate-500/20';
         }
     };
 
@@ -320,27 +320,27 @@ const PartnerDemoHub: React.FC = () => {
                             Partner Demo Hub
                         </p>
                     </div>
-                    <h1 className="text-6xl font-black tracking-tighter text-slate-200">
+                    <h1 className="text-6xl font-black tracking-tighter text-slate-300">
                         PPN Research Portal
                     </h1>
-                    <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
                         Comprehensive feature gallery showcasing the complete platform capabilities.
                         Click any card to explore the live feature.
                     </p>
                     <div className="flex items-center justify-center gap-4 pt-4">
                         <div className="text-center">
-                            <div className="text-3xl font-black text-slate-200">80+</div>
-                            <div className="text-sm text-slate-400">Active Features</div>
+                            <div className="text-3xl font-black text-slate-300">80+</div>
+                            <div className="text-sm text-slate-300">Active Features</div>
                         </div>
                         <div className="h-12 w-px bg-slate-700"></div>
                         <div className="text-center">
-                            <div className="text-3xl font-black text-slate-200">13</div>
-                            <div className="text-sm text-slate-400">Deep Dives</div>
+                            <div className="text-3xl font-black text-slate-300">13</div>
+                            <div className="text-sm text-slate-300">Deep Dives</div>
                         </div>
                         <div className="h-12 w-px bg-slate-700"></div>
                         <div className="text-center">
-                            <div className="text-3xl font-black text-slate-200">3</div>
-                            <div className="text-sm text-slate-400">Tiers</div>
+                            <div className="text-3xl font-black text-slate-300">3</div>
+                            <div className="text-sm text-slate-300">Tiers</div>
                         </div>
                     </div>
                 </div>
@@ -353,9 +353,9 @@ const PartnerDemoHub: React.FC = () => {
                         <div className="mb-8">
                             <div className="flex items-center gap-3 mb-2">
                                 <span className="text-4xl">{category.icon}</span>
-                                <h2 className="text-3xl font-black text-slate-200">{category.title}</h2>
+                                <h2 className="text-3xl font-black text-slate-300">{category.title}</h2>
                             </div>
-                            <p className="text-slate-400 text-lg ml-14">{category.description}</p>
+                            <p className="text-slate-300 text-lg ml-14">{category.description}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -382,12 +382,12 @@ const PartnerDemoHub: React.FC = () => {
                                     )}
 
                                     {/* Title */}
-                                    <h3 className="text-xl font-black text-slate-200 mb-2 group-hover:text-primary transition-colors">
+                                    <h3 className="text-xl font-black text-slate-300 mb-2 group-hover:text-primary transition-colors">
                                         {feature.title}
                                     </h3>
 
                                     {/* Description */}
-                                    <p className="text-sm text-slate-400 leading-relaxed">
+                                    <p className="text-sm text-slate-300 leading-relaxed">
                                         {feature.description}
                                     </p>
 
@@ -408,21 +408,21 @@ const PartnerDemoHub: React.FC = () => {
             <Section spacing="tight">
                 <div className="bg-gradient-to-r from-primary/10 via-purple-500/10 to-clinical-green/10 border border-primary/20 rounded-2xl p-8">
                     <div className="text-center space-y-4">
-                        <h3 className="text-2xl font-black text-slate-200">Ready to Explore?</h3>
-                        <p className="text-slate-400 max-w-2xl mx-auto">
+                        <h3 className="text-2xl font-black text-slate-300">Ready to Explore?</h3>
+                        <p className="text-slate-300 max-w-2xl mx-auto">
                             This demo hub provides access to all features across Core, Premium, and Enterprise tiers.
                             Click any card above to interact with the live feature.
                         </p>
                         <div className="flex items-center justify-center gap-6 pt-4">
                             <Link
                                 to="/dashboard"
-                                className="px-6 py-3 bg-primary hover:bg-primary/80 text-white font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                                className="px-6 py-3 bg-primary hover:bg-primary/80 text-slate-300 font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95"
                             >
                                 Go to Dashboard
                             </Link>
                             <Link
                                 to="/analytics"
-                                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
+                                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
                             >
                                 View Analytics
                             </Link>

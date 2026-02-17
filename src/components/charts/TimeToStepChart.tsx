@@ -85,7 +85,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                         <p className="text-xs text-slate-300">
                             <span className="font-bold text-emerald-400">75th percentile: {data.p75Days} days</span>
                         </p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-300">
                             Based on {data.nPatients} patient{data.nPatients !== 1 ? 's' : ''}
                         </p>
                     </div>
@@ -108,7 +108,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
             <div className={`card-glass rounded-3xl p-8 h-[500px] flex items-center justify-center ${className}`}>
                 <div className="text-center space-y-4">
                     <span className="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span>
-                    <p className="text-sm font-medium text-slate-400">Loading time-to-step data...</p>
+                    <p className="text-sm font-medium text-slate-300">Loading time-to-step data...</p>
                 </div>
             </div>
         );
@@ -121,7 +121,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-4xl text-red-400">error</span>
                     <div>
                         <p className="text-sm font-bold text-red-400 mb-1">Error Loading Data</p>
-                        <p className="text-xs text-slate-400">{error}</p>
+                        <p className="text-xs text-slate-300">{error}</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-6xl text-slate-600">schedule</span>
                     <div>
                         <p className="text-lg font-black text-slate-300 mb-2">No Data Available</p>
-                        <p className="text-sm text-slate-400 max-w-md">
+                        <p className="text-sm text-slate-300 max-w-md">
                             {filters.siteIds.length > 0
                                 ? 'No transitions found for selected filters. Try adjusting your filters or note that small-cell suppression hides transitions with fewer than 10 patients.'
                                 : 'No patient transitions found. This view requires at least 10 patients per transition.'}
@@ -156,8 +156,8 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-3xl text-primary">schedule</span>
                     <div>
-                        <h3 className="text-xl font-black text-slate-200">Time to Next Step</h3>
-                        <p className="text-xs text-slate-400 font-medium">Median days between treatment stages</p>
+                        <h3 className="text-xl font-black text-slate-300">Time to Next Step</h3>
+                        <p className="text-xs text-slate-300 font-medium">Median days between treatment stages</p>
                     </div>
                 </div>
 
@@ -220,19 +220,19 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                 <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-emerald-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">≤3 days (Fast)</span>
+                        <span className="text-xs text-slate-300 font-medium">≤3 days (Fast)</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-blue-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">4-7 days (Normal)</span>
+                        <span className="text-xs text-slate-300 font-medium">4-7 days (Normal)</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-amber-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">8-14 days (Slow)</span>
+                        <span className="text-xs text-slate-300 font-medium">8-14 days (Slow)</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-red-500"></div>
-                        <span className="text-xs text-slate-400 font-medium">&gt;14 days (Very Slow)</span>
+                        <span className="text-xs text-slate-300 font-medium">&gt;14 days (Very Slow)</span>
                     </div>
                 </div>
             </div>
@@ -245,7 +245,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                             {transition.transition}
                         </p>
                         <p className="text-lg font-black text-slate-300">{transition.medianDays}d</p>
-                        <p className="text-[10px] text-slate-400 font-medium">
+                        <p className="text-[10px] text-slate-300 font-medium">
                             P75: {transition.p75Days}d
                         </p>
                     </div>

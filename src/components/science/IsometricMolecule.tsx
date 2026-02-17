@@ -80,11 +80,11 @@ const IsometricMolecule: React.FC<IsometricMoleculeProps> = ({
 
                 {/* Label */}
                 <div className="mt-6 text-center space-y-1">
-                    <h3 className="text-xl font-bold text-slate-200 group-hover:text-emerald-400 transition-colors duration-300">
+                    <h3 className="text-xl font-bold text-slate-300 group-hover:text-emerald-400 transition-colors duration-300">
                         {name}
                     </h3>
                     {formula && (
-                        <p className="text-sm text-slate-400 font-mono">
+                        <p className="text-sm text-slate-300 font-mono">
                             {formula}
                         </p>
                     )}

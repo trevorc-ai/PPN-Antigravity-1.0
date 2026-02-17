@@ -11,6 +11,15 @@ export { StarRating } from './shared/StarRating';
 export { SegmentedControl } from './shared/SegmentedControl';
 export { UserPicker } from './shared/UserPicker';
 export type { UserOption } from './shared/UserPicker';
+export { NowButton, RelativeTimeDisplay } from './shared/NowButton';
+export { VitalPresetsBar, VITAL_PRESETS } from './shared/VitalPresetsBar';
+export type { VitalPreset } from './shared/VitalPresetsBar';
+export { BatchRegistrationModal } from './shared/BatchRegistrationModal';
+export type { BatchData } from './shared/BatchRegistrationModal';
+export { DeviceRegistrationModal } from './shared/DeviceRegistrationModal';
+export type { DeviceData } from './shared/DeviceRegistrationModal';
+export { VisualTimeline } from './shared/VisualTimeline';
+export type { VisualTimelineProps } from './shared/VisualTimeline';
 
 // ========== PHASE 1: PREPARATION (5 forms) ==========
 export { default as MentalHealthScreeningForm } from './phase-1-preparation/MentalHealthScreeningForm';
@@ -56,34 +65,20 @@ export type { SafetyEventObservationsData } from './phase-2-dosing/SafetyEventOb
 export { default as RescueProtocolForm } from './phase-2-dosing/RescueProtocolForm';
 export type { RescueProtocolData } from './phase-2-dosing/RescueProtocolForm';
 
-// ========== PHASE 3: INTEGRATION (4 forms) ==========
+// ========== PHASE 3: INTEGRATION (4 forms - 100% PHI-Safe) ==========
 export { default as DailyPulseCheckForm } from './phase-3-integration/DailyPulseCheckForm';
 export type { DailyPulseCheckData } from './phase-3-integration/DailyPulseCheckForm';
 
 export { default as LongitudinalAssessmentForm } from './phase-3-integration/LongitudinalAssessmentForm';
 export type { LongitudinalAssessmentData } from './phase-3-integration/LongitudinalAssessmentForm';
 
-export { default as IntegrationSessionNotesForm } from './phase-3-integration/IntegrationSessionNotesForm';
-export type { IntegrationSessionNotesData } from './phase-3-integration/IntegrationSessionNotesForm';
-
-export { default as IntegrationInsightsForm } from './phase-3-integration/IntegrationInsightsForm';
-export type { IntegrationInsightsData } from './phase-3-integration/IntegrationInsightsForm';
-
-// NEW: Structured Replacement Forms (100% PHI-Safe)
 export { default as StructuredIntegrationSessionForm } from './phase-3-integration/StructuredIntegrationSessionForm';
 export type { StructuredIntegrationSessionData } from './phase-3-integration/StructuredIntegrationSessionForm';
 
 export { default as BehavioralChangeTrackerForm } from './phase-3-integration/BehavioralChangeTrackerForm';
 export type { BehavioralChangeData } from './phase-3-integration/BehavioralChangeTrackerForm';
 
-// ========== ONGOING SAFETY (2 forms) ==========
-export { default as OngoingSafetyMonitoringForm } from './ongoing-safety/OngoingSafetyMonitoringForm';
-export type { OngoingSafetyMonitoringData } from './ongoing-safety/OngoingSafetyMonitoringForm';
-
-export { default as ProgressNotesForm } from './ongoing-safety/ProgressNotesForm';
-export type { ProgressNotesData } from './ongoing-safety/ProgressNotesForm';
-
-// NEW: Structured Safety Check (100% PHI-Safe)
+// ========== ONGOING SAFETY (1 form - 100% PHI-Safe) ==========
 export { default as StructuredSafetyCheckForm } from './ongoing-safety/StructuredSafetyCheckForm';
 export type { StructuredSafetyCheckData } from './ongoing-safety/StructuredSafetyCheckForm';
 

@@ -151,13 +151,13 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
                                     onClick={() => toggleCategory(category)}
                                     className="w-full flex items-center justify-between px-4 py-2 bg-slate-800 hover:bg-slate-700 transition-colors"
                                 >
-                                    <span className="text-sm font-medium text-slate-200">{category}</span>
+                                    <span className="text-sm font-medium text-slate-300">{category}</span>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs text-slate-400">{meds.length} medications</span>
+                                        <span className="text-xs text-slate-300">{meds.length} medications</span>
                                         {expandedCategories.includes(category) ? (
-                                            <ChevronUp className="w-4 h-4 text-slate-400" />
+                                            <ChevronUp className="w-4 h-4 text-slate-300" />
                                         ) : (
-                                            <ChevronDown className="w-4 h-4 text-slate-400" />
+                                            <ChevronDown className="w-4 h-4 text-slate-300" />
                                         )}
                                     </div>
                                 </button>

@@ -53,7 +53,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-slate-900/95 backdrop-blur-sm p-4 border border-slate-700 rounded-lg shadow-xl max-w-[250px] z-50 print:bg-white print:border-gray-200 print:text-black">
-                <h4 className="text-slate-200 font-bold mb-1 text-xs uppercase tracking-wider print:text-black">{label}</h4>
+                <h4 className="text-slate-300 font-bold mb-1 text-xs uppercase tracking-wider print:text-black">{label}</h4>
                 <p className="text-xs text-slate-3000 mb-3 italic print:text-gray-500">
                     {METRIC_DEFINITIONS[label] || 'Performance Metric'}
                 </p>
@@ -147,7 +147,7 @@ export default function ClinicPerformanceRadar() {
                 {/* Insights Panel - Scrollable if content overflows */}
                 <div className="flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar max-h-[400px]">
                     <div className="flex items-center gap-2 mb-2 sticky top-0 bg-[#0f1218]/90 backdrop-blur pb-2 z-10 print:bg-white">
-                        <FileText className="w-4 h-4 text-slate-400" />
+                        <FileText className="w-4 h-4 text-slate-300" />
                         <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest print:text-black">
                             {timeRange === 'quarter' ? 'Quarterly' : 'Annual'} Analysis
                         </h3>
@@ -161,9 +161,9 @@ export default function ClinicPerformanceRadar() {
                                 {insight.status === 'danger' && <AlertCircle className="w-4 h-4 text-red-500" />}
                             </div>
                             <div className="flex items-end gap-2 mb-1">
-                                <span className="text-xl font-mono font-bold text-slate-200 print:text-black">{insight.value}</span>
+                                <span className="text-xl font-mono font-bold text-slate-300 print:text-black">{insight.value}</span>
                             </div>
-                            <p className="text-[11px] text-slate-400 leading-snug group-hover:text-slate-300 transition-colors print:text-gray-600">
+                            <p className="text-[11px] text-slate-300 leading-snug group-hover:text-slate-300 transition-colors print:text-gray-600">
                                 {insight.text}
                             </p>
                         </div>

@@ -188,15 +188,15 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
           </span>
           <button
             onClick={onComplete}
-            className="text-[11px] font-black text-slate-3000 hover:text-slate-200 uppercase tracking-widest transition-all"
+            className="text-[11px] font-black text-slate-3000 hover:text-slate-300 uppercase tracking-widest transition-all"
           >
             Skip
           </button>
         </div>
 
         <div className="space-y-1.5">
-          <h3 className="text-lg font-black text-slate-200 tracking-tight leading-none">{step.title}</h3>
-          <p className="text-[12px] text-slate-400 font-medium leading-relaxed">
+          <h3 className="text-lg font-black text-slate-300 tracking-tight leading-none">{step.title}</h3>
+          <p className="text-[12px] text-slate-300 font-medium leading-relaxed">
             {step.description}
           </p>
         </div>

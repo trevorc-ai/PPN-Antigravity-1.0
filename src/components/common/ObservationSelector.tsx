@@ -75,7 +75,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
             <div className={`space-y-4 ${className}`}>
                 <label className="text-slate-300 text-sm font-medium">{label}</label>
                 <div className="p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
-                    <p className="text-slate-400 text-sm">Loading observations...</p>
+                    <p className="text-slate-300 text-sm">Loading observations...</p>
                 </div>
             </div>
         );
@@ -121,7 +121,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
             <div className="space-y-2 max-h-64 overflow-y-auto">
                 {observations.length === 0 ? (
                     <div className="p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
-                        <p className="text-slate-400 text-sm">No observations available for this category.</p>
+                        <p className="text-slate-300 text-sm">No observations available for this category.</p>
                     </div>
                 ) : (
                     observations.map(obs => (
@@ -135,7 +135,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
                                 onChange={() => toggleObservation(obs.observation_id)}
                                 className="mt-0.5 w-4 h-4 text-emerald-500 bg-slate-700 border-slate-600 rounded focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0"
                             />
-                            <span className="text-slate-200 text-sm flex-1 group-hover:text-white transition-colors">
+                            <span className="text-slate-300 text-sm flex-1 group-hover:text-slate-300 transition-colors">
                                 {obs.observation_text}
                             </span>
                         </label>

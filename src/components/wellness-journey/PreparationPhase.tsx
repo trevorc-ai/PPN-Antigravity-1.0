@@ -52,7 +52,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                                 <span className={`text-3xl ${phq9Info.color}`}>{phq9Info.emoji}</span>
                                 <span className={`text-4xl font-black ${phq9Info.color}`}>{journey.baseline.phq9}</span>
                             </div>
-                            <div className="text-sm text-slate-400 font-semibold">PHQ-9</div>
+                            <div className="text-sm text-slate-300 font-semibold">PHQ-9</div>
                         </div>
                     </AdvancedTooltip>
 
@@ -68,7 +68,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                                 <span className={`text-3xl ${gad7Info.color}`}>{gad7Info.emoji}</span>
                                 <span className={`text-4xl font-black ${gad7Info.color}`}>{journey.baseline.gad7}</span>
                             </div>
-                            <div className="text-sm text-slate-400 font-semibold">GAD-7</div>
+                            <div className="text-sm text-slate-300 font-semibold">GAD-7</div>
                         </div>
                     </AdvancedTooltip>
 
@@ -84,7 +84,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                                 <span className="text-3xl">⚠️</span>
                                 <span className="text-4xl font-black text-amber-400">{journey.baseline.aceScore}</span>
                             </div>
-                            <div className="text-sm text-slate-400 font-semibold">ACE</div>
+                            <div className="text-sm text-slate-300 font-semibold">ACE</div>
                         </div>
                     </AdvancedTooltip>
 
@@ -100,7 +100,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                                 <span className="text-3xl">✨</span>
                                 <span className="text-4xl font-black text-emerald-400">{journey.baseline.expectancy}</span>
                             </div>
-                            <div className="text-sm text-slate-400 font-semibold">Expect</div>
+                            <div className="text-sm text-slate-300 font-semibold">Expect</div>
                         </div>
                     </AdvancedTooltip>
                 </div>
@@ -110,18 +110,18 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                 <div className="flex items-center gap-3 mb-4">
                     <TrendingUp className="w-6 h-6 text-emerald-400" />
-                    <h3 className="text-xl font-black text-slate-200">Predicted Outcomes</h3>
+                    <h3 className="text-xl font-black text-slate-300">Predicted Outcomes</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
-                        <div className="text-sm text-slate-400 mb-2">Success Rate</div>
+                        <div className="text-sm text-slate-300 mb-2">Success Rate</div>
                         <div className="text-3xl font-black text-emerald-400">72%</div>
                         <div className="text-xs text-slate-500 mt-2">Based on similar profiles</div>
                     </div>
 
                     <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-                        <div className="text-sm text-slate-400 mb-2">Challenging Experience</div>
+                        <div className="text-sm text-slate-300 mb-2">Challenging Experience</div>
                         <div className="text-3xl font-black text-amber-400">45%</div>
                         <div className="text-xs text-slate-500 mt-2">Likelihood of difficult moments</div>
                     </div>
@@ -146,17 +146,17 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
             {showAI && (
                 <div className="space-y-2 animate-in slide-in-from-top duration-300">
                     <div className="p-3 bg-slate-900/40 rounded-lg">
-                        <p className="text-sm text-slate-400 mb-1">Historical Success Rate</p>
+                        <p className="text-sm text-slate-300 mb-1">Historical Success Rate</p>
                         <p className="text-emerald-400 text-sm font-bold">72% achieved remission (PHQ-9 &lt; 5)</p>
                         <p className="text-slate-500 text-sm mt-1">At 6-month follow-up</p>
                     </div>
                     <div className="p-3 bg-slate-900/40 rounded-lg">
-                        <p className="text-sm text-slate-400 mb-1">Experience Pattern</p>
+                        <p className="text-sm text-slate-300 mb-1">Experience Pattern</p>
                         <p className="text-amber-400 text-sm font-bold">45% experienced challenging moments</p>
                         <p className="text-slate-500 text-sm mt-1">CEQ score &gt; 50 during session</p>
                     </div>
                     <div className="p-3 bg-slate-900/40 rounded-lg">
-                        <p className="text-sm text-slate-400 mb-1">Integration Pattern</p>
+                        <p className="text-sm text-slate-300 mb-1">Integration Pattern</p>
                         <p className="text-blue-400 text-sm font-bold">Average: 6 sessions over 6 months</p>
                         <p className="text-slate-500 text-sm mt-1">Among patients with ACE ≥ 4</p>
                     </div>
@@ -166,7 +166,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                         type="warning"
                         title="Legal Disclaimer"
                     >
-                        <div className="flex items-center justify-center gap-1 text-slate-500 text-sm cursor-help hover:text-slate-400 transition-colors">
+                        <div className="flex items-center justify-center gap-1 text-slate-500 text-sm cursor-help hover:text-slate-300 transition-colors">
                             <span>⚠️</span>
                             <span className="italic">For informational purposes only</span>
                         </div>
@@ -186,7 +186,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
             {showBenchmarks && (
                 <div className="space-y-3 animate-in slide-in-from-top duration-300">
                     <div className="space-y-1">
-                        <p className="text-sm text-slate-400 mb-2">PHQ-9 Comparison</p>
+                        <p className="text-sm text-slate-300 mb-2">PHQ-9 Comparison</p>
                         <div className="flex items-center gap-2 text-sm">
                             <span className="w-16 text-slate-500">You</span>
                             <div className="flex-1 h-2 bg-slate-900/60 rounded-full overflow-hidden">
@@ -199,14 +199,14 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                             <div className="flex-1 h-2 bg-slate-900/60 rounded-full overflow-hidden">
                                 <div className="h-full bg-slate-400" style={{ width: `${(18 / 27) * 100}%` }} />
                             </div>
-                            <span className="w-8 text-slate-400">18</span>
+                            <span className="w-8 text-slate-300">18</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                             <span className="w-16 text-slate-500">Global</span>
                             <div className="flex-1 h-2 bg-slate-900/60 rounded-full overflow-hidden">
                                 <div className="h-full bg-slate-400" style={{ width: `${(17 / 27) * 100}%` }} />
                             </div>
-                            <span className="w-8 text-slate-400">17</span>
+                            <span className="w-8 text-slate-300">17</span>
                         </div>
                     </div>
                     <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded text-sm text-emerald-300">

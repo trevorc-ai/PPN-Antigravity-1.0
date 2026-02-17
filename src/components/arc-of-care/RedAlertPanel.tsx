@@ -104,15 +104,15 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
     const getSeverityConfig = (severity: string) => {
         switch (severity) {
             case 'critical':
-                return { bg: 'bg-red-500/20', border: 'border-red-500/40', text: 'text-red-300', badge: 'bg-red-500 text-white' };
+                return { bg: 'bg-red-500/20', border: 'border-red-500/40', text: 'text-red-300', badge: 'bg-red-500 text-slate-300' };
             case 'high':
-                return { bg: 'bg-orange-500/20', border: 'border-orange-500/40', text: 'text-orange-300', badge: 'bg-orange-500 text-white' };
+                return { bg: 'bg-orange-500/20', border: 'border-orange-500/40', text: 'text-orange-300', badge: 'bg-orange-500 text-slate-300' };
             case 'moderate':
-                return { bg: 'bg-amber-500/20', border: 'border-amber-500/40', text: 'text-amber-300', badge: 'bg-amber-500 text-white' };
+                return { bg: 'bg-amber-500/20', border: 'border-amber-500/40', text: 'text-amber-300', badge: 'bg-amber-500 text-slate-300' };
             case 'low':
-                return { bg: 'bg-blue-500/20', border: 'border-blue-500/40', text: 'text-blue-300', badge: 'bg-blue-500 text-white' };
+                return { bg: 'bg-blue-500/20', border: 'border-blue-500/40', text: 'text-blue-300', badge: 'bg-blue-500 text-slate-300' };
             default:
-                return { bg: 'bg-slate-500/20', border: 'border-slate-500/40', text: 'text-slate-300', badge: 'bg-slate-500 text-white' };
+                return { bg: 'bg-slate-500/20', border: 'border-slate-500/40', text: 'text-slate-300', badge: 'bg-slate-500 text-slate-300' };
         }
     };
 
@@ -153,7 +153,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                 <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="w-5 h-5 text-red-400" />
-                        <h3 className="text-slate-200 font-semibold text-lg">Active Alerts ({activeAlerts.length})</h3>
+                        <h3 className="text-slate-300 font-semibold text-lg">Active Alerts ({activeAlerts.length})</h3>
                     </div>
 
                     <div className="space-y-3">
@@ -210,7 +210,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                                                     {!alert.isAcknowledged && (
                                                         <button
                                                             onClick={() => handleAcknowledge(alert.id)}
-                                                            className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded transition-colors"
+                                                            className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-slate-300 text-xs font-medium rounded transition-colors"
                                                         >
                                                             Acknowledge
                                                         </button>
@@ -219,7 +219,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                                                         onClick={() => setSelectedAlert(isExpanded ? null : alert.id)}
                                                         className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${isExpanded
                                                             ? 'bg-slate-700 text-slate-300'
-                                                            : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                                                            : 'bg-emerald-500 hover:bg-emerald-600 text-slate-300'
                                                             }`}
                                                     >
                                                         {isExpanded ? 'Cancel' : 'Resolve'}
@@ -246,7 +246,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                                                 <select
                                                     value={selectedResolution}
                                                     onChange={(e) => setSelectedResolution(e.target.value)}
-                                                    className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                    className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                                 >
                                                     <option value="">Select resolution action...</option>
                                                     {RESOLUTION_ACTIONS.map((action) => (
@@ -259,7 +259,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                                                     onClick={() => handleResolve(alert.id)}
                                                     disabled={!selectedResolution}
                                                     className={`mt-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedResolution
-                                                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                                                        ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-300'
                                                         : 'bg-slate-700 text-slate-500 cursor-not-allowed'
                                                         }`}
                                                 >
@@ -278,7 +278,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
             {/* Resolved Alerts (Collapsed) */}
             {resolvedAlerts.length > 0 && (
                 <details className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                    <summary className="cursor-pointer text-slate-400 text-sm font-medium flex items-center gap-2">
+                    <summary className="cursor-pointer text-slate-300 text-sm font-medium flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" />
                         Resolved Alerts ({resolvedAlerts.length})
                     </summary>
@@ -288,7 +288,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                             return (
                                 <div key={alert.id} className="p-3 bg-slate-800/30 rounded-lg border border-slate-700/30">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm text-slate-400">{config.label}</span>
+                                        <span className="text-sm text-slate-300">{config.label}</span>
                                         <span className="text-xs text-slate-500">
                                             {new Date(alert.triggeredAt).toLocaleDateString()}
                                         </span>

@@ -117,7 +117,7 @@ const RescueProtocolChecklist: React.FC<RescueProtocolChecklistProps> = ({
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-4">
                 <Shield className="w-5 h-5 text-amber-400" />
-                <h3 className="text-slate-200 font-semibold">Rescue Protocol</h3>
+                <h3 className="text-slate-300 font-semibold">Rescue Protocol</h3>
             </div>
 
             <div className="space-y-2">
@@ -154,11 +154,11 @@ const RescueProtocolChecklist: React.FC<RescueProtocolChecklistProps> = ({
                                             : 'border-slate-600'
                                         }
                   `}>
-                                        {isUsed && <CheckCircle className="w-4 h-4 text-white" />}
+                                        {isUsed && <CheckCircle className="w-4 h-4 text-slate-300" />}
                                     </div>
 
                                     {/* Icon */}
-                                    <Icon className={`w-4 h-4 ${isUsed ? `text-${color}-400` : 'text-slate-400'}`} />
+                                    <Icon className={`w-4 h-4 ${isUsed ? `text-${color}-400` : 'text-slate-300'}`} />
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
@@ -190,8 +190,8 @@ const RescueProtocolChecklist: React.FC<RescueProtocolChecklistProps> = ({
             {/* Summary */}
             <div className="mt-4 pt-4 border-t border-slate-700/30">
                 <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-400">Interventions Used:</span>
-                    <span className="text-slate-200 font-semibold">{usedInterventions.size} / {protocols.length}</span>
+                    <span className="text-slate-300">Interventions Used:</span>
+                    <span className="text-slate-300 font-semibold">{usedInterventions.size} / {protocols.length}</span>
                 </div>
             </div>
         </div>

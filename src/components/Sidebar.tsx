@@ -69,17 +69,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full bg-[#0a0e1a] border-r border-slate-800 z-50 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed top-0 left-0 h-full bg-[#0a1628] border-r border-slate-800 z-50 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           } w-64 flex flex-col`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-800">
+        <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-lg">neurology</span>
+              <span className="material-symbols-outlined text-slate-300 text-lg">neurology</span>
             </div>
             <div>
-              <h1 className="text-sm font-black text-white tracking-tight">PPN Portal</h1>
+              <h1 className="text-sm font-black tracking-tight" style={{ color: '#8B9DC3' }}>PPN Portal</h1>
               <p className="text-xs font-mono text-slate-500 uppercase tracking-wider">Research v2.4</p>
             </div>
           </div>
@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             onClick={onClose}
             className="lg:hidden p-1 hover:bg-slate-800 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-slate-400" />
+            <X className="w-5 h-5" style={{ color: '#8B9DC3' }} />
           </button>
         </div>
 
@@ -120,8 +120,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                           }}
                           className={({ isActive }) =>
                             `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
-                              ? 'bg-primary/30 text-white ring-2 ring-primary shadow-lg shadow-primary/20'
-                              : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                              ? 'bg-primary/30 ring-2 ring-primary shadow-lg shadow-primary/20'
+                              : 'hover:bg-slate-800/50'
                             }`
                           }
                         >
@@ -136,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                               >
                                 {item.icon}
                               </span>
-                              <span className="text-base font-bold tracking-wide">{item.label}</span>
+                              <span className="text-base font-bold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
                             </>
                           )}
                         </NavLink>
@@ -149,18 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-slate-800">
-          <div className="bg-slate-900/50 rounded-xl p-3 space-y-1">
-            <p className="text-xs font-black text-slate-500 uppercase tracking-widest">
-              System Status
-            </p>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-clinical-green animate-pulse" />
-              <span className="text-xs font-bold text-slate-400">All Systems Operational</span>
-            </div>
-          </div>
-        </div>
+
       </aside>
     </>
   );

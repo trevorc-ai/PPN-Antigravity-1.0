@@ -13,7 +13,7 @@ export const PatientSelectionScreen: React.FC<PatientSelectionScreenProps> = ({
     onBack,
 }) => {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#020408] via-[#0a0e1a] to-[#020408] flex items-center justify-center p-6">
+        <div className="min-h-screen bg-[#0a1628] flex items-center justify-center p-6">
             <div className="max-w-4xl w-full">
                 {/* Back Button */}
                 {onBack && (

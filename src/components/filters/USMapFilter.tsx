@@ -45,10 +45,10 @@ export const USMapFilter: React.FC<USMapFilterProps> = ({
                     </span>
                 </div>
                 <div>
-                    <h3 className="text-lg font-black text-slate-200 tracking-tight">
+                    <h3 className="text-lg font-black text-slate-300 tracking-tight">
                         State Filter
                     </h3>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-300">
                         Click states to filter data
                     </p>
                 </div>
@@ -118,8 +118,8 @@ export const USMapFilter: React.FC<USMapFilterProps> = ({
             {/* Hover Tooltip */}
             {hoveredState && (
                 <div className="mt-4 text-center">
-                    <p className="text-sm text-slate-400">
-                        Hover: <span className="text-slate-200 font-bold">{hoveredState}</span>
+                    <p className="text-sm text-slate-300">
+                        Hover: <span className="text-slate-300 font-bold">{hoveredState}</span>
                     </p>
                 </div>
             )}
@@ -140,7 +140,7 @@ export const USMapFilter: React.FC<USMapFilterProps> = ({
                                 <button
                                     onClick={() => handleRemoveState(state)}
                                     disabled={disabled}
-                                    className="text-slate-400 hover:text-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="text-slate-300 hover:text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     aria-label={`Remove ${state}`}
                                 >
                                     <span className="material-symbols-outlined text-sm">close</span>

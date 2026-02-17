@@ -160,7 +160,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
                             </p>
                         )}
                         {totalPatients > 0 && (
-                            <p className="text-xs text-slate-400">
+                            <p className="text-xs text-slate-300">
                                 {Math.round((data.patients / totalPatients) * 100)}% of initial cohort
                             </p>
                         )}
@@ -188,7 +188,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
             <div className={`card-glass rounded-3xl p-8 h-[500px] flex items-center justify-center ${className}`}>
                 <div className="text-center space-y-4">
                     <span className="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span>
-                    <p className="text-sm font-medium text-slate-400">Loading funnel data...</p>
+                    <p className="text-sm font-medium text-slate-300">Loading funnel data...</p>
                 </div>
             </div>
         );
@@ -201,7 +201,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
                     <span className="material-symbols-outlined text-4xl text-red-400">error</span>
                     <div>
                         <p className="text-sm font-bold text-red-400 mb-1">Error Loading Data</p>
-                        <p className="text-xs text-slate-400">{error}</p>
+                        <p className="text-xs text-slate-300">{error}</p>
                     </div>
                 </div>
             </div>
@@ -215,7 +215,7 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
                     <span className="material-symbols-outlined text-6xl text-slate-600">waterfall_chart</span>
                     <div>
                         <p className="text-lg font-black text-slate-300 mb-2">No Data Available</p>
-                        <p className="text-sm text-slate-400">
+                        <p className="text-sm text-slate-300">
                             {filters.siteIds.length > 0 || filters.dateRange.start || filters.substanceIds.length > 0
                                 ? 'Try adjusting your filters'
                                 : 'No patient flow events found'}
@@ -236,8 +236,8 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-3xl text-primary">waterfall_chart</span>
                     <div>
-                        <h3 className="text-xl font-black text-slate-200">Patient Flow Funnel</h3>
-                        <p className="text-xs text-slate-400 font-medium">Progression through treatment stages</p>
+                        <h3 className="text-xl font-black text-slate-300">Patient Flow Funnel</h3>
+                        <p className="text-xs text-slate-300 font-medium">Progression through treatment stages</p>
                     </div>
                 </div>
 

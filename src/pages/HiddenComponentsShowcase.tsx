@@ -14,14 +14,21 @@ const HiddenComponentsShowcase: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
+            {/* READ-ONLY WARNING BANNER */}
+            <div className="bg-amber-500/20 border-2 border-amber-500/50 rounded-xl px-6 py-3 mb-8 max-w-7xl mx-auto">
+                <p className="text-amber-300 text-sm font-bold text-center">
+                    ⚠️ READ-ONLY SHOWCASE - Do not modify without express user permission
+                </p>
+            </div>
+
             <div className="max-w-7xl mx-auto space-y-12">
                 {/* Header */}
                 <div className="text-center space-y-4">
-                    <h1 className="text-5xl font-black text-slate-200 tracking-tight">
+                    <h1 className="text-5xl font-black text-slate-300 tracking-tight">
                         Hidden Components Showcase
                     </h1>
-                    <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+                    <p className="text-lg text-slate-300 max-w-2xl mx-auto">
                         Premium components that are built but not yet integrated into the application
                     </p>
                 </div>
@@ -36,7 +43,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 <span className="text-indigo-400 font-black">1</span>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-200">NeuralCopilot</h2>
+                                <h2 className="text-2xl font-black text-slate-300">NeuralCopilot</h2>
                                 <p className="text-sm text-slate-3000">AI-Powered Clinical Assistant</p>
                             </div>
                         </div>
@@ -44,7 +51,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             <NeuralCopilot context={{ demo: true }} />
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Features:</p>
+                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Google Gemini AI integration</li>
                                 <li>• Real-time safety flag detection</li>
@@ -61,7 +68,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 <span className="text-purple-400 font-black">2</span>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-200">GlassInput</h2>
+                                <h2 className="text-2xl font-black text-slate-300">GlassInput</h2>
                                 <p className="text-sm text-slate-3000">Premium Glassmorphic Input</p>
                             </div>
                         </div>
@@ -85,7 +92,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             />
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Features:</p>
+                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Backdrop blur (12px)</li>
                                 <li>• High-contrast borders (accessible)</li>
@@ -102,26 +109,26 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 <span className="text-emerald-400 font-black">3</span>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-200">GlassmorphicCard</h2>
+                                <h2 className="text-2xl font-black text-slate-300">GlassmorphicCard</h2>
                                 <p className="text-sm text-slate-3000">Glass Effect Container</p>
                             </div>
                         </div>
                         <div className="space-y-4">
                             <GlassmorphicCard hoverable={true}>
-                                <h3 className="text-xl font-black text-slate-200 mb-2">Hoverable Card</h3>
+                                <h3 className="text-xl font-black text-slate-300 mb-2">Hoverable Card</h3>
                                 <p className="text-sm text-slate-300 leading-relaxed">
                                     This card has hover effects. Try hovering over it to see the elevation and glow.
                                 </p>
                             </GlassmorphicCard>
                             <GlassmorphicCard hoverable={false}>
-                                <h3 className="text-xl font-black text-slate-200 mb-2">Static Card</h3>
+                                <h3 className="text-xl font-black text-slate-300 mb-2">Static Card</h3>
                                 <p className="text-sm text-slate-300 leading-relaxed">
                                     This card has no hover effects. Perfect for content that doesn't need interaction.
                                 </p>
                             </GlassmorphicCard>
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Features:</p>
+                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Backdrop blur (20px)</li>
                                 <li>• Hover effects (optional)</li>
@@ -138,7 +145,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 <span className="text-amber-400 font-black">4</span>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-200">GuidedTour</h2>
+                                <h2 className="text-2xl font-black text-slate-300">GuidedTour</h2>
                                 <p className="text-sm text-slate-3000">Interactive Onboarding</p>
                             </div>
                         </div>
@@ -159,7 +166,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             </div>
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Features:</p>
+                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• 5 predefined steps</li>
                                 <li>• Smart positioning (auto-flip)</li>
@@ -179,7 +186,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 <span className="text-emerald-400 font-black">5</span>
                             </div>
                             <div>
-                                <h2 className="text-2xl font-black text-slate-200">Wellness Journey - Phase 1</h2>
+                                <h2 className="text-2xl font-black text-slate-300">Wellness Journey - Phase 1</h2>
                                 <p className="text-sm text-slate-300">Set & Setting Analysis (WO_042)</p>
                             </div>
                         </div>
@@ -188,7 +195,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                         <div className="space-y-6">
                             {/* Low Risk Patient */}
                             <div>
-                                <h3 className="text-lg font-semibold text-slate-200 mb-3">Low Risk Patient</h3>
+                                <h3 className="text-lg font-semibold text-slate-300 mb-3">Low Risk Patient</h3>
                                 <SetAndSettingCard
                                     expectancyScale={85}
                                     aceScore={1}
@@ -200,7 +207,7 @@ const HiddenComponentsShowcase: React.FC = () => {
 
                             {/* Moderate Risk Patient */}
                             <div>
-                                <h3 className="text-lg font-semibold text-slate-200 mb-3">Moderate Risk Patient</h3>
+                                <h3 className="text-lg font-semibold text-slate-300 mb-3">Moderate Risk Patient</h3>
                                 <SetAndSettingCard
                                     expectancyScale={55}
                                     aceScore={5}
@@ -211,7 +218,7 @@ const HiddenComponentsShowcase: React.FC = () => {
 
                             {/* High Risk Patient */}
                             <div>
-                                <h3 className="text-lg font-semibold text-slate-200 mb-3">High Risk Patient</h3>
+                                <h3 className="text-lg font-semibold text-slate-300 mb-3">High Risk Patient</h3>
                                 <SetAndSettingCard
                                     expectancyScale={35}
                                     aceScore={8}
@@ -222,7 +229,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                         </div>
 
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Features:</p>
+                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Treatment expectancy gauge (1-100 scale)</li>
                                 <li>• ACE score bar chart (0-10 trauma assessment)</li>
@@ -241,23 +248,23 @@ const HiddenComponentsShowcase: React.FC = () => {
 
                 {/* Strategic Value */}
                 <div className="bg-slate-900/50 border-2 border-primary/20 rounded-2xl p-8">
-                    <h2 className="text-2xl font-black text-slate-200 mb-4">Strategic Value</h2>
+                    <h2 className="text-2xl font-black text-slate-300 mb-4">Strategic Value</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="space-y-2">
                             <div className="text-3xl font-black text-indigo-400">10KB</div>
-                            <p className="text-sm text-slate-400">NeuralCopilot</p>
+                            <p className="text-sm text-slate-300">NeuralCopilot</p>
                         </div>
                         <div className="space-y-2">
                             <div className="text-3xl font-black text-purple-400">3KB</div>
-                            <p className="text-sm text-slate-400">GlassInput</p>
+                            <p className="text-sm text-slate-300">GlassInput</p>
                         </div>
                         <div className="space-y-2">
                             <div className="text-3xl font-black text-emerald-400">1KB</div>
-                            <p className="text-sm text-slate-400">GlassmorphicCard</p>
+                            <p className="text-sm text-slate-300">GlassmorphicCard</p>
                         </div>
                         <div className="space-y-2">
                             <div className="text-3xl font-black text-amber-400">7KB</div>
-                            <p className="text-sm text-slate-400">GuidedTour</p>
+                            <p className="text-sm text-slate-300">GuidedTour</p>
                         </div>
                     </div>
                     <div className="mt-6 pt-6 border-t border-slate-800">

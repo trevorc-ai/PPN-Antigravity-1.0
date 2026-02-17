@@ -16,7 +16,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           <p className="text-[10px] font-black text-slate-3000 uppercase tracking-widest mb-1">Clinical Stage</p>
           <span className="text-xs font-bold text-slate-300">{data.payload.name}</span>
           <div className="mt-2 pt-2 border-t border-slate-800">
-             <span className="text-[10px] text-slate-400">Total Volume: {data.value}</span>
+             <span className="text-[10px] text-slate-300">Total Volume: {data.value}</span>
           </div>
         </div>
        );
@@ -96,14 +96,14 @@ const PatientFlowSankey: React.FC = () => {
             <div className="size-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 border border-indigo-500/20">
               <GitMerge size={18} />
             </div>
-            <h3 className="text-lg font-black text-slate-200 tracking-tight">Retention Flow</h3>
+            <h3 className="text-lg font-black text-slate-300 tracking-tight">Retention Flow</h3>
           </div>
           <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Integration Gap Analysis</p>
         </div>
         
         <div className="group/info relative">
-          <Info size={16} className="text-slate-600 hover:text-slate-400 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-400 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+          <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
+          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
             Sankey diagram visualizing patient throughput. Width of lines represents cohort volume at each stage.
           </div>
         </div>

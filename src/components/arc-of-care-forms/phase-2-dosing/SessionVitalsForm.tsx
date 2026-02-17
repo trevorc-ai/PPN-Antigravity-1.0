@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Activity, Droplet, Clock, Save, Plus, Trash2, CheckCircle } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
+import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
 
 /**
  * SessionVitalsForm - Real-Time Vital Signs Tracking
@@ -138,17 +139,25 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
         updateReading(index, 'recorded_at', now);
     }
 
+    function handlePresetSelect(index: number, preset: VitalPreset) {
+        updateReading(index, 'heart_rate', preset.heart_rate);
+        updateReading(index, 'hrv', preset.hrv);
+        updateReading(index, 'spo2', preset.spo2);
+        updateReading(index, 'bp_systolic', preset.bp_systolic);
+        updateReading(index, 'bp_diastolic', preset.bp_diastolic);
+    }
+
     return (
         <div className="max-w-6xl mx-auto space-y-6">
             {/* Header */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Activity className="w-7 h-7 text-blue-400" />
                             Session Vital Signs
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Track real-time vital signs during the dosing session. Add multiple readings to monitor trends.
                         </p>
                     </div>
@@ -180,7 +189,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                     >
                         {/* Reading Header */}
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-slate-200">
+                            <h3 className="text-lg font-bold text-slate-300">
                                 Reading #{index + 1}
                             </h3>
                             {readings.length > 1 && (
@@ -193,6 +202,9 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </button>
                             )}
                         </div>
+
+                        {/* Quick-Entry Presets */}
+                        <VitalPresetsBar onPresetSelect={(preset) => handlePresetSelect(index, preset)} />
 
                         {/* Vital Signs Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -212,7 +224,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="200"
                                         value={reading.heart_rate ?? ''}
                                         onChange={(e) => updateReading(index, 'heart_rate', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.heart_rate ? getStatusColor(hrStatus) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.heart_rate ? getStatusColor(hrStatus) : 'border-slate-700/50'
                                             }`}
                                         placeholder="70"
                                     />
@@ -242,7 +254,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         step="0.01"
                                         value={reading.hrv ?? ''}
                                         onChange={(e) => updateReading(index, 'hrv', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                         placeholder="50.00"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
@@ -267,7 +279,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="100"
                                         value={reading.spo2 ?? ''}
                                         onChange={(e) => updateReading(index, 'spo2', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.spo2 ? getStatusColor(spo2Status) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.spo2 ? getStatusColor(spo2Status) : 'border-slate-700/50'
                                             }`}
                                         placeholder="98"
                                     />
@@ -294,7 +306,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="250"
                                         value={reading.bp_systolic ?? ''}
                                         onChange={(e) => updateReading(index, 'bp_systolic', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.bp_systolic ? getStatusColor(bpStatus) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.bp_systolic ? getStatusColor(bpStatus) : 'border-slate-700/50'
                                             }`}
                                         placeholder="120"
                                     />
@@ -316,7 +328,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="150"
                                         value={reading.bp_diastolic ?? ''}
                                         onChange={(e) => updateReading(index, 'bp_diastolic', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                         placeholder="80"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
@@ -348,7 +360,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             {/* Recorded At */}
                             <div className="space-y-2">
                                 <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
-                                    <Clock className="w-4 h-4 text-slate-400" />
+                                    <Clock className="w-4 h-4 text-slate-300" />
                                     Recorded At
                                 </label>
                                 <div className="flex gap-2">
@@ -356,11 +368,11 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         type="datetime-local"
                                         value={reading.recorded_at ?? ''}
                                         onChange={(e) => updateReading(index, 'recorded_at', e.target.value)}
-                                        className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                        className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                     />
                                     <button
                                         onClick={() => recordNow(index)}
-                                        className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all whitespace-nowrap"
+                                        className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all whitespace-nowrap"
                                     >
                                         Now
                                     </button>
@@ -376,7 +388,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     type="text"
                                     value={reading.data_source ?? ''}
                                     onChange={(e) => updateReading(index, 'data_source', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                     placeholder="e.g., Apple Watch, Manual"
                                 />
                             </div>
@@ -390,7 +402,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     type="text"
                                     value={reading.device_id ?? ''}
                                     onChange={(e) => updateReading(index, 'device_id', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                     placeholder="Device serial number or identifier"
                                 />
                             </div>

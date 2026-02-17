@@ -54,7 +54,7 @@ const StarRating: React.FC<{ value: number; onChange: (value: number) => void; l
                         />
                     </button>
                 ))}
-                <span className="ml-2 text-sm text-slate-400">({value}/5)</span>
+                <span className="ml-2 text-sm text-slate-300">({value}/5)</span>
             </div>
         </div>
     );
@@ -104,11 +104,11 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <TrendingUp className="w-7 h-7 text-emerald-400" />
                             Behavioral Change Tracker
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Track meaningful behavioral changes with structured, PHI-safe inputs
                         </p>
                     </div>
@@ -126,12 +126,12 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                             type="date"
                             value={data.change_date}
                             onChange={(e) => updateField('change_date', e.target.value)}
-                            className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                            className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                         />
                         <button
                             type="button"
                             onClick={setToday}
-                            className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                            className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-colors"
                         >
                             Today
                         </button>
@@ -156,8 +156,8 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                                 type="button"
                                 onClick={() => updateField('change_category', value as any)}
                                 className={`px-4 py-3 rounded-lg font-medium transition-all ${data.change_category === value
-                                    ? 'bg-emerald-600 text-white'
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-emerald-600 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -180,8 +180,8 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                                 type="button"
                                 onClick={() => toggleChangeType(type.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.change_type_ids.includes(type.id)
-                                    ? 'bg-emerald-600 text-white'
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-emerald-600 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -210,8 +210,8 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                                 type="button"
                                 onClick={() => updateField('impact_on_wellbeing', value as any)}
                                 className={`px-4 py-3 rounded-lg font-medium transition-all ${data.impact_on_wellbeing === value
-                                    ? `bg-${color}-500 text-white`
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? `bg-${color}-500 text-slate-300`
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 {label}
@@ -244,8 +244,8 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                                 type="button"
                                 onClick={() => updateField('related_to_dosing', value as any)}
                                 className={`px-4 py-3 rounded-lg font-medium transition-all ${data.related_to_dosing === value
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-blue-500 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 {label}
@@ -259,7 +259,7 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
             <div className="flex justify-end">
                 <button
                     onClick={handleSave}
-                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
+                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium flex items-center gap-2 transition-colors"
                 >
                     <Save className="w-5 h-5" />
                     Log Change

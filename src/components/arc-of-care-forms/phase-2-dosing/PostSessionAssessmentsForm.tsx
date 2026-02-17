@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Save, CheckCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { NumberInput } from '../shared/NumberInput';
+import { NowButton, RelativeTimeDisplay } from '../shared/NowButton';
 
 /**
  * PostSessionAssessmentsForm - Post-Session Experience Assessments
@@ -25,13 +26,15 @@ interface PostSessionAssessmentsFormProps {
     initialData?: PostSessionAssessmentsData;
     patientId?: string;
     sessionId?: string;
+    sessionEndTime?: Date; // Time when session ended (for relative time display)
 }
 
 const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
     onSave,
     initialData = {},
     patientId,
-    sessionId
+    sessionId,
+    sessionEndTime
 }) => {
     const [data, setData] = useState<PostSessionAssessmentsData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
@@ -67,7 +70,7 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
         if (!score) return null;
         if (score >= 60) return { label: 'Complete Mystical Experience', color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' };
         if (score >= 40) return { label: 'Moderate Mystical Experience', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' };
-        return { label: 'Low Mystical Experience', color: 'text-slate-400 bg-slate-500/10 border-slate-500/20' };
+        return { label: 'Low Mystical Experience', color: 'text-slate-300 bg-slate-500/10 border-slate-500/20' };
     };
 
     const meqInterpretation = getMEQInterpretation(data.meq30_total_score);
@@ -78,11 +81,11 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Sparkles className="w-7 h-7 text-purple-400" />
                             Post-Session Assessments
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Standardized assessments completed immediately after the dosing session to measure experience quality.
                         </p>
                     </div>
@@ -105,7 +108,7 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
             <div className="space-y-6">
                 {/* MEQ-30 */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                    <h3 className="text-lg font-bold text-slate-200">MEQ-30 (Mystical Experience Questionnaire)</h3>
+                    <h3 className="text-lg font-bold text-slate-300">MEQ-30 (Mystical Experience Questionnaire)</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
@@ -126,12 +129,24 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
                             label="Completed At"
                             tooltip="Timestamp when MEQ-30 was completed (auto-filled)"
                         >
-                            <input
-                                type="datetime-local"
-                                value={data.meq30_completed_at ?? ''}
-                                onChange={(e) => updateTimestamp('meq30_completed_at', e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
+                            <div className="flex gap-2">
+                                <input
+                                    type="datetime-local"
+                                    value={data.meq30_completed_at ?? ''}
+                                    onChange={(e) => updateTimestamp('meq30_completed_at', e.target.value)}
+                                    className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                />
+                                <NowButton
+                                    onSetNow={(timestamp) => updateTimestamp('meq30_completed_at', timestamp.toISOString().slice(0, 16))}
+                                />
+                            </div>
+                            {sessionEndTime && data.meq30_completed_at && (
+                                <RelativeTimeDisplay
+                                    referenceTime={sessionEndTime}
+                                    currentTime={new Date(data.meq30_completed_at)}
+                                    label="after session ended"
+                                />
+                            )}
                         </FormField>
                     </div>
 
@@ -140,7 +155,7 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
                             <p className={`text-sm font-bold ${meqInterpretation.color.split(' ')[0]}`}>
                                 {meqInterpretation.label}
                             </p>
-                            <p className="text-slate-400 text-xs mt-1">
+                            <p className="text-slate-300 text-xs mt-1">
                                 {data.meq30_total_score! >= 60 && 'Strong predictor of positive long-term outcomes. Patient reported profound mystical experience.'}
                                 {data.meq30_total_score! >= 40 && data.meq30_total_score! < 60 && 'Moderate mystical qualities. Patient experienced some transcendent elements.'}
                                 {data.meq30_total_score! < 40 && 'Limited mystical qualities. Focus on integration and therapeutic processing.'}
@@ -161,7 +176,7 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
 
                 {/* EDI */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                    <h3 className="text-lg font-bold text-slate-200 mb-4">EDI (Ego Dissolution Inventory)</h3>
+                    <h3 className="text-lg font-bold text-slate-300 mb-4">EDI (Ego Dissolution Inventory)</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
@@ -182,19 +197,31 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
                             label="Completed At"
                             tooltip="Timestamp when EDI was completed (auto-filled)"
                         >
-                            <input
-                                type="datetime-local"
-                                value={data.edi_completed_at ?? ''}
-                                onChange={(e) => updateTimestamp('edi_completed_at', e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
+                            <div className="flex gap-2">
+                                <input
+                                    type="datetime-local"
+                                    value={data.edi_completed_at ?? ''}
+                                    onChange={(e) => updateTimestamp('edi_completed_at', e.target.value)}
+                                    className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                />
+                                <NowButton
+                                    onSetNow={(timestamp) => updateTimestamp('edi_completed_at', timestamp.toISOString().slice(0, 16))}
+                                />
+                            </div>
+                            {sessionEndTime && data.edi_completed_at && (
+                                <RelativeTimeDisplay
+                                    referenceTime={sessionEndTime}
+                                    currentTime={new Date(data.edi_completed_at)}
+                                    label="after session ended"
+                                />
+                            )}
                         </FormField>
                     </div>
                 </div>
 
                 {/* CEQ */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                    <h3 className="text-lg font-bold text-slate-200 mb-4">CEQ (Challenging Experience Questionnaire)</h3>
+                    <h3 className="text-lg font-bold text-slate-300 mb-4">CEQ (Challenging Experience Questionnaire)</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
@@ -215,12 +242,24 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
                             label="Completed At"
                             tooltip="Timestamp when CEQ was completed (auto-filled)"
                         >
-                            <input
-                                type="datetime-local"
-                                value={data.ceq_completed_at ?? ''}
-                                onChange={(e) => updateTimestamp('ceq_completed_at', e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
+                            <div className="flex gap-2">
+                                <input
+                                    type="datetime-local"
+                                    value={data.ceq_completed_at ?? ''}
+                                    onChange={(e) => updateTimestamp('ceq_completed_at', e.target.value)}
+                                    className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                />
+                                <NowButton
+                                    onSetNow={(timestamp) => updateTimestamp('ceq_completed_at', timestamp.toISOString().slice(0, 16))}
+                                />
+                            </div>
+                            {sessionEndTime && data.ceq_completed_at && (
+                                <RelativeTimeDisplay
+                                    referenceTime={sessionEndTime}
+                                    currentTime={new Date(data.ceq_completed_at)}
+                                    label="after session ended"
+                                />
+                            )}
                         </FormField>
                     </div>
                 </div>

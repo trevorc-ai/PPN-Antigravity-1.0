@@ -79,7 +79,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
     if (loading) {
         return (
             <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                <div className="flex items-center gap-2 text-slate-400">
+                <div className="flex items-center gap-2 text-slate-300">
                     <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                     <span className="text-sm">Checking for drug interactions...</span>
                 </div>
@@ -141,7 +141,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                                 <strong>Risk:</strong> {interaction.risk_description}
                             </p>
                             <AdvancedTooltip content={tooltips.safetyShield.mechanism}>
-                                <p className="text-sm text-slate-400 leading-relaxed">
+                                <p className="text-sm text-slate-300 leading-relaxed">
                                     <strong>Mechanism:</strong> {interaction.mechanism}
                                 </p>
                             </AdvancedTooltip>
@@ -205,7 +205,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                                 <strong>Risk:</strong> {interaction.risk_description}
                             </p>
                             <AdvancedTooltip content={tooltips.safetyShield.mechanism}>
-                                <p className="text-sm text-slate-400 leading-relaxed">
+                                <p className="text-sm text-slate-300 leading-relaxed">
                                     <strong>Mechanism:</strong> {interaction.mechanism}
                                 </p>
                             </AdvancedTooltip>
@@ -247,7 +247,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                             <p className="text-sm text-slate-300 leading-relaxed">
                                 <strong>Risk:</strong> {interaction.risk_description}
                             </p>
-                            <p className="text-sm text-slate-400 leading-relaxed">
+                            <p className="text-sm text-slate-300 leading-relaxed">
                                 <strong>Mechanism:</strong> {interaction.mechanism}
                             </p>
                             <p className="text-sm text-blue-400 font-medium leading-relaxed">

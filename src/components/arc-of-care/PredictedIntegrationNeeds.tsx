@@ -119,7 +119,7 @@ const PredictedIntegrationNeeds: React.FC<PredictedIntegrationNeedsProps> = ({
                 <div className="flex items-center gap-2">
                     <RiskIcon className={`w-5 h-5 ${colors.text}`} />
                     <span className={`text-2xl font-bold ${colors.text}`}>{prediction.recommendedSessions}</span>
-                    <span className="text-slate-400 text-sm">sessions</span>
+                    <span className="text-slate-300 text-sm">sessions</span>
                 </div>
                 <div className={`px-3 py-1 rounded-full ${colors.bg}/10 border ${colors.border}`}>
                     <span className={`text-sm font-medium ${colors.text} capitalize`}>{prediction.riskLevel} Risk</span>
@@ -128,13 +128,13 @@ const PredictedIntegrationNeeds: React.FC<PredictedIntegrationNeedsProps> = ({
 
             {/* Frequency Badge */}
             <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-slate-400" />
+                <Calendar className="w-4 h-4 text-slate-300" />
                 <span className="text-slate-300 text-sm font-medium capitalize">{prediction.frequency} Schedule</span>
             </div>
 
             {/* Timeline */}
             <div className="space-y-2">
-                <div className="text-xs text-slate-400 font-medium mb-2">Recommended Schedule</div>
+                <div className="text-xs text-slate-300 font-medium mb-2">Recommended Schedule</div>
                 <div className="grid grid-cols-4 gap-2">
                     {prediction.schedule.map((session) => (
                         <div
@@ -148,7 +148,7 @@ const PredictedIntegrationNeeds: React.FC<PredictedIntegrationNeedsProps> = ({
                             <div className={`text-xs ${colors.text} font-semibold`}>
                                 Week {session.week}
                             </div>
-                            <div className="text-xs text-slate-400 mt-1">
+                            <div className="text-xs text-slate-300 mt-1">
                                 Session {session.sessionNumber}
                             </div>
                         </div>

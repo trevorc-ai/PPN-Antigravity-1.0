@@ -33,7 +33,7 @@ const PricingCard: React.FC<{
         <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">{type}</span>
         {tag && <span className="px-2 py-0.5 rounded bg-accent-amber/10 text-accent-amber border border-accent-amber/20 text-[11px] font-black uppercase tracking-widest">{tag}</span>}
       </div>
-      <h3 className="text-2xl font-black text-slate-200 tracking-tight mb-6">{title}</h3>
+      <h3 className="text-2xl font-black text-slate-300 tracking-tight mb-6">{title}</h3>
 
       <div className="mb-8">
         <div className="flex items-baseline gap-1">
@@ -64,7 +64,7 @@ const Pricing: React.FC = () => {
     <div className="min-h-full bg-[#05070a] text-slate-300 font-sans animate-in fade-in duration-700 pb-24 overflow-x-hidden">
       {/* Header Section */}
       <div className="max-w-7xl mx-auto px-6 sm:px-12 pt-20 pb-12 space-y-4">
-        <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-200">
+        <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300">
           PPN Membership & Access Tiers
         </h1>
         <p className="max-w-2xl text-slate-3000 text-sm sm:text-lg font-medium leading-relaxed">
@@ -151,7 +151,7 @@ const Pricing: React.FC = () => {
         {/* Comparison Table Section */}
         <Section spacing="spacious" className="space-y-10">
           <div className="text-center space-y-2">
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Detailed Feature Comparison</h2>
+            <h2 className="text-3xl font-black text-slate-300 tracking-tight">Detailed Feature Comparison</h2>
             <p className="text-slate-3000 text-[11px] font-black uppercase tracking-widest">Compare all tools and infrastructure features across tiers.</p>
           </div>
 

@@ -107,10 +107,10 @@ const ResetPassword: React.FC = () => {
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 mb-4">
                         <AlertCircle className="w-8 h-8 text-red-400" />
                     </div>
-                    <h2 className="text-2xl font-black tracking-tight text-slate-200 mb-3">
+                    <h2 className="text-2xl font-black tracking-tight text-slate-300 mb-3">
                         Invalid Recovery Link
                     </h2>
-                    <p className="text-slate-400 text-sm font-medium mb-6">
+                    <p className="text-slate-300 text-sm font-medium mb-6">
                         {error}
                     </p>
                     <button
@@ -141,10 +141,10 @@ const ResetPassword: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 mb-4">
                                     <Lock className="w-8 h-8 text-primary" />
                                 </div>
-                                <h1 className="text-3xl font-black tracking-tight text-slate-200 mb-2">
+                                <h1 className="text-3xl font-black tracking-tight text-slate-300 mb-2">
                                     Set New Password
                                 </h1>
-                                <p className="text-slate-400 text-sm font-medium">
+                                <p className="text-slate-300 text-sm font-medium">
                                     Choose a strong password for your account
                                 </p>
                             </div>
@@ -276,10 +276,10 @@ const ResetPassword: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-4">
                                     <CheckCircle className="w-8 h-8 text-emerald-400" />
                                 </div>
-                                <h2 className="text-2xl font-black tracking-tight text-slate-200 mb-3">
+                                <h2 className="text-2xl font-black tracking-tight text-slate-300 mb-3">
                                     Password Reset Successfully
                                 </h2>
-                                <p className="text-slate-400 text-sm font-medium mb-6">
+                                <p className="text-slate-300 text-sm font-medium mb-6">
                                     Your password has been updated. You can now sign in with your new password.
                                 </p>
                                 <div className="inline-flex items-center gap-2 text-xs text-slate-3000 font-medium">

@@ -89,13 +89,20 @@ const FormsShowcase: React.FC = () => {
     const phases = Array.from(new Set(FORMS.map(f => f.phase)));
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="min-h-screen bg-[#0a1628]">
+            {/* READ-ONLY WARNING BANNER */}
+            <div className="bg-amber-500/20 border-b-2 border-amber-500/50 px-6 py-3">
+                <p className="text-amber-300 text-sm font-bold text-center">
+                    ⚠️ READ-ONLY SHOWCASE - Do not modify without express user permission
+                </p>
+            </div>
+
             <div className="flex h-screen">
                 {/* Sidebar */}
                 <div className="w-80 bg-slate-900/60 backdrop-blur-xl border-r border-slate-700/50 overflow-y-auto custom-scrollbar">
                     <div className="p-6 border-b border-slate-700/50">
-                        <h1 className="text-2xl font-black text-slate-200">Arc of Care Forms</h1>
-                        <p className="text-slate-400 text-sm mt-1">19 PHI-Safe Components</p>
+                        <h1 className="text-2xl font-black text-slate-300">Arc of Care Forms</h1>
+                        <p className="text-slate-300 text-sm mt-1">19 PHI-Safe Components</p>
                         <div className="mt-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-2">
                             <p className="text-xs font-bold text-emerald-400">✓ 100% COMPLIANT</p>
                             <p className="text-xs text-emerald-300 mt-0.5">Zero free-text inputs</p>
@@ -120,7 +127,7 @@ const FormsShowcase: React.FC = () => {
                                                     key={form.id}
                                                     onClick={() => setSelectedFormId(form.id)}
                                                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all ${isSelected
-                                                        ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                                                        ? 'bg-blue-500 text-slate-300 shadow-lg shadow-blue-500/30'
                                                         : 'text-slate-300 hover:bg-slate-800/50'
                                                         }`}
                                                 >

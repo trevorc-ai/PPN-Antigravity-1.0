@@ -70,8 +70,8 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h3 className="text-slate-200 font-semibold text-lg">Symptom Decay Curve</h3>
-                    <p className="text-slate-400 text-sm">PHQ-9 Depression Score Over Time</p>
+                    <h3 className="text-slate-300 font-semibold text-lg">Symptom Decay Curve</h3>
+                    <p className="text-slate-300 text-sm">PHQ-9 Depression Score Over Time</p>
                 </div>
 
                 {trend && (
@@ -86,8 +86,8 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
             <div className="grid grid-cols-3 gap-4 mb-6">
                 {/* Current Score */}
                 <div className={`p-4 rounded-xl border ${currentZone ? `bg-${currentZone.color}-500/10 border-${currentZone.color}-500/30` : 'bg-slate-800/30 border-slate-700/30'}`}>
-                    <div className="text-xs text-slate-400 mb-1">Current</div>
-                    <div className={`text-2xl font-bold ${currentZone ? `text-${currentZone.color}-400` : 'text-slate-400'}`}>
+                    <div className="text-xs text-slate-300 mb-1">Current</div>
+                    <div className={`text-2xl font-bold ${currentZone ? `text-${currentZone.color}-400` : 'text-slate-300'}`}>
                         {currentScore !== null ? currentScore : '--'}
                     </div>
                     {currentZone && (
@@ -97,7 +97,7 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
 
                 {/* Baseline */}
                 <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/30">
-                    <div className="text-xs text-slate-400 mb-1">Baseline</div>
+                    <div className="text-xs text-slate-300 mb-1">Baseline</div>
                     <div className="text-2xl font-bold text-slate-300">
                         {baselineScore !== null ? baselineScore : '--'}
                     </div>
@@ -106,8 +106,8 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
 
                 {/* Improvement */}
                 <div className={`p-4 rounded-xl border ${improvement !== null && improvement > 0 ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-slate-800/30 border-slate-700/30'}`}>
-                    <div className="text-xs text-slate-400 mb-1">Change</div>
-                    <div className={`text-2xl font-bold ${improvement !== null && improvement > 0 ? 'text-emerald-400' : 'text-slate-400'}`}>
+                    <div className="text-xs text-slate-300 mb-1">Change</div>
+                    <div className={`text-2xl font-bold ${improvement !== null && improvement > 0 ? 'text-emerald-400' : 'text-slate-300'}`}>
                         {improvement !== null ? (improvement > 0 ? `-${improvement}` : `+${Math.abs(improvement)}`) : '--'}
                     </div>
                     <div className={`text-xs mt-1 ${improvement !== null && improvement > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>

@@ -64,7 +64,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
         const diff = current - baseline;
         if (diff < -2) return { icon: ArrowDown, color: 'text-emerald-400', label: 'Improved' };
         if (diff > 2) return { icon: ArrowUp, color: 'text-red-400', label: 'Worsened' };
-        return { icon: Minus, color: 'text-slate-400', label: 'Stable' };
+        return { icon: Minus, color: 'text-slate-300', label: 'Stable' };
     };
 
     const phq9Change = getChangeIndicator(data.phq9_score, baselineScores.phq9);
@@ -73,11 +73,11 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                     <TrendingUp className="w-7 h-7 text-blue-400" />
                     Longitudinal Assessment
                 </h2>
-                <p className="text-slate-400 text-sm mt-2">
+                <p className="text-slate-300 text-sm mt-2">
                     Follow-up assessments to track treatment outcomes over time.
                 </p>
             </div>
@@ -98,7 +98,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                             type="date"
                             value={data.assessment_date ?? ''}
                             onChange={(e) => updateField('assessment_date', e.target.value)}
-                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                         />
                     </FormField>
 

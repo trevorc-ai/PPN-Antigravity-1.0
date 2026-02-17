@@ -27,7 +27,7 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
     if (!vitals) {
         return (
             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <div className="text-center text-slate-400">
+                <div className="text-center text-slate-300">
                     <Activity className="w-8 h-8 mx-auto mb-2 animate-pulse" />
                     <p className="text-sm">Waiting for vitals data...</p>
                 </div>
@@ -74,11 +74,11 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-4">
                 <Activity className="w-5 h-5 text-purple-400" />
-                <h3 className="text-slate-200 font-semibold">Live Vitals</h3>
+                <h3 className="text-slate-300 font-semibold">Live Vitals</h3>
                 <div className="ml-auto">
                     <div className="flex items-center gap-1">
                         <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                        <span className="text-xs text-slate-400">Live</span>
+                        <span className="text-xs text-slate-300">Live</span>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
                         </div>
                         <div className={`text-3xl font-bold ${hrStatus.color === 'emerald' ? 'text-emerald-400' : hrStatus.color === 'amber' ? 'text-amber-400' : hrStatus.color === 'red' ? 'text-red-400' : 'text-blue-400'}`}>
                             {vitals.heartRate}
-                            <span className="text-lg text-slate-400 ml-1">bpm</span>
+                            <span className="text-lg text-slate-300 ml-1">bpm</span>
                         </div>
                     </div>
                 </AdvancedTooltip>
@@ -129,7 +129,7 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
                         </div>
                         <div className={`text-3xl font-bold ${hrvStatus.color === 'emerald' ? 'text-emerald-400' : hrvStatus.color === 'amber' ? 'text-amber-400' : hrvStatus.color === 'red' ? 'text-red-400' : 'text-blue-400'}`}>
                             {vitals.hrv}
-                            <span className="text-lg text-slate-400 ml-1">ms</span>
+                            <span className="text-lg text-slate-300 ml-1">ms</span>
                         </div>
                     </div>
                 </AdvancedTooltip>
@@ -154,7 +154,7 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
                         </div>
                         <div className={`text-3xl font-bold ${bpStatus.color === 'emerald' ? 'text-emerald-400' : bpStatus.color === 'amber' ? 'text-amber-400' : bpStatus.color === 'red' ? 'text-red-400' : 'text-blue-400'}`}>
                             {vitals.bloodPressure}
-                            <span className="text-lg text-slate-400 ml-1">mmHg</span>
+                            <span className="text-lg text-slate-300 ml-1">mmHg</span>
                         </div>
                     </div>
                 </AdvancedTooltip>

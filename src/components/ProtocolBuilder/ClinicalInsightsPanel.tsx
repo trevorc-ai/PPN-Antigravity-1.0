@@ -135,7 +135,7 @@ export const ClinicalInsightsPanel: React.FC<ClinicalInsightsPanelProps> = ({
     };
 
     return (
-        <div className="bg-gradient-to-br from-[#0f1218]/90 to-[#1a1f2e]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 space-y-6">
+        <div className="bg-[#0a1628]/90 backdrop-blur-sm border-2 border-[#1e293b]/50 rounded-2xl p-8 shadow-2xl shadow-black/20 space-y-6">
             <div className="flex items-center gap-3 mb-6">
                 <Activity className="w-7 h-7 text-[#14b8a6]" />
                 <h3 className="text-2xl font-black bg-gradient-to-r from-[#f8fafc] to-[#cbd5e1] bg-clip-text text-transparent">

@@ -5,6 +5,11 @@ import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
 import { DosingSessionPhase } from '../components/wellness-journey/DosingSessionPhase';
 import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhase';
+import { ReadinessScore, RequirementsList, NextSteps } from '../components/benchmark';
+import { useBenchmarkReadiness } from '../hooks/useBenchmarkReadiness';
+import { RiskIndicators } from '../components/risk';
+import { useRiskDetection } from '../hooks/useRiskDetection';
+import { SafetyTimeline, type SafetyEvent } from '../components/safety';
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -52,6 +57,45 @@ interface PatientJourney {
         integrationSessionsScheduled: number;
         behavioralChanges: string[];
     };
+
+    benchmark: {
+        hasBaselineAssessment: boolean;
+        baselineAssessmentDate?: string;
+        hasFollowUpAssessment: boolean;
+        followUpAssessmentDate?: string;
+        hasDosingProtocol: boolean;
+        dosingProtocolDate?: string;
+        hasSetAndSetting: boolean;
+        setAndSettingDate?: string;
+        hasSafetyCheck: boolean;
+        safetyCheckDate?: string;
+    };
+
+    risk: {
+        baseline: {
+            phq9: number;
+            gad7: number;
+            pcl5?: number;
+            ace: number;
+        };
+        vitals?: {
+            heartRate: number;
+            baselineHeartRate?: number;
+            bloodPressureSystolic: number;
+            bloodPressureDiastolic: number;
+            spo2?: number;
+            temperature?: number;
+        };
+        progressTrends?: Array<{
+            metric: string;
+            values: number[];
+            baseline: number;
+        }>;
+    };
+
+    safety: {
+        events: SafetyEvent[];
+    };
 }
 
 const WellnessJourney: React.FC = () => {
@@ -95,6 +139,71 @@ const WellnessJourney: React.FC = () => {
                 'Quit smoking',
                 'New job (Day 130)'
             ]
+        },
+
+        benchmark: {
+            hasBaselineAssessment: true,
+            baselineAssessmentDate: '2025-10-01',
+            hasFollowUpAssessment: true,
+            followUpAssessmentDate: '2025-11-26',
+            hasDosingProtocol: true,
+            dosingProtocolDate: '2025-10-15',
+            hasSetAndSetting: true,
+            setAndSettingDate: '2025-10-01',
+            hasSafetyCheck: false // Missing - shows 80% complete
+        },
+
+        risk: {
+            baseline: {
+                phq9: 21, // Severe depression (≥20)
+                gad7: 12, // Moderate anxiety (10-14)
+                pcl5: 45, // Significant PTSD (≥33)
+                ace: 4 // Moderate childhood adversity (4-5)
+            },
+            vitals: {
+                heartRate: 95,
+                baselineHeartRate: 72,
+                bloodPressureSystolic: 135,
+                bloodPressureDiastolic: 88,
+                spo2: 98,
+                temperature: 98.6
+            },
+            progressTrends: [
+                {
+                    metric: 'PHQ-9',
+                    values: [21, 18, 15, 12, 10, 8, 5], // Improving trend
+                    baseline: 21
+                }
+            ]
+        },
+
+        safety: {
+            events: [
+                {
+                    id: 'safety-1',
+                    date: '2025-10-01',
+                    cssrsScore: 0,
+                    actionsTaken: []
+                },
+                {
+                    id: 'safety-2',
+                    date: '2025-10-15',
+                    cssrsScore: 1,
+                    actionsTaken: ['Routine monitoring']
+                },
+                {
+                    id: 'safety-3',
+                    date: '2025-11-01',
+                    cssrsScore: 3,
+                    actionsTaken: ['Safety plan created', 'Follow-up scheduled (24 hours)']
+                },
+                {
+                    id: 'safety-4',
+                    date: '2025-12-01',
+                    cssrsScore: 0,
+                    actionsTaken: []
+                }
+            ]
         }
     });
 
@@ -102,17 +211,23 @@ const WellnessJourney: React.FC = () => {
     const totalImprovement = journey.baseline.phq9 - journey.integration.currentPhq9;
     const isRemission = journey.integration.currentPhq9 < 5;
 
+    // Benchmark readiness
+    const { result, nextSteps, isLoading } = useBenchmarkReadiness(journey.benchmark);
+
+    // Risk detection
+    const riskDetection = useRiskDetection(journey.risk);
+
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+        <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
             <div className="max-w-[1600px] mx-auto space-y-6">
 
                 {/* Header */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
+                        <h1 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: '#8BA5D3' }}>
                             Wellness Journey
                         </h1>
-                        <p className="text-slate-400 mt-2 text-sm">
+                        <p className="mt-2 text-sm" style={{ color: '#8B9DC3' }}>
                             Patient: {journey.patientId} • 6-Month Journey
                         </p>
                     </div>
@@ -124,7 +239,7 @@ const WellnessJourney: React.FC = () => {
                         type="info"
                         side="left"
                     >
-                        <button className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200 font-bold text-sm rounded-lg transition-colors">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 font-bold text-sm rounded-lg transition-colors" style={{ color: '#8B9DC3' }}>
                             <Download className="w-4 h-4" />
                             <span className="hidden sm:inline">Export PDF</span>
                         </button>
@@ -136,6 +251,47 @@ const WellnessJourney: React.FC = () => {
                     currentPhase={activePhase}
                     completedPhases={completedPhases}
                     onPhaseChange={setActivePhase}
+                />
+
+                {/* Benchmark Readiness Section */}
+                {!isLoading && result && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Readiness Score Widget */}
+                        <ReadinessScore
+                            result={result}
+                            onViewBenchmarks={() => console.log('View benchmarks clicked')}
+                        />
+
+                        {/* Next Steps (only show if not 100%) */}
+                        {!result.isBenchmarkReady && nextSteps.length > 0 && (
+                            <NextSteps steps={nextSteps} estimatedMinutes={10} />
+                        )}
+
+                        {/* Requirements List (full width) */}
+                        <div className={result.isBenchmarkReady ? 'lg:col-span-2' : 'lg:col-span-2'}>
+                            <RequirementsList
+                                result={result}
+                                onCompleteRequirement={(name) => console.log('Complete:', name)}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Risk Indicators Section */}
+                <RiskIndicators
+                    overallRiskLevel={riskDetection.overallRiskLevel}
+                    baselineFlags={riskDetection.baselineFlags}
+                    vitalFlags={riskDetection.vitalFlags}
+                    progressFlags={riskDetection.progressFlags}
+                    patientId={journey.patientId}
+                    sessionTime="2h 15min"
+                />
+
+                {/* Safety Timeline Section */}
+                <SafetyTimeline
+                    events={journey.safety.events}
+                    patientId={journey.patientId}
+                    onExport={() => console.log('Export safety report')}
                 />
 
                 {/* Phase Content - Conditional Rendering */}
@@ -151,10 +307,10 @@ const WellnessJourney: React.FC = () => {
 
                         {/* Total Improvement */}
                         <div>
-                            <p className="text-slate-400 text-sm mb-2">Total Improvement</p>
+                            <p className="text-sm mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-3xl font-black text-emerald-400">-{totalImprovement}</span>
-                                <span className="text-slate-400 text-sm">points</span>
+                                <span className="text-sm" style={{ color: '#8B9DC3' }}>points</span>
                             </div>
                             <div className="flex items-center gap-2 mt-1 text-sm">
                                 <span className="text-red-400">Baseline: {journey.baseline.phq9}</span>
@@ -168,7 +324,7 @@ const WellnessJourney: React.FC = () => {
 
                         {/* MEQ-30 Correlation */}
                         <div>
-                            <p className="text-slate-400 text-sm mb-2">MEQ-30 Score</p>
+                            <p className="text-sm mb-2" style={{ color: '#8B9DC3' }}>MEQ-30 Score</p>
                             <div className="text-2xl font-black text-emerald-400">{journey.session.meq30Score}/100</div>
                             <p className="text-emerald-300 text-sm mt-2">
                                 High mystical experience → Sustained benefit ✓
@@ -177,7 +333,7 @@ const WellnessJourney: React.FC = () => {
 
                         {/* Risk Level */}
                         <div>
-                            <p className="text-slate-400 text-sm mb-2">Risk Level</p>
+                            <p className="text-sm mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
                             <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
                                     <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,14 +342,14 @@ const WellnessJourney: React.FC = () => {
                                 </div>
                                 <span className="text-2xl font-black text-emerald-400">LOW</span>
                             </div>
-                            <p className="text-slate-400 text-sm mt-2">Excellent compliance</p>
+                            <p className="text-sm mt-2" style={{ color: '#8B9DC3' }}>Excellent compliance</p>
                         </div>
 
                         {/* Next Steps */}
                         <div>
-                            <p className="text-slate-400 text-sm mb-2">Next</p>
-                            <p className="text-slate-200 text-sm font-semibold">Maintenance protocol</p>
-                            <p className="text-slate-400 text-sm mt-2">
+                            <p className="text-sm mb-2" style={{ color: '#8B9DC3' }}>Next</p>
+                            <p className="text-sm font-semibold" style={{ color: '#8B9DC3' }}>Maintenance protocol</p>
+                            <p className="text-sm mt-2" style={{ color: '#8B9DC3' }}>
                                 Transition to quarterly check-ins
                             </p>
                         </div>
@@ -210,7 +366,7 @@ const WellnessJourney: React.FC = () => {
                 >
                     <div className="bg-slate-900/40 border border-slate-700/30 rounded-lg p-4 cursor-help hover:bg-slate-900/60 transition-colors">
                         <p className="text-slate-500 text-sm text-center">
-                            <strong className="text-slate-400">⚠️ Clinical Decision Support:</strong> This dashboard is for clinical research purposes only. Not for diagnostic use. All data is encrypted and HIPAA-compliant.
+                            <strong style={{ color: '#8B9DC3' }}>⚠️ Clinical Decision Support:</strong> This dashboard is for clinical research purposes only. Not for diagnostic use. All data is encrypted and HIPAA-compliant.
                         </p>
                     </div>
                 </AdvancedTooltip>

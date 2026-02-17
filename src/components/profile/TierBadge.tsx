@@ -34,7 +34,7 @@ const getTierConfig = (tier: string) => {
                 label: 'Free',
                 bgColor: 'bg-slate-900/50',
                 borderColor: 'border-slate-700',
-                textColor: 'text-slate-400',
+                textColor: 'text-slate-300',
                 icon: Gift,
                 iconColor: 'text-slate-3000'
             };

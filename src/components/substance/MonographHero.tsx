@@ -29,7 +29,7 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                         <span className="px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full text-sm font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/10">
                             {substance.phase}
                         </span>
-                        <span className="px-4 py-1.5 bg-slate-900/80 text-slate-400 border border-slate-800 rounded-full text-sm font-black uppercase tracking-[0.2em]">
+                        <span className="px-4 py-1.5 bg-slate-900/80 text-slate-300 border border-slate-800 rounded-full text-sm font-black uppercase tracking-[0.2em]">
                             {substance.schedule}
                         </span>
                         <div className="flex items-center gap-2 px-4 py-1.5 bg-clinical-green/10 text-clinical-green border border-clinical-green/20 rounded-full text-sm font-black uppercase tracking-[0.2em]">
@@ -39,7 +39,7 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                     </div>
 
                     <div className="space-y-4">
-                        <h1 className="text-5xl sm:text-7xl font-black text-slate-200 tracking-tighter leading-[0.85] transition-all duration-700 hover:tracking-normal cursor-default">
+                        <h1 className="text-5xl sm:text-7xl font-black text-slate-300 tracking-tighter leading-[0.85] transition-all duration-700 hover:tracking-normal cursor-default">
                             {substance.name}
                         </h1>
                         <p className="text-lg sm:text-2xl font-bold text-slate-3000 font-mono tracking-tight leading-relaxed max-w-3xl mx-auto lg:mx-0">
@@ -59,7 +59,7 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                             </div>
                         </div>
                         <div className="h-10 w-px bg-white/5 hidden sm:block"></div>
-                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest leading-tight">
+                        <p className="text-sm font-black text-slate-300 uppercase tracking-widest leading-tight">
                             <span className="text-slate-300">Live Search Enriched</span><br />Institutional Research Node
                         </p>
                     </div>

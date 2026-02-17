@@ -129,11 +129,11 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Eye className="w-7 h-7 text-indigo-400" />
                             Session Observations
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Document clinical observations during the dosing session to track session quality and patient experience.
                         </p>
                     </div>
@@ -173,7 +173,7 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
                         key={category}
                         className={`backdrop-blur-xl border rounded-2xl p-5 space-y-4 ${getCategoryColor(category)}`}
                     >
-                        <h3 className="text-sm font-bold text-slate-200 pb-2 border-b border-current/20">
+                        <h3 className="text-sm font-bold text-slate-300 pb-2 border-b border-current/20">
                             {category}
                         </h3>
 
@@ -191,7 +191,7 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
                                             onChange={() => toggleObservation(obs.id)}
                                             className="mt-0.5 w-5 h-5 rounded border-slate-600 bg-slate-800/50 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
                                         />
-                                        <span className={`text-sm transition-colors ${isChecked ? 'text-slate-200 font-medium' : 'text-slate-400 group-hover:text-slate-300'
+                                        <span className={`text-sm transition-colors ${isChecked ? 'text-slate-300 font-medium' : 'text-slate-300 group-hover:text-slate-300'
                                             }`}>
                                             {obs.label}
                                         </span>

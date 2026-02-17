@@ -90,22 +90,22 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 md:p-8">
             {/* Header */}
             <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-200 mb-2">Daily Pulse Check</h2>
-                <p className="text-slate-400 text-sm">Takes 5 seconds • Helps us support you better</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-300 mb-2">Daily Pulse Check</h2>
+                <p className="text-slate-300 text-sm">Takes 5 seconds • Helps us support you better</p>
             </div>
 
             {/* Question 1: Connection Level */}
             <div className="mb-8">
                 <div className="flex items-center justify-center gap-2 mb-4">
                     <Heart className="w-5 h-5 text-purple-400" />
-                    <h3 className="text-lg font-semibold text-slate-200">How connected do you feel today?</h3>
+                    <h3 className="text-lg font-semibold text-slate-300">How connected do you feel today?</h3>
                     <AdvancedTooltip
                         content="How connected do you feel to yourself, others, and the world? This tracks your sense of meaning and purpose."
                         type="info"
                         tier="standard"
                         side="top"
                     >
-                        <div className="text-slate-400 hover:text-slate-300 cursor-help">
+                        <div className="text-slate-300 hover:text-slate-300 cursor-help">
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                             </svg>
@@ -127,7 +127,7 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
               `}
                         >
                             <span className="text-3xl md:text-4xl">{option.emoji}</span>
-                            <span className={`text-xs font-medium ${connectionLevel === option.value ? 'text-purple-300' : 'text-slate-400'
+                            <span className={`text-xs font-medium ${connectionLevel === option.value ? 'text-purple-300' : 'text-slate-300'
                                 }`}>
                                 {option.label}
                             </span>
@@ -140,7 +140,7 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
             <div className="mb-8">
                 <div className="flex items-center justify-center gap-2 mb-4">
                     <Moon className="w-5 h-5 text-blue-400" />
-                    <h3 className="text-lg font-semibold text-slate-200">How did you sleep last night?</h3>
+                    <h3 className="text-lg font-semibold text-slate-300">How did you sleep last night?</h3>
                     <AdvancedTooltip
                         content="Sleep is the 'canary in the coal mine' for mental health. Declining sleep quality often precedes depression relapse by 2-3 weeks."
                         type="info"
@@ -148,7 +148,7 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
                         title="Why Sleep Matters"
                         side="top"
                     >
-                        <div className="text-slate-400 hover:text-slate-300 cursor-help">
+                        <div className="text-slate-300 hover:text-slate-300 cursor-help">
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                             </svg>
@@ -170,7 +170,7 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
               `}
                         >
                             <span className="text-3xl md:text-4xl">{option.emoji}</span>
-                            <span className={`text-xs font-medium ${sleepQuality === option.value ? 'text-blue-300' : 'text-slate-400'
+                            <span className={`text-xs font-medium ${sleepQuality === option.value ? 'text-blue-300' : 'text-slate-300'
                                 }`}>
                                 {option.label}
                             </span>
@@ -186,7 +186,7 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
                 className={`
           w-full py-4 rounded-2xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-200
           ${isComplete
-                        ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 hover:scale-105'
+                        ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-300 shadow-lg shadow-emerald-500/20 hover:scale-105'
                         : 'bg-slate-700/30 text-slate-500 cursor-not-allowed'
                     }
         `}

@@ -32,11 +32,11 @@ const PatientJourneyDemo: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-primary"></div>
-                        <span className="text-[10px] font-bold text-slate-400">PHQ-9 Score</span>
+                        <span className="text-[10px] font-bold text-slate-300">PHQ-9 Score</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
-                        <span className="text-[10px] font-bold text-slate-400">Dosing Session</span>
+                        <span className="text-[10px] font-bold text-slate-300">Dosing Session</span>
                     </div>
                 </div>
             </div>

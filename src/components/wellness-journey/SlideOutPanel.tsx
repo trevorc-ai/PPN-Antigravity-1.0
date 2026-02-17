@@ -104,7 +104,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                 <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-700/50 px-6 py-4 flex items-center justify-between">
                     <h2
                         id="panel-title"
-                        className="text-xl font-bold text-slate-200"
+                        className="text-xl font-bold text-slate-300"
                     >
                         {title}
                     </h2>
@@ -113,7 +113,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                         className="p-2 rounded-lg hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                         aria-label="Close panel"
                     >
-                        <X className="w-6 h-6 text-slate-400" />
+                        <X className="w-6 h-6 text-slate-300" />
                     </button>
                 </div>
 

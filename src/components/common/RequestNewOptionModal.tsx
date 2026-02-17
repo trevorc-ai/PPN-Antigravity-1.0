@@ -88,12 +88,12 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
             <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-slate-200">
+                    <h3 className="text-xl font-bold text-slate-300">
                         Request New Option
                     </h3>
                     <button
                         onClick={handleClose}
-                        className="text-slate-400 hover:text-slate-200 transition-colors"
+                        className="text-slate-300 hover:text-slate-300 transition-colors"
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -130,11 +130,11 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
                                         ? "e.g., Patient reports improved sleep quality"
                                         : "e.g., Childcare emergency"
                                 }
-                                className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                 rows={3}
                                 maxLength={200}
                             />
-                            <p className="text-slate-400 text-xs mt-1">
+                            <p className="text-slate-300 text-xs mt-1">
                                 {requestText.length}/200 characters
                             </p>
                         </div>
@@ -152,7 +152,7 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
                             <button
                                 onClick={handleSubmit}
                                 disabled={!requestText.trim() || loading}
-                                className="flex-1 py-2 px-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                                className="flex-1 py-2 px-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>
@@ -169,7 +169,7 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
                             <button
                                 onClick={handleClose}
                                 disabled={loading}
-                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:cursor-not-allowed text-slate-200 rounded-lg transition-colors"
+                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:cursor-not-allowed text-slate-300 rounded-lg transition-colors"
                             >
                                 Cancel
                             </button>
@@ -180,7 +180,7 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
                     <div className="text-center py-8">
                         <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
                         <p className="text-emerald-300 font-medium text-lg mb-2">Request Submitted!</p>
-                        <p className="text-slate-400 text-sm">
+                        <p className="text-slate-300 text-sm">
                             Network administrators will review your suggestion and may add it to the system.
                         </p>
                     </div>

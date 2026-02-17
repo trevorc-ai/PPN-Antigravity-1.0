@@ -153,7 +153,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
             ${side === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-2' : ''}
             ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
             ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
-            bg-slate-900 border border-slate-700 text-slate-200 
+            bg-slate-900 border border-slate-700 text-slate-300 
             text-[10px] font-bold uppercase tracking-wider
             whitespace-nowrap shadow-xl animate-in fade-in zoom-in-95 duration-200
             ${config.glow}
@@ -225,7 +225,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                                 </div>
                                 <button
                                     onClick={() => setIsDetailsOpen(false)}
-                                    className="text-slate-3000 hover:text-slate-200 transition-colors"
+                                    className="text-slate-3000 hover:text-slate-300 transition-colors"
                                 >
                                     <X size={16} />
                                 </button>
@@ -240,7 +240,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                             {(glossaryTerm || type === 'critical') && (
                                 <div className="px-5 py-3 border-t border-slate-800/50 bg-black/20 flex justify-between items-center text-[11px]">
                                     {glossaryTerm && (
-                                        <button className="flex items-center gap-1.5 text-slate-400 hover:text-primary transition-colors font-bold uppercase tracking-wider">
+                                        <button className="flex items-center gap-1.5 text-slate-300 hover:text-primary transition-colors font-bold uppercase tracking-wider">
                                             <BookOpen size={12} />
                                             {glossaryTerm}
                                         </button>

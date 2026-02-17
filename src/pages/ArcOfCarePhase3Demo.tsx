@@ -78,14 +78,14 @@ const ArcOfCarePhase3Demo: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
                 <div className="text-center space-y-4">
-                    <h1 className="text-5xl font-black text-slate-200 tracking-tight">
+                    <h1 className="text-5xl font-black text-slate-300 tracking-tight">
                         Wellness Journey - Phase 3
                     </h1>
-                    <p className="text-lg text-slate-400 max-w-3xl mx-auto">
+                    <p className="text-lg text-slate-300 max-w-3xl mx-auto">
                         Integration Tracker: Longitudinal Care & Symptom Monitoring
                     </p>
                 </div>
@@ -123,8 +123,8 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <Calendar className="w-6 h-6 text-emerald-400" />
                             <div>
-                                <h2 className="text-2xl font-bold text-slate-200">Daily Pulse Check</h2>
-                                <p className="text-slate-400 text-sm">Quick daily check-in (30 seconds)</p>
+                                <h2 className="text-2xl font-bold text-slate-300">Daily Pulse Check</h2>
+                                <p className="text-slate-300 text-sm">Quick daily check-in (30 seconds)</p>
                             </div>
                         </div>
 
@@ -145,29 +145,29 @@ const ArcOfCarePhase3Demo: React.FC = () => {
 
                     {/* Quick Stats */}
                     <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                        <h3 className="text-slate-200 text-lg font-semibold mb-4">Integration Progress</h3>
+                        <h3 className="text-slate-300 text-lg font-semibold mb-4">Integration Progress</h3>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-400 text-xs mb-1">Days Post-Session</p>
+                                <p className="text-slate-300 text-xs mb-1">Days Post-Session</p>
                                 <p className="text-3xl font-bold text-emerald-400">183</p>
                                 <p className="text-slate-300 text-xs mt-1">~6 months</p>
                             </div>
 
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-400 text-xs mb-1">PHQ-9 Improvement</p>
+                                <p className="text-slate-300 text-xs mb-1">PHQ-9 Improvement</p>
                                 <p className="text-3xl font-bold text-blue-400">96%</p>
                                 <p className="text-slate-300 text-xs mt-1">24 → 1</p>
                             </div>
 
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-400 text-xs mb-1">Pulse Checks</p>
+                                <p className="text-slate-300 text-xs mb-1">Pulse Checks</p>
                                 <p className="text-3xl font-bold text-purple-400">156</p>
                                 <p className="text-slate-300 text-xs mt-1">85% adherence</p>
                             </div>
 
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-400 text-xs mb-1">Integration Sessions</p>
+                                <p className="text-slate-300 text-xs mb-1">Integration Sessions</p>
                                 <p className="text-3xl font-bold text-amber-400">12</p>
                                 <p className="text-slate-300 text-xs mt-1">Completed</p>
                             </div>
@@ -188,8 +188,8 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                     <div className="flex items-center gap-3">
                         <TrendingDown className="w-6 h-6 text-blue-400" />
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-200">Symptom Trajectory</h2>
-                            <p className="text-slate-400 text-sm">PHQ-9 scores over 6 months post-session</p>
+                            <h2 className="text-2xl font-bold text-slate-300">Symptom Trajectory</h2>
+                            <p className="text-slate-300 text-sm">PHQ-9 scores over 6 months post-session</p>
                         </div>
                     </div>
 
@@ -208,39 +208,39 @@ const ArcOfCarePhase3Demo: React.FC = () => {
 
                 {/* Longitudinal Assessments */}
                 <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                    <h3 className="text-slate-200 text-lg font-semibold mb-4">Scheduled Assessments</h3>
+                    <h3 className="text-slate-300 text-lg font-semibold mb-4">Scheduled Assessments</h3>
 
                     <div className="space-y-3">
                         <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
                             <div>
-                                <p className="text-slate-200 text-sm font-medium">PHQ-9 (Depression)</p>
-                                <p className="text-slate-400 text-xs">Every 2 weeks</p>
+                                <p className="text-slate-300 text-sm font-medium">PHQ-9 (Depression)</p>
+                                <p className="text-slate-300 text-xs">Every 2 weeks</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-emerald-400 text-sm font-semibold">Next: Feb 28</p>
-                                <p className="text-slate-400 text-xs">12 days</p>
+                                <p className="text-slate-300 text-xs">12 days</p>
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
                             <div>
-                                <p className="text-slate-200 text-sm font-medium">C-SSRS (Suicide Risk)</p>
-                                <p className="text-slate-400 text-xs">Weekly</p>
+                                <p className="text-slate-300 text-sm font-medium">C-SSRS (Suicide Risk)</p>
+                                <p className="text-slate-300 text-xs">Weekly</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-amber-400 text-sm font-semibold">Next: Feb 21</p>
-                                <p className="text-slate-400 text-xs">5 days</p>
+                                <p className="text-slate-300 text-xs">5 days</p>
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
                             <div>
-                                <p className="text-slate-200 text-sm font-medium">PSQI (Sleep Quality)</p>
-                                <p className="text-slate-400 text-xs">Monthly</p>
+                                <p className="text-slate-300 text-sm font-medium">PSQI (Sleep Quality)</p>
+                                <p className="text-slate-300 text-xs">Monthly</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-blue-400 text-sm font-semibold">Next: Mar 1</p>
-                                <p className="text-slate-400 text-xs">14 days</p>
+                                <p className="text-slate-300 text-xs">14 days</p>
                             </div>
                         </div>
                     </div>

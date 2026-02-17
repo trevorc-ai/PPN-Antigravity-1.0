@@ -59,7 +59,7 @@ const SafetyRiskMatrixDemo: React.FC = () => {
                 </div>
                 <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
                     <p className="text-sm font-bold text-slate-3000 uppercase tracking-widest mb-1">Serious Events</p>
-                    <p className="text-3xl font-black text-slate-400">0</p>
+                    <p className="text-3xl font-black text-slate-300">0</p>
                     <p className="text-sm text-slate-600 font-medium mt-1">No G4/G5 Events</p>
                 </div>
             </div>

@@ -78,7 +78,7 @@ const Login: React.FC = () => {
         {/* Back to Home Button */}
         <button
           onClick={() => navigate('/')}
-          className="mb-6 flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors group"
+          className="mb-6 flex items-center gap-2 text-slate-300 hover:text-slate-300 transition-colors group"
         >
           <span className="material-symbols-outlined text-xl group-hover:-translate-x-1 transition-transform">arrow_back</span>
           <span className="text-sm font-bold">Back to Home</span>
@@ -90,9 +90,9 @@ const Login: React.FC = () => {
             <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <Activity className="text-slate-300 w-7 h-7" />
             </div>
-            <h1 className="text-3xl font-black text-slate-200 tracking-tight">PPN Research Portal</h1>
+            <h1 className="text-3xl font-black text-slate-300 tracking-tight">PPN Research Portal</h1>
           </div>
-          <p className="text-slate-400 text-sm">Secure clinical intelligence network</p>
+          <p className="text-slate-300 text-sm">Secure clinical intelligence network</p>
         </div>
 
         {/* Login Form */}
@@ -166,7 +166,7 @@ const Login: React.FC = () => {
 
             {/* Sign Up Link */}
             <div className="text-center pt-4 border-t border-slate-800">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-300">
                 Don't have an account?{' '}
                 <Link to="/signup" className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors">
                   Sign Up
@@ -194,13 +194,13 @@ const Login: React.FC = () => {
                 setError(null);
                 setResetSuccess(false);
               }}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-200 transition-colors"
+              className="absolute top-4 right-4 text-slate-300 hover:text-slate-300 transition-colors"
             >
               <span className="material-symbols-outlined">close</span>
             </button>
 
-            <h2 className="text-2xl font-black text-slate-200 mb-2">Reset Password</h2>
-            <p className="text-sm text-slate-400 mb-6">
+            <h2 className="text-2xl font-black text-slate-300 mb-2">Reset Password</h2>
+            <p className="text-sm text-slate-300 mb-6">
               Enter your email address and we'll send you a link to reset your password.
             </p>
 

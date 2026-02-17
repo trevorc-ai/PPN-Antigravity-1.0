@@ -88,7 +88,7 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                     <select
                         value={data.intervention_type ?? ''}
                         onChange={(e) => updateField('intervention_type', e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="">Select intervention...</option>
                         {INTERVENTION_TYPES.map(type => (
@@ -104,11 +104,11 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                                 type="datetime-local"
                                 value={data.start_time ?? ''}
                                 onChange={(e) => updateField('start_time', e.target.value)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                             />
                             <button
                                 onClick={startIntervention}
-                                className="px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-medium"
+                                className="px-4 py-3 bg-orange-600 hover:bg-orange-700 text-slate-300 rounded-lg font-medium"
                             >
                                 Start
                             </button>
@@ -121,17 +121,45 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                                 type="datetime-local"
                                 value={data.end_time ?? ''}
                                 onChange={(e) => updateField('end_time', e.target.value)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                             />
                             <button
                                 onClick={endIntervention}
-                                className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium"
+                                className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-slate-300 rounded-lg font-medium"
                             >
                                 End
                             </button>
                         </div>
                     </FormField>
                 </div>
+
+                {/* Active Intervention Indicator */}
+                {data.start_time && !data.end_time && (
+                    <div className="p-6 bg-orange-500/10 border-2 border-orange-500/30 rounded-xl">
+                        <div className="flex items-start gap-4">
+                            <div className="flex-shrink-0">
+                                <Siren className="w-8 h-8 text-orange-400 animate-pulse" />
+                            </div>
+                            <div className="flex-1 space-y-2">
+                                <h3 className="text-lg font-black text-orange-400">
+                                    🚨 INTERVENTION IN PROGRESS
+                                </h3>
+                                <p className="text-sm text-slate-300">
+                                    Type: <span className="font-bold text-orange-300">{data.intervention_type}</span>
+                                </p>
+                                <p className="text-xs text-slate-300">
+                                    Started: {new Date(data.start_time).toLocaleTimeString()}
+                                </p>
+                                <button
+                                    onClick={endIntervention}
+                                    className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-slate-300 rounded-lg font-medium transition-all"
+                                >
+                                    End Intervention
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {data.duration_minutes !== undefined && data.duration_minutes >= 0 && (
                     <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">

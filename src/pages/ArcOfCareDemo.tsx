@@ -58,14 +58,14 @@ const ArcOfCareDemo: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
                 <div className="text-center space-y-4">
-                    <h1 className="text-5xl font-black text-slate-200 tracking-tight">
+                    <h1 className="text-5xl font-black text-slate-300 tracking-tight">
                         Wellness Journey - Phase 1
                     </h1>
-                    <p className="text-lg text-slate-400 max-w-3xl mx-auto">
+                    <p className="text-lg text-slate-300 max-w-3xl mx-auto">
                         Protocol Builder: Baseline Assessment & Augmented Intelligence
                     </p>
                 </div>
@@ -83,7 +83,7 @@ const ArcOfCareDemo: React.FC = () => {
                     {/* Left: Input Form */}
                     <div className="space-y-6">
                         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                            <h2 className="text-2xl font-bold text-slate-200 mb-6">Baseline Assessment</h2>
+                            <h2 className="text-2xl font-bold text-slate-300 mb-6">Baseline Assessment</h2>
 
                             {/* Expectancy Scale */}
                             <div className="space-y-2 mb-6">
@@ -98,7 +98,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setExpectancyScale(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                                 />
-                                <p className="text-slate-400 text-xs">1 = No belief, 100 = Complete confidence</p>
+                                <p className="text-slate-300 text-xs">1 = No belief, 100 = Complete confidence</p>
                             </div>
 
                             {/* ACE Score */}
@@ -114,7 +114,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setAceScore(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
                                 />
-                                <p className="text-slate-400 text-xs">0 = No trauma, 10 = Severe childhood trauma</p>
+                                <p className="text-slate-300 text-xs">0 = No trauma, 10 = Severe childhood trauma</p>
                             </div>
 
                             {/* GAD-7 Score */}
@@ -130,7 +130,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setGad7Score(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
                                 />
-                                <p className="text-slate-400 text-xs">0 = No anxiety, 21 = Severe anxiety</p>
+                                <p className="text-slate-300 text-xs">0 = No anxiety, 21 = Severe anxiety</p>
                             </div>
 
                             {/* PHQ-9 Score */}
@@ -146,7 +146,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setPhq9Score(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
                                 />
-                                <p className="text-slate-400 text-xs">0 = No depression, 27 = Severe depression</p>
+                                <p className="text-slate-300 text-xs">0 = No depression, 27 = Severe depression</p>
                             </div>
 
                             {/* Clinical Observations (PHI-Safe) */}
@@ -162,7 +162,7 @@ const ArcOfCareDemo: React.FC = () => {
                             <button
                                 onClick={handleSubmit}
                                 disabled={loading}
-                                className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                                className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>
@@ -220,7 +220,7 @@ const ArcOfCareDemo: React.FC = () => {
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="bg-slate-800/50 rounded-lg p-4">
-                                            <p className="text-slate-400 text-xs mb-1">Risk Level</p>
+                                            <p className="text-slate-300 text-xs mb-1">Risk Level</p>
                                             <p className={`text-2xl font-bold ${prediction.riskLevel === 'low' ? 'text-emerald-400' :
                                                 prediction.riskLevel === 'moderate' ? 'text-yellow-400' :
                                                     prediction.riskLevel === 'high' ? 'text-orange-400' :
@@ -231,24 +231,24 @@ const ArcOfCareDemo: React.FC = () => {
                                         </div>
 
                                         <div className="bg-slate-800/50 rounded-lg p-4">
-                                            <p className="text-slate-400 text-xs mb-1">Risk Score</p>
-                                            <p className="text-2xl font-bold text-slate-200">{prediction.riskScore}/100</p>
+                                            <p className="text-slate-300 text-xs mb-1">Risk Score</p>
+                                            <p className="text-2xl font-bold text-slate-300">{prediction.riskScore}/100</p>
                                         </div>
                                     </div>
 
                                     <div className="bg-slate-800/50 rounded-lg p-4">
-                                        <p className="text-slate-400 text-xs mb-1">Recommended Sessions</p>
+                                        <p className="text-slate-300 text-xs mb-1">Recommended Sessions</p>
                                         <p className="text-3xl font-bold text-emerald-400">{prediction.sessionCount}</p>
                                         <p className="text-slate-300 text-sm mt-2">{prediction.schedule}</p>
                                     </div>
 
                                     <div className="bg-slate-800/50 rounded-lg p-4">
-                                        <p className="text-slate-400 text-xs mb-2">Clinical Rationale</p>
-                                        <p className="text-slate-200 text-sm leading-relaxed">{prediction.rationale}</p>
+                                        <p className="text-slate-300 text-xs mb-2">Clinical Rationale</p>
+                                        <p className="text-slate-300 text-sm leading-relaxed">{prediction.rationale}</p>
                                     </div>
 
                                     <div className="bg-slate-800/50 rounded-lg p-4">
-                                        <p className="text-slate-400 text-xs mb-3">Risk Breakdown</p>
+                                        <p className="text-slate-300 text-xs mb-3">Risk Breakdown</p>
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-300 text-sm">ACE Risk</span>

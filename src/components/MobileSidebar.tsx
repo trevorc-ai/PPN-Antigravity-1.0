@@ -132,12 +132,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-slate-200 text-xs uppercase font-black leading-tight tracking-tight">
+                            <h1 className="text-slate-300 text-xs uppercase font-black leading-tight tracking-tight">
                                 PPN Research
                             </h1>
                             <div className="flex items-center gap-1">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                <p className="text-slate-400 text-xs font-bold tracking-wider">ONLINE</p>
+                                <p className="text-slate-300 text-xs font-bold tracking-wider">ONLINE</p>
                             </div>
                         </div>
                     </Link>
@@ -145,7 +145,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                     {/* Close Button - Thumb-reach zone (top right) */}
                     <button
                         onClick={onClose}
-                        className="p-2.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-lg transition-colors active:scale-95"
+                        className="p-2.5 text-slate-300 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-colors active:scale-95"
                         aria-label="Close menu"
                     >
                         <span className="material-symbols-outlined text-2xl">close</span>
@@ -168,7 +168,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                                             className={({ isActive }) =>
                                                 `group relative flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${isActive
                                                     ? 'bg-indigo-500/20 text-slate-300 ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-500/10'
-                                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 active:scale-95'
+                                                    : 'text-slate-300 hover:text-slate-300 hover:bg-slate-800/50 active:scale-95'
                                                 }`
                                             }
                                         >
@@ -200,7 +200,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                                                     )}
 
                                                     {/* Chevron */}
-                                                    <span className="material-symbols-outlined text-sm text-slate-600 group-hover:text-slate-400 transition-colors">
+                                                    <span className="material-symbols-outlined text-sm text-slate-600 group-hover:text-slate-300 transition-colors">
                                                         chevron_right
                                                     </span>
                                                 </>
@@ -217,7 +217,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                 <div className="shrink-0 p-4 border-t border-slate-800/50">
                     <div className="bg-slate-800/30 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs font-black text-slate-400 uppercase tracking-wider">
+                            <span className="text-xs font-black text-slate-300 uppercase tracking-wider">
                                 Active Protocols
                             </span>
                             <span className="text-xs font-mono font-bold text-indigo-400 px-2 py-0.5 bg-indigo-500/10 rounded">
@@ -275,7 +275,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                                         }`}
                                 >
                                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
-                                    <span className="text-xs font-medium text-slate-400">{d.name}</span>
+                                    <span className="text-xs font-medium text-slate-300">{d.name}</span>
                                     <span className="text-xs font-mono text-slate-600">({d.count})</span>
                                 </div>
                             ))}

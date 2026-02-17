@@ -70,17 +70,17 @@ const MolecularVisualizationDemo: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
             <div className="max-w-7xl mx-auto space-y-12">
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <div className="flex items-center justify-center gap-3 mb-4">
                         <Atom className="w-12 h-12 text-emerald-400" />
-                        <h1 className="text-5xl font-black text-slate-200 tracking-tight">
+                        <h1 className="text-5xl font-black text-slate-300 tracking-tight">
                             Molecular Visualization
                         </h1>
                     </div>
-                    <p className="text-lg text-slate-400 max-w-3xl mx-auto">
+                    <p className="text-lg text-slate-300 max-w-3xl mx-auto">
                         High-performance 3D molecular structures with lazy-loading WebGL and scientific-grade rendering
                     </p>
                     <div className="flex items-center justify-center gap-6 text-sm text-slate-500">
@@ -122,8 +122,8 @@ const MolecularVisualizationDemo: React.FC = () => {
                         <div key={molecule.name} className="space-y-4">
                             {/* Molecule Info */}
                             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                                <h2 className="text-2xl font-bold text-slate-200 mb-1">{molecule.name}</h2>
-                                <p className="text-sm text-slate-400 mb-3">{molecule.fullName}</p>
+                                <h2 className="text-2xl font-bold text-slate-300 mb-1">{molecule.name}</h2>
+                                <p className="text-sm text-slate-300 mb-3">{molecule.fullName}</p>
                                 <p className="text-sm text-slate-300 leading-relaxed">{molecule.description}</p>
 
                                 {/* SMILES String */}
@@ -147,7 +147,7 @@ const MolecularVisualizationDemo: React.FC = () => {
 
                 {/* Technical Info */}
                 <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8">
-                    <h2 className="text-2xl font-bold text-slate-200 mb-6">Technical Features</h2>
+                    <h2 className="text-2xl font-bold text-slate-300 mb-6">Technical Features</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div className="space-y-2">
@@ -196,7 +196,7 @@ const MolecularVisualizationDemo: React.FC = () => {
 
                 {/* Implementation Details */}
                 <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8">
-                    <h2 className="text-2xl font-bold text-slate-200 mb-4">Implementation</h2>
+                    <h2 className="text-2xl font-bold text-slate-300 mb-4">Implementation</h2>
 
                     <div className="space-y-4">
                         <div>
@@ -216,7 +216,7 @@ const MolecularVisualizationDemo: React.FC = () => {
 
                         <div>
                             <h3 className="text-slate-300 font-semibold mb-2">Dependencies:</h3>
-                            <ul className="text-slate-400 text-sm space-y-1">
+                            <ul className="text-slate-300 text-sm space-y-1">
                                 <li>• <span className="text-emerald-400 font-mono">3Dmol.js</span> - Loaded via CDN in index.html</li>
                                 <li>• <span className="text-blue-400 font-mono">Intersection Observer API</span> - Native browser API</li>
                                 <li>• <span className="text-purple-400 font-mono">requestAnimationFrame</span> - Native browser API</li>
@@ -225,7 +225,7 @@ const MolecularVisualizationDemo: React.FC = () => {
 
                         <div>
                             <h3 className="text-slate-300 font-semibold mb-2">Files Created:</h3>
-                            <ul className="text-slate-400 text-sm space-y-1 font-mono">
+                            <ul className="text-slate-300 text-sm space-y-1 font-mono">
                                 <li>• src/components/science/MoleculeViewer.tsx</li>
                                 <li>• src/components/science/index.ts</li>
                                 <li>• src/components/science/README.md</li>
@@ -236,7 +236,7 @@ const MolecularVisualizationDemo: React.FC = () => {
 
                 {/* Documentation Link */}
                 <div className="text-center">
-                    <p className="text-sm text-slate-400">
+                    <p className="text-sm text-slate-300">
                         Full documentation: <code className="text-emerald-400">src/components/science/README.md</code>
                     </p>
                 </div>

@@ -11,7 +11,7 @@ const StepCard: React.FC<{ number: string; title: string; points: string[]; icon
       <span className="material-symbols-outlined text-3xl">{icon}</span>
     </div>
     <div className="space-y-4 relative z-10">
-      <h3 className="text-xl font-black text-slate-200 tracking-tight">{title}</h3>
+      <h3 className="text-xl font-black text-slate-300 tracking-tight">{title}</h3>
       <ul className="space-y-3">
         {points.map((point, i) => (
           <li key={i} className="flex gap-3 text-sm text-slate-3000 font-medium leading-relaxed">
@@ -32,7 +32,7 @@ const FAQItem: React.FC<{ q: string; a: string }> = ({ q, a }) => (
     </div>
     <div className="flex gap-4 border-t border-slate-800/50 pt-4">
       <span className="text-clinical-green font-black text-lg select-none">A:</span>
-      <p className="text-slate-400 text-sm leading-relaxed font-medium">"{a}"</p>
+      <p className="text-slate-300 text-sm leading-relaxed font-medium">"{a}"</p>
     </div>
   </div>
 );
@@ -48,13 +48,13 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 font-sans animate-in fade-in duration-700 pb-24 overflow-x-hidden">
+    <div className="min-h-full bg-[#0a1628] text-slate-300 font-sans animate-in fade-in duration-700 pb-24 overflow-x-hidden">
       {/* HEADER */}
       <div className="h-16 bg-[#0a0c10]/90 border-b border-white/5 flex items-center justify-between px-4 sm:px-8 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <button
             onClick={onMenuClick}
-            className="lg:hidden size-10 flex items-center justify-center rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-all"
+            className="lg:hidden size-10 flex items-center justify-center rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 transition-all"
             aria-label="Open menu"
           >
             <span className="material-symbols-outlined">menu</span>
@@ -68,7 +68,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
         </div>
 
         <div className="flex items-center gap-4">
-          <Link to="/" className="hidden lg:flex items-center gap-2 text-[11px] font-black text-slate-3000 hover:text-slate-200 uppercase tracking-widest transition-colors group">
+          <Link to="/" className="hidden lg:flex items-center gap-2 text-[11px] font-black text-slate-3000 hover:text-slate-300 uppercase tracking-widest transition-colors group">
             <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
             Back to Home
           </Link>
@@ -82,7 +82,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
       </div>
 
       {/* HERO */}
-      <div className="relative py-20 sm:py-32 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] border-b border-white/5 overflow-hidden">
+      <div className="relative py-20 sm:py-32 bg-[#0a1628] border-b border-white/5 overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[700px] bg-primary/10 rounded-full blur-[160px] pointer-events-none"></div>
 
@@ -91,11 +91,11 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
             <span className="material-symbols-outlined text-sm">database</span>
             Clinical Wisdom Economics
           </div>
-          <h1 className="text-5xl sm:text-8xl font-black tracking-tighter text-slate-200 leading-none">
+          <h1 className="text-5xl sm:text-8xl font-black tracking-tighter text-slate-300 leading-none">
             Clinical Wisdom <br />
             is the <span className="text-primary">Currency.</span>
           </h1>
-          <p className="max-w-3xl mx-auto text-slate-400 text-lg sm:text-xl font-medium leading-relaxed">
+          <p className="max-w-3xl mx-auto text-slate-300 text-lg sm:text-xl font-medium leading-relaxed">
             The PPN Guild operates on a simple principle: <span className="text-slate-300 font-bold">Share high-quality data, and the platform is free.</span> We align practitioner incentives with the expansion of the global evidence base.
           </p>
         </div>
@@ -107,7 +107,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
         <Section spacing="default" className="space-y-16">
           <div className="text-center space-y-4">
             <h3 className="text-xs font-black text-primary tracking-[0.5em]">The Framework</h3>
-            <h2 className="text-4xl sm:text-6xl font-black text-slate-200 tracking-tight">How It Works</h2>
+            <h2 className="text-4xl sm:text-6xl font-black text-slate-300 tracking-tight">How It Works</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -145,7 +145,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
         <Section spacing="default" className="max-w-4xl mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h3 className="text-xs font-black text-accent-amber tracking-[0.5em]">Verification Details</h3>
-            <h2 className="text-4xl font-black text-slate-200 tracking-tight">Frequently Asked Questions</h2>
+            <h2 className="text-4xl font-black text-slate-300 tracking-tight">Frequently Asked Questions</h2>
           </div>
 
           <div className="space-y-6">
@@ -168,7 +168,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
         <Section spacing="default" className="bg-[#111418]/60 border border-slate-800 rounded-[4rem] p-12 sm:p-24 text-center space-y-10 relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-30"></div>
           <div className="space-y-4 relative z-10">
-            <h2 className="text-4xl sm:text-7xl font-black text-slate-200 tracking-tighter leading-tight">Ready to join the <span className="text-primary">Cooperative?</span></h2>
+            <h2 className="text-4xl sm:text-7xl font-black text-slate-300 tracking-tighter leading-tight">Ready to join the <span className="text-primary">Cooperative?</span></h2>
             <p className="text-slate-3000 font-medium text-xl leading-relaxed max-w-2xl mx-auto">
               Join 500+ clinical researchers in building the world's most robust repository for psychedelic therapy.
             </p>

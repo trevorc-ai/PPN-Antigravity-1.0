@@ -81,7 +81,7 @@ const StarRating: React.FC<{ value: number; onChange: (value: number) => void; l
                         />
                     </button>
                 ))}
-                <span className="ml-2 text-sm text-slate-400">({value}/5)</span>
+                <span className="ml-2 text-sm text-slate-300">({value}/5)</span>
             </div>
         </div>
     );
@@ -137,11 +137,11 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Brain className="w-7 h-7 text-purple-400" />
                             Structured Integration Session
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             PHI-safe structured session documentation with zero free-text inputs
                         </p>
                     </div>
@@ -159,7 +159,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                             type="number"
                             value={data.session_number}
                             onChange={(e) => updateField('session_number', parseInt(e.target.value) || 1)}
-                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                             min="1"
                         />
                     </FormField>
@@ -170,12 +170,12 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="date"
                                 value={data.session_date}
                                 onChange={(e) => updateField('session_date', e.target.value)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                             />
                             <button
                                 type="button"
                                 onClick={setToday}
-                                className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                                className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-colors"
                             >
                                 Today
                             </button>
@@ -191,8 +191,8 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="button"
                                 onClick={() => updateField('session_duration_minutes', duration as 30 | 45 | 60 | 90)}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.session_duration_minutes === duration
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-blue-500 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 {duration} min
@@ -213,8 +213,8 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="button"
                                 onClick={() => updateField('attendance_status', value as 'attended' | 'cancelled' | 'no_show')}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.attendance_status === value
-                                    ? `bg-${color}-500 text-white`
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? `bg-${color}-500 text-slate-300`
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 {label}
@@ -234,8 +234,8 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="button"
                                 onClick={() => toggleArrayItem('session_focus_ids', focus.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.session_focus_ids.includes(focus.id)
-                                    ? 'bg-purple-500 text-white'
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-purple-500 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -250,7 +250,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
 
             {/* Patient Progress Indicators */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-6">
-                <h3 className="text-lg font-bold text-slate-200">Patient Progress Indicators</h3>
+                <h3 className="text-lg font-bold text-slate-300">Patient Progress Indicators</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <StarRating
                         label="Insight Integration"
@@ -285,8 +285,8 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="button"
                                 onClick={() => toggleArrayItem('homework_assigned_ids', homework.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.homework_assigned_ids.includes(homework.id)
-                                    ? 'bg-cyan-500 text-white'
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-cyan-500 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 <div className="flex items-center justify-between">
@@ -312,8 +312,8 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="button"
                                 onClick={() => toggleArrayItem('therapist_observation_ids', obs.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.therapist_observation_ids.includes(obs.id)
-                                    ? obs.valence === 'positive' ? 'bg-emerald-600 text-white' : 'bg-yellow-600 text-white'
-                                    : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? obs.valence === 'positive' ? 'bg-emerald-600 text-slate-300' : 'bg-yellow-600 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -333,7 +333,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                         type="date"
                         value={data.next_session_scheduled || ''}
                         onChange={(e) => updateField('next_session_scheduled', e.target.value || undefined)}
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200"
+                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                     />
                 </FormField>
             </div>
@@ -342,7 +342,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
             <div className="flex justify-end">
                 <button
                     onClick={handleSave}
-                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium flex items-center gap-2 transition-colors"
+                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium flex items-center gap-2 transition-colors"
                 >
                     <Save className="w-5 h-5" />
                     Save Session

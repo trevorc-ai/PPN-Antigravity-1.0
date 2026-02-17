@@ -27,3 +27,8 @@ export { default as RescueProtocolChecklist } from './RescueProtocolChecklist';
 export { default as PulseCheckWidget } from './PulseCheckWidget';
 export { default as SymptomDecayCurveChart } from './SymptomDecayCurveChart';
 export { default as RedAlertPanel } from './RedAlertPanel';
+
+// ===== UX ENHANCEMENTS =====
+export { ArcOfCareOnboarding } from './ArcOfCareOnboarding';
+export type { ArcOfCareOnboardingProps } from './ArcOfCareOnboarding';
+export { PhaseLoadingSkeleton } from './PhaseLoadingSkeleton';

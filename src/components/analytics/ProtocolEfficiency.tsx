@@ -40,15 +40,15 @@ const CustomTooltip = ({ active, payload, overhead }: any) => {
                 <h4 className="font-black text-slate-300 text-sm mb-2">{data.name}</h4>
                 <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
-                        <span className="text-slate-400">Revenue:</span>
+                        <span className="text-slate-300">Revenue:</span>
                         <span className="font-mono text-emerald-400">${data.revenue.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-slate-400">Operational Load:</span>
-                        <span className="font-mono text-slate-200">{data.hours} Staff Hrs</span>
+                        <span className="text-slate-300">Operational Load:</span>
+                        <span className="font-mono text-slate-300">{data.hours} Staff Hrs</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-slate-400">Cost (@${overhead}/hr):</span>
+                        <span className="text-slate-300">Cost (@${overhead}/hr):</span>
                         <span className="font-mono text-rose-400">-${cost.toLocaleString()}</span>
                     </div>
                     <div className="pt-2 border-t border-slate-800 flex justify-between font-bold">
@@ -84,11 +84,11 @@ export default function ProtocolEfficiency() {
             {/* HEADER */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div title="Forecasting financial efficiency and margin analysis for selected protocols">
-                    <h2 className="text-xl font-black text-slate-200 tracking-tighter flex items-center gap-2">
+                    <h2 className="text-xl font-black text-slate-300 tracking-tighter flex items-center gap-2">
                         <Calculator className="text-indigo-500" />
                         Protocol ROI Engine
                     </h2>
-                    <p className="text-xs text-slate-400 font-medium mt-1">
+                    <p className="text-xs text-slate-300 font-medium mt-1">
                         Financial Efficiency & Margin Analysis.
                     </p>
                 </div>
@@ -179,7 +179,7 @@ export default function ProtocolEfficiency() {
                                 <div className="flex items-center gap-3">
                                     <div className={`text-xs font-black w-4 text-slate-600`}>#{i + 1}</div>
                                     <div>
-                                        <div className="text-xs font-bold text-slate-200">{p.name}</div>
+                                        <div className="text-xs font-bold text-slate-300">{p.name}</div>
                                         <div className="text-xs text-slate-3000">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
                                     </div>
                                 </div>

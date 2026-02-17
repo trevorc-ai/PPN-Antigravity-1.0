@@ -19,7 +19,7 @@ const WorkflowChaosPage: React.FC = () => {
     const navigate = useNavigate();
 
     return (
-        <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300">
+        <PageContainer className="min-h-screen bg-[#0a1628] text-slate-300">
             {/* Hero Section */}
             <Section spacing="tight" className="pt-20 pb-12 text-center">
                 <motion.div
@@ -31,11 +31,11 @@ const WorkflowChaosPage: React.FC = () => {
                         <ServerCrash className="w-4 h-4" />
                         Operational Inefficiency
                     </div>
-                    <h1 className="text-5xl sm:text-7xl font-black tracking-tighter text-slate-200 mb-6 leading-[0.9]">
+                    <h1 className="text-5xl sm:text-7xl font-black tracking-tighter text-slate-300 mb-6 leading-[0.9]">
                         The End of <br />
                         <span className="text-gradient-primary">Fragmented Care.</span>
                     </h1>
-                    <p className="text-xl text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
+                    <p className="text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
                         Your current stack—IntakeQ, Spruce, Spotify, Excel, and a generic EHR—is costing you 10+ hours a week in administrative burnout.
                     </p>
                 </motion.div>
@@ -60,7 +60,7 @@ const WorkflowChaosPage: React.FC = () => {
                         >
                             <tool.icon className={`w-8 h-8 ${tool.color}`} />
                             <div>
-                                <h3 className="text-sm font-black text-slate-200">{tool.name}</h3>
+                                <h3 className="text-sm font-black text-slate-300">{tool.name}</h3>
                                 <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">{tool.desc}</p>
                             </div>
                         </motion.div>
@@ -80,10 +80,10 @@ const WorkflowChaosPage: React.FC = () => {
 
                     <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                         <div className="space-y-8">
-                            <h2 className="text-4xl font-black tracking-tight text-slate-200">
+                            <h2 className="text-4xl font-black tracking-tight text-slate-300">
                                 The <span className="text-gradient-primary">Practice OS</span> Solution.
                             </h2>
-                            <p className="text-lg text-slate-400 font-medium leading-relaxed">
+                            <p className="text-lg text-slate-300 font-medium leading-relaxed">
                                 PPN unifies your entire clinical workflow into a single, secure, purpose-built platform designed specifically for the 6-8 hour psychedelic therapy session.
                             </p>
 

@@ -79,11 +79,11 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
             <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
                 <div className="flex items-start justify-between mb-4">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Brain className="w-7 h-7 text-purple-400" />
                             MEQ-30 Questionnaire
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             30-item Mystical Experience Questionnaire
                         </p>
                     </div>
@@ -98,7 +98,7 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 {/* Progress Bar */}
                 <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400">Progress: {answeredCount}/30</span>
+                        <span className="text-slate-300">Progress: {answeredCount}/30</span>
                         <span className="text-emerald-400 font-bold">{progressPercentage}%</span>
                     </div>
                     <div className="h-2 bg-slate-900/60 rounded-full overflow-hidden">
@@ -141,12 +141,12 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                                 }`}
                         >
                             <div className="flex items-start gap-3 mb-4">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isAnswered ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-400'
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isAnswered ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-300'
                                     }`}>
                                     {isAnswered ? <CheckCircle className="w-5 h-5" /> : <span className="text-sm font-bold">{question.number}</span>}
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-slate-200 text-base font-medium leading-relaxed">
+                                    <p className="text-slate-300 text-base font-medium leading-relaxed">
                                         {question.text}
                                     </p>
                                     <p className="text-slate-500 text-xs mt-1">Subscale: {question.subscale}</p>
@@ -159,7 +159,7 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                                         key={option.value}
                                         onClick={() => updateResponse(question.number, option.value)}
                                         className={`flex-1 min-w-[80px] px-3 py-2 rounded-lg font-medium text-sm transition-all ${data.responses[question.number] === option.value
-                                            ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
+                                            ? 'bg-emerald-600 text-slate-300 shadow-lg shadow-emerald-600/30'
                                             : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                             }`}
                                     >

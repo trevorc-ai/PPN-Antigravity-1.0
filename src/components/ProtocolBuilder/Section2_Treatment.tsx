@@ -4,7 +4,7 @@ export const Section2_Treatment = ({ protocol, onChange, autoFilled }) => {
   return (
     <div className={`p-6 rounded-2xl border border-indigo-500/20 bg-slate-900/40 opacity-0 translate-y-4 animate-in fade-in slide-in-from-bottom-6 duration-700 fill-mode-forwards`}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-slate-200 flex items-center gap-3">
+        <h2 className="text-xl font-bold text-slate-300 flex items-center gap-3">
           <span className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-sm">2</span>
           Treatment Parameters
         </h2>

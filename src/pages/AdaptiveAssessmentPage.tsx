@@ -146,7 +146,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
         const remissionProbability = finalMEQScore >= 60 ? 87 : finalMEQScore >= 40 ? 72 : 58;
 
         return (
-            <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+            <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
                 <div className="max-w-4xl mx-auto space-y-6">
                     {/* Success Header */}
                     <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-8 text-center">
@@ -180,22 +180,22 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
 
                         {/* Correlation to Baseline */}
                         <div className="mt-8 pt-8 border-t border-slate-700/50">
-                            <h3 className="text-slate-200 text-sm font-bold mb-4 text-center">
+                            <h3 className="text-slate-300 text-sm font-bold mb-4 text-center">
                                 Your Predicted Journey
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                 <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-400 mb-2">Baseline Depression</p>
+                                    <p className="text-slate-300 mb-2">Baseline Depression</p>
                                     <p className="text-3xl font-black text-red-400">{baselinePhq9}</p>
                                     <p className="text-slate-500 text-xs mt-1">PHQ-9 (Severe)</p>
                                 </div>
                                 <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-400 mb-2">Expected Improvement</p>
+                                    <p className="text-slate-300 mb-2">Expected Improvement</p>
                                     <p className="text-3xl font-black text-emerald-400">-{totalImprovement}</p>
                                     <p className="text-slate-500 text-xs mt-1">Points at 6 months</p>
                                 </div>
                                 <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-400 mb-2">Remission Likelihood</p>
+                                    <p className="text-slate-300 mb-2">Remission Likelihood</p>
                                     <p className="text-3xl font-black text-blue-400">{remissionProbability}%</p>
                                     <p className="text-slate-500 text-xs mt-1">Based on 2,847 patients</p>
                                 </div>
@@ -204,15 +204,15 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
 
                         {/* Next Steps */}
                         <div className="mt-8 pt-8 border-t border-slate-700/50">
-                            <h3 className="text-slate-200 text-sm font-bold mb-4">Next Steps</h3>
+                            <h3 className="text-slate-300 text-sm font-bold mb-4">Next Steps</h3>
                             <div className="space-y-3">
                                 <div className="flex items-start gap-3 p-3 bg-slate-900/40 rounded-lg">
                                     <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                                         <span className="text-emerald-400 text-xs font-bold">1</span>
                                     </div>
                                     <div>
-                                        <p className="text-slate-200 font-semibold text-sm">Continue Integration Protocol</p>
-                                        <p className="text-slate-400 text-xs mt-1">
+                                        <p className="text-slate-300 font-semibold text-sm">Continue Integration Protocol</p>
+                                        <p className="text-slate-300 text-xs mt-1">
                                             Daily pulse checks (1-tap, 30 seconds) to track your progress
                                         </p>
                                     </div>
@@ -222,8 +222,8 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                                         <span className="text-blue-400 text-xs font-bold">2</span>
                                     </div>
                                     <div>
-                                        <p className="text-slate-200 font-semibold text-sm">Follow-up Assessments</p>
-                                        <p className="text-slate-400 text-xs mt-1">
+                                        <p className="text-slate-300 font-semibold text-sm">Follow-up Assessments</p>
+                                        <p className="text-slate-300 text-xs mt-1">
                                             PHQ-9 at Days 7, 14, 30, 60, 90, 180 to monitor symptom reduction
                                         </p>
                                     </div>
@@ -233,8 +233,8 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                                         <span className="text-amber-400 text-xs font-bold">3</span>
                                     </div>
                                     <div>
-                                        <p className="text-slate-200 font-semibold text-sm">Integration Sessions</p>
-                                        <p className="text-slate-400 text-xs mt-1">
+                                        <p className="text-slate-300 font-semibold text-sm">Integration Sessions</p>
+                                        <p className="text-slate-300 text-xs mt-1">
                                             Schedule weekly therapy to process insights and build new patterns
                                         </p>
                                     </div>
@@ -247,7 +247,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                     <div className="flex items-center justify-center gap-4">
                         <button
                             onClick={() => navigate('/arc-of-care-god-view')}
-                            className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all"
+                            className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all"
                         >
                             View Your Journey
                         </button>
@@ -260,7 +260,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
     // Expansion notice
     if (needsExpansion && phase === 'expanded') {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+            <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="bg-blue-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-8 mb-6">
                         <div className="flex items-start gap-4">
@@ -274,7 +274,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                                 <p className="text-slate-300 text-sm leading-relaxed">
                                     {expansionReason}
                                 </p>
-                                <p className="text-slate-400 text-xs mt-3">
+                                <p className="text-slate-300 text-xs mt-3">
                                     This will take about 5 more minutes. Your responses help us provide the best possible care.
                                 </p>
                             </div>
@@ -293,7 +293,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
 
     // Quick Mode assessments
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-4 sm:p-6 lg:p-8">
+        <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
             {/* Back Button - Only show when not in modal */}
             {showBackButton && (
                 <div className="max-w-4xl mx-auto mb-6">
@@ -311,7 +311,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
             <div className="max-w-4xl mx-auto mb-6">
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4">
                     <div className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-slate-400">Quick Assessment Progress</span>
+                        <span className="text-slate-300">Quick Assessment Progress</span>
                         <span className="text-emerald-400 font-bold">
                             {currentAssessment === 'meq' ? '1' : currentAssessment === 'edi' ? '2' : '3'} of 3
                         </span>

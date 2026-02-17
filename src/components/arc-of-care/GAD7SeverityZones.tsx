@@ -100,7 +100,7 @@ const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
                 <div className="flex items-center gap-2">
                     <Icon className={`w-5 h-5 ${colors.text}`} />
                     <span className={`text-2xl font-bold ${colors.text}`}>{clampedScore}</span>
-                    <span className="text-slate-400 text-sm">/21</span>
+                    <span className="text-slate-300 text-sm">/21</span>
                 </div>
                 <div className={`px-3 py-1 rounded-full ${colors.bg}/10 border ${colors.border}`}>
                     <span className={`text-sm font-medium ${colors.text}`}>{severity.label}</span>
@@ -124,7 +124,7 @@ const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
                                 }
               `}
                         >
-                            <div className={`text-xs font-medium mb-1 ${isActive ? zoneColors.text : 'text-slate-400'}`}>
+                            <div className={`text-xs font-medium mb-1 ${isActive ? zoneColors.text : 'text-slate-300'}`}>
                                 {zone.label}
                             </div>
                             <div className={`text-xs ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>
@@ -172,7 +172,7 @@ const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
 
                     {clampedScore >= 10 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
-                            <p className="text-slate-400 text-xs">
+                            <p className="text-slate-300 text-xs">
                                 <span className="font-semibold">Note:</span> Consider benzodiazepine pre-medication (e.g., Lorazepam 0.5-1mg) 30 minutes before dosing to reduce anxiety and improve session quality.
                             </p>
                         </div>

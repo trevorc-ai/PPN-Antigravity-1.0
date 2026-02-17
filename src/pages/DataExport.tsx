@@ -143,14 +143,14 @@ const DataExport: React.FC = () => {
     };
 
     return (
-        <div className="p-6 sm:p-10 min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
+        <div className="p-6 sm:p-10 min-h-screen bg-[#0a1628]">
             <PageContainer width="wide">
                 {/* Header */}
                 <Section spacing="tight" className="border-b border-slate-800 pb-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
-                            <h1 className="text-4xl font-black text-slate-200 tracking-tight">Data Export Manager</h1>
-                            <p className="text-slate-400 text-lg mt-2">
+                            <h1 className="text-4xl font-black text-slate-300 tracking-tight">Data Export Manager</h1>
+                            <p className="text-slate-300 text-lg mt-2">
                                 Generate de-identified research datasets for outcomes benchmarking and risk surveillance.
                             </p>
                         </div>
@@ -184,7 +184,7 @@ const DataExport: React.FC = () => {
                             <div className="card-glass rounded-3xl p-8">
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className="material-symbols-outlined text-3xl text-primary">download</span>
-                                    <h2 className="text-xl font-black text-slate-200">New Export</h2>
+                                    <h2 className="text-xl font-black text-slate-300">New Export</h2>
                                 </div>
 
                                 <div className="space-y-6">
@@ -237,7 +237,7 @@ const DataExport: React.FC = () => {
                                                     onClick={() => handleIndicationToggle(indication)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${config.indications.includes(indication)
                                                         ? 'bg-primary text-slate-300 border border-primary'
-                                                        : 'bg-slate-900 text-slate-400 border border-slate-800 hover:border-slate-700'
+                                                        : 'bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700'
                                                         }`}
                                                 >
                                                     {indication}
@@ -258,7 +258,7 @@ const DataExport: React.FC = () => {
                                                     onClick={() => setConfig({ ...config, format })}
                                                     className={`p-4 rounded-xl border transition-all ${config.format === format
                                                         ? 'bg-primary/10 border-primary text-primary'
-                                                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+                                                        : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
                                                         }`}
                                                 >
                                                     <FileText className="mx-auto mb-2" size={24} />
@@ -290,7 +290,7 @@ const DataExport: React.FC = () => {
                                     {/* Progress Bar */}
                                     {isGenerating && (
                                         <div className="space-y-2">
-                                            <div className="flex justify-between text-xs font-bold text-slate-400">
+                                            <div className="flex justify-between text-xs font-bold text-slate-300">
                                                 <span>Generating EXP-{new Date().toISOString().split('T')[0]}-BETA.{config.format}...</span>
                                                 <span>{progress}%</span>
                                             </div>
@@ -309,7 +309,7 @@ const DataExport: React.FC = () => {
                                             <AlertCircle size={14} className="mt-0.5 shrink-0" />
                                             <p>
                                                 <span className="font-bold text-red-400">PII Warning:</span> All exports are logged.
-                                                Re-identification is strictly prohibited. Action logged as: <span className="font-mono text-slate-400">admin_chen_1</span>
+                                                Re-identification is strictly prohibited. Action logged as: <span className="font-mono text-slate-300">admin_chen_1</span>
                                             </p>
                                         </div>
                                     </div>
@@ -323,7 +323,7 @@ const DataExport: React.FC = () => {
                         <Section spacing="default">
                             <div className="card-glass rounded-3xl p-8">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-xl font-black text-slate-200">Recent Exports</h2>
+                                    <h2 className="text-xl font-black text-slate-300">Recent Exports</h2>
                                     <div className="relative">
                                         <input
                                             type="text"
@@ -361,14 +361,14 @@ const DataExport: React.FC = () => {
                                                     <td className="py-4 px-4">
                                                         <div className="flex flex-wrap gap-1">
                                                             {record.filters.split(', ').map((filter, idx) => (
-                                                                <span key={idx} className="text-xs font-bold text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded">
+                                                                <span key={idx} className="text-xs font-bold text-slate-300 bg-slate-800/50 px-2 py-0.5 rounded">
                                                                     {filter}
                                                                 </span>
                                                             ))}
                                                         </div>
                                                     </td>
                                                     <td className="py-4 px-4">
-                                                        <div className="text-xs text-slate-400">{record.generated}</div>
+                                                        <div className="text-xs text-slate-300">{record.generated}</div>
                                                     </td>
                                                     <td className="py-4 px-4 text-center">
                                                         {record.status === 'complete' ? (
@@ -385,7 +385,7 @@ const DataExport: React.FC = () => {
                                                                         className="p-2 hover:bg-slate-800 rounded-lg transition-colors group"
                                                                         title="Preview"
                                                                     >
-                                                                        <Eye className="text-slate-400 group-hover:text-slate-200" size={16} />
+                                                                        <Eye className="text-slate-300 group-hover:text-slate-300" size={16} />
                                                                     </button>
                                                                     <button
                                                                         className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group"
@@ -414,7 +414,7 @@ const DataExport: React.FC = () => {
                                         Showing <span className="font-bold text-slate-300">1-4</span> of <span className="font-bold text-slate-300">28</span> exports
                                     </div>
                                     <div className="flex gap-2">
-                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-400 rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">
+                                        <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">
                                             Previous
                                         </button>
                                         <button className="px-4 py-2 bg-slate-900 border border-slate-800 text-slate-300 rounded-lg text-xs font-bold hover:border-slate-700 transition-colors">

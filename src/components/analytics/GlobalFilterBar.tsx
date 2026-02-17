@@ -178,8 +178,8 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
         return (
             <div className={`card-glass rounded-3xl p-6 ${className}`}>
                 <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-slate-400 animate-spin">progress_activity</span>
-                    <span className="text-sm font-medium text-slate-400">Loading filters...</span>
+                    <span className="material-symbols-outlined text-slate-300 animate-spin">progress_activity</span>
+                    <span className="text-sm font-medium text-slate-300">Loading filters...</span>
                 </div>
             </div>
         );
@@ -191,7 +191,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-2xl text-primary">filter_alt</span>
-                    <h3 className="text-lg font-black text-slate-200">Global Filters</h3>
+                    <h3 className="text-lg font-black text-slate-300">Global Filters</h3>
                     {activeFilterCount > 0 && (
                         <span className="px-2.5 py-1 rounded-full bg-primary/20 border border-primary/30 text-xs font-bold text-primary">
                             {activeFilterCount} active
@@ -213,7 +213,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Date Range */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
                         Date Range
                     </label>
                     <div className="space-y-2">
@@ -237,7 +237,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                 {/* Sites */}
                 {sites.length > 1 && (
                     <div className="space-y-2">
-                        <label className="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                        <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
                             Sites ({filters.siteIds.length} selected)
                         </label>
                         <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -249,7 +249,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                         onChange={() => handleSiteChange(site.id)}
                                         className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                     />
-                                    <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
+                                    <span className="text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors">
                                         {site.name}
                                     </span>
                                 </label>
@@ -260,7 +260,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Substances */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
                         Substances ({filters.substanceIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -272,7 +272,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                     onChange={() => handleSubstanceChange(substance.substance_id)}
                                     className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                 />
-                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
+                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors">
                                     {substance.substance_name}
                                 </span>
                             </label>
@@ -282,7 +282,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Routes */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
                         Routes ({filters.routeIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -294,7 +294,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                     onChange={() => handleRouteChange(route.route_id)}
                                     className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                 />
-                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
+                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors">
                                     {route.route_name}
                                 </span>
                             </label>
@@ -304,7 +304,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Support Modalities */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
                         Support Modality ({filters.supportModalityIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -316,7 +316,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                     onChange={() => handleModalityChange(modality.support_modality_id)}
                                     className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                 />
-                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
+                                <span className="text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors">
                                     {modality.support_modality}
                                 </span>
                             </label>
@@ -326,7 +326,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Protocols */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 tracking-widest uppercase">
+                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
                         Protocols ({filters.protocolIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -339,7 +339,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                         onChange={() => handleProtocolChange(protocol.id)}
                                         className="size-4 rounded border-slate-700 bg-slate-900 text-primary focus:ring-primary focus:ring-offset-0"
                                     />
-                                    <span className="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">
+                                    <span className="text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors">
                                         {protocol.name}
                                     </span>
                                 </label>

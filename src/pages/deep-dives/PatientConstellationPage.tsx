@@ -23,7 +23,7 @@ const PatientConstellation: React.FC = () => {
             <Section>
                 <div className="border-b border-slate-800 pb-6">
                     <h1 className="text-5xl font-black tracking-tighter mb-2">Patient Constellation</h1>
-                    <p className="text-slate-400 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">
+                    <p className="text-slate-300 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">
                         This chart maps patient outcomes based on their treatment resistance and symptom severity. Each dot represents a patient, allowing you to see patterns in how different people respond to treatments.
                     </p>
                 </div>
@@ -34,7 +34,7 @@ const PatientConstellation: React.FC = () => {
                 {/* Filterable Table Section */}
                 <div className="mt-12 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-2xl font-black text-slate-200 tracking-tight">Active Protocols</h2>
+                        <h2 className="text-2xl font-black text-slate-300 tracking-tight">Active Protocols</h2>
                         <div className="relative group w-full max-w-md">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-3000 group-focus-within:text-primary transition-colors" size={18} />
                             <input
@@ -73,11 +73,11 @@ const PatientConstellation: React.FC = () => {
                                                     <span className={`text-[11px] font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-3000'}`}>{p.status}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-6 text-sm font-mono text-slate-400">{p.protocol.dosage} {p.protocol.dosageUnit}</td>
+                                            <td className="px-8 py-6 text-sm font-mono text-slate-300">{p.protocol.dosage} {p.protocol.dosageUnit}</td>
                                             <td className="px-8 py-6 text-right">
                                                 <button
                                                     onClick={() => navigate(`/protocol/${p.id}`)}
-                                                    className="text-[11px] font-black text-primary hover:text-slate-200 uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
+                                                    className="text-[11px] font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
                                                 >
                                                     Open Protocol
                                                     <ChevronRight className="size-4" />

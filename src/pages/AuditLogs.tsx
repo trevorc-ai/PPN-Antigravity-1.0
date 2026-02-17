@@ -34,13 +34,13 @@ const AuditLogs: React.FC = () => {
   }, [activeFilter]);
 
   return (
-    <PageContainer width="wide" className="h-full flex flex-col gap-8 animate-in fade-in duration-500 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
+    <PageContainer width="wide" className="h-full flex flex-col gap-8 animate-in fade-in duration-500 bg-[#0a1628]">
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 pt-6 sm:pt-10 px-6 sm:px-0">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-primary text-5xl font-black">history_edu</span>
-            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-200 uppercase">Audit Logs</h1>
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-300 uppercase">Audit Logs</h1>
           </div>
           <p className="text-slate-3000 text-sm font-bold tracking-[0.2em] uppercase">
             Institutional Research Ledger • <span className="text-emerald-500">Node Synchronized</span>
@@ -84,7 +84,7 @@ const AuditLogs: React.FC = () => {
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex flex-col gap-1">
-                        <span className="text-sm font-black text-slate-400 uppercase tracking-widest">{log.actor}</span>
+                        <span className="text-sm font-black text-slate-300 uppercase tracking-widest">{log.actor}</span>
                         <span className="text-sm text-slate-700 font-mono tracking-tighter uppercase">ID: {log.id}</span>
                       </div>
                     </td>
@@ -133,7 +133,7 @@ const AuditLogs: React.FC = () => {
           <div className="px-10 py-8 border-t border-slate-800 bg-black/20 flex flex-col sm:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-6">
               <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">
-                Total Record Nodes: <span className="text-slate-400">{AUDIT_LOGS.length}</span>
+                Total Record Nodes: <span className="text-slate-300">{AUDIT_LOGS.length}</span>
               </span>
               <div className="h-6 w-px bg-slate-800"></div>
               <div className="flex items-center gap-3">
@@ -143,7 +143,7 @@ const AuditLogs: React.FC = () => {
             </div>
 
             <div className="flex gap-4">
-              <button className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
+              <button className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all">
                 Export Parquet
               </button>
               <button className="px-8 py-3 bg-primary hover:bg-blue-600 text-slate-300 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-primary/30 transition-all active:scale-95">

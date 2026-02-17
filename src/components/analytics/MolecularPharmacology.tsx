@@ -84,11 +84,11 @@ export default function MolecularPharmacology() {
             {/* Header & Tabs */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div title="Visualizing receptor binding potential ($K_i$ affinity) across target sites">
-                    <h2 className="text-xl font-black text-slate-200 tracking-tighter flex items-center gap-2">
+                    <h2 className="text-xl font-black text-slate-300 tracking-tighter flex items-center gap-2">
                         <Dna className="text-indigo-500" />
                         Molecular Bridge
                     </h2>
-                    <p className="text-xs text-slate-400 font-medium mt-1">
+                    <p className="text-xs text-slate-300 font-medium mt-1">
                         Receptor Binding Potential (Standardized $K_i$ Affinity).
                     </p>
                 </div>
@@ -161,12 +161,12 @@ export default function MolecularPharmacology() {
 
                         <div className="flex justify-between items-start mb-4 relative z-10">
                             <div className="p-3 bg-slate-800 rounded-xl border border-slate-700 shadow-lg">
-                                <FlaskConical className="w-6 h-6 text-slate-200" />
+                                <FlaskConical className="w-6 h-6 text-slate-300" />
                             </div>
                             <span className="text-4xl font-black text-slate-800 select-none opacity-50 group-hover:text-slate-700 transition-colors">3D</span>
                         </div>
 
-                        <h3 className="text-2xl font-black text-slate-200 tracking-tight mb-1 relative z-10">{data.name}</h3>
+                        <h3 className="text-2xl font-black text-slate-300 tracking-tight mb-1 relative z-10">{data.name}</h3>
                         <p className="text-xs font-mono text-indigo-400 mb-4 relative z-10">{data.formula}</p>
 
                         <div className="space-y-3 relative z-10">
@@ -184,10 +184,10 @@ export default function MolecularPharmacology() {
                     {/* Mechanism Description */}
                     <div className="p-5 bg-slate-900/30 border border-slate-800 rounded-2xl flex-1 flex flex-col">
                         <div className="flex items-center gap-2 mb-3">
-                            <Microscope className="w-4 h-4 text-slate-400" />
+                            <Microscope className="w-4 h-4 text-slate-300" />
                             <h4 className="text-xs font-black text-slate-300 uppercase tracking-widest">Mechanism of Action</h4>
                         </div>
-                        <p className="text-xs text-slate-400 leading-relaxed flex-1">
+                        <p className="text-xs text-slate-300 leading-relaxed flex-1">
                             {data.description}
                         </p>
 

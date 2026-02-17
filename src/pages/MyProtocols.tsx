@@ -126,7 +126,7 @@ export const MyProtocols = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3 flex-wrap">
-                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-white">My Protocols</h1>
+                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>My Protocols</h1>
                         <div className="px-2 py-0.5 bg-clinical-green/10 border border-clinical-green/20 rounded-md text-[8px] font-mono text-clinical-green tracking-widest font-black uppercase">
                             Standardized_v2.4
                         </div>
@@ -153,14 +153,14 @@ export const MyProtocols = () => {
                         placeholder="Search local protocols..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-12 bg-[#0f172a] border border-slate-700 rounded-xl pl-12 pr-6 text-sm font-bold text-white placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all"
+                        className="w-full h-12 bg-[#0f172a] border border-slate-700 rounded-xl pl-12 pr-6 text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all" style={{ color: '#8B9DC3' }}
                     />
                 </div>
 
                 <div className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
                     {loading ? (
                         <div className="py-20 text-center">
-                            <p className="text-slate-400 font-black uppercase tracking-widest text-[10px]">Loading protocols...</p>
+                            <p className="font-black uppercase tracking-widest text-[10px]" style={{ color: '#8B9DC3' }}>Loading protocols...</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -180,7 +180,7 @@ export const MyProtocols = () => {
                                         <tr key={p.id} className="hover:bg-primary/5 transition-colors group">
                                             <td className="px-8 py-6">
                                                 <div className="flex flex-col">
-                                                    <span className="text-base font-black text-white leading-tight uppercase">
+                                                    <span className="text-base font-black leading-tight uppercase" style={{ color: '#9DAEC8' }}>
                                                         {p.substance_name} Protocol
                                                     </span>
                                                     <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-tight mt-1">
@@ -189,15 +189,15 @@ export const MyProtocols = () => {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <span className="text-sm font-bold text-slate-300">{p.substance_name}</span>
+                                                <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.substance_name}</span>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <span className="text-sm font-bold text-slate-300">{p.patient_sex}</span>
+                                                <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.patient_sex}</span>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <span className="text-sm font-bold text-slate-300">{p.patient_sex}</span>
+                                                <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.patient_sex}</span>
                                             </td>
-                                            <td className="px-8 py-6 text-sm font-mono text-slate-400">
+                                            <td className="px-8 py-6 text-sm font-mono" style={{ color: '#8B9DC3' }}>
                                                 {p.dosage_mg} {p.dosage_unit}
                                             </td>
                                             <td className="px-8 py-6">
@@ -211,7 +211,7 @@ export const MyProtocols = () => {
                                             <td className="px-8 py-6 text-right">
                                                 <button
                                                     onClick={() => navigate(`/protocol/${p.id}`)}
-                                                    className="text-[10px] font-black text-primary hover:text-white uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
+                                                    className="text-[10px] font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
                                                 >
                                                     Open Protocol
                                                     <ChevronRight className="size-4" />

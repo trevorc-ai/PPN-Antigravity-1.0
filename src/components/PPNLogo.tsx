@@ -118,7 +118,7 @@ export const PPNLogo: React.FC<PPNLogoProps> = ({
             </svg>
 
             {/* Subtitle */}
-            <p className={`${subtext} font-medium tracking-[0.2em] text-slate-600 dark:text-slate-400 uppercase text-center`}>
+            <p className={`${subtext} font-medium tracking-[0.2em] text-slate-600 dark:text-slate-300 uppercase text-center`}>
                 Psychedelic Practitioners Network
             </p>
 

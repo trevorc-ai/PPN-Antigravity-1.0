@@ -72,11 +72,11 @@ const BaselinePhysiologyForm: React.FC<BaselinePhysiologyFormProps> = ({
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-slate-200 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
                             <Heart className="w-7 h-7 text-red-400" />
                             Baseline Physiology
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2">
+                        <p className="text-slate-300 text-sm mt-2">
                             Record resting vital signs before treatment to establish baseline cardiovascular health.
                         </p>
                     </div>
@@ -110,7 +110,7 @@ const BaselinePhysiologyForm: React.FC<BaselinePhysiologyFormProps> = ({
                                 step="0.01"
                                 value={data.resting_hrv ?? ''}
                                 onChange={(e) => updateField('resting_hrv', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                 placeholder="50.00"
                             />
                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
@@ -157,8 +157,8 @@ const BaselinePhysiologyForm: React.FC<BaselinePhysiologyFormProps> = ({
                     <div className={`mt-6 p-6 rounded-lg border ${bpStatus.color}`}>
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm text-slate-400 mb-1">Combined Blood Pressure</p>
-                                <p className="text-4xl font-black text-slate-200">
+                                <p className="text-sm text-slate-300 mb-1">Combined Blood Pressure</p>
+                                <p className="text-4xl font-black text-slate-300">
                                     {data.resting_bp_systolic} / {data.resting_bp_diastolic}
                                     <span className="text-lg text-slate-500 ml-2">mmHg</span>
                                 </p>

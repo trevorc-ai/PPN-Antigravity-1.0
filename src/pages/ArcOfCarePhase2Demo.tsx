@@ -111,14 +111,14 @@ const ArcOfCarePhase2Demo: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
                 <div className="text-center space-y-4">
-                    <h1 className="text-5xl font-black text-slate-200 tracking-tight">
+                    <h1 className="text-5xl font-black text-slate-300 tracking-tight">
                         Wellness Journey - Phase 2
                     </h1>
-                    <p className="text-lg text-slate-400 max-w-3xl mx-auto">
+                    <p className="text-lg text-slate-300 max-w-3xl mx-auto">
                         Session Logger: Real-Time Monitoring During Psychedelic-Assisted Therapy
                     </p>
                 </div>
@@ -136,8 +136,8 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                 <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-200">Session Controls</h2>
-                            <p className="text-slate-400 text-sm mt-1">
+                            <h2 className="text-2xl font-bold text-slate-300">Session Controls</h2>
+                            <p className="text-slate-300 text-sm mt-1">
                                 {sessionActive ? `Session in progress • ${elapsedMinutes} minutes elapsed` : 'Session not started'}
                             </p>
                         </div>
@@ -146,7 +146,7 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                             {!sessionActive && !sessionStartTime && (
                                 <button
                                     onClick={handleStartSession}
-                                    className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
+                                    className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-300 font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
                                 >
                                     <Play className="w-5 h-5" />
                                     Start Session
@@ -156,7 +156,7 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                             {sessionActive && (
                                 <button
                                     onClick={handlePauseSession}
-                                    className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
+                                    className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-300 font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
                                 >
                                     <Pause className="w-5 h-5" />
                                     Pause
@@ -166,7 +166,7 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                             {sessionStartTime && (
                                 <button
                                     onClick={handleEndSession}
-                                    className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
+                                    className="px-6 py-3 bg-red-500 hover:bg-red-600 text-slate-300 font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
                                 >
                                     <StopCircle className="w-5 h-5" />
                                     End Session
@@ -219,7 +219,7 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                     <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-12 text-center">
                         <Play className="w-16 h-16 text-slate-600 mx-auto mb-4" />
                         <h3 className="text-slate-300 text-xl font-semibold mb-2">No Active Session</h3>
-                        <p className="text-slate-400 text-sm">Click "Start Session" to begin monitoring</p>
+                        <p className="text-slate-300 text-sm">Click "Start Session" to begin monitoring</p>
                     </div>
                 )}
             </div>

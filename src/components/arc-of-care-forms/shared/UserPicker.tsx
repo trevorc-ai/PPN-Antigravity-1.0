@@ -54,7 +54,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                 type="button"
                 onClick={() => !disabled && setIsOpen(!isOpen)}
                 disabled={disabled}
-                className="w-full flex items-center justify-between px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-between px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <div className="flex items-center gap-3">
                     {selectedUser ? (
@@ -71,7 +71,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                         <span className="text-slate-500">{placeholder}</span>
                     )}
                 </div>
-                <svg className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className={`w-4 h-4 text-slate-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
@@ -87,7 +87,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search users..."
-                                className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full pl-10 pr-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 autoFocus
                             />
                         </div>
@@ -111,7 +111,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                                         <User className="w-4 h-4 text-blue-400" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-200 truncate">{user.name}</p>
+                                        <p className="text-sm font-medium text-slate-300 truncate">{user.name}</p>
                                         <p className="text-xs text-slate-500 truncate">{user.email}</p>
                                     </div>
                                     <span className="text-xs text-slate-600 bg-slate-800 px-2 py-1 rounded">
