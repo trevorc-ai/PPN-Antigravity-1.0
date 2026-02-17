@@ -25,8 +25,8 @@ const Footer: React.FC = () => {
           {/* Column 1: Brand */}
           <div className="space-y-4">
             {/* PPN Portal Logo */}
-            <div className="flex items-baseline gap-0 cursor-default">
-              <span className="text-3xl font-black tracking-tight text-slate-300 leading-none">PPN</span>
+            <div className="flex items-baseline gap-1 cursor-default">
+              <span className="text-3xl font-black tracking-tight text-slate-400 leading-none">PPN</span>
               <span className="text-3xl font-black tracking-tight text-primary leading-none">Portal</span>
             </div>
 
