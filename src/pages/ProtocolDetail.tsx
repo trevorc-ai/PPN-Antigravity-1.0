@@ -26,12 +26,12 @@ const ProtocolDetail: React.FC = () => {
             <span className="material-symbols-outlined text-5xl text-slate-700">person_off</span>
           </div>
           <div className="space-y-3">
-            <h2 className="text-3xl font-black text-slate-300 uppercase tracking-widest leading-none">Record Not Found</h2>
+            <h2 className="text-3xl font-black uppercase tracking-widest leading-none" style={{ color: '#A8B5D1' }}>Record Not Found</h2>
             <p className="text-slate-3000 font-mono text-base uppercase tracking-widest">Registry_Node_Lookup: {id}</p>
           </div>
           <button
             onClick={() => navigate('/dashboard')}
-            className="px-10 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20"
+            className="px-10 py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20"
           >
             Return to Registry
           </button>
@@ -118,7 +118,7 @@ const ProtocolDetail: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-white/5 pb-8 print:border-black/10">
           <div className="space-y-1">
             <div className="flex items-center gap-4">
-              <h1 className="text-4xl font-black tracking-tight text-slate-300 print:text-black">
+              <h1 className="text-4xl font-black tracking-tight print:text-black" style={{ color: '#8BA5D3' }}>
                 {record.demographics.patientHash ? record.demographics.patientHash.substring(0, 12) + '...' : 'ANONYMOUS'}
               </h1>
               <span className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border print:border-black print:text-black print:bg-transparent ${record.status === 'Active' ? 'bg-primary/20 text-primary border-primary/30' :
@@ -148,7 +148,7 @@ const ProtocolDetail: React.FC = () => {
                   <span className="material-symbols-outlined text-2xl">hexagon</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-300 uppercase tracking-[0.2em] print:text-black">Receptor Affinity Profile</h3>
+                  <h3 className="text-xl font-black uppercase tracking-[0.2em] print:text-black" style={{ color: '#A8B5D1' }}>Receptor Affinity Profile</h3>
                   <AdvancedTooltip content="Comparative binding affinity logic: Target Substance vs. Endogenous Standard (Serotonin/Dopamine Baselne).">
                     <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
@@ -157,8 +157,8 @@ const ProtocolDetail: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
                 <div className="md:col-span-1 space-y-4">
-                  <p className="text-sm font-bold text-slate-300 leading-relaxed print:text-black">
-                    <span className="text-slate-300 print:text-black">Micro-Pharmacology Analysis:</span> Visualizing the binding potency across critical safety and efficacy targets.
+                  <p className="text-sm font-bold leading-relaxed print:text-black" style={{ color: '#8B9DC3' }}>
+                    <span className="print:text-black" style={{ color: '#8B9DC3' }}>Micro-Pharmacology Analysis:</span> Visualizing the binding potency across critical safety and efficacy targets.
                   </p>
                   <ul className="space-y-3">
                     <li className="flex items-center gap-3">
@@ -208,7 +208,7 @@ const ProtocolDetail: React.FC = () => {
                   <span className="material-symbols-outlined text-2xl">psychology_alt</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-300 uppercase tracking-[0.2em] print:text-black">Therapeutic Envelope</h3>
+                  <h3 className="text-xl font-black uppercase tracking-[0.2em] print:text-black" style={{ color: '#A8B5D1' }}>Therapeutic Envelope</h3>
                   <AdvancedTooltip content="Environmental setting, support staff ratio, and integration time allocation.">
                     <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
@@ -223,14 +223,14 @@ const ProtocolDetail: React.FC = () => {
                       <span className="material-symbols-outlined text-xl">{settingIcon}</span>
                       <span className="text-sm font-bold uppercase tracking-widest">Environment</span>
                     </div>
-                    <p className="text-xl font-bold text-slate-300 print:text-black">{record.context?.setting || 'Not Specified'}</p>
+                    <p className="text-xl font-bold print:text-black" style={{ color: '#8B9DC3' }}>{record.context?.setting || 'Not Specified'}</p>
                   </div>
                   <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-3xl space-y-2 print:bg-gray-50 print:border-gray-200">
                     <div className="flex items-center gap-3 text-slate-3000 mb-2 print:text-black">
                       <span className="material-symbols-outlined text-xl">group</span>
                       <span className="text-sm font-bold uppercase tracking-widest">Support Ratio</span>
                     </div>
-                    <p className="text-xl font-bold text-slate-300 print:text-black">{record.context?.supportRatio || 'Unsupervised'}</p>
+                    <p className="text-xl font-bold print:text-black" style={{ color: '#8B9DC3' }}>{record.context?.supportRatio || 'Unsupervised'}</p>
                   </div>
                 </div>
 
@@ -285,7 +285,7 @@ const ProtocolDetail: React.FC = () => {
                   <span className="material-symbols-outlined text-2xl">monitoring</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-slate-300 uppercase tracking-[0.2em] print:text-black">EFFICACY TRAJECTORY (PHQ-9)</h3>
+                  <h3 className="text-xl font-black uppercase tracking-[0.2em] print:text-black" style={{ color: '#A8B5D1' }}>EFFICACY TRAJECTORY (PHQ-9)</h3>
                   <AdvancedTooltip content="Longitudinal tracking of clinical outcome measures (e.g., PHQ-9) vs. baseline.">
                     <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
@@ -298,7 +298,7 @@ const ProtocolDetail: React.FC = () => {
                 <div className="space-y-6 p-6 bg-slate-900/30 rounded-3xl border border-slate-800 flex flex-col justify-center print:bg-gray-50 print:border-gray-200">
                   <h4 className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Subjective Difficulty</h4>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-slate-300 print:text-black">{record.experience?.difficultyScore || '—'}</span>
+                    <span className="text-5xl font-black print:text-black" style={{ color: '#9DAEC8' }}>{record.experience?.difficultyScore || '—'}</span>
                     <span className="text-xl font-bold text-slate-600 print:text-black">/ 10</span>
                   </div>
 
@@ -380,7 +380,7 @@ const ProtocolDetail: React.FC = () => {
                       <Info className="text-slate-600 hover:text-primary transition-colors cursor-help print:hidden" size={14} />
                     </AdvancedTooltip>
                   </div>
-                  <p className="text-3xl font-black text-slate-300 tracking-tight print:text-black">{record.protocol.substance}</p>
+                  <p className="text-3xl font-black tracking-tight print:text-black" style={{ color: '#9DAEC8' }}>{record.protocol.substance}</p>
                 </div>
 
                 <div className="space-y-4 pt-4 border-t border-slate-800/50 print:border-gray-300">
@@ -414,7 +414,7 @@ const ProtocolDetail: React.FC = () => {
               <div className="flex items-center gap-3 mb-8 relative z-10">
                 <span className="material-symbols-outlined text-3xl text-red-500 print:text-black">medical_services</span>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-black text-slate-300 uppercase tracking-widest print:text-black">Safety Monitor</h3>
+                  <h3 className="text-lg font-black uppercase tracking-widest print:text-black" style={{ color: '#A8B5D1' }}>Safety Monitor</h3>
                   <AdvancedTooltip
                     content="Real-time monitoring of concomitant medications and adverse events."
                     side="bottom"
@@ -484,7 +484,7 @@ const ProtocolDetail: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-primary">hub</span>
-                <h3 className="text-2xl font-black text-slate-300 uppercase tracking-tighter">Cohort Matches</h3>
+                <h3 className="text-2xl font-black uppercase tracking-tighter" style={{ color: '#A8B5D1' }}>Cohort Matches</h3>
               </div>
               <p className="text-slate-3000 text-sm font-bold tracking-widest uppercase">Global Research Registry: Hive Mind Intelligence</p>
             </div>

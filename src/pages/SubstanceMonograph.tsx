@@ -123,7 +123,7 @@ const SubstanceMonograph: React.FC = () => {
       <div className="h-full flex flex-col items-center justify-center p-8 text-center space-y-6">
         <span className="material-symbols-outlined text-7xl text-slate-800">error</span>
         <div className="space-y-2">
-          <h2 className="text-2xl font-black text-slate-300 uppercase tracking-tight">Compound Node Not Found</h2>
+          <h2 className="text-2xl font-black uppercase tracking-tight" style={{ color: '#A8B5D1' }}>Compound Node Not Found</h2>
           <p className="text-slate-3000 font-medium">The requested identifier 0x{id} does not exist in the institutional registry.</p>
         </div>
         <button
@@ -150,7 +150,7 @@ const SubstanceMonograph: React.FC = () => {
               {/* Bento Cell 1: Registry */}
               <section className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-6 backdrop-blur-3xl shadow-2xl flex flex-col group/registry">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-[13px] font-black text-slate-300 tracking-[0.2em] flex items-center gap-3">
+                  <h3 className="text-[13px] font-black tracking-[0.2em] flex items-center gap-3" style={{ color: '#A8B5D1' }}>
                     <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                       <span className="material-symbols-outlined text-lg">science</span>
                     </div>
@@ -182,7 +182,7 @@ const SubstanceMonograph: React.FC = () => {
               {/* Bento Cell 2: Affinity */}
               <section className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-6 backdrop-blur-3xl shadow-2xl h-[420px] flex flex-col group/radar">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-[13px] font-black text-slate-300 tracking-[0.2em] flex items-center gap-3">
+                  <h3 className="text-[13px] font-black tracking-[0.2em] flex items-center gap-3" style={{ color: '#A8B5D1' }}>
                     <div className="size-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
                       <span className="material-symbols-outlined text-lg">hexagon</span>
                     </div>
@@ -208,7 +208,7 @@ const SubstanceMonograph: React.FC = () => {
             <section className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-3xl shadow-2xl h-[400px] flex flex-col group/velocity">
               <div className="flex items-center justify-between mb-6">
                 <div className="space-y-1">
-                  <h3 className="text-[13px] font-black text-slate-300 tracking-[0.2em] flex items-center gap-3">
+                  <h3 className="text-[13px] font-black tracking-[0.2em] flex items-center gap-3" style={{ color: '#A8B5D1' }}>
                     <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
                       <span className="material-symbols-outlined text-lg">trending_up</span>
                     </div>
@@ -262,7 +262,7 @@ const SubstanceMonograph: React.FC = () => {
                   </div>
                 ) : aiAnalysis ? (
                   <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
-                    <p className="text-sm text-slate-300 font-medium leading-relaxed italic border-l-2 border-indigo-500/30 pl-4">
+                    <p className="text-sm font-medium leading-relaxed italic border-l-2 border-indigo-500/30 pl-4" style={{ color: '#8B9DC3' }}>
                       "{aiAnalysis}"
                     </p>
                     <ResearchSources chunks={groundingChunks} />
@@ -274,7 +274,7 @@ const SubstanceMonograph: React.FC = () => {
                     </p>
                     <button
                       onClick={runAiSynthesis}
-                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 group active:scale-95"
+                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 group active:scale-95"
                     >
                       <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">bolt</span>
                       Initialize Synthesis
@@ -287,7 +287,7 @@ const SubstanceMonograph: React.FC = () => {
             {/* Bento Cell 5: Clinical Archive */}
             <section className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-3xl shadow-2xl space-y-6 group/archives">
               <div className="space-y-1">
-                <h3 className="text-[13px] font-black text-slate-300 tracking-[0.2em] uppercase">Clinical Archive</h3>
+                <h3 className="text-[13px] font-black tracking-[0.2em] uppercase" style={{ color: '#A8B5D1' }}>Clinical Archive</h3>
                 <p className="text-[11px] text-slate-600 font-black uppercase tracking-widest">Authorized Site Uploads</p>
               </div>
               <div className="space-y-3">
@@ -320,7 +320,7 @@ const SubstanceMonograph: React.FC = () => {
                   <span className="material-symbols-outlined text-2xl">gpp_maybe</span>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-slate-300 tracking-tight">Safety & Interactions</h2>
+                  <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Safety & Interactions</h2>
                   <p className="text-[11px] text-slate-600 font-black uppercase tracking-[0.2em]">Global Safety Node Intelligence</p>
                 </div>
               </div>
@@ -336,11 +336,11 @@ const SubstanceMonograph: React.FC = () => {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className={`size-3 rounded-full ${inter.risk === 'High' ? 'bg-red-500 shadow-[0_0_12px_#ef4444]' : 'bg-accent-amber shadow-[0_0_12px_#f59e0b]'}`}></div>
-                      <h4 className="text-lg font-black text-slate-300 tracking-tight">{inter.agent}</h4>
+                      <h4 className="text-lg font-black tracking-tight" style={{ color: '#8B9DC3' }}>{inter.agent}</h4>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-[11px] font-black uppercase border ${inter.risk === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-accent-amber/10 text-accent-amber border-accent-amber/20'}`}>{inter.risk} RISK</span>
                   </div>
-                  <p className="text-sm text-slate-300 font-medium leading-relaxed">{inter.description}</p>
+                  <p className="text-sm font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>{inter.description}</p>
                 </div>
               ))}
             </div>

@@ -36,7 +36,7 @@ const SectionHeader: React.FC<{ title: string; icon: string; count: number; onSe
       <div className="size-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-3000">
         <span className="material-symbols-outlined text-sm">{icon}</span>
       </div>
-      <h3 className="text-sm font-black text-slate-300 tracking-tight">{title}</h3>
+      <h3 className="text-sm font-black tracking-tight" style={{ color: '#A8B5D1' }}>{title}</h3>
       <span className="px-2 py-0.5 rounded-md bg-slate-800 text-[11px] font-mono text-slate-300 font-bold">{count}</span>
     </div>
     {onSeeAll && (
@@ -92,7 +92,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
         <div className="flex flex-col justify-center min-w-0 pr-4">
           <div className="flex items-center gap-2 mb-1">
             <span className={`size-1.5 rounded-full ${res.status === 'Active' ? 'bg-clinical-green animate-pulse' : 'bg-slate-600'}`}></span>
-            <h4 className="text-sm font-black text-slate-300 tracking-tight truncate">{cardTitle}</h4>
+            <h4 className="text-sm font-black tracking-tight truncate" style={{ color: '#8B9DC3' }}>{cardTitle}</h4>
           </div>
           <p className="text-[12px] font-bold text-slate-3000 tracking-wide pl-3.5">{cardSubtitle}</p>
         </div>
@@ -119,7 +119,7 @@ const PatientCard: React.FC<{ res: PatientRecord; variant?: 'compact' | 'full' }
       {/* Header: Clinical Context First */}
       <div className="flex justify-between items-start relative z-10">
         <div className="space-y-1">
-          <h4 className="text-xl font-black text-slate-300 tracking-tight leading-tight">{cardTitle}</h4>
+          <h4 className="text-xl font-black tracking-tight leading-tight" style={{ color: '#8B9DC3' }}>{cardTitle}</h4>
           <p className="text-[11px] font-medium text-slate-3000">{cardSubtitle}</p>
         </div>
         {/* Patient ID as Discrete Badge */}
@@ -472,10 +472,10 @@ const SearchPortal: React.FC = () => {
               <span className="material-symbols-outlined text-2xl">auto_awesome</span>
             </div>
             <div className="space-y-1">
-              <h1 className="text-5xl font-black tracking-tighter mb-4 text-slate-300">
+              <h1 className="text-5xl font-black tracking-tighter mb-4" style={{ color: '#8BA5D3' }}>
                 PPN Research Portal
               </h1>
-              <p className="text-slate-300 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">Search and analyze de-identified treatment protocols across the global network</p>
+              <p className="text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium" style={{ color: '#8B9DC3' }}>Search and analyze de-identified treatment protocols across the global network</p>
             </div>
           </div>
 
@@ -553,14 +553,14 @@ const SearchPortal: React.FC = () => {
         `}>
           <div className="h-full overflow-y-auto custom-scrollbar p-6 space-y-8 pb-20 w-72 lg:w-80">
             <div className="flex items-center justify-between lg:hidden mb-2">
-              <h3 className="text-sm font-black text-slate-300">Filters</h3>
+              <h3 className="text-sm font-black" style={{ color: '#A8B5D1' }}>Filters</h3>
               <button onClick={() => setIsFilterOpen(false)} className="p-2 text-slate-3000 hover:text-slate-300">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <div className="hidden lg:flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold text-slate-300">Smart Filters</h3>
+              <h3 className="text-xs font-bold" style={{ color: '#A8B5D1' }}>Smart Filters</h3>
               <button onClick={handleReset} className="text-[12px] font-bold text-primary hover:underline">Reset</button>
             </div>
 
@@ -691,7 +691,7 @@ const SearchPortal: React.FC = () => {
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                       {/* Subtle Header - No Box */}
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-sm font-bold text-slate-300">Research Results</h3>
+                        <h3 className="text-sm font-bold" style={{ color: '#A8B5D1' }}>Research Results</h3>
                         <span className="text-xs text-slate-3000">
                           {substanceResults.length + patientResults.length + clinicianResults.length} nodes
                         </span>

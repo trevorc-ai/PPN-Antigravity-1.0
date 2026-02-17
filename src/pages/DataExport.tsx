@@ -149,8 +149,8 @@ const DataExport: React.FC = () => {
                 <Section spacing="tight" className="border-b border-slate-800 pb-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
-                            <h1 className="text-4xl font-black text-slate-300 tracking-tight">Data Export Manager</h1>
-                            <p className="text-slate-300 text-lg mt-2">
+                            <h1 className="text-4xl font-black tracking-tight" style={{ color: '#8BA5D3' }}>Data Export Manager</h1>
+                            <p className="text-lg mt-2" style={{ color: '#8B9DC3' }}>
                                 Generate de-identified research datasets for outcomes benchmarking and risk surveillance.
                             </p>
                         </div>
@@ -184,7 +184,7 @@ const DataExport: React.FC = () => {
                             <div className="card-glass rounded-3xl p-8">
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className="material-symbols-outlined text-3xl text-primary">download</span>
-                                    <h2 className="text-xl font-black text-slate-300">New Export</h2>
+                                    <h2 className="text-xl font-black" style={{ color: '#A8B5D1' }}>New Export</h2>
                                 </div>
 
                                 <div className="space-y-6">
@@ -272,7 +272,7 @@ const DataExport: React.FC = () => {
                                     <button
                                         onClick={handleGenerateExport}
                                         disabled={isGenerating}
-                                        className="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-300 py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                        className="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-600 text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                                     >
                                         {isGenerating ? (
                                             <>
@@ -323,7 +323,7 @@ const DataExport: React.FC = () => {
                         <Section spacing="default">
                             <div className="card-glass rounded-3xl p-8">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-xl font-black text-slate-300">Recent Exports</h2>
+                                    <h2 className="text-xl font-black" style={{ color: '#A8B5D1' }}>Recent Exports</h2>
                                     <div className="relative">
                                         <input
                                             type="text"

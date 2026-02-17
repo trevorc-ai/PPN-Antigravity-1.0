@@ -32,7 +32,7 @@ const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => voi
 
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start">
-            <h4 className="text-base font-bold text-slate-300 truncate hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)}>
+            <h4 className="text-base font-bold truncate hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)} style={{ color: '#8B9DC3' }}>
               {practitioner.name}
             </h4>
             <span className="text-[10px] font-black text-slate-3000 uppercase tracking-wider bg-slate-900 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
@@ -58,7 +58,7 @@ const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => voi
         </button>
         <button
           onClick={() => onMessage(practitioner)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-slate-300 border border-blue-500/50 rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-500/20"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500/50 rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-500/20"
           title="Send Message"
         >
           <span className="material-symbols-outlined text-lg">chat_bubble</span>
@@ -149,7 +149,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
               )}
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-black text-slate-300 leading-tight">{practitioner.name}</h3>
+              <h3 className="text-lg sm:text-xl font-black leading-tight" style={{ color: '#8B9DC3' }}>{practitioner.name}</h3>
               <p className="text-[11px] font-bold text-primary uppercase tracking-widest">{practitioner.role}</p>
             </div>
           </div>
@@ -193,7 +193,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
             </div>
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-blue-600 text-slate-300 font-black py-4 rounded-2xl text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-primary/10 active:scale-95"
+              className="w-full bg-primary hover:bg-blue-600 text-white font-black py-4 rounded-2xl text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-primary/10 active:scale-95"
             >
               Dispatch
             </button>
@@ -236,7 +236,7 @@ const ClinicianDirectory: React.FC = () => {
       <Section spacing="default" className="flex-1">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
           <div className="space-y-1">
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tighter text-slate-300">Practitioners</h1>
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Practitioners</h1>
             <p className="text-slate-3000 text-[11px] sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
           </div>
 

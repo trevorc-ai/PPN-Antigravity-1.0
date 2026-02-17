@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, Target, Shield, TrendingUp, ArrowRight } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
@@ -10,6 +10,7 @@ import { useBenchmarkReadiness } from '../hooks/useBenchmarkReadiness';
 import { RiskIndicators } from '../components/risk';
 import { useRiskDetection } from '../hooks/useRiskDetection';
 import { SafetyTimeline, type SafetyEvent } from '../components/safety';
+import { ArcOfCareOnboarding } from '../components/arc-of-care';
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -102,6 +103,40 @@ const WellnessJourney: React.FC = () => {
     // Phase navigation state
     const [activePhase, setActivePhase] = useState<1 | 2 | 3>(1); // Default to Preparation (Phase 1)
     const [completedPhases] = useState<number[]>([]); // No phases complete for new patient
+
+    // Onboarding state
+    const [showOnboarding, setShowOnboarding] = useState(false);
+
+    // Check if user has seen onboarding
+    useEffect(() => {
+        const hasSeenOnboarding = localStorage.getItem('arcOfCareOnboardingSeen');
+        if (!hasSeenOnboarding) {
+            setShowOnboarding(true);
+        }
+    }, []);
+
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyPress = (e: KeyboardEvent) => {
+            // Alt+1/2/3 to switch phases
+            if (e.altKey && e.key === '1') {
+                e.preventDefault();
+                setActivePhase(1);
+            } else if (e.altKey && e.key === '2') {
+                e.preventDefault();
+                setActivePhase(2);
+            } else if (e.altKey && e.key === '3') {
+                e.preventDefault();
+                setActivePhase(3);
+            } else if (e.altKey && e.key === 'h') {
+                e.preventDefault();
+                setShowOnboarding(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, []);
 
     // Mock data
     const [journey] = useState<PatientJourney>({
