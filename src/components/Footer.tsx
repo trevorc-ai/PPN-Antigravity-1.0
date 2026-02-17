@@ -19,23 +19,21 @@ const Footer: React.FC = () => {
     <footer className="bg-[#020408] border-t border-white/5 pt-32 pb-10 mt-24">
       <div className="max-w-[1600px] mx-auto px-6 sm:px-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
 
-        {/* Column 1: Institutional Brand */}
-        <div className="space-y-8">
-          <div className="flex items-center gap-3 group cursor-default">
-            <div className="bg-primary rounded-xl p-2.5 flex items-center justify-center shadow-[0_0_20px_rgba(43,116,243,0.3)] transition-transform group-hover:scale-105">
-              <span className="material-symbols-outlined text-slate-300 text-xl font-black">science</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base font-black tracking-tight text-slate-300 uppercase leading-none mb-1">PPN RESEARCH</span>
-              <span className="text-[11px] font-black text-slate-600 uppercase tracking-[0.3em]">Institutional Repository</span>
-            </div>
+        {/* Column 1: Brand */}
+        <div className="space-y-6">
+          {/* PPN Portal Logo - Matching Landing Page Style */}
+          <div className="flex items-baseline gap-0 cursor-default">
+            <span className="text-3xl font-black tracking-tight text-slate-300 leading-none">PPN</span>
+            <span className="text-3xl font-black tracking-tight text-primary leading-none">Portal</span>
           </div>
-          <p className="text-[13px] text-slate-3000 leading-relaxed font-medium max-w-xs">
-            Operating the global clinical node network for high-fidelity psychedelic research and therapeutic protocol discovery. Certified for IRB-governed longitudinal studies.
+
+          <p className="text-sm text-slate-400 leading-relaxed font-medium max-w-xs">
+            The institutional standard for outcomes tracking and safety surveillance in psychedelic therapy.
           </p>
+
           <div className="flex items-center gap-4">
             {['hub', 'public', 'psychology', 'database'].map(icon => (
-              <div key={icon} className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-3000 hover:text-primary transition-all cursor-pointer group shadow-lg">
+              <div key={icon} className="size-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary transition-all cursor-pointer group shadow-lg">
                 <span className="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">{icon}</span>
               </div>
             ))}
