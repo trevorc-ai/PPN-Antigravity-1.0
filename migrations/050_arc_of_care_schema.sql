@@ -43,6 +43,7 @@ ON CONFLICT (scale_code) DO NOTHING;
 ALTER TABLE ref_assessment_scales ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy (authenticated users can read)
+DROP POLICY IF EXISTS "ref_assessment_scales_read" ON ref_assessment_scales;
 CREATE POLICY "ref_assessment_scales_read" ON ref_assessment_scales FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Intervention Types (for rescue protocols)
@@ -71,6 +72,7 @@ ON CONFLICT (intervention_code) DO NOTHING;
 ALTER TABLE ref_intervention_types ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy (authenticated users can read)
+DROP POLICY IF EXISTS "ref_intervention_types_read" ON ref_intervention_types;
 CREATE POLICY "ref_intervention_types_read" ON ref_intervention_types FOR SELECT USING (auth.role() = 'authenticated');
 
 -- MedDRA Codes (standardized adverse event coding)
@@ -98,6 +100,7 @@ ON CONFLICT (meddra_code) DO NOTHING;
 ALTER TABLE ref_meddra_codes ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy (authenticated users can read)
+DROP POLICY IF EXISTS "ref_meddra_codes_read" ON ref_meddra_codes;
 CREATE POLICY "ref_meddra_codes_read" ON ref_meddra_codes FOR SELECT USING (auth.role() = 'authenticated');
 
 -- =====================================================
@@ -191,6 +194,7 @@ CREATE TABLE IF NOT EXISTS log_baseline_assessments (
 -- RLS Policy for baseline assessments
 ALTER TABLE log_baseline_assessments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can only access their site's baseline assessments" ON log_baseline_assessments;
 CREATE POLICY "Users can only access their site's baseline assessments"
   ON log_baseline_assessments
   FOR SELECT
@@ -255,6 +259,7 @@ CREATE INDEX IF NOT EXISTS idx_pulse_checks_date ON log_pulse_checks(check_date)
 -- RLS Policy for pulse checks
 ALTER TABLE log_pulse_checks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can only access their site's pulse checks" ON log_pulse_checks;
 CREATE POLICY "Users can only access their site's pulse checks"
   ON log_pulse_checks
   FOR SELECT
@@ -300,6 +305,7 @@ CREATE INDEX IF NOT EXISTS idx_longitudinal_assessments_date ON log_longitudinal
 -- RLS Policy for longitudinal assessments
 ALTER TABLE log_longitudinal_assessments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can only access their site's longitudinal assessments" ON log_longitudinal_assessments;
 CREATE POLICY "Users can only access their site's longitudinal assessments"
   ON log_longitudinal_assessments
   FOR SELECT
@@ -333,6 +339,7 @@ CREATE INDEX IF NOT EXISTS idx_behavioral_changes_patient ON log_behavioral_chan
 -- RLS Policy for behavioral changes
 ALTER TABLE log_behavioral_changes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can only access their site's behavioral changes" ON log_behavioral_changes;
 CREATE POLICY "Users can only access their site's behavioral changes"
   ON log_behavioral_changes
   FOR SELECT
@@ -371,6 +378,7 @@ CREATE TABLE IF NOT EXISTS log_integration_sessions (
 -- RLS Policy for integration sessions
 ALTER TABLE log_integration_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can only access their site's integration sessions" ON log_integration_sessions;
 CREATE POLICY "Users can only access their site's integration sessions"
   ON log_integration_sessions
   FOR SELECT
@@ -414,6 +422,7 @@ CREATE INDEX IF NOT EXISTS idx_red_alerts_triggered ON log_red_alerts(alert_trig
 -- RLS Policy for red alerts
 ALTER TABLE log_red_alerts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can only access their site's red alerts" ON log_red_alerts;
 CREATE POLICY "Users can only access their site's red alerts"
   ON log_red_alerts
   FOR SELECT
@@ -427,13 +436,110 @@ CREATE POLICY "Users can only access their site's red alerts"
   );
 
 -- =====================================================
--- MIGRATION COMPLETE
+-- INSPECTOR REQUIRED ADDITIONS (2026-02-17)
+-- Fix 1: RLS for log_session_vitals (was missing entirely)
+-- Fix 2: INSERT policies for all 7 log_* tables
+-- Approved by: INSPECTOR — Conditional Sign-Off
+-- =====================================================
+
+-- FIX 1: log_session_vitals RLS (CRITICAL — table had zero protection)
+ALTER TABLE log_session_vitals ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can select their site session vitals" ON log_session_vitals;
+CREATE POLICY "Users can select their site session vitals"
+  ON log_session_vitals FOR SELECT
+  USING (
+    session_id IN (
+      SELECT id FROM log_clinical_records
+      WHERE site_id IN (
+        SELECT site_id FROM log_user_sites WHERE user_id = auth.uid()
+      )
+    )
+  );
+
+DROP POLICY IF EXISTS "Users can insert session vitals" ON log_session_vitals;
+CREATE POLICY "Users can insert session vitals"
+  ON log_session_vitals FOR INSERT
+  WITH CHECK (
+    session_id IN (
+      SELECT id FROM log_clinical_records
+      WHERE site_id IN (
+        SELECT site_id FROM log_user_sites WHERE user_id = auth.uid()
+      )
+    )
+  );
+
+-- FIX 2: INSERT policies for all other log_* tables
+-- (SELECT policies already exist; these enable application writes)
+
+DROP POLICY IF EXISTS "Users can insert baseline assessments" ON log_baseline_assessments;
+CREATE POLICY "Users can insert baseline assessments"
+  ON log_baseline_assessments FOR INSERT
+  WITH CHECK (
+    site_id IN (SELECT site_id FROM log_user_sites WHERE user_id = auth.uid())
+  );
+
+DROP POLICY IF EXISTS "Users can insert pulse checks" ON log_pulse_checks;
+CREATE POLICY "Users can insert pulse checks"
+  ON log_pulse_checks FOR INSERT
+  WITH CHECK (
+    patient_id IN (
+      SELECT patient_id FROM log_baseline_assessments
+      WHERE site_id IN (SELECT site_id FROM log_user_sites WHERE user_id = auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "Users can insert longitudinal assessments" ON log_longitudinal_assessments;
+CREATE POLICY "Users can insert longitudinal assessments"
+  ON log_longitudinal_assessments FOR INSERT
+  WITH CHECK (
+    patient_id IN (
+      SELECT patient_id FROM log_baseline_assessments
+      WHERE site_id IN (SELECT site_id FROM log_user_sites WHERE user_id = auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "Users can insert behavioral changes" ON log_behavioral_changes;
+CREATE POLICY "Users can insert behavioral changes"
+  ON log_behavioral_changes FOR INSERT
+  WITH CHECK (
+    patient_id IN (
+      SELECT patient_id FROM log_baseline_assessments
+      WHERE site_id IN (SELECT site_id FROM log_user_sites WHERE user_id = auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "Users can insert integration sessions" ON log_integration_sessions;
+CREATE POLICY "Users can insert integration sessions"
+  ON log_integration_sessions FOR INSERT
+  WITH CHECK (
+    patient_id IN (
+      SELECT patient_id FROM log_baseline_assessments
+      WHERE site_id IN (SELECT site_id FROM log_user_sites WHERE user_id = auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "Users can insert red alerts" ON log_red_alerts;
+CREATE POLICY "Users can insert red alerts"
+  ON log_red_alerts FOR INSERT
+  WITH CHECK (
+    patient_id IN (
+      SELECT patient_id FROM log_baseline_assessments
+      WHERE site_id IN (SELECT site_id FROM log_user_sites WHERE user_id = auth.uid())
+    )
+  );
+
+-- =====================================================
+-- MIGRATION COMPLETE (INSPECTOR-APPROVED)
 -- =====================================================
 -- Total operations:
 --   - 3 new ref_* tables (assessment_scales, intervention_types, meddra_codes)
 --   - 3 ALTER TABLE (clinical_records, safety_events, interventions)
---   - 7 new log_* tables (baseline_assessments, session_vitals, pulse_checks, 
---                         longitudinal_assessments, behavioral_changes, 
+--   - 7 new log_* tables (baseline_assessments, session_vitals, pulse_checks,
+--                         longitudinal_assessments, behavioral_changes,
 --                         integration_sessions, red_alerts)
--- Total: 13 operations
+--   - 1 RLS ENABLE added (log_session_vitals — was missing)
+--   - 8 INSERT policies added (all 7 log_* tables + session_vitals select)
+-- Total: 13 schema objects + 9 RLS additions
+-- Inspector Sign-Off: CONDITIONAL APPROVAL → FULL APPROVAL after these fixes
 -- =====================================================

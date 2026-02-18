@@ -15,6 +15,8 @@ export { default as SetAndSettingCard } from './SetAndSettingCard';
 export { default as ExpectancyScaleGauge } from './ExpectancyScaleGauge';
 export { default as ACEScoreBarChart } from './ACEScoreBarChart';
 export { default as GAD7SeverityZones } from './GAD7SeverityZones';
+export { default as PHQ9SeverityZones } from './PHQ9SeverityZones';
+export { default as PCL5SeverityZones } from './PCL5SeverityZones';
 export { default as PredictedIntegrationNeeds } from './PredictedIntegrationNeeds';
 
 // ===== PHASE 2: SESSION LOGGER =====

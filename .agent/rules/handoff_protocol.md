@@ -4,8 +4,9 @@
 - **Artifact-First:** Never pass a task via chat. Create a file first.
   - **DESIGNER:** Save specs to `docs/design/[feature_name].md`.
   - **SOOP:** Save schemas to `docs/schema/[feature_name].sql`.
-  - **BUILDER:** You may not write code until LEAD comments "✅ APPROVED" on the artifact.
+  - **BUILDER:** You may begin work immediately on any ticket in `_WORK_ORDERS/03_BUILD/` where `owner: BUILDER`. No additional approval needed — the routing IS the approval.
 - **Handoff Syntax:** When finishing a task, state: *"I have completed [Task]. Review artifact at [File_Path]."*
+- **Batch Processing:** BUILDER should process ALL tickets in `03_BUILD/` with `owner: BUILDER` sequentially without stopping to ask permission between tickets. Move each to `04_QA/` when done, then pick up the next one.
 
 ## 2. Error Handling & Debugging Standards
 **A. The "No Silent Failures" Rule (Frontend)**

@@ -137,7 +137,7 @@ const SubstanceMonograph: React.FC = () => {
   }
 
   return (
-    <div className="min-h-full bg-[#080a0f] animate-in fade-in duration-700 pb-20 overflow-x-hidden">
+    <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] animate-in fade-in duration-700 pb-20 overflow-x-hidden">
       {/* Hero Section */}
       <MonographHero substance={sub} />
 

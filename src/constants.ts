@@ -1014,41 +1014,5 @@ export const PATIENTS: PatientRecord[] = [
 export const SAMPLE_INTERVENTION_RECORDS = PATIENTS;
 
 // --- AUDIT LOG DATA ---
-export const AUDIT_LOGS: AuditLog[] = [
-  {
-    id: 'LOG-8821',
-    timestamp: '2026-01-28 14:45:22',
-    actor: 'Dr. Sarah Jenkins',
-    action: 'SAFETY_CHECK',
-    details: 'Interaction Analysis: Psilocybin + Lithium',
-    status: 'ALERT_TRIGGERED',
-    hash: '0x9928...11a'
-  },
-  {
-    id: 'LOG-8820',
-    timestamp: '2026-01-28 14:44:10',
-    actor: 'Dr. Sarah Jenkins',
-    action: 'PROTOCOL_VIEW',
-    details: 'Accessed Dossier: EX-002 (Psilocybin Safety Case)',
-    status: 'AUTHORIZED',
-    hash: '0x7731...b2c'
-  },
-  {
-    id: 'LOG-8819',
-    timestamp: '2026-01-28 14:43:55',
-    actor: 'Dr. Sarah Jenkins',
-    action: 'SEARCH_QUERY',
-    details: 'Query Term: "Nausea"',
-    status: 'EXECUTED',
-    hash: '0x4421...99d'
-  },
-  {
-    id: 'LOG-8818',
-    timestamp: '2026-01-28 10:15:00',
-    actor: 'System',
-    action: 'LEDGER_SYNC',
-    details: 'Daily Node Synchronization (5 New Records)',
-    status: 'VERIFIED',
-    hash: '0x1102...33f'
-  }
-];
+// Import generated audit logs (200 diverse records)
+export { AUDIT_LOGS } from './data/generateAuditLogs';

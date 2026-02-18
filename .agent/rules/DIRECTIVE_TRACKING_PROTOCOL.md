@@ -1,8 +1,12 @@
 # Directive Tracking Protocol
 
-**Status:** MANDATORY - ALL AGENTS MUST FOLLOW  
-**Effective Date:** February 13, 2026  
-**Purpose:** Ensure zero user directives are lost or ignored
+> ⚠️ **SUPERSEDED (2026-02-17)**
+> This manual COMMAND_LOG tracking protocol was written before the `_WORK_ORDERS/` Kanban system existed.
+> **It is no longer in effect.** All directive tracking now happens via work order tickets in `_WORK_ORDERS/`.
+> - Routing = approval. No manual acknowledgment required.
+> - Progress tracking = ticket `status` frontmatter.
+> - Completion = ticket moved to `05_USER_REVIEW/`.
+> Agents should ignore the steps below and follow the work order workflow instead.
 
 ---
 

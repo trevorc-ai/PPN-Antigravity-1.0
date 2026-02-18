@@ -147,7 +147,7 @@ export default function Dashboard() {
   const { protocols, loading: protocolsLoading } = usePractitionerProtocols();
 
   return (
-    <PageContainer className="min-h-screen bg-[#0a1628] text-slate-300 flex flex-col gap-8">
+    <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 flex flex-col gap-8">
 
       {/* HEADER SECTION */}
       <Section spacing="tight" data-tour="dashboard-header" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">

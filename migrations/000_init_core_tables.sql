@@ -6,6 +6,16 @@
 -- Note: Reference tables (ref_*) are handled in Migration 003.
 -- ============================================================================
 
+-- ⚠️  LEGACY WARNING (2026-02-17) ⚠️
+-- The tables `sites` and `user_sites` created below are LEGACY ARTIFACTS.
+-- They exist in the live DB but are EMPTY and NOT used by the application.
+-- The live application uses:
+--   → log_sites      (has 4 records — Portland, Seattle, Demo Alpha, Demo Beta)
+--   → log_user_sites (active RLS table used by all policies)
+-- DO NOT reference `sites` or `user_sites` in new migrations or FK constraints.
+-- DO NOT drop them — they are harmless and dropping violates governance rules.
+-- ============================================================================
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. SITES (referenced by main.py health check & Sync)

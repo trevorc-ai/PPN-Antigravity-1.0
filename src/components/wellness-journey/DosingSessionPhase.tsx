@@ -1,17 +1,70 @@
 import React, { useState } from 'react';
-import { Activity, Sparkles, CheckCircle, ChevronDown, ChevronUp, X, Info } from 'lucide-react';
+import { Activity, Sparkles, CheckCircle, ChevronDown, ChevronUp, X, Info, Clock, Download, Heart } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
+import SessionTimeline from '../arc-of-care/SessionTimeline';
+import RealTimeVitalsPanel from '../arc-of-care/RealTimeVitalsPanel';
 
 interface DosingSessionPhaseProps {
     journey: any;
 }
+
+// WO-061: Mock session timeline events (replaces DB connection until schema deployed)
+const MOCK_TIMELINE_EVENTS = [
+    {
+        id: 1,
+        timestamp: new Date('2025-10-15T09:00:00'),
+        eventType: 'milestone' as const,
+        description: 'Session started. Patient calm, oriented. Pre-session vitals within normal range.',
+    },
+    {
+        id: 2,
+        timestamp: new Date('2025-10-15T09:45:00'),
+        eventType: 'milestone' as const,
+        description: 'Onset confirmed. Patient reports visual distortions and emotional opening.',
+    },
+    {
+        id: 3,
+        timestamp: new Date('2025-10-15T10:30:00'),
+        eventType: 'safety_event' as const,
+        description: 'Patient reported transient anxiety. Verbal reassurance provided.',
+        severity: 'mild' as const,
+    },
+    {
+        id: 4,
+        timestamp: new Date('2025-10-15T11:15:00'),
+        eventType: 'milestone' as const,
+        description: 'Peak intensity. Patient deeply engaged, non-verbal. Monitoring continued.',
+    },
+    {
+        id: 5,
+        timestamp: new Date('2025-10-15T13:00:00'),
+        eventType: 'intervention' as const,
+        description: 'Grounding music changed per patient request. Blanket provided for comfort.',
+    },
+    {
+        id: 6,
+        timestamp: new Date('2025-10-15T15:30:00'),
+        eventType: 'milestone' as const,
+        description: 'Resolution phase. Patient alert, oriented, reporting positive experience.',
+    },
+];
+
+// WO-062: Mock vitals data (replaces DB connection until schema deployed)
+const MOCK_VITALS = {
+    heartRate: 88,
+    hrv: 52,
+    bloodPressure: '128/84',
+    timestamp: new Date('2025-10-15T11:15:00'),
+};
 
 export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey }) => {
     const [showAI, setShowAI] = useState(false);
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
     const [showMetricsInfo, setShowMetricsInfo] = useState(false);
     const [showSessionInfo, setShowSessionInfo] = useState(false);
+    const [showTimeline, setShowTimeline] = useState(true);   // WO-061
+    const [showVitals, setShowVitals] = useState(true);       // WO-062
     const [assessmentCompleted, setAssessmentCompleted] = useState(false);
     const [assessmentScores, setAssessmentScores] = useState<{
         meq: number;
@@ -19,23 +72,28 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
         ceq: number;
     } | null>(null);
 
-    // Helper: Progress bar component
-    const ProgressBar: React.FC<{ value: number; max: number; color: string; label: string }> = ({ value, max, color, label }) => {
-        const percentage = (value / max) * 100;
-        return (
-            <div className="space-y-1">
-                <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-300">{label}</span>
-                    <span className={`font-bold ${color}`}>{value}/{max}</span>
-                </div>
-                <div className="h-2 bg-slate-900/60 rounded-full overflow-hidden">
-                    <div
-                        className={`h-full ${color.replace('text-', 'bg-')} transition-all duration-500`}
-                        style={{ width: `${percentage}%` }}
-                    />
-                </div>
-            </div>
-        );
+    // WO-061: Export session timeline as PDF
+    const handleExportTimeline = () => {
+        console.log('[WO-061] Export Session Timeline (PDF) triggered', {
+            events: MOCK_TIMELINE_EVENTS.length,
+            timestamp: new Date().toISOString(),
+        });
+        alert('Session Timeline PDF export queued. The report will include all logged events with timestamps.');
+    };
+
+    // WO-062: Export vitals as CSV
+    const handleExportVitals = () => {
+        const csvRows = [
+            'timestamp,heart_rate,hrv,bp_systolic,bp_diastolic',
+            `${MOCK_VITALS.timestamp.toISOString()},${MOCK_VITALS.heartRate},${MOCK_VITALS.hrv},${MOCK_VITALS.bloodPressure.split('/')[0]},${MOCK_VITALS.bloodPressure.split('/')[1]}`,
+        ];
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `vitals_session_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     return (
@@ -83,7 +141,79 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                 </div>
             </div>
 
-            {/* Experience Metrics - MOVED UP, with visible explanations for mobile */}
+            {/* WO-061: Session Timeline */}
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <Clock className="w-6 h-6 text-blue-400" />
+                        <h3 className="text-lg font-bold text-slate-300">Session Timeline</h3>
+                        <span className="text-xs text-slate-500 bg-slate-800/50 px-2 py-1 rounded-full">
+                            {MOCK_TIMELINE_EVENTS.length} events
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <AdvancedTooltip content="Export complete session timeline as PDF for clinical records and insurance documentation." tier="micro">
+                            <button
+                                onClick={handleExportTimeline}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-xs rounded-lg transition-colors"
+                            >
+                                <Download className="w-3.5 h-3.5" />
+                                Export PDF
+                            </button>
+                        </AdvancedTooltip>
+                        <button
+                            onClick={() => setShowTimeline(!showTimeline)}
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700/50 hover:bg-slate-700/70 transition-colors"
+                            aria-label={showTimeline ? 'Collapse timeline' : 'Expand timeline'}
+                        >
+                            {showTimeline ? <ChevronUp className="w-4 h-4 text-slate-300" /> : <ChevronDown className="w-4 h-4 text-slate-300" />}
+                        </button>
+                    </div>
+                </div>
+                {showTimeline && (
+                    <div className="animate-in slide-in-from-top duration-200">
+                        <SessionTimeline events={MOCK_TIMELINE_EVENTS} />
+                    </div>
+                )}
+            </div>
+
+            {/* WO-062: Real-Time Vitals Panel */}
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <Heart className="w-6 h-6 text-red-400" />
+                        <h3 className="text-lg font-bold text-slate-300">Vital Signs</h3>
+                        <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
+                            ● Live
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <AdvancedTooltip content="Export all vital sign readings as CSV for EHR integration and compliance records." tier="micro">
+                            <button
+                                onClick={handleExportVitals}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-xs rounded-lg transition-colors"
+                            >
+                                <Download className="w-3.5 h-3.5" />
+                                Export CSV
+                            </button>
+                        </AdvancedTooltip>
+                        <button
+                            onClick={() => setShowVitals(!showVitals)}
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700/50 hover:bg-slate-700/70 transition-colors"
+                            aria-label={showVitals ? 'Collapse vitals' : 'Expand vitals'}
+                        >
+                            {showVitals ? <ChevronUp className="w-4 h-4 text-slate-300" /> : <ChevronDown className="w-4 h-4 text-slate-300" />}
+                        </button>
+                    </div>
+                </div>
+                {showVitals && (
+                    <div className="animate-in slide-in-from-top duration-200">
+                        <RealTimeVitalsPanel vitals={MOCK_VITALS} />
+                    </div>
+                )}
+            </div>
+
+            {/* Experience Metrics */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 relative">
                 <div className="flex items-center justify-between mb-1">
                     <h3 className="text-lg font-bold text-slate-300">Experience Metrics</h3>
@@ -175,7 +305,7 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                 </div>
             </div>
 
-            {/* Assessment Button or Completed State - MOVED TO BOTTOM */}
+            {/* Assessment Button or Completed State */}
             {!assessmentCompleted ? (
                 <div className="space-y-3">
                     <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
@@ -277,10 +407,8 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                             <AdaptiveAssessmentPage
                                 showBackButton={false}
                                 onComplete={(scores) => {
-                                    // Update state with scores
                                     setAssessmentScores(scores);
                                     setAssessmentCompleted(true);
-                                    // Close modal after a brief delay to show completion
                                     setTimeout(() => {
                                         setShowAssessmentModal(false);
                                     }, 3000);

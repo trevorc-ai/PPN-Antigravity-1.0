@@ -264,7 +264,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
       </div>
 
       {/* Institutional Identity Section */}
-      <div id="institutional-identity" className="relative py-24 bg-[#080a0f] border-b border-white/5">
+      <div id="institutional-identity" className="relative py-24 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] border-b border-white/5">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none"></div>
         <PageContainer className="relative z-10 text-center space-y-12">
           <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-sm font-black text-primary tracking-[0.5em] mb-6 shadow-2xl">
@@ -329,7 +329,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
       </div>
 
       {/* Principles Section */}
-      <div id="security-compliance" className="py-24 bg-[#080a0f]/50 border-y border-white/5">
+      <div id="security-compliance" className="py-24 bg-gradient-to-b from-[#0a1628]/50 via-[#0d1b2a]/50 to-[#05070a]/50 border-y border-white/5">
         <PageContainer className="space-y-24">
           <div className="text-center space-y-12">
             <h3 className="text-sm font-black text-primary tracking-[0.8em]">Core Principles</h3>
@@ -408,7 +408,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
       </div>
 
       {/* Membership Tiers Section */}
-      <div id="membership-tiers" className="py-24 bg-[#080a0f] border-t border-white/5 relative overflow-hidden">
+      <div id="membership-tiers" className="py-24 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] border-t border-white/5 relative overflow-hidden">
         <PageContainer className="space-y-28 relative z-10">
           <div className="text-center space-y-8">
             <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-accent-amber/10 border border-accent-amber/20 text-sm font-black text-accent-amber tracking-[0.6em] mb-4 shadow-2xl">
@@ -478,7 +478,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
       </div>
 
       {/* Final Call to Action */}
-      <div className="py-24 bg-[#080a0f] border-t border-white/5 relative overflow-hidden">
+      <div className="py-24 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] border-t border-white/5 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
         <PageContainer width="narrow" className="text-center space-y-16 relative z-10">
           <div className="space-y-6">

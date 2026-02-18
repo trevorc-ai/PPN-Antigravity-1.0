@@ -68,9 +68,9 @@ export function useSubscription(): UseSubscriptionReturn {
                 return;
             }
 
-            // Fetch subscription from user_subscriptions table
+            // Fetch subscription from log_user_subscriptions (live table name)
             const { data, error: fetchError } = await supabase
-                .from('user_subscriptions')
+                .from('log_user_subscriptions')
                 .select('*')
                 .eq('user_id', user.id)
                 .single();

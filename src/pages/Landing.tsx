@@ -162,11 +162,11 @@ const Landing: React.FC = () => {
                 Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] pb-4 text-slate-300">
-                Stop Practicing in Isolation.<br />
-                Join the Global Psychedelic <span className="text-gradient-primary inline-block pb-1">Practitioner Alliance</span>.
+                Your Clinic's Outcomes,<br />
+                Calibrated Against <span className="text-gradient-primary inline-block pb-1">12,000+ Sessions</span>.
               </h1>
               <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
-                The only platform that unifies safety surveillance, outcomes tracking, and peer benchmarking—so you can practice with confidence, not guesswork.
+                Real-time safety surveillance, longitudinal outcomes tracking, and anonymized peer benchmarking. Built for practitioners who need evidence, not anecdotes.
               </p>
               <p className="text-base text-slate-300 max-w-2xl lg:mx-0 mx-auto font-medium">
                 Built for practitioners who refuse to compromise on safety or evidence. Trusted by 840+ clinicians across 14 institutional sites.
@@ -289,7 +289,7 @@ const Landing: React.FC = () => {
               </p>
               <div className="space-y-4 text-lg text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
                 <p>
-                  PPN is not a social network. It's a professional alliance of 840+ licensed clinicians who share one goal: prove that psychedelic therapy works—safely, consistently, and at scale.
+                  PPN is not a social network. It's a professional alliance of 840+ licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
                 </p>
                 <p>
                   By pooling de-identified outcomes data across 14 institutional sites, we're building the evidence base that unlocks insurance coverage, reduces malpractice risk, and elevates the entire field.
@@ -542,7 +542,7 @@ const Landing: React.FC = () => {
                 Calibrate your practice against the global standard.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
-                Stop practicing in isolation. Instantly see how your clinic's safety scores, patient retention rates, and efficacy outcomes compare to the anonymized network average, helping you spot blind spots before they become liabilities.
+                Your clinic's safety scores, patient retention rates, and efficacy outcomes compared to anonymized network percentiles. Identify performance gaps before they become liabilities.
               </p>
               <button
                 onClick={() => navigate('/analytics')}

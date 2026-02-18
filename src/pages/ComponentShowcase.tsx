@@ -109,7 +109,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">WO_008: Profile Edit</h3>
                         <p className="text-sm text-slate-300 font-mono">User Profile Editing & Partner Tiers</p>
                     </div>
-                    <div className="bg-[#0e1117] border border-slate-800 rounded-2xl overflow-hidden">
+                    <div className="bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] border border-slate-800 rounded-2xl overflow-hidden">
                         <ProfileEdit />
                     </div>
                 </div>

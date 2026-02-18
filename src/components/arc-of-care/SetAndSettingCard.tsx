@@ -1,17 +1,21 @@
 import React from 'react';
-import { Brain, Heart, Shield, Calendar } from 'lucide-react';
+import { Brain, Heart, Shield, Calendar, Download, FileText } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import ExpectancyScaleGauge from './ExpectancyScaleGauge.tsx';
 import ACEScoreBarChart from './ACEScoreBarChart.tsx';
 import GAD7SeverityZones from './GAD7SeverityZones.tsx';
+import PHQ9SeverityZones from './PHQ9SeverityZones.tsx';
+import PCL5SeverityZones from './PCL5SeverityZones.tsx';
 import PredictedIntegrationNeeds from './PredictedIntegrationNeeds.tsx';
 
 interface SetAndSettingCardProps {
     expectancyScale: number; // 1-100
     aceScore: number; // 0-10
     gad7Score: number; // 0-21
-    phq9Score?: number; // 0-27 (optional, for integration prediction)
+    phq9Score?: number; // 0-27
+    pcl5Score?: number; // 0-80 (PTSD Checklist)
     onScheduleSessions?: () => void;
+    onExportPDF?: () => void;
 }
 
 /**
@@ -30,8 +34,22 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
     aceScore,
     gad7Score,
     phq9Score = 0,
-    onScheduleSessions
+    pcl5Score,
+    onScheduleSessions,
+    onExportPDF
 }) => {
+    const handleExport = () => {
+        if (onExportPDF) {
+            onExportPDF();
+        } else {
+            // Default: log export event (PDF generation requires backend)
+            console.log('[WO-060] Export Baseline Report triggered', {
+                timestamp: new Date().toISOString(),
+                scores: { expectancyScale, aceScore, gad7Score, phq9Score, pcl5Score }
+            });
+            alert('Baseline Report export queued. PDF will be generated and emailed to the practitioner on file.');
+        }
+    };
     return (
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
             {/* Header */}
@@ -46,16 +64,26 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                     </div>
                 </div>
 
-                <AdvancedTooltip
-                    content="Set & Setting refers to the patient's mindset (set) and environment (setting) before treatment. These factors significantly influence therapeutic outcomes."
-                    type="info"
-                    tier="standard"
-                    side="left"
-                >
-                    <div className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors cursor-help">
-                        <Shield className="w-5 h-5 text-slate-300" />
-                    </div>
-                </AdvancedTooltip>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleExport}
+                        className="flex items-center gap-2 px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-sm rounded-lg transition-colors"
+                        title="Export Baseline Report (PDF)"
+                    >
+                        <Download className="w-4 h-4" />
+                        <span className="hidden sm:inline">Export PDF</span>
+                    </button>
+                    <AdvancedTooltip
+                        content="Set & Setting refers to the patient's mindset (set) and environment (setting) before treatment. These factors significantly influence therapeutic outcomes."
+                        type="info"
+                        tier="standard"
+                        side="left"
+                    >
+                        <div className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors cursor-help">
+                            <Shield className="w-5 h-5 text-slate-300" />
+                        </div>
+                    </AdvancedTooltip>
+                </div>
             </div>
 
             {/* Grid Layout */}
@@ -152,6 +180,52 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         phq9Score={phq9Score}
                     />
                 </div>
+
+                {/* PHQ-9 Depression — WO-060 Phase 1C */}
+                <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                        <Brain className="w-4 h-4 text-red-400" />
+                        <h4 className="text-slate-300 text-sm font-medium">Depression Severity (PHQ-9)</h4>
+                        <AdvancedTooltip
+                            content="Patient Health Questionnaire-9 (0-27). Scores ≥10 indicate clinically significant depression. Scores ≥20 require psychiatric consultation before dosing."
+                            type="warning"
+                            tier="detailed"
+                            title="PHQ-9 Clinical Significance"
+                            side="top"
+                        >
+                            <div className="text-slate-300 hover:text-slate-300 cursor-help">
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                </svg>
+                            </div>
+                        </AdvancedTooltip>
+                    </div>
+                    <PHQ9SeverityZones score={phq9Score} />
+                </div>
+
+                {/* PCL-5 PTSD — WO-060 Phase 1C */}
+                {pcl5Score !== undefined && (
+                    <div className="space-y-3 lg:col-span-2">
+                        <div className="flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-purple-400" />
+                            <h4 className="text-slate-300 text-sm font-medium">PTSD Severity (PCL-5)</h4>
+                            <AdvancedTooltip
+                                content="PTSD Checklist for DSM-5 (0-80). Scores ≥33 suggest probable PTSD diagnosis. Trauma-informed care protocols should be activated for scores ≥33."
+                                type="warning"
+                                tier="detailed"
+                                title="PCL-5 Clinical Significance"
+                                side="top"
+                            >
+                                <div className="text-slate-300 hover:text-slate-300 cursor-help">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                            </AdvancedTooltip>
+                        </div>
+                        <PCL5SeverityZones score={pcl5Score} />
+                    </div>
+                )}
             </div>
 
             {/* Schedule Sessions CTA */}

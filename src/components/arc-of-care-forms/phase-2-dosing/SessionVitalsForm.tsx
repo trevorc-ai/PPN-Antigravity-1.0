@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Activity, Droplet, Clock, Save, Plus, Trash2, CheckCircle } from 'lucide-react';
+import { Heart, Activity, Droplet, Clock, Save, Plus, Trash2, CheckCircle, Wind, Thermometer, AlertTriangle } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
 
@@ -31,6 +31,11 @@ export interface VitalSignReading {
     bp_systolic?: number;
     bp_diastolic?: number;
     spo2?: number;
+    // WO-085: New vital sign fields
+    respiratory_rate?: number;                                              // breaths/min (normal 12-20)
+    temperature?: number;                                                   // °F (normal 97.0-99.5)
+    diaphoresis_score?: 0 | 1 | 2 | 3;                                    // 0=None, 1=Mild, 2=Moderate, 3=Severe
+    level_of_consciousness?: 'alert' | 'verbal' | 'pain' | 'unresponsive'; // AVPU scale
     recorded_at?: string;
     data_source?: string;
     device_id?: string;
@@ -80,12 +85,16 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
             reading.hrv ||
             reading.bp_systolic ||
             reading.bp_diastolic ||
-            reading.spo2
+            reading.spo2 ||
+            reading.respiratory_rate ||
+            reading.temperature ||
+            reading.diaphoresis_score !== undefined ||
+            reading.level_of_consciousness
         );
     }
 
-    function getVitalStatus(type: 'hr' | 'bp' | 'spo2', value?: number): 'normal' | 'elevated' | 'critical' {
-        if (!value) return 'normal';
+    function getVitalStatus(type: 'hr' | 'bp' | 'spo2' | 'rr' | 'temp', value?: number): 'normal' | 'elevated' | 'critical' {
+        if (value === undefined || value === null) return 'normal';
 
         switch (type) {
             case 'hr':
@@ -100,9 +109,31 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                 if (value < 95) return 'elevated';
                 if (value < 90) return 'critical';
                 return 'normal';
+            // WO-085: New vital status checks
+            case 'rr':
+                if (value < 10 || value > 24) return 'elevated';
+                if (value < 8 || value > 30) return 'critical';
+                return 'normal';
+            case 'temp':
+                if (value > 99.5 && value <= 100.4) return 'elevated';
+                if (value > 100.4) return 'critical';
+                return 'normal';
             default:
                 return 'normal';
         }
+    }
+
+    function getDiaphoresisStatus(score?: number): 'normal' | 'elevated' | 'critical' {
+        if (score === undefined) return 'normal';
+        if (score === 2) return 'elevated';
+        if (score === 3) return 'critical';
+        return 'normal';
+    }
+
+    function getLOCStatus(loc?: string): 'normal' | 'elevated' | 'critical' {
+        if (!loc || loc === 'alert') return 'normal';
+        if (loc === 'verbal') return 'elevated';
+        return 'critical'; // pain or unresponsive
     }
 
     function getStatusColor(status: 'normal' | 'elevated' | 'critical'): string {
@@ -353,6 +384,130 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </div>
                                 </div>
                             )}
+                        </div>
+
+                        {/* WO-085: New Vital Signs Section */}
+                        <div className="pt-4 border-t border-slate-700/50">
+                            <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wide mb-4">Extended Monitoring</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                                {/* Respiratory Rate */}
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                                        <Wind className="w-4 h-4 text-cyan-400" />
+                                        Resp. Rate
+                                        <AdvancedTooltip content="Normal: 12-20 breaths/min. Monitor for respiratory depression (ketamine/esketamine risk per REMS)." tier="micro">
+                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        </AdvancedTooltip>
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max="60"
+                                            value={reading.respiratory_rate ?? ''}
+                                            onChange={(e) => updateReading(index, 'respiratory_rate', e.target.value ? parseInt(e.target.value) : undefined)}
+                                            className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.respiratory_rate !== undefined ? getStatusColor(getVitalStatus('rr', reading.respiratory_rate)) : 'border-slate-700/50'
+                                                }`}
+                                            placeholder="16"
+                                        />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs">br/min</span>
+                                    </div>
+                                    {reading.respiratory_rate !== undefined && getVitalStatus('rr', reading.respiratory_rate) !== 'normal' && (
+                                        <p className={`text-xs ${getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                            {getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? '⚠️ Critical — respiratory depression risk' : '⚠️ Outside normal range'}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Temperature */}
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                                        <Thermometer className="w-4 h-4 text-orange-400" />
+                                        Temperature
+                                        <AdvancedTooltip content="Normal: 97.0–99.5°F. Monitor for hyperthermia (MDMA risk) and thermoregulation fluctuations." tier="micro">
+                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        </AdvancedTooltip>
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type="number"
+                                            min="90"
+                                            max="110"
+                                            step="0.1"
+                                            value={reading.temperature ?? ''}
+                                            onChange={(e) => updateReading(index, 'temperature', e.target.value ? parseFloat(e.target.value) : undefined)}
+                                            className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.temperature !== undefined ? getStatusColor(getVitalStatus('temp', reading.temperature)) : 'border-slate-700/50'
+                                                }`}
+                                            placeholder="98.6"
+                                        />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs">°F</span>
+                                    </div>
+                                    {reading.temperature !== undefined && getVitalStatus('temp', reading.temperature) !== 'normal' && (
+                                        <p className={`text-xs ${getVitalStatus('temp', reading.temperature) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                            {getVitalStatus('temp', reading.temperature) === 'critical' ? '⚠️ Critical — hyperthermia risk' : '⚠️ Mild fever'}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Diaphoresis Score */}
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                                        <Droplet className="w-4 h-4 text-blue-300" />
+                                        Diaphoresis
+                                        <AdvancedTooltip content="Sweating scale: 0=None, 1=Mild, 2=Moderate, 3=Severe. Severe may signal hyperthermia or serotonin syndrome." tier="micro">
+                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        </AdvancedTooltip>
+                                    </label>
+                                    <select
+                                        value={reading.diaphoresis_score ?? ''}
+                                        onChange={(e) => updateReading(index, 'diaphoresis_score', e.target.value !== '' ? parseInt(e.target.value) as 0 | 1 | 2 | 3 : undefined)}
+                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none ${reading.diaphoresis_score !== undefined ? getStatusColor(getDiaphoresisStatus(reading.diaphoresis_score)) : 'border-slate-700/50'
+                                            }`}
+                                    >
+                                        <option value="">Select...</option>
+                                        <option value="0">0 — None (dry skin)</option>
+                                        <option value="1">1 — Mild (slight moisture)</option>
+                                        <option value="2">2 — Moderate (visible sweating)</option>
+                                        <option value="3">3 — Severe (profuse sweating)</option>
+                                    </select>
+                                    {reading.diaphoresis_score !== undefined && getDiaphoresisStatus(reading.diaphoresis_score) !== 'normal' && (
+                                        <p className={`text-xs ${getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                            {getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? '⚠️ Severe — check temp & hydration' : '⚠️ Monitor closely'}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Level of Consciousness */}
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                                        <AlertTriangle className="w-4 h-4 text-yellow-400" />
+                                        LOC (AVPU)
+                                        <AdvancedTooltip content="AVPU scale: Alert=Normal, Verbal=Responds to voice, Pain=Over-sedation, Unresponsive=Emergency. Required per CANMAT guidelines." tier="micro">
+                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        </AdvancedTooltip>
+                                    </label>
+                                    <select
+                                        value={reading.level_of_consciousness ?? ''}
+                                        onChange={(e) => updateReading(index, 'level_of_consciousness', e.target.value || undefined)}
+                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none ${reading.level_of_consciousness ? getStatusColor(getLOCStatus(reading.level_of_consciousness)) : 'border-slate-700/50'
+                                            }`}
+                                    >
+                                        <option value="">Select...</option>
+                                        <option value="alert">Alert (A) — Fully awake</option>
+                                        <option value="verbal">Verbal (V) — Responds to voice</option>
+                                        <option value="pain">Pain (P) — Responds to pain only</option>
+                                        <option value="unresponsive">Unresponsive (U) — No response</option>
+                                    </select>
+                                    {reading.level_of_consciousness && getLOCStatus(reading.level_of_consciousness) !== 'normal' && (
+                                        <p className={`text-xs ${getLOCStatus(reading.level_of_consciousness) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                            {reading.level_of_consciousness === 'unresponsive' ? '🚨 EMERGENCY — initiate rescue protocol' :
+                                                reading.level_of_consciousness === 'pain' ? '⚠️ Critical — over-sedation' :
+                                                    '⚠️ Monitor — reduced responsiveness'}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
                         </div>
 
                         {/* Metadata Grid */}

@@ -111,7 +111,7 @@ const SubstanceCatalog: React.FC = () => {
   };
 
   return (
-    <div className="min-h-full flex flex-col lg:flex-row bg-[#080a10] animate-in fade-in duration-700">
+    <div className="min-h-full flex flex-col lg:flex-row bg-gradient-to-br from-[#0a0e1a] via-[#050810] to-[#020408] animate-in fade-in duration-700">
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         <PageContainer className="max-w-7xl mx-auto p-6 sm:p-10 lg:p-12 space-y-12">
           <Section spacing="default" className="space-y-10">

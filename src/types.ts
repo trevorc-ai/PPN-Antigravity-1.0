@@ -106,6 +106,13 @@ export interface AuditLog {
   details: string;
   status: string;
   hash: string;
+  site?: string;
+  category?: string;
+  riskLevel?: string;
+  gender?: string;
+  substance?: string;
+  age?: number;
+  weightRange?: string;
 }
 
 export interface Clinician {

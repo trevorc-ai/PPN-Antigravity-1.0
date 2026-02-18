@@ -47,6 +47,9 @@ export type { VitalSignReading } from './phase-2-dosing/SessionVitalsForm';
 export { default as SessionTimelineForm } from './phase-2-dosing/SessionTimelineForm';
 export type { SessionTimelineData } from './phase-2-dosing/SessionTimelineForm';
 
+export { default as SessionEventLogForm } from './phase-2-dosing/SessionEventLogForm';
+export type { TimelineEvent, EventType } from './phase-2-dosing/SessionEventLogForm';
+
 export { default as SessionObservationsForm } from './phase-2-dosing/SessionObservationsForm';
 export type { SessionObservationsData } from './phase-2-dosing/SessionObservationsForm';
 
