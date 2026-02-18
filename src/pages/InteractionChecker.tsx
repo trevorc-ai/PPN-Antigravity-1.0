@@ -231,7 +231,7 @@ const InteractionChecker: React.FC = () => {
         className="flex items-center gap-2 text-slate-300 hover:text-slate-300 transition-colors mb-6 group"
       >
         <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
-        <span className="text-xs font-black uppercase tracking-widest">Return to Catalog</span>
+        <span className="text-sm font-black uppercase tracking-widest">Return to Catalog</span>
       </button>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -249,7 +249,7 @@ const InteractionChecker: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleClear}
-            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
+            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-xl text-sm font-black uppercase tracking-widest transition-all"
           >
             Reset Analysis
           </button>
@@ -259,7 +259,7 @@ const InteractionChecker: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Input: Psychedelic */}
         <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
-          <label className="text-xs font-black text-slate-300 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
+          <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
           <div className="relative group">
             <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">biotech</span>
@@ -282,14 +282,14 @@ const InteractionChecker: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-2 px-2">
-            <span className="material-symbols-outlined text-xs text-slate-600">lock</span>
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">Validated Protocol List Only</span>
+            <span className="material-symbols-outlined text-sm text-slate-400">lock</span>
+            <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Validated Protocol List Only</span>
           </div>
         </section>
 
         {/* Input: Medication */}
         <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
-          <label className="text-xs font-black text-slate-300 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
+          <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
           <div className="relative group">
             <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">dataset</span>
@@ -316,7 +316,7 @@ const InteractionChecker: React.FC = () => {
           <div className="px-2">
             <button
               onClick={handleRequestAgent}
-              className="text-xs font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2 group"
+              className="text-sm font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2 group"
             >
               <span>Agent not listed? Request institutional database update.</span>
               <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">arrow_forward</span>
@@ -354,7 +354,7 @@ const InteractionChecker: React.FC = () => {
                 </div>
                 <button
                   onClick={handlePrint}
-                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
+                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
                 >
                   <span className="material-symbols-outlined text-lg">print</span>
                   Print / Save Results
@@ -379,14 +379,14 @@ const InteractionChecker: React.FC = () => {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 <div className="lg:col-span-7 space-y-8">
                   <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Clinical Description</h3>
+                    <h3 className="text-sm font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Clinical Description</h3>
                     <p className="text-xl sm:text-2xl font-bold leading-relaxed" style={{ color: '#8B9DC3' }}>
                       "{analysisResult.description}"
                     </p>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Mechanism of Interaction</h3>
+                    <h3 className="text-sm font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Mechanism of Interaction</h3>
                     <div className="p-6 bg-black/40 border border-white/5 rounded-2xl">
                       <p className="text-base font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>
                         {analysisResult.mechanism}
@@ -398,8 +398,8 @@ const InteractionChecker: React.FC = () => {
                 <div className="lg:col-span-5 flex flex-col justify-end">
                   <div className="bg-black/60 border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
                     <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                      <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Protocol Sync Status</span>
-                      <span className="text-xs font-mono text-clinical-green font-black uppercase">Active</span>
+                      <span className="text-sm font-black text-slate-300 uppercase tracking-widest">Protocol Sync Status</span>
+                      <span className="text-sm font-mono text-clinical-green font-black uppercase">Active</span>
                     </div>
                     <div className="space-y-2">
                       <p className="text-sm font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
@@ -407,7 +407,7 @@ const InteractionChecker: React.FC = () => {
                     </div>
                     {analysisResult.sourceUrl && (
                       <div className="flex items-center gap-2">
-                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-xs font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors">
+                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-sm font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors">
                           Source: {analysisResult.source}
                           <span className="material-symbols-outlined text-xs">open_in_new</span>
                         </a>
@@ -418,7 +418,7 @@ const InteractionChecker: React.FC = () => {
               </div>
 
               {/* Legal Footer */}
-              <div className="mt-8 pt-6 border-t border-white/5 text-xs font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>
+              <div className="mt-8 pt-6 border-t border-white/5 text-sm font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>
                 DISCLAIMER: This tool is for educational and harm reduction purposes only. It does not constitute medical advice. Independent verification is required.
               </div>
             </div>
@@ -432,18 +432,18 @@ const InteractionChecker: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">clinical_notes</span>
           </div>
           <div className="space-y-2">
-            <h3 className="text-xs font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Registry Methodology</h3>
+            <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Registry Methodology</h3>
             <p className="text-sm text-slate-300 leading-relaxed font-medium italic">
               Interaction data is synthesized from peer-reviewed literature, clinical trial reports (2024-2025), and anonymized practitioner observations. All data points are validated by the institutional Lead Investigator node before ledger entry.
             </p>
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-1.5">
                 <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                <span className="text-xs font-mono text-clinical-green font-black uppercase tracking-widest">Ledger Verified</span>
+                <span className="text-sm font-mono text-clinical-green font-black uppercase tracking-widest">Ledger Verified</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
-                <span className="text-xs font-mono text-primary font-black uppercase tracking-widest">Node Sync Complete</span>
+                <span className="text-sm font-mono text-primary font-black uppercase tracking-widest">Node Sync Complete</span>
               </div>
             </div>
           </div>
