@@ -1,6 +1,6 @@
 ---
 id: WO-084
-status: 01_TRIAGE
+status: 03_BUILD
 priority: P1 (Critical)
 category: Strategic Analysis
 audience: Technical Team

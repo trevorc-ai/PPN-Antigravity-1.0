@@ -4,7 +4,7 @@ status: 03_BUILD
 priority: P3 (Normal)
 category: Polish
 audience: Provider-Facing
-owner: BUILDER
+owner: INSPECTOR
 failure_count: 0
 ---
 

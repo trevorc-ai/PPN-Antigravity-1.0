@@ -19,3 +19,7 @@ export { PhaseIndicator } from './PhaseIndicator';
 export { default as PreparationPhase } from './PreparationPhase';
 export { default as DosingSessionPhase } from './DosingSessionPhase';
 export { default as IntegrationPhase } from './IntegrationPhase';
+
+// Phase 3 Integration Forms (WO-052)
+export { StructuredIntegrationSession } from './StructuredIntegrationSession';
+export { BehavioralChangeTracker } from './BehavioralChangeTracker';

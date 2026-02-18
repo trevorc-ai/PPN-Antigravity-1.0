@@ -2,11 +2,11 @@
 title: "Brand Messaging Update & Legal Disclaimer Integration"
 category: "Marketing / Design"
 priority: "P1"
-owner: "MARKETER"
+owner: MARKETER
 assigned_to: "BUILDER"
 assigned_date: "2026-02-15T17:10:00-08:00"
 created_date: "2026-02-15"
-status: "03_BUILD"
+status: 03_BUILD
 failure_count: 0
 estimated_effort: "MEDIUM"
 ---

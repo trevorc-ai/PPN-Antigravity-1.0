@@ -6,9 +6,26 @@ category: Bug / Layout / Navigation
 owner: INSPECTOR
 failure_count: 1
 created_date: 2026-02-16T12:52:43-08:00
-completed_date: 2026-02-17T23:07:00-08:00
+completed_date: 2026-02-17T23:31:00-08:00
 rejected_date: 2026-02-17T09:12:00-08:00
 ---
+
+## LEAD FIX — INSPECTOR REJECTION RESOLVED (2026-02-17T23:31 PST)
+
+**Fixed by:** LEAD (acting as BUILDER for this one-line correction)
+
+### Fix Applied:
+- ✅ Deleted `{ label: 'Wellness Journey', icon: 'psychology', path: '/wellness-journey' }` from `navSections` in `src/components/Sidebar.tsx` (line 32)
+- ✅ Removed orphaned `/wellness-journey` entry from `tourDataMap` in same file
+- Clinical Tools section now contains only: My Protocols, Interaction Checker
+
+### Verification:
+- No other references to the Wellness Journey link remain in Sidebar.tsx
+- tourDataMap is clean — no dead entries
+- All other nav items and functionality preserved
+
+**INSPECTOR:** Please re-audit. This was the sole rejection reason (failure_count: 1). All other items from the original ticket were previously approved.
+
 
 ## BUILDER IMPLEMENTATION NOTES (2026-02-17 23:07 PST)
 

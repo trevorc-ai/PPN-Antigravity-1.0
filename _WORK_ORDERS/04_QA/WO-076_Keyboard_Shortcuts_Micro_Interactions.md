@@ -3,7 +3,7 @@ id: WO-076
 status: 03_BUILD
 priority: P3 (Normal)
 category: Feature
-owner: BUILDER
+owner: INSPECTOR
 failure_count: 0
 ---
 

@@ -300,14 +300,16 @@ const WellnessJourney: React.FC = () => {
                                 Track complete patient progress across 3 phases of psychedelic-assisted therapy
                             </p>
 
-                            {/* Primary CTA */}
+                            {/* Primary CTA — accessible: icon + text label, focus ring, aria-label */}
                             <button
                                 onClick={() => setActivePhase(1)}
-                                className="inline-flex items-center gap-2 px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-slate-100 font-bold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-emerald-500/50"
+                                className="inline-flex items-center gap-2 px-6 py-4 bg-slate-700 hover:bg-slate-600 border-2 border-emerald-500 text-slate-100 font-bold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-emerald-500/50"
                                 tabIndex={1}
+                                aria-label="Begin Phase 1: Preparation"
                             >
-                                Start with Phase 1
-                                <ArrowRight className="w-5 h-5" />
+                                <span className="material-symbols-outlined text-emerald-400 text-lg" aria-hidden="true">play_arrow</span>
+                                <span>Start with Phase 1 — Preparation</span>
+                                <ArrowRight className="w-5 h-5 text-emerald-400" aria-hidden="true" />
                             </button>
 
                             {/* Keyboard Shortcut Hint */}
@@ -448,16 +450,19 @@ const WellnessJourney: React.FC = () => {
                             </p>
                         </div>
 
-                        {/* Risk Level */}
+                        {/* Risk Level — accessible: icon + text label, not color-only */}
                         <div>
                             <p className="text-sm mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center" aria-hidden="true">
                                     <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
-                                <span className="text-2xl font-black text-emerald-400">LOW</span>
+                                <div>
+                                    <span className="text-2xl font-black text-emerald-400" aria-label="Risk level: Low">LOW</span>
+                                    <span className="ml-2 text-xs font-bold text-emerald-400 uppercase tracking-widest">[STATUS: LOW RISK]</span>
+                                </div>
                             </div>
                             <p className="text-sm mt-2" style={{ color: '#8B9DC3' }}>Excellent compliance</p>
                         </div>

@@ -154,7 +154,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
             ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
             ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
             bg-slate-900 border border-slate-700 text-slate-300 
-            text-[10px] font-bold uppercase tracking-wider
+            text-xs font-bold uppercase tracking-wider
             whitespace-nowrap shadow-xl animate-in fade-in zoom-in-95 duration-200
             ${config.glow}
           `}>
@@ -238,7 +238,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
 
                             {/* Footer / Meta */}
                             {(glossaryTerm || type === 'critical') && (
-                                <div className="px-5 py-3 border-t border-slate-800/50 bg-black/20 flex justify-between items-center text-[11px]">
+                                <div className="px-5 py-3 border-t border-slate-800/50 bg-black/20 flex justify-between items-center text-xs">
                                     {glossaryTerm && (
                                         <button className="flex items-center gap-1.5 text-slate-300 hover:text-primary transition-colors font-bold uppercase tracking-wider">
                                             <BookOpen size={12} />
@@ -281,7 +281,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
             {children}
             {/* Keyboard Hint */}
             {isFocused && !isVisible && (
-                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-blue-500 text-slate-300 text-[10px] px-1 rounded">?</div>
+                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-blue-500 text-slate-300 text-xs px-1 rounded">?</div>
             )}
 
             {isVisible && (
@@ -304,7 +304,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                         {title && (
                             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
                                 <Icon size={12} className={config.color} />
-                                <span className={`text-[10px] font-black uppercase tracking-widest ${config.color}`}>{title}</span>
+                                <span className={`text-xs font-black uppercase tracking-widest ${config.color}`}>{title}</span>
                             </div>
                         )}
 

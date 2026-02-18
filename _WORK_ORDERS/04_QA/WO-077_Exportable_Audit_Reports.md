@@ -3,7 +3,7 @@ id: WO-077
 status: 03_BUILD
 priority: P1 (Critical)
 category: Feature
-owner: BUILDER
+owner: INSPECTOR
 failure_count: 0
 ---
 

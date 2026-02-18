@@ -65,49 +65,66 @@ WHILE 03_BUILD queue is not empty:
 
 ---
 
-## 📋 CURRENT 03_BUILD PRIORITY ORDER — UPDATED 2026-02-17T23:22 PST
+## 📋 CURRENT 03_BUILD PRIORITY ORDER — UPDATED 2026-02-17T23:31 PST
 
 Execute in this exact order. **Non-BUILDER tickets are clearly marked — skip them.**
 
 ### 🔴 IMMEDIATE (Quick Wins — Do First)
 
-1. **WO-087** — Wellness Journey Page Bug Fixes & URL Rename
-   - Fix unresponsive form, button color accessibility, tooltip font size violations
-   - Rename page URL to "Wellness Journey"
-   - **No dependencies, no blockers — ship it**
+1. **WO-095** — Alphabetical Sort on All Form Dropdowns *(0.5 day, zero blockers)*
+   - Fix `InteractionChecker.tsx` lines 197 & 222: add `.slice().sort()` to hardcoded arrays
+   - Audit `ClinicalInsightsPanel.tsx` for missing `.order()` calls
+   - **Fastest possible win — ship it first**
+
+2. **WO-087** — Wellness Journey Page Bug Fixes & URL Rename
+   - Fix unresponsive form (wire existing components from `/src/components/wellness-journey/`)
+   - Fix button color accessibility (no color-only state indicators)
+   - Fix tooltip font size violations (grep `text-[10px]`, `text-[11px]`)
+   - Rename URL from `arc-of-care-god-view` → `wellness-journey`
+   - **Flag URL rename explicitly in handoff — INSPECTOR must review it**
 
 ### 🟠 HIGH PRIORITY
 
-2. **WO-085** — Add Missing Vital Signs to SessionVitalsForm
+3. **WO-085** — Add Missing Vital Signs to SessionVitalsForm
    - SOOP migration may not have run yet → **use mock data**
    - Add: respiratory_rate, temperature, skin_conductance fields to `SessionVitalsForm.tsx`
    - Component location: `src/components/wellness-journey/`
 
-3. **WO-086** — Session Timeline Tracking
+4. **WO-086** — Session Timeline Tracking
    - Create `SessionTimelineForm.tsx` in `src/components/wellness-journey/`
    - Use `useSessionTimeline()` mock hook
    - Clone pattern from `SessionVitalsForm.tsx`
 
-4. **WO-074** — Phase 1 Baseline Assessment Wizard
+5. **WO-074** — Phase 1 Baseline Assessment Wizard
    - Location: `src/components/wellness-journey/`
+
+6. **WO-096** — Migrate InteractionChecker to ref tables
+   - Replaces hardcoded constants with live Supabase ref table queries
+   - Coordinate with SOOP if migration not yet run → use mock data
 
 ### 🟡 STANDARD PRIORITY
 
-5. **WO-063** — Integrate Symptom Trajectory Chart
+7. **WO-063** — Integrate Symptom Trajectory Chart
    - Use `useLongitudinalAssessments()` mock hook
    - Integrate `SymptomDecayCurve.tsx` into Wellness Journey Phase 3
 
-6. **WO-065** — Integrate Session Monitoring Dashboard
+8. **WO-065** — Integrate Session Monitoring Dashboard
    - Use `useSessionTimeline()` mock hook
    - Integrate `SessionMonitoringDashboard.tsx` into Phase 2
 
-7. **WO-066** — Integrate Safety Event Documentation
+9. **WO-066** — Integrate Safety Event Documentation
    - Use mock data for `log_interventions` and `log_safety_alerts`
    - Integrate `RescueProtocolChecklist.tsx` and `RedAlertPanel.tsx`
 
+10. **WO-075** — Smart PreFill System
+11. **WO-076** — Auto-Generated Narratives
+12. **WO-077** — Exportable Audit Reports
+13. **WO-052** — Phase 3 Forms Redesign
+
 ### 🔵 PHANTOM SHIELD (After above complete)
-8. **WO-059** — Potency Normalizer
-9. **WO-060** — Crisis Logger
+14. **WO-059** — Potency Normalizer
+15. **WO-060** — Crisis Logger
+16. **WO-061** — Cockpit Mode UI
 
 ### ℹ️ NON-BUILDER TICKETS IN 03_BUILD — SKIP, DO NOT TOUCH
 These belong to other agents. BUILDER must not open or modify these:
@@ -117,6 +134,7 @@ These belong to other agents. BUILDER must not open or modify these:
 - `WO-086a_*_MARKETER.md` → MARKETER
 - `WO-084_Session_Tracking_*` → ANALYST
 - `WO-062_GREY_MARKET_PHANTOM_SHIELD_ARCHITECTURE.md` → LEAD reference doc only
+- `WO-066_Arc_Of_Care_Mini_Guided_Tours.md` → DESIGNER (needs design spec first)
 
 ---
 

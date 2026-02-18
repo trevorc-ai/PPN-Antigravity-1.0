@@ -8,6 +8,18 @@
 - **Handoff Syntax:** When finishing a task, state: *"I have completed [Task]. Review artifact at [File_Path]."*
 - **Batch Processing:** BUILDER should process ALL tickets in `03_BUILD/` with `owner: BUILDER` sequentially without stopping to ask permission between tickets. Move each to `04_QA/` when done, then pick up the next one.
 
+## 2. 🔁 MANDATORY NEXT ACTIONS RULE (All Agents)
+
+**Every agent MUST append a `## NEXT ACTIONS` section to every ticket before moving it forward.**
+This is non-negotiable. The pipeline must never stall because an agent finished and stopped.
+
+The `## NEXT ACTIONS` section must answer:
+1. **What follow-on tickets need to be created?** (Create them immediately, don't just list them)
+2. **What tickets does this work unblock?** (Update those tickets' frontmatter and move them)
+3. **What is the agent doing next?** (Name the next ticket ID or state the queue is empty)
+
+**Failure to complete NEXT ACTIONS = incomplete ticket. INSPECTOR will reject it.**
+
 ## 2. Error Handling & Debugging Standards
 **A. The "No Silent Failures" Rule (Frontend)**
 - **DESIGNER/BUILDER:** Every async operation (API call, data fetch) must have:

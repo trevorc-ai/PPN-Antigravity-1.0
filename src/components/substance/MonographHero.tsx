@@ -16,7 +16,7 @@ interface MonographHeroProps {
 
 export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
     return (
-        <div className="relative w-full overflow-hidden border-b border-white/5 bg-[#05070a]">
+        <div className="relative w-full overflow-hidden border-b border-white/5 bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
             <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
                 <div className="absolute -top-48 -left-48 size-[800px] bg-primary/10 rounded-full blur-[160px] animate-pulse"></div>

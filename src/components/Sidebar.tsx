@@ -29,7 +29,6 @@ const navSections: NavSection[] = [
   {
     title: 'Clinical Tools',
     items: [
-      { label: 'Wellness Journey', icon: 'psychology', path: '/wellness-journey' },
       { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
       { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
     ],
@@ -103,7 +102,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   {section.items.map((item) => {
                     // Map tour data attributes to specific navigation items
                     const tourDataMap: Record<string, string> = {
-                      '/wellness-journey': 'wellness-journey',
                       '/interactions': 'interaction-checker',
                       '/catalog': 'substance-catalog',
                       '/help': 'help-faq'

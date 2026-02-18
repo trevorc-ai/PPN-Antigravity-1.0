@@ -8,7 +8,7 @@ status: 01_TRIAGE
 priority: P0 (URGENT — USER ESCALATED 2026-02-17T22:21)
 category: Strategic Analysis / Marketing
 type: MARKET_STUDY (not a build order)
-owner: PRODDY
+owner: LEAD
 secondary_owner: ANALYST
 failure_count: 0
 created_date: 2026-02-17T19:21:00-08:00

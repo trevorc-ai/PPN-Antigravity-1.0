@@ -283,7 +283,24 @@ npm run db:rollback
 
 ---
 
+## 🔁 NEXT ACTIONS (MANDATORY — Complete Before Moving Ticket Forward)
+
+> Do not leave this section blank. The pipeline must never stall.
+> INSPECTOR will reject any ticket missing this section.
+
+**Follow-on tickets to create immediately:**
+- [ ] WO-[ID]: [Description] → `owner: [AGENT]` | `status: [QUEUE]`
+
+**Tickets this work unblocks:**
+- [ ] WO-[ID]: [Ticket name] — update frontmatter and move to correct queue
+
+**This agent's next action:**
+- [ ] Moving to next ticket: WO-[ID] — [Name]
+- [ ] OR: Queue empty. Notifying LEAD.
+
+---
+
 **END OF PLAN**
 
 **Status:** [READY FOR PHASE 2 / IN PROGRESS / COMPLETE]  
-**Next Action:** [e.g., DESIGNER to create visual mockup]
+**Next Action:** [Explicit statement of what happens next and who does it]
