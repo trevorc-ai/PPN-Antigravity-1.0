@@ -1,8 +1,8 @@
 ---
 id: WO-084
 title: "Enhanced Help Features — Crisis Logger & Cockpit Mode (User Manual + Mini Guided Tours)"
-status: 03_BUILD
-owner: BUILDER
+status: 01_TRIAGE
+owner: LEAD
 failure_count: 0
 created: 2026-02-17T22:32:48-08:00
 priority: high
@@ -329,3 +329,7 @@ PRODDY → update `owner: LEAD` and `status: 01_TRIAGE`. LEAD will route to DESI
 **PRODDY SIGN-OFF:** ✅ Strategy complete for both features. Route to LEAD → DESIGNER (tooltip/overlay specs) + BUILDER (implementation) after strategy approved.
 
 **Routing:** `owner: LEAD` | `status: 01_TRIAGE`
+## [STATUS: REROUTING]
+This strategy ticket was found in 03_BUILD/QA, but only contains Strategy specs.
+Routing to LEAD for assignment to DESIGNER/BUILDER as per PRODDY instructions.
+

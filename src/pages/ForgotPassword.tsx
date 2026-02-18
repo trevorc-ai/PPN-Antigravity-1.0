@@ -76,7 +76,7 @@ const ForgotPassword: React.FC = () => {
 
                                 {/* Email field */}
                                 <div className="space-y-2">
-                                    <label htmlFor="email" className="block text-[10px] font-bold text-slate-3000 uppercase tracking-widest">
+                                    <label htmlFor="email" className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
                                         Email Address
                                     </label>
                                     <input
@@ -112,7 +112,7 @@ const ForgotPassword: React.FC = () => {
 
                             {/* Footer */}
                             <div className="mt-6 text-center">
-                                <p className="text-xs text-slate-3000 font-medium">
+                                <p className="text-sm text-slate-500 font-medium">
                                     Remember your password?{' '}
                                     <button
                                         onClick={() => navigate('/login')}
@@ -136,7 +136,7 @@ const ForgotPassword: React.FC = () => {
                                 <p className="text-slate-300 text-sm font-medium mb-6 max-w-sm mx-auto">
                                     We've sent a password recovery link to <span className="text-slate-300 font-bold">{email}</span>
                                 </p>
-                                <div className="space-y-3 text-xs text-slate-3000 font-medium mb-8">
+                                <div className="space-y-3 text-xs text-slate-500 font-medium mb-8">
                                     <p>• Click the link in the email to reset your password</p>
                                     <p>• The link will expire in 1 hour</p>
                                     <p>• Check your spam folder if you don't see it</p>
@@ -154,7 +154,7 @@ const ForgotPassword: React.FC = () => {
 
                 {/* Security notice */}
                 <div className="mt-6 text-center">
-                    <p className="text-xs text-slate-600 font-medium">
+                    <p className="text-sm text-slate-600 font-medium">
                         🔒 Secured by Supabase Auth v2
                     </p>
                 </div>

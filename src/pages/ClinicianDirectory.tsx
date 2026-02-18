@@ -35,15 +35,15 @@ const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => voi
             <h4 className="text-base font-bold truncate hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/clinician/${practitioner.id}`)} style={{ color: '#8B9DC3' }}>
               {practitioner.name}
             </h4>
-            <span className="text-[10px] font-black text-slate-3000 uppercase tracking-wider bg-slate-900 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
+            <span className="text-xs font-black text-slate-500 uppercase tracking-wider bg-slate-900 px-1.5 py-0.5 rounded ml-2 whitespace-nowrap">
               {practitioner.verificationLevel || 'L4'}
             </span>
           </div>
-          <p className="text-xs text-primary font-medium truncate mt-0.5">{practitioner.role}</p>
+          <p className="text-sm text-primary font-medium truncate mt-0.5">{practitioner.role}</p>
 
-          <div className="flex items-center gap-1 mt-2 text-slate-3000">
+          <div className="flex items-center gap-1 mt-2 text-slate-500">
             <span className="material-symbols-outlined text-[14px]">location_on</span>
-            <span className="text-[11px] font-medium truncate uppercase tracking-wide">{practitioner.location}</span>
+            <span className="text-xs font-medium truncate uppercase tracking-wide">{practitioner.location}</span>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@ const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => voi
         </button>
         <button
           onClick={() => onMessage(practitioner)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500/50 rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-500/20"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-slate-300 border border-blue-500/50 rounded-lg transition-all flex items-center justify-center shadow-lg shadow-blue-500/20"
           title="Send Message"
         >
           <span className="material-symbols-outlined text-lg">chat_bubble</span>
@@ -128,13 +128,13 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
       <div className="flex flex-col h-full">
         <div className="p-6 sm:p-8 border-b border-white/5 bg-slate-900/50">
           <div className="flex items-center justify-between mb-6">
-            <button onClick={onClose} className="p-2.5 hover:bg-white/5 rounded-full text-slate-3000 hover:text-slate-300 transition-all">
+            <button onClick={onClose} className="p-2.5 hover:bg-white/5 rounded-full text-slate-500 hover:text-slate-300 transition-all">
               <span className="material-symbols-outlined">close</span>
             </button>
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2.5">
                 <span className="size-2 rounded-full bg-clinical-green animate-pulse"></span>
-                <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Secure Link</span>
+                <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Secure Link</span>
               </div>
             </div>
             <div className="size-10"></div>
@@ -150,7 +150,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
             </div>
             <div>
               <h3 className="text-lg sm:text-xl font-black leading-tight" style={{ color: '#8B9DC3' }}>{practitioner.name}</h3>
-              <p className="text-[11px] font-bold text-primary uppercase tracking-widest">{practitioner.role}</p>
+              <p className="text-sm font-bold text-primary uppercase tracking-widest">{practitioner.role}</p>
             </div>
           </div>
         </div>
@@ -164,7 +164,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
                 }`}>
                 <p className="leading-relaxed">{msg.text}</p>
                 <div className="flex items-center gap-2 mt-2.5 justify-end opacity-40">
-                  <span className="text-[11px] font-mono text-slate-300 uppercase">{msg.timestamp}</span>
+                  <span className="text-xs font-mono text-slate-300 uppercase">{msg.timestamp}</span>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
             </div>
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-blue-600 text-white font-black py-4 rounded-2xl text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-primary/10 active:scale-95"
+              className="w-full bg-primary hover:bg-blue-600 text-slate-300 font-black py-4 rounded-2xl text-xs uppercase tracking-widest transition-all shadow-xl shadow-primary/10 active:scale-95"
             >
               Dispatch
             </button>
@@ -237,12 +237,12 @@ const ClinicianDirectory: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
           <div className="space-y-1">
             <h1 className="text-3xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Practitioners</h1>
-            <p className="text-slate-3000 text-[11px] sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
+            <p className="text-slate-500 text-sm sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
           </div>
 
           <div className="hidden sm:flex items-center gap-3 bg-slate-900/60 border border-slate-800 p-2.5 rounded-2xl shadow-2xl backdrop-blur-xl">
             <div className="relative">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-3000 text-lg">search</span>
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
               <input
                 type="text"
                 placeholder="Search identity..."
@@ -254,7 +254,7 @@ const ClinicianDirectory: React.FC = () => {
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-[11px] font-black text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
+              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-xs font-black text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
             >
               <option value="All">All Roles</option>
               {roles.filter(r => r !== 'All').map(r => <option key={r} value={r}>{r}</option>)}
@@ -262,7 +262,7 @@ const ClinicianDirectory: React.FC = () => {
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-[11px] font-black text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
+              className="bg-slate-800/50 border-none rounded-xl px-5 h-10 text-xs font-black text-slate-300 focus:ring-1 focus:ring-primary appearance-none cursor-pointer"
             >
               <option value="All">Global Nodes</option>
               {locations.filter(l => l !== 'All').map(l => <option key={l} value={l}>{l}</option>)}
@@ -271,7 +271,7 @@ const ClinicianDirectory: React.FC = () => {
 
           <div className="flex sm:hidden w-full gap-3">
             <div className="relative flex-1">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-3000 text-lg">search</span>
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
               <input
                 type="text"
                 placeholder="Search name..."
@@ -293,7 +293,7 @@ const ClinicianDirectory: React.FC = () => {
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
-                className="bg-slate-800/50 border-slate-700 rounded-xl px-4 h-12 text-[11px] font-black text-slate-300"
+                className="bg-slate-800/50 border-slate-700 rounded-xl px-4 h-12 text-xs font-black text-slate-300"
               >
                 <option value="All">All Roles</option>
                 {roles.filter(r => r !== 'All').map(r => <option key={r} value={r}>{r}</option>)}
@@ -301,7 +301,7 @@ const ClinicianDirectory: React.FC = () => {
               <select
                 value={selectedLocation}
                 onChange={(e) => setSelectedLocation(e.target.value)}
-                className="bg-slate-800/50 border-slate-700 rounded-xl px-4 h-12 text-[11px] font-black text-slate-300"
+                className="bg-slate-800/50 border-slate-700 rounded-xl px-4 h-12 text-xs font-black text-slate-300"
               >
                 <option value="All">All Nodes</option>
                 {locations.filter(l => l !== 'All').map(l => <option key={l} value={l}>{l}</option>)}
@@ -322,7 +322,7 @@ const ClinicianDirectory: React.FC = () => {
           {filteredPractitioners.length === 0 && (
             <div className="col-span-full py-24 text-center space-y-5 bg-slate-900/20 rounded-[4rem] border-2 border-dashed border-slate-800/50">
               <span className="material-symbols-outlined text-6xl text-slate-700 opacity-20">person_off</span>
-              <p className="text-slate-3000 font-black uppercase tracking-[0.3em] text-[11px]">Zero Registry Hits</p>
+              <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-sm">Zero Registry Hits</p>
             </div>
           )}
         </div>

@@ -282,7 +282,7 @@ const SessionEventLogForm: React.FC<SessionEventLogFormProps> = ({
 
                 {/* Quick-Entry Preset Bar */}
                 <div className="mt-5 pt-5 border-t border-slate-700/50">
-                    <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-3">
+                    <p className="text-sm text-slate-400 font-semibold uppercase tracking-wide mb-3">
                         Quick Entry — click to pre-fill the next event
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -375,7 +375,7 @@ const SessionEventLogForm: React.FC<SessionEventLogFormProps> = ({
                                     <Clock className="w-4 h-4 text-slate-400" />
                                     Timestamp
                                     <AdvancedTooltip content="Record the exact time of this event. Use 'Now' for real-time logging." tier="micro">
-                                        <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <div className="flex gap-2">
@@ -404,7 +404,7 @@ const SessionEventLogForm: React.FC<SessionEventLogFormProps> = ({
                                     <IconComponent className={`w-4 h-4 ${config.color}`} />
                                     Event Type
                                     <AdvancedTooltip content="Categorize this event to enable filtering and analysis." tier="micro">
-                                        <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <select
@@ -430,7 +430,7 @@ const SessionEventLogForm: React.FC<SessionEventLogFormProps> = ({
                             >
                                 Description
                                 <AdvancedTooltip content="Be specific for legal documentation. Include substance, dose, route, and clinical observations." tier="micro">
-                                    <span className="text-slate-500 cursor-help">ⓘ</span>
+                                    <span className="text-slate-400 cursor-help">ⓘ</span>
                                 </AdvancedTooltip>
                             </label>
                             <textarea
@@ -448,7 +448,7 @@ const SessionEventLogForm: React.FC<SessionEventLogFormProps> = ({
                                     }`}
                             />
                             <div className="flex justify-end">
-                                <span className={`text-xs font-mono ${charOver ? 'text-red-400' : charWarning ? 'text-yellow-400' : 'text-slate-500'
+                                <span className={`text-xs font-mono ${charOver ? 'text-red-400' : charWarning ? 'text-yellow-400' : 'text-slate-400'
                                     }`}>
                                     {charCount} / 500
                                 </span>

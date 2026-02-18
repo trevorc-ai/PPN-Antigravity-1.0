@@ -25,7 +25,7 @@ const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
       </div>
 
       <div className="absolute bottom-10 left-10 right-10 z-10 space-y-4 max-w-3xl">
-        <p className="text-slate-300 text-xs font-mono uppercase tracking-[0.3em] font-bold">Published May 14, 2024</p>
+        <p className="text-slate-300 text-sm font-mono uppercase tracking-[0.3em] font-bold">Published May 14, 2024</p>
         <h2 className="text-4xl sm:text-5xl font-black text-slate-300 tracking-tighter leading-[1.1]">
           FDA Approves Landmark Phase III Trial for PPN-04 Compound
         </h2>
@@ -60,7 +60,7 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
             }`}>
             {article.category}
           </span>
-          <span className="text-xs font-mono text-slate-3000 uppercase tracking-widest">{article.timestamp}</span>
+          <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">{article.timestamp}</span>
         </div>
       </div>
 
@@ -68,7 +68,7 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
         <h3 className="text-xl font-black text-slate-300 group-hover:text-slate-300 leading-tight tracking-tight transition-colors">
           {article.title}
         </h3>
-        <p className="text-sm text-slate-3000 leading-relaxed font-medium line-clamp-3">
+        <p className="text-sm text-slate-500 leading-relaxed font-medium line-clamp-3">
           {article.summary}
         </p>
         <button className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-300 uppercase tracking-[0.2em] transition-all group/btn">
@@ -187,14 +187,14 @@ const News: React.FC = () => {
             <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
               <button
                 onClick={() => setSortBy('recent')}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-300'}`}
+                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
               >
                 <span className="material-symbols-outlined text-sm">schedule</span>
                 Most Recent
               </button>
               <button
                 onClick={() => setSortBy('cited')}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-300'}`}
+                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
               >
                 <span className="material-symbols-outlined text-sm">star</span>
                 Most Cited
@@ -265,7 +265,7 @@ const News: React.FC = () => {
                 </div>
                 <h3 className="text-sm font-black text-slate-300 tracking-[0.2em]">Weekly Briefing</h3>
               </div>
-              <p className="text-xs text-slate-3000 leading-relaxed font-medium">
+              <p className="text-sm text-slate-500 leading-relaxed font-medium">
                 Get the most critical clinical updates delivered to your inbox every Monday morning.
               </p>
             </div>
@@ -278,7 +278,7 @@ const News: React.FC = () => {
               <button className="w-full py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
                 Subscribe Now
               </button>
-              <p className="text-xs text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>
+              <p className="text-sm text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>
             </div>
           </section>
 
@@ -291,7 +291,7 @@ const News: React.FC = () => {
             <div className="space-y-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-end">
-                  <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Active Trials</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Trials</span>
                   <span className="text-[12px] font-mono font-black text-slate-300">124</span>
                 </div>
                 <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
@@ -301,7 +301,7 @@ const News: React.FC = () => {
 
               <div className="space-y-3">
                 <div className="flex justify-between items-end">
-                  <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Peer Reviews</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Peer Reviews</span>
                   <span className="text-[12px] font-mono font-black text-slate-300">8,402</span>
                 </div>
                 <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
@@ -314,7 +314,7 @@ const News: React.FC = () => {
           {/* Professional Context Node */}
           <div className="p-6 bg-slate-900/40 border border-slate-800/60 rounded-3xl flex items-center gap-5">
             <div className="size-12 rounded-2xl bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700">
-              <span className="material-symbols-outlined text-slate-3000">verified</span>
+              <span className="material-symbols-outlined text-slate-500">verified</span>
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Source Context</span>

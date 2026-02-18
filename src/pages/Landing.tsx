@@ -141,7 +141,7 @@ const Landing: React.FC = () => {
               PPN Portal
             </p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] font-black text-slate-600 tracking-widest uppercase">Institutional Gateway</span>
+              <span className="text-xs font-black text-slate-600 tracking-widest uppercase">Institutional Gateway</span>
               <div className="size-1 rounded-full bg-clinical-green animate-pulse"></div>
             </div>
           </div>
@@ -180,7 +180,7 @@ const Landing: React.FC = () => {
               transition={{ duration: 1, delay: 0.5 }}
               className="max-w-2xl lg:mx-0 mx-auto p-4 bg-slate-900/40 border border-slate-800 rounded-2xl"
             >
-              <p className="text-[12px] font-black text-slate-3000 uppercase tracking-widest leading-relaxed">
+              <p className="text-[12px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
                 <span className="text-primary mr-2">Notice:</span>
                 PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
               </p>
@@ -234,15 +234,15 @@ const Landing: React.FC = () => {
             >
               <div className="text-center">
                 <p className="text-2xl font-black text-slate-300">12k+</p>
-                <p className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest mt-1">Records</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Records</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-black text-slate-300">840+</p>
-                <p className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest mt-1">Clinicians</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Clinicians</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-black text-clinical-green">98%</p>
-                <p className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest mt-1">Uptime</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Uptime</p>
               </div>
             </motion.div>
           </div>
@@ -307,7 +307,7 @@ const Landing: React.FC = () => {
                   <p className="text-2xl font-black text-slate-300">{loc}</p>
                   <div className="flex items-center justify-center gap-2">
                     <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                    <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Active Practitioner</span>
+                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
                   </div>
                 </div>
               ))}
@@ -319,7 +319,7 @@ const Landing: React.FC = () => {
       {/* SECTION: Trust Indicators */}
       <section className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <p className="text-center text-sm text-slate-3000 font-bold uppercase tracking-widest mb-12">
+          <p className="text-center text-sm text-slate-500 font-bold uppercase tracking-widest mb-12">
             Trusted by Leading Research Institutions
           </p>
 
@@ -391,7 +391,7 @@ const Landing: React.FC = () => {
                 <span className="text-red-300 font-bold text-sm">Disconnected Tools Risk</span>
               </div>
               <div className="flex items-center gap-4 p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                <span className="material-symbols-outlined text-slate-3000">description</span>
+                <span className="material-symbols-outlined text-slate-500">description</span>
                 <span className="text-slate-300 font-bold text-sm line-through">Unsecure Spreadsheets</span>
               </div>
               <div className="flex items-center gap-4 p-4 bg-clinical-green/20 border border-clinical-green/30 rounded-xl">
@@ -407,7 +407,7 @@ const Landing: React.FC = () => {
       <section className="py-32 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
-            <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">Simple Process</p>
+            <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">Simple Process</p>
             <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-300">How It Works</h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">Four steps to collaborative clinical intelligence</p>
           </div>
@@ -465,7 +465,7 @@ const Landing: React.FC = () => {
 
                 {/* Content */}
                 <h3 className="text-xl font-black text-slate-300">{item.title}</h3>
-                <p className="text-sm text-slate-3000 leading-relaxed">{item.desc}</p>
+                <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -477,7 +477,7 @@ const Landing: React.FC = () => {
         <div className="max-w-7xl mx-auto space-y-20">
           {/* Section Header */}
           <div className="text-center space-y-4">
-            <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">Clinical Intelligence Platform</p>
+            <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">Clinical Intelligence Platform</p>
             <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight pb-2 text-slate-300">
               Built for <span className="text-gradient-primary inline-block pb-1">Safety</span>.<br />Designed for Growth.
             </h2>
@@ -504,7 +504,7 @@ const Landing: React.FC = () => {
 
             {/* Text Right */}
             <div className="space-y-6 order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-[11px] font-black text-red-400 uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-xs font-black text-red-400 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">security</span>
                 Safety Surveillance
               </div>
@@ -534,7 +534,7 @@ const Landing: React.FC = () => {
           >
             {/* Text Left */}
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-[11px] font-black text-primary uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-xs font-black text-primary uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">query_stats</span>
                 Network Benchmarking
               </div>
@@ -580,7 +580,7 @@ const Landing: React.FC = () => {
 
             {/* Text Right */}
             <div className="space-y-6 order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[11px] font-black text-emerald-400 uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs font-black text-emerald-400 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">timeline</span>
                 Patient Outcomes
               </div>
@@ -631,19 +631,19 @@ const Landing: React.FC = () => {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-slate-300">12k+</span>
-                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Enrolled Subjects</p>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-clinical-green">04</span>
-                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Global Hubs</p>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Global Hubs</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-primary">85%</span>
-                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Avg. Outcome Lift</p>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Avg. Outcome Lift</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="text-3xl font-black text-accent-amber">99.9%</span>
-                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Data Integrity</p>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Data Integrity</p>
                   </div>
                 </div>
               </div>
@@ -660,7 +660,7 @@ const Landing: React.FC = () => {
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
               Clinical <span className="text-gradient-primary inline-block pb-1">Intelligence</span> Infrastructure
             </h2>
-            <p className="text-[12px] text-slate-3000 font-black uppercase tracking-[0.4em]">Designed for Institutional Precision</p>
+            <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.4em]">Designed for Institutional Precision</p>
           </div>
 
           <BentoGrid>
@@ -681,7 +681,7 @@ const Landing: React.FC = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-3000 font-mono">Structured Data Capture</span>
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-500 font-mono">Structured Data Capture</span>
                     <div className="h-px flex-1 bg-slate-800"></div>
                   </div>
                 </div>
@@ -710,7 +710,7 @@ const Landing: React.FC = () => {
                         transition={{ duration: 2, repeat: Infinity }}
                         className="size-1.5 bg-indigo-400 rounded-full"
                       ></motion.span>
-                      <span className="text-[11px] font-black uppercase text-indigo-300">Cohort Comparisons</span>
+                      <span className="text-xs font-black uppercase text-indigo-300">Cohort Comparisons</span>
                     </div>
                   </div>
                 </div>
@@ -753,7 +753,7 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="flex gap-4">
                     {['MedDRA', 'LOINC', 'SNOMED'].map(code => (
-                      <span key={code} className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-[11px] font-black text-slate-3000 tracking-widest uppercase">{code}</span>
+                      <span key={code} className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-black text-slate-500 tracking-widest uppercase">{code}</span>
                     ))}
                   </div>
                 </div>
@@ -815,14 +815,14 @@ const Landing: React.FC = () => {
               <h1 className="text-2xl font-black tracking-tighter cursor-default">
                 PPN <span className="text-primary font-bold">Portal</span>
               </h1>
-              <p className="text-sm text-slate-3000 leading-relaxed font-medium">
+              <p className="text-sm text-slate-500 leading-relaxed font-medium">
                 The institutional standard for outcomes tracking and safety surveillance in psychedelic research.
               </p>
             </div>
 
             <div className="space-y-4">
               <h4 className="text-sm font-black uppercase tracking-widest text-slate-300">Legal & Privacy</h4>
-              <ul className="space-y-2 text-sm text-slate-3000 font-medium">
+              <ul className="space-y-2 text-sm text-slate-500 font-medium">
                 <li className="hover:text-primary transition-colors cursor-pointer">Terms of Service</li>
                 <li className="hover:text-primary transition-colors cursor-pointer">De-identification Policy</li>
                 <li className="hover:text-primary transition-colors cursor-pointer">Registry Consensus</li>

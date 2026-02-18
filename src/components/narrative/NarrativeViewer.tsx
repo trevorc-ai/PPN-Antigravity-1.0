@@ -42,7 +42,7 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
                     </div>
                     <div>
                         <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">Clinical Narrative</h3>
-                        <p className="text-xs text-slate-500">Generated {generatedTime}</p>
+                        <p className="text-sm text-slate-500">Generated {generatedTime}</p>
                     </div>
                 </div>
 

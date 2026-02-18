@@ -104,11 +104,11 @@ const PhaseTour: React.FC<PhaseTourProps> = ({ phase, steps, phaseColor, onClose
 
                 {/* Content */}
                 <div className="px-6 py-5 space-y-3 animate-in fade-in duration-200">
-                    <h3 className="text-lg font-black text-slate-200">{step.title}</h3>
+                    <h3 className="text-lg font-black text-slate-300">{step.title}</h3>
                     <p className="text-sm text-slate-300 leading-relaxed">{step.description}</p>
                     {step.detail && (
                         <div className={`p-3 rounded-xl ${colors.bg} border ${colors.border}`}>
-                            <p className="text-xs text-slate-400 leading-relaxed">{step.detail}</p>
+                            <p className="text-sm text-slate-400 leading-relaxed">{step.detail}</p>
                         </div>
                     )}
                 </div>

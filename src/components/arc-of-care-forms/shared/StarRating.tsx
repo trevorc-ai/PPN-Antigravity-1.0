@@ -55,7 +55,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
                         <Star
                             className={`w-8 h-8 transition-all ${star <= displayValue
                                     ? 'fill-yellow-400 text-yellow-400'
-                                    : 'fill-transparent text-slate-600 group-hover:text-slate-500'
+                                    : 'fill-transparent text-slate-400 group-hover:text-slate-400'
                                 }`}
                         />
                     </button>

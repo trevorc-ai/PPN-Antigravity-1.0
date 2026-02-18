@@ -4,6 +4,19 @@ import { BaselineRiskFlags } from './BaselineRiskFlags';
 import { SessionRiskFlags } from './SessionRiskFlags';
 import { ProgressRiskFlags } from './ProgressRiskFlags';
 import { getRiskColor, getRiskIcon, type RiskLevel, type RiskFlag } from '../../utils/riskCalculator';
+import { downloadReport } from '../../services/reportGenerator';
+import { AdvancedTooltip } from '../ui/AdvancedTooltip';
+
+
+interface PatientCharacteristics {
+    gender: string;
+    age: number;
+    weight: string;
+    ethnicity: string;
+    medications: string[];
+    treatment: string;
+    notes?: string;
+}
 
 export interface RiskIndicatorsProps {
     overallRiskLevel: RiskLevel;
@@ -11,6 +24,7 @@ export interface RiskIndicatorsProps {
     vitalFlags: RiskFlag[];
     progressFlags: RiskFlag[];
     patientId?: string;
+    patientCharacteristics?: PatientCharacteristics;
     sessionTime?: string;
 }
 
@@ -29,6 +43,7 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
     vitalFlags,
     progressFlags,
     patientId,
+    patientCharacteristics,
     sessionTime
 }) => {
     const totalFlags = baselineFlags.length + vitalFlags.length + progressFlags.length;
@@ -36,40 +51,83 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
     return (
         <div className="space-y-6">
             {/* Risk Summary Widget */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                    <div className={`p-3 rounded-lg ${overallRiskLevel === 'high' ? 'bg-red-500/20' :
+            <div className={`relative card-glass rounded-2xl p-6 transition-all duration-300 ${overallRiskLevel === 'high' ? 'border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.2)]' :
+                overallRiskLevel === 'moderate' ? 'border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.1)]' :
+                    ''
+                }`}>
+
+                {/* Top Row: Icon + Title | Risk Level Badge */}
+                <div className="grid grid-cols-2 mb-3" style={{ minHeight: '72px' }}>
+                    {/* Left: Icon + Title + Patient ID */}
+                    <div className="flex items-start gap-4">
+                        <div className={`p-4 rounded-xl flex-shrink-0 ${overallRiskLevel === 'high' ? 'bg-red-500/20' :
                             overallRiskLevel === 'moderate' ? 'bg-yellow-500/20' :
                                 'bg-emerald-500/20'
-                        }`}>
-                        {overallRiskLevel === 'low' ? (
-                            <Shield className="w-6 h-6 text-emerald-400" />
-                        ) : (
-                            <AlertTriangle className={`w-6 h-6 ${getRiskColor(overallRiskLevel)}`} />
-                        )}
+                            }`}>
+                            {overallRiskLevel === 'low' ? (
+                                <Shield className="w-8 h-8 text-emerald-400" />
+                            ) : overallRiskLevel === 'moderate' ? (
+                                <AlertTriangle className="w-8 h-8 text-amber-400" />
+                            ) : (
+                                <AlertTriangle className="w-8 h-8 text-red-500" />
+                            )}
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-100">Risk Analysis</h3>
+                            {patientId && (
+                                <div className="mt-1">
+                                    <span className="text-sm text-slate-400">Patient: </span>
+                                    <span className="text-sm text-slate-200 font-medium">{patientId}</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <div className="flex-1">
-                        <h3 className="text-lg font-bold text-slate-300">
-                            Risk Summary
-                        </h3>
-                        {patientId && (
-                            <p className="text-xs text-slate-500 mt-1">
-                                Patient: {patientId}
-                            </p>
-                        )}
+
+                    {/* Right: Risk Level Badge — centered both axes */}
+                    <div className="flex items-center justify-center">
+                        <div className="flex items-center gap-2">
+                            <span className="text-3xl">{getRiskIcon(overallRiskLevel)}</span>
+                            <span className={`text-4xl font-black uppercase tracking-wide ${getRiskColor(overallRiskLevel)}`}>
+                                {overallRiskLevel}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Overall Risk Level */}
-                <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm text-slate-400">Current Risk Level:</span>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xl">{getRiskIcon(overallRiskLevel)}</span>
-                        <span className={`text-2xl font-black uppercase ${getRiskColor(overallRiskLevel)}`}>
-                            {overallRiskLevel}
-                        </span>
-                    </div>
+                {/* Tooltip — absolute top-right corner, opens bottom-left */}
+                <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
+                    <AdvancedTooltip
+                        tier="guide"
+                        type="info"
+                        side="bottom-left"
+                        title="Risk Calculation Logic"
+                        width="w-80"
+                        content={
+                            <div className="text-sm">
+                                Risk level is calculated based on baseline assessments (PHQ-9, GAD-7, ACE), real-time vitals, and algorithmic prediction of adverse event probability compared to the global patient population.
+                                <div className="mt-2 pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
+                            </div>
+                        }
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </AdvancedTooltip>
                 </div>
+
+                {/* Patient Characteristics — Left justified, below header */}
+                {patientCharacteristics && (
+                    <div className="mb-5 pl-1 space-y-1 border-b border-slate-700/50 pb-4">
+                        <div className="text-sm font-medium text-slate-200">
+                            {patientCharacteristics.age}yo {patientCharacteristics.gender} • {patientCharacteristics.weight} • {patientCharacteristics.ethnicity}
+                        </div>
+                        <div className="text-sm text-slate-300">
+                            {patientCharacteristics.treatment}
+                        </div>
+                        <div className="text-sm text-slate-400">
+                            {patientCharacteristics.medications.join(', ') || 'None'}
+                        </div>
+                    </div>
+                )}
+
 
                 {/* Active Flags Summary */}
                 {totalFlags > 0 && (
@@ -79,13 +137,13 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                         </p>
                         <div className="space-y-2">
                             {baselineFlags.slice(0, 3).map((flag, index) => (
-                                <div key={index} className="flex items-start gap-2 text-xs">
+                                <div key={index} className="flex items-start gap-2 text-sm">
                                     <span>{getRiskIcon(flag.severity)}</span>
                                     <span className="text-slate-300">{flag.message} ({flag.metric})</span>
                                 </div>
                             ))}
                             {baselineFlags.length > 3 && (
-                                <p className="text-xs text-slate-500 pl-6">
+                                <p className="text-sm text-slate-400 pl-6">
                                     +{baselineFlags.length - 3} more baseline flags
                                 </p>
                             )}
@@ -100,12 +158,12 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                             <strong className="text-slate-300">Recent Changes:</strong>
                         </p>
                         {vitalFlags.length > 0 && (
-                            <p className="text-xs text-yellow-400">
+                            <p className="text-sm text-yellow-400">
                                 ↑ {vitalFlags.length} vital sign anomal{vitalFlags.length !== 1 ? 'ies' : 'y'} detected
                             </p>
                         )}
                         {progressFlags.length > 0 && (
-                            <p className="text-xs text-yellow-400 mt-1">
+                            <p className="text-sm text-yellow-400 mt-1">
                                 ↑ {progressFlags.length} declining trend{progressFlags.length !== 1 ? 's' : ''} detected
                             </p>
                         )}
@@ -114,7 +172,17 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
 
                 {/* View Full Report Button */}
                 {totalFlags > 0 && (
-                    <button className="w-full mt-6 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium transition-colors">
+                    <button
+                        className="w-full mt-6 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg font-medium transition-colors"
+                        onClick={() => downloadReport({
+                            patientId: patientId ?? 'UNKNOWN',
+                            baseline: {
+                                phq9: baselineFlags.find(f => f.metric === 'PHQ-9 (Depression)')?.value as number | undefined,
+                                gad7: baselineFlags.find(f => f.metric === 'GAD-7 (Anxiety)')?.value as number | undefined,
+                                pcl5: baselineFlags.find(f => f.metric === 'PCL-5 (PTSD)')?.value as number | undefined,
+                            }
+                        }, 'audit')}
+                    >
                         View Full Risk Report
                     </button>
                 )}

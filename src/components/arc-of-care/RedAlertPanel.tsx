@@ -235,7 +235,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                                                 {/* PHI Safety Notice */}
                                                 <div className="flex items-start gap-2 p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg mb-3">
                                                     <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                                                    <p className="text-emerald-300 text-xs">
+                                                    <p className="text-emerald-300 text-sm">
                                                         <strong>PHI-Safe:</strong> Select from predefined resolution actions only.
                                                     </p>
                                                 </div>

@@ -33,7 +33,7 @@ export const NextSteps: React.FC<NextStepsProps> = ({
                     <h3 className="text-lg font-bold text-blue-300">
                         Next Steps to Reach 100%
                     </h3>
-                    <p className="text-xs text-blue-400/70 mt-1">
+                    <p className="text-sm text-blue-400/70 mt-1">
                         {steps.length} action{steps.length !== 1 ? 's' : ''} remaining
                     </p>
                 </div>
@@ -59,8 +59,8 @@ export const NextSteps: React.FC<NextStepsProps> = ({
             </div>
 
             {/* Estimated Time */}
-            <div className="flex items-center gap-2 text-xs text-blue-400/70 pt-4 border-t border-blue-500/20">
-                <Clock className="w-3 h-3" />
+            <div className="flex items-center gap-2 text-sm text-blue-300 pt-4 border-t border-blue-500/20">
+                <Clock className="w-4 h-4" />
                 <span>Estimated time to complete: {estimatedMinutes} minutes</span>
             </div>
         </div>

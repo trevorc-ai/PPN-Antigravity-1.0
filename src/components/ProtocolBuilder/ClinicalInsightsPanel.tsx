@@ -193,7 +193,7 @@ export const ClinicalInsightsPanel: React.FC<ClinicalInsightsPanelProps> = ({
                                         <div className="bg-[#10b981] h-2 rounded-full" style={{ width: `${outcomesData.response_rate * 100}%` }}></div>
                                     </div>
                                 </div>
-                                <p className="text-xs text-[#64748b] mt-2">
+                                <p className="text-sm text-[#64748b] mt-2">
                                     Based on {outcomesData.unique_patients} similar patients ({(outcomesData.confidence_level * 100).toFixed(0)}% confidence)
                                 </p>
                             </div>
@@ -214,8 +214,8 @@ export const ClinicalInsightsPanel: React.FC<ClinicalInsightsPanelProps> = ({
                                             <span className="text-lg">{severityIcons[interaction.interaction_severity]}</span>
                                             <div className="flex-1">
                                                 <p className="text-sm font-medium text-[#f8fafc]">{interaction.medication.medication_name}</p>
-                                                <p className="text-xs text-[#94a3b8] mt-1">{interaction.risk_description}</p>
-                                                <p className="text-xs text-[#14b8a6] mt-1">→ {interaction.clinical_recommendation}</p>
+                                                <p className="text-sm text-[#94a3b8] mt-1">{interaction.risk_description}</p>
+                                                <p className="text-sm text-[#14b8a6] mt-1">→ {interaction.clinical_recommendation}</p>
                                             </div>
                                         </div>
                                     </div>

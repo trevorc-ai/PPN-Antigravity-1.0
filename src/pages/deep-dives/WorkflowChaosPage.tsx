@@ -61,7 +61,7 @@ const WorkflowChaosPage: React.FC = () => {
                             <tool.icon className={`w-8 h-8 ${tool.color}`} />
                             <div>
                                 <h3 className="text-sm font-black text-slate-300">{tool.name}</h3>
-                                <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">{tool.desc}</p>
+                                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">{tool.desc}</p>
                             </div>
                         </motion.div>
                     ))}

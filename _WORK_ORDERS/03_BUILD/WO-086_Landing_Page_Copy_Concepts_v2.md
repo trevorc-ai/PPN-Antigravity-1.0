@@ -731,6 +731,12 @@ The current landing page serves two ICPs with one message and one CTA. This is w
 4. The VoC identifies a "Supervision Desert" — practitioners feel abandoned after certification. Is there a content marketing play here (peer supervision circles, case consultation groups) that drives acquisition for ICP B?
 5. The grey market segment (Tier 0) is the largest untapped dataset in mental health history. What is the ethical and legal framework for engaging them without creating liability for PPN?
 
+### Strategy Note: Segment Routing vs A/B Testing
+**Clarification for BUILDER/MARKETER:**
+- **Segment Routing (Our Approach):** This is a permanent architectural decision. We are sending two key audiences to two different destinations (`/phantom-shield` vs `/clinic-commander`) to serve their distinct needs.
+- **A/B Testing (Not this):** This is *optimization* (e.g., showing 50% of people Headline A and 50% Headline B on the *same* page to see which converts better).
+- **Why Routing?** A clinic director needs "Insurance ROI" content. A grey market supervisor needs "Legal Defense" content. These are mutually exclusive value props, not just different headlines. A single page cannot serve both well.
+
 ---
 
 ## PART 4: DESIGNER BRIEF

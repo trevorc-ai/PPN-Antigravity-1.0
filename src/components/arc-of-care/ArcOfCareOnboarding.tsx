@@ -52,7 +52,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                 <div className="p-8 pb-6 bg-gradient-to-br from-blue-600/20 to-emerald-600/20 border-b border-slate-700">
                     <h2
                         id="onboarding-title"
-                        className="text-3xl font-black text-slate-100 mb-3"
+                        className="text-3xl font-black text-slate-300 mb-3"
                     >
                         Welcome to the Wellness Journey
                     </h2>
@@ -70,7 +70,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                             <div className="w-16 h-16 mx-auto mb-4 bg-blue-500/20 rounded-full flex items-center justify-center">
                                 <span className="text-3xl font-black text-blue-400">1</span>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-200 mb-2">
+                            <h3 className="text-lg font-bold text-slate-300 mb-2">
                                 Phase 1: Preparation
                             </h3>
                             <p className="text-sm text-slate-400">
@@ -83,7 +83,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                             <div className="w-16 h-16 mx-auto mb-4 bg-emerald-500/20 rounded-full flex items-center justify-center">
                                 <span className="text-3xl font-black text-emerald-400">2</span>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-200 mb-2">
+                            <h3 className="text-lg font-bold text-slate-300 mb-2">
                                 Phase 2: Dosing Session
                             </h3>
                             <p className="text-sm text-slate-400">
@@ -96,7 +96,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                             <div className="w-16 h-16 mx-auto mb-4 bg-purple-500/20 rounded-full flex items-center justify-center">
                                 <span className="text-3xl font-black text-purple-400">3</span>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-200 mb-2">
+                            <h3 className="text-lg font-bold text-slate-300 mb-2">
                                 Phase 3: Integration
                             </h3>
                             <p className="text-sm text-slate-400">
@@ -107,7 +107,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
 
                     {/* Key Benefits */}
                     <div className="bg-slate-800/50 rounded-xl p-6 mb-8">
-                        <h3 className="text-lg font-bold text-slate-200 mb-4">
+                        <h3 className="text-lg font-bold text-slate-300 mb-4">
                             Why Use the Wellness Journey?
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -119,7 +119,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                                     <p className="text-sm font-semibold text-slate-300 mb-1">
                                         Predict Outcomes
                                     </p>
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-sm text-slate-400">
                                         Algorithm-based predictions for integration needs
                                     </p>
                                 </div>
@@ -133,7 +133,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                                     <p className="text-sm font-semibold text-slate-300 mb-1">
                                         Ensure Safety
                                     </p>
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-sm text-slate-400">
                                         Real-time vitals and rescue protocol tracking
                                     </p>
                                 </div>
@@ -147,7 +147,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                                     <p className="text-sm font-semibold text-slate-300 mb-1">
                                         Prove Value
                                     </p>
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-sm text-slate-400">
                                         Longitudinal data for insurance and research
                                     </p>
                                 </div>
@@ -159,7 +159,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                     <div className="flex flex-col sm:flex-row gap-3">
                         <button
                             onClick={handleGetStarted}
-                            className="flex-1 px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-slate-100 font-bold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-emerald-500/50"
+                            className="flex-1 px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-slate-300 font-bold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-emerald-500/50"
                             tabIndex={1}
                         >
                             Get Started with Phase 1

@@ -67,7 +67,7 @@ export default function RegulatoryWeather() {
                                     <Icon className={`w-4 h-4 ${config.color} flex-shrink-0`} />
                                     <h4 className="text-sm font-medium text-slate-300">{item.title}</h4>
                                 </div>
-                                <p className="text-xs text-slate-300 mt-1">{item.detail}</p>
+                                <p className="text-sm text-slate-300 mt-1">{item.detail}</p>
                             </div>
                         </div>
                     );

@@ -44,14 +44,14 @@ const HiddenComponentsShowcase: React.FC = () => {
                             </div>
                             <div>
                                 <h2 className="text-2xl font-black text-slate-300">NeuralCopilot</h2>
-                                <p className="text-sm text-slate-3000">AI-Powered Clinical Assistant</p>
+                                <p className="text-sm text-slate-500">AI-Powered Clinical Assistant</p>
                             </div>
                         </div>
                         <div className="h-[600px] rounded-2xl overflow-hidden border-2 border-indigo-500/20">
                             <NeuralCopilot context={{ demo: true }} />
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
+                            <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Google Gemini AI integration</li>
                                 <li>• Real-time safety flag detection</li>
@@ -69,7 +69,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             </div>
                             <div>
                                 <h2 className="text-2xl font-black text-slate-300">GlassInput</h2>
-                                <p className="text-sm text-slate-3000">Premium Glassmorphic Input</p>
+                                <p className="text-sm text-slate-500">Premium Glassmorphic Input</p>
                             </div>
                         </div>
                         <div className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 rounded-2xl p-8 border border-purple-500/20 space-y-6">
@@ -92,7 +92,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             />
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
+                            <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Backdrop blur (12px)</li>
                                 <li>• High-contrast borders (accessible)</li>
@@ -110,7 +110,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             </div>
                             <div>
                                 <h2 className="text-2xl font-black text-slate-300">GlassmorphicCard</h2>
-                                <p className="text-sm text-slate-3000">Glass Effect Container</p>
+                                <p className="text-sm text-slate-500">Glass Effect Container</p>
                             </div>
                         </div>
                         <div className="space-y-4">
@@ -128,7 +128,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             </GlassmorphicCard>
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
+                            <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Backdrop blur (20px)</li>
                                 <li>• Hover effects (optional)</li>
@@ -146,7 +146,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                             </div>
                             <div>
                                 <h2 className="text-2xl font-black text-slate-300">GuidedTour</h2>
-                                <p className="text-sm text-slate-3000">Interactive Onboarding</p>
+                                <p className="text-sm text-slate-500">Interactive Onboarding</p>
                             </div>
                         </div>
                         <div className="bg-gradient-to-br from-amber-900/20 to-orange-900/20 rounded-2xl p-8 border border-amber-500/20 space-y-6">
@@ -160,20 +160,20 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 >
                                     Start Tour Demo
                                 </button>
-                                <p className="text-xs text-slate-3000">
+                                <p className="text-sm text-slate-500">
                                     ⚠️ Note: Tour steps are outdated and need to be updated to match current UI
                                 </p>
                             </div>
                         </div>
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
+                            <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• 5 predefined steps</li>
                                 <li>• Smart positioning (auto-flip)</li>
                                 <li>• Spotlight highlighting</li>
                                 <li>• Progress indicators</li>
                             </ul>
-                            <p className="text-xs text-amber-400 font-bold mt-3">
+                            <p className="text-sm text-amber-400 font-bold mt-3">
                                 ⚠️ Status: Needs rebuild (steps outdated)
                             </p>
                         </div>
@@ -229,7 +229,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                         </div>
 
                         <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 space-y-2">
-                            <p className="text-xs font-bold text-slate-300 uppercase tracking-widest">Features:</p>
+                            <p className="text-sm font-bold text-slate-300 uppercase tracking-widest">Features:</p>
                             <ul className="text-sm text-slate-300 space-y-1">
                                 <li>• Treatment expectancy gauge (1-100 scale)</li>
                                 <li>• ACE score bar chart (0-10 trauma assessment)</li>
@@ -239,7 +239,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 <li>• Evidence-based clinical recommendations</li>
                                 <li>• AdvancedTooltip integration for education</li>
                             </ul>
-                            <p className="text-xs text-emerald-400 font-bold mt-3">
+                            <p className="text-sm text-emerald-400 font-bold mt-3">
                                 ✅ Status: Phase 1 Complete (Week 3 of 20)
                             </p>
                         </div>
@@ -277,7 +277,7 @@ const HiddenComponentsShowcase: React.FC = () => {
 
                 {/* Documentation Link */}
                 <div className="text-center">
-                    <p className="text-sm text-slate-3000">
+                    <p className="text-sm text-slate-500">
                         Full strategic analysis: <code className="text-primary">HIDDEN_COMPONENTS_STRATEGIC_ANALYSIS.md</code>
                     </p>
                 </div>

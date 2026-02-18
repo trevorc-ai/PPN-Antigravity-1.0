@@ -85,10 +85,10 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <div className="card-glass rounded-2xl p-6 max-w-md w-full shadow-2xl">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-slate-300">
+                    <h3 className="text-xl font-bold text-slate-100">
                         Request New Option
                     </h3>
                     <button
@@ -119,7 +119,7 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
 
                         {/* Input */}
                         <div className="mb-4">
-                            <label className="text-slate-300 text-sm font-medium mb-2 block">
+                            <label className="text-slate-200 text-sm font-medium mb-2 block">
                                 Suggested Text
                             </label>
                             <textarea
@@ -130,11 +130,11 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
                                         ? "e.g., Patient reports improved sleep quality"
                                         : "e.g., Childcare emergency"
                                 }
-                                className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-200 placeholder-slate-500 transition-colors"
                                 rows={3}
                                 maxLength={200}
                             />
-                            <p className="text-slate-300 text-xs mt-1">
+                            <p className="text-slate-400 text-sm mt-1">
                                 {requestText.length}/200 characters
                             </p>
                         </div>
@@ -152,7 +152,7 @@ export const RequestNewOptionModal: React.FC<RequestNewOptionModalProps> = ({
                             <button
                                 onClick={handleSubmit}
                                 disabled={!requestText.trim() || loading}
-                                className="flex-1 py-2 px-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                                className="flex-1 py-2 px-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-100 font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                             >
                                 {loading ? (
                                     <>

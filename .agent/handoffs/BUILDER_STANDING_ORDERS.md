@@ -76,6 +76,19 @@ Execute in this exact order. **Non-BUILDER tickets are clearly marked — skip t
    - Audit `ClinicalInsightsPanel.tsx` for missing `.order()` calls
    - **Fastest possible win — ship it first**
 
+1a. **WO-110** — Deep Crawl QA Automation *(Automation, 1 hour)*
+   - Script a "Spider" workflow within the `browser` skill.
+   - Generate `QA_CRAWL_REPORT.md`.
+   - **Run this ASAP to catch regressions**
+
+1b. **WO-112** — Fix Assessment Font Size *(Quick Win, 15 mins)*
+   - Increase body text to `text-base` (16px) loops in `Assessment.tsx`.
+   - Fix headings/labels.
+
+1c. **WO-113** — Assessment Tooltips *(Quick Win, 30 mins)*
+   - Add `AdvancedTooltip` to assessment questions.
+   - Add citations footer.
+
 2. **WO-087** — Wellness Journey Page Bug Fixes & URL Rename
    - Fix unresponsive form (wire existing components from `/src/components/wellness-journey/`)
    - Fix button color accessibility (no color-only state indicators)

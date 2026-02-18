@@ -135,7 +135,7 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                                 <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                                 <div>
                                     <p className="text-emerald-300 text-sm font-medium">Pulse Check Submitted</p>
-                                    <p className="text-emerald-200 text-xs mt-1">
+                                    <p className="text-emerald-200 text-sm mt-1">
                                         Connection: {lastPulseCheck.connectionLevel}/5 • Sleep: {lastPulseCheck.sleepQuality}/5
                                     </p>
                                 </div>
@@ -149,33 +149,33 @@ const ArcOfCarePhase3Demo: React.FC = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-300 text-xs mb-1">Days Post-Session</p>
+                                <p className="text-slate-300 text-sm mb-1">Days Post-Session</p>
                                 <p className="text-3xl font-bold text-emerald-400">183</p>
-                                <p className="text-slate-300 text-xs mt-1">~6 months</p>
+                                <p className="text-slate-300 text-sm mt-1">~6 months</p>
                             </div>
 
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-300 text-xs mb-1">PHQ-9 Improvement</p>
+                                <p className="text-slate-300 text-sm mb-1">PHQ-9 Improvement</p>
                                 <p className="text-3xl font-bold text-blue-400">96%</p>
-                                <p className="text-slate-300 text-xs mt-1">24 → 1</p>
+                                <p className="text-slate-300 text-sm mt-1">24 → 1</p>
                             </div>
 
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-300 text-xs mb-1">Pulse Checks</p>
+                                <p className="text-slate-300 text-sm mb-1">Pulse Checks</p>
                                 <p className="text-3xl font-bold text-purple-400">156</p>
-                                <p className="text-slate-300 text-xs mt-1">85% adherence</p>
+                                <p className="text-slate-300 text-sm mt-1">85% adherence</p>
                             </div>
 
                             <div className="bg-slate-800/50 rounded-lg p-4">
-                                <p className="text-slate-300 text-xs mb-1">Integration Sessions</p>
+                                <p className="text-slate-300 text-sm mb-1">Integration Sessions</p>
                                 <p className="text-3xl font-bold text-amber-400">12</p>
-                                <p className="text-slate-300 text-xs mt-1">Completed</p>
+                                <p className="text-slate-300 text-sm mt-1">Completed</p>
                             </div>
                         </div>
 
                         <div className="mt-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
                             <p className="text-emerald-300 text-sm font-medium mb-1">Sustained Remission</p>
-                            <p className="text-emerald-200 text-xs leading-relaxed">
+                            <p className="text-emerald-200 text-sm leading-relaxed">
                                 Patient has maintained minimal depression symptoms (PHQ-9 ≤ 4) for 90+ consecutive days.
                                 Excellent long-term outcome.
                             </p>
@@ -197,7 +197,7 @@ const ArcOfCarePhase3Demo: React.FC = () => {
 
                     <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
                         <p className="text-blue-300 text-sm font-medium mb-2">Clinical Interpretation</p>
-                        <p className="text-blue-200 text-xs leading-relaxed">
+                        <p className="text-blue-200 text-sm leading-relaxed">
                             The symptom decay curve shows a rapid initial improvement (first 2 months) followed by sustained remission.
                             This pattern is consistent with successful psychedelic-assisted therapy outcomes. The patient moved from
                             <span className="font-semibold"> severe depression (PHQ-9: 24)</span> to
@@ -214,33 +214,33 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                         <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
                             <div>
                                 <p className="text-slate-300 text-sm font-medium">PHQ-9 (Depression)</p>
-                                <p className="text-slate-300 text-xs">Every 2 weeks</p>
+                                <p className="text-slate-300 text-sm">Every 2 weeks</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-emerald-400 text-sm font-semibold">Next: Feb 28</p>
-                                <p className="text-slate-300 text-xs">12 days</p>
+                                <p className="text-slate-300 text-sm">12 days</p>
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
                             <div>
                                 <p className="text-slate-300 text-sm font-medium">C-SSRS (Suicide Risk)</p>
-                                <p className="text-slate-300 text-xs">Weekly</p>
+                                <p className="text-slate-300 text-sm">Weekly</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-amber-400 text-sm font-semibold">Next: Feb 21</p>
-                                <p className="text-slate-300 text-xs">5 days</p>
+                                <p className="text-slate-300 text-sm">5 days</p>
                             </div>
                         </div>
 
                         <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg">
                             <div>
                                 <p className="text-slate-300 text-sm font-medium">PSQI (Sleep Quality)</p>
-                                <p className="text-slate-300 text-xs">Monthly</p>
+                                <p className="text-slate-300 text-sm">Monthly</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-blue-400 text-sm font-semibold">Next: Mar 1</p>
-                                <p className="text-slate-300 text-xs">14 days</p>
+                                <p className="text-slate-300 text-sm">14 days</p>
                             </div>
                         </div>
                     </div>

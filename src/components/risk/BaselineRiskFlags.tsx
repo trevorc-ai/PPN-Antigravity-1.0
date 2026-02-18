@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle, Shield } from 'lucide-react';
 import { getRiskColor, getRiskIcon, type RiskFlag } from '../../utils/riskCalculator';
+import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 export interface BaselineRiskFlagsProps {
     flags: RiskFlag[];
@@ -36,7 +37,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
     }
 
     return (
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+        <div className="card-glass rounded-2xl p-6">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 bg-yellow-500/20 rounded-lg">
@@ -47,7 +48,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                         Risk Indicators Detected
                     </h3>
                     {patientId && (
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-sm text-slate-400 mt-1">
                             Patient: {patientId}
                         </p>
                     )}
@@ -60,8 +61,8 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                     <div
                         key={index}
                         className={`p-4 rounded-lg border ${flag.severity === 'high'
-                                ? 'bg-red-500/10 border-red-500/30'
-                                : 'bg-yellow-500/10 border-yellow-500/30'
+                            ? 'bg-red-500/10 border-red-500/30'
+                            : 'bg-yellow-500/10 border-yellow-500/30'
                             }`}
                     >
                         <div className="flex items-start gap-3">
@@ -73,11 +74,11 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                                     <h4 className={`font-semibold ${getRiskColor(flag.severity)}`}>
                                         {flag.message}
                                     </h4>
-                                    <span className="text-xs text-slate-400 whitespace-nowrap">
+                                    <span className="text-sm text-slate-400 whitespace-nowrap">
                                         {flag.metric}
                                     </span>
                                 </div>
-                                <p className="text-sm text-slate-300 mt-1">
+                                <p className="text-sm font-bold text-slate-200 mt-1">
                                     Score: {flag.value}
                                     {flag.threshold && ` (Threshold: ≥${flag.threshold})`}
                                 </p>
@@ -86,10 +87,30 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
 
                         {/* Recommendation */}
                         <div className="mt-3 pl-9">
-                            <p className="text-xs text-slate-400">
-                                <strong className="text-slate-300">Recommended Actions:</strong>
-                            </p>
-                            <p className="text-xs text-slate-400 mt-1">
+                            <div className="flex items-center gap-1.5">
+                                <p className="text-sm text-slate-400">
+                                    <strong className="text-slate-200">Recommended Actions:</strong>
+                                </p>
+                                <AdvancedTooltip
+                                    tier="guide"
+                                    type="science"
+                                    side="bottom"
+                                    title="Evidence Sources"
+                                    width="w-80"
+                                    content={
+                                        <div className="space-y-2 text-sm">
+                                            <div><span className="font-bold text-slate-200">PHQ-9:</span> Kroenke &amp; Spitzer (2002). J Gen Intern Med.</div>
+                                            <div><span className="font-bold text-slate-200">GAD-7:</span> Spitzer et al. (2006). Arch Intern Med.</div>
+                                            <div><span className="font-bold text-slate-200">PCL-5:</span> Weathers et al. (2013). VA PTSD Research.</div>
+                                            <div><span className="font-bold text-slate-200">ACE:</span> Felitti et al. (1998). Am J Prev Med.</div>
+                                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
+                                        </div>
+                                    }
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                </AdvancedTooltip>
+                            </div>
+                            <p className="text-sm text-slate-400 mt-1">
                                 {flag.recommendation}
                             </p>
                         </div>
@@ -102,7 +123,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                 <p className="text-sm text-slate-400 mb-3">
                     <strong className="text-slate-300">General Recommendations:</strong>
                 </p>
-                <ul className="text-xs text-slate-400 space-y-1 list-disc list-inside">
+                <ul className="text-sm text-slate-400 space-y-1 list-disc list-inside">
                     <li>Trauma-informed approach required</li>
                     <li>Close monitoring during session</li>
                     <li>Have rescue medication available</li>

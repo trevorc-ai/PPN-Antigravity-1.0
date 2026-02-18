@@ -98,7 +98,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setExpectancyScale(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                                 />
-                                <p className="text-slate-300 text-xs">1 = No belief, 100 = Complete confidence</p>
+                                <p className="text-slate-300 text-sm">1 = No belief, 100 = Complete confidence</p>
                             </div>
 
                             {/* ACE Score */}
@@ -114,7 +114,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setAceScore(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
                                 />
-                                <p className="text-slate-300 text-xs">0 = No trauma, 10 = Severe childhood trauma</p>
+                                <p className="text-slate-300 text-sm">0 = No trauma, 10 = Severe childhood trauma</p>
                             </div>
 
                             {/* GAD-7 Score */}
@@ -130,7 +130,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setGad7Score(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
                                 />
-                                <p className="text-slate-300 text-xs">0 = No anxiety, 21 = Severe anxiety</p>
+                                <p className="text-slate-300 text-sm">0 = No anxiety, 21 = Severe anxiety</p>
                             </div>
 
                             {/* PHQ-9 Score */}
@@ -146,7 +146,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     onChange={(e) => setPhq9Score(Number(e.target.value))}
                                     className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
                                 />
-                                <p className="text-slate-300 text-xs">0 = No depression, 27 = Severe depression</p>
+                                <p className="text-slate-300 text-sm">0 = No depression, 27 = Severe depression</p>
                             </div>
 
                             {/* Clinical Observations (PHI-Safe) */}
@@ -220,7 +220,7 @@ const ArcOfCareDemo: React.FC = () => {
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="bg-slate-800/50 rounded-lg p-4">
-                                            <p className="text-slate-300 text-xs mb-1">Risk Level</p>
+                                            <p className="text-slate-300 text-sm mb-1">Risk Level</p>
                                             <p className={`text-2xl font-bold ${prediction.riskLevel === 'low' ? 'text-emerald-400' :
                                                 prediction.riskLevel === 'moderate' ? 'text-yellow-400' :
                                                     prediction.riskLevel === 'high' ? 'text-orange-400' :
@@ -231,24 +231,24 @@ const ArcOfCareDemo: React.FC = () => {
                                         </div>
 
                                         <div className="bg-slate-800/50 rounded-lg p-4">
-                                            <p className="text-slate-300 text-xs mb-1">Risk Score</p>
+                                            <p className="text-slate-300 text-sm mb-1">Risk Score</p>
                                             <p className="text-2xl font-bold text-slate-300">{prediction.riskScore}/100</p>
                                         </div>
                                     </div>
 
                                     <div className="bg-slate-800/50 rounded-lg p-4">
-                                        <p className="text-slate-300 text-xs mb-1">Recommended Sessions</p>
+                                        <p className="text-slate-300 text-sm mb-1">Recommended Sessions</p>
                                         <p className="text-3xl font-bold text-emerald-400">{prediction.sessionCount}</p>
                                         <p className="text-slate-300 text-sm mt-2">{prediction.schedule}</p>
                                     </div>
 
                                     <div className="bg-slate-800/50 rounded-lg p-4">
-                                        <p className="text-slate-300 text-xs mb-2">Clinical Rationale</p>
+                                        <p className="text-slate-300 text-sm mb-2">Clinical Rationale</p>
                                         <p className="text-slate-300 text-sm leading-relaxed">{prediction.rationale}</p>
                                     </div>
 
                                     <div className="bg-slate-800/50 rounded-lg p-4">
-                                        <p className="text-slate-300 text-xs mb-3">Risk Breakdown</p>
+                                        <p className="text-slate-300 text-sm mb-3">Risk Breakdown</p>
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-300 text-sm">ACE Risk</span>

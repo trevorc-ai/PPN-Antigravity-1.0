@@ -60,7 +60,7 @@ const StarRating: React.FC<{
     label: string;
 }> = ({ value, onChange, label }) => (
     <div>
-        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
+        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
         <div className="flex items-center gap-2" role="group" aria-label={`${label} rating`}>
             {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -143,7 +143,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 </div>
                 <div>
                     <h3 className="text-lg font-black text-slate-300">Behavioral Change Tracker</h3>
-                    <p className="text-xs text-slate-500 uppercase tracking-widest">Phase 3 — Integration Progress</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3 — Integration Progress</p>
                 </div>
             </div>
 
@@ -167,7 +167,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
 
             {/* Change Type */}
             <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Change Type</p>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Change Type</p>
                 <div className="grid grid-cols-2 gap-2">
                     {CHANGE_TYPES.map((type) => (
                         <button
@@ -189,7 +189,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
 
             {/* What Changed */}
             <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">What Changed? (select all that apply)</p>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">What Changed? (select all that apply)</p>
                 <div className="space-y-2">
                     {WHAT_CHANGED_OPTIONS.map((opt) => {
                         const checked = form.what_changed_ids.includes(opt.id);
@@ -216,7 +216,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
 
             {/* Impact on Well-Being */}
             <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Impact on Well-Being</p>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Impact on Well-Being</p>
                 <div className="relative">
                     <select
                         value={form.impact_level}
@@ -240,7 +240,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
 
             {/* Session Relation */}
             <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Related to Dosing Session?</p>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Related to Dosing Session?</p>
                 <div className="space-y-2">
                     {SESSION_RELATION_OPTIONS.map((opt) => (
                         <label
@@ -266,7 +266,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
 
             {/* Validation hint */}
             {!isValid && (
-                <p className="text-xs text-amber-400 font-bold">
+                <p className="text-sm text-amber-400 font-bold">
                     ⚠️ Select a change type and confidence rating to save.
                 </p>
             )}

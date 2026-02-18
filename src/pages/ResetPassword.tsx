@@ -161,7 +161,7 @@ const ResetPassword: React.FC = () => {
 
                                 {/* New password field */}
                                 <div className="space-y-2">
-                                    <label htmlFor="password" className="block text-[10px] font-bold text-slate-3000 uppercase tracking-widest">
+                                    <label htmlFor="password" className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
                                         New Password
                                     </label>
                                     <div className="relative">
@@ -177,7 +177,7 @@ const ResetPassword: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-3000 hover:text-slate-300 transition-colors"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
                                         >
                                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </button>
@@ -187,7 +187,7 @@ const ResetPassword: React.FC = () => {
                                     {password && (
                                         <div className="space-y-1">
                                             <div className="flex items-center justify-between text-xs">
-                                                <span className="text-slate-3000 font-medium">Password Strength:</span>
+                                                <span className="text-slate-500 font-medium">Password Strength:</span>
                                                 <span className={`font-bold ${passwordStrength.strength === 'Weak' ? 'text-red-400' :
                                                     passwordStrength.strength === 'Medium' ? 'text-amber-400' :
                                                         'text-emerald-400'
@@ -206,16 +206,16 @@ const ResetPassword: React.FC = () => {
 
                                     {/* Password requirements */}
                                     <div className="space-y-1 text-xs">
-                                        <p className={password.length >= 8 ? 'text-emerald-400' : 'text-slate-3000'}>
+                                        <p className={password.length >= 8 ? 'text-emerald-400' : 'text-slate-500'}>
                                             • At least 8 characters
                                         </p>
-                                        <p className={/[A-Z]/.test(password) ? 'text-emerald-400' : 'text-slate-3000'}>
+                                        <p className={/[A-Z]/.test(password) ? 'text-emerald-400' : 'text-slate-500'}>
                                             • One uppercase letter
                                         </p>
-                                        <p className={/[a-z]/.test(password) ? 'text-emerald-400' : 'text-slate-3000'}>
+                                        <p className={/[a-z]/.test(password) ? 'text-emerald-400' : 'text-slate-500'}>
                                             • One lowercase letter
                                         </p>
-                                        <p className={/[0-9]/.test(password) ? 'text-emerald-400' : 'text-slate-3000'}>
+                                        <p className={/[0-9]/.test(password) ? 'text-emerald-400' : 'text-slate-500'}>
                                             • One number
                                         </p>
                                     </div>
@@ -223,7 +223,7 @@ const ResetPassword: React.FC = () => {
 
                                 {/* Confirm password field */}
                                 <div className="space-y-2">
-                                    <label htmlFor="confirmPassword" className="block text-[10px] font-bold text-slate-3000 uppercase tracking-widest">
+                                    <label htmlFor="confirmPassword" className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
                                         Confirm Password
                                     </label>
                                     <div className="relative">
@@ -239,13 +239,13 @@ const ResetPassword: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-3000 hover:text-slate-300 transition-colors"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
                                         >
                                             {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </button>
                                     </div>
                                     {confirmPassword && password !== confirmPassword && (
-                                        <p className="text-xs text-red-400 font-medium">Passwords do not match</p>
+                                        <p className="text-sm text-red-400 font-medium">Passwords do not match</p>
                                     )}
                                 </div>
 
@@ -282,7 +282,7 @@ const ResetPassword: React.FC = () => {
                                 <p className="text-slate-300 text-sm font-medium mb-6">
                                     Your password has been updated. You can now sign in with your new password.
                                 </p>
-                                <div className="inline-flex items-center gap-2 text-xs text-slate-3000 font-medium">
+                                <div className="inline-flex items-center gap-2 text-xs text-slate-500 font-medium">
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                     Redirecting to login...
                                 </div>
@@ -293,7 +293,7 @@ const ResetPassword: React.FC = () => {
 
                 {/* Security notice */}
                 <div className="mt-6 text-center">
-                    <p className="text-xs text-slate-600 font-medium">
+                    <p className="text-sm text-slate-600 font-medium">
                         🔒 Secured by Supabase Auth v2
                     </p>
                 </div>

@@ -299,7 +299,7 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
             {/* ── Quick-Action Buttons ─────────────────────────────────────── */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-slate-300 mb-1">Quick Actions</h3>
-                <p className="text-xs text-slate-500 mb-5">
+                <p className="text-sm text-slate-400 mb-5">
                     Tap to record the current time. Once set, use Manual Entry below to correct.
                 </p>
 
@@ -326,23 +326,23 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                                     <div className="flex items-center gap-4">
                                         <div className={`p-3 rounded-lg transition-colors ${isSet ? 'bg-slate-700' : `${bgClass}`}`}>
                                             <Icon
-                                                className={`w-7 h-7 transition-colors ${isSet ? 'text-slate-500' : colorClass}`}
+                                                className={`w-7 h-7 transition-colors ${isSet ? 'text-slate-400' : colorClass}`}
                                                 aria-hidden="true"
                                             />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h4 className={`text-base font-black transition-colors ${isSet ? 'text-slate-500' : colorClass}`}>
+                                            <h4 className={`text-base font-black transition-colors ${isSet ? 'text-slate-400' : colorClass}`}>
                                                 {shortLabel}
                                             </h4>
                                             {isSet ? (
                                                 <p className="text-sm text-slate-300 mt-0.5 font-mono">
                                                     {formatTime(data[field])}
-                                                    <span className="text-slate-500 ml-2 text-xs font-sans">
+                                                    <span className="text-slate-400 ml-2 text-xs font-sans">
                                                         (T+{calculateElapsed(data.dose_administered_at, data[field])})
                                                     </span>
                                                 </p>
                                             ) : (
-                                                <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+                                                <p className="text-sm text-slate-400 mt-0.5">{description}</p>
                                             )}
                                         </div>
                                         {isSet && (
@@ -355,7 +355,7 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                                 {isSet && (
                                     <button
                                         onClick={() => clearField(field)}
-                                        className="absolute top-2 right-2 p-1 rounded text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                                        className="absolute top-2 right-2 p-1 rounded text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
                                         aria-label={`Clear ${milestone.label} timestamp`}
                                         title="Clear this timestamp"
                                     >
@@ -377,7 +377,7 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-emerald-300 font-semibold text-sm">Total Session Duration</p>
-                                <p className="text-emerald-500 text-xs mt-0.5">Dose → Session End</p>
+                                <p className="text-emerald-500 text-sm mt-0.5">Dose → Session End</p>
                             </div>
                             <span className="text-3xl font-black text-emerald-400 tabular-nums">
                                 {totalDuration}
@@ -398,7 +398,7 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                                 key={label}
                                 className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-lg text-center"
                             >
-                                <p className="text-xs text-slate-500 font-medium mb-1">{label}</p>
+                                <p className="text-sm text-slate-400 font-medium mb-1">{label}</p>
                                 <p className="text-sm font-black text-slate-300 tabular-nums">
                                     {calculateElapsed(from, to)}
                                 </p>
@@ -417,10 +417,10 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                     aria-controls="manual-entry-panel"
                 >
                     <div>
-                        <h3 className="text-lg font-bold text-slate-300 group-hover:text-slate-200 transition-colors">
+                        <h3 className="text-lg font-bold text-slate-300 group-hover:text-slate-300 transition-colors">
                             Manual Entry
                         </h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-sm text-slate-400 mt-0.5">
                             Override timestamps for corrections or retrospective entry
                         </p>
                     </div>
@@ -454,7 +454,7 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                                         />
                                         <button
                                             onClick={() => setNow(field)}
-                                            className="px-4 py-3 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-lg font-bold text-sm transition-all whitespace-nowrap"
+                                            className="px-4 py-3 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-slate-300 rounded-lg font-bold text-sm transition-all whitespace-nowrap"
                                             aria-label={`Set ${label} to current time`}
                                         >
                                             Now

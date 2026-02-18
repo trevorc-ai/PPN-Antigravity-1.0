@@ -104,8 +104,8 @@ const FormsShowcase: React.FC = () => {
                         <h1 className="text-2xl font-black text-slate-300">Arc of Care Forms</h1>
                         <p className="text-slate-300 text-sm mt-1">19 PHI-Safe Components</p>
                         <div className="mt-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-2">
-                            <p className="text-xs font-bold text-emerald-400">✓ 100% COMPLIANT</p>
-                            <p className="text-xs text-emerald-300 mt-0.5">Zero free-text inputs</p>
+                            <p className="text-sm font-bold text-emerald-400">✓ 100% COMPLIANT</p>
+                            <p className="text-sm text-emerald-300 mt-0.5">Zero free-text inputs</p>
                         </div>
                     </div>
 

@@ -245,7 +245,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <Heart className="w-4 h-4 text-red-400" />
                                     Heart Rate
                                     <AdvancedTooltip content="Normal range: 60-100 bpm" tier="micro">
-                                        <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <div className="relative">
@@ -259,12 +259,12 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                         placeholder="70"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                         bpm
                                     </span>
                                 </div>
                                 {reading.heart_rate && hrStatus !== 'normal' && (
-                                    <p className={`text-xs ${hrStatus === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                    <p className={`text-sm ${hrStatus === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
                                         {hrStatus === 'critical' ? '⚠️ Critical - Outside safe range' : '⚠️ Elevated'}
                                     </p>
                                 )}
@@ -276,7 +276,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <Activity className="w-4 h-4 text-blue-400" />
                                     HRV
                                     <AdvancedTooltip content="Heart Rate Variability in milliseconds" tier="micro">
-                                        <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <div className="relative">
@@ -288,7 +288,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                         placeholder="50.00"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                         ms
                                     </span>
                                 </div>
@@ -300,7 +300,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <Droplet className="w-4 h-4 text-cyan-400" />
                                     SpO₂
                                     <AdvancedTooltip content="Blood oxygen saturation. Normal: ≥95%" tier="micro">
-                                        <span className="text-slate-500 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <div className="relative">
@@ -314,12 +314,12 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                         placeholder="98"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                         %
                                     </span>
                                 </div>
                                 {reading.spo2 && spo2Status !== 'normal' && (
-                                    <p className={`text-xs ${spo2Status === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                    <p className={`text-sm ${spo2Status === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
                                         {spo2Status === 'critical' ? '⚠️ Critical - Low oxygen' : '⚠️ Below normal'}
                                     </p>
                                 )}
@@ -341,7 +341,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                         placeholder="120"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                         mmHg
                                     </span>
                                 </div>
@@ -362,7 +362,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                         placeholder="80"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                         mmHg
                                     </span>
                                 </div>
@@ -378,7 +378,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <p className="text-2xl font-black">
                                             {reading.bp_systolic} / {reading.bp_diastolic}
                                         </p>
-                                        <p className="text-xs mt-1">
+                                        <p className="text-sm mt-1">
                                             {bpStatus === 'normal' ? '✓ Normal' : bpStatus === 'elevated' ? '⚠️ Elevated' : '⚠️ Critical'}
                                         </p>
                                     </div>
@@ -397,7 +397,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <Wind className="w-4 h-4 text-cyan-400" />
                                         Resp. Rate
                                         <AdvancedTooltip content="Normal: 12-20 breaths/min. Monitor for respiratory depression (ketamine/esketamine risk per REMS)." tier="micro">
-                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <div className="relative">
@@ -411,10 +411,10 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 }`}
                                             placeholder="16"
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs">br/min</span>
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">br/min</span>
                                     </div>
                                     {reading.respiratory_rate !== undefined && getVitalStatus('rr', reading.respiratory_rate) !== 'normal' && (
-                                        <p className={`text-xs ${getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                        <p className={`text-sm ${getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
                                             {getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? '⚠️ Critical — respiratory depression risk' : '⚠️ Outside normal range'}
                                         </p>
                                     )}
@@ -426,7 +426,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <Thermometer className="w-4 h-4 text-orange-400" />
                                         Temperature
                                         <AdvancedTooltip content="Normal: 97.0–99.5°F. Monitor for hyperthermia (MDMA risk) and thermoregulation fluctuations." tier="micro">
-                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <div className="relative">
@@ -441,10 +441,10 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 }`}
                                             placeholder="98.6"
                                         />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs">°F</span>
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">°F</span>
                                     </div>
                                     {reading.temperature !== undefined && getVitalStatus('temp', reading.temperature) !== 'normal' && (
-                                        <p className={`text-xs ${getVitalStatus('temp', reading.temperature) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                        <p className={`text-sm ${getVitalStatus('temp', reading.temperature) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
                                             {getVitalStatus('temp', reading.temperature) === 'critical' ? '⚠️ Critical — hyperthermia risk' : '⚠️ Mild fever'}
                                         </p>
                                     )}
@@ -456,7 +456,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <Droplet className="w-4 h-4 text-blue-300" />
                                         Diaphoresis
                                         <AdvancedTooltip content="Sweating scale: 0=None, 1=Mild, 2=Moderate, 3=Severe. Severe may signal hyperthermia or serotonin syndrome." tier="micro">
-                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <select
@@ -472,7 +472,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <option value="3">3 — Severe (profuse sweating)</option>
                                     </select>
                                     {reading.diaphoresis_score !== undefined && getDiaphoresisStatus(reading.diaphoresis_score) !== 'normal' && (
-                                        <p className={`text-xs ${getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                        <p className={`text-sm ${getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
                                             {getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? '⚠️ Severe — check temp & hydration' : '⚠️ Monitor closely'}
                                         </p>
                                     )}
@@ -484,7 +484,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <AlertTriangle className="w-4 h-4 text-yellow-400" />
                                         LOC (AVPU)
                                         <AdvancedTooltip content="AVPU scale: Alert=Normal, Verbal=Responds to voice, Pain=Over-sedation, Unresponsive=Emergency. Required per CANMAT guidelines." tier="micro">
-                                            <span className="text-slate-500 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <select
@@ -500,7 +500,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <option value="unresponsive">Unresponsive (U) — No response</option>
                                     </select>
                                     {reading.level_of_consciousness && getLOCStatus(reading.level_of_consciousness) !== 'normal' && (
-                                        <p className={`text-xs ${getLOCStatus(reading.level_of_consciousness) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
+                                        <p className={`text-sm ${getLOCStatus(reading.level_of_consciousness) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
                                             {reading.level_of_consciousness === 'unresponsive' ? '🚨 EMERGENCY — initiate rescue protocol' :
                                                 reading.level_of_consciousness === 'pain' ? '⚠️ Critical — over-sedation' :
                                                     '⚠️ Monitor — reduced responsiveness'}
@@ -551,7 +551,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             {/* Device ID */}
                             <div className="space-y-2 md:col-span-2">
                                 <label className="text-sm font-semibold text-slate-300">
-                                    Device ID <span className="text-slate-500 font-normal">(Optional)</span>
+                                    Device ID <span className="text-slate-400 font-normal">(Optional)</span>
                                 </label>
                                 <input
                                     type="text"

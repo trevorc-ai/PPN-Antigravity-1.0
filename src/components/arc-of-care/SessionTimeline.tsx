@@ -61,7 +61,7 @@ const SessionTimeline: React.FC<SessionTimelineProps> = ({ events }) => {
             <div className="text-center py-12">
                 <Clock className="w-12 h-12 text-slate-600 mx-auto mb-3" />
                 <p className="text-slate-300 text-sm">No events logged yet</p>
-                <p className="text-slate-500 text-xs mt-1">Events will appear here as they occur</p>
+                <p className="text-slate-500 text-sm mt-1">Events will appear here as they occur</p>
             </div>
         );
     }

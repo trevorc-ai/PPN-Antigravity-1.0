@@ -93,7 +93,7 @@ const IsometricMolecule: React.FC<IsometricMoleculeProps> = ({
                 {/* Hover Indicator */}
                 {(tiltOnHover || rotateOnHover) && (
                     <div className="mt-4 text-center">
-                        <p className="text-xs text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p className="text-sm text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             Hover to tilt
                         </p>
                     </div>

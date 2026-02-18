@@ -43,19 +43,19 @@ export const FormField: React.FC<FormFieldProps> = ({
                 {required && <span className="text-red-400">*</span>}
                 {tooltip && (
                     <AdvancedTooltip content={tooltip} tier="micro">
-                        <span className="text-slate-500 cursor-help">ⓘ</span>
+                        <span className="text-slate-400 cursor-help">ⓘ</span>
                     </AdvancedTooltip>
                 )}
             </label>
             {children}
             {error && (
-                <p className="text-red-400 text-xs flex items-center gap-1">
+                <p className="text-red-400 text-sm flex items-center gap-1">
                     <span>⚠️</span>
                     {error}
                 </p>
             )}
             {helpText && !error && (
-                <p className="text-slate-500 text-xs">{helpText}</p>
+                <p className="text-slate-400 text-sm">{helpText}</p>
             )}
         </div>
     );

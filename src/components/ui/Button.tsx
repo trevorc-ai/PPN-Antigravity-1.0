@@ -55,15 +55,15 @@ export const Button: React.FC<ButtonProps> = ({
     ...props
 }) => {
     // Base styles (always applied)
-    const baseStyles = 'inline-flex items-center justify-center gap-2 font-black uppercase tracking-[0.2em] transition-all rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100';
+    const baseStyles = 'inline-flex items-center justify-center gap-2 font-black uppercase tracking-[0.2em] transition-all rounded-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100';
 
     // Variant styles
     const variantStyles: Record<ButtonVariant, string> = {
-        primary: 'bg-primary hover:bg-blue-600 text-slate-300 shadow-lg shadow-primary/20 focus:ring-primary',
-        secondary: 'bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-300 hover:text-slate-300 hover:bg-slate-800 focus:ring-slate-700',
-        danger: 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 focus:ring-red-500',
-        ghost: 'bg-transparent text-slate-300 hover:text-slate-300 hover:bg-slate-800/50 focus:ring-slate-700',
-        outline: 'bg-transparent border-2 border-slate-700 text-slate-300 hover:border-primary hover:text-slate-300 focus:ring-slate-700'
+        primary: 'bg-primary hover:bg-blue-600 text-slate-300 shadow-lg shadow-primary/20',
+        secondary: 'bg-slate-900/80 border-2 border-slate-700 hover:border-primary text-slate-300 hover:text-slate-300 hover:bg-slate-800',
+        danger: 'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20',
+        ghost: 'bg-transparent text-slate-300 hover:text-slate-300 hover:bg-slate-800/50',
+        outline: 'bg-transparent border-2 border-slate-700 text-slate-300 hover:border-primary hover:text-slate-300'
     };
 
     // Size styles

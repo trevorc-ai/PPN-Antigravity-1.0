@@ -101,7 +101,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
                 </label>
                 <button
                     onClick={onRequestNew}
-                    className="text-emerald-400 text-xs hover:text-emerald-300 flex items-center gap-1 transition-colors"
+                    className="text-emerald-400 text-sm hover:text-emerald-300 flex items-center gap-1 transition-colors"
                 >
                     <Plus className="w-3 h-3" />
                     Request New Option
@@ -111,7 +111,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
             {/* PHI Safety Notice */}
             <div className="flex items-start gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
                 <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-emerald-300 text-xs">
+                <p className="text-emerald-300 text-sm">
                     <strong>PHI-Safe:</strong> Select from predefined observations only.
                     No free-text entry prevents accidental PHI storage.
                 </p>
@@ -133,7 +133,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
                                 type="checkbox"
                                 checked={selectedIds.includes(obs.observation_id)}
                                 onChange={() => toggleObservation(obs.observation_id)}
-                                className="mt-0.5 w-4 h-4 text-emerald-500 bg-slate-700 border-slate-600 rounded focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0"
+                                className="mt-0.5 w-4 h-4 text-emerald-500 bg-slate-700 border-slate-600 rounded"
                             />
                             <span className="text-slate-300 text-sm flex-1 group-hover:text-slate-300 transition-colors">
                                 {obs.observation_text}
@@ -146,7 +146,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
             {/* Selection Summary */}
             {selectedIds.length > 0 && (
                 <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                    <p className="text-emerald-300 text-xs font-medium">
+                    <p className="text-emerald-300 text-sm font-medium">
                         ✓ {selectedIds.length} observation{selectedIds.length !== 1 ? 's' : ''} selected
                     </p>
                 </div>

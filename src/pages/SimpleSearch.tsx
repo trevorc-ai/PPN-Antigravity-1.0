@@ -59,7 +59,7 @@ const SimpleSearch: React.FC = () => {
         </form>
 
         <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
-          <span className="text-sm font-black text-slate-3000 tracking-[0.2em] mr-2 w-full sm:w-auto mb-2 sm:mb-0">Fast Access Nodes:</span>
+          <span className="text-sm font-black text-slate-500 tracking-[0.2em] mr-2 w-full sm:w-auto mb-2 sm:mb-0">Fast Access Nodes:</span>
           {quickLinks.map((link) => (
             <button
               key={link.label}
@@ -75,19 +75,19 @@ const SimpleSearch: React.FC = () => {
         <div className="pt-16 grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-2xl mx-auto border-t border-slate-800/50">
           <div className="text-center space-y-1">
             <p className="text-2xl font-black text-slate-300">12,482</p>
-            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Indexed Nodes</p>
+            <p className="text-sm font-black text-slate-500 tracking-widest">Indexed Nodes</p>
           </div>
           <div className="text-center space-y-1">
             <p className="text-2xl font-black text-clinical-green">14.2ms</p>
-            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Query Latency</p>
+            <p className="text-sm font-black text-slate-500 tracking-widest">Query Latency</p>
           </div>
           <div className="text-center space-y-1">
             <p className="text-2xl font-black text-primary">Live</p>
-            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Protocol Sync</p>
+            <p className="text-sm font-black text-slate-500 tracking-widest">Protocol Sync</p>
           </div>
           <div className="text-center space-y-1">
             <p className="text-2xl font-black text-indigo-400">98%</p>
-            <p className="text-[11px] font-black text-slate-3000 tracking-widest">Search Recall</p>
+            <p className="text-sm font-black text-slate-500 tracking-widest">Search Recall</p>
           </div>
         </div>
       </PageContainer>

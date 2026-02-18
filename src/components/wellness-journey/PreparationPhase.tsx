@@ -31,15 +31,15 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
 
     return (
         <div className="space-y-6">
-            {/* Baseline Metrics Card */}
-            <div className="bg-gradient-to-br from-red-500/10 to-red-900/10 border-2 border-red-500/50 rounded-3xl p-6 space-y-4">
+            {/* Baseline Metrics Card — standard glass card */}
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
                 <div className="flex items-center gap-3 mb-4">
-                    <Brain className="w-6 h-6 text-red-400" />
-                    <h3 className="text-xl font-black text-red-300">Baseline Metrics</h3>
+                    <Brain className="w-7 h-7 text-slate-400" />
+                    <h3 className="text-2xl font-black text-slate-200">Baseline Metrics</h3>
                 </div>
 
-                {/* Grid of 4 metric cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 2x2 grid of metric cards */}
+                <div className="grid grid-cols-2 gap-4">
                     {/* PHQ-9 */}
                     <AdvancedTooltip
                         content={`PHQ-9: ${journey.baseline.phq9} - ${phq9Info.label}. Patient Health Questionnaire measures depression severity on a 0-27 scale.`}
@@ -47,12 +47,12 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                         type="clinical"
                         title="PHQ-9"
                     >
-                        <div className="p-4 bg-slate-900/40 rounded-2xl flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <span className={`text-3xl ${phq9Info.color}`}>{phq9Info.emoji}</span>
                                 <span className={`text-4xl font-black ${phq9Info.color}`}>{journey.baseline.phq9}</span>
                             </div>
-                            <div className="text-sm text-slate-300 font-semibold">PHQ-9</div>
+                            <div className="text-base text-slate-300 font-bold">PHQ-9</div>
                         </div>
                     </AdvancedTooltip>
 
@@ -63,12 +63,12 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                         type="clinical"
                         title="GAD-7"
                     >
-                        <div className="p-4 bg-slate-900/40 rounded-2xl flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <span className={`text-3xl ${gad7Info.color}`}>{gad7Info.emoji}</span>
                                 <span className={`text-4xl font-black ${gad7Info.color}`}>{journey.baseline.gad7}</span>
                             </div>
-                            <div className="text-sm text-slate-300 font-semibold">GAD-7</div>
+                            <div className="text-base text-slate-300 font-bold">GAD-7</div>
                         </div>
                     </AdvancedTooltip>
 
@@ -79,12 +79,12 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                         type="warning"
                         title="ACE Score"
                     >
-                        <div className="p-4 bg-slate-900/40 rounded-2xl flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <span className="text-3xl">⚠️</span>
                                 <span className="text-4xl font-black text-amber-400">{journey.baseline.aceScore}</span>
                             </div>
-                            <div className="text-sm text-slate-300 font-semibold">ACE</div>
+                            <div className="text-base text-slate-300 font-bold">ACE</div>
                         </div>
                     </AdvancedTooltip>
 
@@ -95,35 +95,62 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                         type="success"
                         title="Expectancy"
                     >
-                        <div className="p-4 bg-slate-900/40 rounded-2xl flex flex-col items-center justify-center cursor-help hover:bg-slate-900/60 transition-colors">
+                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <span className="text-3xl">✨</span>
                                 <span className="text-4xl font-black text-emerald-400">{journey.baseline.expectancy}</span>
                             </div>
-                            <div className="text-sm text-slate-300 font-semibold">Expect</div>
+                            <div className="text-base text-slate-300 font-bold">Expect</div>
                         </div>
                     </AdvancedTooltip>
                 </div>
             </div>
 
-            {/* Predictions Card */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
+            {/* Predictions Card — standard glass card */}
+            <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+
+                {/* Tooltip — top-right, opens bottom-left */}
+                <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>
+                    <AdvancedTooltip
+                        tier="guide"
+                        type="science"
+                        side="bottom-left"
+                        title="Prediction Methodology"
+                        width="w-96"
+                        content={
+                            <div className="space-y-2 text-sm">
+                                <div><span className="font-bold text-slate-200">Success Rate (72%):</span> Defined as PHQ-9 &lt; 5 at 6-month follow-up. Derived from MAPS Phase 3 MDMA-AT trials (Mitchell et al., 2021, <em>Nature Medicine</em>) and Carhart-Harris et al. psilocybin depression studies (2021, <em>NEJM</em>).</div>
+                                <div><span className="font-bold text-slate-200">Challenging Experience (45%):</span> Defined as CEQ (Challenging Experience Questionnaire) score &gt; 50 during session. Barrett et al. (2017), <em>J Psychopharmacology</em>. Elevated ACE score and high baseline anxiety are the primary predictors.</div>
+                                <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Predictions are population-level estimates from patients with similar baseline profiles — not individual guarantees. Clinical decision support only.</div>
+                            </div>
+                        }
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </AdvancedTooltip>
+                </div>
+
                 <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp className="w-6 h-6 text-emerald-400" />
-                    <h3 className="text-xl font-black text-slate-300">Predicted Outcomes</h3>
+                    <TrendingUp className="w-7 h-7 text-emerald-400" />
+                    <h3 className="text-2xl font-black text-slate-200">Predicted Outcomes</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
-                        <div className="text-sm text-slate-300 mb-2">Success Rate</div>
-                        <div className="text-3xl font-black text-emerald-400">72%</div>
-                        <div className="text-xs text-slate-500 mt-2">Based on similar profiles</div>
+                    {/* Success Rate */}
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex flex-col justify-between gap-3 min-h-[110px]">
+                        <div className="flex items-stretch justify-between flex-1">
+                            <div className="text-xl font-black text-slate-300">Success Rate</div>
+                            <div className="text-5xl font-black text-emerald-400/70 self-center">72%</div>
+                        </div>
+                        <div className="text-sm text-slate-400">Based on similar profiles</div>
                     </div>
 
-                    <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-                        <div className="text-sm text-slate-300 mb-2">Challenging Experience</div>
-                        <div className="text-3xl font-black text-amber-400">45%</div>
-                        <div className="text-xs text-slate-500 mt-2">Likelihood of difficult moments</div>
+                    {/* Challenging Experience */}
+                    <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl flex flex-col justify-between gap-3 min-h-[110px]">
+                        <div className="flex items-stretch justify-between flex-1">
+                            <div className="text-xl font-black text-slate-300">Challenging Experience</div>
+                            <div className="text-5xl font-black text-amber-400/70 self-center">45%</div>
+                        </div>
+                        <div className="text-sm text-slate-400">Likelihood of difficult moments</div>
                     </div>
                 </div>
             </div>
@@ -134,32 +161,93 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
                 className="w-full p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-center justify-between hover:bg-blue-500/20 transition-colors group"
             >
                 <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center">
-                        <span className="text-blue-400 text-xs font-bold">AI</span>
+                    <div className="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center">
+                        <span className="text-blue-400 text-sm font-bold">AI</span>
                     </div>
-                    <span className="text-blue-300 text-sm font-semibold">Statistical Insights</span>
-                    <span className="text-blue-400 text-sm">(2,847 patients)</span>
+                    <span className="text-blue-200 text-base font-semibold">Statistical Insights</span>
+                    <span className="text-blue-300 text-sm">(2,847 patients)</span>
                 </div>
                 {showAI ? <ChevronUp className="w-4 h-4 text-blue-400" /> : <ChevronDown className="w-4 h-4 text-blue-400 group-hover:animate-bounce" />}
             </button>
 
             {showAI && (
-                <div className="space-y-2 animate-in slide-in-from-top duration-300">
-                    <div className="p-3 bg-slate-900/40 rounded-lg">
-                        <p className="text-sm text-slate-300 mb-1">Historical Success Rate</p>
-                        <p className="text-emerald-400 text-sm font-bold">72% achieved remission (PHQ-9 &lt; 5)</p>
-                        <p className="text-slate-500 text-sm mt-1">At 6-month follow-up</p>
+                <div className="space-y-3 animate-in slide-in-from-top duration-300">
+
+                    {/* Historical Success Rate */}
+                    <div className="relative p-4 bg-slate-900/40 rounded-xl">
+                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
+                            <AdvancedTooltip
+                                tier="guide"
+                                type="science"
+                                side="bottom-left"
+                                title="Evidence Sources"
+                                width="w-96"
+                                content={
+                                    <div className="space-y-2 text-sm">
+                                        <div><span className="font-bold text-slate-200">Success Rate:</span> Mitchell et al. (2021). MDMA-assisted therapy for severe PTSD. <em>Nature Medicine</em>. Carhart-Harris et al. (2021). Trial of psilocybin versus escitalopram for depression. <em>NEJM</em>.</div>
+                                        <div><span className="font-bold text-slate-200">Remission definition:</span> PHQ-9 &lt; 5 at 6-month follow-up.</div>
+                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Population-level estimates only — not individual predictions.</div>
+                                    </div>
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            </AdvancedTooltip>
+                        </div>
+                        <p className="text-base font-bold text-slate-300 mb-1">Historical Success Rate</p>
+                        <p className="text-emerald-400 text-lg font-bold">72% achieved remission (PHQ-9 &lt; 5)</p>
+                        <p className="text-slate-400 text-base mt-1">At 6-month follow-up</p>
                     </div>
-                    <div className="p-3 bg-slate-900/40 rounded-lg">
-                        <p className="text-sm text-slate-300 mb-1">Experience Pattern</p>
-                        <p className="text-amber-400 text-sm font-bold">45% experienced challenging moments</p>
-                        <p className="text-slate-500 text-sm mt-1">CEQ score &gt; 50 during session</p>
+
+                    {/* Experience Pattern */}
+                    <div className="relative p-4 bg-slate-900/40 rounded-xl">
+                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
+                            <AdvancedTooltip
+                                tier="guide"
+                                type="warning"
+                                side="bottom-left"
+                                title="Evidence Sources"
+                                width="w-96"
+                                content={
+                                    <div className="space-y-2 text-sm">
+                                        <div><span className="font-bold text-slate-200">Challenging Experience:</span> Barrett et al. (2017). Qualitative and quantitative features of challenging experiences. <em>J Psychopharmacology</em>.</div>
+                                        <div><span className="font-bold text-slate-200">CEQ definition:</span> Challenging Experience Questionnaire score &gt; 50. Elevated ACE score and high baseline GAD-7 are primary predictors.</div>
+                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Population-level estimates only — not individual predictions.</div>
+                                    </div>
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            </AdvancedTooltip>
+                        </div>
+                        <p className="text-base font-bold text-slate-300 mb-1">Experience Pattern</p>
+                        <p className="text-amber-400 text-lg font-bold">45% experienced challenging moments</p>
+                        <p className="text-slate-400 text-base mt-1">CEQ score &gt; 50 during session</p>
                     </div>
-                    <div className="p-3 bg-slate-900/40 rounded-lg">
-                        <p className="text-sm text-slate-300 mb-1">Integration Pattern</p>
-                        <p className="text-blue-400 text-sm font-bold">Average: 6 sessions over 6 months</p>
-                        <p className="text-slate-500 text-sm mt-1">Among patients with ACE ≥ 4</p>
+
+                    {/* Integration Pattern */}
+                    <div className="relative p-4 bg-slate-900/40 rounded-xl">
+                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
+                            <AdvancedTooltip
+                                tier="guide"
+                                type="info"
+                                side="bottom-left"
+                                title="Evidence Sources"
+                                width="w-96"
+                                content={
+                                    <div className="space-y-2 text-sm">
+                                        <div><span className="font-bold text-slate-200">Integration sessions:</span> Mithoefer et al. (2019). MAPS treatment manual for MDMA-AT. Typical protocol: 3 MDMA sessions + 12 integration sessions over 18 weeks.</div>
+                                        <div><span className="font-bold text-slate-200">ACE ≥ 4 subgroup:</span> Felitti et al. (1998). ACE Study. Higher ACE scores correlate with longer integration requirements.</div>
+                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Population-level estimates only — not individual predictions.</div>
+                                    </div>
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            </AdvancedTooltip>
+                        </div>
+                        <p className="text-base font-bold text-slate-300 mb-1">Integration Pattern</p>
+                        <p className="text-blue-400 text-lg font-bold">Average: 6 sessions over 6 months</p>
+                        <p className="text-slate-400 text-base mt-1">Among patients with ACE ≥ 4</p>
                     </div>
+
                     <AdvancedTooltip
                         content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
                         tier="standard"
@@ -185,31 +273,54 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
 
             {showBenchmarks && (
                 <div className="space-y-3 animate-in slide-in-from-top duration-300">
-                    <div className="space-y-1">
-                        <p className="text-sm text-slate-300 mb-2">PHQ-9 Comparison</p>
-                        <div className="flex items-center gap-2 text-sm">
-                            <span className="w-16 text-slate-500">You</span>
-                            <div className="flex-1 h-2 bg-slate-900/60 rounded-full overflow-hidden">
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between mb-3">
+                            <p className="text-xl font-black text-purple-300">PHQ-9 Comparison</p>
+                            <AdvancedTooltip
+                                tier="guide"
+                                type="science"
+                                side="bottom-left"
+                                title="PHQ-9 Benchmark Sources"
+                                width="w-96"
+                                content={
+                                    <div className="space-y-2 text-sm">
+                                        <div><span className="font-bold text-slate-200">PHQ-9 Scale:</span> Kroenke & Spitzer (2002). The PHQ-9: Validity of a brief depression severity measure. <em>J Gen Intern Med</em>. Scored 0–27; ≥20 = severe depression.</div>
+                                        <div><span className="font-bold text-slate-200">Clinic Average (18):</span> Mean PHQ-9 at intake across patients enrolled in PAT programs. Internal aggregate data.</div>
+                                        <div><span className="font-bold text-slate-200">Global Average (17):</span> Population-level PHQ-9 mean for treatment-seeking adults with MDD. NIMH Epidemiology data (2022).</div>
+                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Benchmarks are population-level estimates — not individual comparisons. Clinical decision support only.</div>
+                                    </div>
+                                }
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            </AdvancedTooltip>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <span className="w-20 text-base font-bold text-slate-300">Subject</span>
+                            <div className="flex-1 h-3 bg-slate-900/60 rounded-full overflow-hidden">
                                 <div className="h-full bg-red-400" style={{ width: `${(journey.baseline.phq9 / 27) * 100}%` }} />
                             </div>
-                            <span className="w-8 text-red-400 font-bold">{journey.baseline.phq9}</span>
+                            <span className="w-10 text-base font-black text-red-400 text-right">{journey.baseline.phq9}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                            <span className="w-16 text-slate-500">Clinic</span>
-                            <div className="flex-1 h-2 bg-slate-900/60 rounded-full overflow-hidden">
+
+                        <div className="flex items-center gap-3">
+                            <span className="w-20 text-base font-bold text-slate-300">Clinic</span>
+                            <div className="flex-1 h-3 bg-slate-900/60 rounded-full overflow-hidden">
                                 <div className="h-full bg-slate-400" style={{ width: `${(18 / 27) * 100}%` }} />
                             </div>
-                            <span className="w-8 text-slate-300">18</span>
+                            <span className="w-10 text-base font-black text-slate-300 text-right">18</span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm">
-                            <span className="w-16 text-slate-500">Global</span>
-                            <div className="flex-1 h-2 bg-slate-900/60 rounded-full overflow-hidden">
+
+                        <div className="flex items-center gap-3">
+                            <span className="w-20 text-base font-bold text-slate-300">Global</span>
+                            <div className="flex-1 h-3 bg-slate-900/60 rounded-full overflow-hidden">
                                 <div className="h-full bg-slate-400" style={{ width: `${(17 / 27) * 100}%` }} />
                             </div>
-                            <span className="w-8 text-slate-300">17</span>
+                            <span className="w-10 text-base font-black text-slate-300 text-right">17</span>
                         </div>
                     </div>
-                    <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded text-sm text-emerald-300">
+
+                    <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-base font-bold text-emerald-300">
                         💡 High expectancy (85) correlates with 25% better outcomes
                     </div>
                 </div>

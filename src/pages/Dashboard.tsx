@@ -21,35 +21,42 @@ interface ClinicPerformanceCardProps {
   percentile?: string;
   icon: React.ElementType;
   color: string;
+  link?: string;
 }
 
 const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
-  title, value, change, comparison, percentile, icon: Icon, color
-}) => (
-  <div className="card-glass rounded-3xl p-6 border-2 border-indigo-500/30 hover:border-indigo-500/50 transition-all">
-    <div className="flex items-start justify-between mb-4">
-      <div className={`p-3 rounded-2xl ${color} bg-opacity-10`}>
-        <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
-      </div>
-      {percentile && (
-        <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-          <span className="text-xs font-black text-emerald-400">{percentile}</span>
+  title, value, change, comparison, percentile, icon: Icon, color, link
+}) => {
+  const navigate = useNavigate();
+  return (
+    <div
+      onClick={() => link && navigate(link)}
+      className={`card-glass rounded-3xl p-6 border-2 border-indigo-500/30 hover:border-indigo-500/50 transition-all ${link ? 'cursor-pointer hover:scale-[1.02] active:scale-95 hover:shadow-xl hover:shadow-amber-500/10' : ''}`}
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className={`p-3 rounded-2xl ${color} bg-opacity-10`}>
+          <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
         </div>
-      )}
+        {percentile && (
+          <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            <span className="text-xs font-black text-emerald-400">{percentile}</span>
+          </div>
+        )}
+      </div>
+      <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">{title}</h3>
+      <div className="text-4xl font-black tracking-tight mb-1" style={{ color: '#9DAEC8' }}>{value}</div>
+      <div className="flex items-center gap-2 text-sm">
+        <span className={`font-bold ${change.startsWith('+') ? 'text-emerald-400' : 'text-slate-300'}`}>
+          {change}
+        </span>
+        <span className="text-slate-500">vs last month</span>
+      </div>
+      <div className="mt-2 text-sm text-slate-300">
+        {comparison}
+      </div>
     </div>
-    <h3 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">{title}</h3>
-    <div className="text-4xl font-black tracking-tight mb-1" style={{ color: '#9DAEC8' }}>{value}</div>
-    <div className="flex items-center gap-2 text-sm">
-      <span className={`font-bold ${change.startsWith('+') ? 'text-emerald-400' : 'text-slate-300'}`}>
-        {change}
-      </span>
-      <span className="text-slate-3000">vs last month</span>
-    </div>
-    <div className="mt-2 text-sm text-slate-300">
-      {comparison}
-    </div>
-  </div>
-);
+  );
+};
 
 // --- COMPONENT: NEXT STEP ITEM ---
 interface NextStepProps {
@@ -73,7 +80,7 @@ const NextStepItem: React.FC<NextStepProps> = ({ number, text, link, urgent }) =
       <span className="flex-1 text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors">
         {text}
       </span>
-      <ArrowRight className="w-4 h-4 text-slate-3000 group-hover:text-indigo-400 transition-colors" />
+      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 transition-colors" />
     </button>
   );
 };
@@ -107,14 +114,14 @@ const InsightCard: React.FC<InsightCardProps> = ({ title, value, subtext, icon: 
           <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
         </div>
         <div className="p-2 rounded-full bg-slate-900 border border-slate-800 group-hover:bg-slate-800 transition-colors">
-          <ArrowRight className="w-5 h-5 text-slate-3000 group-hover:text-slate-300" />
+          <ArrowRight className="w-5 h-5 text-slate-500 group-hover:text-slate-300" />
         </div>
       </div>
 
       <div className="relative z-10">
         <h3 className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-2">{title}</h3>
         <div className="text-2xl font-black text-slate-300 tracking-tight mb-2">{value}</div>
-        <p className="text-xs font-medium text-slate-3000 leading-snug group-hover:text-slate-300 transition-colors">
+        <p className="text-sm font-medium text-slate-500 leading-snug group-hover:text-slate-300 transition-colors">
           {subtext}
         </p>
       </div>
@@ -136,7 +143,7 @@ const MetricPill: React.FC<MetricPillProps> = ({ icon: Icon, label, value, color
       <Icon className={`w-5 h-5 text-${color}-500`} />
     </div>
     <div>
-      <div className="text-xs font-bold text-slate-3000 uppercase tracking-widest">{label}</div>
+      <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</div>
       <div className="text-xl font-black text-slate-300">{value}</div>
     </div>
   </div>
@@ -157,8 +164,8 @@ export default function Dashboard() {
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
               <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
             </span>
-            <span className="text-xs font-medium text-slate-3000 font-mono">ID: 8842-ALPHA</span>
-            <span className="text-xs font-medium text-slate-3000">Last updated: 2 min ago</span>
+            <span className="text-xs font-medium text-slate-500 font-mono">ID: 8842-ALPHA</span>
+            <span className="text-xs font-medium text-slate-500">Last updated: 2 min ago</span>
           </div>
           <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
             Dashboard
@@ -203,7 +210,7 @@ export default function Dashboard() {
             </button>
           </div>
 
-          <p className="text-xs text-slate-300 text-center mt-3">
+          <p className="text-sm text-slate-300 text-center mt-3">
             AI-powered search across {protocols.length}+ protocols • Advanced filters • Real-time analysis
           </p>
         </div>
@@ -213,7 +220,7 @@ export default function Dashboard() {
       <Section spacing="tight">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
-          <span className="text-xs text-slate-3000 font-medium">This Month</span>
+          <span className="text-xs text-slate-500 font-medium">This Month</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <ClinicPerformanceCard
@@ -240,6 +247,7 @@ export default function Dashboard() {
             comparison="Review needed"
             icon={AlertTriangle}
             color="bg-amber-500"
+            link="/deep-dives/molecular-pharmacology"
           />
           <ClinicPerformanceCard
             title="Avg Session Time"
@@ -280,7 +288,7 @@ export default function Dashboard() {
             <SafetyRiskMatrix />
             {protocols.length > 0 && (
               <div className="mt-6 pt-6 border-t border-slate-800">
-                <p className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-3">Your Active Protocols</p>
+                <p className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-3">Your Active Protocols</p>
                 <div className="flex flex-wrap gap-2">
                   {protocols.slice(0, 5).map((protocol, index) => (
                     <div
@@ -302,7 +310,7 @@ export default function Dashboard() {
         ) : (
           <div className="card-glass rounded-3xl p-12 text-center">
             <p className="text-slate-300 mb-2">No active protocols in the last 90 days</p>
-            <p className="text-sm text-slate-3000">Log your first protocol to see safety risk assessment</p>
+            <p className="text-sm text-slate-500">Log your first protocol to see safety risk assessment</p>
             <button
               onClick={() => navigate('/wellness-journey')}
               className="mt-4 px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-slate-300 font-bold transition-all cursor-pointer"
@@ -387,7 +395,7 @@ export default function Dashboard() {
       <Section spacing="tight">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Network Activity</h2>
-          <span className="text-xs text-slate-3000 font-medium">Last 7 Days</span>
+          <span className="text-xs text-slate-500 font-medium">Last 7 Days</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <InsightCard
@@ -421,7 +429,7 @@ export default function Dashboard() {
       </Section>
 
       <div className="text-center pt-10 border-t border-slate-900 mt-auto">
-        <p className="text-xs text-slate-600 font-mono">
+        <p className="text-sm text-slate-600 font-mono">
           Antigravity Clinical OS • v1.2.4 • Encrypted
         </p>
       </div>

@@ -165,7 +165,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                         <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                         <div>
                             <p className="text-yellow-400 font-semibold text-sm">Consent Required</p>
-                            <p className="text-yellow-400/80 text-xs mt-1">
+                            <p className="text-yellow-400/80 text-sm mt-1">
                                 Patient consent must be obtained and documented before proceeding with treatment.
                             </p>
                         </div>

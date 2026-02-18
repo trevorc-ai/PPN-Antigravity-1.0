@@ -60,7 +60,7 @@ const PatientFlowPage: React.FC = () => {
                             <h4 className="text-sm font-black text-slate-300 tracking-widest uppercase mb-4">
                                 Active Filters (Debug)
                             </h4>
-                            <pre className="text-xs text-slate-300 font-mono bg-slate-900/50 p-4 rounded-xl overflow-x-auto">
+                            <pre className="text-sm text-slate-300 font-mono bg-slate-900/50 p-4 rounded-xl overflow-x-auto">
                                 {JSON.stringify(filters, null, 2)}
                             </pre>
                         </div>

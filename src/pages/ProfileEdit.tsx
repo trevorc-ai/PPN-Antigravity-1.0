@@ -187,7 +187,7 @@ const ProfileEdit: React.FC = () => {
                                     {errors.display_name}
                                 </p>
                             )}
-                            <p className="text-xs text-slate-3000 mt-1">
+                            <p className="text-sm text-slate-500 mt-1">
                                 {formData.display_name.length}/100 characters
                             </p>
                         </div>
@@ -213,7 +213,7 @@ const ProfileEdit: React.FC = () => {
                                     {errors.specialty}
                                 </p>
                             )}
-                            <p className="text-xs text-slate-3000 mt-1">
+                            <p className="text-sm text-slate-500 mt-1">
                                 {formData.specialty.length}/100 characters
                             </p>
                         </div>
@@ -234,7 +234,7 @@ const ProfileEdit: React.FC = () => {
                                     <label htmlFor="is_profile_public" className="block text-sm font-bold text-slate-300 cursor-pointer">
                                         Make my profile public
                                     </label>
-                                    <p className="text-xs text-slate-300 mt-1">
+                                    <p className="text-sm text-slate-300 mt-1">
                                         Allow other practitioners in the network to view your profile and credentials
                                     </p>
                                 </div>

@@ -199,7 +199,7 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
             </div>
 
             {/* Helper Text */}
-            <p className="text-xs text-[#64748b] mt-4">
+            <p className="text-sm text-[#64748b] mt-4">
                 Select all medications the patient is currently taking. This helps identify potential drug interactions.
             </p>
         </div>

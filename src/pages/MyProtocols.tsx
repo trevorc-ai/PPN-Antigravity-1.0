@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Search, ChevronRight, ClipboardList, Activity, Info, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface Protocol {
-    id: number;
+    id: string; // Changed from number to string (UUID)
     subject_id: string;
     session_number: number;
     substance_name: string;
@@ -37,10 +37,9 @@ export const MyProtocols = () => {
             const { data, error } = await supabase
                 .from('log_clinical_records')
                 .select(`
-          clinical_record_id,
-          subject_id,
+          id,
+          patient_id,
           session_date,
-          outcome_score,
           substance_id,
           patient_sex,
           ref_substances (substance_name)
@@ -51,8 +50,8 @@ export const MyProtocols = () => {
             if (error) throw error;
 
             const formattedData = data?.map((record: any) => ({
-                id: record.clinical_record_id,
-                subject_id: `PT-${String(record.subject_id).padStart(6, '0')}`,
+                id: record.id,
+                subject_id: `PT-${String(record.patient_id).padStart(6, '0')}`,
                 session_number: 1,
                 substance_name: record.ref_substances?.substance_name || 'Unknown',
                 indication_name: 'Research',
@@ -131,14 +130,14 @@ export const MyProtocols = () => {
                             Standardized_v2.4
                         </div>
                     </div>
-                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">
+                    <p className="text-slate-500 text-sm font-black uppercase tracking-[0.3em]">
                         Institutional Research Architecture // Node_0x7
                     </p>
                 </div>
 
                 <button
                     onClick={() => navigate('/wellness-journey')}
-                    className="px-8 py-4 bg-primary hover:bg-blue-600 text-white text-[11px] font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
+                    className="px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
                 >
                     <PlusCircle size={18} />
                     Create New Protocol
@@ -160,13 +159,13 @@ export const MyProtocols = () => {
                 <div className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
                     {loading ? (
                         <div className="py-20 text-center">
-                            <p className="font-black uppercase tracking-widest text-[10px]" style={{ color: '#8B9DC3' }}>Loading protocols...</p>
+                            <p className="font-black uppercase tracking-widest text-sm" style={{ color: '#8B9DC3' }}>Loading protocols...</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
+                                    <tr className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
                                         <SortableHeader field="subject_id" label="Protocol Reference" />
                                         <SortableHeader field="substance_name" label="Substance" />
                                         <SortableHeader field="patient_sex" label="Gender" />
@@ -183,7 +182,7 @@ export const MyProtocols = () => {
                                                     <span className="text-base font-black leading-tight uppercase" style={{ color: '#9DAEC8' }}>
                                                         {p.substance_name} Protocol
                                                     </span>
-                                                    <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-tight mt-1">
+                                                    <span className="text-xs font-mono text-slate-500 font-bold uppercase tracking-tight mt-1">
                                                         {p.subject_id} • Session {p.session_number}
                                                     </span>
                                                 </div>
@@ -203,7 +202,7 @@ export const MyProtocols = () => {
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-2">
                                                     <div className={`size-1.5 rounded-full ${p.status === 'Completed' ? 'bg-clinical-green' : 'bg-primary'}`}></div>
-                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>
+                                                    <span className={`text-xs font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>
                                                         {p.status}
                                                     </span>
                                                 </div>
@@ -211,7 +210,7 @@ export const MyProtocols = () => {
                                             <td className="px-8 py-6 text-right">
                                                 <button
                                                     onClick={() => navigate(`/protocol/${p.id}`)}
-                                                    className="text-[10px] font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
+                                                    className="text-xs font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
                                                 >
                                                     Open Protocol
                                                     <ChevronRight className="size-4" />
@@ -226,7 +225,7 @@ export const MyProtocols = () => {
                     {!loading && filteredProtocols.length === 0 && (
                         <div className="py-20 text-center space-y-4">
                             <ClipboardList className="mx-auto text-slate-800" size={48} />
-                            <p className="text-slate-600 font-black uppercase tracking-widest text-[10px]">
+                            <p className="text-slate-600 font-black uppercase tracking-widest text-sm">
                                 Zero Protocol Matches Found
                             </p>
                         </div>

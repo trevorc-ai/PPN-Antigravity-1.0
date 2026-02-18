@@ -26,7 +26,7 @@ const ResearchSources: React.FC<{ chunks: any[] }> = ({ chunks }) => {
 
   return (
     <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
-      <h4 className="text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2">
+      <h4 className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2">
         <span className="material-symbols-outlined text-sm">database</span>
         Verified Intelligence Nodes
       </h4>
@@ -43,7 +43,7 @@ const ResearchSources: React.FC<{ chunks: any[] }> = ({ chunks }) => {
               <span className="text-sm text-slate-300 font-bold truncate group-hover:text-slate-300 transition-colors">{s.title}</span>
               <span className="material-symbols-outlined text-[14px] text-slate-600 group-hover:text-indigo-400 transition-colors">arrow_outward</span>
             </div>
-            <span className="text-[11px] font-mono text-slate-600 truncate">{s.uri}</span>
+            <span className="text-xs font-mono text-slate-600 truncate">{s.uri}</span>
           </a>
         ))}
       </div>
@@ -124,7 +124,7 @@ const SubstanceMonograph: React.FC = () => {
         <span className="material-symbols-outlined text-7xl text-slate-800">error</span>
         <div className="space-y-2">
           <h2 className="text-2xl font-black uppercase tracking-tight" style={{ color: '#A8B5D1' }}>Compound Node Not Found</h2>
-          <p className="text-slate-3000 font-medium">The requested identifier 0x{id} does not exist in the institutional registry.</p>
+          <p className="text-slate-500 font-medium">The requested identifier 0x{id} does not exist in the institutional registry.</p>
         </div>
         <button
           onClick={() => navigate('/catalog')}
@@ -156,7 +156,7 @@ const SubstanceMonograph: React.FC = () => {
                     </div>
                     Registry
                   </h3>
-                  <span className="text-[11px] font-mono text-slate-600 font-black tracking-widest">MOD_0x{id?.slice(-4)}</span>
+                  <span className="text-xs font-mono text-slate-600 font-black tracking-widest">MOD_0x{id?.slice(-4)}</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 flex-1">
@@ -171,7 +171,7 @@ const SubstanceMonograph: React.FC = () => {
                     <div key={i} className="p-3 bg-black/40 border border-white/5 rounded-[1.2rem] hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 group/item">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="material-symbols-outlined text-[13px] text-slate-600 group-hover/item:text-primary transition-colors">{item.icon}</span>
-                        <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest">{item.label}</span>
+                        <span className="text-xs font-black text-slate-600 uppercase tracking-widest">{item.label}</span>
                       </div>
                       <span className="text-sm font-mono font-bold text-slate-300 truncate block group-hover/item:text-slate-300 transition-colors">{item.val}</span>
                     </div>
@@ -188,7 +188,7 @@ const SubstanceMonograph: React.FC = () => {
                     </div>
                     Affinity
                   </h3>
-                  <div className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-[11px] font-black uppercase tracking-widest">Ki Spec</div>
+                  <div className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-black uppercase tracking-widest">Ki Spec</div>
                 </div>
                 <div className="flex-1 min-h-0 bg-black/20 rounded-[2rem] p-2 border border-white/5">
                   <ResponsiveContainer width="100%" height="100%">
@@ -214,7 +214,7 @@ const SubstanceMonograph: React.FC = () => {
                     </div>
                     Clinical Velocity
                   </h3>
-                  <p className="text-[11px] text-slate-600 font-black uppercase tracking-[0.2em] ml-11">Efficacy validation trend across versions</p>
+                  <p className="text-sm text-slate-600 font-black uppercase tracking-[0.2em] ml-11">Efficacy validation trend across versions</p>
                 </div>
               </div>
               <div className="flex-1 min-h-0 bg-black/40 rounded-[2rem] p-6 border border-white/5">
@@ -250,7 +250,7 @@ const SubstanceMonograph: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-[14px] font-black text-indigo-300 uppercase tracking-[0.2em]">Neural Synthesis</h3>
-                  <p className="text-[11px] font-mono text-indigo-500/60 uppercase tracking-widest">Node_4.2 Analysis</p>
+                  <p className="text-sm font-mono text-indigo-500/60 uppercase tracking-widest">Node_4.2 Analysis</p>
                 </div>
               </div>
 
@@ -258,7 +258,7 @@ const SubstanceMonograph: React.FC = () => {
                 {isAiLoading ? (
                   <div className="h-full py-12 flex flex-col items-center justify-center space-y-4">
                     <div className="size-10 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin"></div>
-                    <p className="text-[11px] font-black text-indigo-500/60 uppercase tracking-widest animate-pulse font-mono">Accessing Grounded Registry...</p>
+                    <p className="text-sm font-black text-indigo-500/60 uppercase tracking-widest animate-pulse font-mono">Accessing Grounded Registry...</p>
                   </div>
                 ) : aiAnalysis ? (
                   <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
@@ -269,12 +269,12 @@ const SubstanceMonograph: React.FC = () => {
                   </div>
                 ) : (
                   <div className="h-full flex flex-col justify-between space-y-6">
-                    <p className="text-[14px] text-slate-3000 font-medium leading-relaxed">
+                    <p className="text-[14px] text-slate-500 font-medium leading-relaxed">
                       Run a neural synthesis to correlate this compound with the latest grounded clinical research from 2024-2025.
                     </p>
                     <button
                       onClick={runAiSynthesis}
-                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 group active:scale-95"
+                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 group active:scale-95"
                     >
                       <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">bolt</span>
                       Initialize Synthesis
@@ -288,7 +288,7 @@ const SubstanceMonograph: React.FC = () => {
             <section className="bg-slate-900/40 border border-white/5 rounded-[2.5rem] p-8 backdrop-blur-3xl shadow-2xl space-y-6 group/archives">
               <div className="space-y-1">
                 <h3 className="text-[13px] font-black tracking-[0.2em] uppercase" style={{ color: '#A8B5D1' }}>Clinical Archive</h3>
-                <p className="text-[11px] text-slate-600 font-black uppercase tracking-widest">Authorized Site Uploads</p>
+                <p className="text-sm text-slate-600 font-black uppercase tracking-widest">Authorized Site Uploads</p>
               </div>
               <div className="space-y-3">
                 {[1, 2, 3].map(i => (
@@ -299,7 +299,7 @@ const SubstanceMonograph: React.FC = () => {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-300 group-hover:text-slate-300 transition-colors">Log_0x{i}2</p>
-                        <p className="text-[11px] font-mono text-slate-600 font-bold uppercase tracking-widest leading-none">OCT 2025</p>
+                        <p className="text-sm font-mono text-slate-600 font-bold uppercase tracking-widest leading-none">OCT 2025</p>
                       </div>
                     </div>
                     <span className="material-symbols-outlined text-slate-700 text-sm group-hover:text-slate-300 transition-colors">download</span>
@@ -321,12 +321,12 @@ const SubstanceMonograph: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Safety & Interactions</h2>
-                  <p className="text-[11px] text-slate-600 font-black uppercase tracking-[0.2em]">Global Safety Node Intelligence</p>
+                  <p className="text-sm text-slate-600 font-black uppercase tracking-[0.2em]">Global Safety Node Intelligence</p>
                 </div>
               </div>
               <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl">
                 <span className="size-1.5 bg-red-500 rounded-full animate-ping"></span>
-                <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest leading-none font-mono">Live Monitoring Active</span>
+                <span className="text-xs font-black text-slate-300 uppercase tracking-widest leading-none font-mono">Live Monitoring Active</span>
               </div>
             </div>
 
@@ -338,7 +338,7 @@ const SubstanceMonograph: React.FC = () => {
                       <div className={`size-3 rounded-full ${inter.risk === 'High' ? 'bg-red-500 shadow-[0_0_12px_#ef4444]' : 'bg-accent-amber shadow-[0_0_12px_#f59e0b]'}`}></div>
                       <h4 className="text-lg font-black tracking-tight" style={{ color: '#8B9DC3' }}>{inter.agent}</h4>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-[11px] font-black uppercase border ${inter.risk === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-accent-amber/10 text-accent-amber border-accent-amber/20'}`}>{inter.risk} RISK</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-black uppercase border ${inter.risk === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-accent-amber/10 text-accent-amber border-accent-amber/20'}`}>{inter.risk} RISK</span>
                   </div>
                   <p className="text-sm font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>{inter.description}</p>
                 </div>

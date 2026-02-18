@@ -144,7 +144,7 @@ export const VisualTimeline: React.FC<VisualTimelineProps> = ({
                             <div
                                 className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all ${hasValue
                                         ? `${milestone.bgColor} ${milestone.borderColor} ${milestone.color}`
-                                        : 'bg-slate-800 border-slate-700 text-slate-600'
+                                        : 'bg-slate-800 border-slate-700 text-slate-400'
                                     }`}
                                 role="status"
                                 aria-label={`${milestone.label}: ${hasValue ? milestone.time?.toLocaleTimeString() : 'not set'}`}
@@ -154,16 +154,16 @@ export const VisualTimeline: React.FC<VisualTimelineProps> = ({
 
                             {/* Label */}
                             <div className="mt-2 text-center">
-                                <p className={`text-xs font-bold ${hasValue ? milestone.color : 'text-slate-500'}`}>
+                                <p className={`text-sm font-bold ${hasValue ? milestone.color : 'text-slate-400'}`}>
                                     {milestone.label}
                                 </p>
                                 {milestone.time && (
-                                    <p className="text-xs text-slate-300 mt-1">
+                                    <p className="text-sm text-slate-300 mt-1">
                                         {milestone.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </p>
                                 )}
                                 {showElapsed && milestone.time && doseTime && (
-                                    <p className="text-xs text-slate-500 font-mono mt-0.5">
+                                    <p className="text-sm text-slate-400 font-mono mt-0.5">
                                         {calculateElapsed(doseTime, milestone.time)}
                                     </p>
                                 )}

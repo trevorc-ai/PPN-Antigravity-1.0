@@ -14,7 +14,7 @@ const About: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] bg-primary/5 rounded-full blur-[140px] pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-6 sm:px-12 relative z-10 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary uppercase tracking-[0.3em] mb-4 shadow-xl">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-black text-primary uppercase tracking-[0.3em] mb-4 shadow-xl">
             <span className="material-symbols-outlined text-sm">info</span>
             Institutional Identity
           </div>
@@ -59,19 +59,19 @@ const About: React.FC = () => {
               <div className="grid grid-cols-2 gap-6">
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                   <span className="text-3xl font-black text-slate-300">12k+</span>
-                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Enrolled Subjects</p>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                   <span className="text-3xl font-black text-clinical-green">04</span>
-                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Global Hubs</p>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Global Hubs</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                   <span className="text-3xl font-black text-primary">85%</span>
-                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Avg. Outcome Lift</p>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Avg. Outcome Lift</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                   <span className="text-3xl font-black text-accent-amber">99.9%</span>
-                  <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Data Integrity</p>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Data Integrity</p>
                 </div>
               </div>
             </div>
@@ -81,7 +81,7 @@ const About: React.FC = () => {
         {/* Core Principles */}
         <Section spacing="default" className="space-y-16">
           <div className="text-center space-y-8">
-            <h3 className="text-[11px] font-black text-primary tracking-[0.4em] uppercase tracking-[0.8em]">Our Principles</h3>
+            <h3 className="text-xs font-black text-primary tracking-[0.4em] uppercase tracking-[0.8em]">Our Principles</h3>
             <div className="max-w-2xl mx-auto border-[1px] border-primary/30 rounded-xl p-8 backdrop-blur-sm shadow-xl">
               <h2 className="text-3xl sm:text-5xl font-black text-slate-300 tracking-tight">
                 <span className="text-gradient-primary">Built</span> for Regulatory Rigor.
@@ -114,7 +114,7 @@ const About: React.FC = () => {
                   <span className="material-symbols-outlined text-3xl">{principle.icon}</span>
                 </div>
                 <h4 className="text-xl font-black text-slate-300 tracking-tight">{principle.title}</h4>
-                <p className="text-sm text-slate-3000 font-medium leading-relaxed">{principle.desc}</p>
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">{principle.desc}</p>
               </div>
             ))}
           </div>
@@ -140,7 +140,7 @@ const About: React.FC = () => {
                 <p className="text-2xl font-black text-slate-300">{loc}</p>
                 <div className="flex items-center justify-center gap-2">
                   <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                  <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">Active Practitioner</span>
+                  <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
                 </div>
               </div>
             ))}
@@ -153,7 +153,7 @@ const About: React.FC = () => {
             <h2 className="text-3xl sm:text-5xl font-black text-slate-300 tracking-tight leading-tight">
               <span className="text-gradient-primary">Access</span> the Discovery Network.
             </h2>
-            <p className="text-slate-3000 font-medium max-w-lg mx-auto leading-relaxed">
+            <p className="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
               Qualified practitioners and research institutions are invited to apply for institutional node access.
             </p>
           </div>

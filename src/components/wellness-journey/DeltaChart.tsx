@@ -61,21 +61,21 @@ export const DeltaChart: React.FC<DeltaChartProps> = ({
             {/* Values */}
             <div className="flex items-center justify-between">
                 <div>
-                    <p className="text-xs text-slate-300">Baseline</p>
+                    <p className="text-sm text-slate-300">Baseline</p>
                     <p className="text-2xl font-black text-slate-300">
                         {baseline}{unit}
                     </p>
                 </div>
 
                 <div className="text-center">
-                    <p className="text-xs text-slate-300">Change</p>
+                    <p className="text-sm text-slate-300">Change</p>
                     <p className={`text-lg font-bold ${isImproving ? 'text-emerald-400' : 'text-red-400'}`}>
                         {delta > 0 ? '+' : ''}{delta}{unit}
                     </p>
                 </div>
 
                 <div className="text-right">
-                    <p className="text-xs text-slate-300">Current</p>
+                    <p className="text-sm text-slate-300">Current</p>
                     <p className="text-2xl font-black text-blue-400">
                         {current}{unit}
                     </p>
@@ -84,7 +84,7 @@ export const DeltaChart: React.FC<DeltaChartProps> = ({
 
             {/* Percent Change */}
             <div className="pt-2 border-t border-slate-700/50">
-                <p className="text-xs text-slate-300 text-center">
+                <p className="text-sm text-slate-300 text-center">
                     {isImproving ? '↓' : '↑'} {percentChange.toFixed(0)}% {getTrendText()}
                 </p>
             </div>

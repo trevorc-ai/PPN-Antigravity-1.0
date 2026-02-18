@@ -228,7 +228,7 @@ const AuditLogs: React.FC = () => {
           <div className="overflow-x-auto custom-scrollbar flex-1">
             <table className="w-full text-left border-collapse min-w-[1400px]">
               <thead className="bg-black/40 sticky top-0 z-10 border-b border-slate-800">
-                <tr className="text-sm font-black uppercase tracking-[0.3em] text-slate-3000">
+                <tr className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">
                   <th
                     className="px-6 py-8 cursor-pointer hover:text-primary transition-colors"
                     onClick={() => handleSort('timestamp')}
@@ -332,7 +332,7 @@ const AuditLogs: React.FC = () => {
               <div className="h-6 w-px bg-slate-800"></div>
               <div className="flex items-center gap-3">
                 <div className="size-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></div>
-                <span className="text-sm font-mono text-slate-3000 uppercase tracking-widest">Global Uplink: Stable</span>
+                <span className="text-sm font-mono text-slate-500 uppercase tracking-widest">Global Uplink: Stable</span>
               </div>
             </div>
 
@@ -340,7 +340,7 @@ const AuditLogs: React.FC = () => {
               <button
                 onClick={handleExport}
                 disabled={isExporting}
-                className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-2xl text-xs font-black uppercase tracking-widest transition-all hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isExporting ? (
                   <>
@@ -354,7 +354,7 @@ const AuditLogs: React.FC = () => {
                   </>
                 )}
               </button>
-              <button className="px-8 py-3 bg-primary hover:bg-blue-600 text-slate-300 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl shadow-primary/30 transition-all active:scale-95">
+              <button className="px-8 py-3 bg-primary hover:bg-blue-600 text-slate-300 rounded-2xl text-xs font-black uppercase tracking-widest shadow-2xl shadow-primary/30 transition-all active:scale-95">
                 Verify Node Integrity
               </button>
             </div>

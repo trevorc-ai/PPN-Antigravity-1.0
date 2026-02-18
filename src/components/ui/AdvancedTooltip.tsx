@@ -5,7 +5,7 @@ import { Info, AlertTriangle, ShieldAlert, Activity, Microscope, CheckCircle, He
 
 export type TooltipTier = 'micro' | 'standard' | 'guide';
 export type TooltipType = 'info' | 'warning' | 'critical' | 'clinical' | 'science' | 'success';
-export type TooltipSide = 'top' | 'right' | 'bottom' | 'left';
+export type TooltipSide = 'top' | 'right' | 'bottom' | 'left' | 'bottom-left';
 
 interface AdvancedTooltipProps {
     content: React.ReactNode;
@@ -151,10 +151,11 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
             absolute z-[100] px-3 py-1.5 rounded-lg
             ${side === 'top' ? 'bottom-full left-1/2 -translate-x-1/2 mb-2' : ''}
             ${side === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-2' : ''}
+            ${side === 'bottom-left' ? 'top-full right-0 mt-2' : ''}
             ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
             ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
             bg-slate-900 border border-slate-700 text-slate-300 
-            text-xs font-bold uppercase tracking-wider
+            text-sm font-bold uppercase tracking-wider
             whitespace-nowrap shadow-xl animate-in fade-in zoom-in-95 duration-200
             ${config.glow}
           `}>
@@ -195,6 +196,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
               absolute z-50 p-0
               ${side === 'top' ? 'bottom-full left-1/2 -translate-x-1/2 mb-3' : ''}
               ${side === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-3' : ''}
+              ${side === 'bottom-left' ? 'top-full right-0 mt-3' : ''}
               ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-3' : ''}
               ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-3' : ''}
               ${width || 'w-80 sm:w-96'}
@@ -225,7 +227,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                                 </div>
                                 <button
                                     onClick={() => setIsDetailsOpen(false)}
-                                    className="text-slate-3000 hover:text-slate-300 transition-colors"
+                                    className="text-slate-500 hover:text-slate-300 transition-colors"
                                 >
                                     <X size={16} />
                                 </button>
@@ -289,6 +291,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
           absolute z-[100] 
           ${side === 'top' ? 'bottom-full left-1/2 -translate-x-1/2 mb-2' : ''}
           ${side === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-2' : ''}
+          ${side === 'bottom-left' ? 'top-full right-0 mt-2' : ''}
           ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
           ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
           ${width || 'w-64'}
@@ -304,11 +307,11 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                         {title && (
                             <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
                                 <Icon size={12} className={config.color} />
-                                <span className={`text-xs font-black uppercase tracking-widest ${config.color}`}>{title}</span>
+                                <span className={`text-sm font-black uppercase tracking-widest ${config.color}`}>{title}</span>
                             </div>
                         )}
 
-                        <div className="text-xs text-slate-300 font-medium leading-relaxed">
+                        <div className="text-sm text-slate-300 font-medium leading-relaxed">
                             {content}
                         </div>
 

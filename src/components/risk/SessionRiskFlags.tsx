@@ -1,6 +1,7 @@
 import React from 'react';
 import { Activity, TrendingUp } from 'lucide-react';
 import { getRiskColor, getRiskIcon, type RiskFlag } from '../../utils/riskCalculator';
+import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 export interface SessionRiskFlagsProps {
     flags: RiskFlag[];
@@ -25,7 +26,28 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
     }
 
     return (
-        <div className="bg-yellow-500/10 backdrop-blur-xl border border-yellow-500/30 rounded-2xl p-6">
+        <div className="relative bg-yellow-500/10 backdrop-blur-xl border border-yellow-500/30 rounded-2xl p-6">
+            {/* Tooltip — top-right corner, opens inward */}
+            <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>
+                <AdvancedTooltip
+                    tier="guide"
+                    type="warning"
+                    side="bottom-left"
+                    title="Evidence Sources"
+                    width="w-80"
+                    content={
+                        <div className="space-y-2 text-sm">
+                            <div><span className="font-bold text-slate-200">Heart Rate:</span> AHA Guidelines for PAT monitoring (2020).</div>
+                            <div><span className="font-bold text-slate-200">Blood Pressure:</span> JNC 8 Hypertension Guidelines.</div>
+                            <div><span className="font-bold text-slate-200">SpO2:</span> WHO Pulse Oximetry Training Manual.</div>
+                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
+                        </div>
+                    }
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-600 cursor-help hover:text-yellow-400 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </AdvancedTooltip>
+            </div>
+
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
                 <div className="p-3 bg-yellow-500/20 rounded-lg">
@@ -36,7 +58,7 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
                         Vitals Anomaly Detected
                     </h3>
                     {sessionTime && (
-                        <p className="text-xs text-yellow-400/70 mt-1">
+                        <p className="text-sm text-yellow-400/70 mt-1">
                             Session Time: {sessionTime}
                         </p>
                     )}
@@ -60,7 +82,7 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
                                 </span>
                             </div>
                             {flag.threshold && (
-                                <p className="text-xs text-slate-400 mt-1">
+                                <p className="text-sm text-slate-400 mt-1">
                                     Threshold: {flag.threshold}% change from baseline
                                 </p>
                             )}
@@ -74,7 +96,7 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
                 <p className="text-sm text-yellow-300 font-semibold mb-2">
                     Recommended Actions:
                 </p>
-                <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                <ul className="text-sm text-slate-300 space-y-1 list-disc list-outside pl-4">
                     {flags.map((flag, index) => (
                         <li key={index}>{flag.recommendation}</li>
                     ))}

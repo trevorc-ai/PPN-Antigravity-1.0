@@ -44,7 +44,7 @@ export const CompletenessWidget: React.FC<CompletenessWidgetProps> = ({
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-slate-300">Data Completeness</h3>
-                    <p className="text-xs text-slate-300">Patient: {patientId}</p>
+                    <p className="text-sm text-slate-300">Patient: {patientId}</p>
                 </div>
             </div>
 
@@ -66,7 +66,7 @@ export const CompletenessWidget: React.FC<CompletenessWidgetProps> = ({
                     ))}
                 </div>
 
-                <p className="text-xs text-slate-300">
+                <p className="text-sm text-slate-300">
                     {completedRequirements.length} of {totalRequirements} requirements met
                 </p>
             </div>

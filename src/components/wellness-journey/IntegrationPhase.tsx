@@ -46,8 +46,8 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
             {/* Symptom Decay Curve - REUSE EXISTING COMPONENT */}
             <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 border-2 border-emerald-500/50 rounded-3xl p-6">
                 <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp className="w-6 h-6 text-emerald-400" />
-                    <h3 className="text-xl font-black text-emerald-300">Symptom Decay Curve</h3>
+                    <TrendingUp className="w-8 h-8 text-emerald-400" />
+                    <h3 className="text-2xl font-black text-emerald-100">Symptom Decay Curve</h3>
                 </div>
 
                 {/* USE EXISTING SymptomDecayCurve COMPONENT */}
@@ -69,9 +69,9 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <Heart className="w-6 h-6 text-pink-400" />
-                        <h3 className="text-lg font-bold text-slate-300">Daily Pulse Check</h3>
-                        <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
+                        <Heart className="w-8 h-8 text-pink-400" />
+                        <h3 className="text-2xl font-bold text-slate-300">Daily Pulse Check</h3>
+                        <span className="text-sm text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
                             7-day streak ✓
                         </span>
                     </div>
@@ -79,9 +79,9 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         <AdvancedTooltip content="Export 7-day pulse check trend as CSV for integration session review." tier="micro">
                             <button
                                 onClick={handleExportTrend}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-xs rounded-lg transition-colors"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-sm rounded-lg transition-colors"
                             >
-                                <Download className="w-3.5 h-3.5" />
+                                <Download className="w-4 h-4" />
                                 Export CSV
                             </button>
                         </AdvancedTooltip>
@@ -100,18 +100,18 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         {/* 7-Day Trend Summary */}
                         <div className="grid grid-cols-2 gap-3">
                             <div className="p-3 bg-slate-800/40 rounded-xl text-center">
-                                <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Avg Connection</p>
+                                <p className="text-sm text-slate-500 uppercase tracking-wide mb-1">Avg Connection</p>
                                 <p className="text-2xl font-black text-pink-400">{avgConnection}<span className="text-sm text-slate-500">/5</span></p>
                             </div>
                             <div className="p-3 bg-slate-800/40 rounded-xl text-center">
-                                <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">Avg Sleep</p>
+                                <p className="text-sm text-slate-500 uppercase tracking-wide mb-1">Avg Sleep</p>
                                 <p className="text-2xl font-black text-blue-400">{avgSleep}<span className="text-sm text-slate-500">/5</span></p>
                             </div>
                         </div>
 
                         {/* 7-Day Bar Chart */}
                         <div>
-                            <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">7-Day Trend</p>
+                            <p className="text-sm text-slate-500 uppercase tracking-wide mb-3">7-Day Trend</p>
                             <div className="grid grid-cols-7 gap-1">
                                 {MOCK_PULSE_TREND.map((d) => (
                                     <div key={d.day} className="flex flex-col items-center gap-1">
@@ -129,25 +129,25 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                                 title={`Sleep: ${d.sleep}/5`}
                                             />
                                         </div>
-                                        <span className="text-xs text-slate-500">{d.day.slice(0, 1)}</span>
+                                        <span className="text-sm text-slate-400">{d.day.slice(0, 1)}</span>
                                     </div>
                                 ))}
                             </div>
                             <div className="flex items-center gap-4 mt-2">
                                 <div className="flex items-center gap-1">
                                     <div className="w-3 h-3 rounded-sm bg-pink-500/70" />
-                                    <span className="text-xs text-slate-500">Connection</span>
+                                    <span className="text-sm text-slate-400">Connection</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <div className="w-3 h-3 rounded-sm bg-blue-500/70" />
-                                    <span className="text-xs text-slate-500">Sleep</span>
+                                    <span className="text-sm text-slate-400">Sleep</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Today's Pulse Check Widget */}
                         <div>
-                            <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">Today's Check-In</p>
+                            <p className="text-sm text-slate-500 uppercase tracking-wide mb-3">Today's Check-In</p>
                             <PulseCheckWidget
                                 patientId="patient-001"
                                 sessionId={journey.session.sessionNumber}
@@ -166,8 +166,8 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 {/* Compliance Metrics */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
-                        <CheckCircle className="w-6 h-6 text-emerald-400" />
-                        <h3 className="text-lg font-black text-slate-300">Compliance</h3>
+                        <CheckCircle className="w-8 h-8 text-emerald-400" />
+                        <h3 className="text-2xl font-black text-slate-300">Compliance</h3>
                     </div>
 
                     <div className="space-y-4">
@@ -217,8 +217,8 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 {/* Quality of Life Improvements */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
-                        <TrendingUp className="w-6 h-6 text-blue-400" />
-                        <h3 className="text-lg font-black text-slate-300">Quality of Life</h3>
+                        <TrendingUp className="w-8 h-8 text-blue-400" />
+                        <h3 className="text-2xl font-black text-slate-300">Quality of Life</h3>
                     </div>
 
                     <div className="space-y-3">
@@ -242,8 +242,8 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 {/* Alerts & Next Steps */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
-                        <CheckCircle className="w-6 h-6 text-emerald-400" />
-                        <h3 className="text-lg font-black text-slate-300">Status</h3>
+                        <CheckCircle className="w-8 h-8 text-emerald-400" />
+                        <h3 className="text-2xl font-black text-slate-300">Status</h3>
                     </div>
 
                     <div className="space-y-4">
@@ -268,8 +268,8 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 {/* Personalized Insights */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                     <div className="flex items-center gap-3 mb-4">
-                        <span className="text-2xl">💡</span>
-                        <h3 className="text-lg font-black text-slate-300">Personalized Insight</h3>
+                        <span className="text-3xl">💡</span>
+                        <h3 className="text-2xl font-black text-slate-300">Personalized Insight</h3>
                     </div>
 
                     <div className="p-4 bg-gradient-to-br from-amber-500/10 to-amber-900/10 border border-amber-500/20 rounded-2xl">

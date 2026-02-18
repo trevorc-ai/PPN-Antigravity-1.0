@@ -64,11 +64,11 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                             </div>
                             <div className="text-left">
                                 <p className="text-sm font-medium">{selectedUser.name}</p>
-                                <p className="text-xs text-slate-500">{selectedUser.role}</p>
+                                <p className="text-sm text-slate-400">{selectedUser.role}</p>
                             </div>
                         </>
                     ) : (
-                        <span className="text-slate-500">{placeholder}</span>
+                        <span className="text-slate-400">{placeholder}</span>
                     )}
                 </div>
                 <svg className={`w-4 h-4 text-slate-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,7 +81,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                     {/* Search */}
                     <div className="p-3 border-b border-slate-700/50">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
                                 value={searchQuery}
@@ -112,15 +112,15 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-slate-300 truncate">{user.name}</p>
-                                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                                        <p className="text-sm text-slate-400 truncate">{user.email}</p>
                                     </div>
-                                    <span className="text-xs text-slate-600 bg-slate-800 px-2 py-1 rounded">
+                                    <span className="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded">
                                         {user.role}
                                     </span>
                                 </button>
                             ))
                         ) : (
-                            <div className="px-4 py-8 text-center text-slate-500 text-sm">
+                            <div className="px-4 py-8 text-center text-slate-400 text-sm">
                                 No users found
                             </div>
                         )}

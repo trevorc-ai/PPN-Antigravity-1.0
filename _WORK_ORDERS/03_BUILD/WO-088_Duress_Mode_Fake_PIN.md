@@ -2,7 +2,7 @@
 id: WO-088
 title: "Duress Mode (Fake PIN) — Hidden Database Switching"
 status: 03_BUILD
-owner: BUILDER
+owner: SOOP
 ticket_type: EVALUATION (not a direct build order)
 priority: P2 (High)
 category: Feature / Security / Grey Market / Legal Defense
@@ -15,6 +15,11 @@ requested_by: Trevor Calton
 source: gemini_recommendation
 proddy_validation_required: true
 ---
+
+## AGENT INSTRUCTIONS
+1.  **READ**: Review the Technical Implementation plan.
+2.  **EXECUTE**: Implement the Schema changes (SOOP) or Code (BUILDER).
+3.  **HANDOFF**: Follow the instructions at the bottom of this file.
 
 # User Request (Verbatim)
 
@@ -259,3 +264,17 @@ function initializeDuressMode() {
 **PRODDY SIGN-OFF:** ✅ Approved. Option B. Route to SOOP (schema) then BUILDER.
 
 **Routing:** `owner: LEAD` — route to SOOP then BUILDER after WO-059/060 complete.
+
+---
+
+## HANDOFF INSTRUCTIONS
+**IF YOU ARE SOOP:**
+1.  **UPDATE STATUS**: Keep `status` as `03_BUILD`.
+2.  **UPDATE OWNER**: Change `owner` to `BUILDER`.
+3.  **MOVE FILE**: Keep file in `_WORK_ORDERS/03_BUILD/`.
+
+**IF YOU ARE BUILDER:**
+1.  **UPDATE STATUS**: Change `status` to `04_QA`.
+2.  **UPDATE OWNER**: Change `owner` to `INSPECTOR`.
+3.  **MOVE FILE**: Move this file to `_WORK_ORDERS/04_QA/`.
+

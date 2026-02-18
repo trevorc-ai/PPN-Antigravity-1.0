@@ -113,7 +113,7 @@ const BaselinePhysiologyForm: React.FC<BaselinePhysiologyFormProps> = ({
                                 className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                                 placeholder="50.00"
                             />
-                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                                 ms
                             </span>
                         </div>
@@ -160,14 +160,14 @@ const BaselinePhysiologyForm: React.FC<BaselinePhysiologyFormProps> = ({
                                 <p className="text-sm text-slate-300 mb-1">Combined Blood Pressure</p>
                                 <p className="text-4xl font-black text-slate-300">
                                     {data.resting_bp_systolic} / {data.resting_bp_diastolic}
-                                    <span className="text-lg text-slate-500 ml-2">mmHg</span>
+                                    <span className="text-lg text-slate-400 ml-2">mmHg</span>
                                 </p>
                             </div>
                             <div className="text-right">
                                 <p className={`text-lg font-bold ${bpStatus.color.split(' ')[0]}`}>
                                     {bpStatus.label}
                                 </p>
-                                <p className="text-xs text-slate-500 mt-1">
+                                <p className="text-sm text-slate-400 mt-1">
                                     {bpStatus.label === 'Normal' && '✓ Within normal range'}
                                     {bpStatus.label === 'Elevated' && '⚠️ Monitor closely'}
                                     {bpStatus.label.includes('Hypertension') && '⚠️ Consult physician'}

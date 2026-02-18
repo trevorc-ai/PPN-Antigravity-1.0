@@ -140,7 +140,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
             <div className="flex items-center justify-between">
                 <div>
                     <h3 className="text-slate-300 text-sm font-bold">Symptom Decay Curve</h3>
-                    <p className="text-slate-300 text-xs">PHQ-9 scores over 6 months</p>
+                    <p className="text-slate-300 text-sm">PHQ-9 scores over 6 months</p>
                 </div>
                 {trend && (
                     <div className={`flex items-center gap-1 ${trend.color}`}>
@@ -153,13 +153,13 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
             {/* Current Status */}
             <div className="flex items-center gap-4 p-3 bg-slate-900/40 rounded-lg">
                 <div>
-                    <p className="text-xs text-slate-300">Current PHQ-9</p>
+                    <p className="text-sm text-slate-300">Current PHQ-9</p>
                     <p className="text-2xl font-black" style={{ color: currentSeverity.color }}>
                         {currentPhq9}
                     </p>
                 </div>
                 <div className="flex-1">
-                    <p className="text-xs text-slate-300 mb-1">{currentSeverity.label}</p>
+                    <p className="text-sm text-slate-300 mb-1">{currentSeverity.label}</p>
                     <div className="h-2 bg-slate-900/60 rounded-full overflow-hidden">
                         <div
                             className="h-full transition-all duration-500"
@@ -171,7 +171,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                     </div>
                 </div>
                 <div>
-                    <p className="text-xs text-slate-300">Improvement</p>
+                    <p className="text-sm text-slate-300">Improvement</p>
                     <p className="text-xl font-black text-emerald-400">
                         -{baselinePhq9 - currentPhq9}
                     </p>

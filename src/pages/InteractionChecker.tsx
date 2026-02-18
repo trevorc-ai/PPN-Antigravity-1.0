@@ -3,8 +3,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { useToast } from '../contexts/ToastContext';
-import { INTERACTION_RULES } from '../constants';
-
 import { supabase } from '../supabaseClient';
 
 // WO-096: Types for live ref table data
@@ -16,22 +14,26 @@ interface RefSubstance {
 interface RefMedication {
   medication_id: number;
   medication_name: string;
-  medication_category: string;
+  // medication_category: string; // Removed to prevent 404 if column is missing
 }
 
 const InteractionChecker: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { addToast } = useToast();
+
   const [selectedPsychedelic, setSelectedPsychedelic] = useState(searchParams.get('agentA') || '');
   const [selectedMedication, setSelectedMedication] = useState(searchParams.get('agentB') || '');
+
   const [dbRule, setDbRule] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  // WO-096: Live ref table state
+  const [errorState, setErrorState] = useState<string | null>(null);
+
   const [substances, setSubstances] = useState<RefSubstance[]>([]);
   const [medications, setMedications] = useState<RefMedication[]>([]);
   const [refLoading, setRefLoading] = useState(true);
 
+  // Initial Sync from URL
   useEffect(() => {
     const agentA = searchParams.get('agentA');
     const agentB = searchParams.get('agentB');
@@ -39,101 +41,124 @@ const InteractionChecker: React.FC = () => {
     if (agentB) setSelectedMedication(agentB);
   }, [searchParams]);
 
-  // WO-096: Fetch live ref tables on mount
+  // Fetch Reference Lists
   useEffect(() => {
     const fetchRefData = async () => {
       setRefLoading(true);
-      const [{ data: substanceData }, { data: medicationData }] = await Promise.all([
-        supabase
-          .from('ref_substances')
-          .select('substance_id, substance_name')
-          .order('substance_name'),
-        supabase
-          .from('ref_medications')
-          .select('medication_id, medication_name, medication_category')
-          .eq('is_active', true)
-          .order('medication_category')
-          .order('medication_name'),
-      ]);
-      if (substanceData) setSubstances(substanceData);
-      if (medicationData) setMedications(medicationData);
-      setRefLoading(false);
+      try {
+        const [{ data: subData }, { data: medData }] = await Promise.all([
+          supabase.from('ref_substances').select('substance_id, substance_name').order('substance_name'),
+          supabase.from('ref_medications').select('medication_id, medication_name').eq('is_active', true).order('medication_name')
+        ]);
+
+        if (subData) setSubstances(subData);
+        if (medData) setMedications(medData);
+      } catch (err) {
+        console.error('Ref Fetch Error:', err);
+        addToast({ title: 'System Error', message: 'Failed to load medication database.', type: 'error' });
+      } finally {
+        setRefLoading(false);
+      }
     };
     fetchRefData();
   }, []);
 
-  // WO-096: Group medications by category for optgroup rendering
-  const medicationsByCategory = useMemo(() => {
-    return medications.reduce<Record<string, RefMedication[]>>((acc, med) => {
-      const cat = med.medication_category || 'Other';
-      if (!acc[cat]) acc[cat] = [];
-      acc[cat].push(med);
-      return acc;
-    }, {});
-  }, [medications]);
-
-  // Fetch interaction rule from Supabase
+  // Fetch Interaction Logic
   useEffect(() => {
     const fetchInteraction = async () => {
       if (!selectedPsychedelic || !selectedMedication) {
         setDbRule(null);
+        setErrorState(null);
         return;
       }
 
       setIsLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('ref_knowledge_graph')
-          .select('*')
-          .ilike('substance_name', selectedPsychedelic)
-          .ilike('interactor_name', selectedMedication)
-          .maybeSingle();
+      setErrorState(null);
 
-        if (error) {
-          console.error('Error fetching interaction:', error);
-          // Fallback to local constant only if DB fails (optional, but omitting for now to enforce DB source)
+      try {
+        // Step 1: Resolve IDs
+        const sub = substances.find(s => s.substance_name === selectedPsychedelic);
+        const med = medications.find(m => m.medication_name === selectedMedication);
+
+        if (!sub || !med) {
+          console.warn("Invalid selection IDs");
+          return;
         }
 
+        // Step 2: Query ref_drug_interactions
+        const { data, error } = await supabase
+          .from('ref_drug_interactions')
+          .select('*')
+          .eq('substance_id', sub.substance_id)
+          .eq('medication_id', med.medication_id)
+          .maybeSingle();
+
+        if (error) throw error;
+
         if (data) {
+          // Map DB Enum to UI Risk Levels
+          let risk = 1;
+          let severityLabel = 'Low';
+
+          switch (data.interaction_severity) {
+            case 'SEVERE': risk = 9; severityLabel = 'High'; break;
+            case 'MODERATE': risk = 5; severityLabel = 'Moderate'; break;
+            case 'MILD': risk = 3; severityLabel = 'Low'; break;
+          }
+
           setDbRule({
-            id: `DB-${data.interaction_id}`,
-            substance: data.substance_name,
-            interactor: data.interactor_name,
-            riskLevel: data.risk_level,
-            severity: data.severity_grade,
-            description: data.clinical_description,
+            id: `DB-${data.id}`,
+            substance: selectedPsychedelic,
+            interactor: selectedMedication,
+            riskLevel: risk,
+            severity: severityLabel,
+            description: data.risk_description,
             mechanism: data.mechanism,
-            source: data.evidence_source,
-            sourceUrl: data.source_url,
+            clinical_recommendation: data.clinical_recommendation,
+            source: "National Library of Medicine / PubMed",
+            sourceUrl: data.pubmed_reference,
             isKnown: true
           });
         } else {
+          // Explicit "No Record Found" -> Nominal Logic
           setDbRule(null);
         }
-      } catch (err) {
-        console.error('Unexpected error:', err);
+
+      } catch (err: any) {
+        console.error('Interaction Query Error:', err);
+        setErrorState(err.message || "Database connection failed");
+        setDbRule(null); // Ensure we don't show stale data
       } finally {
         setIsLoading(false);
       }
     };
 
-    // Debounce slightly to prevent rapid firing updates
-    const timeoutId = setTimeout(() => {
-      fetchInteraction();
-    }, 300);
-
+    const timeoutId = setTimeout(fetchInteraction, 300);
     return () => clearTimeout(timeoutId);
-  }, [selectedPsychedelic, selectedMedication]);
+  }, [selectedPsychedelic, selectedMedication, substances, medications]);
 
   const analysisResult = useMemo(() => {
     if (!selectedPsychedelic || !selectedMedication) return null;
-    if (isLoading) return null; // Wait for load
+    if (isLoading) return null;
 
-    if (dbRule) {
-      return dbRule;
+    // SAFETY CATCH: If there was a DB error, return explicit ERROR object
+    if (errorState) {
+      return {
+        id: 'ERR-SYSTEM',
+        substance: selectedPsychedelic,
+        interactor: selectedMedication,
+        riskLevel: 0,
+        severity: 'SYSTEM ERROR',
+        description: `CRITICAL FAILURE: Unable to verify interaction safety due to database error: ${errorState}.`,
+        mechanism: 'System integrity check failed.',
+        isKnown: true, // Treat as known failure
+        isError: true
+      };
     }
 
-    // Default "Nominal" state for undocumented nodes
+    if (dbRule) return dbRule;
+
+    // Default "Nominal" ONLY if no error
     return {
       id: 'RULE-NOMINAL',
       substance: selectedPsychedelic,
@@ -146,23 +171,27 @@ const InteractionChecker: React.FC = () => {
       source: "National Library of Medicine / PubMed (2024)",
       sourceUrl: "https://pubmed.ncbi.nlm.nih.gov/"
     };
-  }, [selectedPsychedelic, selectedMedication, dbRule, isLoading]);
+  }, [selectedPsychedelic, selectedMedication, dbRule, isLoading, errorState]);
 
   const handleClear = () => {
     setSelectedPsychedelic('');
     setSelectedMedication('');
-    navigate('/interactions'); // Clear URL params
+    navigate('/interactions');
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
+  const handleRequestAgent = () => addToast({ title: 'Request Logged', message: 'The clinical data team has been notified.', type: 'success' });
 
-  const handleRequestAgent = () => {
-    addToast({ title: 'Request Logged', message: 'The clinical data team has been notified to review this missing agent.', type: 'success' });
-  };
-
-  const getSeverityStyles = (risk: number) => {
+  // Styles logic...
+  const getSeverityStyles = (risk: number, isError?: boolean) => {
+    if (isError) return {
+      bg: 'bg-red-900/20',
+      border: 'border-red-500',
+      text: 'text-red-500',
+      glow: 'shadow-[0_0_30px_rgba(239,68,68,0.4)]',
+      icon: 'error',
+      label: 'SYSTEM ERROR'
+    };
     if (risk >= 8) return {
       bg: 'bg-red-500/10',
       border: 'border-red-500/50',
@@ -189,7 +218,7 @@ const InteractionChecker: React.FC = () => {
     };
   };
 
-  const styles = analysisResult ? getSeverityStyles(analysisResult.riskLevel) : null;
+  const styles = analysisResult ? getSeverityStyles(analysisResult.riskLevel, analysisResult.isError) : null;
 
   return (
     <PageContainer width="wide" className="!max-w-[1600px] p-4 sm:p-10 space-y-8 animate-in fade-in duration-700">
@@ -213,7 +242,7 @@ const InteractionChecker: React.FC = () => {
             </div>
             <div>
               <h1 className="text-4xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Interaction Checker</h1>
-              <p className="text-slate-300 text-xs font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
+              <p className="text-slate-300 text-sm font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
             </div>
           </div>
         </div>
@@ -272,14 +301,10 @@ const InteractionChecker: React.FC = () => {
               className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait" style={{ color: '#8B9DC3' }}
             >
               <option value="">{refLoading ? 'Loading...' : 'Select Interactor...'}</option>
-              {(Object.entries(medicationsByCategory) as [string, RefMedication[]][]).map(([category, meds]) => (
-                <optgroup key={category} label={category}>
-                  {meds.map(m => (
-                    <option key={m.medication_id} value={m.medication_name}>
-                      {m.medication_name.toUpperCase()}
-                    </option>
-                  ))}
-                </optgroup>
+              {medications.map(m => (
+                <option key={m.medication_id} value={m.medication_name}>
+                  {m.medication_name.toUpperCase()}
+                </option>
               ))}
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
@@ -305,7 +330,7 @@ const InteractionChecker: React.FC = () => {
         {!analysisResult ? (
           <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-[3rem] space-y-6 opacity-40">
             <span className="material-symbols-outlined text-7xl text-slate-700">query_stats</span>
-            <p className="text-slate-300 font-black text-xs uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
+            <p className="text-slate-300 font-black text-sm uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
           </div>
         ) : (
           <div
@@ -329,7 +354,7 @@ const InteractionChecker: React.FC = () => {
                 </div>
                 <button
                   onClick={handlePrint}
-                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white text-xs font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
+                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
                 >
                   <span className="material-symbols-outlined text-lg">print</span>
                   Print / Save Results
@@ -344,7 +369,7 @@ const InteractionChecker: React.FC = () => {
                   </div>
                   <div>
                     <h3 className={`text-4xl font-black tracking-tighter ${styles?.text}`}>{styles?.label}</h3>
-                    <p className="text-xs font-mono font-black text-slate-300 uppercase tracking-widest mt-1">
+                    <p className="text-sm font-mono font-black text-slate-300 uppercase tracking-widest mt-1">
                       Risk Level: {analysisResult.riskLevel} / 10 • Severity: {analysisResult.severity}
                     </p>
                   </div>
@@ -354,14 +379,14 @@ const InteractionChecker: React.FC = () => {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 <div className="lg:col-span-7 space-y-8">
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Clinical Description</h3>
+                    <h3 className="text-xs font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Clinical Description</h3>
                     <p className="text-xl sm:text-2xl font-bold leading-relaxed" style={{ color: '#8B9DC3' }}>
                       "{analysisResult.description}"
                     </p>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Mechanism of Interaction</h3>
+                    <h3 className="text-xs font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Mechanism of Interaction</h3>
                     <div className="p-6 bg-black/40 border border-white/5 rounded-2xl">
                       <p className="text-base font-medium leading-relaxed" style={{ color: '#8B9DC3' }}>
                         {analysisResult.mechanism}
@@ -377,7 +402,7 @@ const InteractionChecker: React.FC = () => {
                       <span className="text-xs font-mono text-clinical-green font-black uppercase">Active</span>
                     </div>
                     <div className="space-y-2">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
+                      <p className="text-sm font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
                       <p className="text-base font-mono font-black" style={{ color: '#8B9DC3' }}>{analysisResult.id} // SECURE_NODE_0x7</p>
                     </div>
                     {analysisResult.sourceUrl && (
@@ -408,7 +433,7 @@ const InteractionChecker: React.FC = () => {
           </div>
           <div className="space-y-2">
             <h3 className="text-xs font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Registry Methodology</h3>
-            <p className="text-xs text-slate-300 leading-relaxed font-medium italic">
+            <p className="text-sm text-slate-300 leading-relaxed font-medium italic">
               Interaction data is synthesized from peer-reviewed literature, clinical trial reports (2024-2025), and anonymized practitioner observations. All data points are validated by the institutional Lead Investigator node before ledger entry.
             </p>
             <div className="flex items-center gap-4 pt-2">

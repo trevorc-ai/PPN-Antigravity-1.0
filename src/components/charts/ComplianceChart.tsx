@@ -116,13 +116,13 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                 <div className="bg-[#0c0f16] border border-white/10 rounded-xl p-4 shadow-2xl">
                     <p className="text-sm font-black text-slate-300 mb-2">{data.monthLabel}</p>
                     <div className="space-y-1">
-                        <p className="text-xs text-slate-300">
+                        <p className="text-sm text-slate-300">
                             <span className="font-bold text-primary">{data.complianceRate}%</span> compliance rate
                         </p>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-sm text-slate-300">
                             <span className="font-bold text-emerald-400">{data.sessionsWithFollowup}</span> with follow-up
                         </p>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-sm text-slate-300">
                             out of {data.totalSessions} total sessions
                         </p>
                     </div>
@@ -158,7 +158,7 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-4xl text-red-400">error</span>
                     <div>
                         <p className="text-sm font-bold text-red-400 mb-1">Error Loading Data</p>
-                        <p className="text-xs text-slate-300">{error}</p>
+                        <p className="text-sm text-slate-300">{error}</p>
                     </div>
                 </div>
             </div>
@@ -197,12 +197,12 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-3xl text-primary">show_chart</span>
                     <div>
                         <h3 className="text-xl font-black text-slate-300">Follow-up Compliance</h3>
-                        <p className="text-xs text-slate-300 font-medium">Completion rates over time</p>
+                        <p className="text-sm text-slate-300 font-medium">Completion rates over time</p>
                     </div>
                 </div>
 
                 <div className="text-right">
-                    <p className="text-[11px] font-black text-slate-3000 tracking-widest uppercase">Overall Rate</p>
+                    <p className="text-sm font-black text-slate-500 tracking-widest uppercase">Overall Rate</p>
                     <div className="flex items-center gap-2">
                         <p className="text-2xl font-black" style={{ color: getComplianceColor(overallCompliance) }}>
                             {overallCompliance}%
@@ -220,8 +220,8 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
             <div className="mb-4 px-4 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-start gap-3">
                 <span className="material-symbols-outlined text-indigo-400 text-xl">info</span>
                 <div>
-                    <p className="text-xs font-bold text-indigo-400 mb-1">Small-Cell Suppression Active</p>
-                    <p className="text-xs text-slate-300">
+                    <p className="text-sm font-bold text-indigo-400 mb-1">Small-Cell Suppression Active</p>
+                    <p className="text-sm text-slate-300">
                         Only showing months with ≥10 sessions. Some months may be hidden to protect privacy.
                     </p>
                 </div>
@@ -269,7 +269,7 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
 
             {/* Benchmark Lines */}
             <div className="mt-6 pt-6 border-t border-slate-800">
-                <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-3">Performance Benchmarks</p>
+                <p className="text-sm font-black text-slate-500 tracking-widest uppercase mb-3">Performance Benchmarks</p>
                 <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-emerald-500"></div>
@@ -293,19 +293,19 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
             {/* Summary Stats */}
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800">
-                    <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">Months Tracked</p>
+                    <p className="text-sm font-black text-slate-500 tracking-widest uppercase mb-1">Months Tracked</p>
                     <p className="text-lg font-black text-slate-300">{data.length}</p>
                 </div>
                 <div className="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800">
-                    <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">Total Sessions</p>
+                    <p className="text-sm font-black text-slate-500 tracking-widest uppercase mb-1">Total Sessions</p>
                     <p className="text-lg font-black text-slate-300">{data.reduce((sum, d) => sum + d.totalSessions, 0)}</p>
                 </div>
                 <div className="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800">
-                    <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">With Follow-up</p>
+                    <p className="text-sm font-black text-slate-500 tracking-widest uppercase mb-1">With Follow-up</p>
                     <p className="text-lg font-black text-slate-300">{data.reduce((sum, d) => sum + d.sessionsWithFollowup, 0)}</p>
                 </div>
                 <div className="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800">
-                    <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">Trend</p>
+                    <p className="text-sm font-black text-slate-500 tracking-widest uppercase mb-1">Trend</p>
                     <div className="flex items-center justify-center gap-1">
                         <p className={`text-lg font-black ${trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : 'text-slate-300'}`}>
                             {trend > 0 ? '+' : ''}{Math.round(trend * 10) / 10}%

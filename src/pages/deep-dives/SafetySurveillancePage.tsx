@@ -69,7 +69,7 @@ const SafetySurveillancePage: React.FC = () => {
                     <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
                         <Shield className="w-6 h-6 text-red-400" />
                     </div>
-                    <span className="text-[11px] font-black text-red-400 uppercase tracking-widest">Safety Intelligence</span>
+                    <span className="text-xs font-black text-red-400 uppercase tracking-widest">Safety Intelligence</span>
                 </div>
                 <h1 className="text-5xl font-black tracking-tighter">
                     <span className="text-gradient-primary">Safety</span> Surveillance Matrix
@@ -85,37 +85,37 @@ const SafetySurveillancePage: React.FC = () => {
                     <div className="card-glass p-6 rounded-2xl">
                         <div className="flex items-center gap-3 mb-3">
                             <Activity className="w-5 h-5 text-emerald-400" />
-                            <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Active Protocols</p>
+                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Active Protocols</p>
                         </div>
                         <p className="text-4xl font-black text-slate-300">42</p>
-                        <p className="text-xs text-slate-600 font-medium mt-1">Currently monitored</p>
+                        <p className="text-sm text-slate-600 font-medium mt-1">Currently monitored</p>
                     </div>
 
                     <div className="card-glass p-6 rounded-2xl">
                         <div className="flex items-center gap-3 mb-3">
                             <Shield className="w-5 h-5 text-primary" />
-                            <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Risk Index</p>
+                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Risk Index</p>
                         </div>
                         <p className="text-4xl font-black text-emerald-400">0.4%</p>
-                        <p className="text-xs text-slate-600 font-medium mt-1">Current Low Risk</p>
+                        <p className="text-sm text-slate-600 font-medium mt-1">Current Low Risk</p>
                     </div>
 
                     <div className="card-glass p-6 rounded-2xl">
                         <div className="flex items-center gap-3 mb-3">
                             <AlertTriangle className="w-5 h-5 text-amber-400" />
-                            <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Total Events</p>
+                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Total Events</p>
                         </div>
                         <p className="text-4xl font-black text-slate-300">407</p>
-                        <p className="text-xs text-slate-600 font-medium mt-1">Last 90 days</p>
+                        <p className="text-sm text-slate-600 font-medium mt-1">Last 90 days</p>
                     </div>
 
                     <div className="card-glass p-6 rounded-2xl">
                         <div className="flex items-center gap-3 mb-3">
                             <TrendingDown className="w-5 h-5 text-red-400" />
-                            <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Serious Events (SAE)</p>
+                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Serious Events (SAE)</p>
                         </div>
                         <p className="text-4xl font-black text-slate-300">0</p>
-                        <p className="text-xs text-slate-600 font-medium mt-1">No G4/G5 events</p>
+                        <p className="text-sm text-slate-600 font-medium mt-1">No G4/G5 events</p>
                     </div>
                 </div>
             </Section>
@@ -128,7 +128,7 @@ const SafetySurveillancePage: React.FC = () => {
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <h2 className="text-2xl font-black text-slate-300 tracking-tight">Risk Heatmap</h2>
-                                <p className="text-sm text-slate-3000 font-medium mt-1">Frequency × Severity Matrix</p>
+                                <p className="text-sm text-slate-500 font-medium mt-1">Frequency × Severity Matrix</p>
                             </div>
                             <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs font-black text-emerald-400 uppercase">
                                 Live Data
@@ -142,7 +142,7 @@ const SafetySurveillancePage: React.FC = () => {
                                     <div className="w-32 shrink-0"></div>
                                     {severityGrades.map((grade, i) => (
                                         <div key={i} className="flex-1 min-w-[80px] text-center">
-                                            <p className="text-[10px] font-black text-slate-3000 uppercase tracking-wider whitespace-pre-line leading-tight">
+                                            <p className="text-sm font-black text-slate-500 uppercase tracking-wider whitespace-pre-line leading-tight">
                                                 {grade}
                                             </p>
                                         </div>
@@ -153,7 +153,7 @@ const SafetySurveillancePage: React.FC = () => {
                                 {frequencyLevels.map((freq, freqIdx) => (
                                     <div key={freqIdx} className="flex items-center mb-2">
                                         <div className="w-32 shrink-0 pr-3">
-                                            <p className="text-[10px] font-black text-slate-3000 uppercase tracking-wider text-right whitespace-pre-line leading-tight">
+                                            <p className="text-sm font-black text-slate-500 uppercase tracking-wider text-right whitespace-pre-line leading-tight">
                                                 {freq}
                                             </p>
                                         </div>
@@ -180,15 +180,15 @@ const SafetySurveillancePage: React.FC = () => {
                         <div className="flex items-center gap-6 mt-6 pt-6 border-t border-slate-800/50">
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 rounded bg-emerald-500/20 border border-emerald-500/30"></div>
-                                <span className="text-xs font-bold text-slate-3000 uppercase">Mild/Moderate</span>
+                                <span className="text-xs font-bold text-slate-500 uppercase">Mild/Moderate</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 rounded bg-amber-500/20 border border-amber-500/30"></div>
-                                <span className="text-xs font-bold text-slate-3000 uppercase">Severe</span>
+                                <span className="text-xs font-bold text-slate-500 uppercase">Severe</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-4 h-4 rounded bg-red-500/20 border border-red-500/30"></div>
-                                <span className="text-xs font-bold text-slate-3000 uppercase">Critical</span>
+                                <span className="text-xs font-bold text-slate-500 uppercase">Critical</span>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@ const SafetySurveillancePage: React.FC = () => {
                     {/* Donut Chart (1/3 width) */}
                     <div className="card-glass p-8 rounded-3xl">
                         <h2 className="text-xl font-black text-slate-300 tracking-tight mb-2">Severity Distribution</h2>
-                        <p className="text-sm text-slate-3000 font-medium mb-6">Event breakdown by grade</p>
+                        <p className="text-sm text-slate-500 font-medium mb-6">Event breakdown by grade</p>
 
                         <div role="img" aria-label="Donut chart showing safety event severity distribution: 245 Grade 1 Mild events, 120 Grade 2 Moderate events, 38 Grade 3 Severe events, 4 Grade 4 Life-threatening events, and 0 Grade 5 Fatal events">
                             <ResponsiveContainer width="100%" height={250}>
@@ -240,9 +240,9 @@ const SafetySurveillancePage: React.FC = () => {
                         </div>
 
                         <div className="mt-6 pt-6 border-t border-slate-800/50 text-center">
-                            <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest mb-1">Safety Score</p>
+                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Safety Score</p>
                             <p className="text-3xl font-black text-emerald-400">93%</p>
-                            <p className="text-xs text-slate-600 font-medium mt-1">Mild/Moderate events</p>
+                            <p className="text-sm text-slate-600 font-medium mt-1">Mild/Moderate events</p>
                         </div>
                     </div>
                 </div>
@@ -254,7 +254,7 @@ const SafetySurveillancePage: React.FC = () => {
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-2xl font-black text-slate-300 tracking-tight">Recent Safety Events</h2>
-                            <p className="text-sm text-slate-3000 font-medium mt-1">Last 7 days</p>
+                            <p className="text-sm text-slate-500 font-medium mt-1">Last 7 days</p>
                         </div>
                         <button className="px-4 py-2 bg-primary/10 border border-primary/20 hover:bg-primary/20 text-primary text-xs font-black rounded-xl uppercase tracking-widest transition-all">
                             View All Events
@@ -265,12 +265,12 @@ const SafetySurveillancePage: React.FC = () => {
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-800">
-                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Event ID</th>
-                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Type</th>
-                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Severity</th>
-                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Substance</th>
-                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Date</th>
-                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-3000 uppercase tracking-widest">Status</th>
+                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Event ID</th>
+                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Type</th>
+                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Severity</th>
+                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Substance</th>
+                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Date</th>
+                                    <th className="text-left py-3 px-4 text-xs font-black text-slate-500 uppercase tracking-widest">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -291,7 +291,7 @@ const SafetySurveillancePage: React.FC = () => {
                                             <span className="text-sm font-medium text-slate-300">{event.substance}</span>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <span className="text-sm font-medium text-slate-3000">{event.date}</span>
+                                            <span className="text-sm font-medium text-slate-500">{event.date}</span>
                                         </td>
                                         <td className="py-4 px-4">
                                             {event.resolved ? (

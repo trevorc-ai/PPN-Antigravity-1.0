@@ -36,7 +36,7 @@ const PatientConstellation: React.FC = () => {
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-black text-slate-300 tracking-tight">Active Protocols</h2>
                         <div className="relative group w-full max-w-md">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-3000 group-focus-within:text-primary transition-colors" size={18} />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
                             <input
                                 type="text"
                                 placeholder="Search protocols, IDs, or substances..."
@@ -51,7 +51,7 @@ const PatientConstellation: React.FC = () => {
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="text-[11px] font-black text-slate-3000 uppercase tracking-[0.2em] border-b border-slate-800/50">
+                                    <tr className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
                                         <th className="px-8 py-6">Protocol Reference</th>
                                         <th className="px-8 py-6">Current Status</th>
                                         <th className="px-8 py-6">Dosage</th>
@@ -64,20 +64,20 @@ const PatientConstellation: React.FC = () => {
                                             <td className="px-8 py-6">
                                                 <div className="flex flex-col">
                                                     <span className="text-base font-black text-slate-300 leading-tight">{p.protocol.substance} Protocol</span>
-                                                    <span className="text-[11px] font-mono text-slate-3000 font-bold tracking-tight mt-1">{p.id} • {p.siteId}</span>
+                                                    <span className="text-xs font-mono text-slate-500 font-bold tracking-tight mt-1">{p.id} • {p.siteId}</span>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-2">
                                                     <div className={`size-1.5 rounded-full ${p.status === 'Completed' ? 'bg-clinical-green' : p.status === 'Active' ? 'bg-primary' : 'bg-slate-500'}`}></div>
-                                                    <span className={`text-[11px] font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-3000'}`}>{p.status}</span>
+                                                    <span className={`text-xs font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>{p.status}</span>
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6 text-sm font-mono text-slate-300">{p.protocol.dosage} {p.protocol.dosageUnit}</td>
                                             <td className="px-8 py-6 text-right">
                                                 <button
                                                     onClick={() => navigate(`/protocol/${p.id}`)}
-                                                    className="text-[11px] font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
+                                                    className="text-xs font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-2 ml-auto"
                                                 >
                                                     Open Protocol
                                                     <ChevronRight className="size-4" />
@@ -91,7 +91,7 @@ const PatientConstellation: React.FC = () => {
                         {filteredProtocols.length === 0 && (
                             <div className="py-20 text-center space-y-4">
                                 <ClipboardList className="mx-auto text-slate-800" size={48} />
-                                <p className="text-slate-600 font-black uppercase tracking-widest text-[11px]">Zero Protocol Matches Found</p>
+                                <p className="text-slate-600 font-black uppercase tracking-widest text-sm">Zero Protocol Matches Found</p>
                             </div>
                         )}
                     </div>

@@ -158,7 +158,7 @@ export const BillingPortal: FC = () => {
                                 {loading ? 'Loading...' : 'Manage Subscription'}
                                 <ExternalLink className="w-4 h-4" />
                             </button>
-                            <p className="text-xs text-slate-300 text-center mt-3">
+                            <p className="text-sm text-slate-300 text-center mt-3">
                                 Update payment method, view invoices, or cancel subscription
                             </p>
                         </div>

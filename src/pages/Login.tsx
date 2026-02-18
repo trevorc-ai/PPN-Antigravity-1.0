@@ -177,7 +177,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* Security Badge */}
-        <div className="mt-6 flex items-center justify-center gap-2 text-slate-3000 text-xs">
+        <div className="mt-6 flex items-center justify-center gap-2 text-slate-500 text-xs">
           <ShieldCheck className="w-4 h-4" />
           <span>HIPAA Compliant • End-to-End Encrypted</span>
         </div>
@@ -209,7 +209,7 @@ const Login: React.FC = () => {
                 <ShieldCheck className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm text-green-400 font-bold">Check your email!</p>
-                  <p className="text-xs text-green-400/80 mt-1">
+                  <p className="text-sm text-green-400/80 mt-1">
                     We've sent password reset instructions to {resetEmail}
                   </p>
                 </div>

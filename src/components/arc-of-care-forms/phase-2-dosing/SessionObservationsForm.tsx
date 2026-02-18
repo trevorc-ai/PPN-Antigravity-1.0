@@ -153,7 +153,7 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
 
                 {/* Quick Select Buttons */}
                 <div className="flex flex-wrap gap-2 mt-4">
-                    <span className="text-xs text-slate-500 self-center mr-2">Quick Select:</span>
+                    <span className="text-xs text-slate-400 self-center mr-2">Quick Select:</span>
                     {QUICK_SELECT_PRESETS.map((preset) => (
                         <button
                             key={preset.label}

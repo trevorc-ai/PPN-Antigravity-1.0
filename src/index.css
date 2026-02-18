@@ -1,7 +1,7 @@
 body {
   background: #0a1628;
   background-attachment: fixed;
-  color: #F5F5F0;
+  color: #A8B5D1;
 }
 
 /* Enhanced Focus Styles for Accessibility (WCAG 2.4.7 - Focus Visible) */
@@ -145,11 +145,12 @@ select:focus-visible {
   ========================================
    GLOBAL FONT SIZE ENFORCEMENT (User req)
   ========================================
-   ABSOLUTE MINIMUM: 12px (no exceptions for body text)
+   ABSOLUTE MINIMUM: 14px for body text (text-sm)
+   12px only for badges, labels, and metadata
    Catches ALL Tailwind utility classes and inline styles
 */
 
-/* Catch all small Tailwind text utilities */
+/* Force text-xs to 12px minimum (labels/badges only) */
 [class*="text-[8px]"],
 [class*="text-[9px]"],
 [class*="text-[10px]"],
@@ -157,6 +158,17 @@ select:focus-visible {
 .text-xs {
   font-size: 12px !important;
   line-height: 1.5 !important;
+}
+
+/* Body text elements: enforce 14px minimum */
+p.text-xs,
+li.text-xs,
+td.text-xs,
+th.text-xs,
+[class*="text-xs"] p,
+[class*="text-xs"] li {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
 }
 
 /* Ensure labels, spans, paragraphs, and divs respect minimum */

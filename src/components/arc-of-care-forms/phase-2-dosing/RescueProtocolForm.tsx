@@ -147,7 +147,7 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                                 <p className="text-sm text-slate-300">
                                     Type: <span className="font-bold text-orange-300">{data.intervention_type}</span>
                                 </p>
-                                <p className="text-xs text-slate-300">
+                                <p className="text-sm text-slate-300">
                                     Started: {new Date(data.start_time).toLocaleTimeString()}
                                 </p>
                                 <button

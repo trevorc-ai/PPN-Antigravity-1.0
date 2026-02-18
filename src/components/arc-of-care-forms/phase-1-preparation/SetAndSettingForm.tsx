@@ -110,14 +110,14 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
 
                         {/* Value Display */}
                         <div className="flex items-center justify-between">
-                            <span className="text-slate-500 text-sm">Low (1)</span>
+                            <span className="text-slate-400 text-sm">Low (1)</span>
                             <div className="text-center">
                                 <p className="text-5xl font-black text-slate-300">
                                     {data.treatment_expectancy ?? 50}
                                 </p>
-                                <p className="text-xs text-slate-500 mt-1">out of 100</p>
+                                <p className="text-sm text-slate-400 mt-1">out of 100</p>
                             </div>
-                            <span className="text-slate-500 text-sm">High (100)</span>
+                            <span className="text-slate-400 text-sm">High (100)</span>
                         </div>
 
                         {/* Interpretation */}

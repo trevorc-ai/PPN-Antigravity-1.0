@@ -34,7 +34,7 @@ export const ReadinessScore: React.FC<ReadinessScoreProps> = ({
                     <h3 className="text-lg font-bold text-slate-300">
                         Benchmark Readiness: {formatScore(result.score)}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500 mt-1">
                         {result.metCount} of {result.totalCount} Requirements Met
                     </p>
                 </div>

@@ -152,7 +152,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
         <div className="bg-[#0f1218] border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative">
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 text-slate-3000 hover:text-slate-300 hover:bg-slate-800 rounded-lg transition-colors z-10"
+                className="absolute top-4 right-4 p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-800 rounded-lg transition-colors z-10"
             >
                 <X className="w-5 h-5" />
             </button>
@@ -162,7 +162,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 <h3 className="text-xl font-black text-slate-300 uppercase tracking-tight flex items-center gap-2">
                     {patient.id}
                 </h3>
-                <p className="text-xs text-slate-300 font-mono mt-1">
+                <p className="text-sm text-slate-300 font-mono mt-1">
                     {patient.details.age}y {patient.details.sex} • {patient.details.diagnosis}
                 </p>
             </div>
@@ -172,18 +172,18 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 {/* Left Column: Protocol */}
                 <div className="space-y-6">
                     <div>
-                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Protocol Used</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Protocol Used</span>
                         <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                             <div className="flex items-center gap-2 mb-1">
                                 <BrainCircuit className="w-4 h-4 text-indigo-400" />
                                 <span className="font-bold text-indigo-300">{patient.protocol}</span>
                             </div>
-                            <p className="text-xs text-indigo-200/60 mt-1">{patient.details.sessions} Sessions Completed</p>
+                            <p className="text-sm text-indigo-200/60 mt-1">{patient.details.sessions} Sessions Completed</p>
                         </div>
                     </div>
 
                     <div>
-                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Clinical Outcome</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinical Outcome</span>
 
                         <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
                             <div className="flex items-center gap-4">
@@ -200,7 +200,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 {/* Right Column: Context */}
                 <div className="space-y-6">
                     <div>
-                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Concomitant Meds</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Concomitant Meds</span>
                         <div className="flex flex-wrap gap-2">
                             {patient.details.medications.length > 0 ? (
                                 patient.details.medications.map(med => (
@@ -214,8 +214,8 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                         </div>
                     </div>
                     <div>
-                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-2">Clinician Notes</span>
-                        <p className="text-xs text-slate-300 italic leading-relaxed border-l-2 border-slate-700 pl-3">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Clinician Notes</span>
+                        <p className="text-sm text-slate-300 italic leading-relaxed border-l-2 border-slate-700 pl-3">
                             "{patient.details.clinician_notes}"
                         </p>
                     </div>
@@ -246,13 +246,13 @@ export default function PatientConstellation() {
                     </div>
                     <div title="Scatter plot visualizing patient outcomes based on treatment resistance and symptom severity">
                         <h3 className="text-lg font-black text-slate-300 tracking-tight">Patient Galaxy Analysis</h3>
-                        <p className="text-xs text-slate-300 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
+                        <p className="text-sm text-slate-300 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
                     </div>
                 </div>
 
                 <button
                     onClick={() => setShowGuide(!showGuide)}
-                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-3000 hover:text-slate-300 transition-colors"
+                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-slate-300 transition-colors"
                     title="How to read this chart"
                 >
                     <Info className="w-5 h-5" />
@@ -265,7 +265,7 @@ export default function PatientConstellation() {
                     <h4 className="text-xs font-black text-slate-300 uppercase tracking-widest mb-2 flex items-center gap-2">
                         <Lightbulb className="w-3 h-3 text-amber-400" /> Interpreting the Galaxy
                     </h4>
-                    <ul className="space-y-3 text-[11px] text-slate-300 leading-relaxed">
+                    <ul className="space-y-3 text-xs text-slate-300 leading-relaxed">
                         <li><strong className="text-slate-300">X-Axis (Resistance):</strong> Treatment Resistance Score (Count of prior failed trials).</li>
                         <li><strong className="text-slate-300">Y-Axis (Severity):</strong> Current Symptom Load (PHQ-9 / CAPS-5). Top = Severe.</li>
                         <li><strong className="text-emerald-400">Green Nodes:</strong> "Responder" Cohort (Remission Achieved). Click to analyze protocol & duration.</li>
@@ -295,9 +295,9 @@ export default function PatientConstellation() {
                                     const data = payload[0].payload;
                                     return (
                                         <div className="bg-slate-900/95 backdrop-blur border border-slate-700 p-3 rounded-lg shadow-xl z-50">
-                                            <p className="text-slate-300 font-bold text-xs mb-1">{data.id}</p>
-                                            <p className="text-xs text-slate-300">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
-                                            <p className="text-xs text-slate-300">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
+                                            <p className="text-slate-300 font-bold text-sm mb-1">{data.id}</p>
+                                            <p className="text-sm text-slate-300">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
+                                            <p className="text-sm text-slate-300">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
                                         </div>
                                     );
                                 }
@@ -333,7 +333,7 @@ export default function PatientConstellation() {
             {/* Footer Insight */}
             <div className="mt-auto p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-xl flex items-start gap-3 shrink-0">
                 <Activity className="w-4 h-4 text-emerald-500 mt-0.5" />
-                <p className="text-[11px] text-emerald-100/70 leading-relaxed">
+                <p className="text-sm text-emerald-100/70 leading-relaxed">
                     <strong className="text-emerald-400">Analysis:</strong> 74% of nearest neighbors (high resistance / high severity) achieved remission using <strong className="text-emerald-400">IM Ketamine + IFS</strong>.
                 </p>
             </div>

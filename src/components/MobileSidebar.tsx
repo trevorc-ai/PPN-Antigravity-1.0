@@ -137,7 +137,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                             </h1>
                             <div className="flex items-center gap-1">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                <p className="text-slate-300 text-xs font-bold tracking-wider">ONLINE</p>
+                                <p className="text-slate-300 text-sm font-bold tracking-wider">ONLINE</p>
                             </div>
                         </div>
                     </Link>
@@ -156,7 +156,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                 <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-6">
                     {sections.map((section) => (
                         <nav key={section.title} className="space-y-2">
-                            <h3 className="text-xs font-black text-slate-3000 uppercase tracking-widest px-2">
+                            <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest px-2">
                                 {section.title}
                             </h3>
                             <ul className="space-y-1">
@@ -254,8 +254,8 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                                                 const data = payload[0].payload;
                                                 return (
                                                     <div className="bg-[#0f172a] border border-slate-700 rounded-lg px-3 py-2 shadow-xl">
-                                                        <p className="text-xs font-bold text-slate-300">{data.name}</p>
-                                                        <p className="text-xs font-mono text-indigo-400">{data.count} Active</p>
+                                                        <p className="text-sm font-bold text-slate-300">{data.name}</p>
+                                                        <p className="text-sm font-mono text-indigo-400">{data.count} Active</p>
                                                     </div>
                                                 );
                                             }

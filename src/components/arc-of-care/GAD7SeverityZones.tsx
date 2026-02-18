@@ -172,7 +172,7 @@ const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
 
                     {clampedScore >= 10 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
-                            <p className="text-slate-300 text-xs">
+                            <p className="text-slate-300 text-sm">
                                 <span className="font-semibold">Note:</span> Consider benzodiazepine pre-medication (e.g., Lorazepam 0.5-1mg) 30 minutes before dosing to reduce anxiety and improve session quality.
                             </p>
                         </div>

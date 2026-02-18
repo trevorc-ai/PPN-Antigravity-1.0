@@ -66,7 +66,7 @@ export const GlassInput: React.FC<GlassInputProps> = ({
             )}
 
             {helperText && !error && (
-                <p className="mt-2 text-xs text-slate-300">
+                <p className="mt-2 text-sm text-slate-300">
                     {helperText}
                 </p>
             )}

@@ -155,7 +155,7 @@ const PostSessionAssessmentsForm: React.FC<PostSessionAssessmentsFormProps> = ({
                             <p className={`text-sm font-bold ${meqInterpretation.color.split(' ')[0]}`}>
                                 {meqInterpretation.label}
                             </p>
-                            <p className="text-slate-300 text-xs mt-1">
+                            <p className="text-slate-300 text-sm mt-1">
                                 {data.meq30_total_score! >= 60 && 'Strong predictor of positive long-term outcomes. Patient reported profound mystical experience.'}
                                 {data.meq30_total_score! >= 40 && data.meq30_total_score! < 60 && 'Moderate mystical qualities. Patient experienced some transcendent elements.'}
                                 {data.meq30_total_score! < 40 && 'Limited mystical qualities. Focus on integration and therapeutic processing.'}

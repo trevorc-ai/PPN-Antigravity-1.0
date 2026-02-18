@@ -1,8 +1,8 @@
 ---
 id: WO-089
 title: "Legacy Transcript — Cryptographically Verified Proof of Experience"
-status: 03_BUILD
-owner: BUILDER
+status: 04_QA
+owner: INSPECTOR
 ticket_type: EVALUATION (not a direct build order)
 priority: P2 (High)
 category: Feature / Trust / Legal Defense / Grey Market
@@ -18,6 +18,12 @@ related_tickets:
   - WO_006 (07_ARCHIVED — stats dashboard only, no crypto signing)
   - WO-077 (01_TRIAGE — plain PDF export, no tamper-proof chain)
 ---
+
+
+## AGENT INSTRUCTIONS
+1.  **READ**: Review the Pre-Screen Brief.
+2.  **EXECUTE**: detailed Pre-Screen Audit (INSPECTOR).
+3.  **HANDOFF**: Follow the instructions at the bottom of this file.
 
 # User Request (Verbatim)
 
@@ -363,3 +369,17 @@ The exported PDF includes:
 **PRODDY SIGN-OFF:** ✅ Approved. Route to INSPECTOR for pre-screen, then SOOP, then BUILDER.
 
 **Routing:** `owner: LEAD` — route to INSPECTOR pre-screen first.
+
+---
+
+## HANDOFF INSTRUCTIONS
+**IF YOU ARE INSPECTOR (PRE-SCREEN):**
+1.  **PASS**:
+    - Change `status` to `03_BUILD`.
+    - Change `owner` to `SOOP`.
+    - Move file to `_WORK_ORDERS/03_BUILD/`.
+2.  **FAIL**:
+    - Change `status` to `01_TRIAGE`.
+    - Change `owner` to `PRODDY`.
+    - Move file to `_WORK_ORDERS/01_TRIAGE/`.
+

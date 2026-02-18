@@ -165,7 +165,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                 </div>
                 <div>
                     <h3 className="text-lg font-black text-slate-300">Integration Session</h3>
-                    <p className="text-xs text-slate-500 uppercase tracking-widest">Phase 3 — Structured Record</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3 — Structured Record</p>
                 </div>
             </div>
 
@@ -205,7 +205,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
 
             {/* Duration */}
             <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">
                     <Clock className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
                     Session Duration
                 </p>
@@ -229,7 +229,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
 
             {/* Attendance */}
             <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Attendance</p>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Attendance</p>
                 <div className="grid grid-cols-3 gap-2">
                     {(['attended', 'cancelled', 'no_show'] as const).map((status) => (
                         <button
@@ -277,7 +277,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
             {isAttended && (
                 <>
                     <div>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">
                             <CheckSquare className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
                             Session Focus Areas
                         </p>
@@ -307,7 +307,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
 
                     {/* Progress Indicators */}
                     <div>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Patient Progress Indicators</p>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Patient Progress Indicators</p>
                         <div className="bg-slate-800/30 rounded-2xl px-4 py-2 divide-y divide-slate-700/50">
                             {PROGRESS_INDICATORS.map(({ key, label }) => (
                                 <StarRating
@@ -322,7 +322,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
 
                     {/* Homework */}
                     <div>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Homework Assigned</p>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Homework Assigned</p>
                         <div className="grid grid-cols-1 gap-2">
                             {HOMEWORK_OPTIONS.map((hw) => {
                                 const checked = form.homework_assigned.includes(hw);

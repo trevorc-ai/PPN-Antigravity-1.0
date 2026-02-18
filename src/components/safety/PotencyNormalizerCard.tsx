@@ -135,7 +135,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                     </div>
                     <div className="text-left">
                         <p className="text-sm font-bold text-slate-300">Potency Normalizer</p>
-                        <p className="text-xs text-slate-500">{expanded ? 'Harm reduction calculator — not medical advice' : collapsedSummary}</p>
+                        <p className="text-sm text-slate-500">{expanded ? 'Harm reduction calculator — not medical advice' : collapsedSummary}</p>
                     </div>
                 </div>
                 {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
@@ -146,7 +146,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
                     {/* Step 1: Batch */}
                     <div>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Step 1 — Select or Create Batch</p>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Step 1 — Select or Create Batch</p>
                         <div className="flex gap-2">
                             <div className="relative flex-1">
                                 <select
@@ -174,7 +174,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                         </div>
 
                         {selectedStrain && (
-                            <p className="text-xs text-slate-500 mt-1.5 italic">{selectedStrain.description}</p>
+                            <p className="text-sm text-slate-500 mt-1.5 italic">{selectedStrain.description}</p>
                         )}
                     </div>
 
@@ -197,17 +197,17 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                                     value={potencyCoeff}
                                     onChange={(e) => handleCoeffChange(parseFloat(e.target.value) || 1.0)}
                                     aria-label="Potency coefficient (auto-filled from strain)"
-                                    className="w-28 bg-slate-800/60 border border-slate-600 rounded-xl px-4 py-3 text-base font-bold text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                    className="w-28 bg-slate-800/60 border border-slate-600 rounded-xl px-4 py-3 text-base font-bold text-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
                                 <div>
                                     <span className={`text-sm font-bold ${potencyCoeff >= 2.0 ? 'text-red-400' : potencyCoeff >= 1.2 ? 'text-amber-400' : 'text-emerald-400'}`}>
                                         {getPotencyLabel(potencyCoeff)}
                                     </span>
                                     {isCustomCoeff && (
-                                        <p className="text-xs text-amber-400 mt-0.5">⚠ Custom value — not from database</p>
+                                        <p className="text-sm text-amber-400 mt-0.5">⚠ Custom value — not from database</p>
                                     )}
                                     {!isCustomCoeff && selectedStrain && (
-                                        <p className="text-xs text-slate-500 mt-0.5">Auto-filled from strain database. Edit to override.</p>
+                                        <p className="text-sm text-slate-500 mt-0.5">Auto-filled from strain database. Edit to override.</p>
                                     )}
                                 </div>
                             </div>
@@ -216,7 +216,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
                     {/* Step 3: Reagent Upload (Optional) */}
                     <div>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Step 3 — Reagent Test (Optional)</p>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Step 3 — Reagent Test (Optional)</p>
                         {uploadedFile ? (
                             <div className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
                                 <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
@@ -257,7 +257,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
                     {/* Dosage Calculator */}
                     <div>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Dosage Calculator</p>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Dosage Calculator</p>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="target-mg" className="block text-sm font-medium text-slate-300 mb-1.5">
@@ -272,7 +272,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                                     placeholder="e.g. 30"
                                     value={targetMg ?? ''}
                                     onChange={(e) => handleMgChange(e.target.value === '' ? null : parseFloat(e.target.value))}
-                                    className="w-full bg-slate-800/60 border border-slate-600 rounded-xl px-4 py-3 text-base font-bold text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                    className="w-full bg-slate-800/60 border border-slate-600 rounded-xl px-4 py-3 text-base font-bold text-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
                             </div>
                             <div>
@@ -288,7 +288,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                                     placeholder="e.g. 3.0"
                                     value={targetGrams ?? ''}
                                     onChange={(e) => handleGramsChange(e.target.value === '' ? null : parseFloat(e.target.value))}
-                                    className="w-full bg-slate-800/60 border border-slate-600 rounded-xl px-4 py-3 text-base font-bold text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                    className="w-full bg-slate-800/60 border border-slate-600 rounded-xl px-4 py-3 text-base font-bold text-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
                             </div>
                         </div>
@@ -298,14 +298,14 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                             <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl space-y-2 animate-in fade-in duration-200">
                                 {recommendedGrams !== null && (
                                     <div>
-                                        <p className="text-xs text-slate-400 uppercase tracking-wide">Recommended Weight</p>
+                                        <p className="text-sm text-slate-400 uppercase tracking-wide">Recommended Weight</p>
                                         <p className="text-2xl font-black text-blue-300">{recommendedGrams.toFixed(2)}g</p>
                                         <p className="text-sm text-slate-400">Equivalent to {(recommendedGrams * potencyCoeff).toFixed(1)}g standard potency</p>
                                     </div>
                                 )}
                                 {effectiveMg !== null && (
                                     <div>
-                                        <p className="text-xs text-slate-400 uppercase tracking-wide">Effective Dose</p>
+                                        <p className="text-sm text-slate-400 uppercase tracking-wide">Effective Dose</p>
                                         <p className="text-2xl font-black text-blue-300">{effectiveMg.toFixed(1)}mg</p>
                                         <p className="text-sm text-slate-400">Psilocybin equivalent at {potencyCoeff}x potency</p>
                                     </div>

@@ -172,7 +172,7 @@ const PCL5SeverityZones: React.FC<PCL5SeverityZonesProps> = ({ score }) => {
 
                     {clampedScore >= 33 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
-                            <p className="text-slate-300 text-xs">
+                            <p className="text-slate-300 text-sm">
                                 <span className="font-semibold">Clinical Note:</span> PCL-5 score ≥33 suggests probable PTSD diagnosis. Trauma-informed care protocols and specialized integration support are strongly recommended.
                             </p>
                         </div>
@@ -180,7 +180,7 @@ const PCL5SeverityZones: React.FC<PCL5SeverityZonesProps> = ({ score }) => {
 
                     {clampedScore >= 61 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
-                            <p className="text-slate-300 text-xs">
+                            <p className="text-slate-300 text-sm">
                                 <span className="font-semibold">Safety Alert:</span> Severe PTSD symptoms may increase risk of re-traumatization during psychedelic sessions. Psychiatric consultation and trauma specialist involvement required before proceeding.
                             </p>
                         </div>

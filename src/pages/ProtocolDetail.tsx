@@ -27,11 +27,11 @@ const ProtocolDetail: React.FC = () => {
           </div>
           <div className="space-y-3">
             <h2 className="text-3xl font-black uppercase tracking-widest leading-none" style={{ color: '#A8B5D1' }}>Record Not Found</h2>
-            <p className="text-slate-3000 font-mono text-base uppercase tracking-widest">Registry_Node_Lookup: {id}</p>
+            <p className="text-slate-500 font-mono text-base uppercase tracking-widest">Registry_Node_Lookup: {id}</p>
           </div>
           <button
             onClick={() => navigate('/dashboard')}
-            className="px-10 py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20"
+            className="px-10 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20"
           >
             Return to Registry
           </button>
@@ -127,11 +127,11 @@ const ProtocolDetail: React.FC = () => {
                 {record.status}
               </span>
             </div>
-            <p className="text-slate-3000 text-sm font-bold tracking-widest uppercase print:text-slate-600">{demographicsString}</p>
+            <p className="text-slate-500 text-sm font-bold tracking-widest uppercase print:text-slate-600">{demographicsString}</p>
           </div>
 
           <div className="print:hidden">
-            <span className="text-[11px] font-mono text-slate-600 uppercase tracking-widest">Secure Node 0x7</span>
+            <span className="text-xs font-mono text-slate-600 uppercase tracking-widest">Secure Node 0x7</span>
           </div>
         </div>
 
@@ -163,15 +163,15 @@ const ProtocolDetail: React.FC = () => {
                   <ul className="space-y-3">
                     <li className="flex items-center gap-3">
                       <div className="size-2 rounded-full bg-blue-500"></div>
-                      <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest print:text-black">{record.protocol.substance} (Target)</span>
+                      <span className="text-xs font-black text-slate-300 uppercase tracking-widest print:text-black">{record.protocol.substance} (Target)</span>
                     </li>
                     <li className="flex items-center gap-3">
                       <div className="size-2 rounded-full bg-slate-600"></div>
-                      <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest print:text-black">Standard (Baseline)</span>
+                      <span className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-black">Standard (Baseline)</span>
                     </li>
                   </ul>
                   <div className="p-4 bg-slate-900/50 border border-slate-800 rounded-2xl mt-4 print:bg-white print:border-black">
-                    <span className="block text-[11px] font-black text-purple-400 uppercase tracking-widest mb-1 print:text-black">Primary Mechanism</span>
+                    <span className="block text-xs font-black text-purple-400 uppercase tracking-widest mb-1 print:text-black">Primary Mechanism</span>
                     <span className="text-xs font-bold text-slate-300 print:text-black">5-HT2A Agonism (Psychedelic)</span>
                   </div>
                 </div>
@@ -219,14 +219,14 @@ const ProtocolDetail: React.FC = () => {
                 {/* Setting & Support Big Blocks */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-3xl space-y-2 print:bg-gray-50 print:border-gray-200">
-                    <div className="flex items-center gap-3 text-slate-3000 mb-2 print:text-black">
+                    <div className="flex items-center gap-3 text-slate-500 mb-2 print:text-black">
                       <span className="material-symbols-outlined text-xl">{settingIcon}</span>
                       <span className="text-sm font-bold uppercase tracking-widest">Environment</span>
                     </div>
                     <p className="text-xl font-bold print:text-black" style={{ color: '#8B9DC3' }}>{record.context?.setting || 'Not Specified'}</p>
                   </div>
                   <div className="p-6 bg-slate-900/50 border border-slate-800 rounded-3xl space-y-2 print:bg-gray-50 print:border-gray-200">
-                    <div className="flex items-center gap-3 text-slate-3000 mb-2 print:text-black">
+                    <div className="flex items-center gap-3 text-slate-500 mb-2 print:text-black">
                       <span className="material-symbols-outlined text-xl">group</span>
                       <span className="text-sm font-bold uppercase tracking-widest">Support Ratio</span>
                     </div>
@@ -237,7 +237,7 @@ const ProtocolDetail: React.FC = () => {
                 {/* The Timeline Bar */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-end px-1">
-                    <span className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Integration Timeline</span>
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Integration Timeline</span>
                     <span className="text-sm font-mono font-bold text-slate-300 print:text-black">Total Contact: {totalHours}h</span>
                   </div>
                   <div className="h-14 w-full flex rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-inner print:bg-gray-100 print:border-gray-300">
@@ -296,7 +296,7 @@ const ProtocolDetail: React.FC = () => {
 
                 {/* Subjective Difficulty Slider Viz */}
                 <div className="space-y-6 p-6 bg-slate-900/30 rounded-3xl border border-slate-800 flex flex-col justify-center print:bg-gray-50 print:border-gray-200">
-                  <h4 className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Subjective Difficulty</h4>
+                  <h4 className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Subjective Difficulty</h4>
                   <div className="flex items-baseline gap-2">
                     <span className="text-5xl font-black print:text-black" style={{ color: '#9DAEC8' }}>{record.experience?.difficultyScore || '—'}</span>
                     <span className="text-xl font-bold text-slate-600 print:text-black">/ 10</span>
@@ -357,7 +357,7 @@ const ProtocolDetail: React.FC = () => {
                     </ResponsiveContainer>
                   </div>
                   <div className="text-center">
-                    <p className="text-[11px] font-black text-slate-3000 uppercase tracking-widest print:text-black">
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest print:text-black">
                       Lower Score = Improvement (Remission &lt; 5)
                     </p>
                   </div>
@@ -375,7 +375,7 @@ const ProtocolDetail: React.FC = () => {
               <div className="space-y-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <label className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Protocol</label>
+                    <label className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Protocol</label>
                     <AdvancedTooltip content="Core pharmacological and identity parameters of the recorded intervention.">
                       <Info className="text-slate-600 hover:text-primary transition-colors cursor-help print:hidden" size={14} />
                     </AdvancedTooltip>
@@ -385,15 +385,15 @@ const ProtocolDetail: React.FC = () => {
 
                 <div className="space-y-4 pt-4 border-t border-slate-800/50 print:border-gray-300">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Dosage</span>
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Dosage</span>
                     <span className="text-lg font-bold text-slate-300 print:text-black">{record.protocol.dosage} {record.protocol.dosageUnit}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Route</span>
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Route</span>
                     <span className="text-lg font-bold text-slate-300 print:text-black">{record.protocol.route}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-3000 uppercase tracking-widest print:text-black">Date</span>
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest print:text-black">Date</span>
                     <span className="text-base font-mono font-bold text-slate-300 print:text-black">{record.protocol.startDate}</span>
                   </div>
                 </div>
@@ -427,7 +427,7 @@ const ProtocolDetail: React.FC = () => {
               <div className="space-y-8 relative z-10">
                 {/* Concomitant Meds */}
                 <div className="space-y-3">
-                  <label className="text-sm font-bold text-slate-3000 uppercase tracking-widest block print:text-black">Concomitant Meds</label>
+                  <label className="text-sm font-bold text-slate-500 uppercase tracking-widest block print:text-black">Concomitant Meds</label>
                   <div className="flex flex-col gap-3">
                     {record.context?.concomitantMeds && record.context.concomitantMeds.length > 0 ? (
                       record.context.concomitantMeds.map((med, i) => (
@@ -443,7 +443,7 @@ const ProtocolDetail: React.FC = () => {
                       ))
                     ) : (
                       <div className="p-4 bg-slate-900/30 border border-slate-800 rounded-xl text-center print:bg-white print:border-black">
-                        <span className="text-xs font-bold text-slate-3000 uppercase tracking-widest print:text-black">None Reported</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest print:text-black">None Reported</span>
                       </div>
                     )}
                   </div>
@@ -451,16 +451,16 @@ const ProtocolDetail: React.FC = () => {
 
                 {/* Adverse Events */}
                 <div className="space-y-3 pt-4 border-t border-slate-800/50 print:border-gray-300">
-                  <label className="text-sm font-bold text-slate-3000 uppercase tracking-widest block print:text-black">Adverse Events</label>
+                  <label className="text-sm font-bold text-slate-500 uppercase tracking-widest block print:text-black">Adverse Events</label>
                   {record.safetyEvents.length > 0 ? (
                     <div className="space-y-3">
                       {record.safetyEvents.map(ev => (
                         <div key={ev.id} className="p-5 bg-red-950/20 border border-red-900/50 rounded-2xl print:bg-white print:border-black">
                           <div className="flex justify-between items-start mb-2">
                             <span className="text-sm font-black text-red-400 uppercase print:text-black">{ev.type}</span>
-                            <span className="px-2 py-0.5 bg-red-900/40 rounded text-[11px] font-black text-red-200 uppercase tracking-widest print:bg-white print:border print:border-black print:text-black">Grade {ev.severity}</span>
+                            <span className="px-2 py-0.5 bg-red-900/40 rounded text-xs font-black text-red-200 uppercase tracking-widest print:bg-white print:border print:border-black print:text-black">Grade {ev.severity}</span>
                           </div>
-                          <p className="text-xs font-medium text-red-300/70 leading-relaxed print:text-black">Causality: {ev.causality}</p>
+                          <p className="text-sm font-medium text-red-300/70 leading-relaxed print:text-black">Causality: {ev.causality}</p>
                         </div>
                       ))}
                     </div>
@@ -486,7 +486,7 @@ const ProtocolDetail: React.FC = () => {
                 <span className="material-symbols-outlined text-primary">hub</span>
                 <h3 className="text-2xl font-black uppercase tracking-tighter" style={{ color: '#A8B5D1' }}>Cohort Matches</h3>
               </div>
-              <p className="text-slate-3000 text-sm font-bold tracking-widest uppercase">Global Research Registry: Hive Mind Intelligence</p>
+              <p className="text-slate-500 text-sm font-bold tracking-widest uppercase">Global Research Registry: Hive Mind Intelligence</p>
             </div>
             <div className="px-5 py-2.5 bg-primary/10 border border-primary/20 rounded-xl">
               <span className="text-xs font-black text-primary uppercase tracking-widest">Scanning {PATIENTS.length} Remote Nodes...</span>
@@ -507,21 +507,21 @@ const ProtocolDetail: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
-                      <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest block">Subject Reference</span>
+                      <span className="text-xs font-black text-slate-500 uppercase tracking-widest block">Subject Reference</span>
                       <span className="text-sm font-mono font-black text-slate-300 uppercase">{caseItem.demographics.patientHash?.substring(0, 8) || caseItem.id}</span>
                     </div>
-                    <div className="px-3 py-1 bg-slate-800 rounded-lg text-[11px] font-black text-slate-300">
+                    <div className="px-3 py-1 bg-slate-800 rounded-lg text-xs font-black text-slate-300">
                       {caseItem.demographics.age}yr {caseItem.demographics.sex.charAt(0)}
                     </div>
                   </div>
 
                   <div className="pt-4 border-t border-slate-800/50 space-y-3">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold text-slate-3000 uppercase tracking-widest">Protocol</span>
+                      <span className="font-bold text-slate-500 uppercase tracking-widest">Protocol</span>
                       <span className="font-black text-slate-300">{caseItem.protocol.substance}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold text-slate-3000 uppercase tracking-widest">Clinical Outcome</span>
+                      <span className="font-bold text-slate-500 uppercase tracking-widest">Clinical Outcome</span>
                       <span className={`font-black ${caseItem.status === 'Completed' ? 'text-clinical-green' : 'text-primary'}`}>
                         {caseItem.outcomes[caseItem.outcomes.length - 1]?.interpretation.split(':')[1] || caseItem.status}
                       </span>
@@ -536,14 +536,14 @@ const ProtocolDetail: React.FC = () => {
               <div className="size-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-600 transition-colors group-hover:text-primary">
                 <span className="material-symbols-outlined">search</span>
               </div>
-              <span className="text-xs font-black text-slate-3000 uppercase tracking-widest">Explore Full Registry</span>
+              <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Explore Full Registry</span>
             </div>
           </div>
         </section>
       </PageContainer>
 
       {/* Print Footer */}
-      <div className="hidden print:block fixed bottom-0 left-0 w-full text-center text-[11px] font-mono font-bold uppercase text-black pb-4">
+      <div className="hidden print:block fixed bottom-0 left-0 w-full text-center text-xs font-mono font-bold uppercase text-black pb-4">
         Confidential Clinical Dossier • PPN Node 0x7 • Do Not Distribute
       </div>
     </div >

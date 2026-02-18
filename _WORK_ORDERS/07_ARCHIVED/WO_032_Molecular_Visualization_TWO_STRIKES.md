@@ -4,10 +4,10 @@ title: Implement High-Performance Molecular Visualization
 type: FEATURE
 category: Feature
 priority: HIGH
-status: 03_BUILD
+status: 01_TRIAGE
 created: 2026-02-15T00:31:20-08:00
 requested_by: Trevor Calton
-assigned_to: BUILDER
+assigned_to: LEAD
 estimated_complexity: 7/10
 failure_count: 2
 triage_reason: Component created but never integrated or tested

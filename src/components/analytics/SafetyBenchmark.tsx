@@ -18,7 +18,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         return (
             <div className="bg-slate-900 border border-slate-700 rounded px-3 py-2">
                 <p className="text-slate-300 text-sm font-medium">{payload[0].payload.name}</p>
-                <p className="text-slate-300 text-xs">{payload[0].value} events per 1000 patients</p>
+                <p className="text-slate-300 text-sm">{payload[0].value} events per 1000 patients</p>
             </div>
         );
     }
@@ -54,7 +54,7 @@ export default function SafetyBenchmark() {
             </div>
 
             <div className="mt-4 pt-4 border-t border-slate-800">
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-sm text-slate-300 leading-relaxed">
                     Your adverse event rate is <span className="text-emerald-400 font-semibold">67% lower</span> than national average.
                 </p>
             </div>

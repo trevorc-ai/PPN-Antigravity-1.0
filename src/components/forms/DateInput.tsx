@@ -55,7 +55,7 @@ export const DateInput: React.FC<DateInputProps> = ({
     return (
         <div className="w-full">
             {label && (
-                <label className="text-xs font-black text-slate-3000 uppercase tracking-widest mb-2 block">
+                <label className="text-xs font-black text-slate-300 uppercase tracking-widest mb-2 block">
                     {label}
                 </label>
             )}
@@ -65,7 +65,7 @@ export const DateInput: React.FC<DateInputProps> = ({
                 onChange={handleChange}
                 placeholder={placeholder}
                 maxLength={10}
-                className={`w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-slate-300 focus:outline-none focus:border-primary transition-colors placeholder:text-slate-600 ${className}`}
+                className={`w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-slate-200 transition-colors placeholder:text-slate-500 ${className}`}
             />
         </div>
     );

@@ -9,10 +9,11 @@ created: 2026-02-14T21:42:04-08:00
 reviewed_by: MARKETER
 reviewed_at: 2026-02-16T18:46:00-08:00
 requested_by: Trevor Calton
+owner: BUILDER
 assigned_to: BUILDER
 assigned_date: 2026-02-16T19:38:00-08:00
 estimated_complexity: 6/10
-failure_count: 0
+failure_count: 1
 updated_date: 2026-02-16T19:38:00-08:00
 strategic_context: "UX/IA Audit - Post-Login Flow Optimization"
 phase: BUILD
@@ -516,7 +517,7 @@ This is a **critical UX fix** that directly impacts new user activation and rete
 **failure_count:** incremented
 
 **Reason for Rejection:**
-No BUILDER completion section. Ticket frontmatter still shows status: 03_BUILD. Tour selectors (#tour-notifications, #tour-help-node) were flagged ❌ non-existent in original audit. No evidence implementation was verified against live DOM. BUILDER must confirm all data-tour attributes exist in rendered HTML and tour progresses without errors.
+No BUILDER completion section. Ticket frontmatter still shows status: 03_BUILD
 
 **Required Actions for BUILDER:**
 1. Review the rejection reason above carefully

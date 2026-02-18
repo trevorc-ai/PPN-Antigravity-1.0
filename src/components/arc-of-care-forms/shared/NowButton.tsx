@@ -67,7 +67,7 @@ export const RelativeTimeDisplay: React.FC<RelativeTimeDisplayProps> = ({
         : `${minutes} minute${minutes !== 1 ? 's' : ''}`;
 
     return (
-        <p className="text-xs text-slate-300 mt-1">
+        <p className="text-sm text-slate-300 mt-1">
             ({timeString} {label})
         </p>
     );

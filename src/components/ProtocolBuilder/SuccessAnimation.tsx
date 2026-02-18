@@ -40,7 +40,7 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({ onComplete, 
         </div>
 
         <h2 className="text-3xl font-black text-slate-300 mt-8 tracking-tighter uppercase">{message}</h2>
-        <p className="text-emerald-400 font-mono tracking-widest text-xs mt-2">{subMessage}</p>
+        <p className="text-emerald-400 font-mono tracking-widest text-sm mt-2">{subMessage}</p>
 
       </div>
     </div>

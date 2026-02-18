@@ -79,13 +79,13 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                 <div className="bg-[#0c0f16] border border-white/10 rounded-xl p-4 shadow-2xl">
                     <p className="text-sm font-black text-slate-300 mb-2">{data.transition}</p>
                     <div className="space-y-1">
-                        <p className="text-xs text-slate-300">
+                        <p className="text-sm text-slate-300">
                             <span className="font-bold text-primary">Median: {data.medianDays} days</span>
                         </p>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-sm text-slate-300">
                             <span className="font-bold text-emerald-400">75th percentile: {data.p75Days} days</span>
                         </p>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-sm text-slate-300">
                             Based on {data.nPatients} patient{data.nPatients !== 1 ? 's' : ''}
                         </p>
                     </div>
@@ -121,7 +121,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-4xl text-red-400">error</span>
                     <div>
                         <p className="text-sm font-bold text-red-400 mb-1">Error Loading Data</p>
-                        <p className="text-xs text-slate-300">{error}</p>
+                        <p className="text-sm text-slate-300">{error}</p>
                     </div>
                 </div>
             </div>
@@ -157,12 +157,12 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                     <span className="material-symbols-outlined text-3xl text-primary">schedule</span>
                     <div>
                         <h3 className="text-xl font-black text-slate-300">Time to Next Step</h3>
-                        <p className="text-xs text-slate-300 font-medium">Median days between treatment stages</p>
+                        <p className="text-sm text-slate-300 font-medium">Median days between treatment stages</p>
                     </div>
                 </div>
 
                 <div className="text-right">
-                    <p className="text-[11px] font-black text-slate-3000 tracking-widest uppercase">Avg Median</p>
+                    <p className="text-sm font-black text-slate-500 tracking-widest uppercase">Avg Median</p>
                     <p className="text-2xl font-black text-primary">{Math.round(avgMedianDays * 10) / 10} days</p>
                 </div>
             </div>
@@ -171,8 +171,8 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
             <div className="mb-4 px-4 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-start gap-3">
                 <span className="material-symbols-outlined text-indigo-400 text-xl">info</span>
                 <div>
-                    <p className="text-xs font-bold text-indigo-400 mb-1">Small-Cell Suppression Active</p>
-                    <p className="text-xs text-slate-300">
+                    <p className="text-sm font-bold text-indigo-400 mb-1">Small-Cell Suppression Active</p>
+                    <p className="text-sm text-slate-300">
                         Only showing transitions with ≥10 patients. Some transitions may be hidden to protect privacy.
                     </p>
                 </div>
@@ -216,7 +216,7 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
 
             {/* Legend */}
             <div className="mt-6 pt-6 border-t border-slate-800">
-                <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-3">Speed Indicators</p>
+                <p className="text-sm font-black text-slate-500 tracking-widest uppercase mb-3">Speed Indicators</p>
                 <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2">
                         <div className="size-3 rounded-full bg-emerald-500"></div>
@@ -241,11 +241,11 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.map((transition) => (
                     <div key={`${transition.fromStage}-${transition.toStage}`} className="text-center p-3 bg-slate-900/50 rounded-xl border border-slate-800">
-                        <p className="text-[10px] font-black text-slate-3000 tracking-widest uppercase mb-1">
+                        <p className="text-sm font-black text-slate-500 tracking-widest uppercase mb-1">
                             {transition.transition}
                         </p>
                         <p className="text-lg font-black text-slate-300">{transition.medianDays}d</p>
-                        <p className="text-[10px] text-slate-300 font-medium">
+                        <p className="text-sm text-slate-300 font-medium">
                             P75: {transition.p75Days}d
                         </p>
                     </div>

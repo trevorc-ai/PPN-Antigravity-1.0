@@ -22,13 +22,13 @@ const IngestionHub: React.FC = () => {
             <span className="material-symbols-outlined text-4xl">upload_file</span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-slate-300">Registry Upload</h1>
           </div>
-          <p className="text-slate-3000 text-xs font-black uppercase tracking-[0.3em] ml-1">Institutional Data Contribution // Registry Node 0x7</p>
+          <p className="text-slate-500 text-sm font-black uppercase tracking-[0.3em] ml-1">Institutional Data Contribution // Registry Node 0x7</p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 bg-slate-900/60 border border-slate-800 rounded-xl flex items-center gap-3 shadow-xl backdrop-blur-md">
             <div className="size-2 rounded-full bg-clinical-green animate-pulse"></div>
-            <span className="text-[11px] font-mono font-bold text-slate-300 uppercase tracking-widest">Uplink: Nominal</span>
+            <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-widest">Uplink: Nominal</span>
           </div>
         </div>
       </Section>
@@ -45,7 +45,7 @@ const IngestionHub: React.FC = () => {
           <div className="space-y-6 relative z-10">
             <div className="space-y-1">
               <h2 className="text-2xl font-black text-slate-300 tracking-tight">Legacy Chart OCR</h2>
-              <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Digital extraction from physical clinical records</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Digital extraction from physical clinical records</p>
             </div>
 
             <div
@@ -59,7 +59,7 @@ const IngestionHub: React.FC = () => {
               </div>
               <div className="text-center">
                 <p className="text-sm font-black text-slate-300">Drop PDF or Images here</p>
-                <p className="text-[11px] text-slate-600 font-bold uppercase mt-1">or click to browse local archive</p>
+                <p className="text-sm text-slate-600 font-bold uppercase mt-1">or click to browse local archive</p>
               </div>
               <button className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-sm font-black text-slate-300 rounded-xl uppercase tracking-widest transition-all">
                 Select Files
@@ -68,7 +68,7 @@ const IngestionHub: React.FC = () => {
 
             <div className="p-4 bg-slate-900/40 border border-slate-800 rounded-2xl flex items-start gap-3">
               <span className="material-symbols-outlined text-primary text-xl">info</span>
-              <p className="text-[11px] font-bold text-slate-3000 leading-relaxed uppercase tracking-tight">
+              <p className="text-sm font-bold text-slate-500 leading-relaxed uppercase tracking-tight">
                 Privacy Guard: All uploaded documents are automatically de-identified at the edge before storage. PHI is never cached in cleartext.
               </p>
             </div>
@@ -84,7 +84,7 @@ const IngestionHub: React.FC = () => {
           <div className="space-y-8 relative z-10 h-full flex flex-col">
             <div className="space-y-1">
               <h2 className="text-2xl font-black text-slate-300 tracking-tight">Neural Dictation</h2>
-              <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Real-time voice-to-protocol synthesis</p>
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Real-time voice-to-protocol synthesis</p>
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center space-y-10 py-4">
@@ -96,7 +96,7 @@ const IngestionHub: React.FC = () => {
                   onClick={() => setIsRecording(!isRecording)}
                   className={`size-32 rounded-full border-4 flex items-center justify-center transition-all duration-500 relative z-10 shadow-2xl ${isRecording
                     ? 'bg-red-500 border-red-400/50 shadow-red-500/30'
-                    : 'bg-slate-900 border-slate-800 hover:border-primary/50 text-slate-3000 hover:text-primary'
+                    : 'bg-slate-900 border-slate-800 hover:border-primary/50 text-slate-500 hover:text-primary'
                     }`}
                 >
                   <span className={`material-symbols-outlined text-5xl ${isRecording ? 'animate-bounce' : ''}`}>
@@ -109,7 +109,7 @@ const IngestionHub: React.FC = () => {
                 <p className="text-sm font-black text-slate-300 uppercase tracking-widest">
                   {isRecording ? 'Capturing Session Audio...' : 'Initialize Dictation'}
                 </p>
-                <p className="text-[11px] text-slate-600 font-bold uppercase tracking-[0.3em]">Institutional HIPAA Buffer Active</p>
+                <p className="text-sm text-slate-600 font-bold uppercase tracking-[0.3em]">Institutional HIPAA Buffer Active</p>
               </div>
             </div>
 
@@ -133,13 +133,13 @@ const IngestionHub: React.FC = () => {
             <span className="material-symbols-outlined text-primary">analytics</span>
             <h3 className="text-base font-black text-slate-300 tracking-tight">Upload Queue</h3>
           </div>
-          <span className="text-[11px] font-mono text-slate-3000 uppercase tracking-widest">Sync_ID: 0x77AF</span>
+          <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">Sync_ID: 0x77AF</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-[11px] font-black text-slate-3000 uppercase tracking-[0.2em] border-b border-slate-800/50">
+              <tr className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
                 <th className="px-8 py-5">Job Reference</th>
                 <th className="px-8 py-5">Source Node</th>
                 <th className="px-8 py-5">Ingestion Type</th>
@@ -161,17 +161,17 @@ const IngestionHub: React.FC = () => {
                       <span className="material-symbols-outlined text-sm text-primary">
                         {job.type.includes('OCR') ? 'document_scanner' : 'mic'}
                       </span>
-                      <span className="text-[11px] font-black text-slate-3000 uppercase tracking-widest">{job.type}</span>
+                      <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{job.type}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-2">
                       <div className={`size-1.5 rounded-full ${job.status === 'Processing' ? 'bg-primary animate-pulse' : job.status === 'Verifying' ? 'bg-accent-amber' : 'bg-slate-700'}`}></div>
-                      <span className={`text-[11px] font-black uppercase tracking-tighter ${job.status === 'Processing' ? 'text-primary' : 'text-slate-3000'}`}>{job.status}</span>
+                      <span className={`text-xs font-black uppercase tracking-tighter ${job.status === 'Processing' ? 'text-primary' : 'text-slate-500'}`}>{job.status}</span>
                     </div>
                   </td>
                   <td className="px-8 py-5 text-right">
-                    <span className="text-[11px] font-mono text-slate-600">{job.time}</span>
+                    <span className="text-xs font-mono text-slate-600">{job.time}</span>
                   </td>
                 </tr>
               ))}
@@ -180,7 +180,7 @@ const IngestionHub: React.FC = () => {
         </div>
 
         <div className="px-8 py-6 bg-slate-900/10 border-t border-slate-800 flex justify-between items-center">
-          <p className="text-[11px] font-bold text-slate-600 uppercase tracking-widest italic">
+          <p className="text-sm font-bold text-slate-600 uppercase tracking-widest italic">
             Note: Records remain in pending state for 24h allowing for practitioner manual review before final registry sync.
           </p>
           <button className="text-sm font-black text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2">

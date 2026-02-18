@@ -96,7 +96,7 @@ export const DeviceRegistrationModal: React.FC<DeviceRegistrationModalProps> = (
                             <h2 id="device-modal-title" className="text-xl font-black text-slate-300">
                                 Register New Device
                             </h2>
-                            <p className="text-xs text-slate-300">
+                            <p className="text-sm text-slate-300">
                                 Add a new wearable device for vital signs tracking
                             </p>
                         </div>

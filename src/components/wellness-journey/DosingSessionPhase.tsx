@@ -5,7 +5,7 @@ import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import SessionTimeline from '../arc-of-care/SessionTimeline';
 import RealTimeVitalsPanel from '../arc-of-care/RealTimeVitalsPanel';
 
-interface DosingSessionPhaseProps {
+interface TreatmentPhaseProps {
     journey: any;
 }
 
@@ -58,7 +58,7 @@ const MOCK_VITALS = {
     timestamp: new Date('2025-10-15T11:15:00'),
 };
 
-export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey }) => {
+export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey }) => {
     const [showAI, setShowAI] = useState(false);
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
     const [showMetricsInfo, setShowMetricsInfo] = useState(false);
@@ -102,8 +102,8 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
             <div className="bg-gradient-to-br from-amber-500/10 to-amber-900/10 border-2 border-amber-500/50 rounded-3xl p-6 relative">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <Activity className="w-6 h-6 text-amber-400" />
-                        <h3 className="text-xl font-black text-amber-300">Session Details</h3>
+                        <Activity className="w-8 h-8 text-amber-400" />
+                        <h3 className="text-2xl font-black text-amber-100">Session Details</h3>
                     </div>
                     <button
                         onClick={() => setShowSessionInfo(!showSessionInfo)}
@@ -129,7 +129,7 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                     <div className="p-4 bg-slate-900/40 rounded-xl space-y-2">
                         <p className="text-slate-300 font-semibold text-sm">{journey.session.substance} {journey.session.dosage}</p>
                         <p className="text-slate-300 text-sm">Session #{journey.session.sessionNumber}</p>
-                        <p className="text-slate-500 text-sm">Oct 15, 2025 • 8 hours</p>
+                        <p className="text-slate-400 text-sm">Oct 15, 2025 • 8 hours</p>
                     </div>
 
                     {/* Safety Info */}
@@ -145,9 +145,9 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <Clock className="w-6 h-6 text-blue-400" />
-                        <h3 className="text-lg font-bold text-slate-300">Session Timeline</h3>
-                        <span className="text-xs text-slate-500 bg-slate-800/50 px-2 py-1 rounded-full">
+                        <Clock className="w-8 h-8 text-blue-400" />
+                        <h3 className="text-2xl font-bold text-slate-300">Session Timeline</h3>
+                        <span className="text-sm text-slate-400 bg-slate-800/50 px-2 py-1 rounded-full">
                             {MOCK_TIMELINE_EVENTS.length} events
                         </span>
                     </div>
@@ -155,9 +155,9 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                         <AdvancedTooltip content="Export complete session timeline as PDF for clinical records and insurance documentation." tier="micro">
                             <button
                                 onClick={handleExportTimeline}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-xs rounded-lg transition-colors"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-sm rounded-lg transition-colors"
                             >
-                                <Download className="w-3.5 h-3.5" />
+                                <Download className="w-4 h-4" />
                                 Export PDF
                             </button>
                         </AdvancedTooltip>
@@ -181,9 +181,9 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <Heart className="w-6 h-6 text-red-400" />
-                        <h3 className="text-lg font-bold text-slate-300">Vital Signs</h3>
-                        <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
+                        <Heart className="w-8 h-8 text-red-400" />
+                        <h3 className="text-2xl font-bold text-slate-300">Vital Signs</h3>
+                        <span className="text-sm text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
                             ● Live
                         </span>
                     </div>
@@ -191,9 +191,9 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                         <AdvancedTooltip content="Export all vital sign readings as CSV for EHR integration and compliance records." tier="micro">
                             <button
                                 onClick={handleExportVitals}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-xs rounded-lg transition-colors"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-sm rounded-lg transition-colors"
                             >
-                                <Download className="w-3.5 h-3.5" />
+                                <Download className="w-4 h-4" />
                                 Export CSV
                             </button>
                         </AdvancedTooltip>
@@ -216,7 +216,7 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
             {/* Experience Metrics */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 relative">
                 <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-lg font-bold text-slate-300">Experience Metrics</h3>
+                    <h3 className="text-2xl font-bold text-slate-300">Experience Metrics</h3>
                     <button
                         onClick={() => setShowMetricsInfo(!showMetricsInfo)}
                         className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700/50 hover:bg-slate-700/70 transition-colors"
@@ -351,11 +351,11 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                 className="w-full p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-center justify-between hover:bg-blue-500/20 transition-colors group"
             >
                 <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded bg-blue-500/20 flex items-center justify-center">
-                        <span className="text-blue-400 text-xs font-bold">AI</span>
+                    <div className="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center">
+                        <span className="text-blue-400 text-sm font-bold">AI</span>
                     </div>
-                    <span className="text-blue-300 text-sm font-semibold">Outcome Prediction</span>
-                    <span className="text-blue-400 text-sm">(1,247 patients)</span>
+                    <span className="text-blue-200 text-base font-semibold">Outcome Prediction</span>
+                    <span className="text-blue-300 text-sm">(1,247 patients)</span>
                 </div>
                 {showAI ? <ChevronUp className="w-4 h-4 text-blue-400" /> : <ChevronDown className="w-4 h-4 text-blue-400 group-hover:animate-bounce" />}
             </button>
@@ -375,7 +375,7 @@ export const DosingSessionPhase: React.FC<DosingSessionPhaseProps> = ({ journey 
                     <div className="p-3 bg-slate-900/40 rounded-lg">
                         <p className="text-sm text-slate-300 mb-1">Integration Pattern</p>
                         <p className="text-blue-400 text-sm font-bold">Standard protocol (6 sessions)</p>
-                        <p className="text-slate-500 text-sm mt-1">CEQ 30-40: 78% success</p>
+                        <p className="text-slate-400 text-sm mt-1">CEQ 30-40: 78% success</p>
                     </div>
                     <AdvancedTooltip
                         content="Historical data for context only. Provider determines treatment approach."

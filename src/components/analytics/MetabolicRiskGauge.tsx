@@ -61,7 +61,7 @@ export default function MetabolicRiskGauge() {
                     <Gauge className="text-indigo-500" />
                     Metabolic Risk Gauge
                 </h2>
-                <p className="text-xs text-slate-300 font-medium mt-1">
+                <p className="text-sm text-slate-300 font-medium mt-1">
                     CYP450 Genomic Safety Check.
                 </p>
             </div>
@@ -69,7 +69,7 @@ export default function MetabolicRiskGauge() {
             {/* CONTROLS */}
             <div className="grid grid-cols-2 gap-4 relative z-10">
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Protocol Substance</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Protocol Substance</label>
                     <div className="relative">
                         <select
                             value={selectedSubstance}
@@ -80,12 +80,12 @@ export default function MetabolicRiskGauge() {
                             <option value="Psilocybin">Psilocybin (COMP360)</option>
                             <option value="Ketamine">Ketamine (Racemic)</option>
                         </select>
-                        <Pill className="absolute right-3 top-2.5 w-4 h-4 text-slate-3000 pointer-events-none" />
+                        <Pill className="absolute right-3 top-2.5 w-4 h-4 text-slate-500 pointer-events-none" />
                     </div>
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Genomic Status</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Genomic Status</label>
                     <div className="relative">
                         <select
                             value={selectedStatus}
@@ -99,7 +99,7 @@ export default function MetabolicRiskGauge() {
                             <option value="Rapid">Rapid Metabolizer (RM)</option>
                             <option value="Ultra-Rapid">Ultra-Rapid (UM)</option>
                         </select>
-                        <Dna className="absolute right-3 top-2.5 w-4 h-4 text-slate-3000 pointer-events-none" />
+                        <Dna className="absolute right-3 top-2.5 w-4 h-4 text-slate-500 pointer-events-none" />
                     </div>
                 </div>
             </div>
@@ -128,7 +128,7 @@ export default function MetabolicRiskGauge() {
                     <div className={`text-4xl font-black tracking-tighter transition-colors duration-500`} style={{ color: activeRule.color }}>
                         {activeRule.riskLevel}
                     </div>
-                    <div className="text-xs font-bold text-slate-3000 uppercase tracking-widest">
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">
                         Toxicity Risk
                     </div>
                 </div>
@@ -151,10 +151,10 @@ export default function MetabolicRiskGauge() {
                             }`}>
                             Clinical Guidance
                         </h4>
-                        <p className="text-xs text-slate-300 font-medium leading-relaxed">
+                        <p className="text-sm text-slate-300 font-medium leading-relaxed">
                             {activeRule.recommendation}
                         </p>
-                        <p className="text-xs text-slate-3000 mt-2 font-mono">
+                        <p className="text-sm text-slate-500 mt-2 font-mono">
                             Mechanism: {activeRule.mechanism}
                         </p>
                     </div>

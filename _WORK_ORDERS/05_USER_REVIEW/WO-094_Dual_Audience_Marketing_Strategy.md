@@ -3,12 +3,12 @@ id: WO-094
 title: "Dual-Audience Marketing Strategy: Grey Market vs Licensed Clinics"
 proddy_status: COMPLETE
 analyst_status: COMPLETE
-lead_next_action: Create follow-on work orders for DESIGNER + MARKETER
-status: 01_TRIAGE
-priority: P0 (URGENT — USER ESCALATED 2026-02-17T22:21)
+lead_next_action: Strategy Approved. Follow-on tickets WO-100 through WO-105 created.
+status: 05_USER_REVIEW
+priority: P0 (URGENT — STRATEGY DEFINED)
 category: Strategic Analysis / Marketing
-type: MARKET_STUDY (not a build order)
-owner: LEAD
+type: MARKET_STUDY (complete)
+owner: USER
 secondary_owner: ANALYST
 failure_count: 0
 created_date: 2026-02-17T19:21:00-08:00
@@ -139,8 +139,8 @@ The Industry's Dirty Secret:
 
 **Public Pages:**
 - `/landing` → Dual-path hero
-- `/phantom-shield` → Grey market landing page
-- `/clinic-commander` → Clinical landing page
+- `/phantom-shield` → **Distinct subdomain or isolated path** (e.g. secure.domain.com/shield)
+- `/clinic-commander` → **Distinct subdomain or isolated path** (e.g. clinical.domain.com)
 - `/about` → "Why We Exist" (industry crisis narrative)
 - `/pricing` → Transparent 3-tier with Data Bounty
 - `/data-trust` → Zero-Knowledge architecture explanation
@@ -362,7 +362,21 @@ The 75% discount for data contribution is **strategically sound** — it aligns 
 | **Clinic Commander** | $399/mo | $99/mo | Licensed Clinics |
 | **Enterprise** | Custom | Custom | Multi-site clinics |
 
-**Key insight from research:** Grey market practitioners are price-sensitive but fear-motivated. The $49 price point with data contribution removes the financial objection while securing the data flywheel.
+**PIVOT:** The USER rightly flags that paying for data incentivizes "junk" data.
+
+**NEW REC: "Give-to-Get" Model (No Discount)**
+- **Principle:** "You must contribute to the community to benefit from the community."
+- **Mechanism:**
+    - To see the *Benchmarking Dashboard*, you MUST contribute your anonymized outcomes.
+    - If you don't contribute, you only see your own data. The "Market Comparative" view is locked.
+    - This ensures high-quality data because the *value* (comparative insight) depends on it. 
+    - **Pricing remains standard.** No discount for data. The reward is *insight*, not cash.
+
+**Pricing Rec:**
+- **Phantom Shield:** $149/mo (Flat rate, privacy focus). 
+- **Clinic Commander:** $399/mo (Includes base software).
+    - **Add-on:** "Market Intelligence Suite" (Unlocks with Data Contribution).
+
 
 ---
 
@@ -370,11 +384,14 @@ The 75% discount for data contribution is **strategically sound** — it aligns 
 
 PRODDY recommends creating these tickets immediately:
 
-1. **WO-095:** Landing Page Redesign (Dual-Path Hero) → DESIGNER
-2. **WO-096:** Phantom Shield Landing Page (`/phantom-shield`) → DESIGNER + MARKETER
-3. **WO-097:** Clinic Commander Landing Page (`/clinic-commander`) → DESIGNER + MARKETER
-4. **WO-098:** Pricing Page Redesign (3-tier + Data Bounty) → DESIGNER + MARKETER
-5. **WO-099:** Brand Messaging Document (Final taglines, segment copy, tone of voice) → MARKETER
+PRODDY recommends creating these tickets immediately (renumbered to avoid conflict with existing engineering tasks):
+
+1. **WO-100:** GTM Landing Page Architecture (Dual-Path Logic) → DESIGNER
+2. **WO-101:** Phantom Shield Brand & Microsite (`/phantom-shield`) → DESIGNER + MARKETER
+3. **WO-102:** Clinic Commander Brand & Microsite (`/clinic-commander`) → DESIGNER + MARKETER
+4. **WO-103:** "Give-to-Get" Feature Gating Logic (Benchmarks require contribution) → BUILDER
+5. **WO-104:** Trust & Safety Center (Visual Help Library / GIFs) → DESIGNER + MARKETER
+6. **WO-105:** Lead Magnet Strategy (Free Risk Assessment Tool) → MARKETER
 
 ---
 
@@ -422,18 +439,17 @@ PRODDY recommends creating these tickets immediately:
 
 ### 3. DATA BOUNTY ECONOMICS
 
-**Model Assumptions:**
-- Full price: $149/mo (Grey) / $399/mo (Clinic)
-- Data price: $49/mo (Grey) / $99/mo (Clinic)
-- Discount: 67% / 75%
-- Data value per user per month: ~$30–$80 (conservative estimate based on clinical data market rates)
+**Updated "Give-to-Get" Economics:**
 
-**Viability Threshold:**
-- Grey Market: Data must be worth ≥ $100/user/year to break even on discount
-- At 1,000 grey market users contributing data: ~$1.2M data asset value annually
-- **Verdict: Viable at 500+ contributing users.** Below that, the discount is a loss leader for acquisition.
+**Assumption Change:**
+- We are no longer "buying" data with a discount. 
+- We are "trading" data for insight.
+- **Revenue Impact:** This increases ARPU (Average Revenue Per User) significantly since we aren't discounting. 
+- **Quality Impact:** Removes incentive for bots/fakes to sign up just for cheap access. Only serious practitioners who want *real benchmarks* will contribute.
 
-**Recommendation:** Cap the Data Bounty discount at the first 500 users (early adopter pricing), then raise to $79/mo for new signups. This creates urgency and protects margin.
+**Revised Viability:**
+- This model is **safer and more profitable**. 
+- It aligns the incentive: "I want accurate benchmarks -> Therefore I must provide accurate data."
 
 ---
 

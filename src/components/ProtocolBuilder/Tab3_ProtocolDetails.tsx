@@ -207,7 +207,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                         <p className="text-sm font-medium text-[#f8fafc]">
                             I verify that informed consent has been obtained and is on file.
                         </p>
-                        <p className="text-xs text-[#94a3b8] mt-1">
+                        <p className="text-sm text-[#94a3b8] mt-1">
                             Required by IRB protocol
                         </p>
                     </div>

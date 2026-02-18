@@ -105,7 +105,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                 </div>
                 <div>
                     <h3 className="text-lg font-black text-slate-300">Adverse Event Log</h3>
-                    <p className="text-xs text-slate-500 uppercase tracking-widest">Phase 2 — Session Safety Documentation</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 2 — Session Safety Documentation</p>
                 </div>
             </div>
 
@@ -132,7 +132,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
 
             {/* Severity */}
             <div>
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Severity</p>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Severity</p>
                 <div className="grid grid-cols-3 gap-2">
                     {(Object.entries(SEVERITY_CONFIG) as [AdverseEventData['severity'], typeof SEVERITY_CONFIG[keyof typeof SEVERITY_CONFIG]][]).map(([key, cfg]) => (
                         <button
@@ -153,7 +153,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                         </button>
                     ))}
                 </div>
-                <p className="text-xs text-slate-500 mt-2 italic">
+                <p className="text-sm text-slate-500 mt-2 italic">
                     {SEVERITY_CONFIG[form.severity].description}
                 </p>
             </div>
@@ -217,7 +217,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                     <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                     <div>
                         <p className="text-sm font-bold text-red-400">Severe Event — Supervisor Notification Required</p>
-                        <p className="text-xs text-red-300/70 mt-1">Document supervisor acknowledgment separately in the Red Alert panel.</p>
+                        <p className="text-sm text-red-300/70 mt-1">Document supervisor acknowledgment separately in the Red Alert panel.</p>
                     </div>
                 </div>
             )}

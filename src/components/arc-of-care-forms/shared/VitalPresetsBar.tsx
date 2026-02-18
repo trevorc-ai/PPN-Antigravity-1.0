@@ -57,7 +57,7 @@ export const VitalPresetsBar: React.FC<VitalPresetsBarProps> = ({ onPresetSelect
 
     return (
         <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4">
-            <p className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">
+            <p className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">
                 Quick Entry Presets
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -100,7 +100,7 @@ export const VitalPresetsBar: React.FC<VitalPresetsBarProps> = ({ onPresetSelect
                     );
                 })}
             </div>
-            <p className="text-xs text-slate-500 mt-3">
+            <p className="text-sm text-slate-400 mt-3">
                 💡 Click a preset to auto-fill all vital signs. You can fine-tune values after.
             </p>
         </div>

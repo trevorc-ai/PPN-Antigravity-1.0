@@ -84,7 +84,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
                     className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 text-center font-bold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed ${getStatusColor()}`}
                 />
                 {unit && (
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none">
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">
                         {unit}
                     </span>
                 )}

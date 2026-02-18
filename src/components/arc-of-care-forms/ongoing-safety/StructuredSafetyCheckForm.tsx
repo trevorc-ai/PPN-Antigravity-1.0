@@ -228,7 +228,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             </button>
                         </div>
                         {data.new_adverse_events && (
-                            <p className="text-xs text-yellow-400 mt-2">→ Complete Adverse Event Report</p>
+                            <p className="text-sm text-yellow-400 mt-2">→ Complete Adverse Event Report</p>
                         )}
                     </FormField>
 
@@ -256,7 +256,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             </button>
                         </div>
                         {data.medication_changes && (
-                            <p className="text-xs text-yellow-400 mt-2">→ Update Medications list</p>
+                            <p className="text-sm text-yellow-400 mt-2">→ Update Medications list</p>
                         )}
                     </FormField>
                 </div>

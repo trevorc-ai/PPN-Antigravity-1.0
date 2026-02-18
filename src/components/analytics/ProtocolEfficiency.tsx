@@ -88,7 +88,7 @@ export default function ProtocolEfficiency() {
                         <Calculator className="text-indigo-500" />
                         Protocol ROI Engine
                     </h2>
-                    <p className="text-xs text-slate-300 font-medium mt-1">
+                    <p className="text-sm text-slate-300 font-medium mt-1">
                         Financial Efficiency & Margin Analysis.
                     </p>
                 </div>
@@ -98,7 +98,7 @@ export default function ProtocolEfficiency() {
                         <DollarSign className="w-5 h-5 text-indigo-400" />
                     </div>
                     <div className="flex-1">
-                        <label className="text-xs font-bold text-slate-3000 uppercase tracking-widest block mb-1" title="Adjust the estimated hourly operational cost to see impact on margin">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1" title="Adjust the estimated hourly operational cost to see impact on margin">
                             Est. Hourly Overhead: <span className="text-slate-300">${overhead}</span>
                         </label>
                         <input
@@ -169,7 +169,7 @@ export default function ProtocolEfficiency() {
                         <p className="text-3xl font-black text-slate-300 tracking-tight">
                             ${totalPotentialProfit.toLocaleString()}
                         </p>
-                        <p className="text-xs text-indigo-400/60 font-medium mt-1">
+                        <p className="text-sm text-indigo-400/60 font-medium mt-1">
                             Total Net Profit (Single Run of All Protocols)
                         </p>
                     </div>
@@ -180,7 +180,7 @@ export default function ProtocolEfficiency() {
                                     <div className={`text-xs font-black w-4 text-slate-600`}>#{i + 1}</div>
                                     <div>
                                         <div className="text-xs font-bold text-slate-300">{p.name}</div>
-                                        <div className="text-xs text-slate-3000">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
+                                        <div className="text-xs text-slate-500">{p.hours} hrs • Margin: {((p.profit / p.revenue) * 100).toFixed(0)}%</div>
                                     </div>
                                 </div>
                                 <div className={`text-xs font-mono font-bold ${p.profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>

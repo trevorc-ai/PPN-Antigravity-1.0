@@ -109,10 +109,10 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                     warning
                 </span>
                 <div>
-                    <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-1">
+                    <p className="text-sm font-black text-amber-400 uppercase tracking-widest mb-1">
                         Medical Disclaimer
                     </p>
-                    <p className="text-xs text-slate-300 leading-relaxed">
+                    <p className="text-sm text-slate-300 leading-relaxed">
                         This is for informational purposes only. For medical advice or diagnosis, consult a professional.
                     </p>
                 </div>

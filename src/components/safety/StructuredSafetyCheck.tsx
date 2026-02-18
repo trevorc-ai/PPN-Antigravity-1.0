@@ -99,7 +99,7 @@ export const StructuredSafetyCheck: React.FC<StructuredSafetyCheckProps> = ({
                         🚨 Structured Safety Check
                     </h3>
                     {patientId && (
-                        <p className="text-xs text-slate-500 mt-1">
+                        <p className="text-sm text-slate-500 mt-1">
                             Patient: {patientId}
                         </p>
                     )}
@@ -152,7 +152,7 @@ export const StructuredSafetyCheck: React.FC<StructuredSafetyCheckProps> = ({
                                             {scoreAssessment.label} (Score: {score})
                                         </span>
                                     </div>
-                                    <p className="text-xs text-slate-400 mt-1">
+                                    <p className="text-sm text-slate-400 mt-1">
                                         {scoreAssessment.description}
                                     </p>
                                 </div>
@@ -168,7 +168,7 @@ export const StructuredSafetyCheck: React.FC<StructuredSafetyCheckProps> = ({
                     <p className="text-red-300 font-bold text-sm mb-2">
                         ⚠️ HIGH RISK DETECTED
                     </p>
-                    <p className="text-xs text-red-400">
+                    <p className="text-sm text-red-400">
                         This patient requires immediate attention and safety protocol activation.
                     </p>
                 </div>

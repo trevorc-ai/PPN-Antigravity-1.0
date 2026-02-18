@@ -251,7 +251,7 @@ const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
                 <div className="absolute inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
                     <div className="text-center p-6">
                         <p className="text-slate-300 text-sm">3D visualization unavailable</p>
-                        <p className="text-slate-500 text-xs mt-1">Showing static structure</p>
+                        <p className="text-slate-500 text-sm mt-1">Showing static structure</p>
                     </div>
                 </div>
             </div>
@@ -329,7 +329,7 @@ const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
                     {!isLoading && (
                         <div className="absolute bottom-4 left-4 right-4">
                             <div className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-lg p-3">
-                                <p className="text-slate-300 text-xs">
+                                <p className="text-slate-300 text-sm">
                                     <span className="font-semibold">Click and drag</span> to rotate • <span className="font-semibold">Scroll</span> to zoom
                                 </p>
                             </div>

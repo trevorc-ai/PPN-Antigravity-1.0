@@ -31,6 +31,8 @@ export const EDI_BRIEF_CONFIG: AssessmentConfig = {
         {
             id: 'edi_brief_1',
             text: 'I experienced a disintegration of my "self" or ego.',
+            tooltip: 'Measures the reduction in self-referential awareness.',
+            citation: 'Nour et al., 2016',
             type: 'slider',
             min: 0,
             max: 100,
@@ -42,6 +44,8 @@ export const EDI_BRIEF_CONFIG: AssessmentConfig = {
         {
             id: 'edi_brief_2',
             text: 'I experienced a dissolution of my "self" or ego.',
+            tooltip: 'Assesses the merging of self with surroundings.',
+            citation: 'Nour et al., 2016',
             type: 'slider',
             min: 0,
             max: 100,

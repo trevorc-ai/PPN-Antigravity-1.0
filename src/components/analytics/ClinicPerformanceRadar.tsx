@@ -54,7 +54,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         return (
             <div className="bg-slate-900/95 backdrop-blur-sm p-4 border border-slate-700 rounded-lg shadow-xl max-w-[250px] z-50 print:bg-white print:border-gray-200 print:text-black">
                 <h4 className="text-slate-300 font-bold mb-1 text-xs uppercase tracking-wider print:text-black">{label}</h4>
-                <p className="text-xs text-slate-3000 mb-3 italic print:text-gray-500">
+                <p className="text-sm text-slate-500 mb-3 italic print:text-slate-500">
                     {METRIC_DEFINITIONS[label] || 'Performance Metric'}
                 </p>
                 <div className="flex flex-col gap-2">
@@ -65,7 +65,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                                     className="w-2 h-2 rounded-full"
                                     style={{ backgroundColor: entry.color }}
                                 />
-                                <span className="text-slate-300 font-medium print:text-gray-700">{entry.name}:</span>
+                                <span className="text-slate-300 font-medium print:text-slate-700">{entry.name}:</span>
                             </div>
                             <span className="text-slate-300 font-bold font-mono print:text-black">{entry.dataKey === 'A' ? entry.payload.A : entry.payload.B}</span>
                         </div>
@@ -93,14 +93,14 @@ export default function ClinicPerformanceRadar() {
                     <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
                         <button
                             onClick={() => setTimeRange('quarter')}
-                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'quarter' ? 'bg-indigo-600 text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-300'
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'quarter' ? 'bg-indigo-600 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             Q1 2026
                         </button>
                         <button
                             onClick={() => setTimeRange('year')}
-                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'year' ? 'bg-indigo-600 text-slate-300 shadow-lg' : 'text-slate-3000 hover:text-slate-300'
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'year' ? 'bg-indigo-600 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'
                                 }`}
                         >
                             Last 12 Mo
@@ -155,7 +155,7 @@ export default function ClinicPerformanceRadar() {
                     {insights.map((insight, idx) => (
                         <div key={idx} className="p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-slate-700 transition-colors group print:bg-gray-50 print:border-gray-200">
                             <div className="flex justify-between items-start mb-2">
-                                <span className="text-xs font-bold text-slate-3000 uppercase tracking-wider">{insight.label}</span>
+                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{insight.label}</span>
                                 {insight.status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
                                 {insight.status === 'warning' && <AlertCircle className="w-4 h-4 text-amber-500" />}
                                 {insight.status === 'danger' && <AlertCircle className="w-4 h-4 text-red-500" />}
@@ -163,14 +163,14 @@ export default function ClinicPerformanceRadar() {
                             <div className="flex items-end gap-2 mb-1">
                                 <span className="text-xl font-mono font-bold text-slate-300 print:text-black">{insight.value}</span>
                             </div>
-                            <p className="text-[11px] text-slate-300 leading-snug group-hover:text-slate-300 transition-colors print:text-gray-600">
+                            <p className="text-sm text-slate-300 leading-snug group-hover:text-slate-300 transition-colors print:text-slate-600">
                                 {insight.text}
                             </p>
                         </div>
                     ))}
 
                     <div className="mt-auto pt-4 border-t border-slate-800 text-center print:border-gray-200">
-                        <p className="text-[10px] text-slate-600 font-mono">
+                        <p className="text-sm text-slate-600 font-mono">
                             Node ID: 8821-X
                         </p>
                     </div>

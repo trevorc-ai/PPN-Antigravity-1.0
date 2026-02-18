@@ -59,7 +59,7 @@ export const SafetyAlert: React.FC<SafetyAlertProps> = ({
                 <p className={`font-semibold ${isHighRisk ? 'text-red-300' : 'text-yellow-300'}`}>
                     {alert.message}
                 </p>
-                <p className="text-xs text-slate-400 mt-2">
+                <p className="text-sm text-slate-400 mt-2">
                     Logged: {alert.timestamp.toLocaleString()}
                 </p>
             </div>

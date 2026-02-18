@@ -81,7 +81,7 @@ export const SafetyTimeline: React.FC<SafetyTimelineProps> = ({
                             🛡️ Safety Event Timeline
                         </h3>
                         {patientId && (
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="text-sm text-slate-500 mt-1">
                                 Patient: {patientId}
                             </p>
                         )}
@@ -117,10 +117,10 @@ export const SafetyTimeline: React.FC<SafetyTimelineProps> = ({
                                 <div className="flex items-center gap-3">
                                     <span className="text-2xl">{getRiskIcon(getRiskLevel(event.cssrsScore))}</span>
                                     <div>
-                                        <p className={`font-semibold ${getRiskColor(event.cssrsScore)}`}>
+                                        <p className={`text-lg font-bold ${getRiskColor(event.cssrsScore)}`}>
                                             C-SSRS: {event.cssrsScore} ({getRiskLevel(event.cssrsScore).toUpperCase()} Risk)
                                         </p>
-                                        <p className="text-xs text-slate-400 mt-1">
+                                        <p className="text-base text-slate-300 mt-1">
                                             {formatDate(event.date)}
                                         </p>
                                     </div>
@@ -130,10 +130,10 @@ export const SafetyTimeline: React.FC<SafetyTimelineProps> = ({
                             {/* Actions Taken */}
                             {event.actionsTaken.length > 0 && (
                                 <div className="pl-11">
-                                    <p className="text-xs text-slate-400 mb-2">
-                                        <strong className="text-slate-300">Actions:</strong>
+                                    <p className="text-base text-slate-300 mb-2">
+                                        <strong className="text-slate-100">Actions:</strong>
                                     </p>
-                                    <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                                    <ul className="text-sm text-slate-300 space-y-1 list-disc list-outside pl-4">
                                         {event.actionsTaken.map((action, actionIndex) => (
                                             <li key={actionIndex}>{action}</li>
                                         ))}
@@ -143,7 +143,7 @@ export const SafetyTimeline: React.FC<SafetyTimelineProps> = ({
 
                             {event.actionsTaken.length === 0 && (
                                 <div className="pl-11">
-                                    <p className="text-xs text-slate-400">
+                                    <p className="text-sm text-slate-400">
                                         ↳ No actions needed
                                     </p>
                                 </div>
@@ -161,19 +161,19 @@ export const SafetyTimeline: React.FC<SafetyTimelineProps> = ({
                             <p className="text-2xl font-bold text-emerald-400">
                                 {events.filter(e => getRiskLevel(e.cssrsScore) === 'low').length}
                             </p>
-                            <p className="text-xs text-slate-400 mt-1">Low Risk</p>
+                            <p className="text-sm text-slate-400 mt-1">Low Risk</p>
                         </div>
                         <div>
                             <p className="text-2xl font-bold text-yellow-400">
                                 {events.filter(e => getRiskLevel(e.cssrsScore) === 'moderate').length}
                             </p>
-                            <p className="text-xs text-slate-400 mt-1">Moderate Risk</p>
+                            <p className="text-sm text-slate-400 mt-1">Moderate Risk</p>
                         </div>
                         <div>
                             <p className="text-2xl font-bold text-red-400">
                                 {events.filter(e => getRiskLevel(e.cssrsScore) === 'high').length}
                             </p>
-                            <p className="text-xs text-slate-400 mt-1">High Risk</p>
+                            <p className="text-sm text-slate-400 mt-1">High Risk</p>
                         </div>
                     </div>
                 </div>

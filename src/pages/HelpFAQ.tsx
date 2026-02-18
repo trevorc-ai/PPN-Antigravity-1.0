@@ -115,7 +115,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               placeholder="Search help topics..."
               className="w-full bg-[#0D121C] border border-slate-800 rounded-lg py-4 px-14 text-slate-300 focus:outline-none focus:border-primary transition-all shadow-xl"
             />
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-3000" size={20} />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
             <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-blue-600 text-slate-300 px-4 py-2 sm:px-6 rounded-md font-medium transition-colors">
               Search
             </button>
@@ -175,12 +175,12 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                       className="w-full text-left px-8 py-5 flex justify-between items-center hover:bg-slate-800/20 transition-colors"
                     >
                       <span className="text-base font-medium text-slate-300">{faq.q}</span>
-                      <ChevronDown className={`text-slate-3000 transition-transform duration-300 ${activeFAQ === idx ? 'rotate-180' : ''}`} size={18} />
+                      <ChevronDown className={`text-slate-500 transition-transform duration-300 ${activeFAQ === idx ? 'rotate-180' : ''}`} size={18} />
                     </button>
                     {activeFAQ === idx && (
                       <div className="px-8 pb-6 text-sm text-slate-300 leading-relaxed border-t border-slate-800/40 pt-4">
                         <div className="mb-3">
-                          <span className="text-[11px] font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded border border-primary/20">
+                          <span className="text-xs font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded border border-primary/20">
                             {faq.category}
                           </span>
                         </div>
@@ -194,7 +194,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                   <div className="text-slate-600 mb-4 flex justify-center">
                     <Search size={48} opacity={0.2} />
                   </div>
-                  <p className="text-slate-3000 font-medium">No matching support articles found</p>
+                  <p className="text-slate-500 font-medium">No matching support articles found</p>
                   <button
                     onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
                     className="mt-4 text-primary text-sm font-bold hover:underline"
@@ -232,7 +232,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               </div>
               <div>
                 <div className="text-sm font-semibold text-slate-300">All Systems Operational</div>
-                <div className="text-[11px] text-slate-3000 mt-1 uppercase tracking-wider">
+                <div className="text-xs text-slate-500 mt-1 uppercase tracking-wider">
                   Latency: <span className="text-slate-300">24ms</span> • Updated: <span className="text-slate-300">2m ago</span>
                 </div>
               </div>

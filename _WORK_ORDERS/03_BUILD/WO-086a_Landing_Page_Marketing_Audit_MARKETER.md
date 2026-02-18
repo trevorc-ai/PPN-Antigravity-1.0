@@ -99,7 +99,21 @@ For each proposed infographic:
 - **Social proof strategy** (where to add testimonials, stats, logos)
 - **CTA optimization** (button text, placement, color)
 - **Mobile considerations** (responsive copy/layout tweaks)
+- **Mobile considerations** (responsive copy/layout tweaks)
 - **SEO keywords** (naturally integrated terms)
+
+### 7. SEO Strategy (MANDATORY)
+**Keywords to Target:**
+- "Psychedelic Therapy Software"
+- "Ketamine Clinic EHR"
+- "Psychedelic Interaction Checker"
+- "Integration Therapy Tools"
+
+**Deliverable:**
+- Define H1, H2, H3 hierarchy for SEO.
+- Write Meta Title (max 60 chars).
+- Write Meta Description (max 160 chars).
+- Define Alt Text for all key images.
 
 ### 6. Prioritization Matrix
 | Recommendation | Impact | Effort | Priority |

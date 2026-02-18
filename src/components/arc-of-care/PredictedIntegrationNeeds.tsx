@@ -170,7 +170,7 @@ const PredictedIntegrationNeeds: React.FC<PredictedIntegrationNeedsProps> = ({
             <div className="mt-2 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
                 <div className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-blue-300 text-xs leading-relaxed">
+                    <p className="text-blue-300 text-sm leading-relaxed">
                         <span className="font-semibold">Evidence-based:</span> Patients who complete the recommended number of integration sessions have 40% higher sustained remission rates at 6 months (n=5,000+ similar baseline profiles).
                     </p>
                 </div>

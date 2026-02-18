@@ -41,7 +41,7 @@ export const RequirementsList: React.FC<RequirementsListProps> = ({
                     <h3 className="text-lg font-bold text-slate-300">
                         Benchmark Requirements
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500 mt-1">
                         5 requirements for network benchmarking
                     </p>
                 </div>
@@ -53,8 +53,8 @@ export const RequirementsList: React.FC<RequirementsListProps> = ({
                     <div
                         key={index}
                         className={`p-4 rounded-lg border ${req.met
-                                ? 'bg-emerald-500/5 border-emerald-500/20'
-                                : 'bg-slate-800/50 border-slate-700/50'
+                            ? 'bg-emerald-500/5 border-emerald-500/20'
+                            : 'bg-slate-800/50 border-slate-700/50'
                             }`}
                     >
                         {/* Requirement Header */}
@@ -70,7 +70,7 @@ export const RequirementsList: React.FC<RequirementsListProps> = ({
                                 <h4 className={`font-semibold ${req.met ? 'text-emerald-300' : 'text-slate-300'}`}>
                                     {index + 1}. {req.name}
                                 </h4>
-                                <p className="text-xs text-slate-500 mt-1">
+                                <p className="text-sm text-slate-400 mt-1">
                                     Form: {req.form}
                                 </p>
                             </div>
@@ -78,19 +78,19 @@ export const RequirementsList: React.FC<RequirementsListProps> = ({
 
                         {/* Completion Info or Action */}
                         {req.met ? (
-                            <div className="flex items-center gap-2 ml-8 text-xs text-emerald-400">
-                                <Calendar className="w-3 h-3" />
+                            <div className="flex items-center gap-2 ml-8 text-sm text-emerald-400">
+                                <Calendar className="w-4 h-4" />
                                 <span>Completed: {formatDate(req.completedAt)}</span>
                             </div>
                         ) : (
                             <div className="ml-8 mt-3">
-                                <p className="text-xs text-slate-400 mb-2">
+                                <p className="text-sm text-slate-300 mb-2">
                                     Action: {req.action}
                                 </p>
                                 {onCompleteRequirement && (
                                     <button
                                         onClick={() => onCompleteRequirement(req.name)}
-                                        className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-slate-300 text-xs rounded-lg font-medium transition-colors"
+                                        className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-slate-300 text-sm rounded-lg font-medium transition-colors"
                                     >
                                         Complete Now
                                     </button>

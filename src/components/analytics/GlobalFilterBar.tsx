@@ -213,7 +213,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Date Range */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
+                    <label className="text-xs font-black text-slate-300 tracking-widest uppercase">
                         Date Range
                     </label>
                     <div className="space-y-2">
@@ -237,7 +237,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                 {/* Sites */}
                 {sites.length > 1 && (
                     <div className="space-y-2">
-                        <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
+                        <label className="text-xs font-black text-slate-300 tracking-widest uppercase">
                             Sites ({filters.siteIds.length} selected)
                         </label>
                         <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -260,7 +260,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Substances */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
+                    <label className="text-xs font-black text-slate-300 tracking-widest uppercase">
                         Substances ({filters.substanceIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -282,7 +282,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Routes */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
+                    <label className="text-xs font-black text-slate-300 tracking-widest uppercase">
                         Routes ({filters.routeIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -304,7 +304,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Support Modalities */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
+                    <label className="text-xs font-black text-slate-300 tracking-widest uppercase">
                         Support Modality ({filters.supportModalityIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -326,7 +326,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
 
                 {/* Protocols */}
                 <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-300 tracking-widest uppercase">
+                    <label className="text-xs font-black text-slate-300 tracking-widest uppercase">
                         Protocols ({filters.protocolIds.length} selected)
                     </label>
                     <div className="max-h-32 overflow-y-auto space-y-2 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
@@ -345,7 +345,7 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                                 </label>
                             ))
                         ) : (
-                            <p className="text-xs text-slate-3000 italic">No protocols available</p>
+                            <p className="text-sm text-slate-500 italic">No protocols available</p>
                         )}
                     </div>
                 </div>

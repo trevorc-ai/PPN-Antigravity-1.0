@@ -172,7 +172,7 @@ const PHQ9SeverityZones: React.FC<PHQ9SeverityZonesProps> = ({ score }) => {
 
                     {clampedScore >= 15 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
-                            <p className="text-slate-300 text-xs">
+                            <p className="text-slate-300 text-sm">
                                 <span className="font-semibold">Note:</span> PHQ-9 score ≥15 indicates moderately severe to severe depression. Consider psychiatric consultation and enhanced safety monitoring throughout treatment.
                             </p>
                         </div>
@@ -180,7 +180,7 @@ const PHQ9SeverityZones: React.FC<PHQ9SeverityZonesProps> = ({ score }) => {
 
                     {clampedScore >= 10 && clampedScore < 15 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
-                            <p className="text-slate-300 text-xs">
+                            <p className="text-slate-300 text-sm">
                                 <span className="font-semibold">Note:</span> Moderate depression documented. Monitor for symptom changes during integration phase.
                             </p>
                         </div>

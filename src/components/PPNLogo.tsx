@@ -8,7 +8,7 @@ interface PPNLogoProps {
 
 const sizeMap = {
     sm: { container: 120, text: 'text-xl', subtext: 'text-[8px]' },
-    md: { container: 180, text: 'text-3xl', subtext: 'text-[10px]' },
+    md: { container: 180, text: 'text-3xl', subtext: 'text-xs' },
     lg: { container: 240, text: 'text-4xl', subtext: 'text-xs' },
     xl: { container: 320, text: 'text-5xl', subtext: 'text-sm' }
 };

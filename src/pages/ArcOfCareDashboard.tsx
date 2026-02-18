@@ -202,7 +202,7 @@ const ArcOfCareDashboard: React.FC = () => {
                                 <Brain className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                                 <div>
                                     <h3 className="text-emerald-300 font-semibold text-sm sm:text-base">Phase 1: Protocol Builder</h3>
-                                    <p className="text-emerald-200 text-xs sm:text-sm mt-1">
+                                    <p className="text-emerald-200 text-sm sm:text-sm mt-1">
                                         Complete baseline assessment to predict integration needs
                                     </p>
                                 </div>
@@ -309,7 +309,7 @@ const ArcOfCareDashboard: React.FC = () => {
                                 <Activity className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                                 <div>
                                     <h3 className="text-blue-300 font-semibold text-sm sm:text-base">Phase 2: Session Logger</h3>
-                                    <p className="text-blue-200 text-xs sm:text-sm mt-1">
+                                    <p className="text-blue-200 text-sm sm:text-sm mt-1">
                                         Real-time monitoring during psychedelic-assisted therapy
                                     </p>
                                 </div>
@@ -359,7 +359,7 @@ const ArcOfCareDashboard: React.FC = () => {
                                 <TrendingUp className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
                                 <div>
                                     <h3 className="text-purple-300 font-semibold text-sm sm:text-base">Phase 3: Integration Tracker</h3>
-                                    <p className="text-purple-200 text-xs sm:text-sm mt-1">
+                                    <p className="text-purple-200 text-sm sm:text-sm mt-1">
                                         Longitudinal care tracking and symptom monitoring
                                     </p>
                                 </div>
@@ -387,11 +387,11 @@ const ArcOfCareDashboard: React.FC = () => {
                                 <h3 className="text-slate-300 text-lg font-semibold mb-4">Progress Stats</h3>
                                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
                                     <div className="bg-slate-800/50 rounded-lg p-3 sm:p-4">
-                                        <p className="text-slate-300 text-xs mb-1">Days Post-Session</p>
+                                        <p className="text-slate-300 text-sm mb-1">Days Post-Session</p>
                                         <p className="text-2xl sm:text-3xl font-bold text-emerald-400">183</p>
                                     </div>
                                     <div className="bg-slate-800/50 rounded-lg p-3 sm:p-4">
-                                        <p className="text-slate-300 text-xs mb-1">PHQ-9 Improvement</p>
+                                        <p className="text-slate-300 text-sm mb-1">PHQ-9 Improvement</p>
                                         <p className="text-2xl sm:text-3xl font-bold text-blue-400">96%</p>
                                     </div>
                                 </div>

@@ -2,7 +2,7 @@
 id: WO-093
 title: "Camera Scan — OCR Patient Label to PPN ID (Mobile HTML Bridge)"
 status: 03_BUILD
-owner: BUILDER
+owner: INSPECTOR
 ticket_type: EVALUATION — Fast-Track Candidate
 priority: P1 (High — strategic partner request, potentially trivial to build)
 category: Tooling / Mobile / Onboarding / Zero-Knowledge
@@ -308,3 +308,38 @@ Both should use the **same PPN ID formula** — coordinate the collision-resista
 **PRODDY SIGN-OFF:** ✅ Fast-track approved. Route directly to INSPECTOR pre-screen, then BUILDER. Do not wait for DESIGNER.
 
 **Routing:** `owner: LEAD` — route to INSPECTOR pre-screen immediately, then BUILDER. This is the fastest ticket in the queue.
+
+---
+
+## 🔨 BUILDER IMPLEMENTATION NOTES (2026-02-18 06:43 PST)
+
+**Status:** ✅ COMPLETE — Delivered as standalone HTML file
+
+### Deliverable
+**File:** `public/PPN_Bridge_Camera.html`
+
+### What Was Built
+1. **Camera scan** — `<input type="file" capture="environment">` opens rear camera on mobile (iOS Safari + Android Chrome ✅)
+2. **Progressive OCR** — Native `TextDetector` API first (Chrome/Android, instant), Tesseract.js CDN fallback (iOS Safari, all browsers)
+3. **Regex extraction** — Handles 4 name formats (First Last, LAST FIRST, ALL CAPS) and 3 DOB formats (MM/DD/YY, MM-DD-YYYY, Month DD YYYY)
+4. **PPN ID formula** — `PPN-{F1F2}{L1L2}{MMDDYY}` — matches WO-092 formula exactly (birth year included)
+5. **Manual entry fallback** — Full form with auto-fill from OCR, editable before generating
+6. **Copy to clipboard** — `navigator.clipboard.writeText()` with `execCommand` fallback for older browsers
+7. **Reset flow** — "Scan another patient" clears all state
+8. **Zero-knowledge** — No server calls, no localStorage persistence of PII, image processed on-device only
+
+### Accessibility
+- ✅ All fonts ≥ 16px (mobile readability spec)
+- ✅ Min touch targets 52px (exceeds 48px requirement)
+- ✅ `role="status"` + `aria-live="polite"` on status banner
+- ✅ `aria-label` on all interactive elements
+- ✅ High contrast dark theme (clinic lighting)
+- ✅ No color-only meaning (icons + text for all states)
+
+### Zero-Knowledge Verified
+- ✅ No image transmitted to any server
+- ✅ No patient name stored in localStorage or cookies
+- ✅ Tesseract.js runs entirely in browser worker
+- ✅ Google Cloud Vision NOT used (PHI risk avoided)
+
+**Route to:** `04_QA` for INSPECTOR review

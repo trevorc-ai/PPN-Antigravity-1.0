@@ -14,7 +14,7 @@ const StepCard: React.FC<{ number: string; title: string; points: string[]; icon
       <h3 className="text-xl font-black text-slate-300 tracking-tight">{title}</h3>
       <ul className="space-y-3">
         {points.map((point, i) => (
-          <li key={i} className="flex gap-3 text-sm text-slate-3000 font-medium leading-relaxed">
+          <li key={i} className="flex gap-3 text-sm text-slate-500 font-medium leading-relaxed">
             <span className="text-primary mt-1 select-none">•</span>
             {point}
           </li>
@@ -68,13 +68,13 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
         </div>
 
         <div className="flex items-center gap-4">
-          <Link to="/" className="hidden lg:flex items-center gap-2 text-[11px] font-black text-slate-3000 hover:text-slate-300 uppercase tracking-widest transition-colors group">
+          <Link to="/" className="hidden lg:flex items-center gap-2 text-xs font-black text-slate-500 hover:text-slate-300 uppercase tracking-widest transition-colors group">
             <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
             Back to Home
           </Link>
           <button
             onClick={() => navigate('/#secure-access-node')}
-            className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
+            className="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
           >
             Login
           </button>
@@ -87,7 +87,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[700px] bg-primary/10 rounded-full blur-[160px] pointer-events-none"></div>
 
         <div className="max-w-5xl mx-auto px-6 relative z-10 text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-4 shadow-xl">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-black text-primary uppercase tracking-[0.4em] mb-4 shadow-xl">
             <span className="material-symbols-outlined text-sm">database</span>
             Clinical Wisdom Economics
           </div>
@@ -169,7 +169,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-30"></div>
           <div className="space-y-4 relative z-10">
             <h2 className="text-4xl sm:text-7xl font-black text-slate-300 tracking-tighter leading-tight">Ready to join the <span className="text-primary">Cooperative?</span></h2>
-            <p className="text-slate-3000 font-medium text-xl leading-relaxed max-w-2xl mx-auto">
+            <p className="text-slate-500 font-medium text-xl leading-relaxed max-w-2xl mx-auto">
               Join 500+ clinical researchers in building the world's most robust repository for psychedelic therapy.
             </p>
           </div>
@@ -193,7 +193,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
 
       {/* FOOTER */}
       <footer className="py-12 border-t border-white/5 text-center">
-        <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em]">
+        <p className="text-sm font-black text-slate-700 uppercase tracking-[0.5em]">
           Psychedelic Practitioners Network © 2025 // Node Integrity Verified
         </p>
       </footer>

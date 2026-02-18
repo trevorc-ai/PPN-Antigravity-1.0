@@ -99,7 +99,7 @@ export const BatchRegistrationModal: React.FC<BatchRegistrationModalProps> = ({
                             <h2 id="batch-modal-title" className="text-xl font-black text-slate-300">
                                 Register New Batch
                             </h2>
-                            <p className="text-xs text-slate-300">
+                            <p className="text-sm text-slate-300">
                                 Add a new substance batch for traceability
                             </p>
                         </div>

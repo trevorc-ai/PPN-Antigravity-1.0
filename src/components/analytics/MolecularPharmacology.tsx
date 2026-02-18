@@ -88,7 +88,7 @@ export default function MolecularPharmacology() {
                         <Dna className="text-indigo-500" />
                         Molecular Bridge
                     </h2>
-                    <p className="text-xs text-slate-300 font-medium mt-1">
+                    <p className="text-sm text-slate-300 font-medium mt-1">
                         Receptor Binding Potential (Standardized $K_i$ Affinity).
                     </p>
                 </div>
@@ -99,7 +99,7 @@ export default function MolecularPharmacology() {
                             onClick={() => setActiveMol(key)}
                             className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${activeMol === key
                                 ? 'bg-indigo-600 text-slate-300 shadow-lg'
-                                : 'text-slate-3000 hover:text-slate-300'
+                                : 'text-slate-500 hover:text-slate-300'
                                 }`}
                             title={`Load pharmacology data for ${key}`}
                         >
@@ -113,7 +113,7 @@ export default function MolecularPharmacology() {
 
                 {/* LEFT: The Chart */}
                 <div className="lg:col-span-2 bg-slate-900/30 border border-slate-800/50 rounded-2xl p-6 relative min-h-[300px] flex flex-col">
-                    <h3 className="text-xs font-bold text-slate-3000 uppercase tracking-widest absolute top-4 left-4 z-10">
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest absolute top-4 left-4 z-10">
                         Binding Strength (Relative Potency)
                     </h3>
                     <div className="flex-1 w-full h-full min-h-[250px]">
@@ -134,8 +134,8 @@ export default function MolecularPharmacology() {
                                         if (active && payload && payload.length) {
                                             return (
                                                 <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl z-50">
-                                                    <p className="text-xs font-bold text-slate-300 mb-1">{payload[0].payload.receptor}</p>
-                                                    <p className="text-xs text-indigo-400 uppercase tracking-widest">{payload[0].payload.role}</p>
+                                                    <p className="text-sm font-bold text-slate-300 mb-1">{payload[0].payload.receptor}</p>
+                                                    <p className="text-sm text-indigo-400 uppercase tracking-widest">{payload[0].payload.role}</p>
                                                 </div>
                                             );
                                         }
@@ -167,15 +167,15 @@ export default function MolecularPharmacology() {
                         </div>
 
                         <h3 className="text-2xl font-black text-slate-300 tracking-tight mb-1 relative z-10">{data.name}</h3>
-                        <p className="text-xs font-mono text-indigo-400 mb-4 relative z-10">{data.formula}</p>
+                        <p className="text-sm font-mono text-indigo-400 mb-4 relative z-10">{data.formula}</p>
 
                         <div className="space-y-3 relative z-10">
                             <div className="flex items-center justify-between p-2 bg-black/20 rounded-lg border border-white/5">
-                                <span className="text-xs text-slate-3000 font-bold uppercase">Class</span>
+                                <span className="text-xs text-slate-500 font-bold uppercase">Class</span>
                                 <span className="text-xs font-medium text-slate-300">{data.class}</span>
                             </div>
                             <div className="flex items-center justify-between p-2 bg-black/20 rounded-lg border border-white/5">
-                                <span className="text-xs text-slate-3000 font-bold uppercase">Half-Life</span>
+                                <span className="text-xs text-slate-500 font-bold uppercase">Half-Life</span>
                                 <span className="text-xs font-medium text-slate-300">{data.halfLife}</span>
                             </div>
                         </div>
@@ -187,14 +187,14 @@ export default function MolecularPharmacology() {
                             <Microscope className="w-4 h-4 text-slate-300" />
                             <h4 className="text-xs font-black text-slate-300 uppercase tracking-widest">Mechanism of Action</h4>
                         </div>
-                        <p className="text-xs text-slate-300 leading-relaxed flex-1">
+                        <p className="text-sm text-slate-300 leading-relaxed flex-1">
                             {data.description}
                         </p>
 
                         <div className="mt-4 pt-4 border-t border-slate-800">
                             <div className="flex items-start gap-2" title="Important clinical considerations">
                                 <Info className="w-3 h-3 text-indigo-400 mt-0.5 shrink-0" />
-                                <p className="text-xs text-slate-3000 leading-tight">
+                                <p className="text-sm text-slate-500 leading-tight">
                                     <strong className="text-slate-300">Clinical Note:</strong> {data.id === 'MDMA' ? 'Check cardiac history.' : data.id === 'KET' ? 'Monitor blood pressure.' : 'Screen for psychosis history.'}
                                 </p>
                             </div>

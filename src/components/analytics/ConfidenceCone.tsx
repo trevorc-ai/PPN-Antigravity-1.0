@@ -18,7 +18,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md">
-        <p className="text-[10px] font-black text-slate-3000 uppercase tracking-widest mb-2">Day {label}</p>
+        <p className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2">Day {label}</p>
         {payload.map((p: any, i: number) => {
           // Skip the confidence interval array in the tooltip for cleaner UI
           if (p.name === 'Confidence Interval') return null;
@@ -33,7 +33,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           );
         })}
         <div className="mt-2 pt-2 border-t border-slate-800">
-           <p className="text-[10px] text-slate-3000">PHQ-9 Severity Index</p>
+           <p className="text-sm text-slate-500">PHQ-9 Severity Index</p>
         </div>
       </div>
     );
@@ -63,11 +63,11 @@ const ConfidenceCone: React.FC = () => {
             </div>
             <h3 className="text-lg font-black text-slate-300 tracking-tight">Predictive Trajectory</h3>
           </div>
-          <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Patient vs. Aggregate (N=14k)</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest ml-1">Patient vs. Aggregate (N=14k)</p>
         </div>
         <div className="group/info relative">
           <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-48 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50">
+          <div className="absolute right-0 top-6 w-48 p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50">
             Gray area represents the 95% Confidence Interval of the responding community cohort.
           </div>
         </div>
@@ -112,7 +112,7 @@ const ConfidenceCone: React.FC = () => {
                         className={`size-2 rounded-full ${entry.value === 'Confidence Interval' ? 'rounded-sm' : ''}`} 
                         style={{ backgroundColor: entry.color }}
                       ></div>
-                      <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{entry.value}</span>
+                      <span className="text-xs font-black text-slate-300 uppercase tracking-widest">{entry.value}</span>
                     </div>
                   ))}
                 </div>
@@ -157,7 +157,7 @@ const ConfidenceCone: React.FC = () => {
       {/* Footer Insight */}
       <div className="mt-4 pt-4 border-t border-slate-800 flex items-center gap-2">
         <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-        <p className="text-[10px] font-mono text-emerald-500 uppercase tracking-widest">
+        <p className="text-sm font-mono text-emerald-500 uppercase tracking-widest">
           Result: Outperforming 68% of Cohort
         </p>
       </div>

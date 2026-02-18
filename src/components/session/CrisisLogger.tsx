@@ -172,7 +172,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                     </div>
                     <div>
                         <h3 className="text-sm font-black text-amber-400 uppercase tracking-widest">Crisis Logger</h3>
-                        <p className="text-xs text-amber-600">Hold button to log — auto-timestamped</p>
+                        <p className="text-sm text-amber-600">Hold button to log — auto-timestamped</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -243,7 +243,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
             {/* Timeline */}
             {events.length > 0 && (
                 <div className="border-t border-slate-800 px-4 py-3">
-                    <p className="text-xs font-black text-amber-600 uppercase tracking-widest mb-2">Timeline</p>
+                    <p className="text-sm font-black text-amber-600 uppercase tracking-widest mb-2">Timeline</p>
                     <div className="space-y-1.5 max-h-40 overflow-y-auto">
                         {events.map((evt, i) => {
                             const btn = EVENT_BUTTONS.find((b) => b.type === evt.event_type);
@@ -265,7 +265,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
 
             {/* Disclaimer */}
             <div className="px-4 py-3 border-t border-slate-800">
-                <p className="text-xs text-slate-600 italic text-center">
+                <p className="text-sm text-slate-600 italic text-center">
                     Documentation tool only — not medical advice. Hold any button to log.
                 </p>
             </div>

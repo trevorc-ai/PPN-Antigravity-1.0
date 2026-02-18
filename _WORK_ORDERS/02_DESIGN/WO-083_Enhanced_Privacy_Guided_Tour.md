@@ -1,13 +1,19 @@
 ---
 id: WO-083
 title: "Enhanced Privacy Guided Tour — Strategy & Naming"
-status: 03_BUILD
-owner: BUILDER
+status: 02_DESIGN
+owner: DESIGNER
 failure_count: 0
 created: 2026-02-17T22:32:48-08:00
 priority: high
 tags: [grey-market, privacy, guided-tour, onboarding, proddy, naming, strategy]
 ---
+
+
+## AGENT INSTRUCTIONS
+1.  **READ**: Review the Strategy Section below.
+2.  **EXECUTE**: Create the Design Brief and Tailwind Specs.
+3.  **HANDOFF**: Follow the instructions at the bottom of this file.
 
 # WO-083: Enhanced Privacy Guided Tour — Strategy & Naming
 
@@ -266,3 +272,12 @@ PRODDY → update `owner: LEAD` and `status: 01_TRIAGE`. LEAD will then route to
 **PRODDY SIGN-OFF:** ✅ Strategy complete. Route to LEAD → MARKETER (copy refinement) + DESIGNER (visual spec) in parallel.
 
 **Routing:** `owner: LEAD` | `status: 01_TRIAGE`
+
+---
+
+## HANDOFF INSTRUCTIONS
+Upon completion of the Design Specs:
+1.  **UPDATE STATUS**: Change `status` to `03_BUILD`.
+2.  **UPDATE OWNER**: Change `owner` to `BUILDER`.
+3.  **MOVE FILE**: Move this file to `_WORK_ORDERS/03_BUILD/`.
+

@@ -17,15 +17,15 @@ const ClinicRadarDemo: React.FC = () => {
     return (
         <div className="w-full h-full bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
-                <p className="text-xs font-bold text-slate-3000 uppercase tracking-widest">Performance Benchmarking</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Performance Benchmarking</p>
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-primary"></div>
-                        <span className="text-[10px] font-bold text-slate-300">Your Clinic</span>
+                        <span className="text-xs font-bold text-slate-300">Your Clinic</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-slate-600"></div>
-                        <span className="text-[10px] font-bold text-slate-300">Network Avg</span>
+                        <span className="text-xs font-bold text-slate-300">Network Avg</span>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@ const ClinicRadarDemo: React.FC = () => {
             </ResponsiveContainer>
 
             <div className="mt-4 pt-4 border-t border-slate-800/50">
-                <p className="text-xs text-slate-3000 font-medium">
+                <p className="text-sm text-slate-500 font-medium">
                     Your clinic outperforms the network average across all key metrics.
                 </p>
             </div>

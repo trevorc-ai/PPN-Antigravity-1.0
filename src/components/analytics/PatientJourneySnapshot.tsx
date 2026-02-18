@@ -22,9 +22,9 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md z-50">
         <div className="flex items-center gap-2 mb-2 border-b border-slate-700/50 pb-2">
-          <span className="text-[10px] font-mono text-slate-300 uppercase tracking-widest">{data.displayDate}</span>
+          <span className="text-xs font-mono text-slate-300 uppercase tracking-widest">{data.displayDate}</span>
           {isEvent && (
-            <span className={`text-[10px] font-black uppercase px-1.5 py-0.5 rounded ${data.type === 'dose' ? 'bg-cyan-500/10 text-cyan-500' :
+            <span className={`text-xs font-black uppercase px-1.5 py-0.5 rounded ${data.type === 'dose' ? 'bg-cyan-500/10 text-cyan-500' :
                 data.type === 'safety' ? 'bg-amber-500/10 text-amber-500' :
                   'bg-indigo-500/10 text-indigo-500'
               }`}>
@@ -34,20 +34,20 @@ const CustomTooltip = ({ active, payload }: any) => {
         </div>
 
         <div className="space-y-1">
-          <p className="text-xs font-bold text-slate-300 leading-tight">{data.label}</p>
+          <p className="text-sm font-bold text-slate-300 leading-tight">{data.label}</p>
           {data.score !== null ? (
             <div className="flex justify-between gap-4 mt-1">
-              <span className="text-[10px] text-slate-3000 font-bold uppercase tracking-wide">Score:</span>
-              <span className="text-[10px] text-primary font-mono font-black">{data.score} / 27</span>
+              <span className="text-xs text-slate-500 font-bold uppercase tracking-wide">Score:</span>
+              <span className="text-xs text-primary font-mono font-black">{data.score} / 27</span>
             </div>
           ) : (
             <div className="flex justify-between gap-4 mt-1">
-              <span className="text-[10px] text-slate-3000 font-bold uppercase tracking-wide">Value:</span>
-              <span className="text-[10px] text-slate-300 font-mono font-bold">{data.value}</span>
+              <span className="text-xs text-slate-500 font-bold uppercase tracking-wide">Value:</span>
+              <span className="text-xs text-slate-300 font-mono font-bold">{data.value}</span>
             </div>
           )}
           {data.details && (
-            <p className="text-[10px] text-slate-3000 italic mt-2 border-t border-slate-800 pt-2 leading-relaxed max-w-[200px]">
+            <p className="text-sm text-slate-500 italic mt-2 border-t border-slate-800 pt-2 leading-relaxed max-w-[200px]">
               "{data.details}"
             </p>
           )}
@@ -142,12 +142,12 @@ const PatientJourneySnapshot: React.FC = () => {
             </div>
             <h3 className="text-lg font-black text-slate-300 tracking-tight">Clinical Journey</h3>
           </div>
-          <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest ml-1">Intervention Timeline & Outcome (PHQ-9)</p>
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest ml-1">Intervention Timeline & Outcome (PHQ-9)</p>
         </div>
 
         <div className="group/info relative">
           <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-[10px] text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
             Composed chart correlating symptom scores (Line) with discrete clinical events (Timeline Dots).
           </div>
         </div>
@@ -208,19 +208,19 @@ const PatientJourneySnapshot: React.FC = () => {
       <div className="mt-2 pt-4 border-t border-slate-800 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-cyan-500"></div>
-          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Dosing</span>
+          <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Dosing</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-indigo-500"></div>
-          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Integration</span>
+          <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Integration</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="size-2 rounded-full bg-amber-500"></div>
-          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Safety Check</span>
+          <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Safety Check</span>
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <div className="w-4 h-0.5 bg-blue-500"></div>
-          <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Symptom Score</span>
+          <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Symptom Score</span>
         </div>
       </div>
 

@@ -96,7 +96,8 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 8px;
           padding: 12px 16px;
-          color: #f8f9fa;
+          color: #f1f5f9;
+          font-size: 14px;
           cursor: pointer;
           display: flex;
           justify-content: space-between;
@@ -123,7 +124,8 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
           background: rgba(255, 255, 255, 0.05);
           border: none;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          color: #fff;
+          color: #f1f5f9;
+          font-size: 14px;
           outline: none;
         }
         
@@ -133,9 +135,10 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
         }
         
         .option {
-          padding: 10px 16px;
+          padding: 12px 16px;
           cursor: pointer;
-          color: #c4b5fd;
+          color: #cbd5e1;
+          font-size: 14px;
         }
         
         .option:hover {

@@ -10,7 +10,7 @@ const FeatureItem: React.FC<{ text: string; locked?: boolean }> = ({ text, locke
     <span className={`material-symbols-outlined text-lg ${locked ? 'text-slate-600' : 'text-primary font-black'}`}>
       {locked ? 'lock' : 'check_circle'}
     </span>
-    <span className="text-[11px] font-bold text-slate-300 tracking-tight">{text}</span>
+    <span className="text-xs font-bold text-slate-300 tracking-tight">{text}</span>
   </div>
 );
 
@@ -30,8 +30,8 @@ const PricingCard: React.FC<{
   return (
     <div className={`flex flex-col bg-[#1c222d]/40 border ${isPrimary ? 'border-primary/50 shadow-2xl shadow-primary/10' : 'border-slate-800'} rounded-[2.5rem] p-8 sm:p-10 transition-all hover:bg-[#1c222d]/60 group`}>
       <div className="flex justify-between items-start mb-2">
-        <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">{type}</span>
-        {tag && <span className="px-2 py-0.5 rounded bg-accent-amber/10 text-accent-amber border border-accent-amber/20 text-[11px] font-black uppercase tracking-widest">{tag}</span>}
+        <span className="text-xs font-black text-primary uppercase tracking-[0.2em]">{type}</span>
+        {tag && <span className="px-2 py-0.5 rounded bg-accent-amber/10 text-accent-amber border border-accent-amber/20 text-xs font-black uppercase tracking-widest">{tag}</span>}
       </div>
       <h3 className="text-2xl font-black text-slate-300 tracking-tight mb-6">{title}</h3>
 
@@ -39,7 +39,7 @@ const PricingCard: React.FC<{
         <div className="flex items-baseline gap-1">
           <span className="text-4xl font-black text-slate-300">{price}</span>
         </div>
-        {priceSub && <p className="text-[11px] font-bold text-slate-3000 uppercase tracking-widest mt-1">{priceSub}</p>}
+        {priceSub && <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">{priceSub}</p>}
       </div>
 
       <button
@@ -67,7 +67,7 @@ const Pricing: React.FC = () => {
         <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300">
           PPN Membership & Access Tiers
         </h1>
-        <p className="max-w-2xl text-slate-3000 text-sm sm:text-lg font-medium leading-relaxed">
+        <p className="max-w-2xl text-slate-500 text-sm sm:text-lg font-medium leading-relaxed">
           Professional membership and subscription tiers for the PPN community. Secure your access to the global clinical network.
         </p>
       </div>
@@ -152,17 +152,17 @@ const Pricing: React.FC = () => {
         <Section spacing="spacious" className="space-y-10">
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-black text-slate-300 tracking-tight">Detailed Feature Comparison</h2>
-            <p className="text-slate-3000 text-[11px] font-black uppercase tracking-widest">Compare all tools and infrastructure features across tiers.</p>
+            <p className="text-slate-500 text-sm font-black uppercase tracking-widest">Compare all tools and infrastructure features across tiers.</p>
           </div>
 
           <div className="bg-[#0c0f14] border border-slate-800 rounded-[3rem] overflow-hidden shadow-2xl">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-900/40 border-b border-slate-800">
-                  <th className="px-10 py-6 text-[11px] font-black text-slate-3000 uppercase tracking-[0.2em]">Feature</th>
-                  <th className="px-10 py-6 text-[11px] font-black text-slate-3000 uppercase tracking-[0.2em] text-center">Guild</th>
-                  <th className="px-10 py-6 text-[11px] font-black text-slate-3000 uppercase tracking-[0.2em] text-center">Enterprise</th>
-                  <th className="px-10 py-6 text-[11px] font-black text-slate-3000 uppercase tracking-[0.2em] text-center">Researcher</th>
+                  <th className="px-10 py-6 text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Feature</th>
+                  <th className="px-10 py-6 text-xs font-black text-slate-500 uppercase tracking-[0.2em] text-center">Guild</th>
+                  <th className="px-10 py-6 text-xs font-black text-slate-500 uppercase tracking-[0.2em] text-center">Enterprise</th>
+                  <th className="px-10 py-6 text-xs font-black text-slate-500 uppercase tracking-[0.2em] text-center">Researcher</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/50">

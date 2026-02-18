@@ -70,7 +70,7 @@ const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
         <div className="p-8 flex flex-col gap-4">
           <div className="min-w-0 space-y-1.5">
             <h3 className="text-3xl font-black tracking-tighter truncate group-hover:text-primary transition-colors" style={{ color: '#9DAEC8' }}>{sub.name}</h3>
-            <p className="text-[12px] text-slate-3000 font-bold italic leading-relaxed line-clamp-2">
+            <p className="text-[12px] text-slate-500 font-bold italic leading-relaxed line-clamp-2">
               {sub.chemicalName}
             </p>
           </div>
@@ -89,7 +89,7 @@ const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
       <div className="px-8 pb-8">
         <button
           onClick={() => navigate(`/monograph/${sub.id}`)}
-          className="w-full py-4 bg-primary hover:bg-blue-600 text-white text-xs font-black rounded-xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 border-t border-white/10"
+          className="w-full py-4 bg-primary hover:bg-blue-600 text-slate-300 text-xs font-black rounded-xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 border-t border-white/10"
         >
           View Full Monograph
         </button>
@@ -159,7 +159,7 @@ const SubstanceCatalog: React.FC = () => {
 
             <div className="space-y-4 relative z-10">
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-3000 uppercase tracking-widest ml-1">Substance Compound</label>
+                <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Substance Compound</label>
                 <div className="relative">
                   <select
                     value={selectedMatrixSub}
@@ -173,7 +173,7 @@ const SubstanceCatalog: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-3000 uppercase tracking-widest ml-1">Secondary Medication</label>
+                <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Secondary Medication</label>
                 <div className="relative">
                   <select
                     value={secondaryMed}
@@ -201,7 +201,7 @@ const SubstanceCatalog: React.FC = () => {
 
             <div className="flex items-center gap-3 p-3 bg-black/40 rounded-xl border border-slate-800/60 relative z-10">
               <div className="size-1.5 rounded-full bg-clinical-green animate-pulse shadow-[0_0_8px_#53d22d]"></div>
-              <p className="text-xs text-slate-600 font-black uppercase tracking-widest">Node Status: Protected</p>
+              <p className="text-sm text-slate-600 font-black uppercase tracking-widest">Node Status: Protected</p>
             </div>
           </div>
         </div>
@@ -213,7 +213,7 @@ const SubstanceCatalog: React.FC = () => {
               <span className="material-symbols-outlined text-indigo-400 text-2xl font-black">verified</span>
               <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#8B9DC3' }}>Compliance Status: Active</span>
             </div>
-            <p className="text-xs text-slate-3000 font-medium leading-relaxed italic relative z-10">
+            <p className="text-sm text-slate-500 font-medium leading-relaxed italic relative z-10">
               Institutional access verified. All data presented is for research purposes only.
             </p>
           </div>

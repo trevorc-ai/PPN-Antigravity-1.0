@@ -70,7 +70,7 @@ const Analytics = () => {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={handlePrint}
-                        className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
+                        className="p-3 bg-indigo-600 hover:bg-indigo-500 text-slate-300 rounded-xl flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
                     >
                         <Printer className="w-5 h-5" />
                         <span className="font-bold">Print Report</span>
@@ -81,7 +81,7 @@ const Analytics = () => {
             {/* PRINT HEADER - Visible ONLY on Print */}
             <div className="hidden print:block mb-8 border-b-2 border-black pb-4">
                 <h1 className="text-4xl font-black text-black mb-2">Clinical Intelligence Report</h1>
-                <div className="flex justify-between text-sm text-gray-600 font-mono">
+                <div className="flex justify-between text-sm text-slate-600 font-mono">
                     <span>Generated: {new Date().toLocaleDateString()}</span>
                     <span>Node: LIVE_NODE_07</span>
                     <span>User: Dr. Sarah Chen</span>
@@ -149,11 +149,11 @@ const Analytics = () => {
                     <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl h-full flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none">
                         <div className="flex items-center gap-2 mb-2">
                             <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                            <div className="text-xs font-black text-slate-3000 uppercase tracking-widest print:text-gray-500">{stat.label}</div>
+                            <div className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-slate-500">{stat.label}</div>
                         </div>
                         <div className="flex items-baseline gap-2">
                             <div className={`text-3xl font-black ${stat.color} tracking-tight`}>{stat.value}</div>
-                            <div className="text-xs font-bold bg-slate-900/50 px-2 py-0.5 rounded border border-slate-800 print:bg-gray-100 print:text-gray-600 print:border-gray-200" style={{ color: '#8B9DC3' }}>{stat.trend}</div>
+                            <div className="text-xs font-bold bg-slate-900/50 px-2 py-0.5 rounded border border-slate-800 print:bg-gray-100 print:text-slate-600 print:border-gray-200" style={{ color: '#8B9DC3' }}>{stat.trend}</div>
                         </div>
                     </div>
                 ))}
@@ -184,18 +184,18 @@ const Analytics = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
                                     <p className="text-2xl font-black" style={{ color: '#9DAEC8' }}>{benchmark.practitioner_adverse_event_rate.toFixed(2)}%</p>
-                                    <p className="text-xs text-slate-3000 mt-1">{benchmark.adverse_events} events / {benchmark.total_sessions} sessions</p>
+                                    <p className="text-sm text-slate-500 mt-1">{benchmark.adverse_events} events / {benchmark.total_sessions} sessions</p>
                                 </div>
                                 <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
                                     <p className="text-2xl font-black" style={{ color: '#9DAEC8' }}>{benchmark.network_average_rate.toFixed(2)}%</p>
-                                    <p className="text-xs text-slate-3000 mt-1">All sites with N ≥ 10</p>
+                                    <p className="text-sm text-slate-500 mt-1">All sites with N ≥ 10</p>
                                 </div>
                                 <div className={`rounded-xl p-4 border ${benchmark.status === 'excellent' ? 'bg-emerald-500/10 border-emerald-500/20' :
                                     benchmark.status === 'good' ? 'bg-blue-500/10 border-blue-500/20' :
                                         benchmark.status === 'average' ? 'bg-slate-900/50 border-slate-800' :
                                             'bg-amber-500/10 border-amber-500/20'
                                     }`}>
-                                    <p className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">Status</p>
+                                    <p className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-2">Status</p>
                                     <p className={`text-2xl font-black ${benchmark.status === 'excellent' ? 'text-emerald-400' :
                                         benchmark.status === 'good' ? 'text-blue-400' :
                                             benchmark.status === 'average' ? 'text-slate-300' :
@@ -206,7 +206,7 @@ const Analytics = () => {
                                                 benchmark.status === 'average' ? 'Average' :
                                                     'Needs Improvement'}
                                     </p>
-                                    <p className="text-xs text-slate-3000 mt-1">{benchmark.percentile}th percentile</p>
+                                    <p className="text-sm text-slate-500 mt-1">{benchmark.percentile}th percentile</p>
                                 </div>
                             </div>
                         </div>
@@ -215,7 +215,7 @@ const Analytics = () => {
                     <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-12 text-center">
                         <ShieldCheck className="w-16 h-16 text-slate-600 mx-auto mb-4" />
                         <p className="mb-2" style={{ color: '#8B9DC3' }}>Insufficient data for safety benchmark</p>
-                        <p className="text-sm text-slate-3000">Log at least 10 protocols to see your safety performance</p>
+                        <p className="text-sm text-slate-500">Log at least 10 protocols to see your safety performance</p>
                     </div>
                 )}
             </Section>
@@ -256,7 +256,7 @@ const Analytics = () => {
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
                         <div className="absolute top-6 left-6 z-10">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
-                            <p className="text-sm print:text-gray-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
+                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
                         </div>
                         <ClinicPerformanceRadar />
                     </GlassmorphicCard>
@@ -267,7 +267,7 @@ const Analytics = () => {
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
                         <div className="absolute top-6 left-6 z-10">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</h3>
-                            <p className="text-sm print:text-gray-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
+                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
                         </div>
                         <PatientConstellation />
                     </GlassmorphicCard>
@@ -278,7 +278,7 @@ const Analytics = () => {
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
                         <div className="absolute top-6 left-6 z-10">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Molecular Bridge</h3>
-                            <p className="text-sm print:text-gray-500" style={{ color: '#8B9DC3' }}>Receptor affinity profiles</p>
+                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Receptor affinity profiles</p>
                         </div>
                         <MolecularPharmacology />
                     </GlassmorphicCard>
@@ -289,7 +289,7 @@ const Analytics = () => {
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
                         <div className="absolute top-6 left-6 z-10">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Genomic Safety</h3>
-                            <p className="text-sm print:text-gray-500" style={{ color: '#8B9DC3' }}>CYP450 metabolic risk analysis</p>
+                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>CYP450 metabolic risk analysis</p>
                         </div>
                         <MetabolicRiskGauge />
                     </GlassmorphicCard>
@@ -300,7 +300,7 @@ const Analytics = () => {
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
                         <div className="absolute top-6 left-6 z-10">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Protocol ROI</h3>
-                            <p className="text-sm print:text-gray-500" style={{ color: '#8B9DC3' }}>Financial efficiency modeling</p>
+                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Financial efficiency modeling</p>
                         </div>
                         <ProtocolEfficiency />
                     </GlassmorphicCard>
@@ -309,7 +309,7 @@ const Analytics = () => {
             </Section>
 
             {/* PRINT FOOTER */}
-            <div className="hidden print:block text-center text-xs text-gray-400 pt-8 border-t border-gray-200 mt-8">
+            <div className="hidden print:block text-center text-xs text-slate-400 pt-8 border-t border-gray-200 mt-8">
                 <p>CONFIDENTIAL: For Clinical Use Only. Generated by PPN Portal.</p>
             </div>
 

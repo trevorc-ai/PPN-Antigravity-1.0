@@ -113,14 +113,14 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 {answeredCount > 0 && (
                     <div className="mt-4 grid grid-cols-2 gap-3">
                         <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                            <p className="text-xs text-purple-300">Total Score</p>
+                            <p className="text-sm text-purple-300">Total Score</p>
                             <p className="text-2xl font-black text-purple-400">{normalizedScore}/100</p>
                         </div>
                         {isMysticalExperience && (
                             <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2">
                                 <Award className="w-6 h-6 text-emerald-400" />
                                 <div>
-                                    <p className="text-xs text-emerald-300">Complete</p>
+                                    <p className="text-sm text-emerald-300">Complete</p>
                                     <p className="text-sm font-bold text-emerald-400">Mystical Experience</p>
                                 </div>
                             </div>
@@ -149,7 +149,7 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                                     <p className="text-slate-300 text-base font-medium leading-relaxed">
                                         {question.text}
                                     </p>
-                                    <p className="text-slate-500 text-xs mt-1">Subscale: {question.subscale}</p>
+                                    <p className="text-slate-400 text-sm mt-1">Subscale: {question.subscale}</p>
                                 </div>
                             </div>
 

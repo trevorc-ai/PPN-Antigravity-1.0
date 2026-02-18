@@ -19,6 +19,8 @@ export interface AssessmentQuestion {
     id: string;
     text: string;
     subscale?: string;
+    tooltip?: string; // WO-113
+    citation?: string; // WO-113
     type: 'likert' | 'slider';
     min: number;
     max: number;
@@ -134,10 +136,10 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                 <div className="flex items-start justify-between mb-4">
                     <div>
                         <h2 className="text-2xl font-black text-slate-300">{config.name}</h2>
-                        <p className="text-slate-300 text-sm mt-1">{config.description}</p>
+                        <p className="text-slate-300 text-base mt-1">{config.description}</p>
                     </div>
                     {isSaving && (
-                        <div className="flex items-center gap-2 text-blue-400 text-xs">
+                        <div className="flex items-center gap-2 text-blue-400 text-sm">
                             <Save className="w-4 h-4 animate-pulse" />
                             <span>Saving...</span>
                         </div>
@@ -146,7 +148,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
 
                 {/* Progress Bar */}
                 <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between text-sm">
                         <span className="text-slate-300">
                             Progress: {answeredCount}/{config.questions.length} questions
                         </span>
@@ -164,7 +166,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                 {answeredCount > 0 && (
                     <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
                         <div className="flex items-center justify-between">
-                            <span className="text-emerald-300 text-sm font-semibold">
+                            <span className="text-emerald-300 text-base font-semibold">
                                 Current {config.shortName} Score
                             </span>
                             <span className="text-2xl font-black text-emerald-400">
@@ -176,7 +178,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
             </div>
 
             {/* Questions */}
-            <div className="space-y-6">
+            <div className="space-y-8">
                 {currentQuestions.map((question, idx) => {
                     const questionNumber = startIdx + idx + 1;
                     const isAnswered = responses[question.id] !== undefined;
@@ -184,53 +186,68 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                     return (
                         <div
                             key={question.id}
-                            className={`bg-slate-900/60 backdrop-blur-xl border rounded-2xl p-6 transition-all ${isAnswered
+                            className={`bg-slate-900/60 backdrop-blur-xl border rounded-2xl p-8 transition-all ${isAnswered
                                 ? 'border-emerald-500/50 bg-emerald-500/5'
                                 : 'border-slate-700/50'
                                 }`}
                         >
                             {/* Question Header */}
-                            <div className="flex items-start gap-3 mb-4">
+                            <div className="flex items-start gap-4 mb-6">
                                 <div
-                                    className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isAnswered
+                                    className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isAnswered
                                         ? 'bg-emerald-500/20 text-emerald-400'
                                         : 'bg-slate-700/50 text-slate-300'
                                         }`}
                                 >
                                     {isAnswered ? (
-                                        <CheckCircle className="w-5 h-5" />
+                                        <CheckCircle className="w-6 h-6" />
                                     ) : (
-                                        <span className="text-sm font-bold">{questionNumber}</span>
+                                        <span className="text-base font-bold">{questionNumber}</span>
                                     )}
                                 </div>
-                                <div className="flex-1">
-                                    <p className="text-slate-300 text-base font-bold leading-relaxed">
-                                        {question.text}
-                                    </p>
-                                    {question.subscale && (
-                                        <p className="text-slate-500 text-xs mt-1">
-                                            Subscale: {question.subscale}
+                                <div className="flex-1 space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-slate-300 text-2xl font-bold leading-relaxed">
+                                            {question.text}
                                         </p>
-                                    )}
+                                        {question.tooltip && (
+                                            <AdvancedTooltip content={question.tooltip} tier="standard">
+                                                <span className="material-symbols-outlined text-slate-500 hover:text-primary cursor-help text-lg">help</span>
+                                            </AdvancedTooltip>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center gap-4">
+                                        {question.subscale && (
+                                            <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-400 text-sm font-medium uppercase tracking-wider">
+                                                {question.subscale}
+                                            </span>
+                                        )}
+                                        {question.citation && (
+                                            <span className="text-slate-500 text-sm italic">
+                                                Ref: {question.citation}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Response Options */}
                             {question.type === 'likert' && (
-                                <div className="flex flex-wrap gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                                     {question.labels?.map((option) => (
                                         <button
                                             key={option.value}
                                             onClick={() => handleResponse(question.id, option.value)}
-                                            className={`flex-1 min-w-[100px] px-4 py-3 rounded-lg font-medium text-sm transition-all ${responses[question.id] === option.value
-                                                ? 'bg-emerald-500 text-slate-300 shadow-lg shadow-emerald-500/30'
-                                                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                            className={`flex flex-col items-center justify-center p-4 rounded-xl transition-all border ${responses[question.id] === option.value
+                                                ? 'bg-emerald-500 border-emerald-400 text-slate-300 shadow-lg shadow-emerald-500/20 transform scale-[1.02]'
+                                                : 'bg-slate-800/40 border-slate-700/50 text-slate-300 hover:bg-slate-700/60 hover:border-slate-600'
                                                 }`}
                                         >
-                                            <div className="text-center">
-                                                <div className="font-bold">{option.value}</div>
-                                                <div className="text-xs opacity-80">{option.label}</div>
-                                            </div>
+                                            <span className="text-lg font-black mb-1">{option.value}</span>
+                                            <span className={`text-base font-medium text-center ${responses[question.id] === option.value ? 'text-slate-300/90' : 'text-slate-400'}`}>
+                                                {option.label}
+                                            </span>
                                         </button>
                                     ))}
                                 </div>
@@ -248,7 +265,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                                         }
                                         className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                                     />
-                                    <div className="flex items-center justify-between text-xs">
+                                    <div className="flex items-center justify-between text-sm">
                                         <span className="text-slate-300">{question.min}</span>
                                         <span className="text-emerald-400 font-bold text-lg">
                                             {responses[question.id] ?? 50}

@@ -64,7 +64,7 @@ const SignUp = () => {
                         <Stethoscope className="w-6 h-6 text-slate-300" />
                     </div>
                     <h1 className="text-2xl font-black text-slate-300 tracking-tight mb-2">Join the Network</h1>
-                    <p className="text-slate-300 text-xs font-medium uppercase tracking-widest">
+                    <p className="text-slate-300 text-sm font-medium uppercase tracking-widest">
                         Practitioner Registration
                     </p>
                 </div>
@@ -82,10 +82,10 @@ const SignUp = () => {
                     <div className="space-y-4">
                         {/* Email */}
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">Email Address</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Email Address</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Mail className="h-4 w-4 text-slate-3000" />
+                                    <Mail className="h-4 w-4 text-slate-500" />
                                 </div>
                                 <input
                                     name="email"
@@ -101,10 +101,10 @@ const SignUp = () => {
 
                         {/* Password */}
                         <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">Password</label>
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Password</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock className="h-4 w-4 text-slate-3000" />
+                                    <Lock className="h-4 w-4 text-slate-500" />
                                 </div>
                                 <input
                                     name="password"
@@ -139,7 +139,7 @@ const SignUp = () => {
                     </button>
 
                     <div className="text-center pt-2">
-                        <Link to="/login" className="text-xs text-slate-3000 hover:text-indigo-400 font-bold uppercase tracking-widest transition-colors">
+                        <Link to="/login" className="text-xs text-slate-500 hover:text-indigo-400 font-bold uppercase tracking-widest transition-colors">
                             Already have an account? Sign In
                         </Link>
                     </div>
@@ -149,7 +149,7 @@ const SignUp = () => {
 
             {/* Footer / Copyright */}
             <div className="absolute bottom-6 text-center w-full">
-                <p className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.2em]">
+                <p className="text-sm text-slate-600 font-bold uppercase tracking-[0.2em]">
                     Secured by Supabase Auth v2
                 </p>
             </div>

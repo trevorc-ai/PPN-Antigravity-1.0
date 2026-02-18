@@ -197,7 +197,7 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
 
             {/* Info */}
             <div className="mt-6 p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
-                <p className="text-blue-300 text-xs leading-relaxed text-center">
+                <p className="text-blue-300 text-sm leading-relaxed text-center">
                     <span className="font-semibold">Why daily?</span> Daily pulse checks take &lt;10 seconds but provide early warning signs of destabilization. If you score &lt;3 for 2 consecutive days, we'll ask you to complete a full PHQ-9 assessment.
                 </p>
             </div>

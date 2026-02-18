@@ -76,7 +76,7 @@ const StarRating: React.FC<{ value: number; onChange: (value: number) => void; l
                         <Star
                             className={`w-8 h-8 transition-all ${star <= value
                                 ? 'fill-yellow-400 text-yellow-400'
-                                : 'text-slate-600 hover:text-slate-500'
+                                : 'text-slate-400 hover:text-slate-400'
                                 }`}
                         />
                     </button>

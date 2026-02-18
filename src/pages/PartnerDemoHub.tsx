@@ -316,7 +316,7 @@ const PartnerDemoHub: React.FC = () => {
             <Section spacing="tight">
                 <div className="text-center space-y-6">
                     <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/20 rounded-full">
-                        <p className="text-xs font-black text-primary uppercase tracking-widest">
+                        <p className="text-sm font-black text-primary uppercase tracking-widest">
                             Partner Demo Hub
                         </p>
                     </div>
@@ -435,7 +435,7 @@ const PartnerDemoHub: React.FC = () => {
             <Section spacing="tight">
                 <div className="text-center text-slate-500 text-sm space-y-2">
                     <p>Partner Demo Hub • Last Updated: {new Date().toLocaleDateString()}</p>
-                    <p className="font-mono text-xs">
+                    <p className="font-mono text-sm">
                         Access URL: <span className="text-primary">http://localhost:3000/#/partner-demo</span>
                     </p>
                 </div>

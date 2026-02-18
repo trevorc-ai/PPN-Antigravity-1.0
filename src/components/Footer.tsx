@@ -80,7 +80,7 @@ const Footer: React.FC = () => {
             <span className="material-symbols-outlined text-amber-400/80 text-xl flex-shrink-0" aria-hidden="true">
               warning
             </span>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-sm text-slate-300 leading-relaxed">
               <span className="font-bold text-amber-400/90">Medical Disclaimer:</span> This is for informational purposes only. For medical advice or diagnosis, consult a professional.
             </p>
           </div>
@@ -88,7 +88,7 @@ const Footer: React.FC = () => {
 
         {/* Legal Banner - Simplified */}
         <div className="border-t border-white/[0.03] pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-slate-600 text-center md:text-left">
+          <p className="text-sm text-slate-600 text-center md:text-left">
             © 2025 Psychedelic Practitioners Network. All Rights Reserved.
           </p>
           <div className="flex items-center gap-4">

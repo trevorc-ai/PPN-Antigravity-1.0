@@ -29,6 +29,7 @@ const navSections: NavSection[] = [
   {
     title: 'Clinical Tools',
     items: [
+      { label: 'Wellness Journey', icon: 'timeline', path: '/wellness-journey' },
       { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
       { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
     ],
@@ -79,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h1 className="text-sm font-black tracking-tight" style={{ color: '#8B9DC3' }}>PPN Portal</h1>
-              <p className="text-xs font-mono text-slate-500 uppercase tracking-wider">Research v2.4</p>
+              <p className="text-sm font-mono text-slate-500 uppercase tracking-wider">Research v2.4</p>
             </div>
           </div>
           <button

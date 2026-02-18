@@ -51,7 +51,7 @@ const ComponentShowcase: React.FC = () => {
                         </p>
                     </div>
                     <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-                        <p className="text-xs font-black text-amber-400 uppercase tracking-widest">
+                        <p className="text-sm font-black text-amber-400 uppercase tracking-widest">
                             Testing Only
                         </p>
                     </div>
@@ -269,7 +269,7 @@ const ComponentShowcase: React.FC = () => {
 
             {/* Footer */}
             <Section spacing="tight">
-                <div className="text-center text-slate-3000 text-sm">
+                <div className="text-center text-slate-500 text-sm">
                     <p>Component Showcase • Testing Environment • {new Date().toLocaleDateString()}</p>
                     <p className="mt-2">Navigate to <span className="font-mono text-indigo-400">http://localhost:3000/#/component-showcase</span></p>
                 </div>

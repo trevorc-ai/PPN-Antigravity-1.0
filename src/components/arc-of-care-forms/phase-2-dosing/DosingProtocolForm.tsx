@@ -175,7 +175,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                             ))}
                         </select>
                         {selectedSubstance && (
-                            <p className="text-xs text-slate-500 mt-2">
+                            <p className="text-sm text-slate-400 mt-2">
                                 Typical range: {selectedSubstance.typical_range}
                             </p>
                         )}

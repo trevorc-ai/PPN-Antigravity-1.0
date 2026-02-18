@@ -48,7 +48,7 @@ export const USMapFilter: React.FC<USMapFilterProps> = ({
                     <h3 className="text-lg font-black text-slate-300 tracking-tight">
                         State Filter
                     </h3>
-                    <p className="text-xs text-slate-300">
+                    <p className="text-sm text-slate-300">
                         Click states to filter data
                     </p>
                 </div>
@@ -127,7 +127,7 @@ export const USMapFilter: React.FC<USMapFilterProps> = ({
             {/* Selected States Badges */}
             {showSelectedBadges && selectedStates.length > 0 && (
                 <div className="mt-6">
-                    <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-3">
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest mb-3">
                         Selected States ({selectedStates.length})
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -154,7 +154,7 @@ export const USMapFilter: React.FC<USMapFilterProps> = ({
             {/* Instructions */}
             {selectedStates.length === 0 && (
                 <div className="mt-6 text-center">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm text-slate-500">
                         {multiSelect ? 'Click states to select multiple' : 'Click a state to select'}
                     </p>
                 </div>

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description"
+        content="PPN Patient Bridge — Scan a patient label to generate a zero-knowledge PPN ID. No data leaves your device." />
+    <meta name="theme-color" content="#0a1628" />
+    <title>PPN Patient Bridge — Camera Scan</title>
+
+    <!-- Tesseract.js v5 — client-side OCR, zero server calls -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <style>
+        /* ─── Design System ─────────────────────────────────────────── */
+        :root {
+            --bg: #0a1628;
+            --bg2: #0d1b2a;
+            --surface: #111827;
+            --border: #1e3a5f;
+            --primary: #2b74f3;
+            --primary-h: #1a5fd4;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --faint: #475569;
+            --radius: 16px;
+            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 60%, #05070a 100%);
+            min-height: 100dvh;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── Layout ────────────────────────────────────────────────── */
+        .app {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 16px 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ─── Header ────────────────────────────────────────────────── */
+        .header {
+            text-align: center;
+            padding: 8px 0 4px;
+        }
+
+        .header__logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .header__dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 12px rgba(43, 116, 243, 0.6);
+        }
+
+        .header__brand {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--primary);
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ─── Card ──────────────────────────────────────────────────── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .card__title {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        /* ─── Scan Button ───────────────────────────────────────────── */
+        .scan-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            min-height: 64px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, #1a5fd4 100%);
+            border: none;
+            border-radius: var(--radius);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: transform 0.12s, box-shadow 0.12s;
+            box-shadow: 0 4px 24px rgba(43, 116, 243, 0.35);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .scan-btn:active {
+            transform: scale(0.97);
+        }
+
+        .scan-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .scan-btn svg {
+            flex-shrink: 0;
+        }
+
+        /* Hidden file input */
+        #cameraInput {
+            display: none;
+        }
+
+        /* ─── Status Banner ─────────────────────────────────────────── */
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.4;
+            transition: all 0.25s;
+        }
+
+        .status--idle {
+            background: rgba(71, 85, 105, 0.2);
+            border: 1px solid var(--faint);
+            color: var(--muted);
+        }
+
+        .status--loading {
+            background: rgba(43, 116, 243, 0.12);
+            border: 1px solid rgba(43, 116, 243, 0.3);
+            color: #93c5fd;
+        }
+
+        .status--success {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .status--warn {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fcd34d;
+        }
+
+        .status--error {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(147, 197, 253, 0.3);
+            border-top-color: #93c5fd;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ─── Form Fields ───────────────────────────────────────────── */
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .field input {
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 16px;
+            font-family: var(--font);
+            transition: border-color 0.15s, box-shadow 0.15s;
+            -webkit-appearance: none;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(43, 116, 243, 0.2);
+        }
+
+        .field input::placeholder {
+            color: var(--faint);
+        }
+
+        .field input.autofilled {
+            border-color: var(--emerald);
+            background: rgba(16, 185, 129, 0.06);
+        }
+
+        .fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .fields-grid .field:last-child {
+            grid-column: 1 / -1;
+        }
+
+        /* ─── Generate Button ───────────────────────────────────────── */
+        .gen-btn {
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 24px;
+            background: rgba(43, 116, 243, 0.15);
+            border: 1px solid rgba(43, 116, 243, 0.4);
+            border-radius: 12px;
+            color: #93c5fd;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .gen-btn:hover,
+        .gen-btn:active {
+            background: rgba(43, 116, 243, 0.25);
+        }
+
+        /* ─── Result Card ───────────────────────────────────────────── */
+        .result {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .result.visible {
+            display: flex;
+        }
+
+        .result__id {
+            text-align: center;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: var(--radius);
+        }
+
+        .result__label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--emerald);
+            margin-bottom: 8px;
+        }
+
+        .result__value {
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.04em;
+            font-variant-numeric: tabular-nums;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 24px;
+            background: var(--emerald);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.97);
+            background: #059669;
+        }
+
+        .copy-btn.copied {
+            background: #059669;
+        }
+
+        .reset-btn {
+            width: 100%;
+            min-height: 44px;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--faint);
+            border-radius: 10px;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .reset-btn:active {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        /* ─── Privacy Note ──────────────────────────────────────────── */
+        .privacy {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 14px 16px;
+            background: rgba(43, 116, 243, 0.06);
+            border: 1px solid rgba(43, 116, 243, 0.2);
+            border-radius: 12px;
+        }
+
+        .privacy__icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .privacy__text {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .privacy__text strong {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        /* ─── Divider ───────────────────────────────────────────────── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--faint);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ─── Preview image ─────────────────────────────────────────── */
+        #previewWrap {
+            display: none;
+        }
+
+        #previewWrap.visible {
+            display: block;
+        }
+
+        #preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app" role="main">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header__logo">
+                <div class="header__dot" aria-hidden="true"></div>
+                <span class="header__brand">PPN Portal</span>
+            </div>
+            <h1>Patient Bridge</h1>
+            <p>Scan a patient label to generate a zero-knowledge PPN ID instantly.</p>
+        </header>
+
+        <!-- Privacy guarantee -->
+        <div class="privacy" role="note" aria-label="Privacy guarantee">
+            <span class="privacy__icon" aria-hidden="true">🔒</span>
+            <p class="privacy__text">
+                <strong>Zero-knowledge guarantee:</strong> All processing happens on your device.
+                No image, name, or patient data is ever transmitted to any server.
+            </p>
+        </div>
+
+        <!-- Scan button -->
+        <div class="card">
+            <p class="card__title">Step 1 — Scan Label</p>
+            <label for="cameraInput" style="display:block">
+                <button class="scan-btn" id="scanBtn" type="button" aria-label="Scan patient label with camera"
+                    onclick="document.getElementById('cameraInput').click()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                        <circle cx="12" cy="13" r="4" />
+                    </svg>
+                    Scan Patient Label
+                </button>
+            </label>
+            <input type="file" id="cameraInput" accept="image/*" capture="environment"
+                aria-label="Camera input for patient label" />
+
+            <!-- Status -->
+            <div id="status" class="status status--idle" role="status" aria-live="polite" style="margin-top:14px">
+                <span id="statusIcon" aria-hidden="true">📷</span>
+                <span id="statusText">Ready to scan. Point camera at patient wristband or chart label.</span>
+            </div>
+
+            <!-- Preview -->
+            <div id="previewWrap" style="margin-top:12px">
+                <img id="preview" alt="Scanned label preview" />
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider" aria-hidden="true">or enter manually</div>
+
+        <!-- Manual entry -->
+        <div class="card">
+            <p class="card__title">Step 2 — Confirm Details</p>
+            <div class="fields-grid">
+                <div class="field">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" placeholder="John" autocomplete="off" autocorrect="off"
+                        autocapitalize="words" spellcheck="false" aria-label="Patient first name" />
+                </div>
+                <div class="field">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="Doe" autocomplete="off" autocorrect="off"
+                        autocapitalize="words" spellcheck="false" aria-label="Patient last name" />
+                </div>
+                <div class="field">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" aria-label="Patient date of birth" />
+                </div>
+            </div>
+
+            <button class="gen-btn" id="genBtn" type="button" style="margin-top:16px" onclick="generateFromForm()"
+                aria-label="Generate PPN ID from entered details">
+                Generate PPN ID →
+            </button>
+        </div>
+
+        <!-- Result -->
+        <div class="result" id="result" aria-live="polite" aria-label="Generated PPN ID">
+            <div class="result__id">
+                <div class="result__label">Generated PPN ID</div>
+                <div class="result__value" id="ppnValue" aria-label="PPN ID value">—</div>
+            </div>
+            <button class="copy-btn" id="copyBtn" type="button" onclick="copyResult()"
+                aria-label="Copy PPN ID to clipboard">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+                Copy PPN ID
+            </button>
+            <button class="reset-btn" type="button" onclick="resetAll()" aria-label="Scan another patient">
+                ↩ Scan another patient
+            </button>
+        </div>
+
+    </div><!-- /app -->
+
+    <script>
+        'use strict';
+
+        // ─── PPN ID Formula (matches WO-092 Google Sheets formula) ──────────────
+        // Format: PPN-{F1F2}{L1L2}{MMDDYY}
+        // Example: John Doe, 01/01/1985 → PPN-JODO010185
+        function buildPPNID(first, last, dob) {
+            const f = (first || '').trim().toUpperCase();
+            const l = (last || '').trim().toUpperCase();
+            if (!f || !l || !dob) return null;
+
+            const f2 = f.replace(/[^A-Z]/g, '').substring(0, 2).padEnd(2, 'X');
+            const l2 = l.replace(/[^A-Z]/g, '').substring(0, 2).padEnd(2, 'X');
+
+            // dob can be a Date object or a string "YYYY-MM-DD" (from <input type=date>)
+            let mm, dd, yy;
+            if (dob instanceof Date) {
+                mm = String(dob.getMonth() + 1).padStart(2, '0');
+                dd = String(dob.getDate()).padStart(2, '0');
+                yy = String(dob.getFullYear()).slice(-2);
+            } else {
+                // "YYYY-MM-DD"
+                const parts = dob.split('-');
+                if (parts.length !== 3) return null;
+                mm = parts[1].padStart(2, '0');
+                dd = parts[2].padStart(2, '0');
+                yy = parts[0].slice(-2);
+            }
+
+            return `PPN-${f2}${l2}${mm}${dd}${yy}`;
+        }
+
+        // ─── Status helpers ──────────────────────────────────────────────────────
+        function setStatus(type, icon, text) {
+            const el = document.getElementById('status');
+            el.className = `status status--${type}`;
+            document.getElementById('statusIcon').textContent = icon;
+            document.getElementById('statusText').textContent = text;
+        }
+
+        // ─── OCR: progressive enhancement ───────────────────────────────────────
+        async function extractTextFromImage(file) {
+            // Try native TextDetector API first (Chrome/Android — instant, no download)
+            if ('TextDetector' in window) {
+                try {
+                    const detector = new window.TextDetector();
+                    const bitmap = await createImageBitmap(file);
+                    const texts = await detector.detect(bitmap);
+                    if (texts.length > 0) {
+                        return texts.map(t => t.rawValue).join(' ');
+                    }
+                } catch (_) {
+                    // Fall through to Tesseract
+                }
+            }
+
+            // Tesseract.js fallback — works on iOS Safari, Firefox, all browsers
+            if (typeof Tesseract === 'undefined') {
+                throw new Error('OCR library not loaded. Check your internet connection.');
+            }
+            const { data: { text } } = await Tesseract.recognize(file, 'eng', {
+                logger: m => {
+                    if (m.status === 'recognizing text') {
+                        const pct = Math.round((m.progress || 0) * 100);
+                        setStatus('loading', '🔍', `Reading label… ${pct}%`);
+                    }
+                }
+            });
+            return text;
+        }
+
+        // ─── Regex extraction ────────────────────────────────────────────────────
+        const NAME_PATTERNS = [
+            /([A-Z][a-z]{1,})\s+([A-Z][a-z]{1,})/,          // First Last
+            /([A-Z]{2,}),\s*([A-Z]{2,})/,                    // LAST, FIRST (all caps)
+        ];
+        const DOB_PATTERNS = [
+            /(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/,      // MM/DD/YY or MM-DD-YYYY
+            /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\.?\s+(\d{1,2}),?\s+(\d{4})/i,
+        ];
+        const MONTH_MAP = {
+            jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06',
+            jul: '07', aug: '08', sep: '09', oct: '10', nov: '11', dec: '12'
+        };
+
+        function extractPatientData(rawText) {
+            let first = null, last = null, mm = null, dd = null, yy = null;
+
+            for (const pat of NAME_PATTERNS) {
+                const m = rawText.match(pat);
+                if (m) {
+                    // Pattern 2 returns LAST, FIRST — swap
+                    if (pat.source.includes(',')) {
+                        last = m[1].charAt(0) + m[1].slice(1).toLowerCase();
+                        first = m[2].charAt(0) + m[2].slice(1).toLowerCase();
+                    } else {
+                        first = m[1];
+                        last = m[2];
+                    }
+                    break;
+                }
+            }
+
+            for (const pat of DOB_PATTERNS) {
+                const m = rawText.match(pat);
+                if (m) {
+                    if (isNaN(parseInt(m[1]))) {
+                        // Month-name pattern
+                        mm = MONTH_MAP[m[1].toLowerCase().substring(0, 3)] || '00';
+                        dd = m[2].padStart(2, '0');
+                        yy = m[3].slice(-2);
+                    } else {
+                        mm = m[1].padStart(2, '0');
+                        dd = m[2].padStart(2, '0');
+                        yy = m[3].length === 4 ? m[3].slice(-2) : m[3].padStart(2, '0');
+                    }
+                    break;
+                }
+            }
+
+            return { first, last, mm, dd, yy };
+        }
+
+        // ─── Camera input handler ────────────────────────────────────────────────
+        document.getElementById('cameraInput').addEventListener('change', async function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            // Show preview
+            const preview = document.getElementById('preview');
+            const previewWrap = document.getElementById('previewWrap');
+            preview.src = URL.createObjectURL(file);
+            previewWrap.classList.add('visible');
+
+            // Disable scan button during processing
+            document.getElementById('scanBtn').disabled = true;
+            setStatus('loading', '', 'Initialising OCR…');
+
+            try {
+                const rawText = await extractTextFromImage(file);
+                const { first, last, mm, dd, yy } = extractPatientData(rawText);
+
+                if (first && last && mm && dd && yy) {
+                    // Auto-fill form
+                    const fnEl = document.getElementById('firstName');
+                    const lnEl = document.getElementById('lastName');
+                    const dobEl = document.getElementById('dob');
+
+                    fnEl.value = first;
+                    lnEl.value = last;
+                    // Reconstruct full year (assume 1900s if yy > current year's last 2 digits)
+                    const currentYY = new Date().getFullYear() % 100;
+                    const fullYear = parseInt(yy) > currentYY ? `19${yy}` : `20${yy}`;
+                    dobEl.value = `${fullYear}-${mm}-${dd}`;
+
+                    [fnEl, lnEl, dobEl].forEach(el => el.classList.add('autofilled'));
+
+                    // Generate ID immediately
+                    const id = buildPPNID(first, last, dobEl.value);
+                    if (id) {
+                        showResult(id);
+                        setStatus('success', '✅', `Label read successfully. PPN ID generated: ${id}`);
+                    } else {
+                        setStatus('warn', '⚠️', 'Label read but ID could not be generated. Please verify the fields below.');
+                    }
+                } else {
+                    setStatus('warn', '⚠️',
+                        'Could not read all fields from the label. Please fill in any missing details below and tap Generate.');
+                }
+            } catch (err) {
+                setStatus('error', '❌', `OCR error: ${err.message}. Please enter details manually.`);
+            } finally {
+                document.getElementById('scanBtn').disabled = false;
+                // Clear file input so same file can be re-selected
+                this.value = '';
+            }
+        });
+
+        // ─── Manual generate ─────────────────────────────────────────────────────
+        function generateFromForm() {
+            const first = document.getElementById('firstName').value.trim();
+            const last = document.getElementById('lastName').value.trim();
+            const dob = document.getElementById('dob').value;
+
+            if (!first || !last || !dob) {
+                setStatus('warn', '⚠️', 'Please fill in First Name, Last Name, and Date of Birth.');
+                return;
+            }
+
+            const id = buildPPNID(first, last, dob);
+            if (id) {
+                showResult(id);
+                setStatus('success', '✅', `PPN ID generated from manual entry.`);
+            } else {
+                setStatus('error', '❌', 'Could not generate ID. Please check all fields.');
+            }
+        }
+
+        // ─── Show result ─────────────────────────────────────────────────────────
+        function showResult(id) {
+            document.getElementById('ppnValue').textContent = id;
+            document.getElementById('result').classList.add('visible');
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // ─── Copy to clipboard ───────────────────────────────────────────────────
+        async function copyResult() {
+            const id = document.getElementById('ppnValue').textContent;
+            if (!id || id === '—') return;
+
+            const btn = document.getElementById('copyBtn');
+            try {
+                await navigator.clipboard.writeText(id);
+                btn.textContent = '✅ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy PPN ID`;
+                    btn.classList.remove('copied');
+                }, 2500);
+            } catch (_) {
+                // Fallback for older browsers
+                const ta = document.createElement('textarea');
+                ta.value = id;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => { btn.textContent = '📋 Copy PPN ID'; }, 2500);
+            }
+        }
+
+        // ─── Reset ───────────────────────────────────────────────────────────────
+        function resetAll() {
+            ['firstName', 'lastName'].forEach(id => {
+                const el = document.getElementById(id);
+                el.value = '';
+                el.classList.remove('autofilled');
+            });
+            document.getElementById('dob').value = '';
+            document.getElementById('dob').classList.remove('autofilled');
+            document.getElementById('ppnValue').textContent = '—';
+            document.getElementById('result').classList.remove('visible');
+            document.getElementById('previewWrap').classList.remove('visible');
+            setStatus('idle', '📷', 'Ready to scan. Point camera at patient wristband or chart label.');
+        }
+    </script>
+</body>
+
+</html>

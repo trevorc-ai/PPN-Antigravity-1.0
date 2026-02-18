@@ -79,7 +79,7 @@ function NumericInput({ label, value, onChange, min, max, placeholder, id }: {
                 className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
             />
             {min !== undefined && max !== undefined && (
-                <p className="text-xs text-slate-600 mt-1">Range: {min}–{max}</p>
+                <p className="text-sm text-slate-600 mt-1">Range: {min}–{max}</p>
             )}
         </div>
     );
@@ -174,7 +174,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                     <CheckCircle className="w-6 h-6 text-emerald-400 flex-shrink-0" />
                     <div>
                         <p className="text-sm font-black text-emerald-400">Baseline Assessment Complete</p>
-                        <p className="text-xs text-emerald-300/70">All 5 forms submitted. Clinical narrative generated below.</p>
+                        <p className="text-sm text-emerald-300/70">All 5 forms submitted. Clinical narrative generated below.</p>
                     </div>
                 </div>
                 <NarrativeViewer narrative={narrative} />
@@ -189,7 +189,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 <div className="flex items-center justify-between mb-4">
                     <div>
                         <h2 className="text-lg font-black text-slate-300">Baseline Assessment</h2>
-                        <p className="text-xs text-slate-500 uppercase tracking-widest">
+                        <p className="text-sm text-slate-500 uppercase tracking-widest">
                             Step {step} of {STEPS.length}: {STEPS[step - 1].subtitle}
                         </p>
                     </div>
@@ -235,7 +235,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                         {data.mentalHealth.pcl5 !== null && data.mentalHealth.pcl5 >= 33 && (
                             <div className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
                                 <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                                <p className="text-xs text-amber-300">PCL-5 ≥ 33 — significant PTSD symptoms documented. Trauma-informed approach indicated.</p>
+                                <p className="text-sm text-amber-300">PCL-5 ≥ 33 — significant PTSD symptoms documented. Trauma-informed approach indicated.</p>
                             </div>
                         )}
                     </>
@@ -296,7 +296,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                             { key: 'prior_experience', label: 'Prior Psychedelic Experience', options: EXPERIENCE_OPTIONS, id: 'experience' },
                         ] as const).map(({ key, label, options, id }) => (
                             <div key={key}>
-                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
+                                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
                                 <div className="grid grid-cols-2 gap-2">
                                     {options.map((opt) => (
                                         <button
@@ -322,7 +322,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 {step === 5 && (
                     <div className="space-y-5">
                         <div>
-                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Consent Type</p>
+                            <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Consent Type</p>
                             <div className="space-y-2">
                                 {CONSENT_TYPES.map((type) => (
                                     <label
@@ -403,7 +403,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                     </button>
                 </div>
 
-                <p className="text-xs text-slate-600 mt-2 text-center">
+                <p className="text-sm text-slate-600 mt-2 text-center">
                     Keyboard: <kbd className="px-1 py-0.5 bg-slate-800 rounded text-slate-500">Cmd+S</kbd> Save &amp; Exit &nbsp;·&nbsp;
                     <kbd className="px-1 py-0.5 bg-slate-800 rounded text-slate-500">Cmd+Enter</kbd> Next &nbsp;·&nbsp;
                     <kbd className="px-1 py-0.5 bg-slate-800 rounded text-slate-500">Alt+1–5</kbd> Jump to step

@@ -66,11 +66,11 @@ export default function RegulatoryMosaic({
                         <Map className="w-5 h-5 text-indigo-500" />
                         Regulatory Mosaic (Grid View)
                     </h3>
-                    <p className="text-[10px] font-bold text-slate-3000 uppercase tracking-widest">
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
                         Navigating Legal Complexity • State-by-State Status
                     </p>
                 </div>
-                <div className="flex items-center gap-3 text-[10px] font-bold uppercase">
+                <div className="flex items-center gap-3 text-xs font-bold uppercase">
                     <span className="flex items-center gap-1.5">
                         <span className="size-2.5 bg-[#5B8FA3] rounded-full"></span>
                         <span className="text-emerald-400">Legal</span>
@@ -113,18 +113,18 @@ export default function RegulatoryMosaic({
                             <div className="flex justify-between items-start mb-2 mt-1">
                                 <span className="text-3xl font-black text-slate-300 drop-shadow-lg">{state.code}</span>
                                 {state.status.includes('Legal') && <CheckCircle className="w-5 h-5 text-emerald-400" />}
-                                {state.status === 'Illegal' && <Lock className="w-5 h-5 text-slate-3000" />}
+                                {state.status === 'Illegal' && <Lock className="w-5 h-5 text-slate-500" />}
                             </div>
 
                             {/* State name */}
-                            <p className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">{state.name}</p>
+                            <p className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-1">{state.name}</p>
 
                             {/* Status badge */}
-                            <p className={`text-[10px] font-mono ${state.status.includes('Legal') ? 'text-emerald-400' :
+                            <p className={`text-sm font-mono ${state.status.includes('Legal') ? 'text-emerald-400' :
                                 state.status === 'Decriminalized' ? 'text-green-400' :
                                     state.status === 'Medical Only' ? 'text-blue-400' :
                                         state.status === 'Pending' ? 'text-amber-400' :
-                                            'text-slate-3000'
+                                            'text-slate-500'
                                 }`}>
                                 {state.status}
                             </p>
@@ -140,7 +140,7 @@ export default function RegulatoryMosaic({
                             <div className="flex justify-between items-start mb-3">
                                 <div>
                                     <h4 className="text-2xl font-black text-slate-300 uppercase mb-1">{stateData.name}</h4>
-                                    <span className="text-xs text-slate-3000 font-mono">{stateData.code}</span>
+                                    <span className="text-xs text-slate-500 font-mono">{stateData.code}</span>
                                 </div>
                                 <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase border ${stateData.status.includes('Legal') ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' :
                                     stateData.status === 'Decriminalized' ? 'bg-green-500/10 border-green-500/30 text-green-400' :
@@ -155,7 +155,7 @@ export default function RegulatoryMosaic({
                             {/* Details */}
                             <div className="space-y-3 pt-3 border-t border-slate-700">
                                 <div>
-                                    <span className="text-[10px] font-bold text-slate-3000 uppercase tracking-wider block mb-1">
+                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
                                         License Requirement
                                     </span>
                                     <span className="text-sm font-medium text-slate-300">{stateData.license}</span>
@@ -163,7 +163,7 @@ export default function RegulatoryMosaic({
 
                                 {stateData.keyForm && (
                                     <div>
-                                        <span className="text-[10px] font-bold text-slate-3000 uppercase tracking-wider block mb-1">
+                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
                                             Key Form
                                         </span>
                                         <span className="text-sm font-medium text-indigo-400">{stateData.keyForm}</span>
@@ -185,10 +185,10 @@ export default function RegulatoryMosaic({
                         <div className="p-4 bg-slate-900 rounded-xl border-2 border-slate-700 flex items-center gap-3 shadow-lg">
                             <Radio className="w-4 h-4 text-amber-500 animate-pulse" />
                             <div className="flex-1">
-                                <p className="text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-0.5">
+                                <p className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-0.5">
                                     System Status
                                 </p>
-                                <p className="text-[10px] text-slate-3000 leading-tight">
+                                <p className="text-sm text-slate-500 leading-tight">
                                     Monitoring 52 legislative bodies for regulatory changes.
                                 </p>
                             </div>

@@ -16,7 +16,6 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
         {
             id: 1 as const,
             label: 'Preparation',
-            duration: '2 weeks',
             icon: Calendar,
             color: 'red',
             bgColor: 'bg-red-500/20',
@@ -25,8 +24,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
         },
         {
             id: 2 as const,
-            label: 'Dosing Session',
-            duration: '8 hours',
+            label: 'Treatment',
             icon: Activity,
             color: 'amber',
             bgColor: 'bg-amber-500/20',
@@ -36,7 +34,6 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
         {
             id: 3 as const,
             label: 'Integration',
-            duration: '6 months',
             icon: TrendingUp,
             color: 'emerald',
             bgColor: 'bg-emerald-500/20',
@@ -57,15 +54,14 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                     return (
                         <React.Fragment key={phase.id}>
                             <button
-                                onClick={() => !isDisabled && onPhaseChange(phase.id)}
-                                disabled={isDisabled}
+                                onClick={() => onPhaseChange(phase.id)}
                                 className={`
                   flex items-center gap-3 px-6 py-4 rounded-t-2xl transition-all
                   ${isActive
                                         ? `${phase.bgColor} border-2 ${phase.borderColor} ${phase.textColor} font-bold`
                                         : isCompleted
                                             ? 'bg-slate-800/40 border border-slate-700 text-slate-300 hover:text-slate-300'
-                                            : 'bg-slate-900/20 border border-slate-800 text-slate-600 cursor-not-allowed opacity-50'
+                                            : 'bg-slate-900/40 border border-slate-700 text-slate-400 hover:text-slate-300 hover:bg-slate-800/40 cursor-pointer'
                                     }
                 `}
                                 role="tab"
@@ -80,11 +76,10 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                         <phase.icon className="w-5 h-5" />
                                     )}
                                     <div className="text-left">
-                                        <div className="text-xs uppercase tracking-wide">Phase {phase.id}</div>
-                                        <div className={`text-sm ${isActive ? 'font-black' : 'font-semibold'}`}>
+                                        <div className="text-sm uppercase tracking-wide">Phase {phase.id}</div>
+                                        <div className={`text-base ${isActive ? 'font-black' : 'font-semibold'}`}>
                                             {phase.label} {isCompleted && !isActive && '✓'}
                                         </div>
-                                        <div className="text-xs opacity-70">{phase.duration}</div>
                                     </div>
                                 </div>
                             </button>
@@ -112,7 +107,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                 >
                     {phases.map(phase => (
                         <option key={phase.id} value={phase.id}>
-                            Phase {phase.id}: {phase.label} ({phase.duration})
+                            Phase {phase.id}: {phase.label}
                         </option>
                     ))}
                 </select>

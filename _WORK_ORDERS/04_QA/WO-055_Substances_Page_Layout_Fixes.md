@@ -3,7 +3,7 @@ id: WO-055
 status: 03_BUILD
 priority: P2 (High)
 category: UI/UX / Layout Improvements
-owner: BUILDER
+owner: INSPECTOR
 failure_count: 0
 created_date: 2026-02-16T11:56:42-08:00
 completed_date: 2026-02-16T14:15:00-08:00
