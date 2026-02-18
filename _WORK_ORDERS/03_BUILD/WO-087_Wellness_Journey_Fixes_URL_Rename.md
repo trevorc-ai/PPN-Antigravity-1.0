@@ -2,7 +2,7 @@
 id: WO-087
 title: "Wellness Journey Page — Bug Fixes & URL Rename"
 status: 00_INBOX
-owner: PENDING
+owner: BUILDER
 failure_count: 0
 created: 2026-02-17T22:40:28-08:00
 priority: critical

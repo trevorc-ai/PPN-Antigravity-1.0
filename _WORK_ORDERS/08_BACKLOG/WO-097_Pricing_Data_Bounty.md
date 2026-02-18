@@ -1,9 +1,9 @@
 ---
-id: WO-062
-status: 03_BUILD
+id: WO-097
+status: 08_BACKLOG
 priority: P1 (Critical)
 category: Feature / Pricing / Monetization / Strategy
-owner: BUILDER
+owner: LEAD
 failure_count: 0
 created_date: 2026-02-16T15:02:00-08:00
 estimated_complexity: 6/10
@@ -1405,3 +1405,11 @@ The Data Contribution Agreement is **legally binding** and involves:
 
 **LEAD STATUS:** ✅ Approved with conditions. Routed to INSPECTOR for Phase 3 (Legal Review). **DO NOT proceed to DESIGNER/SOOP until INSPECTOR approves.**
 
+
+---
+
+## 📣 LEAD NOTE — BACKLOGGED (2026-02-17T23:18 PST)
+
+**Renumbered:** WO-062 → WO-097
+**Reason:** USER deprioritized. Pricing/Data Bounty strategy is defined in WO-094 (PRODDY+ANALYST complete). Build deferred until dual-audience landing pages (WO-095–WO-096) are live and user feedback is gathered.
+**Reactivate when:** Landing pages live + first 50 signups.

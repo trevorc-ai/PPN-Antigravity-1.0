@@ -65,67 +65,58 @@ WHILE 03_BUILD queue is not empty:
 
 ---
 
-## 📋 CURRENT 03_BUILD PRIORITY ORDER
+## 📋 CURRENT 03_BUILD PRIORITY ORDER — UPDATED 2026-02-17T23:22 PST
 
-Execute in this exact order:
+Execute in this exact order. **Non-BUILDER tickets are clearly marked — skip them.**
 
 ### 🔴 IMMEDIATE (Quick Wins — Do First)
 
-1. **WO-095** — Alphabetical Sort on All Form Dropdowns
-   - Find all `<select>` elements in form components
-   - Sort their options alphabetically
-   - ~0.5 day effort
-   - **No dependencies, no blockers**
-
-2. **WO-085a** — ~~Site Name Correction~~ ✅ **COMPLETE** (INSPECTOR fixed this already)
+1. **WO-087** — Wellness Journey Page Bug Fixes & URL Rename
+   - Fix unresponsive form, button color accessibility, tooltip font size violations
+   - Rename page URL to "Wellness Journey"
+   - **No dependencies, no blockers — ship it**
 
 ### 🟠 HIGH PRIORITY
 
-3. **WO-085** — Add Missing Vital Signs to SessionVitalsForm
+2. **WO-085** — Add Missing Vital Signs to SessionVitalsForm
    - SOOP migration may not have run yet → **use mock data**
    - Add: respiratory_rate, temperature, skin_conductance fields to `SessionVitalsForm.tsx`
    - Component location: `src/components/wellness-journey/`
 
-4. **WO-086** — Session Timeline Tracking
+3. **WO-086** — Session Timeline Tracking
    - Create `SessionTimelineForm.tsx` in `src/components/wellness-journey/`
    - Use `useSessionTimeline()` mock hook
    - Clone pattern from `SessionVitalsForm.tsx`
 
-5. **WO-052** — Phase 3 Forms Redesign
-   - ✅ UNBLOCKED — LEAD answered all questions
+4. **WO-074** — Phase 1 Baseline Assessment Wizard
    - Location: `src/components/wellness-journey/`
-   - Forms Showcase: `src/pages/ComponentShowcase.tsx`
-   - Reuse existing `StructuredSafetyCheck.tsx` — do not duplicate
 
 ### 🟡 STANDARD PRIORITY
 
-6. **WO-063** — Integrate Symptom Trajectory Chart
+5. **WO-063** — Integrate Symptom Trajectory Chart
    - Use `useLongitudinalAssessments()` mock hook
    - Integrate `SymptomDecayCurve.tsx` into Wellness Journey Phase 3
 
-7. **WO-065** — Integrate Session Monitoring Dashboard
+6. **WO-065** — Integrate Session Monitoring Dashboard
    - Use `useSessionTimeline()` mock hook
    - Integrate `SessionMonitoringDashboard.tsx` into Phase 2
 
-8. **WO-066** — Integrate Safety Event Documentation
+7. **WO-066** — Integrate Safety Event Documentation
    - Use mock data for `log_interventions` and `log_safety_alerts`
    - Integrate `RescueProtocolChecklist.tsx` and `RedAlertPanel.tsx`
 
-9. **WO-066** — Arc of Care Mini Guided Tours
-   - Add compass icon to each phase header
-   - Create Phase1Tour, Phase2Tour, Phase3Tour components
-   - Auto-trigger on phase unlock (localStorage)
-
-10. **WO-074** — Phase 1 Baseline Assessment Wizard
-11. **WO-075** — Smart Pre-Fill System
-12. **WO-076** — Auto-Generated Narratives
-13. **WO-077** — Exportable Audit Reports
-14. **WO-057** — Sidebar Overlap & Navigation Fixes
-
 ### 🔵 PHANTOM SHIELD (After above complete)
-15. **WO-059** — Potency Normalizer
-16. **WO-060** — Crisis Logger
-17. **WO-061** — Cockpit Mode UI
+8. **WO-059** — Potency Normalizer
+9. **WO-060** — Crisis Logger
+
+### ℹ️ NON-BUILDER TICKETS IN 03_BUILD — SKIP, DO NOT TOUCH
+These belong to other agents. BUILDER must not open or modify these:
+- `WO_027_*_MARKETER.md` → MARKETER
+- `WO_028_*_MARKETER.md` → MARKETER
+- `WO_BRAND_*_MARKETER.md` → MARKETER
+- `WO-086a_*_MARKETER.md` → MARKETER
+- `WO-084_Session_Tracking_*` → ANALYST
+- `WO-062_GREY_MARKET_PHANTOM_SHIELD_ARCHITECTURE.md` → LEAD reference doc only
 
 ---
 

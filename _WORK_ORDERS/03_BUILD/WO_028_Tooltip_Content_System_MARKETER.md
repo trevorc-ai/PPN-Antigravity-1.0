@@ -11,7 +11,7 @@ assigned_to: LEAD
 assigned_date: 2026-02-15T05:49:00-08:00
 estimated_complexity: 5/10
 failure_count: 0
-owner: LEAD
+owner: MARKETER
 ---
 
 # Work Order: Implement Tooltip Content System
