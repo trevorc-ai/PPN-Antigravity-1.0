@@ -49,7 +49,7 @@ const About: React.FC = () => {
                 onClick={() => navigate('/advanced-search')}
                 className="px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95"
               >
-                Access Research Portal
+                Access PPN Portal
               </button>
             </div>
           </div>

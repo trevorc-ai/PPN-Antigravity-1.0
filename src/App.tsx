@@ -227,8 +227,8 @@ const AppContent: React.FC = () => {
           <Route path="/audit" element={<AuditLogs />} />
 
           {/* WELLNESS JOURNEY / ARC OF CARE */}
-          <Route path="/arc-of-care-god-view" element={<WellnessJourney />} />
-          <Route path="/wellness-journey" element={<WellnessJourney />} /> {/* Alias */}
+          <Route path="/wellness-journey" element={<WellnessJourney />} />
+          <Route path="/arc-of-care-god-view" element={<Navigate to="/wellness-journey" replace />} /> {/* Legacy redirect */}
 
           {/* PROTOCOL BUILDER */}
           <Route path="/protocols" element={<MyProtocols />} />

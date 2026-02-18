@@ -440,7 +440,7 @@ const DataExport: React.FC = () => {
                             <span>FDA 21 CFR PART 11</span>
                         </div>
                         <div className="h-3 w-px bg-slate-800" />
-                        <span>© 2023 Psychedelic Research Portal • Data Version: 2.1.0-BETA • PsyRes Platform v2.2.1</span>
+                        <span>© 2026 PPN Portal • Data Version: 2.1.0-BETA • PsyRes Platform v2.2.1</span>
                     </div>
                 </Section>
             </PageContainer>

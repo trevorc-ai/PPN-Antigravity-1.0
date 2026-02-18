@@ -30,7 +30,6 @@ const Breadcrumbs: React.FC = () => {
     settings: 'Settings',
     'advanced-search': 'Global Research Search',
     'wellness-journey': 'Wellness Journey',
-    'arc-of-care-god-view': 'Wellness Journey', // Legacy route
     pricing: 'Membership Tiers',
     contribution: 'Give-to-Get Model',
     login: 'Authentication Gate',
@@ -67,7 +66,8 @@ const Breadcrumbs: React.FC = () => {
       {location.pathname !== '/dashboard' && location.pathname !== '/advanced-search' && (
         <button
           onClick={() => navigate(-1)}
-          className="mr-4 pr-4 border-r border-white/10 hidden sm:flex items-center gap-1 text-[12px] font-black tracking-widest text-slate-300 hover:text-primary transition-colors group"
+          className="mr-4 pr-4 border-r border-white/10 hidden sm:flex items-center gap-1 text-xs font-black tracking-widest uppercase hover:text-primary transition-colors group"
+          style={{ color: 'rgb(203, 213, 225)' }}
         >
           <span className="material-symbols-outlined text-[15px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
           Back
@@ -77,7 +77,8 @@ const Breadcrumbs: React.FC = () => {
       <div className="flex items-center gap-2.5">
         <Link
           to="/advanced-search"
-          className={`flex items-center gap-2 text-xs font-black tracking-[0.2em] uppercase transition-all group ${isPortalActive ? 'text-primary' : 'text-slate-300 hover:text-primary'
+          style={{ color: isPortalActive ? undefined : 'rgb(203, 213, 225)' }}
+          className={`flex items-center gap-2 text-xs font-black tracking-widest uppercase transition-all group ${isPortalActive ? 'text-primary' : 'hover:text-primary'
             }`}
         >
           <div className={`size-5 rounded-md flex items-center justify-center transition-colors ${isPortalActive ? 'bg-primary/20 text-primary' : 'bg-slate-800 group-hover:bg-primary/20 group-hover:text-primary'
@@ -100,13 +101,16 @@ const Breadcrumbs: React.FC = () => {
             <React.Fragment key={to}>
               <span className="material-symbols-outlined text-slate-700 text-[15px] select-none opacity-50">chevron_right</span>
               {last ? (
-                <span className="text-xs font-black text-slate-300 tracking-widest uppercase animate-in fade-in duration-300">
+                <span
+                  className="text-xs font-black tracking-widest uppercase animate-in fade-in duration-300"
+                  style={{ color: 'rgb(203, 213, 225)' }}
+                >
                   {label}
                 </span>
               ) : (
                 <Link
                   to={to}
-                  className="text-xs font-black text-slate-300 tracking-widest uppercase hover:text-slate-300 transition-colors"
+                  className="text-xs font-black text-slate-500 tracking-widest uppercase hover:text-slate-300 transition-colors"
                 >
                   {label}
                 </Link>

@@ -212,3 +212,24 @@ Build a verified directory of prescribers, integration specialists, and support 
 3. **BUILDER:** Build verification system and search interface
 4. **MARKETER:** Recruit initial providers for directory
 5. **INSPECTOR:** QA review of verification and privacy mechanisms
+
+---
+
+## 📣 PRODDY STRATEGIC ASSESSMENT — COMPLETE (2026-02-17T23:14 PST)
+
+### VERDICT: ⚠️ APPROVED — DEFER TO PHASE 3
+
+**Rationale:** P3 priority is correct. Integration Specialists are only ~10% of the market. The NPI Registry API + HIPAA-compliant messaging + shared care notes stack is significant infrastructure investment for a small segment. Build the core practitioner tools first.
+
+### Critical Blocker Identified:
+- **HIPAA compliance for shared care notes** requires a Business Associate Agreement (BAA) — this is a legal/compliance dependency that must be resolved before any Phase 5 work begins
+- NPI Registry API is publicly available and reliable — not a blocker for Phase 1-2
+
+### Phase Prioritization:
+- **Phase 1-2 (MVP):** Simple provider directory with manual verification only — no referral workflow, no shared notes
+- **Phase 3+ (After HIPAA BAA):** Referral workflow + collaborative care notes
+- **Phase 4+ (After 200+ providers listed):** Ratings + reviews
+
+### Routing Decision: → BACKLOG (Phase 3)
+**Update frontmatter:** `owner: LEAD`, `status: BACKLOG` — revisit after core platform is stable and HIPAA BAA is in place.
+

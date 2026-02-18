@@ -236,7 +236,7 @@ const SubstanceDetail = ({ substance }) => {
 
 ## License
 
-Part of PPN Research Portal (WO_032)
+Part of PPN Portal (WO_032)
 
 ## Credits
 

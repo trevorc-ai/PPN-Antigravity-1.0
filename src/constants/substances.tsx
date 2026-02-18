@@ -3,7 +3,7 @@
  * Substance Constants
  * 
  * Purpose: Support substance selection dropdowns, substance cards, and basic UI display
- * Scope: 7 priority psychedelic substances for PPN Research Portal
+ * Scope: 7 priority psychedelic substances for PPN Portal
  * 
  * Data is intentionally minimal - only what's needed for UI/UX
  * Clinical/pharmacological data lives in the database (ref_substances table)

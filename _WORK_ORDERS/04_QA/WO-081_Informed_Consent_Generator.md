@@ -189,3 +189,51 @@ Build a jurisdiction-specific, substance-specific informed consent template gene
 3. **BUILDER:** Build consent generator UI
 4. **MARKETER:** Source legal review (external attorney)
 5. **INSPECTOR:** QA review of all templates
+
+---
+
+## 📣 PRODDY STRATEGIC ASSESSMENT — COMPLETE (2026-02-17T23:12 PST)
+
+### VERDICT: ✅ APPROVED — HIGH PRIORITY, PHASED BUILD
+
+**Rationale:** This is the single highest cross-segment value feature in the backlog. Both grey market practitioners AND licensed clinics have the same pain: no legally defensible consent templates for psychedelic-specific risks (touch, ontological shock, emergency protocols). This directly addresses Pain Point #2 from VoC research.
+
+### Build vs. Partner Decision: BUILD (Phase 1 MVP only)
+- No existing solution covers PAT-specific risks (touch consent, ontological shock, spiritual emergency)
+- Legal template marketplaces (LegalZoom, Rocket Lawyer) are generic — no psychedelic context
+- **Build an MVP template library first** — do NOT build the full 7-phase system yet
+
+### Phase Prioritization (Revised):
+| Phase | Priority | Timeline | Rationale |
+|-------|----------|----------|-----------|
+| Phase 1: Template Library (OR, CO, Ketamine) | ✅ Ship NOW | Week 1 | Immediate legal defense value |
+| Phase 2: Generator UI (Wizard) | ✅ Ship NOW | Week 1-2 | Core UX |
+| Phase 3: Touch Consent Module | ✅ Ship NOW | Week 2 | Top VoC pain point |
+| Phase 4: Ontological Risk Disclosure | ✅ Ship NOW | Week 2 | Differentiator |
+| Phase 5: Emergency Protocol Section | ✅ Ship NOW | Week 2 | Safety requirement |
+| Phase 6: Version Control & Audit Trail | ⚠️ Phase 2 | Week 3+ | Important but not blocking |
+| Phase 7: Legal Review Integration | ⚠️ Phase 2 | Week 3+ | Nice-to-have at launch |
+
+### External Dependency: Attorney Review
+- **Do NOT block the build on attorney review** — ship with clear disclaimer: "Template for documentation purposes only. Consult qualified legal counsel."
+- Attorney review can be added as a Phase 2 enhancement
+
+### Routing Decision: → SOOP (schema) then BUILDER
+**Update frontmatter:** `owner: SOOP`, `status: 03_BUILD`
+
+
+---
+
+## 🔍 INSPECTOR PRE-SCREEN BRIEF (2026-02-17T23:15 PST)
+
+**Type:** Pre-build feasibility audit — NOT a post-build QA review.
+
+**INSPECTOR: Review this spec and confirm before BUILDER begins:**
+
+1. **Legal language risk** — Does any template language constitute medical advice? Flag any phrasing that could create liability for PPN.
+2. **Schema completeness** — Are `consent_templates`, `consent_versions`, `subject_consents` tables fully specified with correct FK references to existing tables? Verify against live schema.
+3. **PDF generation** — Is a PDF library already in the stack? If not, flag as a dependency that needs LEAD decision before build starts.
+4. **PHI risk** — Consent forms may contain patient names. Confirm the storage model uses `Subject_ID` only, no free-text PII in database fields.
+5. **Scope check** — PRODDY approved Phases 1–5 only. Flag if BUILDER spec includes Phase 6 or 7 (version control, legal review) — those are deferred.
+
+**Output:** Append `## INSPECTOR PRE-SCREEN: [PASS/FAIL]` with specific notes. If PASS → move to `03_BUILD` for BUILDER. If FAIL → move back to `01_TRIAGE` for LEAD.

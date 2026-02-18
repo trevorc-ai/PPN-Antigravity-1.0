@@ -385,7 +385,7 @@ const SearchPortal: React.FC = () => {
     setIsAiLoading(true);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Perform a technical clinical cross-reference for "${searchVal}". Focus on recent 2024-2025 research. Provide a concise synthesis (max 40 words) for a medical research portal.`;
+      const prompt = `Perform a technical clinical cross-reference for "${searchVal}". Focus on recent 2024-2025 research. Provide a concise synthesis (max 40 words) for a clinical intelligence portal.`;
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
@@ -473,7 +473,7 @@ const SearchPortal: React.FC = () => {
             </div>
             <div className="space-y-1">
               <h1 className="text-5xl font-black tracking-tighter mb-4" style={{ color: '#8BA5D3' }}>
-                PPN Research Portal
+                PPN Portal
               </h1>
               <p className="text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium" style={{ color: '#8B9DC3' }}>Search and analyze de-identified treatment protocols across the global network</p>
             </div>

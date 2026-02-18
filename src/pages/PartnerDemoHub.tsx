@@ -321,7 +321,7 @@ const PartnerDemoHub: React.FC = () => {
                         </p>
                     </div>
                     <h1 className="text-6xl font-black tracking-tighter text-slate-300">
-                        PPN Research Portal
+                        PPN Portal
                     </h1>
                     <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
                         Comprehensive feature gallery showcasing the complete platform capabilities.

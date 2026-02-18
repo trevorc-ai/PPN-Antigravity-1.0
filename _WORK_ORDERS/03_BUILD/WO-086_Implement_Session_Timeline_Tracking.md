@@ -8,6 +8,7 @@ implementation_order: 13
 owner: SOOP
 failure_count: 0
 created: 2026-02-17 16:00 PST
+lead_reviewed: 2026-02-17 22:19 PST
 ---
 
 # Implement Minute-by-Minute Session Timeline Tracking
@@ -392,14 +393,33 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
 
 ---
 
+## LEAD ARCHITECTURE (2026-02-17 22:19 PST)
+
+### Architecture Decisions:
+
+1. **New Table Approved:** `session_timeline_events` is a net-new table — no existing table conflict. SOOP to write `migrations/053_session_timeline_events.sql`.
+
+2. **FK Reference Verification:** The schema spec references `dosing_sessions(id)`. SOOP must verify the live table name — it may be `log_sessions` or `log_dosing_sessions`. Run pre-flight check.
+
+3. **Component Location:** `SessionTimelineForm.tsx` goes in `src/components/wellness-journey/` (following the existing pattern for session-phase components), NOT in `src/components/forms/`.
+
+4. **Integration Point:** After BUILDER completes, integrate into the Wellness Journey Phase 2 tab (Session tab) alongside `SessionVitalsForm`.
+
+5. **Mock Data:** The BUILDER mock data system already has `useSessionTimeline()` hook in `src/lib/mockData/hooks.ts`. BUILDER should use this for development before DB is live.
+
+### Execution Order:
+1. **SOOP** → Pre-flight schema check → Write `migrations/053_session_timeline_events.sql` → Move to 04_QA
+2. **USER** → Execute migration in Supabase SQL Editor
+3. **BUILDER** → Clone `SessionVitalsForm.tsx` pattern → Create `SessionTimelineForm.tsx` using mock data hooks → Move to 04_QA
+4. **INSPECTOR** → QA audit
+
 ## NEXT STEPS
 
-1. **LEAD:** Review architecture, approve database schema
-2. **SOOP:** Create database migration SQL
-3. **BUILDER:** Clone SessionVitalsForm → SessionTimelineForm
-4. **BUILDER:** Implement event type dropdown, description field, quick-entry buttons
-5. **INSPECTOR:** QA audit - verify accessibility, PHI security, performance
-6. **BUILDER:** Integrate SessionTimelineForm into Wellness Journey (Phase 2 tab)
+1. ~~**LEAD:** Review architecture, approve database schema~~ ✅ DONE
+2. **SOOP:** Pre-flight schema check → Create `migrations/053_session_timeline_events.sql`
+3. **BUILDER:** Clone `SessionVitalsForm` → Create `SessionTimelineForm` using `useSessionTimeline()` mock hook
+4. **INSPECTOR:** QA audit - verify accessibility, PHI security, performance
+5. **BUILDER:** Integrate `SessionTimelineForm` into Wellness Journey Phase 2 tab
 
 ---
 

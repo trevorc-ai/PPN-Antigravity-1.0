@@ -184,7 +184,7 @@ export const BillingPortal: FC = () => {
                         <CreditCard className="w-16 h-16 text-slate-600 mx-auto mb-4" />
                         <h2 className="text-2xl font-bold text-slate-300 mb-2">No Active Subscription</h2>
                         <p className="text-slate-300 mb-8">
-                            Start your free trial to access all features of PPN Research Portal.
+                            Start your free trial to access all features of PPN Portal.
                         </p>
                         <a
                             href="/#/checkout"

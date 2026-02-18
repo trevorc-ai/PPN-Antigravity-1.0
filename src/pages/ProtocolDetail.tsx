@@ -544,7 +544,7 @@ const ProtocolDetail: React.FC = () => {
 
       {/* Print Footer */}
       <div className="hidden print:block fixed bottom-0 left-0 w-full text-center text-[11px] font-mono font-bold uppercase text-black pb-4">
-        Confidential Clinical Dossier • PPN Research Node 0x7 • Do Not Distribute
+        Confidential Clinical Dossier • PPN Node 0x7 • Do Not Distribute
       </div>
     </div >
   );

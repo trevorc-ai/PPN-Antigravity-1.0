@@ -8,6 +8,7 @@ implementation_order: 12
 owner: SOOP
 failure_count: 0
 created: 2026-02-17 15:57 PST
+lead_reviewed: 2026-02-17 22:19 PST
 ---
 
 # Add Missing Vital Signs to SessionVitalsForm
@@ -391,15 +392,33 @@ function getVitalStatus(type: 'hr' | 'bp' | 'spo2' | 'rr' | 'temp', value?: numb
 
 ---
 
+## LEAD ARCHITECTURE (2026-02-17 22:19 PST)
+
+### ⚠️ CRITICAL: Verify Live Table Names Before Migration
+
+The SQL spec below uses `session_vitals` and `baseline_physiology`. The live schema (per migration `050_arc_of_care_schema.sql` and mock data system) uses:
+- **`log_session_vitals`** (not `session_vitals`)
+- **`log_baseline_assessments`** (not `baseline_physiology`)
+
+**SOOP MUST run pre-flight live schema check before writing migration `052_add_vital_signs_phase1.sql`.**
+
+### Execution Order:
+1. **SOOP** → Pre-flight schema check → Write `migrations/052_add_vital_signs_phase1.sql` (additive only, IF NOT EXISTS) → Move to 04_QA
+2. **USER** → Execute migration in Supabase SQL Editor
+3. **BUILDER** → Implement Phase 1 UI (4 fields) in `SessionVitalsForm.tsx` → Move to 04_QA
+4. **INSPECTOR** → QA audit
+5. Phase 2 (ECG) is a separate work order — do not block Phase 1 on it.
+
+### Architecture Decision: Phase 2 ECG
+ECG fields belong in `log_baseline_assessments` (Phase 1 intake form), NOT in `log_session_vitals`. This is a separate ticket (WO-085b) to be created after Phase 1 ships.
+
 ## NEXT STEPS
 
-1. **LEAD:** Review architecture, approve database schema changes
-2. **SOOP:** Create database migration SQL, optimize indexes
-3. **DESIGNER:** (Optional) Create UI mockups for new fields
-4. **BUILDER:** Implement Phase 1 (4 easy fields)
-5. **INSPECTOR:** QA audit - verify accessibility, PHI security, performance
-6. **BUILDER:** Implement Phase 2 (ECG integration)
-7. **INSPECTOR:** Final QA audit
+1. ~~**LEAD:** Review architecture, approve database schema changes~~ ✅ DONE
+2. **SOOP:** Pre-flight schema check → Create `migrations/052_add_vital_signs_phase1.sql`
+3. **BUILDER:** Implement Phase 1 (4 easy fields) after migration confirmed
+4. **INSPECTOR:** QA audit - verify accessibility, PHI security, performance
+5. **LEAD:** Create WO-085b for Phase 2 (ECG integration) as separate ticket
 
 ---
 

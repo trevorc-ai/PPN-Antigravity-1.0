@@ -139,7 +139,7 @@ const MEQ30Page: React.FC = () => {
                     {/* Actions */}
                     <div className="flex items-center justify-center gap-4">
                         <button
-                            onClick={() => navigate('/arc-of-care-god-view')}
+                            onClick={() => navigate('/wellness-journey')}
                             className="flex items-center gap-2 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition-all"
                         >
                             <ArrowLeft className="w-4 h-4" />

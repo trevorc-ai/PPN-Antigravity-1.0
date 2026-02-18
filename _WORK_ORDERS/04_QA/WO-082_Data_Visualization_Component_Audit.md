@@ -5,6 +5,7 @@ status: 01_TRIAGE
 owner: ANALYST
 failure_count: 0
 created: 2026-02-17T15:57:05-08:00
+routed: 2026-02-17T23:10:06-08:00
 priority: high
 tags: [analytics, audit, data-visualization, component-inventory, ux-optimization]
 ---
@@ -202,3 +203,45 @@ This is a discovery/audit task that requires:
 1. LEAD to define audit methodology and reporting standards
 2. ANALYST to execute comprehensive inspection
 3. Potential follow-up tickets for DESIGNER (Showcase redesign) and BUILDER (component fixes)
+
+---
+
+## LEAD ARCHITECTURE
+
+**Routed:** 2026-02-17T23:10:06-08:00  
+**Owner:** ANALYST  
+**Status:** 01_TRIAGE
+
+### Technical Strategy
+This is a **pure discovery/audit task** — no code changes. ANALYST must use browser inspection tools and codebase search to produce a comprehensive inventory report. The output will directly inform DESIGNER (Showcase reorganization) and BUILDER (component fixes).
+
+### Audit Methodology
+1. Search `/frontend/src/components` for all chart/graph/visualization components using grep for keywords: `recharts`, `Chart`, `Graph`, `Heatmap`, `Sparkline`, `Gauge`, `D3`, `<ResponsiveContainer`
+2. Cross-reference each component against live pages using the browser tool
+3. Check Component Showcase page to confirm what is/isn't displayed there
+4. Document status for each: ✅ Working / ⚠️ Issues / ❌ Broken
+5. Categorize by function per the scope definition
+
+### Reporting Standard
+- Deliver report as `DATA_VISUALIZATION_AUDIT_2026-02-17.md` in `/docs` or project root
+- Use table format for the inventory section
+- Flag any critical broken components for immediate BUILDER attention
+- Coordinate findings with WO-081 (User Guide) — most-used visualizations need documentation priority
+
+### Handoff After ANALYST
+ANALYST — when report is complete, update `owner: INSPECTOR` and `status: 04_QA`. Move ticket to `_WORK_ORDERS/04_QA/`.
+
+---
+
+## 🔍 INSPECTOR PRE-SCREEN BRIEF (2026-02-17T23:15 PST)
+
+**Type:** Pre-execution methodology check — ANALYST audit task.
+
+**INSPECTOR: Confirm audit methodology is sound before ANALYST begins:**
+
+1. **Scope is correct** — This is a discovery/audit only. No code changes. Confirm ANALYST understands this.
+2. **Search methodology** — Grep for `recharts`, `Chart`, `Graph`, `Heatmap`, `Sparkline`, `Gauge`, `D3`, `<ResponsiveContainer` in `/src/components`. Confirm this covers all visualization libraries in use.
+3. **Output format** — Report must be `DATA_VISUALIZATION_AUDIT_2026-02-17.md`. Confirm location: project root or `/docs`.
+4. **Accessibility check** — ANALYST must flag any chart that uses color as the only data differentiator (user has color vision deficiency).
+
+**Output:** Append `## INSPECTOR PRE-SCREEN: [PASS/FAIL]`. PASS → ANALYST executes audit (stays in `03_BUILD` queue). FAIL → back to LEAD.

@@ -336,9 +336,13 @@ This work order requests creating Phase 3 forms in `src/components/forms/`, but 
 
 3. **Forms Showcase:** Where is the Forms Showcase page that needs updating?
 
-### Recommendation:
+### LEAD ARCHITECTURAL DECISION (2026-02-17 22:21 PST)
 
-**PAUSE** this ticket and route to LEAD for architectural guidance before proceeding.
+**Q1: Component Location** → Use `src/components/wellness-journey/` (follow existing pattern). Do NOT create a new `forms/` subdirectory for these.
 
-**Status:** BLOCKED - Needs architectural decision
+**Q2: WO-051 Dependency** → WO-051 (Phase 2 forms) is considered complete based on prior audit. Proceed with Phase 3.
+
+**Q3: Forms Showcase** → The Forms Showcase is `src/pages/ComponentShowcase.tsx`. Add Phase 3 forms to the Integration section there.
+
+**Status:** ✅ UNBLOCKED — BUILDER proceed with Tasks 2 and 3 (StructuredIntegrationSession + BehavioralChangeTracker). StructuredSafetyCheck already exists in `src/components/safety/` — reference it, do not duplicate.
 

@@ -198,7 +198,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 </div>
               </div>
               <p className="text-slate-300 text-[12px] font-medium leading-relaxed">
-                Access to the PPN Research Portal requires a verified practitioner credential. Sessions are logged and audited.
+                Access to the PPN Portal requires a verified practitioner credential. Sessions are logged and audited.
               </p>
               <button
                 onClick={() => navigate('/login')}
@@ -419,7 +419,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Access</span> the Network.
             </h2>
             <p className="max-w-2xl mx-auto text-slate-3000 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
-              Professional membership and subscription tiers for the PPN Research community.
+              Professional membership and subscription tiers for the PPN community.
             </p>
           </div>
 

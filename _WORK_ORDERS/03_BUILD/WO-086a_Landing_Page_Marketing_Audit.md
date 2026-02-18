@@ -1,12 +1,13 @@
 ---
-id: WO-086
-status: 00_INBOX
+id: WO-086a
+status: 03_BUILD
 priority: P2 (High)
 category: Marketing Strategy & Content Optimization
-owner: PENDING
+owner: MARKETER
 failure_count: 0
 created_at: 2026-02-17T16:19:32-08:00
 created_by: CUE
+lead_routed: 2026-02-17T22:21:00-08:00
 ---
 
 # Landing Page Marketing Audit & Enhancement Recommendations

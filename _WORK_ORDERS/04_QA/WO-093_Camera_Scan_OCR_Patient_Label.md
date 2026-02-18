@@ -268,3 +268,19 @@ Both should use the **same PPN ID formula** — coordinate the collision-resista
 2. Standalone HTML vs. in-app integration decision
 3. PPN ID formula coordination with WO-092
 4. If approved: recommend routing directly to BUILDER (estimated 4-6 hours, no DESIGNER or SOOP needed)
+
+---
+
+## 🔍 INSPECTOR PRE-SCREEN BRIEF (2026-02-17T23:15 PST)
+
+**Type:** Pre-build feasibility audit — fast-track candidate.
+
+**INSPECTOR: Quick check before BUILDER begins (this is a 4-6 hour ticket):**
+
+1. **Zero-knowledge guarantee** — Confirm Tesseract.js CDN approach means no image data leaves the device. Verify no server calls in the proposed implementation.
+2. **Collision risk** — The `PPN-JODO0101` formula has known collision risk. Confirm BUILDER uses the same formula as WO-092 (coordinate ID format).
+3. **Standalone vs. in-app** — Confirm deliverable is a standalone `PPN_Bridge_Camera.html` file, NOT a React component. This keeps it out of the main build pipeline.
+4. **iOS Safari compatibility** — `capture="environment"` works on iOS. Confirm Tesseract.js v5 CDN supports Safari without polyfills.
+5. **Accessibility** — 48px minimum touch targets, 16px+ fonts, high contrast for clinic lighting.
+
+**Output:** Append `## INSPECTOR PRE-SCREEN: [PASS/FAIL]`. This should be a fast PASS — flag only blockers. PASS → `03_BUILD`. Fail → `01_TRIAGE`.

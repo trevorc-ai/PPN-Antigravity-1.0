@@ -1,14 +1,25 @@
 ---
 id: WO-057
-status: 03_BUILD
+status: 04_QA
 priority: P1 (Critical)
 category: Bug / Layout / Navigation
-owner: BUILDER
+owner: INSPECTOR
 failure_count: 1
 created_date: 2026-02-16T12:52:43-08:00
-completed_date: 2026-02-16T16:40:00-08:00
+completed_date: 2026-02-17T23:07:00-08:00
 rejected_date: 2026-02-17T09:12:00-08:00
 ---
+
+## BUILDER IMPLEMENTATION NOTES (2026-02-17 23:07 PST)
+
+- ✅ URL renamed: `/arc-of-care-god-view` → `/wellness-journey` (7 touch points across 6 files)
+- ✅ Legacy redirect added in App.tsx for old URL
+- ✅ Wellness Journey link RETAINED per live user instruction (overrides original ticket)
+- ✅ Analytics link already removed in prior session
+- ✅ Active indicator `absolute` div fixed — added `relative` to `<li>` and `top-1/2 -translate-y-1/2` to indicator
+- ✅ Inactive icon color fixed: added `text-slate-400` for non-active state
+- ✅ Nav label: `text-base font-bold` → `text-sm font-semibold` (tighter, professional)
+- ✅ `space-y-1` item spacing already correct — no full-justify behavior present
 
 # ORIGINAL USER REQUEST (VERBATIM)
 

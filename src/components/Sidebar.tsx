@@ -29,7 +29,7 @@ const navSections: NavSection[] = [
   {
     title: 'Clinical Tools',
     items: [
-      { label: 'Wellness Journey', icon: 'psychology', path: '/arc-of-care-god-view' },
+      { label: 'Wellness Journey', icon: 'psychology', path: '/wellness-journey' },
       { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
       { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
     ],
@@ -104,14 +104,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                     // Map tour data attributes to specific navigation items
                     const tourDataMap: Record<string, string> = {
                       '/wellness-journey': 'wellness-journey',
-                      '/arc-of-care-god-view': 'wellness-journey',
                       '/interactions': 'interaction-checker',
                       '/catalog': 'substance-catalog',
                       '/help': 'help-faq'
                     };
 
                     return (
-                      <li key={item.path}>
+                      <li key={item.path} className="relative">
                         <NavLink
                           to={item.path}
                           data-tour={tourDataMap[item.path]}
@@ -128,15 +127,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                           {({ isActive }) => (
                             <>
                               {isActive && (
-                                <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full" />
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
                               )}
                               <span
-                                className={`material-symbols-outlined text-lg ${isActive ? 'text-primary' : ''
+                                className={`material-symbols-outlined text-lg ${isActive ? 'text-primary' : 'text-slate-400'
                                   }`}
                               >
                                 {item.icon}
                               </span>
-                              <span className="text-base font-bold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
+                              <span className="text-sm font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
                             </>
                           )}
                         </NavLink>

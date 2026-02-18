@@ -68,7 +68,7 @@ const Pricing: React.FC = () => {
           PPN Membership & Access Tiers
         </h1>
         <p className="max-w-2xl text-slate-3000 text-sm sm:text-lg font-medium leading-relaxed">
-          Professional membership and subscription tiers for the PPN Research community. Secure your access to the global clinical network.
+          Professional membership and subscription tiers for the PPN community. Secure your access to the global clinical network.
         </p>
       </div>
 

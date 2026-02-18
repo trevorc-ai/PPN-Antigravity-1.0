@@ -246,7 +246,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                     {/* Actions */}
                     <div className="flex items-center justify-center gap-4">
                         <button
-                            onClick={() => navigate('/arc-of-care-god-view')}
+                            onClick={() => navigate('/wellness-journey')}
                             className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all"
                         >
                             View Your Journey

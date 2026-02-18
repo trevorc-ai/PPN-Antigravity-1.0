@@ -325,3 +325,19 @@ The exported PDF includes:
 ## 🚦 Status
 
 **01_TRIAGE → PRODDY** — Evaluation ticket. PRODDY to assess strategic fit, user demand, and build priority before any pipeline commitment. May not proceed to BUILD.
+
+---
+
+## 🔍 INSPECTOR PRE-SCREEN BRIEF (2026-02-17T23:15 PST)
+
+**Type:** Pre-build security + feasibility audit.
+
+**INSPECTOR: Review this spec and confirm before BUILDER begins:**
+
+1. **Cryptographic design** — Is HMAC-SHA256 with a server-held secret the right approach? Confirm the signing secret rotation strategy (key versioning) is addressed before build.
+2. **`log_sessions` FK reference** — The `session_signatures` table references `log_sessions(session_id)` but the live table PK is `id`, not `session_id`. Verify column name before SOOP writes the migration.
+3. **Edge Function security** — The `sign-session` function bypasses RLS to insert. Confirm this is acceptable and document the service-role key usage.
+4. **Public verification endpoint** — Confirm the endpoint reveals no PHI. `signed_at` + `session_sequence_number` are safe to expose publicly.
+5. **WO-077 coordination** — Does WO-077 (Exportable Audit Reports) already have a PDF template? Avoid duplicate PDF infrastructure.
+
+**Output:** Append `## INSPECTOR PRE-SCREEN: [PASS/FAIL]` with notes. PASS → `03_BUILD`. FAIL → `01_TRIAGE`.

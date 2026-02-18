@@ -17,7 +17,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 /**
  * Unified Button Component
  * 
- * Consolidates all button patterns across the PPN Research Portal:
+ * Consolidates all button patterns across the PPN Portal:
  * - Primary actions (bg-primary)
  * - Secondary actions (bg-slate-900)
  * - Danger actions (bg-red-500)

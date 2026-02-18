@@ -138,7 +138,7 @@ const Landing: React.FC = () => {
         <div className="absolute top-10 right-10 z-20 hidden md:block group cursor-default">
           <div className="flex flex-col items-end">
             <p className="text-[12px] font-black text-slate-300 tracking-[0.2em] uppercase transition-colors group-hover:text-primary">
-              PPN Research Portal
+              PPN Portal
             </p>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-[10px] font-black text-slate-600 tracking-widest uppercase">Institutional Gateway</span>
@@ -182,7 +182,7 @@ const Landing: React.FC = () => {
             >
               <p className="text-[12px] font-black text-slate-3000 uppercase tracking-widest leading-relaxed">
                 <span className="text-primary mr-2">Notice:</span>
-                PPN Research Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
+                PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
               </p>
             </motion.div>
 
@@ -848,7 +848,7 @@ const Landing: React.FC = () => {
           {/* FINAL BOUNDARY STATEMENT */}
           <div className="pt-20 border-t border-slate-900 text-center space-y-6">
             <p className="text-sm font-bold text-slate-600 leading-relaxed max-w-3xl mx-auto uppercase tracking-widest">
-              PPN Research Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance. We do not support patient-level data sharing across clinics.
+              PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance. We do not support patient-level data sharing across clinics.
             </p>
             <p className="text-sm text-slate-700 font-medium tracking-widest">
               &copy; 2026 PRECISION PSYCHEDELIC NETWORK (PPN). ALL RIGHTS RESERVED. FOR INSTITUTIONAL USE ONLY.

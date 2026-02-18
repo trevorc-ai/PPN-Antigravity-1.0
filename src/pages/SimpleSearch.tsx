@@ -32,7 +32,7 @@ const SimpleSearch: React.FC = () => {
           <div className="inline-flex items-center justify-center size-20 rounded-[2rem] bg-slate-900 border border-slate-800 shadow-2xl mb-4 group hover:border-primary/50 transition-all duration-500">
             <span className="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">auto_awesome</span>
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300">PPN Research Portal</h1>
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300">PPN Portal</h1>
           <p className="text-slate-300 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">
             Access the unified clinical database for high-fidelity molecular research and protocol discovery.
           </p>

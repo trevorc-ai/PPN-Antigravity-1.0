@@ -3,11 +3,21 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { useToast } from '../contexts/ToastContext';
-import { INTERACTION_RULES, MEDICATIONS_LIST } from '../constants';
-
-const PSYCHEDELICS = ['Psilocybin', 'MDMA', 'Ketamine', 'LSD-25', '5-MeO-DMT', 'Ibogaine', 'Mescaline'];
+import { INTERACTION_RULES } from '../constants';
 
 import { supabase } from '../supabaseClient';
+
+// WO-096: Types for live ref table data
+interface RefSubstance {
+  substance_id: number;
+  substance_name: string;
+}
+
+interface RefMedication {
+  medication_id: number;
+  medication_name: string;
+  medication_category: string;
+}
 
 const InteractionChecker: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -17,6 +27,10 @@ const InteractionChecker: React.FC = () => {
   const [selectedMedication, setSelectedMedication] = useState(searchParams.get('agentB') || '');
   const [dbRule, setDbRule] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  // WO-096: Live ref table state
+  const [substances, setSubstances] = useState<RefSubstance[]>([]);
+  const [medications, setMedications] = useState<RefMedication[]>([]);
+  const [refLoading, setRefLoading] = useState(true);
 
   useEffect(() => {
     const agentA = searchParams.get('agentA');
@@ -24,6 +38,39 @@ const InteractionChecker: React.FC = () => {
     if (agentA) setSelectedPsychedelic(agentA);
     if (agentB) setSelectedMedication(agentB);
   }, [searchParams]);
+
+  // WO-096: Fetch live ref tables on mount
+  useEffect(() => {
+    const fetchRefData = async () => {
+      setRefLoading(true);
+      const [{ data: substanceData }, { data: medicationData }] = await Promise.all([
+        supabase
+          .from('ref_substances')
+          .select('substance_id, substance_name')
+          .order('substance_name'),
+        supabase
+          .from('ref_medications')
+          .select('medication_id, medication_name, medication_category')
+          .eq('is_active', true)
+          .order('medication_category')
+          .order('medication_name'),
+      ]);
+      if (substanceData) setSubstances(substanceData);
+      if (medicationData) setMedications(medicationData);
+      setRefLoading(false);
+    };
+    fetchRefData();
+  }, []);
+
+  // WO-096: Group medications by category for optgroup rendering
+  const medicationsByCategory = useMemo(() => {
+    return medications.reduce<Record<string, RefMedication[]>>((acc, med) => {
+      const cat = med.medication_category || 'Other';
+      if (!acc[cat]) acc[cat] = [];
+      acc[cat].push(med);
+      return acc;
+    }, {});
+  }, [medications]);
 
   // Fetch interaction rule from Supabase
   useEffect(() => {
@@ -152,10 +199,10 @@ const InteractionChecker: React.FC = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate('/catalog')}
-        className="flex items-center gap-2 text-slate-3000 hover:text-slate-300 transition-colors mb-6 group"
+        className="flex items-center gap-2 text-slate-300 hover:text-slate-300 transition-colors mb-6 group"
       >
         <span className="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
-        <span className="text-[10px] font-black uppercase tracking-widest">Return to Catalog</span>
+        <span className="text-xs font-black uppercase tracking-widest">Return to Catalog</span>
       </button>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -166,14 +213,14 @@ const InteractionChecker: React.FC = () => {
             </div>
             <div>
               <h1 className="text-4xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Interaction Checker</h1>
-              <p className="text-slate-3000 text-[10px] font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
+              <p className="text-slate-300 text-xs font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={handleClear}
-            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-3000 hover:text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+            className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
           >
             Reset Analysis
           </button>
@@ -183,18 +230,23 @@ const InteractionChecker: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Input: Psychedelic */}
         <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
-          <label className="text-[10px] font-black text-slate-3000 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
+          <label className="text-xs font-black text-slate-300 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
           <div className="relative group">
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-3000 group-focus-within:text-primary transition-colors">
+            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">biotech</span>
             </div>
             <select
               value={selectedPsychedelic}
               onChange={(e) => setSelectedPsychedelic(e.target.value)}
-              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all" style={{ color: '#8B9DC3' }}
+              disabled={refLoading}
+              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait" style={{ color: '#8B9DC3' }}
             >
-              <option value="">Select Controlled Substance...</option>
-              {PSYCHEDELICS.map(p => <option key={p} value={p}>{p.toUpperCase()}</option>)}
+              <option value="">{refLoading ? 'Loading...' : 'Select Controlled Substance...'}</option>
+              {substances.map(s => (
+                <option key={s.substance_id} value={s.substance_name}>
+                  {s.substance_name.toUpperCase()}
+                </option>
+              ))}
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
               <span className="material-symbols-outlined">expand_more</span>
@@ -202,24 +254,33 @@ const InteractionChecker: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 px-2">
             <span className="material-symbols-outlined text-xs text-slate-600">lock</span>
-            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Validated Protocol List Only</span>
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">Validated Protocol List Only</span>
           </div>
         </section>
 
         {/* Input: Medication */}
         <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
-          <label className="text-[10px] font-black text-slate-3000 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
+          <label className="text-xs font-black text-slate-300 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
           <div className="relative group">
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-3000 group-focus-within:text-primary transition-colors">
+            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">dataset</span>
             </div>
             <select
               value={selectedMedication}
               onChange={(e) => setSelectedMedication(e.target.value)}
-              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all" style={{ color: '#8B9DC3' }}
+              disabled={refLoading}
+              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait" style={{ color: '#8B9DC3' }}
             >
-              <option value="">Select Interactor...</option>
-              {MEDICATIONS_LIST.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
+              <option value="">{refLoading ? 'Loading...' : 'Select Interactor...'}</option>
+              {(Object.entries(medicationsByCategory) as [string, RefMedication[]][]).map(([category, meds]) => (
+                <optgroup key={category} label={category}>
+                  {meds.map(m => (
+                    <option key={m.medication_id} value={m.medication_name}>
+                      {m.medication_name.toUpperCase()}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
               <span className="material-symbols-outlined">expand_more</span>
@@ -230,7 +291,7 @@ const InteractionChecker: React.FC = () => {
           <div className="px-2">
             <button
               onClick={handleRequestAgent}
-              className="text-[10px] font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2 group"
+              className="text-xs font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2 group"
             >
               <span>Agent not listed? Request institutional database update.</span>
               <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">arrow_forward</span>
@@ -244,7 +305,7 @@ const InteractionChecker: React.FC = () => {
         {!analysisResult ? (
           <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-[3rem] space-y-6 opacity-40">
             <span className="material-symbols-outlined text-7xl text-slate-700">query_stats</span>
-            <p className="text-slate-3000 font-black text-[11px] uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
+            <p className="text-slate-300 font-black text-xs uppercase tracking-[0.4em]">Awaiting Selection Nodes</p>
           </div>
         ) : (
           <div
@@ -268,7 +329,7 @@ const InteractionChecker: React.FC = () => {
                 </div>
                 <button
                   onClick={handlePrint}
-                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white text-[10px] font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
+                  className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white text-xs font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
                 >
                   <span className="material-symbols-outlined text-lg">print</span>
                   Print / Save Results
@@ -283,7 +344,7 @@ const InteractionChecker: React.FC = () => {
                   </div>
                   <div>
                     <h3 className={`text-4xl font-black tracking-tighter ${styles?.text}`}>{styles?.label}</h3>
-                    <p className="text-[10px] font-mono font-black text-slate-3000 uppercase tracking-widest mt-1">
+                    <p className="text-xs font-mono font-black text-slate-300 uppercase tracking-widest mt-1">
                       Risk Level: {analysisResult.riskLevel} / 10 • Severity: {analysisResult.severity}
                     </p>
                   </div>
@@ -312,16 +373,16 @@ const InteractionChecker: React.FC = () => {
                 <div className="lg:col-span-5 flex flex-col justify-end">
                   <div className="bg-black/60 border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
                     <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                      <span className="text-[10px] font-black text-slate-3000 uppercase tracking-widest">Protocol Sync Status</span>
-                      <span className="text-[10px] font-mono text-clinical-green font-black uppercase">Active</span>
+                      <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Protocol Sync Status</span>
+                      <span className="text-xs font-mono text-clinical-green font-black uppercase">Active</span>
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
                       <p className="text-base font-mono font-black" style={{ color: '#8B9DC3' }}>{analysisResult.id} // SECURE_NODE_0x7</p>
                     </div>
                     {analysisResult.sourceUrl && (
                       <div className="flex items-center gap-2">
-                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-[10px] font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors">
+                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-xs font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors">
                           Source: {analysisResult.source}
                           <span className="material-symbols-outlined text-xs">open_in_new</span>
                         </a>
@@ -347,17 +408,17 @@ const InteractionChecker: React.FC = () => {
           </div>
           <div className="space-y-2">
             <h3 className="text-xs font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Registry Methodology</h3>
-            <p className="text-[12px] text-slate-3000 leading-relaxed font-medium italic">
+            <p className="text-xs text-slate-300 leading-relaxed font-medium italic">
               Interaction data is synthesized from peer-reviewed literature, clinical trial reports (2024-2025), and anonymized practitioner observations. All data points are validated by the institutional Lead Investigator node before ledger entry.
             </p>
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-1.5">
                 <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                <span className="text-[8px] font-mono text-clinical-green font-black uppercase tracking-widest">Ledger Verified</span>
+                <span className="text-xs font-mono text-clinical-green font-black uppercase tracking-widest">Ledger Verified</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
-                <span className="text-[8px] font-mono text-primary font-black uppercase tracking-widest">Node Sync Complete</span>
+                <span className="text-xs font-mono text-primary font-black uppercase tracking-widest">Node Sync Complete</span>
               </div>
             </div>
           </div>

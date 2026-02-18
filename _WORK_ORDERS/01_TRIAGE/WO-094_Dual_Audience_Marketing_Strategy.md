@@ -1,8 +1,11 @@
 ---
 id: WO-094
 title: "Dual-Audience Marketing Strategy: Grey Market vs Licensed Clinics"
+proddy_status: COMPLETE
+analyst_status: COMPLETE
+lead_next_action: Create follow-on work orders for DESIGNER + MARKETER
 status: 01_TRIAGE
-priority: P1 (Critical)
+priority: P0 (URGENT — USER ESCALATED 2026-02-17T22:21)
 category: Strategic Analysis / Marketing
 type: MARKET_STUDY (not a build order)
 owner: PRODDY
@@ -11,6 +14,7 @@ failure_count: 0
 created_date: 2026-02-17T19:21:00-08:00
 requested_by: USER
 ticket_type: EVALUATION — Strategic Analysis & Recommendations
+lead_directive: "USER has escalated this to ASAP priority. PRODDY begin immediately. This is the #1 strategic priority. All other PRODDY tasks are secondary."
 ---
 
 # WO-094: Dual-Audience Marketing Strategy
@@ -271,3 +275,204 @@ Using the seed notes above + research in `/public/admin_uploads/tc_notes/`, PROD
 **01_TRIAGE** — Awaiting PRODDY + ANALYST analysis
 
 **Priority:** P1 — This strategy shapes all future marketing and product decisions.
+
+---
+
+## 📣 PRODDY ANALYSIS — COMPLETE (2026-02-17T23:12 PST)
+
+### 1. DUAL-SEGMENT HYPOTHESIS: ✅ VALIDATED WITH REFINEMENTS
+
+The two-segment model is **correct and well-supported by research**. However, PRODDY recommends a third micro-segment worth tracking:
+
+| Segment | Size | Primary Fear | Primary CTA |
+|---------|------|-------------|-------------|
+| **A: Grey Market / Religious** | ~60% of market | Legal liability, jail, career destruction | "Protect Your Practice" |
+| **B: Licensed Clinics (Ketamine/Psilocybin)** | ~30% of market | Flying blind, malpractice, insurance denial | "See Your Benchmarks" |
+| **C: Integration Specialists** | ~10% of market | Scope of practice violations, referral isolation | "Build Your Network" |
+
+**Segment C** (Integration Specialists) is too small for a dedicated landing page at MVP but should be acknowledged in the Referral Network Directory (WO-083) and peer supervision features.
+
+---
+
+### 2. MESSAGING FRAMEWORK: ✅ VALIDATED WITH ONE CRITICAL CHANGE
+
+**The USER's seed notes are strategically sound.** PRODDY validates the fear-based approach — research confirms practitioners are motivated by loss aversion, not aspiration.
+
+**One critical refinement:** The tagline "Prove You're Not Reckless" (#4) should be **retired**. It implies guilt and may alienate licensed clinicians who are already operating carefully. Replace with:
+
+**FINAL TAGLINE RECOMMENDATION:**
+- **Main:** `"The Operating System for Safe Psychedelic Practice"` ✅
+- **Hero Subhead:** `"Don't Fly Blind. Don't Go Broke. Don't Get Sued."` ✅
+- **Grey Market Sub-brand:** `"The Phantom Shield"` ✅
+- **Clinic Sub-brand:** `"Clinic Commander"` ✅
+
+---
+
+### 3. FEATURE-TO-MARKET FIT MATRIX
+
+| Feature | Segment A (Grey) | Segment B (Clinic) | Build Status |
+|---------|-----------------|-------------------|-------------|
+| Crisis Logger | ✅ PRIMARY | ⚠️ Secondary | In BUILD (WO-060) |
+| Cockpit Mode UI | ✅ PRIMARY | ❌ Not relevant | In BUILD (WO-061) |
+| Potency Normalizer | ✅ PRIMARY | ✅ PRIMARY | In BUILD (WO-059) |
+| Zero-Knowledge Architecture | ✅ PRIMARY | ⚠️ Nice-to-have | Partial (WO-090) |
+| Duress Mode (Fake PIN) | ✅ PRIMARY | ❌ Not relevant | TRIAGE (WO-088) |
+| Real-Time Benchmarking | ❌ Not relevant | ✅ PRIMARY | Partial |
+| Unit Economics Dashboard | ❌ Not relevant | ✅ PRIMARY | Not built |
+| Insurance Dossier Generator | ⚠️ Secondary | ✅ PRIMARY | Not built |
+| Informed Consent Generator | ✅ HIGH | ✅ HIGH | TRIAGE (WO-081) |
+| Peer Supervision Matching | ⚠️ Secondary | ✅ HIGH | TRIAGE (WO-082) |
+
+**GTM Priority Order:**
+1. **Ship Phantom Shield suite** (WO-059, 060, 061) — unlocks Segment A immediately
+2. **Ship Informed Consent Generator** (WO-081) — serves BOTH segments, highest cross-segment value
+3. **Build Insurance Dossier Generator** — unlocks Segment B premium tier
+4. **Build Unit Economics Dashboard** — Segment B retention driver
+
+---
+
+### 4. WEBSITE STRUCTURE: ✅ VALIDATED WITH MVP SCOPE REDUCTION
+
+**USER's proposed structure is correct.** PRODDY recommends phasing:
+
+**MVP (Ship Now):**
+- `/` → Dual-path hero (Grey Market vs Clinical)
+- `/phantom-shield` → Grey market landing page
+- `/clinic-commander` → Clinical landing page
+- `/pricing` → 3-tier with Data Bounty
+
+**Phase 2 (After first 100 users):**
+- `/about` → "Why We Exist"
+- `/data-trust` → Zero-Knowledge architecture
+- `/safety` → Safety features showcase
+
+**Phase 3 (After product-market fit signal):**
+- `/data-contribution` → Manage data sharing
+- All authenticated personalization
+
+---
+
+### 5. PRICING STRATEGY: ✅ DATA BOUNTY MODEL VALIDATED
+
+The 75% discount for data contribution is **strategically sound** — it aligns incentives perfectly. PRODDY recommends:
+
+| Tier | Price (No Data) | Price (With Data) | Target Segment |
+|------|----------------|-------------------|---------------|
+| **Phantom Shield** | $149/mo | $49/mo | Grey Market |
+| **Clinic Commander** | $399/mo | $99/mo | Licensed Clinics |
+| **Enterprise** | Custom | Custom | Multi-site clinics |
+
+**Key insight from research:** Grey market practitioners are price-sensitive but fear-motivated. The $49 price point with data contribution removes the financial objection while securing the data flywheel.
+
+---
+
+### 6. FOLLOW-ON WORK ORDERS RECOMMENDED
+
+PRODDY recommends creating these tickets immediately:
+
+1. **WO-095:** Landing Page Redesign (Dual-Path Hero) → DESIGNER
+2. **WO-096:** Phantom Shield Landing Page (`/phantom-shield`) → DESIGNER + MARKETER
+3. **WO-097:** Clinic Commander Landing Page (`/clinic-commander`) → DESIGNER + MARKETER
+4. **WO-098:** Pricing Page Redesign (3-tier + Data Bounty) → DESIGNER + MARKETER
+5. **WO-099:** Brand Messaging Document (Final taglines, segment copy, tone of voice) → MARKETER
+
+---
+
+## 📣 ANALYST METRICS FRAMEWORK — COMPLETE (2026-02-17T23:12 PST)
+
+### 1. SEGMENT SIZING ESTIMATE
+
+**Grey Market (Segment A):**
+- US estimate: 15,000–25,000 active underground/religious practitioners
+- Addressable (tech-savvy, privacy-conscious): ~8,000–12,000
+- SAM at $49/mo: ~$5M–$7M ARR at 10% penetration
+
+**Licensed Clinics (Segment B):**
+- US ketamine clinics: ~2,500 active (2026 estimate)
+- Regulated psilocybin (OR + CO): ~500 licensed facilitators, growing
+- Addressable: ~1,500 clinics with 2+ practitioners
+- SAM at $399/mo: ~$7M ARR at 10% penetration
+
+**Combined TAM:** ~$12M–$15M ARR at 10% penetration. Realistic Year 1 target: $500K–$1M ARR.
+
+---
+
+### 2. CONVERSION FUNNEL ANALYSIS
+
+**Grey Market Funnel — Predicted Drop-offs:**
+
+| Stage | Expected Conversion | Drop-off Risk | Mitigation |
+|-------|-------------------|---------------|-----------|
+| Landing → Phantom Shield page | 35% | HIGH — trust barrier | Lead with "Zero-Knowledge" proof |
+| Phantom Shield → Pricing | 25% | MEDIUM — price shock | Show $49 with data prominently |
+| Pricing → Signup | 40% | LOW — fear motivates | Emphasize "one incident = career over" |
+| Signup → Activation (first session logged) | 55% | MEDIUM — onboarding friction | Cockpit Mode tutorial as first step |
+| Activation → 30-day retention | 70% | LOW — fear keeps them engaged | Crisis Logger habit loop |
+
+**Clinical Funnel — Predicted Drop-offs:**
+
+| Stage | Expected Conversion | Drop-off Risk | Mitigation |
+|-------|-------------------|---------------|-----------|
+| Landing → Clinic Commander page | 40% | MEDIUM — ROI skepticism | Show benchmarking demo immediately |
+| Clinic Commander → Free Trial | 30% | HIGH — commitment aversion | No credit card required |
+| Free Trial → Paid | 25% | HIGH — value not yet proven | 14-day trial with benchmark report |
+| Paid → 90-day retention | 80% | LOW — data lock-in | Monthly benchmark report email |
+
+---
+
+### 3. DATA BOUNTY ECONOMICS
+
+**Model Assumptions:**
+- Full price: $149/mo (Grey) / $399/mo (Clinic)
+- Data price: $49/mo (Grey) / $99/mo (Clinic)
+- Discount: 67% / 75%
+- Data value per user per month: ~$30–$80 (conservative estimate based on clinical data market rates)
+
+**Viability Threshold:**
+- Grey Market: Data must be worth ≥ $100/user/year to break even on discount
+- At 1,000 grey market users contributing data: ~$1.2M data asset value annually
+- **Verdict: Viable at 500+ contributing users.** Below that, the discount is a loss leader for acquisition.
+
+**Recommendation:** Cap the Data Bounty discount at the first 500 users (early adopter pricing), then raise to $79/mo for new signups. This creates urgency and protects margin.
+
+---
+
+### 4. KPI FRAMEWORK
+
+**North Star Metric:** `Sessions Documented Per Month` (proxy for safety infrastructure adoption)
+
+**Segment A (Grey Market) KPIs:**
+| KPI | Target (Month 3) | Target (Month 12) |
+|-----|-----------------|------------------|
+| Phantom Shield page visits | 2,000/mo | 10,000/mo |
+| Signup conversion rate | 8% | 12% |
+| Crisis Logger activation rate | 60% of signups | 75% |
+| Sessions documented/user/mo | 3 | 6 |
+| Data contribution rate | 40% | 60% |
+| 90-day retention | 65% | 75% |
+
+**Segment B (Clinical) KPIs:**
+| KPI | Target (Month 3) | Target (Month 12) |
+|-----|-----------------|------------------|
+| Clinic Commander page visits | 500/mo | 3,000/mo |
+| Free trial conversion | 15% | 20% |
+| Trial-to-paid conversion | 20% | 30% |
+| Benchmark reports generated/mo | 2/clinic | 5/clinic |
+| Insurance dossiers generated | 10/mo | 100/mo |
+| 90-day retention | 75% | 85% |
+
+**Leading Indicators to Watch:**
+- If Crisis Logger activation < 40% at Day 30 → onboarding is broken
+- If Data Bounty uptake < 30% → price point is wrong or trust is missing
+- If Clinic trial-to-paid < 15% → benchmarking demo is not compelling enough
+
+---
+
+## ✅ COMBINED STATUS: COMPLETE
+
+**PRODDY:** ✅ Segment validation, messaging, feature matrix, website structure, pricing, follow-on WOs
+**ANALYST:** ✅ Market sizing, funnel analysis, Data Bounty economics, KPI framework
+
+**LEAD Next Action:** Create WO-095 through WO-099 and route to DESIGNER + MARKETER.
+**USER Next Action:** Review and approve strategy before DESIGNER begins landing page work.
+
