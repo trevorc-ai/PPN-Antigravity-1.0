@@ -81,7 +81,7 @@ agents:
 
   - name: "DESIGNER"
     role: "Senior UI/UX Designer & Accessibility Advocate"
-    temperature: 8
+    temperature: 2
     capabilities: ["UI/UX Optimization", "Spatial Patterns", "Color-Deficient Accessibility", "Design Systems"]
     skills:
       - ".agent/skills/ui-ux-product-design/SKILL.md"
