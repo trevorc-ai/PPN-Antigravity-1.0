@@ -35,7 +35,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
 }) => {
     const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [dimensions, setDimensions] = useState({ width: 800, height: 300 });
+    const [dimensions, setDimensions] = useState({ width: 0, height: 300 });
 
     // Update dimensions on mount and resize
     useEffect(() => {
@@ -151,15 +151,15 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
             </div>
 
             {/* Current Status */}
-            <div className="flex items-center gap-4 p-3 bg-slate-900/40 rounded-lg">
-                <div>
-                    <p className="text-sm text-slate-300">Current PHQ-9</p>
+            <div className="flex flex-wrap items-center gap-3 p-3 bg-slate-900/40 rounded-lg">
+                <div className="flex-shrink-0">
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-0.5">Current PHQ-9</p>
                     <p className="text-2xl font-black" style={{ color: currentSeverity.color }}>
                         {currentPhq9}
                     </p>
                 </div>
-                <div className="flex-1">
-                    <p className="text-sm text-slate-300 mb-1">{currentSeverity.label}</p>
+                <div className="flex-1 min-w-[120px]">
+                    <p className="text-xs text-slate-400 mb-1">{currentSeverity.label}</p>
                     <div className="h-2 bg-slate-900/60 rounded-full overflow-hidden">
                         <div
                             className="h-full transition-all duration-500"
@@ -170,229 +170,235 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                         />
                     </div>
                 </div>
-                <div>
-                    <p className="text-sm text-slate-300">Improvement</p>
+                <div className="flex-shrink-0">
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-0.5">Improvement</p>
                     <p className="text-xl font-black text-emerald-400">
-                        -{baselinePhq9 - currentPhq9}
+                        -{baselinePhq9 - currentPhq9} pts
                     </p>
                 </div>
             </div>
 
             {/* Chart */}
-            <div ref={containerRef} className="relative bg-slate-900/40 rounded-lg p-3 w-full">
-                <svg
-                    width="100%"
-                    height="100%"
-                    viewBox={`0 0 ${width} ${height}`}
-                    preserveAspectRatio="xMidYMid meet"
-                    className="overflow-visible"
-                >
-                    <defs>
-                        {/* Gradient for afterglow period */}
-                        <linearGradient id="afterglowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="rgba(59, 130, 246, 0.2)" />
-                            <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
-                        </linearGradient>
-                    </defs>
+            <div
+                ref={containerRef}
+                className="relative bg-slate-900/40 rounded-lg p-3 w-full overflow-hidden"
+                style={{ height: dimensions.height }}
+            >
+                {dimensions.width > 0 && (
+                    <svg
+                        width="100%"
+                        height="100%"
+                        viewBox={`0 0 ${width} ${height}`}
+                        preserveAspectRatio="xMidYMid meet"
+                        className="block"
+                    >
+                        <defs>
+                            {/* Gradient for afterglow period */}
+                            <linearGradient id="afterglowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="rgba(59, 130, 246, 0.2)" />
+                                <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
+                            </linearGradient>
+                        </defs>
 
-                    <g transform={`translate(${padding.left}, ${padding.top})`}>
-                        {/* Severity zones (background) */}
-                        {zones.map((zone, i) => (
+                        <g transform={`translate(${padding.left}, ${padding.top})`}>
+                            {/* Severity zones (background) */}
+                            {zones.map((zone, i) => (
+                                <rect
+                                    key={i}
+                                    x={0}
+                                    y={yScale(zone.max)}
+                                    width={chartWidth}
+                                    height={yScale(zone.min) - yScale(zone.max)}
+                                    fill={zone.color}
+                                />
+                            ))}
+
+                            {/* Afterglow period highlight (Days 0-14) */}
                             <rect
-                                key={i}
                                 x={0}
-                                y={yScale(zone.max)}
-                                width={chartWidth}
-                                height={yScale(zone.min) - yScale(zone.max)}
-                                fill={zone.color}
+                                y={0}
+                                width={xScale(14)}
+                                height={chartHeight}
+                                fill="url(#afterglowGradient)"
                             />
-                        ))}
 
-                        {/* Afterglow period highlight (Days 0-14) */}
-                        <rect
-                            x={0}
-                            y={0}
-                            width={xScale(14)}
-                            height={chartHeight}
-                            fill="url(#afterglowGradient)"
-                        />
-
-                        {/* Grid lines (horizontal) */}
-                        {[0, 5, 10, 15, 20, 27].map((value) => (
-                            <g key={value}>
-                                <line
-                                    x1={0}
-                                    y1={yScale(value)}
-                                    x2={chartWidth}
-                                    y2={yScale(value)}
-                                    stroke="rgba(148, 163, 184, 0.1)"
-                                    strokeWidth={1}
-                                />
-                                <text
-                                    x={-10}
-                                    y={yScale(value)}
-                                    textAnchor="end"
-                                    dominantBaseline="middle"
-                                    className="text-xs fill-slate-400"
-                                >
-                                    {value}
-                                </text>
-                            </g>
-                        ))}
-
-                        {/* Milestone markers (vertical) */}
-                        {milestones.map((milestone) => (
-                            <g key={milestone.day}>
-                                <line
-                                    x1={xScale(milestone.day)}
-                                    y1={0}
-                                    x2={xScale(milestone.day)}
-                                    y2={chartHeight}
-                                    stroke="rgba(148, 163, 184, 0.2)"
-                                    strokeWidth={milestone.day === 0 || milestone.day === 14 ? 2 : 1}
-                                    strokeDasharray={milestone.day === 14 ? "4 4" : "none"}
-                                />
-                                <text
-                                    x={xScale(milestone.day)}
-                                    y={chartHeight + 20}
-                                    textAnchor="middle"
-                                    className="text-xs fill-slate-300"
-                                >
-                                    {milestone.label}
-                                </text>
-                            </g>
-                        ))}
-
-                        {/* Curve path */}
-                        <path
-                            d={generateCurvePath()}
-                            fill="none"
-                            stroke="#3b82f6"
-                            strokeWidth={3}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-
-                        {/* Data points */}
-                        {[{ day: 0, phq9: baselinePhq9 }, ...dataPoints].map((point, i) => {
-                            const severity = getSeverityInfo(point.phq9);
-                            return (
-                                <g key={i}>
-                                    <circle
-                                        cx={xScale(point.day)}
-                                        cy={yScale(point.phq9)}
-                                        r={hoveredPoint === i ? 8 : 6}
-                                        fill={severity.color}
-                                        stroke="#0f172a"
-                                        strokeWidth={2}
-                                        className="cursor-pointer transition-all"
-                                        onMouseEnter={() => setHoveredPoint(i)}
-                                        onMouseLeave={() => setHoveredPoint(null)}
+                            {/* Grid lines (horizontal) */}
+                            {[0, 5, 10, 15, 20, 27].map((value) => (
+                                <g key={value}>
+                                    <line
+                                        x1={0}
+                                        y1={yScale(value)}
+                                        x2={chartWidth}
+                                        y2={yScale(value)}
+                                        stroke="rgba(148, 163, 184, 0.1)"
+                                        strokeWidth={1}
                                     />
-                                    {/* Tooltip on hover */}
-                                    {hoveredPoint === i && (
-                                        <g>
-                                            <rect
-                                                x={xScale(point.day) - 60}
-                                                y={yScale(point.phq9) - 50}
-                                                width={120}
-                                                height={40}
-                                                rx={8}
-                                                fill="#0f172a"
-                                                stroke={severity.color}
-                                                strokeWidth={2}
-                                            />
-                                            <text
-                                                x={xScale(point.day)}
-                                                y={yScale(point.phq9) - 35}
-                                                textAnchor="middle"
-                                                className="text-xs fill-slate-300 font-semibold"
-                                            >
-                                                Day {point.day}
-                                            </text>
-                                            <text
-                                                x={xScale(point.day)}
-                                                y={yScale(point.phq9) - 20}
-                                                textAnchor="middle"
-                                                className="text-sm font-bold"
-                                                fill={severity.color}
-                                            >
-                                                PHQ-9: {point.phq9}
-                                            </text>
-                                        </g>
-                                    )}
+                                    <text
+                                        x={-10}
+                                        y={yScale(value)}
+                                        textAnchor="end"
+                                        dominantBaseline="middle"
+                                        className="text-xs fill-slate-400"
+                                    >
+                                        {value}
+                                    </text>
                                 </g>
-                            );
-                        })}
+                            ))}
 
-                        {/* Annotations */}
-                        {/* Afterglow annotation */}
-                        <text
-                            x={xScale(7)}
-                            y={-10}
-                            textAnchor="middle"
-                            className="text-xs fill-blue-400 font-semibold"
-                        >
-                            Afterglow Period
-                        </text>
+                            {/* Milestone markers (vertical) */}
+                            {milestones.map((milestone) => (
+                                <g key={milestone.day}>
+                                    <line
+                                        x1={xScale(milestone.day)}
+                                        y1={0}
+                                        x2={xScale(milestone.day)}
+                                        y2={chartHeight}
+                                        stroke="rgba(148, 163, 184, 0.2)"
+                                        strokeWidth={milestone.day === 0 || milestone.day === 14 ? 2 : 1}
+                                        strokeDasharray={milestone.day === 14 ? "4 4" : "none"}
+                                    />
+                                    <text
+                                        x={xScale(milestone.day)}
+                                        y={chartHeight + 20}
+                                        textAnchor="middle"
+                                        className="text-xs fill-slate-300"
+                                    >
+                                        {milestone.label}
+                                    </text>
+                                </g>
+                            ))}
 
-                        {/* Remission line (PHQ-9 < 5) */}
-                        <line
-                            x1={0}
-                            y1={yScale(5)}
-                            x2={chartWidth}
-                            y2={yScale(5)}
-                            stroke="#22c55e"
-                            strokeWidth={2}
-                            strokeDasharray="4 4"
-                        />
-                        <text
-                            x={chartWidth - 5}
-                            y={yScale(5) - 5}
-                            textAnchor="end"
-                            className="text-xs fill-emerald-400 font-semibold"
-                        >
-                            Remission (PHQ-9 &lt; 5)
-                        </text>
+                            {/* Curve path */}
+                            <path
+                                d={generateCurvePath()}
+                                fill="none"
+                                stroke="#3b82f6"
+                                strokeWidth={3}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
 
-                        {/* Axes */}
-                        <line
-                            x1={0}
-                            y1={chartHeight}
-                            x2={chartWidth}
-                            y2={chartHeight}
-                            stroke="rgba(148, 163, 184, 0.3)"
-                            strokeWidth={2}
-                        />
-                        <line
-                            x1={0}
-                            y1={0}
-                            x2={0}
-                            y2={chartHeight}
-                            stroke="rgba(148, 163, 184, 0.3)"
-                            strokeWidth={2}
-                        />
+                            {/* Data points */}
+                            {[{ day: 0, phq9: baselinePhq9 }, ...dataPoints].map((point, i) => {
+                                const severity = getSeverityInfo(point.phq9);
+                                return (
+                                    <g key={i}>
+                                        <circle
+                                            cx={xScale(point.day)}
+                                            cy={yScale(point.phq9)}
+                                            r={hoveredPoint === i ? 8 : 6}
+                                            fill={severity.color}
+                                            stroke="#0f172a"
+                                            strokeWidth={2}
+                                            className="cursor-pointer transition-all"
+                                            onMouseEnter={() => setHoveredPoint(i)}
+                                            onMouseLeave={() => setHoveredPoint(null)}
+                                        />
+                                        {/* Tooltip on hover */}
+                                        {hoveredPoint === i && (
+                                            <g>
+                                                <rect
+                                                    x={xScale(point.day) - 60}
+                                                    y={yScale(point.phq9) - 50}
+                                                    width={120}
+                                                    height={40}
+                                                    rx={8}
+                                                    fill="#0f172a"
+                                                    stroke={severity.color}
+                                                    strokeWidth={2}
+                                                />
+                                                <text
+                                                    x={xScale(point.day)}
+                                                    y={yScale(point.phq9) - 35}
+                                                    textAnchor="middle"
+                                                    className="text-xs fill-slate-300 font-semibold"
+                                                >
+                                                    Day {point.day}
+                                                </text>
+                                                <text
+                                                    x={xScale(point.day)}
+                                                    y={yScale(point.phq9) - 20}
+                                                    textAnchor="middle"
+                                                    className="text-sm font-bold"
+                                                    fill={severity.color}
+                                                >
+                                                    PHQ-9: {point.phq9}
+                                                </text>
+                                            </g>
+                                        )}
+                                    </g>
+                                );
+                            })}
 
-                        {/* Axis labels */}
-                        <text
-                            x={chartWidth / 2}
-                            y={chartHeight + 45}
-                            textAnchor="middle"
-                            className="text-sm fill-slate-300 font-semibold"
-                        >
-                            Days Post-Session
-                        </text>
-                        <text
-                            x={-chartHeight / 2}
-                            y={-45}
-                            textAnchor="middle"
-                            transform={`rotate(-90, -${chartHeight / 2}, -45)`}
-                            className="text-sm fill-slate-300 font-semibold"
-                        >
-                            PHQ-9 Score
-                        </text>
-                    </g>
-                </svg>
+                            {/* Annotations */}
+                            {/* Afterglow annotation */}
+                            <text
+                                x={xScale(7)}
+                                y={-10}
+                                textAnchor="middle"
+                                className="text-xs fill-blue-400 font-semibold"
+                            >
+                                Afterglow Period
+                            </text>
+
+                            {/* Remission line (PHQ-9 < 5) */}
+                            <line
+                                x1={0}
+                                y1={yScale(5)}
+                                x2={chartWidth}
+                                y2={yScale(5)}
+                                stroke="#22c55e"
+                                strokeWidth={2}
+                                strokeDasharray="4 4"
+                            />
+                            <text
+                                x={chartWidth - 5}
+                                y={yScale(5) - 5}
+                                textAnchor="end"
+                                className="text-xs fill-emerald-400 font-semibold"
+                            >
+                                Remission (PHQ-9 &lt; 5)
+                            </text>
+
+                            {/* Axes */}
+                            <line
+                                x1={0}
+                                y1={chartHeight}
+                                x2={chartWidth}
+                                y2={chartHeight}
+                                stroke="rgba(148, 163, 184, 0.3)"
+                                strokeWidth={2}
+                            />
+                            <line
+                                x1={0}
+                                y1={0}
+                                x2={0}
+                                y2={chartHeight}
+                                stroke="rgba(148, 163, 184, 0.3)"
+                                strokeWidth={2}
+                            />
+
+                            {/* Axis labels */}
+                            <text
+                                x={chartWidth / 2}
+                                y={chartHeight + 45}
+                                textAnchor="middle"
+                                className="text-sm fill-slate-300 font-semibold"
+                            >
+                                Days Post-Session
+                            </text>
+                            <text
+                                x={-chartHeight / 2}
+                                y={-45}
+                                textAnchor="middle"
+                                transform={`rotate(-90, -${chartHeight / 2}, -45)`}
+                                className="text-sm fill-slate-300 font-semibold"
+                            >
+                                PHQ-9 Score
+                            </text>
+                        </g>
+                    </svg>
+                )}
             </div>
 
             {/* Legend */}

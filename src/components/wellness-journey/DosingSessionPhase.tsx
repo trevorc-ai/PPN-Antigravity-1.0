@@ -210,7 +210,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                         {/* Timer */}
                         <div className="text-center sm:text-left">
-                            <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-400 font-bold mb-1 shadow-green-900/50">Session Active</p>
+                            <p className="text-xs uppercase tracking-[0.2em] text-emerald-400 font-bold mb-1 shadow-green-900/50">Session Active</p>
                             <p className="text-4xl font-black text-white font-mono tracking-tight leading-none drop-shadow-[0_0_10px_rgba(16,185,129,0.5)] tabular-nums">
                                 {elapsedTime}
                             </p>
@@ -218,7 +218,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         {/* Live Vitals Ticker */}
                         <div className="flex items-center gap-5 bg-slate-950/50 p-3 rounded-xl border border-white/5 shadow-inner">
                             <div className="text-right">
-                                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-0.5">HR</p>
+                                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">HR</p>
                                 <div className="flex items-center gap-1.5 justify-end">
                                     <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse" />
                                     <p className="text-xl font-black text-slate-200 leading-none">{liveVitals.hr}</p>
@@ -226,12 +226,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             </div>
                             <div className="w-px h-8 bg-slate-800" />
                             <div className="text-right">
-                                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-0.5">BP</p>
+                                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">BP</p>
                                 <p className="text-xl font-black text-slate-200 leading-none">{liveVitals.bp}</p>
                             </div>
                             <div className="w-px h-8 bg-slate-800" />
                             <div className="text-right">
-                                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-0.5">SpO2</p>
+                                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">SpO2</p>
                                 <p className={`text-xl font-black leading-none ${liveVitals.spo2 < 95 ? 'text-amber-400' : 'text-slate-200'}`}>{liveVitals.spo2}%</p>
                             </div>
                         </div>
@@ -333,7 +333,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
 
                 {/* Keyboard Shortcut Legend */}
                 <div className="flex items-center justify-center gap-4 px-4 py-2.5 bg-slate-900/40 border border-slate-800/50 rounded-xl">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
                     {[
                         { key: 'V', label: 'Vitals' },
                         { key: 'O', label: 'Observe' },
@@ -341,8 +341,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         { key: 'A', label: 'Adverse' },
                     ].map(({ key, label }) => (
                         <div key={key} className="flex items-center gap-1.5">
-                            <kbd className="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono font-bold text-slate-400">{key}</kbd>
-                            <span className="text-[10px] text-slate-600">{label}</span>
+                            <kbd className="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 border border-slate-700 text-xs font-mono font-bold text-slate-400">{key}</kbd>
+                            <span className="text-xs text-slate-600">{label}</span>
                         </div>
                     ))}
                 </div>
@@ -374,7 +374,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                         : 'bg-slate-800/40 border-slate-800 hover:border-slate-600 hover:bg-slate-800/60'}`}>
                                     <div className="flex items-center gap-3 mb-1">
                                         <span className="text-sm font-mono font-bold text-slate-400">{event.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                        <span className={`text-[10px] uppercase font-extrabold tracking-widest px-2.5 py-1 rounded-md border
+                                        <span className={`text-xs uppercase font-extrabold tracking-widest px-2.5 py-1 rounded-md border
                                             ${event.eventType === 'safety_event' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
                                                 event.eventType === 'intervention' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
                                                     'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>

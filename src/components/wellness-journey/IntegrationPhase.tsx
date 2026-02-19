@@ -110,11 +110,11 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                 {/* 7-Day Trend Summary */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="p-4 bg-slate-800/40 rounded-xl text-center border border-slate-700/50">
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Connection</p>
+                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Connection</p>
                                         <p className="text-3xl font-black text-pink-400">{avgConnection}<span className="text-base text-slate-600 font-normal">/5</span></p>
                                     </div>
                                     <div className="p-4 bg-slate-800/40 rounded-xl text-center border border-slate-700/50">
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Sleep</p>
+                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Sleep</p>
                                         <p className="text-3xl font-black text-blue-400">{avgSleep}<span className="text-base text-slate-600 font-normal">/5</span></p>
                                     </div>
                                 </div>
@@ -126,11 +126,11 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                         <div className="flex items-center gap-4">
                                             <div className="flex items-center gap-1.5">
                                                 <div className="w-2 h-2 rounded-full bg-pink-500" />
-                                                <span className="text-[10px] text-slate-500 font-bold uppercase">Connection</span>
+                                                <span className="text-xs text-slate-500 font-bold uppercase">Connection</span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                                 <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                                <span className="text-[10px] text-slate-500 font-bold uppercase">Sleep</span>
+                                                <span className="text-xs text-slate-500 font-bold uppercase">Sleep</span>
                                             </div>
                                         </div>
                                     </div>
@@ -151,7 +151,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                                         title={`Connection: ${d.connection}/5`}
                                                     />
                                                 </div>
-                                                <span className="text-[10px] font-bold text-slate-500 group-hover/bar:text-slate-300">{d.day.slice(0, 1)}</span>
+                                                <span className="text-xs font-bold text-slate-500 group-hover/bar:text-slate-300">{d.day.slice(0, 1)}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -222,7 +222,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                             <div className="text-3xl font-black text-indigo-400 mb-1">
                                 {journey.integration.integrationSessionsAttended}<span className="text-xl text-slate-500 font-normal">/{journey.integration.integrationSessionsScheduled}</span>
                             </div>
-                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Integration Sessions</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest">Integration Sessions</div>
                         </div>
                     </div>
                 </div>
@@ -237,17 +237,17 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                     <div className="space-y-4">
                         <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl flex items-center justify-between">
                             <div>
-                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">WHOQOL-BREF</div>
+                                <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">WHOQOL-BREF</div>
                                 <div className="text-lg font-bold text-slate-300">Quality of Life</div>
                             </div>
                             <div className="text-right">
                                 <div className="text-2xl font-black text-emerald-400">+21%</div>
-                                <div className="text-[10px] text-emerald-500/70 font-bold">68 → 82</div>
+                                <div className="text-xs text-emerald-500/70 font-bold">68 → 82</div>
                             </div>
                         </div>
 
                         <div>
-                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-3">Behavioral Wins</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Behavioral Wins</div>
                             <div className="space-y-2">
                                 {journey.integration.behavioralChanges.map((change: string, index: number) => (
                                     <div key={index} className="flex items-center gap-3 p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-lg">
@@ -282,7 +282,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         </div>
 
                         <div className="mt-6 pt-4 border-t border-white/5">
-                            <div className="flex items-center gap-2 text-[10px] text-indigo-300 font-bold uppercase tracking-widest">
+                            <div className="flex items-center gap-2 text-xs text-indigo-300 font-bold uppercase tracking-widest">
                                 <Activity className="w-3 h-3" />
                                 Correlation Found
                             </div>

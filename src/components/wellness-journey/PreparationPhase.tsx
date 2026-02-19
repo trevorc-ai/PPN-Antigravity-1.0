@@ -105,14 +105,14 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                                         }`}>
                                         {gate.isComplete ? <CheckCircle className="w-3.5 h-3.5" /> : <div className="w-2 h-2 rounded-full bg-slate-500" />}
                                     </div>
-                                    {gate.isComplete && <span className="text-[10px] font-mono text-emerald-500/70">{gate.date}</span>}
+                                    {gate.isComplete && <span className="text-xs font-mono text-emerald-500/70">{gate.date}</span>}
                                 </div>
                                 <div>
                                     <h3 className={`font-bold text-sm ${gate.isComplete ? 'text-emerald-100' : 'text-slate-200'}`}>{gate.label}</h3>
-                                    <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-2">{gate.description}</p>
+                                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{gate.description}</p>
                                 </div>
                                 {!gate.isComplete && (
-                                    <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-blue-400">
+                                    <div className="mt-2 flex items-center gap-1 text-xs font-bold text-blue-400">
                                         COMPLETE <ArrowRight className="w-2.5 h-2.5" />
                                     </div>
                                 )}
@@ -134,26 +134,26 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                         {/* PHQ-9 */}
                         <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
                             <div className={`text-xl font-black mb-0.5 ${phq9Info.color}`}>{journey.baseline.phq9}</div>
-                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">PHQ-9</div>
-                            <div className="text-[9px] text-slate-500 mt-0.5 truncate">{phq9Info.label}</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">PHQ-9</div>
+                            <div className="text-xs text-slate-500 mt-0.5 truncate">{phq9Info.label}</div>
                         </div>
                         {/* GAD-7 */}
                         <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
                             <div className={`text-xl font-black mb-0.5 ${gad7Info.color}`}>{journey.baseline.gad7}</div>
-                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">GAD-7</div>
-                            <div className="text-[9px] text-slate-500 mt-0.5 truncate">{gad7Info.label}</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">GAD-7</div>
+                            <div className="text-xs text-slate-500 mt-0.5 truncate">{gad7Info.label}</div>
                         </div>
                         {/* ACE */}
                         <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
                             <div className="text-xl font-black text-amber-400 mb-0.5">{journey.baseline.aceScore}</div>
-                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ACE Score</div>
-                            <div className="text-[9px] text-slate-500 mt-0.5">Trauma Hist.</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">ACE Score</div>
+                            <div className="text-xs text-slate-500 mt-0.5">Trauma Hist.</div>
                         </div>
                         {/* Expectancy */}
                         <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
                             <div className="text-xl font-black text-emerald-400 mb-0.5">{journey.baseline.expectancy}</div>
-                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Expectancy</div>
-                            <div className="text-[9px] text-slate-500 mt-0.5">High Belief</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Expectancy</div>
+                            <div className="text-xs text-slate-500 mt-0.5">High Belief</div>
                         </div>
                     </div>
                 </div>
