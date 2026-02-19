@@ -31,6 +31,7 @@ import ClinicRadarDemo from '../components/demos/ClinicRadarDemo';
 import PatientJourneyDemo from '../components/demos/PatientJourneyDemo';
 import { GravityButton } from '../components/GravityButton';
 import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
+import StarField from '../components/StarField';
 
 const chartData = [
   { name: 'Node Avg', value: 68, color: '#334155' },
@@ -111,40 +112,7 @@ const Landing: React.FC = () => {
         </button>
       </header>
 
-      {/* Starry Night Parallax Background - Fixed across entire page */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Base dark gradient */}
-        <div className="absolute inset-0 bg-[#0a1628]"></div>
-
-        {/* CSS-Generated Starfield */}
-        <div className="absolute inset-0" style={{
-          transform: `translateY(${scrollY * 0.05}px)`,
-          backgroundImage: `
-            radial-gradient(2px 2px at 20% 30%, white, transparent),
-            radial-gradient(2px 2px at 60% 70%, white, transparent),
-            radial-gradient(1px 1px at 50% 50%, white, transparent),
-            radial-gradient(1px 1px at 80% 10%, white, transparent),
-            radial-gradient(2px 2px at 90% 60%, white, transparent),
-            radial-gradient(1px 1px at 33% 80%, white, transparent),
-            radial-gradient(1px 1px at 15% 90%, white, transparent)
-          `,
-          backgroundSize: '200px 200px, 300px 300px, 250px 250px, 400px 400px, 350px 350px, 280px 280px, 320px 320px',
-          backgroundPosition: '0 0, 40px 60px, 130px 270px, 70px 100px, 200px 150px, 90px 220px, 160px 50px',
-          opacity: 0.4
-        }}></div>
-
-        {/* Twinkling stars layer */}
-        <div className="absolute inset-0 animate-twinkle" style={{
-          transform: `translateY(${scrollY * 0.08}px)`,
-          backgroundImage: `
-            radial-gradient(1px 1px at 25% 25%, rgba(255,255,255,0.8), transparent),
-            radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.6), transparent),
-            radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,0.7), transparent)
-          `,
-          backgroundSize: '300px 300px, 400px 400px, 350px 350px',
-          opacity: 0.3
-        }}></div>
-      </div>
+      <StarField scrollY={scrollY} />
 
       {/* SECTION: Hero — top padding accounts for sticky nav height */}
       <div className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 px-6 overflow-hidden z-10">

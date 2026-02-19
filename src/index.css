@@ -73,46 +73,17 @@ select:focus-visible {
   background: linear-gradient(90deg, #00204d 0%, #414d6b 33%, #7d7c78 66%, #ffea46 100%);
 }
 
-@keyframes twinkle {
+/* Individual star twinkle — slow, organic, per-star timing via inline style */
+@keyframes starTwinkle {
 
   0%,
   100% {
-    opacity: 0.3;
-    transform: scale(1);
+    opacity: var(--star-base-opacity, 0.5);
   }
 
   50% {
-    opacity: 1;
-    transform: scale(1.2);
+    opacity: calc(var(--star-base-opacity, 0.5) * 0.25);
   }
-}
-
-.animate-twinkle {
-  animation: twinkle 3s ease-in-out infinite;
-}
-
-@keyframes star-drift {
-
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-
-  25% {
-    transform: translate(15px, -10px);
-  }
-
-  50% {
-    transform: translate(-10px, 15px);
-  }
-
-  75% {
-    transform: translate(10px, 5px);
-  }
-}
-
-.animate-star-drift {
-  animation: star-drift 120s ease-in-out infinite;
 }
 
 /* Gradient Text Utilities (Accessible - WCAG AA Compliant) */
