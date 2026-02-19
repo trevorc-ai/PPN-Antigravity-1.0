@@ -131,9 +131,9 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
             />
             <StepCard
               number="03"
-              title="Grow the Network"
+              title="Grow the Alliance"
               points={[
-                "Your data helps 500+ other practitioners optimize their care.",
+                "Your data contributes to benchmarks and safety signals that help practitioners across the alliance improve outcomes.",
                 "Together, we build the evidence base for the future of medicine."
               ]}
               icon="hub"
@@ -170,7 +170,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
           <div className="space-y-4 relative z-10">
             <h2 className="text-4xl sm:text-7xl font-black text-slate-300 tracking-tighter leading-tight">Ready to join the <span className="text-primary">Cooperative?</span></h2>
             <p className="text-slate-500 font-medium text-xl leading-relaxed max-w-2xl mx-auto">
-              Join 500+ clinical researchers in building the world's most robust repository for psychedelic therapy.
+              Join licensed practitioners in building the evidence base for safe, consistent psychedelic-assisted therapy.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
@@ -194,7 +194,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
       {/* FOOTER */}
       <footer className="py-12 border-t border-white/5 text-center">
         <p className="text-sm font-black text-slate-700 uppercase tracking-[0.5em]">
-          Psychedelic Practitioners Network © 2025 // Node Integrity Verified
+          Psychedelic Practitioners Network © 2026 · All Rights Reserved
         </p>
       </footer>
     </div>

@@ -164,13 +164,13 @@ const Landing: React.FC = () => {
               </div>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] pb-4 text-slate-300">
                 Your Clinic's Outcomes,<br />
-                Calibrated Against <span className="text-gradient-primary inline-block pb-1">12,000+ Sessions</span>.
+                Calibrated Against <span className="text-gradient-primary inline-block pb-1">the Field.</span>
               </h1>
               <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
                 Real-time safety surveillance, longitudinal outcomes tracking, and anonymized peer benchmarking. Built for practitioners who need evidence, not anecdotes.
               </p>
               <p className="text-base text-slate-300 max-w-2xl lg:mx-0 mx-auto font-medium">
-                Built for practitioners who refuse to compromise on safety or evidence. Trusted by 840+ clinicians across 14 institutional sites.
+                Built for practitioners who refuse to compromise on safety or evidence. Share de-identified outcomes data — get back benchmarks, safety signals, and peer intelligence.
               </p>
             </motion.div>
 
@@ -199,7 +199,7 @@ const Landing: React.FC = () => {
                   onClick={() => navigate('/signup')}
                   className="flex-1 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95"
                 >
-                  Start Free Trial
+                  Request Early Access
                 </button>
 
                 <button
@@ -215,11 +215,11 @@ const Landing: React.FC = () => {
                 <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    <span>No credit card required</span>
+                    <span>Invitation-only · Licensed practitioners</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    <span>Full access for 14 days</span>
+                    <span>HIPAA-compliant infrastructure</span>
                   </div>
                 </div>
                 <p className="text-sm text-slate-500 text-center lg:text-left">
@@ -303,10 +303,10 @@ const Landing: React.FC = () => {
               </p>
               <div className="space-y-4 text-lg text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
                 <p>
-                  PPN is not a social network. It's a professional alliance of 840+ licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
+                  PPN is not a social network. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
                 </p>
                 <p>
-                  By pooling de-identified outcomes data across 14 institutional sites, we're building the evidence base that unlocks insurance coverage, reduces malpractice risk, and elevates the entire field.
+                  By pooling de-identified outcomes data across a growing network of practitioners, we're building the evidence base that unlocks insurance coverage, reduces malpractice risk, and elevates the entire field.
                 </p>
                 <p className="text-xl font-semibold text-slate-300">
                   You don't have to build this alone. Join the Alliance.
@@ -748,7 +748,7 @@ const Landing: React.FC = () => {
                     </p>
                   </div>
                   <div className="p-4 bg-black/40 rounded-2xl border border-red-500/10">
-                    <p className="text-[12px] font-mono text-red-400/80 font-bold uppercase tracking-widest">Global Risk Pulse Active</p>
+                    <p className="text-[12px] font-mono text-red-400/80 font-bold uppercase tracking-widest">Safety Monitoring Active</p>
                   </div>
                 </div>
               </motion.div>
@@ -846,17 +846,17 @@ const Landing: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-sm font-black uppercase tracking-widest text-slate-300">Network Status</h4>
+              <h4 className="text-sm font-black uppercase tracking-widest text-slate-300">Platform Status</h4>
               <div className="p-4 bg-slate-900/50 border border-slate-800 rounded-2xl space-y-1">
                 <p className="text-sm font-black text-clinical-green">Operational</p>
-                <p className="text-sm text-slate-600 font-black uppercase tracking-widest">Global Sync Active</p>
+                <p className="text-sm text-slate-600 font-black uppercase tracking-widest">All Systems Online</p>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-sm font-black uppercase tracking-widest text-slate-300">Identity Guard</h4>
+              <h4 className="text-sm font-black uppercase tracking-widest text-slate-300">Practitioner Access</h4>
               <button onClick={() => navigate('/login')} className="w-full py-4 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
-                System Security Login
+                Sign In to Portal
               </button>
             </div>
           </div>

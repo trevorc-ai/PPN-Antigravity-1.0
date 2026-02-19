@@ -48,7 +48,7 @@ export const SUBSCRIPTION_TIERS = {
             'Protocol Builder with Clinical Decision Support',
             'Safety Surveillance & Drug Interaction Alerts',
             'Patient Outcomes Tracking',
-            'Network Benchmarking (840+ clinicians)',
+            'Alliance Benchmarking (peer de-identified data)',
             'Basic Analytics Dashboard',
             'Data Export (CSV)',
             'HIPAA-Compliant Storage',

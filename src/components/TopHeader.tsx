@@ -203,7 +203,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
             <div className="hidden lg:flex items-center gap-10">
               {[
                 { label: 'Security', id: 'security-compliance' },
-                { label: 'Network', id: 'global-network' },
+                { label: 'Alliance', id: 'global-network' },
                 { label: 'Membership', id: 'membership-tiers' }
               ].map((link) => (
                 <button
@@ -285,8 +285,8 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                 {isMenuOpen && (
                   <div className="absolute right-0 mt-3 w-56 bg-[#0c0f16] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl">
                     <div className="px-4 py-3 border-b border-white/5 mb-2">
-                      <p className="text-[12px] font-black text-slate-300 tracking-widest leading-none mb-1">Session Node</p>
-                      <p className="text-sm font-bold text-slate-300 truncate">{userProfile?.email || 'user@ppn-research.org'}</p>
+                      <p className="text-[12px] font-black text-slate-300 tracking-widest leading-none mb-1">Signed In As</p>
+                      <p className="text-sm font-bold text-slate-300 truncate">{userProfile?.email || 'user@ppnportal.net'}</p>
                     </div>
 
                     <button
@@ -312,7 +312,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                       className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-400/5 transition-all text-xs font-bold"
                     >
                       <span className="material-symbols-outlined text-lg">logout</span>
-                      Sign Out of Node
+                      Sign Out
                     </button>
                   </div>
                 )}

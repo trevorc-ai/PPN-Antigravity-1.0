@@ -58,20 +58,20 @@ const About: React.FC = () => {
             <div className="relative bg-[#111418]/60 border border-slate-800 rounded-[3rem] p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
               <div className="grid grid-cols-2 gap-6">
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                  <span className="text-3xl font-black text-slate-300">12k+</span>
-                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>
+                  <span className="text-3xl font-black text-slate-300">HIPAA</span>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Certified Architecture</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                  <span className="text-3xl font-black text-clinical-green">04</span>
-                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Global Hubs</p>
+                  <span className="text-3xl font-black text-clinical-green">21 CFR</span>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Part 11 Compliant</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                  <span className="text-3xl font-black text-primary">85%</span>
-                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Avg. Outcome Lift</p>
+                  <span className="text-3xl font-black text-primary">RLS</span>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Row-Level Security</p>
                 </div>
                 <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                  <span className="text-3xl font-black text-accent-amber">99.9%</span>
-                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Data Integrity</p>
+                  <span className="text-3xl font-black text-accent-amber">100%</span>
+                  <p className="text-sm font-black text-slate-500 uppercase tracking-widest">De-Identified Data</p>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@ const About: React.FC = () => {
               The Global <span className="text-gradient-purple">Psychedelic Practitioner</span> Network.
             </h2>
             <p className="text-slate-300 font-medium text-lg leading-relaxed">
-              PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
+              PPN is building a growing alliance of practitioners focused on the rigorous, safe implementation of psychedelic-assisted therapies.
             </p>
           </div>
 
@@ -139,8 +139,7 @@ const About: React.FC = () => {
               <div key={loc} className="space-y-2">
                 <p className="text-2xl font-black text-slate-300">{loc}</p>
                 <div className="flex items-center justify-center gap-2">
-                  <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
+                  <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Founding Region</span>
                 </div>
               </div>
             ))}
@@ -151,7 +150,7 @@ const About: React.FC = () => {
         <Section spacing="default" className="flex flex-col items-center space-y-10 py-10">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-black text-slate-300 tracking-tight leading-tight">
-              <span className="text-gradient-primary">Access</span> the Discovery Network.
+              <span className="text-gradient-primary">Join</span> the Alliance.
             </h2>
             <p className="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
               Qualified practitioners and research institutions are invited to apply for institutional node access.

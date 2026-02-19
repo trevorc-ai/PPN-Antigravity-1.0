@@ -96,7 +96,7 @@ const PartnerDemoHub: React.FC = () => {
             description: 'Complete patient journey tracking from preparation through integration',
             features: [
                 {
-                    title: 'Wellness Journey (God View)',
+                    title: 'Wellness Journey Overview',
                     description: 'Comprehensive longitudinal patient tracking dashboard',
                     path: '/wellness-journey',
                     badge: 'Enterprise',

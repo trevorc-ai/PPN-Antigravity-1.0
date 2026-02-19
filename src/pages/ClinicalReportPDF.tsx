@@ -626,7 +626,7 @@ const ClinicalReportPDF: React.FC = () => {
                                     <div style={{ width: '12px', height: '3px', backgroundColor: '#3b82f6', borderRadius: '2px' }} />This Practice
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', color: '#475569' }}>
-                                    <div style={{ width: '12px', height: '3px', backgroundColor: '#94a3b8', borderRadius: '2px' }} />Network Average (840+ sites)
+                                    <div style={{ width: '12px', height: '3px', backgroundColor: '#94a3b8', borderRadius: '2px' }} />Alliance Average (peer data)
                                 </div>
                             </div>
                         </div>
@@ -653,7 +653,7 @@ const ClinicalReportPDF: React.FC = () => {
                             <div style={{ marginTop: '8px', padding: '12px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px' }}>
                                 <div style={{ fontSize: '20px', fontWeight: 900, color: '#1d4ed8' }}>{REPORT.benchmarkPercentile}th</div>
                                 <div style={{ fontSize: '9px', color: '#3b82f6', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Network Percentile</div>
-                                <div style={{ fontSize: '9px', color: '#64748b', marginTop: '3px' }}>Based on 840+ sites worldwide</div>
+                                <div style={{ fontSize: '9px', color: '#64748b', marginTop: '3px' }}>Based on de-identified peer alliance data</div>
                             </div>
                         </div>
                     </div>

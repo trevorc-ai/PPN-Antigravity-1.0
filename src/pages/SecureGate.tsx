@@ -121,7 +121,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <div className="space-y-6">
               <div className="flex items-center gap-4 text-primary mb-4">
                 <span className="material-symbols-outlined font-black text-xl">verified_user</span>
-                <span className="text-xs font-black tracking-[0.5em]">Encrypted Network Psychedelic Practitioner: 0x7</span>
+                <span className="text-xs font-black tracking-[0.5em]">Verified Practitioner Access</span>
               </div>
               <h1 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-300 leading-[1.0]">
                 Psychedelic <br />
@@ -193,7 +193,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                   <span className="material-symbols-outlined text-2xl">lock</span>
                 </div>
                 <div>
-                  <h3 className="text-slate-300 font-black tracking-widest text-[14px]">Restricted Node</h3>
+                  <h3 className="text-slate-300 font-black tracking-widest text-[14px]">Practitioners Only</h3>
                   <p className="text-slate-500 text-sm font-bold mt-1">Authorized Personnel Only</p>
                 </div>
               </div>
@@ -269,7 +269,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
         <PageContainer className="relative z-10 text-center space-y-12">
           <div className="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-primary/10 border border-primary/20 text-sm font-black text-primary tracking-[0.5em] mb-6 shadow-2xl">
             <span className="material-symbols-outlined text-lg">info</span>
-            Registry ID: 0x9921-PPN
+            Psychedelic Practitioners Network
           </div>
           <h2 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-300 leading-none">
             Advancing the <br />
@@ -301,7 +301,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                     onClick={scrollToLogin}
                     className="px-14 py-6 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
                   >
-                    Start Researching
+                    Request Access
                   </button>
                 </div>
               </div>
@@ -310,10 +310,10 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <div className="relative bg-[#0c0f14] border border-slate-800 rounded-[3rem] p-10 sm:p-14 shadow-2xl backdrop-blur-2xl">
                   <div className="grid grid-cols-2 gap-6 sm:gap-10">
                     {[
-                      { val: '12k+', label: 'Enrolled Subjects', color: 'text-slate-300' },
-                      { val: '04', label: 'Global Hubs', color: 'text-clinical-green' },
-                      { val: '85%', label: 'Avg. Outcome Lift', color: 'text-primary' },
-                      { val: '99.9%', label: 'Data Integrity', color: 'text-accent-amber' },
+                      { val: 'HIPAA', label: 'Certified Architecture', color: 'text-slate-300' },
+                      { val: '21 CFR', label: 'Part 11 Compliant', color: 'text-clinical-green' },
+                      { val: 'RLS', label: 'Row-Level Security', color: 'text-primary' },
+                      { val: '100%', label: 'De-Identified Data', color: 'text-accent-amber' },
                     ].map((stat) => (
                       <div key={stat.label} className="p-6 sm:p-10 bg-black/40 border border-slate-800 rounded-[2rem] space-y-4 hover:border-slate-600 transition-all hover:scale-105 shadow-xl">
                         <span className={`text-4xl sm:text-5xl font-black ${stat.color} leading-none block tracking-tighter`}>{stat.val}</span>
@@ -388,7 +388,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 Network.
               </h2>
               <p className="text-slate-300 font-medium text-xl sm:text-2xl leading-relaxed opacity-80">
-                PPN operates across 14 institutional sites globally, facilitating the world's most comprehensive longitudinal study on psychedelic therapy.
+                PPN is building a growing alliance of practitioners focused on the rigorous, safe implementation of psychedelic-assisted therapies.
               </p>
             </div>
 
@@ -397,8 +397,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <div key={loc} className="space-y-4 group cursor-default">
                   <p className="text-3xl font-black text-slate-300 group-hover:text-primary transition-colors leading-none">{loc}</p>
                   <div className="flex items-center justify-center gap-2.5">
-                    <span className="size-2.5 rounded-full bg-clinical-green animate-pulse shadow-[0_0_12px_#53d22d]"></span>
-                    <span className="text-xs font-black text-slate-500 tracking-widest">Active Practitioner</span>
+                    <span className="text-xs font-black text-slate-600 tracking-widest">Founding Region</span>
                   </div>
                 </div>
               ))}
@@ -416,7 +415,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               Membership Framework
             </div>
             <h2 className="text-4xl sm:text-8xl font-black text-slate-300 tracking-tighter leading-none">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Access</span> the Network.
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary to-primary/50">Access</span> the Alliance.
             </h2>
             <p className="max-w-2xl mx-auto text-slate-500 text-xl sm:text-2xl font-medium leading-relaxed opacity-80">
               Professional membership and subscription tiers for the PPN community.

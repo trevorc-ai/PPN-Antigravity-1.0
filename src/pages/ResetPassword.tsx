@@ -294,7 +294,7 @@ const ResetPassword: React.FC = () => {
                 {/* Security notice */}
                 <div className="mt-6 text-center">
                     <p className="text-sm text-slate-600 font-medium">
-                        🔒 Secured by Supabase Auth v2
+                        🔒 HIPAA-compliant · End-to-end encrypted
                     </p>
                 </div>
             </div>
