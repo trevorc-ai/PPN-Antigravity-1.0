@@ -48,6 +48,10 @@ CREATE INDEX IF NOT EXISTS idx_corrections_site_time
 
 ALTER TABLE public.log_corrections ENABLE ROW LEVEL SECURITY;
 
+-- Idempotency guards (DROP POLICY IF EXISTS before each CREATE POLICY)
+DROP POLICY IF EXISTS "corrections_site_insert" ON public.log_corrections;
+DROP POLICY IF EXISTS "corrections_site_select" ON public.log_corrections;
+
 -- Site staff INSERT: they can only correct their own site's records
 -- and must be the corrected_by person
 CREATE POLICY "corrections_site_insert"
