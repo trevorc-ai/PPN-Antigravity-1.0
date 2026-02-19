@@ -327,7 +327,7 @@ const WellnessJourney: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
+        <div className="min-h-screen bg-[#0a1628] px-4 py-4 sm:px-8 sm:py-6 lg:px-16 lg:py-8 xl:px-24">
             {/* Onboarding Modal */}
             {showOnboarding && (
                 <ArcOfCareOnboarding
@@ -358,7 +358,7 @@ const WellnessJourney: React.FC = () => {
                 )}
             </SlideOutPanel>
 
-            <div className="max-w-[1600px] mx-auto space-y-6">
+            <div className="max-w-6xl mx-auto space-y-6">
                 {/* Export Report - Secondary Position (Top Right) */}
                 <div className="flex justify-end">
                     <ExportReportButton patientData={exportPatientData} />
