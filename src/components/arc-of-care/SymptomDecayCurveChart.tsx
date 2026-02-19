@@ -22,9 +22,17 @@ interface SymptomDecayCurveChartProps {
 const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
     patientId,
     sessionId,
-    data,
+    data = [],   // WO-117: default prevents crash when caller passes undefined
     sessionDate
 }) => {
+    // WO-117: Guard invalid sessionDate before any date math
+    const safeSessionDate = sessionDate instanceof Date && !isNaN(sessionDate.getTime())
+        ? sessionDate
+        : new Date();
+
+    // WO-117: Coerce data to safe array (belt-and-suspenders)
+    const safeData = Array.isArray(data) ? data : [];
+
     // Define severity zones
     const zones = [
         { label: 'Minimal', range: '0-4', min: 0, max: 4, color: 'emerald' },
@@ -36,8 +44,8 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
 
     // Calculate trend
     const getTrend = () => {
-        if (data.length < 2) return null;
-        const recent = data.slice(-2);
+        if (safeData.length < 2) return null;
+        const recent = safeData.slice(-2);
         const diff = recent[1].phq9Score - recent[0].phq9Score;
         if (diff < -2) return { direction: 'improving', icon: TrendingDown, color: 'emerald', label: 'Improving' };
         if (diff > 2) return { direction: 'declining', icon: TrendingUp, color: 'red', label: 'Declining' };
@@ -47,8 +55,8 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
     const trend = getTrend();
 
     // Get current score
-    const currentScore = data.length > 0 ? data[data.length - 1].phq9Score : null;
-    const baselineScore = data.length > 0 ? data[0].phq9Score : null;
+    const currentScore = safeData.length > 0 ? safeData[safeData.length - 1].phq9Score : null;
+    const baselineScore = safeData.length > 0 ? safeData[0].phq9Score : null;
     const improvement = baselineScore !== null && currentScore !== null ? baselineScore - currentScore : null;
 
     // Determine current zone
@@ -60,10 +68,29 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
     const currentZone = getCurrentZone(currentScore);
 
     // Check if in afterglow period
-    const daysPostSession = data.length > 0
-        ? Math.floor((new Date(data[data.length - 1].assessmentDate).getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24))
+    const daysPostSession = safeData.length > 0
+        ? Math.floor((new Date(safeData[safeData.length - 1].assessmentDate).getTime() - safeSessionDate.getTime()) / (1000 * 60 * 60 * 24))
         : 0;
     const isAfterglowPeriod = daysPostSession <= 14;
+
+    // WO-117: Empty data state — render graceful fallback instead of crashing
+    if (safeData.length === 0) {
+        return (
+            <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+                <h3 className="text-slate-300 font-semibold text-lg mb-2">Symptom Decay Curve</h3>
+                <p className="text-slate-500 text-sm">PHQ-9 Depression Score Over Time</p>
+                <div className="flex flex-col items-center justify-center py-12 gap-3">
+                    <div className="w-12 h-12 rounded-full bg-slate-800/60 border border-slate-700/50 flex items-center justify-center">
+                        <TrendingDown className="w-5 h-5 text-slate-600" />
+                    </div>
+                    <p className="text-slate-500 text-sm text-center">
+                        No assessment data recorded yet.<br />
+                        <span className="text-slate-600 text-xs">Complete a longitudinal assessment to see trajectory.</span>
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
@@ -150,12 +177,12 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
                 )}
 
                 {/* Data points */}
-                {data.length > 0 && (
+                {safeData.length > 0 && (
                     <svg className="absolute left-16 right-4 top-4 bottom-8" style={{ width: 'calc(100% - 5rem)', height: 'calc(100% - 3rem)' }}>
                         {/* Line */}
                         <polyline
-                            points={data.map((point, i) => {
-                                const x = (i / (data.length - 1 || 1)) * 100;
+                            points={safeData.map((point, i) => {
+                                const x = (i / (safeData.length - 1 || 1)) * 100;
                                 const y = 100 - ((point.phq9Score / 27) * 100);
                                 return `${x}%,${y}%`;
                             }).join(' ')}
@@ -166,8 +193,8 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
                         />
 
                         {/* Points */}
-                        {data.map((point, i) => {
-                            const x = (i / (data.length - 1 || 1)) * 100;
+                        {safeData.map((point, i) => {
+                            const x = (i / (safeData.length - 1 || 1)) * 100;
                             const y = 100 - ((point.phq9Score / 27) * 100);
                             return (
                                 <circle

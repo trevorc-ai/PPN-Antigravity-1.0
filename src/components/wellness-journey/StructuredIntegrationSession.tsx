@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Calendar, Clock, CheckSquare, Star, BookOpen, ChevronDown } from 'lucide-react';
-import { supabase } from '../../supabaseClient';
+import { createIntegrationSession } from '../../services/clinicalLog';
 
 interface StructuredIntegrationSessionProps {
     patientId: string;
@@ -126,25 +126,25 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
     const handleSave = useCallback(async () => {
         setSaveStatus('saving');
         try {
-            const { error } = await supabase.from('log_integration_sessions').insert({
+            // WO-213: Routed through clinicalLog service layer (not direct Supabase)
+            // ARCH NOTE: session_notes JSON blob removed — violates no-free-text rule.
+            // TODO (WO-214): Replace focus_areas string[] and homework_assigned string[]
+            //   with session_focus_ids integer[] and homework_assigned_ids integer[]
+            //   once RefPicker component provides FK IDs from ref_ tables.
+            const result = await createIntegrationSession({
                 patient_id: patientId,
-                dosing_session_id: sessionId ?? null,
+                dosing_session_id: sessionId !== undefined ? String(sessionId) : undefined,
                 integration_session_number: form.integration_session_number,
                 session_date: form.session_date,
                 session_duration_minutes: form.session_duration_minutes,
                 attended: form.attendance_status === 'attended',
-                cancellation_reason: form.cancellation_reason_id,
-                session_notes: JSON.stringify({
-                    focus_areas: form.focus_areas,
-                    insight_integration_score: form.insight_integration_score,
-                    emotional_processing_score: form.emotional_processing_score,
-                    behavioral_application_score: form.behavioral_application_score,
-                    engagement_level_score: form.engagement_level_score,
-                    homework_assigned: form.homework_assigned,
-                    next_session_date: form.next_session_date,
-                }),
+                insight_integration_rating: form.insight_integration_score,
+                emotional_processing_rating: form.emotional_processing_score,
+                behavioral_application_rating: form.behavioral_application_score,
+                engagement_level_rating: form.engagement_level_score,
+                // session_focus_ids and homework_assigned_ids pending RefPicker (WO-214)
             });
-            if (error) throw error;
+            if (!result.success) throw result.error;
             setSaveStatus('saved');
             onSave?.(form);
             setTimeout(() => setSaveStatus('idle'), 3000);
@@ -217,8 +217,8 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                             onClick={() => setForm((f) => ({ ...f, session_duration_minutes: opt.value }))}
                             aria-pressed={form.session_duration_minutes === opt.value}
                             className={`py-2.5 rounded-xl text-sm font-bold transition-all border ${form.session_duration_minutes === opt.value
-                                    ? 'bg-primary/20 border-primary text-primary'
-                                    : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
+                                ? 'bg-primary/20 border-primary text-primary'
+                                : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
                                 }`}
                         >
                             {opt.label}
@@ -238,10 +238,10 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                             onClick={() => setForm((f) => ({ ...f, attendance_status: status, cancellation_reason_id: null }))}
                             aria-pressed={form.attendance_status === status}
                             className={`py-2.5 rounded-xl text-sm font-bold transition-all border capitalize ${form.attendance_status === status
-                                    ? status === 'attended'
-                                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
-                                        : 'bg-red-500/20 border-red-500 text-red-400'
-                                    : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
+                                ? status === 'attended'
+                                    ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
+                                    : 'bg-red-500/20 border-red-500 text-red-400'
+                                : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
                                 }`}
                         >
                             {status.replace('_', ' ')}
@@ -288,8 +288,8 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                                     <label
                                         key={area}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${checked
-                                                ? 'bg-primary/10 border-primary/40 text-slate-300'
-                                                : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                            ? 'bg-primary/10 border-primary/40 text-slate-300'
+                                            : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                                             }`}
                                     >
                                         <input
@@ -330,8 +330,8 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                                     <label
                                         key={hw}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${checked
-                                                ? 'bg-emerald-500/10 border-emerald-500/30 text-slate-300'
-                                                : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                            ? 'bg-emerald-500/10 border-emerald-500/30 text-slate-300'
+                                            : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                                             }`}
                                     >
                                         <input
@@ -373,10 +373,10 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                 onClick={handleSave}
                 disabled={saveStatus === 'saving'}
                 className={`w-full py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all ${saveStatus === 'saved'
-                        ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
-                        : saveStatus === 'error'
-                            ? 'bg-red-500/20 border border-red-500/40 text-red-400'
-                            : 'bg-primary/20 border border-primary/40 text-primary hover:bg-primary/30 active:scale-[0.98]'
+                    ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
+                    : saveStatus === 'error'
+                        ? 'bg-red-500/20 border border-red-500/40 text-red-400'
+                        : 'bg-primary/20 border border-primary/40 text-primary hover:bg-primary/30 active:scale-[0.98]'
                     }`}
             >
                 {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? '✓ Session Recorded' : saveStatus === 'error' ? '✗ Save Failed' : 'Save Integration Session'}

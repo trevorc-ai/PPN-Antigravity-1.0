@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Calendar, TrendingUp, Star, ChevronDown } from 'lucide-react';
-import { supabase } from '../../supabaseClient';
+import { createBehavioralChange } from '../../services/clinicalLog';
 
 interface BehavioralChangeTrackerProps {
     patientId: string;
@@ -113,16 +113,20 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
         if (!form.change_type || form.confidence_score === 0) return;
         setSaveStatus('saving');
         try {
-            const { error } = await supabase.from('log_behavioral_changes').insert({
+            // WO-213: Routed through clinicalLog service layer (not direct Supabase)
+            const result = await createBehavioralChange({
                 patient_id: patientId,
-                session_id: sessionId ?? null,
+                session_id: sessionId !== undefined ? String(sessionId) : undefined,
                 change_date: form.change_date,
                 change_type: form.change_type,
                 change_description: JSON.stringify(form.what_changed_ids),
                 is_positive: ['highly_positive', 'moderately_positive'].includes(form.impact_level),
-                logged_at: new Date().toISOString(),
+                impact_on_wellbeing: form.impact_level,
+                confidence_sustaining: form.confidence_score,
+                related_to_dosing: form.session_relation,
+                // TODO (WO-214): Replace string arrays with integer FK IDs once RefPicker is built
             });
-            if (error) throw error;
+            if (!result.success) throw result.error;
             setSaveStatus('saved');
             onSave?.(form);
             setTimeout(() => setSaveStatus('idle'), 3000);
@@ -176,8 +180,8 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                             onClick={() => setForm((f) => ({ ...f, change_type: type.id }))}
                             aria-pressed={form.change_type === type.id}
                             className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-bold transition-all ${form.change_type === type.id
-                                    ? 'bg-primary/20 border-primary text-primary'
-                                    : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
+                                ? 'bg-primary/20 border-primary text-primary'
+                                : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
                                 }`}
                         >
                             <span>{type.icon}</span>
@@ -197,8 +201,8 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                             <label
                                 key={opt.id}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${checked
-                                        ? 'bg-blue-500/10 border-blue-500/30 text-slate-300'
-                                        : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                    ? 'bg-blue-500/10 border-blue-500/30 text-slate-300'
+                                    : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                                     }`}
                             >
                                 <input
@@ -246,8 +250,8 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                         <label
                             key={opt.id}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${form.session_relation === opt.id
-                                    ? 'bg-primary/10 border-primary/40 text-slate-300'
-                                    : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                ? 'bg-primary/10 border-primary/40 text-slate-300'
+                                : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                                 }`}
                         >
                             <input
@@ -277,12 +281,12 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 onClick={handleSave}
                 disabled={!isValid || saveStatus === 'saving'}
                 className={`w-full py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all ${!isValid
-                        ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
-                        : saveStatus === 'saved'
-                            ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
-                            : saveStatus === 'error'
-                                ? 'bg-red-500/20 border border-red-500/40 text-red-400'
-                                : 'bg-blue-500/20 border border-blue-500/40 text-blue-400 hover:bg-blue-500/30 active:scale-[0.98]'
+                    ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
+                    : saveStatus === 'saved'
+                        ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
+                        : saveStatus === 'error'
+                            ? 'bg-red-500/20 border border-red-500/40 text-red-400'
+                            : 'bg-blue-500/20 border border-blue-500/40 text-blue-400 hover:bg-blue-500/30 active:scale-[0.98]'
                     }`}
             >
                 {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? '✓ Change Recorded' : saveStatus === 'error' ? '✗ Save Failed' : 'Log Behavioral Change'}

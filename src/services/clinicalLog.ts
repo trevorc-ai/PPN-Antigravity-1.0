@@ -355,10 +355,10 @@ export async function createIntegrationSession(data: IntegrationSessionData) {
 export async function createBehavioralChange(data: BehavioralChangeData) {
     const is_positive = data.impact_on_wellbeing
         ? data.impact_on_wellbeing.includes('positive')
-        : true;
+        : (data.is_positive ?? true);
     const change_description = data.change_type_ids?.length
         ? JSON.stringify(data.change_type_ids)
-        : 'structured';
+        : (data.change_description ?? 'structured'); // preserve legacy string data until RefPicker (WO-214)
 
     try {
         const { data: result, error } = await supabase
