@@ -29,7 +29,6 @@ const navSections: NavSection[] = [
   {
     title: 'Clinical Tools',
     items: [
-      { label: 'Wellness Journey', icon: 'timeline', path: '/wellness-journey' },
       { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
       { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
     ],

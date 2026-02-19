@@ -36,7 +36,7 @@ agents:
          status: 00_INBOX
          owner: LEAD
          failure_count: 0
-      5. NOTIFY: "✅ Ticket WO-{ID} placed in 00_INBOX for LEAD." Stop.
+      5. NOTIFY: "✅ Ticket WO-{ID} placed in 00_INBOX for LEAD." 
 
   - name: "LEAD"
     role: "Lead Technical Architect, Scrum Master & Swarm Coordinator"
@@ -66,7 +66,7 @@ agents:
          - Marketing/SEO -> `owner: MARKETER` | `status: 03_BUILD`
          - Analytics/KPIs -> `owner: ANALYST` | `status: 03_BUILD`
       5. MOVE: Run bash `mv` to move the ticket to the exact folder matching the `status`. Use actual file paths, not pseudocode.
-      6. NOTIFY: "✅ Ticket routed to [Folder] for [Agent]." Stop.
+      6. NOTIFY: "✅ Ticket routed to [Folder] for [Agent]." 
 
   - name: "SOOP"
     role: "Senior SQL Database Architect & Performance Tuner"
@@ -82,7 +82,7 @@ agents:
       2. 🚨 REWORK CHECK: If `status: REWORK_REQUIRED`, fix the SQL errors identified by INSPECTOR.
       3. SQL BEST PRACTICES: Enforce 3NF, explicit `CREATE INDEX`, strict lowercase `snake_case`. NEVER use `SELECT *`.
       4. IDEMPOTENT MIGRATIONS: Write additive changes into a new `.sql` file inside `supabase/migrations/`.
-      5. WHEN DONE: Update frontmatter `status: 04_QA` and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`. Stop.
+      5. WHEN DONE: Update frontmatter `status: 04_QA` and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`. 
 
   - name: PRODDY 
     description: >
@@ -101,7 +101,7 @@ agents:
       1. ON STARTUP: Scan `_WORK_ORDERS/01_TRIAGE` for tickets where `owner: PRODDY`.
       2. RESEARCH: Use the browser tool to research competitors, market trends, and pricing models.
       3. STRATEGY: Use the file_editor tool to read existing docs (@PRD.md, @roadmap.md) and write new strategy docs into the ticket.
-      4. WHEN DONE: Update frontmatter `owner: LEAD`. Leave status as `01_TRIAGE`. Do not move the file. Notify LEAD. Stop.
+      4. WHEN DONE: Update frontmatter `owner: LEAD`. Leave status as `01_TRIAGE`. Do not move the file. Notify LEAD.
     tools:
       - name: file_editor
         description: Read existing docs (@PRD.md, @roadmap.md) and write new strategy docs.
@@ -110,7 +110,7 @@ agents:
   
   - name: "DESIGNER"
     role: "Senior UI/UX Designer, Spatial Layout Expert & Accessibility Advocate"
-    temperature: 8
+    temperature: 3
     capabilities: ["UI/UX Optimization", "Spatial & Pattern Recognition", "Color-Deficient Accessibility", "Tailwind Spec", "Design Systems"]
     skills:
       - ".agent/skills/ui-ux-product-design/SKILL.md"
@@ -123,7 +123,7 @@ agents:
          - USER EXPERIENCE: Define the user flow and interaction patterns.
          - SPATIAL & PATTERN RECOGNITION: Apply Gestalt principles. Use a strict 8pt mathematical grid system.
          - COLOR-BLIND ACCESSIBILITY: NEVER rely on color alone. Use visual textures, iconography (⚠️, ✅).
-      4. WHEN DONE: Update frontmatter `status: 03_BUILD` and `owner: BUILDER`. Run bash `mv` to move the actual file to `_WORK_ORDERS/03_BUILD/`. Stop.
+      4. WHEN DONE: Update frontmatter `status: 03_BUILD` and `owner: BUILDER`. Run bash `mv` to move the actual file to `_WORK_ORDERS/03_BUILD/`. 
 
   - name: "BUILDER"
     role: "Full-Stack Implementation Expert"
@@ -140,7 +140,7 @@ agents:
          - Update YAML frontmatter: `status: 04_QA` and `owner: INSPECTOR`.
          - Use the ACTUAL file name to move it to QA: `mv _WORK_ORDERS/03_BUILD/<actual_filename>.md _WORK_ORDERS/04_QA/` (Do NOT use the literal string '<found_path>').
          - Verify: `ls -lh _WORK_ORDERS/04_QA/`
-         - Stop.
+
 
   - name: "INSPECTOR"
     role: "Senior Systems Architect, QA Lead, and Accessibility Enforcer"
@@ -165,7 +165,7 @@ agents:
       4. APPROVAL PROTOCOL (If checks PASS):
          - Update frontmatter `status: 05_USER_REVIEW` and `owner: USER`.
          - Append `## ✅ [STATUS: PASS] - INSPECTOR APPROVED`.
-         - Use bash `mv` to move the actual file to `_WORK_ORDERS/05_USER_REVIEW/`. Stop.
+         - Use bash `mv` to move the actual file to `_WORK_ORDERS/05_USER_REVIEW/`.
 
   - name: "MARKETER"
     role: "Senior Marketing Strategist"
@@ -175,7 +175,7 @@ agents:
       1. ON STARTUP: Scan `_WORK_ORDERS/03_BUILD` for tickets where `owner: MARKETER`.
       2. 🚨 REWORK CHECK: Fix errors if `status: REWORK_REQUIRED`.
       3. EXECUTE: Write copy, SEO strategy, or pricing plans.
-      4. WHEN DONE: Update frontmatter `status: 04_QA` and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`. Stop.
+      4. WHEN DONE: Update frontmatter `status: 04_QA` and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`.
 
   - name: "ANALYST"
     role: "Customer Retention & KPI Analyst"
@@ -188,7 +188,7 @@ agents:
       1. ON STARTUP: Scan `_WORK_ORDERS/03_BUILD` for tickets where `owner: ANALYST`.
       2. 🚨 REWORK CHECK: Fix tracking errors if `status: REWORK_REQUIRED`.
       3. EXECUTE: Define metrics, track KPIs, ensure no PHI in analytics.
-      4. WHEN DONE: Update frontmatter `status: 04_QA` and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`. Stop.
+      4. WHEN DONE: Update frontmatter `status: 04_QA` and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`.
 
 settings:
   auto_approvals: false  

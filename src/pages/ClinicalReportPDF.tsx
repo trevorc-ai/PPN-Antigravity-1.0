@@ -202,7 +202,8 @@ const RadarChart: React.FC = () => {
     };
     const clinicPts = axes.map((a, i) => pt(a.clinic, i));
     const networkPts = axes.map((a, i) => pt(a.network, i));
-    const toPath = (pts: { x: number; y: number }[]) =>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _toPath = (pts: { x: number; y: number }[]) =>
         pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') + 'Z';
 
     return (
@@ -679,16 +680,6 @@ const ClinicalReportPDF: React.FC = () => {
     );
 };
 
-// ─── Print CSS constant (defined after component so it can reference REPORT) ──
-const PRINT_CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-@media print {
-  @page { size: A4; margin: 0; }
-  body, html { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .pdf-page { page-break-after: always; page-break-inside: avoid; box-shadow: none !important; margin-bottom: 0 !important; }
-  .pdf-page:last-child { page-break-after: auto; }
-  .no-print { display: none !important; }
-}
-`;
+// PRINT_CSS is defined above near line 45 — this duplicate was removed.
 
 export default ClinicalReportPDF;
