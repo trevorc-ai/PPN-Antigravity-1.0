@@ -34,9 +34,9 @@ import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
 import StarField from '../components/StarField';
 
 const chartData = [
-  { name: 'Node Avg', value: 68, color: '#334155' },
-  { name: 'Network Avg', value: 74, color: '#475569' },
-  { name: 'Your Node', value: 92, color: '#2b74f3' },
+  { name: 'Site Avg', value: 68, color: '#334155' },
+  { name: 'Alliance Avg', value: 74, color: '#475569' },
+  { name: 'Your Site', value: 92, color: '#2b74f3' },
 ];
 
 const Landing: React.FC = () => {
@@ -102,7 +102,7 @@ const Landing: React.FC = () => {
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a1628]/80 backdrop-blur-md border-b border-slate-800/60">
         <div>
           <p className="text-sm font-black text-slate-200 tracking-[0.15em] uppercase">PPN Portal</p>
-          <p className="text-[11px] font-semibold text-slate-500 tracking-widest uppercase">Institutional Gateway</p>
+          <p className="text-[11px] font-semibold text-slate-500 tracking-widest uppercase">Clinical Intelligence Platform</p>
         </div>
         <button
           onClick={() => navigate('/login')}
@@ -131,14 +131,14 @@ const Landing: React.FC = () => {
                 Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] pb-4 text-slate-300">
-                Your Clinic's Outcomes,<br />
-                Calibrated Against <span className="text-gradient-primary inline-block pb-1">the Field.</span>
+                Five apps open.<br />
+                Zero <span className="text-gradient-primary inline-block pb-1">benchmarks.</span>
               </h1>
               <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
-                Real-time safety surveillance, longitudinal outcomes tracking, and anonymized peer benchmarking. Built for practitioners who need evidence, not anecdotes.
+                PPN is the operating system for psychedelic wellness practice. Protocol Builder, Safety Surveillance, and Alliance Benchmarking. One tab.
               </p>
               <p className="text-base text-slate-300 max-w-2xl lg:mx-0 mx-auto font-medium">
-                Built for practitioners who refuse to compromise on safety or evidence. Share de-identified outcomes data — get back benchmarks, safety signals, and peer intelligence.
+                You contribute de-identified outcomes data. You get back benchmarks, safety signals, and peer intelligence. The field gets the evidence base it needs.
               </p>
             </motion.div>
 
@@ -223,7 +223,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-emerald-400 text-lg">verified</span>
                 <div>
                   <p className="text-sm font-black text-slate-300">Purpose-Built Infrastructure</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Enterprise-grade data architecture designed for clinical scale from day one.</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Clinical-grade data architecture. Structured, encrypted, and site-isolated from day one.</p>
                 </div>
               </div>
             </motion.div>
@@ -267,17 +267,17 @@ const Landing: React.FC = () => {
                 The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
               </h2>
               <p className="text-2xl sm:text-3xl font-medium text-slate-300 tracking-tight">
-                Where Evidence Meets Experience.
+                Where every session makes the field smarter.
               </p>
               <div className="space-y-4 text-lg text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
                 <p>
-                  PPN is not a social network. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
+                  PPN is not a directory. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
                 </p>
                 <p>
-                  By pooling de-identified outcomes data across a growing network of practitioners, we're building the evidence base that unlocks insurance coverage, reduces malpractice risk, and elevates the entire field.
+                  By pooling de-identified outcomes data across a growing alliance of practitioners, we're building the evidence base that supports insurance coverage, reduces malpractice risk, and elevates the entire field.
                 </p>
                 <p className="text-xl font-semibold text-slate-300">
-                  You don't have to build this alone. Join the Alliance.
+                  You don't have to build this alone.
                 </p>
               </div>
             </div>
@@ -300,7 +300,7 @@ const Landing: React.FC = () => {
       <section className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <p className="text-center text-sm text-slate-500 font-bold uppercase tracking-widest mb-12">
-            Trusted by Leading Research Institutions
+            Built on Clinical-Grade Security Standards
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
@@ -326,7 +326,7 @@ const Landing: React.FC = () => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <Database className="w-12 h-12 mx-auto mb-3 text-purple-400" />
-              <p className="text-sm font-bold text-slate-300">Enterprise Infrastructure</p>
+              <p className="text-sm font-bold text-slate-300">Clinical-Grade Infrastructure</p>
             </motion.div>
             <motion.div
               className="text-center"
@@ -345,14 +345,14 @@ const Landing: React.FC = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight leading-tight">
-              Is your clinical workflow <span className="text-gradient-primary inline-block pb-1">fragmented?</span>
+              The <span className="text-gradient-primary inline-block pb-1">Frankenstein Stack</span> is real.
             </h2>
             <div className="space-y-4 text-slate-300 text-lg leading-relaxed font-medium">
               <p>
-                IntakeQ for forms. Spruce for messaging. Spotify for music. Excel for outcomes. A generic EHR for billing.
+                IntakeQ for intake. Spruce for messaging. Spotify for music. Excel for outcomes. A generic EHR for billing. Five apps, zero integration.
               </p>
               <p>
-                This fragmentation leads to <strong>administrative burnout</strong> and data silos. PPN consolidates your clinical core into one unified flow.
+                That context switching costs practitioners 5 to 10 hours a week. PPN consolidates your clinical core into one place so you can focus on care, not admin.
               </p>
             </div>
             <button
@@ -457,12 +457,12 @@ const Landing: React.FC = () => {
         <div className="max-w-7xl mx-auto space-y-20">
           {/* Section Header */}
           <div className="text-center space-y-4">
-            <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">Clinical Intelligence Platform</p>
+            <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">What's Inside</p>
             <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight pb-2 text-slate-300">
-              Built for <span className="text-gradient-primary inline-block pb-1">Safety</span>.<br />Designed for Growth.
+              Three tools.<br /><span className="text-gradient-primary inline-block pb-1">One tab.</span>
             </h2>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
-              See how PPN helps you practice with confidence.
+              See what practitioners use every session.
             </p>
           </div>
 
@@ -516,13 +516,13 @@ const Landing: React.FC = () => {
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-xs font-black text-primary uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">query_stats</span>
-                Network Benchmarking
+                Alliance Benchmarking
               </div>
               <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                Calibrate your practice against the global standard.
+                See how your practice compares to the alliance.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
-                Your clinic's safety scores, patient retention rates, and efficacy outcomes compared to anonymized network percentiles. Identify performance gaps before they become liabilities.
+                Safety scores, retention rates, and outcomes compared to anonymized alliance percentiles. Identify gaps before they become liabilities.
               </p>
               <button
                 onClick={() => navigate('/analytics')}
@@ -592,14 +592,14 @@ const Landing: React.FC = () => {
             {/* Left: Text */}
             <div className="space-y-8">
               <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                A <span className="text-gradient-primary inline-block pb-1">Unified</span> Framework for <br />Clinical Excellence.
+                Built by practitioners.<br /><span className="text-gradient-primary inline-block pb-1">For practitioners.</span>
               </h2>
               <div className="space-y-6 text-slate-300 text-base leading-relaxed font-medium">
                 <p>
-                  Founded on the principles of open collaboration and radical data integrity, the Psychedelic Practitioners Network (PPN) bridges the gap between discovery and clinical practice.
+                  PPN was built to solve a specific problem: licensed psychedelic wellness practitioners have no standard infrastructure for tracking outcomes, flagging safety events, or comparing results with peers.
                 </p>
                 <p>
-                  We believe that the future of mental health requires a high-fidelity infrastructure capable of tracking long-term outcomes, managing complex substance interactions, and facilitating secure practitioner knowledge exchange.
+                  We built structured data capture, de-identified longitudinal tracking, and alliance benchmarking into a single platform. Privacy by design. No free-text clinical notes in shared data. No patient identifiers ever leave your site.
                 </p>
               </div>
             </div>
@@ -644,7 +644,7 @@ const Landing: React.FC = () => {
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
               Clinical <span className="text-gradient-primary inline-block pb-1">Intelligence</span> Infrastructure
             </h2>
-            <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.4em]">Designed for Institutional Precision</p>
+            <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.4em]">Structured. Secure. Built for Clinical Scale.</p>
           </div>
 
           <BentoGrid>
@@ -682,7 +682,7 @@ const Landing: React.FC = () => {
                 <div className="h-full flex flex-col justify-between">
                   <div className="space-y-4">
                     <span className="material-symbols-outlined text-4xl text-indigo-400">query_stats</span>
-                    <h3 className="text-2xl font-black tracking-tight">Network Benchmarks</h3>
+                    <h3 className="text-2xl font-black tracking-tight">Alliance Benchmarks</h3>
                     <p className="text-slate-300 font-medium leading-relaxed">
                       Compare your results against aggregated, de-identified percentiles.
                     </p>
@@ -758,37 +758,43 @@ const Landing: React.FC = () => {
           </h2>
           <div className="space-y-6">
             <p className="text-lg text-slate-300 leading-relaxed font-medium">
-              The <span className="text-slate-300 font-bold">Psychedelic Practitioners Network (PPN)</span> is a practitioner-only network focused on one thing: helping clinics learn faster from real-world care. We do that by standardizing the inputs that shape outcomes across preparation, dosing, and integration, then returning aggregated benchmarks and safety learning that clinics can use to improve consistency.
+              The <span className="text-slate-300 font-bold">Psychedelic Practitioners Network (PPN)</span> is a practitioner-only alliance focused on one thing: helping clinics learn faster from real-world care. We standardize the inputs that shape outcomes across preparation, dosing, and integration, then return aggregated benchmarks and safety signals that every site can use to improve consistency.
             </p>
             <p className="text-lg text-slate-300 leading-relaxed font-medium">
-              We built PPN with privacy by design, structured fields over narrative text, de-identified longitudinal tracking inside a clinic, and network insights shown only in aggregate.
+              Privacy by design. Structured fields over narrative text. De-identified longitudinal tracking inside each site. Alliance insights shown only in aggregate, never at the patient level.
             </p>
           </div>
 
           {/* Veterans PTSD Statement */}
-          <div className="mt-8 p-6 bg-indigo-600/10 border-2 border-indigo-500/20 rounded-2xl">
+          <div className="mt-8 p-8 bg-indigo-600/10 border-2 border-indigo-500/20 rounded-2xl space-y-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-indigo-500/20 rounded-xl">
+              <div className="p-3 bg-indigo-500/20 rounded-xl flex-shrink-0">
                 <span className="material-symbols-outlined text-2xl text-indigo-400">military_tech</span>
               </div>
-              <div>
-                <h4 className="text-xl font-black text-slate-300 mb-2">Committed to Veteran Care</h4>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  We are committed to supporting <span className="text-gradient-primary inline-block font-bold pb-1">veterans with PTSD</span> through
-                  evidence-based psychedelic therapy research. Our platform is designed to support multi-site outcomes tracking that can contribute
-                  to emerging research on MDMA-assisted therapy and psilocybin for treatment-resistant PTSD.
+              <div className="space-y-3">
+                <h4 className="text-xl font-black text-slate-300">Committed to Veteran Care</h4>
+                <p className="text-base text-slate-300 leading-relaxed">
+                  MDMA-assisted therapy is showing 67% PTSD remission rates in Phase 3 trials. Veterans deserve practitioners who are supported by real data infrastructure, not spreadsheets.
+                </p>
+                <p className="text-base text-slate-300 leading-relaxed">
+                  PPN supports multi-site outcomes tracking for <span className="text-indigo-300 font-bold">MDMA-assisted therapy and psilocybin research for treatment-resistant PTSD</span>. Every session logged contributes to the evidence base that matters.
                 </p>
               </div>
             </div>
-          </div>
-
-          <div className="pt-4">
-            <a
-              href="mailto:info@ppnportal.net"
-              className="inline-flex items-center px-8 py-4 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.25em] transition-all hover:bg-slate-800 active:scale-95"
-            >
-              Contact Us
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => navigate('/signup')}
+                className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all"
+              >
+                Be Part of What Gets Built
+              </button>
+              <a
+                href="mailto:info@ppnportal.net"
+                className="px-8 py-4 bg-transparent border border-indigo-500/30 hover:border-indigo-500/60 text-indigo-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all text-center"
+              >
+                Contact Us
+              </a>
+            </div>
           </div>
         </div>
       </section >
@@ -800,7 +806,7 @@ const Landing: React.FC = () => {
                 PPN <span className="text-primary font-bold">Portal</span>
               </h1>
               <p className="text-sm text-slate-500 leading-relaxed font-medium">
-                The institutional standard for outcomes tracking and safety surveillance in psychedelic research.
+                Clinical intelligence and safety infrastructure for licensed psychedelic wellness practitioners.
               </p>
             </div>
 
@@ -834,7 +840,7 @@ const Landing: React.FC = () => {
               PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance. We do not support patient-level data sharing across clinics.
             </p>
             <p className="text-sm text-slate-700 font-medium tracking-widest">
-              &copy; 2026 PRECISION PSYCHEDELIC NETWORK (PPN). ALL RIGHTS RESERVED. FOR INSTITUTIONAL USE ONLY.
+              &copy; 2026 PRECISION PSYCHEDELIC NETWORK (PPN). ALL RIGHTS RESERVED. FOR LICENSED PRACTITIONERS ONLY.
             </p>
           </div>
         </div>
