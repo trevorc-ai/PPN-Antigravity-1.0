@@ -130,7 +130,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.95] pb-4 text-slate-300">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.1] pb-4 text-slate-300">
                 Clinical <span className="text-gradient-primary inline-block pb-1">intelligence</span><br />
                 for psychedelic wellness practitioners.
               </h1>
