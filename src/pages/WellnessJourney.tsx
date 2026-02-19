@@ -642,52 +642,51 @@ const WellnessJourney: React.FC = () => {
                 </div>
 
                 {/* Bottom Status Bar (Always Visible) */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                    <div className="flex flex-wrap gap-8 items-start">
+                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-700/50">
 
                         {/* Total Improvement */}
-                        <div className="min-w-[180px] max-w-[240px]">
-                            <p className="text-lg font-bold mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
+                        <div className="px-6 py-5">
+                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-3xl font-black text-emerald-400">-{totalImprovement}</span>
-                                <span className="text-sm" style={{ color: '#8B9DC3' }}>points</span>
+                                <span className="text-sm" style={{ color: '#8B9DC3' }}>pts (PHQ-9)</span>
                             </div>
-                            <div className="flex items-center gap-2 mt-1 text-sm flex-wrap">
+                            <div className="flex items-center gap-2 mt-1.5 text-xs">
                                 <span className="text-red-400">Baseline: {journey.baseline.phq9}</span>
-                                <span className="text-slate-500">→</span>
+                                <span className="text-slate-600">→</span>
                                 <span className="text-emerald-400">Today: {journey.integration.currentPhq9}</span>
                             </div>
-                            <p className="text-emerald-300 text-sm font-semibold mt-2">
-                                {isRemission ? '✓ REMISSION' : '↗ IMPROVING'}
+                            <p className="text-emerald-400 text-xs font-bold mt-2 uppercase tracking-widest">
+                                {isRemission ? '✓ Remission' : '↗ Improving'}
                             </p>
                         </div>
 
-                        <div className="w-px bg-slate-700/50 self-stretch hidden sm:block" />
-
                         {/* MEQ-30 Correlation */}
-                        <div className="min-w-[180px] max-w-[240px]">
-                            <p className="text-lg font-bold mb-2" style={{ color: '#8B9DC3' }}>MEQ-30 Score</p>
-                            <div className="text-3xl font-black text-emerald-400">
-                                {journey.session.meq30Score !== null ? `${journey.session.meq30Score}/100` : <span className="text-slate-500 text-lg">Not recorded</span>}
+                        <div className="px-6 py-5">
+                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>MEQ-30 Score</p>
+                            <div className="text-3xl font-black">
+                                {journey.session.meq30Score !== null
+                                    ? <span className="text-emerald-400">{journey.session.meq30Score}/100</span>
+                                    : <span className="text-slate-500 text-base font-semibold">Not recorded</span>
+                                }
                             </div>
                             {journey.session.meq30Score !== null && (
-                                <p className="text-emerald-300 text-sm mt-2">High mystical experience → Sustained benefit ✓</p>
+                                <p className="text-emerald-400 text-xs mt-2">High mystical experience → Sustained benefit ✓</p>
                             )}
                         </div>
 
-                        <div className="w-px bg-slate-700/50 self-stretch hidden sm:block" />
-
                         {/* Risk Level — wired to live riskDetection data */}
-                        <div className="min-w-[180px] max-w-[240px]">
-                            <p className="text-lg font-bold mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
-                            <div className="flex items-center gap-2">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${riskDetection.overallRiskLevel === 'high' ? 'bg-red-500/20' :
-                                    riskDetection.overallRiskLevel === 'moderate' ? 'bg-amber-500/20' :
-                                        'bg-emerald-500/20'
+                        <div className="px-6 py-5">
+                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
+                            <div className="flex items-center gap-2.5">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${riskDetection.overallRiskLevel === 'high' ? 'bg-red-500/20' :
+                                        riskDetection.overallRiskLevel === 'moderate' ? 'bg-amber-500/20' :
+                                            'bg-emerald-500/20'
                                     }`} aria-hidden="true">
-                                    <svg className={`w-5 h-5 ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                        riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                            'text-emerald-400'
+                                    <svg className={`w-4 h-4 ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
+                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
+                                                'text-emerald-400'
                                         }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         {riskDetection.overallRiskLevel === 'high' ? (
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
@@ -699,19 +698,16 @@ const WellnessJourney: React.FC = () => {
                                     </svg>
                                 </div>
                                 <div>
-                                    <span className={`text-2xl font-black ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                        riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                            'text-emerald-400'
-                                        }`} aria-label={`Risk level: ${riskDetection.overallRiskLevel}`}>
+                                    <span className={`text-3xl font-black ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
+                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
+                                                'text-emerald-400'
+                                        }`}>
                                         {riskDetection.overallRiskLevel.toUpperCase()}
                                     </span>
-                                    <span className={`ml-2 text-xs font-bold uppercase tracking-widest ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                        riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                            'text-emerald-400'
-                                        }`}>[STATUS: {riskDetection.overallRiskLevel.toUpperCase()} RISK]</span>
+                                    <span className="sr-only">Risk Status: {riskDetection.overallRiskLevel.toUpperCase()}</span>
                                 </div>
                             </div>
-                            <p className="text-sm mt-2" style={{ color: '#8B9DC3' }}>
+                            <p className="text-xs mt-2" style={{ color: '#8B9DC3' }}>
                                 {riskDetection.overallRiskLevel === 'high' ? 'Immediate review required' :
                                     riskDetection.overallRiskLevel === 'moderate' ? 'Monitor closely' :
                                         'Excellent compliance'}

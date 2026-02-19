@@ -120,7 +120,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             <p className="text-slate-400 mt-1">Verify all safety gates before initiating dosing.</p>
                         </div>
                         <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider">
-                            Phase 1: Prep
+                            Phase 2: Dosing
                         </div>
                     </div>
 
@@ -216,7 +216,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             </p>
                         </div>
                         {/* Live Vitals Ticker */}
-                        <div className="flex items-center gap-6 bg-slate-950/50 p-3 rounded-xl border border-white/5 shadow-inner">
+                        <div className="flex items-center gap-5 bg-slate-950/50 p-3 rounded-xl border border-white/5 shadow-inner">
                             <div className="text-right">
                                 <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-0.5">HR</p>
                                 <div className="flex items-center gap-1.5 justify-end">
@@ -228,6 +228,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             <div className="text-right">
                                 <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-0.5">BP</p>
                                 <p className="text-xl font-black text-slate-200 leading-none">{liveVitals.bp}</p>
+                            </div>
+                            <div className="w-px h-8 bg-slate-800" />
+                            <div className="text-right">
+                                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-0.5">SpO2</p>
+                                <p className={`text-xl font-black leading-none ${liveVitals.spo2 < 95 ? 'text-amber-400' : 'text-slate-200'}`}>{liveVitals.spo2}%</p>
                             </div>
                         </div>
                         {/* End Button */}
@@ -324,6 +329,22 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             <p className="text-xs text-red-400/80 font-bold uppercase tracking-widest group-hover:text-red-200 transition-colors">Log Safety Event</p>
                         </div>
                     </button>
+                </div>
+
+                {/* Keyboard Shortcut Legend */}
+                <div className="flex items-center justify-center gap-4 px-4 py-2.5 bg-slate-900/40 border border-slate-800/50 rounded-xl">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
+                    {[
+                        { key: 'V', label: 'Vitals' },
+                        { key: 'O', label: 'Observe' },
+                        { key: 'N', label: 'Note' },
+                        { key: 'A', label: 'Adverse' },
+                    ].map(({ key, label }) => (
+                        <div key={key} className="flex items-center gap-1.5">
+                            <kbd className="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 border border-slate-700 text-[10px] font-mono font-bold text-slate-400">{key}</kbd>
+                            <span className="text-[10px] text-slate-600">{label}</span>
+                        </div>
+                    ))}
                 </div>
 
                 {/* LIVE STREAM (Bottom) */}
