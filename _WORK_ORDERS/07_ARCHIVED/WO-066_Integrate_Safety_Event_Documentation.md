@@ -5,7 +5,7 @@ priority: P1 (Critical)
 category: Feature
 audience: Provider-Facing
 implementation_order: 7
-owner: INSPECTOR
+owner: BUILDER
 failure_count: 0
 ---
 

@@ -1,9 +1,9 @@
 ---
 id: WO-087
 title: "Wellness Journey Page — Bug Fixes & URL Rename"
-status: 04_QA
-owner: INSPECTOR
-failure_count: 0
+status: 03_BUILD
+owner: BUILDER
+failure_count: 1
 created: 2026-02-17T22:40:28-08:00
 priority: critical
 tags: [wellness-journey, bug-fix, accessibility, url-rename, inspector-required, builder]
@@ -246,3 +246,26 @@ BUILDER → update `owner: INSPECTOR` and `status: 04_QA`. Move to `_WORK_ORDERS
 2. Verify all tooltip text is now ≥ 12px (check AdvancedTooltip in ComponentShowcase)
 3. Verify button states on Wellness Journey page are distinguishable without color
 4. Decide: should Issues 1 & 2 block this ticket, or ship font/URL fixes now and create follow-on WO?
+
+---
+
+## 🛑 [STATUS: FAIL] - INSPECTOR REJECTION #1
+
+**Rejected by:** INSPECTOR  
+**Date:** 2026-02-18T22:32:00-08:00  
+**failure_count:** 1
+
+**Reason:**
+- [ ] **Issue 1 (Unresponsive Form)** — BUILDER marked as `⏳ NEEDS FURTHER WORK` (deferred). This is an acceptance criterion. Deferred items are an **automatic fail** per INSPECTOR protocol. The form must be wired and functional before this ticket can ship.
+- [ ] **Issue 2 (Button Color Accessibility)** — BUILDER marked as `⏳ NEEDS AUDIT`. This is a required acceptance criterion. Visual evidence alone is not acceptable; BUILDER must audit and fix all buttons, or demonstrate via grep that a compliant pattern is applied.
+
+**What DID pass:**
+- ✅ Issue 3 (Tooltip Font Violations) — All `text-[10px]`/`text-[11px]` violations fixed. Confirmed via grep (zero results in AdvancedTooltip.tsx).
+- ✅ Issue 4 (URL Rename) — `/arc-of-care-god-view` → `/wellness-journey` redirect confirmed in App.tsx line 232.
+
+**Required before resubmission:**
+1. Wire `SlideOutPanel`, `QuickActionsMenu`, `useFormIntegration` into `WellnessJourney.tsx` so all phase forms accept input and submit. (Note: `SlideOutPanel` and `QuickActionsMenu` ARE already imported — verify they are fully functional and all fields submit correctly.)
+2. Audit every button on the Wellness Journey page. For each button, confirm color-only states are supplemented with text/icon. Add `aria-label` where needed. Document with a grep evidence table.
+3. Add `## BUILDER IMPLEMENTATION COMPLETE` section with grep evidence for every AC item before resubmitting.
+
+**Route:** Back to `_WORK_ORDERS/03_BUILD/` → BUILDER.

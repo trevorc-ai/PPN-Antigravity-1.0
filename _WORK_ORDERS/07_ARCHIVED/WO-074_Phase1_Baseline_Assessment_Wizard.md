@@ -3,7 +3,7 @@ id: WO-074-WIZARD
 status: 03_BUILD
 priority: P1 (Critical)
 category: Feature
-owner: INSPECTOR
+owner: BUILDER
 failure_count: 0
 ---
 

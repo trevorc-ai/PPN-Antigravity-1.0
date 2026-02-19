@@ -5,7 +5,7 @@ priority: P1 (Critical - Core Feature)
 category: Feature Development
 audience: Clinical Providers
 implementation_order: 13
-owner: SOOP
+owner: BUILDER
 failure_count: 0
 created: 2026-02-17 16:00 PST
 lead_reviewed: 2026-02-17 22:19 PST

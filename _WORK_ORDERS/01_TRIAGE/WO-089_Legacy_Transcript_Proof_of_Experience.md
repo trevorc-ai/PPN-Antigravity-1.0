@@ -1,8 +1,8 @@
 ---
 id: WO-089
 title: "Legacy Transcript — Cryptographically Verified Proof of Experience"
-status: 04_QA
-owner: INSPECTOR
+status: 01_TRIAGE
+owner: PRODDY
 ticket_type: EVALUATION (not a direct build order)
 priority: P2 (High)
 category: Feature / Trust / Legal Defense / Grey Market
@@ -13,7 +13,8 @@ feasibility: Medium-High (8/10)
 strategic_alignment: Grey Market "Phantom Shield" (Extension of Model #2)
 requested_by: Trevor Calton
 source: gemini_recommendation
-proddy_validation_required: true
+proddy_validation_required: false
+proddy_validated: true
 related_tickets:
   - WO_006 (07_ARCHIVED — stats dashboard only, no crypto signing)
   - WO-077 (01_TRIAGE — plain PDF export, no tamper-proof chain)
@@ -382,4 +383,36 @@ The exported PDF includes:
     - Change `status` to `01_TRIAGE`.
     - Change `owner` to `PRODDY`.
     - Move file to `_WORK_ORDERS/01_TRIAGE/`.
+
+---
+
+## 🛑 INSPECTOR PRE-SCREEN: FAIL
+
+**Reviewed by:** INSPECTOR  
+**Date:** 2026-02-18T22:38:00-08:00  
+
+### Pre-Screen Findings:
+
+1. **✅ Cryptographic design** — HMAC-SHA256 is appropriate. Key versioning strategy (store `key_version` integer per signature) is documented by PRODDY. Acceptable.
+
+2. **❌ CRITICAL — FK Column Name Mismatch:**  
+   The spec targets `session_signatures.session_id UUID REFERENCES log_sessions(session_id)`.  
+   **Live schema grep shows: NO `log_sessions` table exists. The correct table is `log_clinical_records` with PK `id`.**  
+   SOOP must use: `session_id UUID REFERENCES log_clinical_records(id) ON DELETE RESTRICT`  
+   **SOOP cannot write this migration until the spec is corrected.** This is a blocker.
+
+3. **⚠️ Edge Function service-role key** — Acceptable if documented. The `sign-session` function must use the Supabase service-role key, not the anon key, to bypass RLS for the server-only insert. SOOP must note this in migration.
+
+4. **✅ Public verification endpoint privacy** — Confirmed safe. `signed_at` + `session_sequence_number` are non-PHI.
+
+5. **✅ WO-077 coordination** — PRODDY confirmed these are separate exports. Share PDF library only.
+
+### VERDICT: FAIL — Spec must be corrected before SOOP migration can proceed.
+
+**Required fix before resubmitting:**
+Update the spec's SQL schema (lines 91-129) to:
+- Change `REFERENCES log_sessions(session_id)` → `REFERENCES log_clinical_records(id)`
+- Remove `session_id` column concept; the FK is to `log_clinical_records.id`
+
+**Route:** Back to `_WORK_ORDERS/01_TRIAGE/` → PRODDY to correct the spec, then re-route to SOOP.
 

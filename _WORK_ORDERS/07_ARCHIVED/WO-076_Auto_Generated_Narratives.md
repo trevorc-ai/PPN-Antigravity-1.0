@@ -3,7 +3,7 @@ id: WO-076
 status: 03_BUILD
 priority: P0 (Blocking)
 category: Feature
-owner: INSPECTOR
+owner: BUILDER
 failure_count: 0
 ---
 

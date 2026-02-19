@@ -4,7 +4,7 @@ title: Critical Fix - SymptomDecayCurveChart Crash
 type: BUG
 category: CRITICAL FIX
 priority: P0 (Immediate)
-status: 00_INBOX
+status: 03_BUILD
 created: 2026-02-18T12:00:00-08:00
 requested_by: BUILDER (QA Bot)
 owner: PENDING

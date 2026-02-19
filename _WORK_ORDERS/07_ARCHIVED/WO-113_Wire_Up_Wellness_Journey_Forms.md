@@ -4,7 +4,7 @@ title: Wire Up Wellness Journey Forms
 type: FEATURE_INTEGRATION
 category: Frontend / Wellness Journey
 priority: P0 (Immediate)
-status: 03_BUILD
+status: 07_ARCHIVED
 created: 2026-02-18T10:20:00-08:00
 requested_by: USER
 owner: BUILDER

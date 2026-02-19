@@ -3,7 +3,7 @@ id: WO-052
 status: 03_BUILD
 priority: P1 (High)
 category: Feature
-owner: INSPECTOR
+owner: BUILDER
 failure_count: 0
 phase: Arc of Care - Phase 3 (Integration)
 estimated_hours: 20-25

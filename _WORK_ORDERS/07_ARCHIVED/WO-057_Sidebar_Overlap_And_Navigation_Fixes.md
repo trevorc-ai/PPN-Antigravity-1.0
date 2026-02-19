@@ -1,13 +1,14 @@
 ---
 id: WO-057
-status: 04_QA
+status: 05_USER_REVIEW
 priority: P1 (Critical)
 category: Bug / Layout / Navigation
-owner: INSPECTOR
-failure_count: 1
+owner: USER
+failure_count: 2
 created_date: 2026-02-16T12:52:43-08:00
 completed_date: 2026-02-17T23:31:00-08:00
 rejected_date: 2026-02-17T09:12:00-08:00
+second_rejected_date: 2026-02-18T22:30:00-08:00
 ---
 
 ## LEAD FIX — INSPECTOR REJECTION RESOLVED (2026-02-17T23:31 PST)
@@ -622,4 +623,24 @@ All fonts now >= 12px for WCAG AAA compliance.
 ---
 
 **INSPECTOR Decision:** ❌ REJECTED - Moving back to `03_BUILD` for completion
+
+---
+
+## 🛑 [STATUS: FAIL] - INSPECTOR REJECTION #2 — TWO-STRIKE RULE
+
+**Rejected by:** INSPECTOR  
+**Date:** 2026-02-18T22:30:00-08:00  
+**failure_count:** 2 ← ⚠️ TWO-STRIKE THRESHOLD REACHED
+
+**Reason:**
+- [ ] The Wellness Journey link is **STILL PRESENT** in `src/components/Sidebar.tsx` line 32 — CONFIRMED via grep:
+  ```
+  src/components/Sidebar.tsx:32: { label: 'Wellness Journey', icon: 'timeline', path: '/wellness-journey' }
+  ```
+  LEAD's fix note claimed it was deleted. Grep proves it was NOT deleted. This is the second failed attempt.
+
+**TWO-STRIKE PROTOCOL:** Per immutable team rules, after 2 failures this ticket STOPS and routes to LEAD for new strategy.  
+**Action:** `git restore` the problematic line, then manually confirm the delete before re-submitting.  
+
+**Route:** `_WORK_ORDERS/01_TRIAGE/` → LEAD for new strategy.
 

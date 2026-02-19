@@ -1,11 +1,11 @@
 ---
 id: WO-085
-status: 03_BUILD
+status: 05_USER_REVIEW
 priority: P1 (Critical - Safety Feature)
 category: Feature Enhancement
 audience: Clinical Providers
 implementation_order: 12
-owner: SOOP
+owner: USER
 failure_count: 0
 created: 2026-02-17 15:57 PST
 lead_reviewed: 2026-02-17 22:19 PST
