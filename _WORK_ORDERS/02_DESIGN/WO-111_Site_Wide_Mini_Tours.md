@@ -1,13 +1,14 @@
 ---
 id: WO-111
 title: Site-Wide Mini Guided Tours & UX Standardization
-status: 02_DESIGN
-owner: DESIGNER
+status: 03_BUILD
+owner: BUILDER
 priority: P2 (High)
 category: UX / Onboarding
 failure_count: 0
 created_date: 2026-02-18T08:15:00-08:00
 requested_by: USER
+designer_completed: 2026-02-18T14:57:00-08:00
 ---
 
 
@@ -48,8 +49,15 @@ The user provided two screenshots defining the aesthetic:
 ### 2. Design System Definition
 **A. The "View from Space" (Global Welcome):**
 - **Trigger:** Auto-launch on first login.
-- **Content:** Information only. "Welcome to PPN. Here is the layout. Note the Compass Icon for detailed help on any page."
+- **Content:** High-level layout orientation. "Welcome to PPN. Here is the layout."
 - **Style:** Centered Modal (Reference Screenshot 1).
+- **MANDATORY FINAL STEP:** The last step of the Global Tour **MUST** end with the Compass Icon highlighted.
+    - **Target element:** The Compass icon button in the top-right nav/header (`[data-tour="compass-icon"]`).
+    - **Step Label:** "Step X of X" (final step).
+    - **Tooltip Title:** "More Info and Tours"
+    - **Tooltip Body:** "To learn more about any element, click ❓. Or take a guided tour through the Portal anywhere you see a compass 🧭."
+    - **Controls:** "Back" (text) | "Finish" (blue filled button).
+    - **Visual:** Glowing border highlight around the Compass icon — same masking treatment as the page-specific mini-tours.
 
 **B. The "Mini-Tours" (Page Specific):**
 - **Trigger:** Compass Icon (Manual) OR Contextual (First visit to a specific complex feature).
@@ -81,3 +89,37 @@ Upon completion of the Strategy & Specs:
 1.  **UPDATE STATUS**: Change `status` to `03_BUILD`.
 2.  **UPDATE OWNER**: Change `owner` to `BUILDER`.
 3.  **MOVE FILE**: Move this file to `_WORK_ORDERS/03_BUILD/`.
+
+---
+
+## ✅ DESIGNER COMPLETION NOTES
+
+**Date Completed:** 2026-02-18T14:57:00-08:00  
+**Designer:** DESIGNER Agent  
+**Status:** ✅ **COMPLETE — ROUTED TO BUILDER**
+
+### Deliverables Produced:
+
+1. **`docs/GUIDED_TOUR_SYSTEM_SPEC.md`** — Full system specification including:
+   - UX Pattern spec for both Tier 1 (Global Welcome) and Tier 2 (Mini Tours)
+   - Complete visual design tokens and component structure
+   - Compass Icon spec and color-coding system
+   - Content guidelines (9th-grade reading level rules)
+   - **8 complete page tours** with step-by-step content:
+     - Dashboard (5 steps), Wellness Journey (4 steps), Substance Catalog (4 steps),
+       Interaction Checker (4 steps), Protocol Builder (5 steps), Analytics (4 steps),
+       Search Portal (3 steps), Settings (3 steps)
+   - Component architecture recommendation (`TourButton.tsx`, `MiniTour.tsx`, `tours/`)
+   - Implementation rollout sequence
+   - Full INSPECTOR testing checklist
+
+2. **Updated `docs/archive/misc/HELP_DOCUMENTATION_AND_TOOLTIPS.md`** — Referenced and aligned; no conflicts found.
+
+### Key Design Decisions:
+
+- **Box-shadow masking** (not SVG overlays) — more performant, eliminates z-index layering issues
+- **`data-tour` attributes** as selectors — stable, semantic, no coupling to CSS classes
+- **`useMiniTour(key)` hook pattern** — clean encapsulation of localStorage tracking
+- **Centralized step data** in `tours/` directory — BUILDER can add pages without modifying the core component
+
+**DESIGNER SIGN-OFF:** [STATUS: PASS] ✅ Ready for BUILDER.

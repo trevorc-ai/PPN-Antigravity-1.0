@@ -1,9 +1,9 @@
 ---
 id: WO-004
-status: 05_USER_REVIEW
+status: REWORK_REQUIRED
 priority: P2 (High)
 category: Design / Architecture
-owner: USER
+owner: BUILDER
 assigned_to: USER
 assigned_date: 2026-02-16T12:24:00-08:00
 created_date: 2026-02-15T11:13:00-08:00
@@ -699,4 +699,25 @@ BUILDER successfully addressed all critical accessibility violations. All 18 fon
 ---
 
 **INSPECTOR:** ✅ **APPROVED**
+
+
+---
+
+## 🛑 [STATUS: FAIL] - INSPECTOR RE-AUDIT (Zero-Deferred-AC Policy)
+
+**Rejected by:** LEAD (Protocol Upgrade — 2026-02-18T16:30:00-08:00)
+**Reason:** Under the new Zero-Deferred-AC Policy, any deferred acceptance criterion is an automatic fail.
+
+**Deferred item found in original approval:**
+> "Regulatory Updates RSS feed deferred for future enhancement (acceptable)"
+
+**This is NOT acceptable.** The RSS feed was in the original ticket acceptance criteria. It must be implemented.
+
+**Required for re-approval:**
+1. Connect the Regulatory Updates RSS feed to the News/Intelligence Hub page
+2. Display live RSS headlines in the "Regulatory Updates" sidebar card or equivalent
+3. Run `grep -rn "rss\|RSS\|RegulatoryFeed" src/` and paste result as grep evidence
+4. Mark the RSS feed AC as `[x]` checked — not deferred
+
+**failure_count:** incremented to 1
 

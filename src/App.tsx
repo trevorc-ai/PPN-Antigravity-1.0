@@ -120,7 +120,6 @@ const ProtectedLayout: React.FC<{
 
   const completeTour = () => {
     setShowTour(false);
-    navigate('/');
   };
 
   return (

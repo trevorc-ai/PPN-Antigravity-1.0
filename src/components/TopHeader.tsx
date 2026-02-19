@@ -226,13 +226,19 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
               <div className="flex items-center gap-3">
                 {/* Tour - Hidden on mobile */}
-                <div className="hidden lg:block">
-                  <NavIconButton
-                    icon="explore"
-                    label="Tour"
-                    tooltip="System Tour"
+                <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
+                  <button
                     onClick={onStartTour}
-                  />
+                    className="size-11 rounded-xl bg-white/5 border border-blue-400/50 hover:border-blue-400/80 flex items-center justify-center text-blue-300 hover:text-blue-200 transition-all hover:bg-blue-500/10 shadow-sm shadow-blue-500/10 group active:scale-90"
+                    aria-label="Tour"
+                  >
+                    <span className="material-symbols-outlined text-[24px] transition-transform group-active:scale-90">explore</span>
+                  </button>
+                  {/* Tooltip */}
+                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
+                    <span className="text-[12px] font-black text-slate-300 tracking-[0.15em] relative z-10">System Tour</span>
+                  </div>
                 </div>
 
 

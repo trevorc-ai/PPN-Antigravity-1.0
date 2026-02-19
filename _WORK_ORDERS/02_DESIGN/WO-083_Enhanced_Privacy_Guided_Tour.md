@@ -1,10 +1,11 @@
 ---
 id: WO-083
 title: "Enhanced Privacy Guided Tour — Strategy & Naming"
-status: 02_DESIGN
-owner: DESIGNER
+status: 03_BUILD
+owner: BUILDER
 failure_count: 0
 created: 2026-02-17T22:32:48-08:00
+designer_completed: 2026-02-18T14:57:00-08:00
 priority: high
 tags: [grey-market, privacy, guided-tour, onboarding, proddy, naming, strategy]
 ---
@@ -281,3 +282,77 @@ Upon completion of the Design Specs:
 2.  **UPDATE OWNER**: Change `owner` to `BUILDER`.
 3.  **MOVE FILE**: Move this file to `_WORK_ORDERS/03_BUILD/`.
 
+---
+
+## ✅ DESIGNER COMPLETION NOTES — VISUAL SPEC
+
+**Date Completed:** 2026-02-18T14:57:00-08:00  
+**Designer:** DESIGNER Agent
+
+### Visual Design Spec: "Advanced Practitioner Tools" Tour
+
+#### Entry Point
+- **Location:** Help menu → "Advanced Practitioner Tools Guide"
+- **Also:** First access to Potency Normalizer or Crisis Logger triggers a non-intrusive banner
+- **Banner Design:**
+  ```tsx
+  <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3 flex items-center gap-3">
+    <Compass className="w-4 h-4 text-purple-400 flex-shrink-0" />
+    <p className="text-sm text-slate-400">
+      New to Advanced Tools? 
+      <button className="text-purple-400 hover:text-purple-300 font-bold underline ml-1">
+        Take the 2-minute tour
+      </button>
+    </p>
+    <button className="ml-auto text-slate-600 hover:text-slate-400">
+      <X className="w-4 h-4" />
+    </button>
+  </div>
+  ```
+
+#### Tour Overlay Style
+- **Matches:** Main guided tour system (per `GUIDED_TOUR_SYSTEM_SPEC.md`)
+- **Color Accent:** `purple-400` (distinguishes from standard clinical blue)
+- **Backdrop:** `bg-black/60 backdrop-blur-[2px]` + box-shadow spotlight masking
+- **Card:** `bg-[#0c1016] border-2 border-purple-500/60 rounded-[1.5rem] p-6 w-[340px]`
+- **CTA buttons:** `bg-purple-600 hover:bg-purple-700` (not primary blue — distinct brand)
+- **Step indicator:** `text-purple-400`
+
+#### Tour Step Visual Flow (7 Steps)
+
+| Step | Target Element | Popover Position | Category Badge Color |
+|------|---------------|-----------------|---------------------|
+| 1 | Full screen (welcome overlay) | Center modal | — |
+| 2 | Potency Normalizer card | bottom | `text-purple-400` |
+| 3 | Crisis Logger button | right | `text-purple-400` |
+| 4 | Cockpit Mode toggle | bottom | `text-purple-400` |
+| 5 | Privacy settings panel | right | `text-purple-400` |
+| 6 | Session log view | top | `text-purple-400` |
+| 7 | Dashboard | bottom | `text-purple-400` |
+
+#### Legal Disclaimer Styling
+```tsx
+<div className="bg-slate-800/40 border-l-4 border-amber-500/60 rounded-r-lg p-3 mt-2">
+  <p className="text-xs text-slate-500 leading-relaxed">
+    ⚖️ PPN Portal is a documentation tool. It does not provide legal advice.
+  </p>
+</div>
+```
+
+#### localStorage Key: `advancedPractitionerTourSeen`
+
+#### data-tour Selectors Required (BUILDER must add these):
+- `[data-tour="potency-normalizer"]`
+- `[data-tour="crisis-logger"]`
+- `[data-tour="cockpit-mode-toggle"]`
+- `[data-tour="privacy-settings"]`
+- `[data-tour="session-log"]`
+- `[data-tour="advanced-dashboard"]`
+
+#### Accessibility
+- `aria-label="Advanced Practitioner Tools guided tour"`
+- All minimums from `GUIDED_TOUR_SYSTEM_SPEC.md` Section 2B apply
+- Entry banner dismisses with `X` button OR `Escape` key
+- Tour itself dismisses with `Escape`
+
+**DESIGNER SIGN-OFF:** [STATUS: PASS] ✅ Visual spec complete. All patterns refer to `GUIDED_TOUR_SYSTEM_SPEC.md`. Ready for BUILDER.
