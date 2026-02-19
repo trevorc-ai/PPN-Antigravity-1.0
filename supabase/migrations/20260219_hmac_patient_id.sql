@@ -114,14 +114,12 @@ BEGIN
   -- =========================================================================
   FOR entry IN SELECT * FROM jsonb_array_elements(saved_policies)
   LOOP
-    -- Rebuild the role list string
+    -- Rebuild the role list string.
+    -- IMPORTANT: array_length('{}', 1) returns NULL (not 0) in Postgres, so we
+    -- cannot use it to detect empty arrays. Use NULLIF + COALESCE instead:
+    -- array_to_string('{}', ', ') = '' → NULLIF makes it NULL → COALESCE → 'PUBLIC'
     roles_arr := ARRAY(SELECT jsonb_array_elements_text(entry->'roles'));
-
-    IF roles_arr IS NULL OR array_length(roles_arr, 1) = 0 THEN
-      roles_str := 'PUBLIC';
-    ELSE
-      roles_str := array_to_string(roles_arr, ', ');
-    END IF;
+    roles_str  := COALESCE(NULLIF(array_to_string(roles_arr, ', '), ''), 'PUBLIC');
 
     -- Base CREATE POLICY clause
     recreate_sql := format(
