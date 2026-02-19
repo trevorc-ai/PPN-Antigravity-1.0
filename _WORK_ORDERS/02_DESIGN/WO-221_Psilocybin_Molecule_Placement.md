@@ -42,3 +42,30 @@ created: 2026-02-19
 
 ## Ready to Deploy
 Once decision is made, BUILDER connects `<PPNLogo />` import to chosen location. No further code work needed before that decision.
+
+---
+
+## PRODDY DECISION (2026-02-19)
+
+**Molecule placement: Inside the app only. NOT on the public landing page.**
+
+**Rationale:**
+The psilocybin molecule is a scientifically credible trust signal for practitioners who already understand the context. However, on the public landing page, it creates an immediate risk: risk-averse institutional buyers, payers evaluating coverage, and practitioners in conservative regulatory environments may respond negatively to a drug molecule as the first thing they see. First impression matters. The landing page audience is mixed — we cannot assume everyone arrives with clinical context or an open mind about psychedelics.
+
+Inside the app, the audience has already self-selected. They are licensed practitioners who signed up and logged in. The molecule there signals scientific rigor, not recreational drug culture.
+
+**Approved placements:**
+1. **Sidebar icon** — Replace the current indigo square avatar with the animated 3D `<PPNLogo />` component at `sm` size. This gives the brand an identity mark in the authenticated experience.
+2. **Dashboard welcome state** — Show at `md` size in the empty state (first login, no sessions logged yet) as part of the welcome message.
+3. **Login / verification screen** — At `lg` size, centered, as a subtle ambient identity element while the user authenticates.
+
+**Do NOT place on:**
+- Public landing page hero (brand risk with mixed audience)
+- Pricing page (too distracting during conversion moment)
+- Any patient-facing screens
+
+**MARKETER note:** The molecule is a practitioner-to-practitioner trust signal. It communicates "this is a serious clinical tool built by people who understand the science." Use the Dr. Jason Allen credibility angle in copy that appears near it — not the molecule alone.
+
+**Next step:** DESIGNER specs placement for sidebar + dashboard welcome state. BUILDER connects on DESIGNER approval.
+
+**Owner:** DESIGNER | **Status:** 02_DESIGN
