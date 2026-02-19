@@ -186,3 +186,19 @@ After running, verify:
 1. RAISE NOTICE log shows exactly **16 "Dropped policy"** and **16 "Recreated policy"** messages
 2. Final SELECT shows `character_maximum_length = 20` for all 6 tables
 3. Test an INSERT with a 14-char patient_id (e.g., `PT-PDX7K2MX9QR`) — should succeed
+
+---
+
+## ✅ WO-210 COMPLETE — USER VERIFIED 2026-02-19T08:02:54-08:00
+
+```
+log_baseline_assessments     | patient_id | 20  ✅
+log_behavioral_changes       | patient_id | 20  ✅
+log_integration_sessions     | patient_id | 20  ✅
+log_longitudinal_assessments | patient_id | 20  ✅
+log_pulse_checks             | patient_id | 20  ✅
+log_red_alerts               | patient_id | 20  ✅
+```
+
+All 16 RLS policies confirmed recreated. HMAC patient ID upgrade complete.
+All existing PT-XXXXX IDs remain valid. System ready for 14-char IDs.
