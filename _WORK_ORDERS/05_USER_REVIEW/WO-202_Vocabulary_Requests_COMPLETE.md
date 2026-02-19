@@ -77,3 +77,13 @@ CREATE TABLE IF NOT EXISTS public.log_vocabulary_requests (
 - Missing: application-layer text-field clear on status → 'approved' — documented in WO, not migration concern ✅
 
 **Ready to run:** `supabase/migrations/20260219_vocabulary_requests.sql`
+
+---
+
+## Feature Note (for help docs + onboarding copy)
+
+Every time a clinician types a concept that does not exist in the ref_ tables (a new type of trauma, a new substance, a new homework type), the app captures it as a vocabulary request instead of throwing it away. The request_count goes up each time another site submits the same concept. At 3 unique sites, it hits the Advisory Board agenda automatically. At 7 sites, it fast-tracks to a 30-day review. At 15, it gets presumptive approval pending safety review.
+
+This is how the controlled vocabulary grows based on actual clinical usage, not guesswork.
+
+**Writing style note (from USER):** Keep all feature explanations at this level. Short sentences. Plain words. No em dashes. Simple, understandable, and repeatable.
