@@ -223,12 +223,7 @@ const AppContent: React.FC = () => {
         <Route path="/landing" element={<Landing />} />
         <Route path="/about" element={<About />} />
         <Route path="/secure-gate" element={<SecureGate />} />
-        <Route path="/vibe-check" element={<PhysicsDemo />} />
-        <Route path="/hidden-components" element={<HiddenComponentsShowcase />} />
-        <Route path="/component-showcase" element={<ComponentShowcase />} />
-        <Route path="/molecules" element={<MolecularVisualizationDemo />} />
-        <Route path="/isometric-molecules" element={<IsometricMoleculesDemo />} />
-        <Route path="/molecule-test" element={<MoleculeTest />} />
+        {/* Dev/test routes removed from public router — use /hidden-components locally only */}
         <Route path="/arc-of-care" element={<ArcOfCareDemo />} />
         <Route path="/arc-of-care-phase2" element={<ArcOfCarePhase2Demo />} />
         <Route path="/arc-of-care-phase3" element={<ArcOfCarePhase3Demo />} />
@@ -264,7 +259,6 @@ const AppContent: React.FC = () => {
             <Route path="/catalog" element={<SubstanceCatalog />} />
             <Route path="/monograph/:id" element={<SubstanceMonograph />} />
             <Route path="/interactions" element={<InteractionChecker />} />
-            <Route path="/audit" element={<AuditLogs />} />
             <Route path="/audit" element={<AuditLogs />} />
 
             {/* WELLNESS JOURNEY / ARC OF CARE */}
