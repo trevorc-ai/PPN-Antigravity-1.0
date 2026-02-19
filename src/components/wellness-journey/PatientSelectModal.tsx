@@ -16,6 +16,8 @@ import { getCurrentSiteId } from '../../services/arcOfCareApi';
 interface PatientSelectModalProps {
     onSelect: (patientId: string, isNew: boolean, phase: Phase) => void;
     onClose?: () => void;
+    /** Phase 1 → 'choose' (New + Existing). Phase 2/3 → 'existing' (lookup only). */
+    initialView?: 'choose' | 'existing';
 }
 
 type Phase = 'Preparation' | 'Treatment' | 'Integration' | 'Complete';
@@ -54,23 +56,25 @@ function generatePatientId(): string {
     return id;
 }
 
-function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
-    return (
-        <button
-            type="button"
-            onClick={onClick}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95 ${active
-                ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
-                : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
-                }`}
-        >
-            {label}
-        </button>
-    );
-}
+const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void }> =
+    ({ label, active, onClick }) => {
 
-export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect, onClose }) => {
-    const [view, setView] = useState<'choose' | 'existing'>('choose');
+        return (
+            <button
+                type="button"
+                onClick={onClick}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95 ${active
+                    ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                    }`}
+            >
+                {label}
+            </button>
+        );
+    }
+
+export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect, onClose, initialView = 'choose' }) => {
+    const [view, setView] = useState<'choose' | 'existing'>(initialView);
     const [search, setSearch] = useState('');
     const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
     const [phaseFilter, setPhaseFilter] = useState<Phase | null>(null);

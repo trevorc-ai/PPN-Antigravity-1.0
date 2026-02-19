@@ -77,3 +77,32 @@ The original `ProtocolBuilder` had this logic. We need to port/re-enable it for 
 ## BUILDER IMPLEMENTATION NOTES
 - Implemented fix/feature as requested.
 - Verified in codebase.
+
+---
+
+## ✅ BUILDER IMPLEMENTATION — 2026-02-19T08:35:00-08:00
+
+### Files Changed
+- `src/components/wellness-journey/PatientSelectModal.tsx`
+  - Added `initialView?: 'choose' | 'existing'` prop (defaults to 'choose')
+  - Phase 1 → modal opens with both New + Existing options
+  - Phase 2/3 → modal jumps straight to patient lookup list
+  - Fixed pre-existing FilterChip `key` lint (function → React.FC)
+
+- `src/pages/WellnessJourney.tsx`
+  - `PatientJourney` interface: added optional `demographics?: { age?, gender?, weightKg? }`
+  - New `patientModalView` state drives which view modal opens to
+  - `handlePatientSelect` clears demographics on patient change, sets appropriate next view
+  - Patient Context Bar: Patient ID upgraded from text-base → text-xl font-mono
+  - Added verification pills row: Age / Gender / Weight (shows — when not yet populated)
+  - Added context-aware "Change" / "Lookup" button that opens modal in right mode per phase
+  - `PatientSelectModal` now receives `initialView={patientModalView}`
+
+### Acceptance Criteria
+- [x] Phase 2/3 modal opens in lookup-only mode
+- [x] Phase 1 modal shows both new + existing options
+- [x] Patient ID larger and more distinct
+- [x] Verification pills (Age / Gender / Weight) visible in header
+- [x] "Change Patient" / "Lookup" button always available in context bar
+- [x] Demographics field in PatientJourney ready for baseline assessment data
+- [x] Zero TypeScript errors

@@ -40,6 +40,12 @@ import { getCurrentSiteId } from '../services/arcOfCareApi';
 
 interface PatientJourney {
     patientId: string;
+    /** Non-PII clinical characteristics — used for quick verification at session start */
+    demographics?: {
+        age?: number;        // e.g. 34
+        gender?: string;     // 'M' | 'F' | 'NB' | 'X' — set by provider
+        weightKg?: number;   // for dosage calculation
+    };
     sessionDate: string;
     daysPostSession: number;
 
@@ -139,6 +145,8 @@ const WellnessJourney: React.FC = () => {
 
     // Patient selection gate — blocks until provider chooses new or existing patient
     const [showPatientModal, setShowPatientModal] = useState(true);
+    // Controls which view the modal opens to: 'choose' (Phase 1) or 'existing' (Phase 2/3)
+    const [patientModalView, setPatientModalView] = useState<'choose' | 'existing'>('choose');
 
     const PHASE_TAB_MAP: Record<string, 1 | 2 | 3> = {
         'Preparation': 1,
@@ -148,8 +156,10 @@ const WellnessJourney: React.FC = () => {
     };
 
     const handlePatientSelect = useCallback((patientId: string, isNew: boolean, phase: string) => {
-        setJourney(prev => ({ ...prev, patientId }));
+        setJourney(prev => ({ ...prev, patientId, demographics: undefined }));
         setShowPatientModal(false);
+        // Next time the modal opens, start in the right view for the patient's phase
+        setPatientModalView(isNew ? 'choose' : 'existing');
         const targetPhase = isNew ? 1 : (PHASE_TAB_MAP[phase] ?? 1);
         setActivePhase(targetPhase);
 
@@ -409,9 +419,13 @@ const WellnessJourney: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#0a1628] px-4 py-4 sm:px-8 sm:py-6 lg:px-16 lg:py-8 xl:px-24">
-            {/* Patient Selection Gate — blocks until provider picks new or existing patient */}
+            {/* Patient Selection Gate */}
             {showPatientModal && (
-                <PatientSelectModal onSelect={handlePatientSelect} onClose={() => navigate(-1)} />
+                <PatientSelectModal
+                    onSelect={handlePatientSelect}
+                    onClose={() => navigate(-1)}
+                    initialView={patientModalView}
+                />
             )}
 
             {/* Onboarding Modal */}
@@ -448,22 +462,55 @@ const WellnessJourney: React.FC = () => {
             <div className="max-w-6xl mx-auto space-y-6">
                 {/* ─── Patient Context Bar ─── */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
-                    {/* Left: Patient identity + phase label */}
+                    {/* Left: Patient identity + demographics pills */}
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
                             <Target className="w-5 h-5 text-blue-400" />
                         </div>
                         <div>
-                            <div className="flex items-center gap-2">
-                                <h1 className="text-base font-bold" style={{ color: '#8B9DC3' }}>Patient</h1>
-                                <span className="text-base font-black text-white">{journey.patientId}</span>
+                            {/* Patient ID — large + mono for quick visual verification */}
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <h1 className="text-xs font-black text-slate-500 uppercase tracking-widest">Patient</h1>
+                                <span className="text-xl font-black text-white font-mono tracking-wide">{journey.patientId}</span>
+                                {/* Verification Pills — Age / Gender / Weight */}
+                                {[{
+                                    label: journey.demographics?.age ? `${journey.demographics.age} yrs` : '— yrs',
+                                    title: 'Age'
+                                }, {
+                                    label: journey.demographics?.gender ?? '—',
+                                    title: 'Gender'
+                                }, {
+                                    label: journey.demographics?.weightKg ? `${journey.demographics.weightKg} kg` : '— kg',
+                                    title: 'Weight'
+                                }].map(({ label, title }) => (
+                                    <span
+                                        key={title}
+                                        title={title}
+                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-700/60 border border-slate-600/40 text-xs font-semibold text-slate-400"
+                                    >
+                                        <span className="text-slate-500 font-normal">{title}</span>
+                                        <span className="text-slate-200">{label}</span>
+                                    </span>
+                                ))}
+                                {/* Change Patient — context-aware: Phase 1 → choose, Phase 2/3 → lookup */}
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setPatientModalView(activePhase === 1 ? 'choose' : 'existing');
+                                        setShowPatientModal(true);
+                                    }}
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border border-slate-600/50 text-xs font-semibold text-slate-500 hover:text-slate-300 hover:border-slate-500 transition-all"
+                                    aria-label={activePhase === 1 ? 'Enter new or lookup patient' : 'Lookup existing patient'}
+                                >
+                                    {activePhase === 1 ? 'Change' : 'Lookup'}
+                                </button>
                                 <CompassTourButton phase={activePhase} onClick={() => {
                                     if (activePhase === 1) setShowTour1(true);
                                     if (activePhase === 2) setShowTour2(true);
                                     if (activePhase === 3) setShowTour3(true);
                                 }} />
                             </div>
-                            <p className="text-sm" style={{ color: '#8B9DC3' }}>
+                            <p className="text-sm mt-0.5" style={{ color: '#8B9DC3' }}>
                                 {activePhase === 1 && 'Pre-treatment preparation — complete baseline assessments before session'}
                                 {activePhase === 2 && `Dosing session in progress · ${journey.sessionDate} · Session #${journey.session.sessionNumber}`}
                                 {activePhase === 3 && `Integration phase · ${journey.daysPostSession} days post-session · Monitoring recovery`}
