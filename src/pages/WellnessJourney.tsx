@@ -10,6 +10,7 @@ import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhas
 import { SlideOutPanel } from '../components/wellness-journey/SlideOutPanel';
 import { QuickActionsMenu } from '../components/wellness-journey/QuickActionsMenu';
 import { WellnessFormRouter, type WellnessFormId } from '../components/wellness-journey/WellnessFormRouter';
+import { Phase1StepGuide, PHASE1_STEPS } from '../components/wellness-journey/Phase1StepGuide';
 import { ReadinessScore, RequirementsList } from '../components/benchmark';
 import { useBenchmarkReadiness } from '../hooks/useBenchmarkReadiness';
 import { RiskIndicators } from '../components/risk';
@@ -180,6 +181,9 @@ const WellnessJourney: React.FC = () => {
     // Forms queued to open automatically after the current one closes
     const [queuedFormId, setQueuedFormId] = useState<WellnessFormId | null>(null);
 
+    // ── Phase 1 guided flow: tracks which forms have been saved ──────────────
+    const [completedForms, setCompletedForms] = useState<Set<string>>(() => new Set());
+
     const FORM_LABELS: Record<WellnessFormId, string> = {
         'meq30': 'MEQ-30 Questionnaire',
         'mental-health': 'Mental Health Screening',
@@ -206,11 +210,21 @@ const WellnessJourney: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleCloseForm = useCallback(() => {
+    // Called by WellnessFormRouter's onComplete after a successful save.
+    // Marks the form done and auto-advances to the next Phase 1 step.
+    const handleFormComplete = useCallback((formId: WellnessFormId | null) => {
+        if (formId && activePhase === 1) {
+            setCompletedForms(prev => new Set([...prev, formId]));
+
+            // Find & queue the next incomplete Phase 1 step
+            const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
+            const next = PHASE1_STEPS[currentIndex + 1];
+            if (next) setQueuedFormId(next.id);
+        }
+        // Close the current panel (queuedFormId is dequeued in handleCloseForm)
         setIsFormOpen(false);
         setTimeout(() => {
             setActiveFormId(null);
-            // Dequeue the next mandatory form if one is waiting
             if (queuedFormId) {
                 setQueuedFormId(null);
                 setActiveFormId(queuedFormId);
@@ -219,7 +233,9 @@ const WellnessJourney: React.FC = () => {
             }
         }, 350);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [queuedFormId]);
+    }, [activePhase, queuedFormId]);
+
+
 
     const handleQuickAction = useCallback((formId: string) => {
         handleOpenForm(formId as WellnessFormId);
@@ -383,7 +399,7 @@ const WellnessJourney: React.FC = () => {
         <div className="min-h-screen bg-[#0a1628] px-4 py-4 sm:px-8 sm:py-6 lg:px-16 lg:py-8 xl:px-24">
             {/* Patient Selection Gate — blocks until provider picks new or existing patient */}
             {showPatientModal && (
-                <PatientSelectModal onSelect={handlePatientSelect} />
+                <PatientSelectModal onSelect={handlePatientSelect} onClose={() => navigate(-1)} />
             )}
 
             {/* Onboarding Modal */}
@@ -402,7 +418,7 @@ const WellnessJourney: React.FC = () => {
             {/* WO-113: SlideOut Clinical Form Panel */}
             <SlideOutPanel
                 isOpen={isFormOpen}
-                onClose={handleCloseForm}
+                onClose={() => handleFormComplete(null)}
                 title={activeFormTitle}
                 width="45%"
             >
@@ -411,7 +427,7 @@ const WellnessJourney: React.FC = () => {
                         formId={activeFormId}
                         patientId={journey.patientId}
                         sessionId={1}
-                        onComplete={handleCloseForm}
+                        onComplete={() => handleFormComplete(activeFormId)}
                     />
                 )}
             </SlideOutPanel>
@@ -572,25 +588,16 @@ const WellnessJourney: React.FC = () => {
                 <div className="animate-in fade-in duration-300 space-y-6">
                     {activePhase === 1 && (
                         <>
+                            {/* ── Phase 1 Guided Step Flow — primary navigator ── */}
+                            <Phase1StepGuide
+                                completedFormIds={completedForms}
+                                onStartStep={handleOpenForm}
+                            />
+
                             <PreparationPhase
                                 journey={journey}
                                 onOpenForm={handleOpenForm}
                             />
-                            {/* Phase 1 form sequence — in clinical order */}
-                            <div className="flex flex-wrap gap-3 pt-2">
-                                <button onClick={() => handleOpenForm('consent')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">check_circle</span>Informed Consent
-                                </button>
-                                <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">shield</span>Safety Screen &amp; Eligibility
-                                </button>
-                                <button onClick={() => handleOpenForm('baseline-observations')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">visibility</span>Baseline Observations
-                                </button>
-                                <button onClick={() => handleOpenForm('set-and-setting')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">home_health</span>Set &amp; Setting
-                                </button>
-                            </div>
                         </>
                     )}
                     {activePhase === 2 && (
@@ -681,12 +688,12 @@ const WellnessJourney: React.FC = () => {
                             <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
                             <div className="flex items-center gap-2.5">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${riskDetection.overallRiskLevel === 'high' ? 'bg-red-500/20' :
-                                        riskDetection.overallRiskLevel === 'moderate' ? 'bg-amber-500/20' :
-                                            'bg-emerald-500/20'
+                                    riskDetection.overallRiskLevel === 'moderate' ? 'bg-amber-500/20' :
+                                        'bg-emerald-500/20'
                                     }`} aria-hidden="true">
                                     <svg className={`w-4 h-4 ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                                'text-emerald-400'
+                                        riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
+                                            'text-emerald-400'
                                         }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         {riskDetection.overallRiskLevel === 'high' ? (
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
@@ -699,8 +706,8 @@ const WellnessJourney: React.FC = () => {
                                 </div>
                                 <div>
                                     <span className={`text-3xl font-black ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                                'text-emerald-400'
+                                        riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
+                                            'text-emerald-400'
                                         }`}>
                                         {riskDetection.overallRiskLevel.toUpperCase()}
                                     </span>
