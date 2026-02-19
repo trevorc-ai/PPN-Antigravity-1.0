@@ -96,16 +96,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="space-y-6">
             {navSections.map((section) => (
               <div key={section.title}>
-                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2 px-3">
+                <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 px-3">
                   {section.title}
                 </h3>
                 <ul className="space-y-1">
                   {section.items.map((item) => {
                     // Map tour data attributes to specific navigation items
                     const tourDataMap: Record<string, string> = {
-                      '/interactions': 'interaction-checker',
-                      '/catalog': 'substance-catalog',
-                      '/help': 'help-faq'
+                      '/wellness-journey': 'nav-wellness-journey',
+                      '/interactions': 'nav-interaction-checker',
+                      '/catalog': 'nav-substance-catalog',
+                      '/help': 'nav-help-faq',
                     };
 
                     return (
@@ -134,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                               >
                                 {item.icon}
                               </span>
-                              <span className="text-sm font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
+                              <span className="text-base font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
                             </>
                           )}
                         </NavLink>

@@ -143,6 +143,35 @@ select:focus-visible {
 
 /* 
   ========================================
+   ⚠️ TEXT BRIGHTNESS ENFORCEMENT — DO NOT REMOVE ⚠️
+  ========================================
+   USER REQUIREMENT: Maximum brightness is text-slate-200 (not pure white).
+   Overly bright text causes eye strain for the USER.
+   This block is PROTECTED and must survive all commits.
+   Enforced: 2026-02-16. Restored: 2026-02-18 after accidental deletion in commit 56e3348.
+   AGENTS: You are FORBIDDEN from removing or weakening this block.
+*/
+
+/* Cap text-white at slate-200 (softer white) */
+.text-white {
+  color: rgb(226 232 240) !important;
+  /* slate-200 — NOT pure white */
+}
+
+/* Cap text-slate-100 at slate-200 */
+.text-slate-100 {
+  color: rgb(226 232 240) !important;
+  /* slate-200 */
+}
+
+/* Soften text-slate-300 slightly */
+.text-slate-300 {
+  color: rgb(148 163 184) !important;
+  /* slate-400 */
+}
+
+/* 
+  ========================================
    GLOBAL FONT SIZE ENFORCEMENT (User req)
   ========================================
    ABSOLUTE MINIMUM: 14px for body text (text-sm)
