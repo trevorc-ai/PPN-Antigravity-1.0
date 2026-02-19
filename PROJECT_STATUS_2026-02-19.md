@@ -155,3 +155,4 @@ In order:
 3. Verify arc-of-care demo pages post WO-117 fix (INSPECTOR, needs login)
 4. Begin WO-096: migrate InteractionChecker to live ref_ tables (BUILDER)
 5. Advisory board outreach after business partner approves WO-218 copy (MARKETER)
+## IP FLAG — PPNLogo.tsx Molecule\n- Source: Derived from molview.com render (not original art)\n- Location: src/components/PPNLogo.tsx\n- Risk: Low (hand-coded SVG, generic hexagonal structure) but unresolved before commercial launch\n- Action: Replace with original DESIGNER molecule artwork at next branding session\n- Status: DEPRIORITIZED — not blocking partner demo\n- Logged: 2026-02-19

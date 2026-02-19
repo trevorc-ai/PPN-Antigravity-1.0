@@ -65,7 +65,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
 
     const sections = [
         {
-            title: 'Core Research',
+            title: 'Core',
             items: [
                 { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
                 { label: 'Wellness Journey', icon: 'psychology', path: '/wellness-journey' },
@@ -132,8 +132,9 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-slate-300 text-xs uppercase font-black leading-tight tracking-tight">
-                                PPN Portal
+                            <h1 className="text-xs uppercase font-black leading-tight tracking-tight">
+                                <span className="text-slate-300">PPN</span>{' '}
+                                <span className="text-primary">Portal</span>
                             </h1>
                             <div className="flex items-center gap-1">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
