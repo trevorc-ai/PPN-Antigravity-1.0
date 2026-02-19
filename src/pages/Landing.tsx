@@ -97,6 +97,20 @@ const Landing: React.FC = () => {
   return (
     <div className="min-h-screen bg-transparent text-slate-300 selection:bg-primary/30 selection:text-slate-300 font-sans overflow-x-hidden relative">
 
+      {/* ── Sticky Nav Bar ─────────────────────────────────────────────── */}
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a1628]/80 backdrop-blur-md border-b border-slate-800/60">
+        <div>
+          <p className="text-sm font-black text-slate-200 tracking-[0.15em] uppercase">PPN Portal</p>
+          <p className="text-[11px] font-semibold text-slate-500 tracking-widest uppercase">Institutional Gateway</p>
+        </div>
+        <button
+          onClick={() => navigate('/login')}
+          className="px-5 py-2 bg-slate-800 border border-slate-600 hover:border-indigo-500/60 hover:bg-slate-700 text-slate-200 text-sm font-bold rounded-xl transition-all"
+        >
+          Sign In
+        </button>
+      </header>
+
       {/* Starry Night Parallax Background - Fixed across entire page */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Base dark gradient */}
@@ -132,27 +146,8 @@ const Landing: React.FC = () => {
         }}></div>
       </div>
 
-      {/* SECTION: Hero */}
-      <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden z-10">
-        {/* Top Right Nav — Brand + Sign In */}
-        <div className="absolute top-8 right-10 z-20 hidden md:flex items-center gap-6">
-          <div className="flex flex-col items-end group cursor-default">
-            <p className="text-[12px] font-black text-slate-300 tracking-[0.2em] uppercase transition-colors group-hover:text-primary">
-              PPN Portal
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-black text-slate-600 tracking-widest uppercase">Institutional Gateway</span>
-              <div className="size-1 rounded-full bg-clinical-green animate-pulse"></div>
-            </div>
-          </div>
-          <button
-            onClick={() => navigate('/login')}
-            className="px-5 py-2.5 bg-slate-900/80 border border-slate-700 hover:border-primary/50 hover:bg-slate-800 text-slate-300 text-sm font-bold rounded-xl transition-all backdrop-blur-sm"
-          >
-            Sign In
-          </button>
-        </div>
-
+      {/* SECTION: Hero — top padding accounts for sticky nav height */}
+      <div className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 px-6 overflow-hidden z-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto px-6 relative z-10">
           {/* Left Column (Text) */}

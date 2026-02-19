@@ -334,3 +334,13 @@ The distinction holds because our vocabulary is defined in advance by the practi
 All copy follows USER writing style directive: short sentences, plain words, no em dashes.
 All [PLACEHOLDERS] are marked for USER to fill in before sending.
 Advisory board contacts (Dr. Jason Allen, Sarah Honeycutt, John Turner, Bridger Lee Jensen) are known. Send Email 1 when ready.
+
+---
+
+## Business Partner Protocol
+
+Business partner gets first look at all materials before any advisory board invitations go out.
+
+Do not send Email 1 to external contacts until the business partner has reviewed and cleared the full copy suite.
+
+USER action required: share this file with business partner for review before proceeding.
