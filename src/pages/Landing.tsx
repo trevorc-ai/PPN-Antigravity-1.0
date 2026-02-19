@@ -321,7 +321,7 @@ const Landing: React.FC = () => {
                 <p className="text-sm font-bold text-slate-300">Early access open to licensed practitioners — <span className="text-primary">apply at ppnportal.net</span></p>
               </div>
               <p className="text-xs text-slate-600 font-medium italic max-w-md">
-                As our founding practitioner network grows, this section will display real participating cities — updated live from the network registry.
+                As our alliance grows, participating cities will be listed here — updated from the verified registry.
               </p>
             </div>
           </div>
@@ -428,7 +428,7 @@ const Landing: React.FC = () => {
             {[
               {
                 step: 1,
-                title: "Join Network",
+                title: "Join Alliance",
                 desc: "Request access and verify credentials",
                 icon: Users
               },
@@ -447,7 +447,7 @@ const Landing: React.FC = () => {
               {
                 step: 4,
                 title: "Benchmark",
-                desc: "Compare against network averages",
+                desc: "Compare against alliance benchmarks",
                 icon: BarChart3
               }
             ].map((item, i) => (
