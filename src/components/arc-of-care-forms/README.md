@@ -5,31 +5,28 @@
 ### **19 PHI-Safe Form Components Built** (100% Compliant)
 
 #### **Phase 1: Preparation (5 forms)**
-1. ✅ `MentalHealthScreeningForm.tsx` - PHQ-9, GAD-7, ACE, PCL-5 with color-coded severity
+1. ✅ `BaselineAssessmentWizard.tsx` (exported as `MentalHealthScreeningForm`) - PHQ-9, GAD-7, ACE, PCL-5
 2. ✅ `SetAndSettingForm.tsx` - Treatment expectancy slider with gradient visualization
-3. ✅ `BaselinePhysiologyForm.tsx` - HRV, BP tracking with combined BP display
-4. ✅ `BaselineObservationsForm.tsx` - Multi-select observations with category grouping
-5. ✅ `ConsentForm.tsx` - Informed consent with auto-timestamp
+3. ✅ `BaselineObservationsForm.tsx` - Multi-select observations with category grouping
+4. ✅ `ConsentForm.tsx` - Informed consent with auto-timestamp
+5. ✅ `MEQ30QuestionnaireForm.tsx` (Moved from Phase 2) - Full 30-question assessment
 
-#### **Phase 2: Dosing Session (9 forms)**
+#### **Phase 2: Dosing Session (6 forms)**
 6. ✅ `DosingProtocolForm.tsx` - Substance, dosage, route, batch tracking
 7. ✅ `SessionVitalsForm.tsx` - Repeatable vital sign readings with color-coded status
 8. ✅ `SessionTimelineForm.tsx` - Visual timeline with "Now" buttons and elapsed time
 9. ✅ `SessionObservationsForm.tsx` - Categorized observations with quick-select presets
-10. ✅ `PostSessionAssessmentsForm.tsx` - MEQ-30, EDI, CEQ with auto-timestamps
-11. ✅ `MEQ30QuestionnaireForm.tsx` - Full 30-question assessment with progress tracking
-12. ✅ `AdverseEventForm.tsx` - Severity grading with conditional intervention field
-13. ✅ `SafetyEventObservationsForm.tsx` - Safety observations with quick presets
-14. ✅ `RescueProtocolForm.tsx` - Intervention tracking with duration calculation
+10. ✅ `SafetyAndAdverseEventForm.tsx` - Unified safety log and adverse event reporting
+11. ✅ `RescueProtocolForm.tsx` - Intervention tracking with duration calculation
 
 #### **Phase 3: Integration (4 forms - 100% PHI-Safe)**
-15. ✅ `DailyPulseCheckForm.tsx` - Star ratings for connection, sleep, mood, anxiety
-16. ✅ `LongitudinalAssessmentForm.tsx` - Follow-up assessments with baseline comparison
-17. ✅ `StructuredIntegrationSessionForm.tsx` - Structured therapy session with dropdown selections
-18. ✅ `BehavioralChangeTrackerForm.tsx` - Behavioral change tracking with category dropdowns
+12. ✅ `DailyPulseCheckForm.tsx` - Star ratings for connection, sleep, mood, anxiety
+13. ✅ `LongitudinalAssessmentForm.tsx` - Follow-up assessments with baseline comparison
+14. ✅ `StructuredIntegrationSessionForm.tsx` - Structured therapy session with dropdown selections
+15. ✅ `BehavioralChangeTrackerForm.tsx` - Behavioral change tracking with category dropdowns
 
 #### **Ongoing Safety (1 form - 100% PHI-Safe)**
-19. ✅ `StructuredSafetyCheckForm.tsx` - Comprehensive safety monitoring with dropdown selections
+16. ✅ `StructuredSafetyCheckForm.tsx` - Comprehensive safety monitoring with dropdown selections
 
 ### **7 Shared Components Built**
 1. ✅ `FormField.tsx` - Reusable field wrapper with label, tooltip, error display
@@ -119,20 +116,17 @@ src/components/arc-of-care-forms/
 │   ├── NowButton.tsx
 │   └── VitalPresetsBar.tsx
 ├── phase-1-preparation/
-│   ├── MentalHealthScreeningForm.tsx
+│   ├── BaselineAssessmentWizard.tsx
 │   ├── SetAndSettingForm.tsx
-│   ├── BaselinePhysiologyForm.tsx
 │   ├── BaselineObservationsForm.tsx
-│   └── ConsentForm.tsx
+│   ├── ConsentForm.tsx
+│   └── MEQ30QuestionnaireForm.tsx
 ├── phase-2-dosing/
 │   ├── DosingProtocolForm.tsx
 │   ├── SessionVitalsForm.tsx
 │   ├── SessionTimelineForm.tsx
 │   ├── SessionObservationsForm.tsx
-│   ├── PostSessionAssessmentsForm.tsx
-│   ├── MEQ30QuestionnaireForm.tsx
-│   ├── AdverseEventForm.tsx
-│   ├── SafetyEventObservationsForm.tsx
+│   ├── SafetyAndAdverseEventForm.tsx
 │   └── RescueProtocolForm.tsx
 ├── phase-3-integration/
 │   ├── DailyPulseCheckForm.tsx

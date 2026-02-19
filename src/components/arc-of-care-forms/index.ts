@@ -50,11 +50,7 @@ export type { TimelineEvent } from './phase-2-dosing/SessionTimelineForm';
 export { default as SessionObservationsForm } from './phase-2-dosing/SessionObservationsForm';
 export type { SessionObservationsData } from './phase-2-dosing/SessionObservationsForm';
 
-export { default as AdverseEventForm } from './phase-2-dosing/AdverseEventForm';
-export type { AdverseEventData } from './phase-2-dosing/AdverseEventForm';
 
-export { default as SafetyEventObservationsForm } from './phase-2-dosing/SafetyEventObservationsForm';
-export type { SafetyEventObservationsData } from './phase-2-dosing/SafetyEventObservationsForm';
 
 // Unified replacement for AdverseEventForm + SafetyEventObservationsForm
 export { default as SafetyAndAdverseEventForm } from './phase-2-dosing/SafetyAndAdverseEventForm';

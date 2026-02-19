@@ -13,8 +13,7 @@ import {
     SessionTimelineForm,
     SessionObservationsForm,
     MEQ30QuestionnaireForm,
-    AdverseEventForm,
-    SafetyEventObservationsForm,
+    SafetyAndAdverseEventForm, // Unified replacement
     RescueProtocolForm,
     // Phase 3 - PHI-Safe Forms Only
     DailyPulseCheckForm,
@@ -53,8 +52,8 @@ const FORMS: FormDefinition[] = [
     { id: 'session-vitals', name: 'Session Vitals', component: SessionVitalsForm, phase: 'Phase 2: Dosing Session' },
     { id: 'session-timeline', name: 'Session Timeline', component: SessionTimelineForm, phase: 'Phase 2: Dosing Session' },
     { id: 'session-observations', name: 'Session Observations', component: SessionObservationsForm, phase: 'Phase 2: Dosing Session' },
-    { id: 'adverse-event', name: 'Adverse Event Report', component: AdverseEventForm, phase: 'Phase 2: Dosing Session' },
-    { id: 'safety-observations', name: 'Safety Event Observations', component: SafetyEventObservationsForm, phase: 'Phase 2: Dosing Session' },
+    { id: 'session-observations', name: 'Session Observations', component: SessionObservationsForm, phase: 'Phase 2: Dosing Session' },
+    { id: 'safety-adverse', name: 'Safety & Adverse Events', component: SafetyAndAdverseEventForm, phase: 'Phase 2: Dosing Session' },
     { id: 'rescue-protocol', name: 'Rescue Protocol', component: RescueProtocolForm, phase: 'Phase 2: Dosing Session' },
 
     // Phase 3: Integration (4 forms - 100% PHI-Safe)
