@@ -7,7 +7,10 @@ import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
 import { TreatmentPhase } from '../components/wellness-journey/DosingSessionPhase';
 import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhase';
-import { ReadinessScore, RequirementsList, NextSteps } from '../components/benchmark';
+import { SlideOutPanel } from '../components/wellness-journey/SlideOutPanel';
+import { QuickActionsMenu } from '../components/wellness-journey/QuickActionsMenu';
+import { WellnessFormRouter, type WellnessFormId } from '../components/wellness-journey/WellnessFormRouter';
+import { ReadinessScore, RequirementsList } from '../components/benchmark';
 import { useBenchmarkReadiness } from '../hooks/useBenchmarkReadiness';
 import { RiskIndicators } from '../components/risk';
 import { useRiskDetection } from '../hooks/useRiskDetection';
@@ -128,6 +131,49 @@ const WellnessJourney: React.FC = () => {
 
     // Onboarding state
     const [showOnboarding, setShowOnboarding] = useState(false);
+
+    // WO-113: SlideOut form panel state
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [activeFormId, setActiveFormId] = useState<WellnessFormId | null>(null);
+    const [activeFormTitle, setActiveFormTitle] = useState('Clinical Form');
+
+    const FORM_LABELS: Record<WellnessFormId, string> = {
+        'mental-health': 'Mental Health Screening',
+        'set-and-setting': 'Set & Setting',
+        'baseline-physiology': 'Baseline Physiology',
+        'baseline-observations': 'Clinical Observations',
+        'consent': 'Informed Consent',
+        'dosing-protocol': 'Dosing Protocol',
+        'session-vitals': 'Session Vitals',
+        'session-timeline': 'Session Timeline',
+        'session-observations': 'Session Observations',
+        'post-session-assessments': 'Post-Session Assessments',
+        'meq30': 'MEQ-30 Questionnaire',
+        'adverse-event': 'Adverse Event Log',
+        'safety-observations': 'Safety Observations',
+        'rescue-protocol': 'Rescue Protocol',
+        'daily-pulse': 'Daily Pulse Check',
+        'longitudinal-assessment': 'Longitudinal Assessment',
+        'structured-integration': 'Integration Session',
+        'behavioral-tracker': 'Behavioral Change Tracker',
+        'structured-safety': 'Safety Check',
+    };
+
+    const handleOpenForm = useCallback((formId: WellnessFormId) => {
+        setActiveFormId(formId);
+        setActiveFormTitle(FORM_LABELS[formId] ?? 'Clinical Form');
+        setIsFormOpen(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const handleCloseForm = useCallback(() => {
+        setIsFormOpen(false);
+        setTimeout(() => setActiveFormId(null), 350);
+    }, []);
+
+    const handleQuickAction = useCallback((formId: string) => {
+        handleOpenForm(formId as WellnessFormId);
+    }, [handleOpenForm]);
 
     // Check if user has seen onboarding
     useEffect(() => {
@@ -295,6 +341,23 @@ const WellnessJourney: React.FC = () => {
             {showTour2 && <Phase2Tour onClose={() => setShowTour2(false)} />}
             {showTour3 && <Phase3Tour onClose={() => setShowTour3(false)} />}
 
+            {/* WO-113: SlideOut Clinical Form Panel */}
+            <SlideOutPanel
+                isOpen={isFormOpen}
+                onClose={handleCloseForm}
+                title={activeFormTitle}
+                width="45%"
+            >
+                {activeFormId && (
+                    <WellnessFormRouter
+                        formId={activeFormId}
+                        patientId={journey.patientId}
+                        sessionId={1}
+                        onComplete={handleCloseForm}
+                    />
+                )}
+            </SlideOutPanel>
+
             <div className="max-w-[1600px] mx-auto space-y-6">
                 {/* Export Report - Secondary Position (Top Right) */}
                 <div className="flex justify-end">
@@ -407,6 +470,7 @@ const WellnessJourney: React.FC = () => {
                             Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
                         </p>
                         <button
+                            data-tour="complete-phase-1"
                             onClick={completeCurrentPhase}
                             className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-500/20 transition-all"
                             aria-label={`Mark Phase ${activePhase} complete and unlock Phase ${activePhase + 1}`}
@@ -421,15 +485,18 @@ const WellnessJourney: React.FC = () => {
                 {!isLoading && result && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Readiness Score Widget */}
-                        <ReadinessScore
-                            result={result}
-                            onViewBenchmarks={() => console.log('View benchmarks clicked')}
-                        />
+                        <div data-tour="baseline-metrics">
+                            <ReadinessScore
+                                result={result}
+                                onViewBenchmarks={() => console.log('View benchmarks clicked')}
+                            />
+                        </div>
 
-
+                        {/* Algorithm predictions placeholder */}
+                        <div data-tour="algorithm-predictions" className="hidden" aria-hidden="true" />
 
                         {/* Requirements List (full width) */}
-                        <div className={result.isBenchmarkReady ? 'lg:col-span-2' : 'lg:col-span-2'}>
+                        <div data-tour="schedule-integration" className={result.isBenchmarkReady ? 'lg:col-span-2' : 'lg:col-span-2'}>
                             <RequirementsList
                                 result={result}
                                 onCompleteRequirement={(name) => {
@@ -444,15 +511,17 @@ const WellnessJourney: React.FC = () => {
                 )}
 
                 {/* Risk Indicators Section */}
-                <RiskIndicators
-                    overallRiskLevel={riskDetection.overallRiskLevel}
-                    patientId={journey.patientId}
-                    patientCharacteristics={patientCharacteristics}
-                    baselineFlags={riskDetection.baselineFlags}
-                    vitalFlags={riskDetection.vitalFlags}
-                    progressFlags={riskDetection.progressFlags}
-                    sessionTime="2h 15min"
-                />
+                <div data-tour="risk-flags">
+                    <RiskIndicators
+                        overallRiskLevel={riskDetection.overallRiskLevel}
+                        patientId={journey.patientId}
+                        patientCharacteristics={patientCharacteristics}
+                        baselineFlags={riskDetection.baselineFlags}
+                        vitalFlags={riskDetection.vitalFlags}
+                        progressFlags={riskDetection.progressFlags}
+                        sessionTime="2h 15min"
+                    />
+                </div>
 
                 {/* Safety Timeline Section */}
                 <SafetyTimeline
@@ -467,11 +536,65 @@ const WellnessJourney: React.FC = () => {
                     }, 'audit')}
                 />
 
-                {/* Phase Content - Conditional Rendering */}
-                <div className="animate-in fade-in duration-300">
-                    {activePhase === 1 && <PreparationPhase journey={journey} />}
-                    {activePhase === 2 && <TreatmentPhase journey={journey} />}
-                    {activePhase === 3 && <IntegrationPhase journey={journey} />}
+                {/* Phase Content — WO-113: Each phase has CTA buttons to open forms */}
+                <div className="animate-in fade-in duration-300 space-y-6">
+                    {activePhase === 1 && (
+                        <>
+                            <PreparationPhase journey={journey} />
+                            <div className="flex flex-wrap gap-3 pt-2">
+                                <button onClick={() => handleOpenForm('mental-health')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">psychology</span>Mental Health Screening
+                                </button>
+                                <button onClick={() => handleOpenForm('baseline-physiology')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">monitor_heart</span>Baseline Physiology
+                                </button>
+                                <button onClick={() => handleOpenForm('set-and-setting')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">home_health</span>Set &amp; Setting
+                                </button>
+                                <button onClick={() => handleOpenForm('consent')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">check_circle</span>Informed Consent
+                                </button>
+                            </div>
+                        </>
+                    )}
+                    {activePhase === 2 && (
+                        <>
+                            <TreatmentPhase journey={journey} />
+                            <div className="flex flex-wrap gap-3 pt-2">
+                                <button onClick={() => handleOpenForm('dosing-protocol')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">medication</span>Dosing Protocol
+                                </button>
+                                <button onClick={() => handleOpenForm('session-vitals')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">ecg_heart</span>Record Vitals
+                                </button>
+                                <button onClick={() => handleOpenForm('meq30')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">self_improvement</span>MEQ-30 Assessment
+                                </button>
+                                <button onClick={() => handleOpenForm('adverse-event')} className="flex items-center gap-2 px-5 py-3 bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">warning</span>Log Adverse Event
+                                </button>
+                            </div>
+                        </>
+                    )}
+                    {activePhase === 3 && (
+                        <>
+                            <IntegrationPhase journey={journey} />
+                            <div className="flex flex-wrap gap-3 pt-2">
+                                <button onClick={() => handleOpenForm('daily-pulse')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">favorite</span>Daily Pulse Check
+                                </button>
+                                <button onClick={() => handleOpenForm('structured-integration')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">edit_note</span>Integration Session
+                                </button>
+                                <button onClick={() => handleOpenForm('behavioral-tracker')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">trending_up</span>Behavioral Change
+                                </button>
+                                <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-slate-700/60 hover:bg-slate-700/80 border border-slate-600/40 text-slate-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">shield</span>Safety Check
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Bottom Status Bar (Always Visible) */}
@@ -569,6 +692,12 @@ const WellnessJourney: React.FC = () => {
                     </div>
                 </AdvancedTooltip>
             </div>
+
+            {/* WO-113: Quick Actions FAB */}
+            <QuickActionsMenu
+                currentPhase={activePhase === 1 ? 'phase1' : activePhase === 2 ? 'phase2' : 'phase3'}
+                onActionSelect={handleQuickAction}
+            />
         </div>
     );
 };
