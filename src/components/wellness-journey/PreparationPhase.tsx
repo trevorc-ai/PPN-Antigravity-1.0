@@ -82,8 +82,8 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                             <p className="text-slate-400 mt-1">Complete all safety gates to unlock the dosing session.</p>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${allGatesPassed
-                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                                : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                            : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
                             }`}>
                             {allGatesPassed ? 'Ready to Start' : 'Action Required'}
                         </div>
@@ -94,26 +94,26 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                             <button
                                 key={key}
                                 onClick={gate.action}
-                                className={`relative flex flex-col p-4 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98]
+                                className={`relative flex flex-col p-3 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98]
                                     ${gate.isComplete
                                         ? 'bg-emerald-900/10 border-emerald-500/30 hover:bg-emerald-900/20'
                                         : 'bg-slate-800/40 border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/60'
                                     }`}
                             >
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${gate.isComplete ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${gate.isComplete ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'
                                         }`}>
-                                        {gate.isComplete ? <CheckCircle className="w-5 h-5" /> : <div className="w-3 h-3 rounded-full bg-slate-500" />}
+                                        {gate.isComplete ? <CheckCircle className="w-3.5 h-3.5" /> : <div className="w-2 h-2 rounded-full bg-slate-500" />}
                                     </div>
                                     {gate.isComplete && <span className="text-[10px] font-mono text-emerald-500/70">{gate.date}</span>}
                                 </div>
                                 <div>
-                                    <h3 className={`font-bold ${gate.isComplete ? 'text-emerald-100' : 'text-slate-200'}`}>{gate.label}</h3>
-                                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{gate.description}</p>
+                                    <h3 className={`font-bold text-sm ${gate.isComplete ? 'text-emerald-100' : 'text-slate-200'}`}>{gate.label}</h3>
+                                    <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-2">{gate.description}</p>
                                 </div>
                                 {!gate.isComplete && (
-                                    <div className="mt-4 flex items-center gap-1 text-xs font-bold text-blue-400">
-                                        COMPLETE <ArrowRight className="w-3 h-3" />
+                                    <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-blue-400">
+                                        COMPLETE <ArrowRight className="w-2.5 h-2.5" />
                                     </div>
                                 )}
                             </button>
@@ -130,30 +130,30 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                         <h3 className="text-xl font-bold text-slate-200">Baseline Clinical Profile</h3>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {/* PHQ-9 */}
-                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
-                            <div className={`text-2xl font-black mb-1 ${phq9Info.color}`}>{journey.baseline.phq9}</div>
-                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">PHQ-9</div>
-                            <div className="text-[10px] text-slate-500 mt-1 truncat">{phq9Info.label}</div>
+                        <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className={`text-xl font-black mb-0.5 ${phq9Info.color}`}>{journey.baseline.phq9}</div>
+                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">PHQ-9</div>
+                            <div className="text-[9px] text-slate-500 mt-0.5 truncate">{phq9Info.label}</div>
                         </div>
                         {/* GAD-7 */}
-                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
-                            <div className={`text-2xl font-black mb-1 ${gad7Info.color}`}>{journey.baseline.gad7}</div>
-                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">GAD-7</div>
-                            <div className="text-[10px] text-slate-500 mt-1 truncat">{gad7Info.label}</div>
+                        <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className={`text-xl font-black mb-0.5 ${gad7Info.color}`}>{journey.baseline.gad7}</div>
+                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">GAD-7</div>
+                            <div className="text-[9px] text-slate-500 mt-0.5 truncate">{gad7Info.label}</div>
                         </div>
                         {/* ACE */}
-                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
-                            <div className="text-2xl font-black text-amber-400 mb-1">{journey.baseline.aceScore}</div>
-                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">ACE Score</div>
-                            <div className="text-[10px] text-slate-500 mt-1">Trauma Hist.</div>
+                        <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className="text-xl font-black text-amber-400 mb-0.5">{journey.baseline.aceScore}</div>
+                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ACE Score</div>
+                            <div className="text-[9px] text-slate-500 mt-0.5">Trauma Hist.</div>
                         </div>
                         {/* Expectancy */}
-                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
-                            <div className="text-2xl font-black text-emerald-400 mb-1">{journey.baseline.expectancy}</div>
-                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Expectancy</div>
-                            <div className="text-[10px] text-slate-500 mt-1">High Belief</div>
+                        <div className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className="text-xl font-black text-emerald-400 mb-0.5">{journey.baseline.expectancy}</div>
+                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Expectancy</div>
+                            <div className="text-[9px] text-slate-500 mt-0.5">High Belief</div>
                         </div>
                     </div>
                 </div>

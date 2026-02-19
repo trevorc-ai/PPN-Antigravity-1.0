@@ -255,7 +255,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="200"
                                         value={reading.heart_rate ?? ''}
                                         onChange={(e) => updateReading(index, 'heart_rate', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.heart_rate ? getStatusColor(hrStatus) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.heart_rate ? getStatusColor(hrStatus) : 'border-slate-600'
                                             }`}
                                         placeholder="70"
                                     />
@@ -285,7 +285,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         step="0.01"
                                         value={reading.hrv ?? ''}
                                         onChange={(e) => updateReading(index, 'hrv', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                        className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
                                         placeholder="50.00"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
@@ -310,7 +310,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="100"
                                         value={reading.spo2 ?? ''}
                                         onChange={(e) => updateReading(index, 'spo2', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.spo2 ? getStatusColor(spo2Status) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.spo2 ? getStatusColor(spo2Status) : 'border-slate-600'
                                             }`}
                                         placeholder="98"
                                     />
@@ -337,7 +337,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="250"
                                         value={reading.bp_systolic ?? ''}
                                         onChange={(e) => updateReading(index, 'bp_systolic', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.bp_systolic ? getStatusColor(bpStatus) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.bp_systolic ? getStatusColor(bpStatus) : 'border-slate-600'
                                             }`}
                                         placeholder="120"
                                     />
@@ -359,7 +359,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         max="150"
                                         value={reading.bp_diastolic ?? ''}
                                         onChange={(e) => updateReading(index, 'bp_diastolic', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                        className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
                                         placeholder="80"
                                     />
                                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
@@ -407,7 +407,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             max="60"
                                             value={reading.respiratory_rate ?? ''}
                                             onChange={(e) => updateReading(index, 'respiratory_rate', e.target.value ? parseInt(e.target.value) : undefined)}
-                                            className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.respiratory_rate !== undefined ? getStatusColor(getVitalStatus('rr', reading.respiratory_rate)) : 'border-slate-700/50'
+                                            className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.respiratory_rate !== undefined ? getStatusColor(getVitalStatus('rr', reading.respiratory_rate)) : 'border-slate-600'
                                                 }`}
                                             placeholder="16"
                                         />
@@ -437,7 +437,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             step="0.1"
                                             value={reading.temperature ?? ''}
                                             onChange={(e) => updateReading(index, 'temperature', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                            className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${reading.temperature !== undefined ? getStatusColor(getVitalStatus('temp', reading.temperature)) : 'border-slate-700/50'
+                                            className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.temperature !== undefined ? getStatusColor(getVitalStatus('temp', reading.temperature)) : 'border-slate-600'
                                                 }`}
                                             placeholder="98.6"
                                         />
@@ -462,7 +462,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <select
                                         value={reading.diaphoresis_score ?? ''}
                                         onChange={(e) => updateReading(index, 'diaphoresis_score', e.target.value !== '' ? parseInt(e.target.value) as 0 | 1 | 2 | 3 : undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none ${reading.diaphoresis_score !== undefined ? getStatusColor(getDiaphoresisStatus(reading.diaphoresis_score)) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none placeholder:text-slate-600 ${reading.diaphoresis_score !== undefined ? getStatusColor(getDiaphoresisStatus(reading.diaphoresis_score)) : 'border-slate-600'
                                             }`}
                                     >
                                         <option value="">Select...</option>
@@ -490,7 +490,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <select
                                         value={reading.level_of_consciousness ?? ''}
                                         onChange={(e) => updateReading(index, 'level_of_consciousness', e.target.value || undefined)}
-                                        className={`w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none ${reading.level_of_consciousness ? getStatusColor(getLOCStatus(reading.level_of_consciousness)) : 'border-slate-700/50'
+                                        className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none placeholder:text-slate-600 ${reading.level_of_consciousness ? getStatusColor(getLOCStatus(reading.level_of_consciousness)) : 'border-slate-600'
                                             }`}
                                     >
                                         <option value="">Select...</option>
@@ -523,7 +523,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         type="datetime-local"
                                         value={reading.recorded_at ?? ''}
                                         onChange={(e) => updateReading(index, 'recorded_at', e.target.value)}
-                                        className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                        className="flex-1 px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
                                     />
                                     <button
                                         onClick={() => recordNow(index)}
@@ -543,7 +543,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     type="text"
                                     value={reading.data_source ?? ''}
                                     onChange={(e) => updateReading(index, 'data_source', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
                                     placeholder="e.g., Apple Watch, Manual"
                                 />
                             </div>
@@ -557,7 +557,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     type="text"
                                     value={reading.device_id ?? ''}
                                     onChange={(e) => updateReading(index, 'device_id', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
                                     placeholder="Device serial number or identifier"
                                 />
                             </div>
@@ -569,7 +569,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
             {/* Add Reading Button */}
             <button
                 onClick={addReading}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 rounded-2xl font-medium transition-all"
+                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 rounded-2xl font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
                 <Plus className="w-5 h-5" />
                 Add Another Reading

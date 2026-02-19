@@ -72,6 +72,36 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
         return () => clearInterval(interval);
     }, [mode]);
 
+    // Keyboard Shortcuts (Speed & Accessibility)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (mode !== 'live') return;
+            // Ignore if typing in an input
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+            switch (e.key.toLowerCase()) {
+                case 'v':
+                    onOpenForm('session-vitals');
+                    break;
+                case 'o':
+                    onOpenForm('session-observations');
+                    break;
+                case 'n':
+                    onOpenForm('session-timeline');
+                    break;
+                case 'a':
+                    onOpenForm('safety-and-adverse-event');
+                    break;
+                case 'escape':
+                    // Close logic handled by router usually, but good to have
+                    break;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [mode, onOpenForm]);
+
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
     const [assessmentCompleted, setAssessmentCompleted] = useState(false);
     const [assessmentScores, setAssessmentScores] = useState<{ meq: number; edi: number; ceq: number; } | null>(null);
@@ -226,7 +256,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <p className="text-3xl font-black text-slate-100 leading-tight mb-2 tracking-tight group-hover:text-white transition-colors">Vitals</p>
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-3xl font-black text-slate-100 leading-tight tracking-tight group-hover:text-white transition-colors">Vitals</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-blue-500/20 border border-blue-500/30 text-xs font-mono font-bold text-blue-300">V</kbd>
+                            </div>
                             <p className="text-xs text-blue-200/60 font-bold uppercase tracking-widest group-hover:text-blue-200 transition-colors">Check & Log</p>
                         </div>
                     </button>
@@ -243,7 +276,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <p className="text-3xl font-black text-slate-100 leading-tight mb-2 tracking-tight group-hover:text-white transition-colors">Observe</p>
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-3xl font-black text-slate-100 leading-tight tracking-tight group-hover:text-white transition-colors">Observe</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 border border-amber-500/30 text-xs font-mono font-bold text-amber-300">O</kbd>
+                            </div>
                             <p className="text-xs text-amber-200/60 font-bold uppercase tracking-widest group-hover:text-amber-200 transition-colors">Behavior & Mood</p>
                         </div>
                     </button>
@@ -260,7 +296,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <p className="text-3xl font-black text-slate-100 leading-tight mb-2 tracking-tight group-hover:text-white transition-colors">Note</p>
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-3xl font-black text-slate-100 leading-tight tracking-tight group-hover:text-white transition-colors">Note</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-emerald-500/20 border border-emerald-500/30 text-xs font-mono font-bold text-emerald-300">N</kbd>
+                            </div>
                             <p className="text-xs text-emerald-200/60 font-bold uppercase tracking-widest group-hover:text-emerald-200 transition-colors">Add to Timeline</p>
                         </div>
                     </button>
@@ -278,7 +317,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <p className="text-3xl font-black text-red-100 leading-tight mb-2 tracking-tight group-hover:text-white transition-colors">Adverse</p>
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-3xl font-black text-red-100 leading-tight tracking-tight group-hover:text-white transition-colors">Adverse</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-red-500/20 border border-red-500/30 text-xs font-mono font-bold text-red-300">A</kbd>
+                            </div>
                             <p className="text-xs text-red-400/80 font-bold uppercase tracking-widest group-hover:text-red-200 transition-colors">Log Safety Event</p>
                         </div>
                     </button>

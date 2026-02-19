@@ -44,8 +44,8 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
 
-            {/* 1. TOP ROW: Symptom Decay & Pulse Check Widget */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 1. TOP ROW: Symptom Decay & Pulse Check Widget (Full Width Stack) */}
+            <div className="space-y-6">
 
                 {/* Symptom Decay Curve */}
                 <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 border-2 border-emerald-500/50 rounded-3xl p-6 shadow-lg shadow-emerald-900/20">
@@ -89,7 +89,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                 <AdvancedTooltip content="Export 7-day pulse check trend as CSV for integration session review." tier="micro">
                                     <button
                                         onClick={handleExportTrend}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-400 hover:text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-400 hover:text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     >
                                         <Download className="w-3 h-3" />
                                         CSV
@@ -97,7 +97,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                 </AdvancedTooltip>
                                 <button
                                     onClick={() => setShowPulseCheck(!showPulseCheck)}
-                                    className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700"
+                                    className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     aria-label={showPulseCheck ? 'Collapse pulse check' : 'Expand pulse check'}
                                 >
                                     {showPulseCheck ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}

@@ -110,7 +110,7 @@ agents:
   
   - name: "DESIGNER"
     role: "Senior UI/UX Designer, Spatial Layout Expert & Accessibility Advocate"
-    temperature: 7
+    temperature: 8
     capabilities: ["UI/UX Optimization", "Spatial & Pattern Recognition", "Color-Deficient Accessibility", "Tailwind Spec", "Design Systems"]
     skills:
       - ".agent/skills/ui-ux-product-design/SKILL.md"
