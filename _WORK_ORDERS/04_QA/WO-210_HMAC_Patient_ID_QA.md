@@ -129,3 +129,60 @@ Paste results and verify the count matches what the RAISE NOTICE log reports aft
 - Exception handling on ALTER: PRESENT ✅
 - Verification SELECT at end: PRESENT ✅
 - PHI risk: NONE — column type extension only, no data access ✅
+
+---
+
+## 🔬 INSPECTOR LIVE DIAGNOSTIC — Policy-by-Policy Verification
+
+**Diagnostic run:** 2026-02-19T07:53:57-08:00  
+**Total policies found:** 16 across 6 tables
+
+### Policy Map
+
+| Table | Policy | Blocks ALTER? | Phase 3 Risk |
+|-------|--------|:---:|:---:|
+| log_baseline_assessments | "Users can insert baseline assessments" | No (uses site_id) | None |
+| log_baseline_assessments | "Users can only access their site's baseline assessments" | No (uses site_id) | None |
+| log_behavioral_changes | "Users can insert behavioral changes" | **YES** `(patient_id)::text IN (...)` | ✅ Safe after VARCHAR(20) |
+| log_behavioral_changes | "Users can only access their site's behavioral changes" | **YES** | ✅ Safe |
+| log_clinical_records | "Enable insert for authenticated users only" | No (WITH CHECK: true) | None |
+| log_clinical_records | "log_select_site" | No (uses is_site_member fn) | None |
+| log_clinical_records | "log_write_site" | No (uses has_site_role fn) | None |
+| log_clinical_records | "site_isolation_insert" | No (uses site_id) | None |
+| log_clinical_records | "site_isolation_select" | No (uses site_id) | None |
+| log_integration_sessions | "Users can insert integration sessions" | **YES** `(patient_id)::text IN (...)` | ✅ Safe |
+| log_integration_sessions | "Users can only access their site's integration sessions" | **YES** | ✅ Safe |
+| log_longitudinal_assessments | "Users can insert longitudinal assessments" | **YES** | ✅ Safe |
+| log_longitudinal_assessments | "Users can only access their site's longitudinal assessments" | **YES** | ✅ Safe |
+| log_pulse_checks | "Users can insert pulse checks" | **YES** ← original blocker | ✅ Safe |
+| log_pulse_checks | "Users can only access their site's pulse checks" | **YES** ← original blocker | ✅ Safe |
+
+### Edge Case Verification
+
+**`{public}` roles (empty polroles OID array):**  
+`polroles = '{}'` → `ARRAY(SELECT rolname FROM pg_roles WHERE oid = ANY('{}'))` → returns NULL → DO $$ block defaults to `'PUBLIC'` → `CREATE POLICY ... TO PUBLIC` ✅
+
+**`WITH CHECK (true)` literal on "Enable insert for authenticated users only":**  
+`pg_get_expr` → string `'true'` → `entry->>'withcheck' = 'true'` (not NULL, not '') → appends `WITH CHECK (true)` → valid Postgres syntax ✅
+
+**`qual = null` cases (INSERT policies):**  
+SQL NULL passed to jsonb_build_object → `entry->>'qual' = NULL` → IS NOT NULL check → USING clause correctly omitted ✅
+
+**`is_site_member()` / `has_site_role()` custom functions (log_clinical_records):**  
+pg_get_expr returns the function call string verbatim → recreated as-is → valid because functions exist in DB ✅
+
+### INSPECTOR NOTE: log_clinical_records has 5 policies
+
+`log_clinical_records` has duplicate-pattern policies from two migration generations (`site_isolation_*` and `log_select_site`/`log_write_site`). Not a blocker — DO $$ saves and recreates all 5 faithfully. **Future WO:** Consolidate to remove the redundant `site_isolation_*` policies when all pages have been validated against the `is_site_member`/`has_site_role` functions.
+
+---
+
+## ✅ [STATUS: PASS] — FINAL INSPECTOR APPROVAL — CLEARED TO RUN
+
+**All 16 policies verified safe for drop-alter-recreate cycle.**  
+**Migration: `supabase/migrations/20260219_hmac_patient_id.sql`**
+
+After running, verify:
+1. RAISE NOTICE log shows exactly **16 "Dropped policy"** and **16 "Recreated policy"** messages
+2. Final SELECT shows `character_maximum_length = 20` for all 6 tables
+3. Test an INSERT with a 14-char patient_id (e.g., `PT-PDX7K2MX9QR`) — should succeed
