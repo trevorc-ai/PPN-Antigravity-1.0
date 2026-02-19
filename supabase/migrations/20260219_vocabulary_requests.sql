@@ -44,6 +44,11 @@ CREATE INDEX IF NOT EXISTS idx_vocab_requests_ref_table
 
 ALTER TABLE public.log_vocabulary_requests ENABLE ROW LEVEL SECURITY;
 
+-- Idempotency guards
+DROP POLICY IF EXISTS "vocab_requests_practitioner_insert" ON public.log_vocabulary_requests;
+DROP POLICY IF EXISTS "vocab_requests_site_select"         ON public.log_vocabulary_requests;
+DROP POLICY IF EXISTS "vocab_requests_own_select"          ON public.log_vocabulary_requests;
+
 -- Practitioners: INSERT their own requests only
 CREATE POLICY "vocab_requests_practitioner_insert"
     ON public.log_vocabulary_requests
@@ -70,6 +75,7 @@ CREATE POLICY "vocab_requests_own_select"
     FOR SELECT
     TO authenticated
     USING (requesting_user = auth.uid());
+
 
 -- Verify
 SELECT 'log_vocabulary_requests created' AS status,

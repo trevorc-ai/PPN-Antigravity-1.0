@@ -59,3 +59,21 @@ CREATE TABLE IF NOT EXISTS public.log_vocabulary_requests (
 - [ ] `requesting_sites UUID[]` has a GIN index
 - [ ] INSPECTOR verified no PHI leaks (proposed_label contains clinical concept names, not patient data)
 - [ ] Application-layer: text fields cleared on status → 'approved'
+
+---
+
+## ✅ [STATUS: PASS] — INSPECTOR APPROVED 2026-02-19T08:18:25-08:00
+
+**Audit Results:**
+- Banned commands: NONE ✅
+- CREATE TABLE IF NOT EXISTS: ✅
+- DROP POLICY : CREATE POLICY = 3:3 ✅ (idempotency fix applied)
+- RLS: ENABLED + INSERT + SELECT (×2) ✅
+- GIN index on requesting_sites: ✅
+- B-tree indexes on status + target_ref_table: ✅
+- PHI check: proposed_label / clinical_rationale are clinical concept names, not patient data ✅
+  (e.g. "post-session somatic integration" — no names, IDs, or PII)
+- service_role UPDATE bypass: acceptable for V1 admin operations ✅
+- Missing: application-layer text-field clear on status → 'approved' — documented in WO, not migration concern ✅
+
+**Ready to run:** `supabase/migrations/20260219_vocabulary_requests.sql`
