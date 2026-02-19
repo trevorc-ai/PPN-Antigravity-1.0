@@ -14,7 +14,7 @@ import {
 } from '../lib/stripe';
 
 export const Checkout: FC = () => {
-    const [selectedTier, setSelectedTier] = useState<SubscriptionTier>('clinic');
+    const [selectedTier, setSelectedTier] = useState<SubscriptionTier>('standard');
     const [billingInterval, setBillingInterval] = useState<BillingInterval>('monthly');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export const Checkout: FC = () => {
     };
 
     const tierEntries = Object.entries(SUBSCRIPTION_TIERS).filter(
-        ([key]) => key !== 'enterprise'
+        ([key]) => key !== 'enterprise' && key !== 'free'
     ) as [SubscriptionTier, typeof SUBSCRIPTION_TIERS[SubscriptionTier]][];
 
     return (
@@ -127,7 +127,7 @@ export const Checkout: FC = () => {
                         const price = getPrice(tier, billingInterval);
                         const savings = getAnnualSavings(tier);
                         const isSelected = selectedTier === tier;
-                        const isPopular = tier === 'clinic';
+                        const isPopular = tier === 'standard';
 
                         return (
                             <div
@@ -146,9 +146,19 @@ export const Checkout: FC = () => {
                                 )}
 
                                 {/* Tier Name */}
-                                <h2 className="text-2xl font-bold text-slate-300 mb-2">
+                                <h2 className="text-2xl font-bold text-slate-300 mb-1">
                                     {details.name}
                                 </h2>
+                                {'planName' in details && (
+                                    <p className="text-sm font-black text-primary uppercase tracking-widest mb-4">
+                                        {(details as any).planName}
+                                    </p>
+                                )}
+                                {'requirements' in details && (
+                                    <p className="text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mb-4">
+                                        Requires contributing 5+ de-identified sessions/month
+                                    </p>
+                                )}
 
                                 {/* Price */}
                                 <div className="mb-6">
@@ -167,9 +177,11 @@ export const Checkout: FC = () => {
                                             Save {formatCurrency(savings)}/year
                                         </p>
                                     )}
-                                    <p className="text-sm text-slate-300 mt-2">
-                                        {details.trialDays}-day free trial
-                                    </p>
+                                    {details.trialDays && (
+                                        <p className="text-sm text-slate-300 mt-2">
+                                            {details.trialDays}-day free trial
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Features */}
@@ -213,7 +225,7 @@ export const Checkout: FC = () => {
                         Need Enterprise?
                     </h3>
                     <p className="text-slate-300 mb-6">
-                        Custom solutions for research institutions and large-scale operations.
+                        Multi-site networks and large-scale clinical operations. Includes dedicated account management, group malpractice insurance access, and Center of Excellence certification.
                     </p>
                     <a
                         href="mailto:sales@ppnportal.net"
