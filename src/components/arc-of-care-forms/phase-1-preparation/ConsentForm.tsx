@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { FileCheck, Save, CheckCircle, AlertTriangle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
-import { SegmentedControl } from '../shared/SegmentedControl';
 
 /**
- * ConsentForm - Informed Consent Documentation
- * 
- * Fields: Consent Type, Consent Obtained (checkbox), Verification DateTime
- * Layout: Vertical stack
- * Features: Auto-timestamp on consent, required checkbox to enable save
+ * ConsentForm — Informed Consent Documentation
+ *
+ * UX flow (per WO-118 spec):
+ *   1. Checkbox is always visible first.
+ *   2. Checking the box auto-stamps the Verification DateTime and reveals the
+ *      consent type selector.
+ *   3. Button clicks NEVER trigger a DB write — they only update local state.
+ *   4. A single explicit "Save Consent" button fires onSave exactly once,
+ *      guarded by hasSavedRef so double-clicks and re-renders are harmless.
+ *
+ * No useEffect auto-save — that pattern caused one DB round-trip per button
+ * click and buried the form in error toasts.
  */
 
 export interface ConsentData {
@@ -18,7 +24,7 @@ export interface ConsentData {
 }
 
 interface ConsentFormProps {
-    onSave?: (data: ConsentData) => void;
+    onSave?: (data: ConsentData) => Promise<boolean> | boolean | void;
     initialData?: ConsentData;
     patientId?: string;
 }
@@ -27,45 +33,72 @@ const CONSENT_TYPES = [
     { value: 'informed_consent', label: 'Informed Consent' },
     { value: 'hipaa_authorization', label: 'HIPAA Authorization' },
     { value: 'research_participation', label: 'Research Participation' },
-    { value: 'photography_recording', label: 'Photography/Recording' }
+    { value: 'photography_recording', label: 'Photography/Recording' },
 ];
 
 const ConsentForm: React.FC<ConsentFormProps> = ({
     onSave,
     initialData = { consent_types: [], consent_obtained: false },
-    patientId
 }) => {
     const [data, setData] = useState<ConsentData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-    // Auto-save with debounce
-    useEffect(() => {
-        if (onSave && data.consent_obtained && data.consent_types.length > 0) {
-            setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
-                setIsSaving(false);
-                setLastSaved(new Date());
-            }, 500);
-            return () => clearTimeout(timer);
-        }
-    }, [data, onSave]);
+    // ── One-shot guard ────────────────────────────────────────────────────────
+    // hasSavedRef ensures the DB write fires exactly once per form mount.
+    // Re-renders, double-clicks, and StrictMode second-invocations are all safe.
+    const hasSavedRef = useRef(false);
 
+    // ── Checkbox handler ──────────────────────────────────────────────────────
     const handleConsentToggle = (checked: boolean) => {
-        const now = checked ? new Date().toISOString().slice(0, 16) : undefined;
         setData(prev => ({
             ...prev,
             consent_obtained: checked,
-            verification_datetime: now
+            // Auto-stamp now; clear on uncheck
+            verification_datetime: checked
+                ? new Date().toISOString().slice(0, 16)
+                : undefined,
+            // Clear type selections on uncheck so the next check starts clean
+            consent_types: checked ? prev.consent_types : [],
         }));
+        // Allow re-saving if the clinician unchecks and re-checks
+        if (!checked) hasSavedRef.current = false;
     };
 
-    const canSave = data.consent_obtained && data.consent_types.length > 0 && data.verification_datetime;
+    // ── Explicit save handler — called ONLY by the Save button ────────────────
+    // async so we await the DB round-trip before updating UI state.
+    // hasSavedRef resets on failure so the clinician can retry.
+    const handleSave = async () => {
+        if (!onSave) return;
+        if (!data.consent_obtained) return;
+        if (hasSavedRef.current) return;
+
+        hasSavedRef.current = true;
+        setIsSaving(true);
+        try {
+            const result = await onSave(data);
+            if (result === false) {
+                // Router signalled failure — allow retry
+                hasSavedRef.current = false;
+            } else {
+                setLastSaved(new Date());
+            }
+        } catch {
+            hasSavedRef.current = false;
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    // Consent types are optional — only the checkbox + timestamp are mandatory
+    const canSave =
+        data.consent_obtained &&
+        !!data.verification_datetime;
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
-            {/* Header */}
+
+            {/* ── Header ──────────────────────────────────────────────────── */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-start justify-between">
                     <div>
@@ -77,10 +110,12 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             Document patient consent and authorization before proceeding with treatment.
                         </p>
                     </div>
+
+                    {/* Inline save status in header */}
                     {isSaving && (
                         <div className="flex items-center gap-2 text-blue-400 text-xs">
                             <Save className="w-4 h-4 animate-pulse" />
-                            <span>Saving...</span>
+                            <span>Saving…</span>
                         </div>
                     )}
                     {lastSaved && !isSaving && (
@@ -92,101 +127,131 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                 </div>
             </div>
 
-            {/* Consent Form */}
+            {/* ── Form body ───────────────────────────────────────────────── */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-8">
-                {/* Consent Type */}
-                <FormField
-                    label="Consent Type"
-                    tooltip="Select the type of consent being documented"
-                    required
-                >
-                    <div className="grid grid-cols-2 gap-3">
-                        {CONSENT_TYPES.map((type) => {
-                            const isSelected = data.consent_types.includes(type.value);
-                            return (
-                                <button
-                                    key={type.value}
-                                    type="button"
-                                    onClick={() =>
-                                        setData(prev => ({
-                                            ...prev,
-                                            consent_types: isSelected
-                                                ? prev.consent_types.filter(t => t !== type.value)
-                                                : [...prev.consent_types, type.value]
-                                        }))
-                                    }
-                                    className={`px-5 py-4 rounded-xl text-base font-semibold text-left transition-all active:scale-95 ${isSelected
-                                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 border border-emerald-500'
-                                        : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
-                                        }`}
-                                >
-                                    {type.label}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </FormField>
 
-                {/* Consent Obtained Checkbox */}
+                {/* ── Step 1: Consent checkbox (always visible) ─────────── */}
                 <div className={`p-6 rounded-lg border-2 transition-all ${data.consent_obtained
                     ? 'bg-emerald-500/5 border-emerald-500/50'
                     : 'bg-slate-800/30 border-slate-700/50'
                     }`}>
                     <label className="flex items-start gap-4 cursor-pointer group">
                         <input
+                            id="consent-obtained-checkbox"
                             type="checkbox"
                             checked={data.consent_obtained}
                             onChange={(e) => handleConsentToggle(e.target.checked)}
                             className="mt-1 w-6 h-6 rounded border-slate-600 bg-slate-800/50 text-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer"
                         />
                         <div className="flex-1">
-                            <p className="text-lg font-bold text-slate-300 group-hover:text-slate-300 transition-colors">
+                            <p className="text-lg font-bold text-slate-300 group-hover:text-white transition-colors">
                                 I confirm that informed consent has been obtained from the patient
                             </p>
-                            <p className="text-sm text-slate-300 mt-2">
-                                By checking this box, you certify that the patient has been fully informed of the treatment, risks, benefits, and alternatives, and has voluntarily agreed to proceed.
+                            <p className="text-sm text-slate-400 mt-2">
+                                By checking this box, you certify that the patient has been fully
+                                informed of the treatment, risks, benefits, and alternatives, and
+                                has voluntarily agreed to proceed.
                             </p>
                         </div>
                     </label>
                 </div>
 
-                {/* Verification DateTime */}
-                {data.consent_obtained && (
-                    <FormField
-                        label="Verification Date & Time"
-                        tooltip="Automatically filled when consent is obtained. Can be manually adjusted if needed."
-                        required
-                    >
-                        <input
-                            type="datetime-local"
-                            value={data.verification_datetime ?? ''}
-                            onChange={(e) => setData(prev => ({ ...prev, verification_datetime: e.target.value }))}
-                            className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                        />
-                    </FormField>
-                )}
-
-                {/* Warning if not consented */}
+                {/* Unchecked warning */}
                 {!data.consent_obtained && (
                     <div className="flex items-start gap-3 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-lg">
                         <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                         <div>
                             <p className="text-yellow-400 font-semibold text-sm">Consent Required</p>
                             <p className="text-yellow-400/80 text-sm mt-1">
-                                Patient consent must be obtained and documented before proceeding with treatment.
+                                Patient consent must be obtained and documented before proceeding
+                                with treatment.
                             </p>
                         </div>
                     </div>
                 )}
 
-                {/* Save Status */}
-                {canSave && (
-                    <div className="flex items-center gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
-                        <CheckCircle className="w-5 h-5 text-emerald-400" />
-                        <p className="text-emerald-400 font-semibold text-sm">
-                            Consent documented and saved
-                        </p>
-                    </div>
+                {/* ── Step 2: Timestamp + type buttons (only after checkbox) ─ */}
+                {data.consent_obtained && (
+                    <>
+                        {/* Auto-stamped verification datetime */}
+                        <FormField
+                            label="Verification Date & Time"
+                            tooltip="Automatically filled when consent is obtained. Adjust if documenting retrospectively."
+                            required
+                        >
+                            <input
+                                id="consent-verification-datetime"
+                                type="datetime-local"
+                                value={data.verification_datetime ?? ''}
+                                onChange={(e) =>
+                                    setData(prev => ({
+                                        ...prev,
+                                        verification_datetime: e.target.value,
+                                    }))
+                                }
+                                className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            />
+                        </FormField>
+
+                        {/* Consent type multi-select */}
+                        <FormField
+                            label="Consent Type"
+                            tooltip="Select all consent types being documented for this patient"
+                            required
+                        >
+                            <div className="grid grid-cols-2 gap-3">
+                                {CONSENT_TYPES.map((type) => {
+                                    const isSelected = data.consent_types.includes(type.value);
+                                    return (
+                                        <button
+                                            key={type.value}
+                                            id={`consent-type-${type.value}`}
+                                            type="button"
+                                            disabled={!!lastSaved}
+                                            onClick={() =>
+                                                setData(prev => ({
+                                                    ...prev,
+                                                    consent_types: isSelected
+                                                        ? prev.consent_types.filter(t => t !== type.value)
+                                                        : [...prev.consent_types, type.value],
+                                                }))
+                                            }
+                                            className={`px-5 py-4 rounded-xl text-base font-semibold text-left transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 ${isSelected
+                                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 border border-emerald-500'
+                                                : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                }`}
+                                        >
+                                            {type.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </FormField>
+
+                        {/* ── Save button — visible once ready, hidden after save ── */}
+                        {canSave && !lastSaved && (
+                            <button
+                                id="consent-save-button"
+                                type="button"
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20"
+                            >
+                                <Save className="w-5 h-5" />
+                                {isSaving ? 'Saving…' : 'Save Consent Documentation'}
+                            </button>
+                        )}
+
+                        {/* ── Saved confirmation ───────────────────────────── */}
+                        {lastSaved && (
+                            <div className="flex items-center gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
+                                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                                <p className="text-emerald-400 font-semibold text-sm">
+                                    Consent documented and saved
+                                </p>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>
