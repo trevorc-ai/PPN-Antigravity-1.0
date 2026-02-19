@@ -2,20 +2,20 @@
  * Stripe Client Configuration — WO-097 "Data Bounty" Pricing Model
  *
  * Tier structure (approved 2026-02-19):
- *   1. Protocol Access   — FREE   (no Stripe price, UI-only)
- *   2. Clinic OS         — $199/mo standard OR $49/mo with Data Bounty (75% discount)
- *   3. Risk Shield       — Custom / Contact Sales  ($999+/site/mo)
- *   4. Pharma Partner    — Data licensing ($50K+/yr, handled outside Stripe)
+ *   1. Protocol Access  — FREE   (no Stripe price, UI-only)
+ *   2. Clinic OS        — $199/mo standard OR $49/mo Research Partner Rate (75% discount)
+ *   3. Enterprise       — Custom / Contact Sales  ($999+/site/mo)
+ *   4. Data Licensing Partnership — internal/sales only, NOT public-facing
  *
  * Required Stripe products/prices to create in dashboard:
- *   VITE_STRIPE_PRICE_CLINIC_OS_STANDARD     — $199/month (recurring)
- *   VITE_STRIPE_PRICE_CLINIC_OS_DATA_BOUNTY  — $49/month  (recurring, Data Bounty rate)
- *   VITE_STRIPE_PRICE_CLINIC_OS_ANNUAL       — $1,908/year (recurring, equiv ~$159/mo, 20% off)
+ *   VITE_STRIPE_PRICE_CLINIC_OS_STANDARD          — $199/month (recurring)
+ *   VITE_STRIPE_PRICE_CLINIC_OS_RESEARCH_PARTNER  — $49/month  (recurring, Research Partner Rate)
+ *   VITE_STRIPE_PRICE_CLINIC_OS_ANNUAL             — $1,908/year (recurring, equiv ~$159/mo, 20% off)
  *
  * Vercel env vars to set:
  *   VITE_STRIPE_PUBLISHABLE_KEY
  *   VITE_STRIPE_PRICE_CLINIC_OS_STANDARD
- *   VITE_STRIPE_PRICE_CLINIC_OS_DATA_BOUNTY
+ *   VITE_STRIPE_PRICE_CLINIC_OS_RESEARCH_PARTNER
  *   VITE_STRIPE_PRICE_CLINIC_OS_ANNUAL        (optional, if offering annual)
  *
  * Previous tiers deprecated: solo ($99), clinic ($499) — replaced by this model.
