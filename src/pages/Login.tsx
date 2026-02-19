@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { Loader2, AlertCircle, Activity, ShieldCheck } from 'lucide-react';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  // If redirected here by RequireAuth, go back to the page they were trying to reach
+  const from = (location.state as { from?: string })?.from || '/dashboard';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +32,7 @@ const Login: React.FC = () => {
       if (error) throw error;
 
       if (data.session) {
-        navigate('/dashboard');
+        navigate(from, { replace: true });
       }
 
     } catch (err: any) {

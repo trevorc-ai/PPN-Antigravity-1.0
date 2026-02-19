@@ -19,6 +19,8 @@ import HelpFAQ from './pages/HelpFAQ';
 import Notifications from './pages/Notifications';
 import Settings from './pages/Settings';
 import DataExport from './pages/DataExport';
+import SessionExportCenter from './pages/SessionExportCenter';
+import ClinicalReportPDF from './pages/ClinicalReportPDF';
 import ProfileEdit from './pages/ProfileEdit';
 import Sidebar from './components/Sidebar';
 import TopHeader from './components/TopHeader';
@@ -148,6 +150,43 @@ const ProtectedLayout: React.FC<{
   );
 };
 
+/**
+ * RequireAuth — Session Gate
+ *
+ * Sits between the Router and ProtectedLayout. Checks the Supabase session:
+ *   - loading  → show a subtle spinner (prevents flash redirect on cold page load)
+ *   - no user  → redirect to /login, preserving the intended destination
+ *   - user ok  → render children via <Outlet />
+ *
+ * This replaces the commented-out auth guard that previously lived inside
+ * ProtectedLayout and was disabled for the Inspector audit.
+ */
+const RequireAuth: React.FC = () => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+
+  // While Supabase restores the persisted session from localStorage,
+  // show a minimal loading screen — never redirect prematurely.
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gradient-to-b from-[#0a1628] to-[#05070a]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+          <p className="text-slate-500 text-sm animate-pulse">Verifying session…</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Session expired or never logged in → send to login, preserve return URL
+  if (!user) {
+    const returnTo = location.pathname + location.hash;
+    return <Navigate to="/login" state={{ from: returnTo }} replace />;
+  }
+
+  return <Outlet />;
+};
+
 const AppContent: React.FC = () => {
   const { user, signOut } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -205,60 +244,64 @@ const AppContent: React.FC = () => {
         <Route path="/billing" element={<BillingPortal />} />
         <Route path="/partner-demo" element={<PartnerDemoHub />} />
 
-        {/* Protected Routes */}
-        <Route element={
-          <ProtectedLayout
-            isAuthenticated={!!user}
-            onLogout={signOut}
-            isSidebarOpen={isSidebarOpen}
-            setIsSidebarOpen={setIsSidebarOpen}
-            showTour={showTour}
-            setShowTour={setShowTour}
-          />
-        }>
-          <Route path="/search" element={<SimpleSearch />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/advanced-search" element={<SearchPortal />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/catalog" element={<SubstanceCatalog />} />
-          <Route path="/monograph/:id" element={<SubstanceMonograph />} />
-          <Route path="/interactions" element={<InteractionChecker />} />
-          <Route path="/audit" element={<AuditLogs />} />
-          <Route path="/audit" element={<AuditLogs />} />
+        {/* Protected Routes — RequireAuth gates all children behind a valid session */}
+        <Route element={<RequireAuth />}>
+          <Route element={
+            <ProtectedLayout
+              isAuthenticated={!!user}
+              onLogout={signOut}
+              isSidebarOpen={isSidebarOpen}
+              setIsSidebarOpen={setIsSidebarOpen}
+              showTour={showTour}
+              setShowTour={setShowTour}
+            />
+          }>
+            <Route path="/search" element={<SimpleSearch />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/advanced-search" element={<SearchPortal />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/catalog" element={<SubstanceCatalog />} />
+            <Route path="/monograph/:id" element={<SubstanceMonograph />} />
+            <Route path="/interactions" element={<InteractionChecker />} />
+            <Route path="/audit" element={<AuditLogs />} />
+            <Route path="/audit" element={<AuditLogs />} />
 
-          {/* WELLNESS JOURNEY / ARC OF CARE */}
-          <Route path="/wellness-journey" element={<WellnessJourney />} />
-          <Route path="/arc-of-care-god-view" element={<Navigate to="/wellness-journey" replace />} /> {/* Legacy redirect */}
+            {/* WELLNESS JOURNEY / ARC OF CARE */}
+            <Route path="/wellness-journey" element={<WellnessJourney />} />
+            <Route path="/arc-of-care-god-view" element={<Navigate to="/wellness-journey" replace />} /> {/* Legacy redirect */}
 
-          {/* PROTOCOL BUILDER */}
-          <Route path="/protocols" element={<MyProtocols />} />
-          <Route path="/protocol/:id" element={<ProtocolDetail />} />
-          <Route path="/clinicians" element={<ClinicianDirectory />} />
-          <Route path="/clinician/:id" element={<ClinicianProfile />} />
-          <Route path="/help" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/profile/edit" element={<ProfileEdit />} />
-          <Route path="/data-export" element={<DataExport />} />
+            {/* PROTOCOL BUILDER */}
+            <Route path="/protocols" element={<MyProtocols />} />
+            <Route path="/protocol/:id" element={<ProtocolDetail />} />
+            <Route path="/clinicians" element={<ClinicianDirectory />} />
+            <Route path="/clinician/:id" element={<ClinicianProfile />} />
+            <Route path="/help" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile/edit" element={<ProfileEdit />} />
+            <Route path="/data-export" element={<DataExport />} />
+            <Route path="/session-export" element={<SessionExportCenter />} />
+            <Route path="/clinical-report-pdf" element={<ClinicalReportPDF />} />
 
-          {/* Forms Showcase - Testing Page for Arc of Care Forms */}
-          <Route path="/forms-showcase" element={<FormsShowcase />} />
+            {/* Forms Showcase - Testing Page for Arc of Care Forms */}
+            <Route path="/forms-showcase" element={<FormsShowcase />} />
 
-          {/* Deep Dives */}
-          <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
-          <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
-          <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
-          <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacologyPage />} />
-          <Route path="/deep-dives/protocol-efficiency" element={<ProtocolEfficiencyPage />} />
-          <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
-          <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
+            {/* Deep Dives */}
+            <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
+            <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
+            <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
+            <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacologyPage />} />
+            <Route path="/deep-dives/protocol-efficiency" element={<ProtocolEfficiencyPage />} />
+            <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
+            <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
 
-          <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Logout</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out of Node</button></div>} />
+            <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Logout</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out of Node</button></div>} />
 
-          {/* Catch-all for undefined protected routes */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Route>
+            {/* Catch-all for undefined protected routes */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Route>
+        </Route> {/* closes RequireAuth */}
       </Routes>
     </Router>
   );
