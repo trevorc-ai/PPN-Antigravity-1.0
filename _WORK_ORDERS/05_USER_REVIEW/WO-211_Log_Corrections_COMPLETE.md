@@ -124,3 +124,14 @@ The `approved_by` / `approved_at` columns have no UPDATE policy. This means:
   (10-char minimum prevents empty fields; 500-char maximum prevents PHI essays)
 - FK references: `auth.users` and `log_sites` — both verified live tables ✅
 - `ON DELETE SET NULL` on FK refs — corrections survive user deletion ✅
+
+---
+
+## ✅ WO-211 COMPLETE — USER VERIFIED 2026-02-19T08:03:55-08:00
+
+```
+status                  | row_count
+log_corrections created | 0          ✅ (new empty table — correct)
+```
+
+Table created. RLS enabled. Both policies active. Amendment mechanism live.
