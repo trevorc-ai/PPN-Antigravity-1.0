@@ -5,6 +5,22 @@
 
 ---
 
+## 🔒 MANDATORY PRE-COMMIT CHECK — PROTECTED CODE REGISTRY
+
+Before committing ANY change that touches `src/index.css`, you MUST run:
+```
+git diff HEAD src/index.css | grep -E "^-.*TEXT BRIGHTNESS|^-.*text-white"
+```
+If this returns ANY output, STOP. Restore the deleted lines before committing.
+
+**What you are protecting:** The text brightness caps that prevent eye strain for the USER. These were deleted by accident in commit `56e3348` and had to be manually restored. This must NEVER happen again.
+
+**Full registry:** `.agent/PROTECTED_CODE_REGISTRY.md` — read it before touching index.css, Sidebar.tsx, or any globally-shared layout file.
+
+**Rule summary:** You may only ADD to `index.css`. Never remove existing rules. Never rewrite the whole file.
+
+---
+
 ## 🚨 THE CORE RULE: DO NOT STOP
 
 **The USER's complaint:** BUILDER stops after every task and waits for approval before proceeding.
