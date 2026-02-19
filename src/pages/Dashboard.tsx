@@ -171,6 +171,43 @@ export default function Dashboard() {
             Dashboard
           </h1>
         </div>
+
+        {/* Primary CTA — always visible at the top */}
+        <button
+          data-tour="wellness-journey"
+          onClick={() => navigate('/wellness-journey')}
+          className="flex items-center gap-3 px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 whitespace-nowrap"
+        >
+          <Plus className="w-5 h-5" />
+          Log New Session
+        </button>
+      </Section>
+
+      {/* RECOMMENDED NEXT STEPS — raised to top so users always know what to do */}
+      <Section spacing="tight">
+        <div className="flex items-center gap-3 mb-4">
+          <CheckCircle className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Recommended Next Steps</h2>
+          <span className="ml-auto text-xs text-slate-500 font-medium">Updated today</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <NextStepItem
+            number={1}
+            text="Review 2 safety alerts from this week"
+            link="/deep-dives/molecular-pharmacology"
+            urgent={true}
+          />
+          <NextStepItem
+            number={2}
+            text="Check your clinic's Q1 benchmarks vs network"
+            link="/deep-dives/clinic-performance"
+          />
+          <NextStepItem
+            number={3}
+            text="Log 3 pending follow-up sessions"
+            link="/wellness-journey"
+          />
+        </div>
       </Section>
 
       {/* SEARCH BAR SECTION */}
@@ -321,31 +358,7 @@ export default function Dashboard() {
         )}
       </Section>
 
-      {/* RECOMMENDED NEXT STEPS */}
-      <Section spacing="tight">
-        <div className="flex items-center gap-3 mb-4">
-          <CheckCircle className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Recommended Next Steps</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <NextStepItem
-            number={1}
-            text="Review 2 safety alerts from this week"
-            link="/deep-dives/molecular-pharmacology"
-            urgent={true}
-          />
-          <NextStepItem
-            number={2}
-            text="Check your clinic's Q1 benchmarks vs network"
-            link="/deep-dives/clinic-performance"
-          />
-          <NextStepItem
-            number={3}
-            text="Log 3 pending follow-up sessions"
-            link="/wellness-journey"
-          />
-        </div>
-      </Section>
+      {/* RECOMMENDED NEXT STEPS — now at bottom for context rather than primary guidance */}
 
       {/* QUICK ACTIONS */}
       <Section spacing="tight">
