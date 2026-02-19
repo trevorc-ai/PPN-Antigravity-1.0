@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Loader2, AlertCircle, Activity, ShieldCheck } from 'lucide-react';
+import { Loader2, AlertCircle, Activity, ShieldCheck, Info } from 'lucide-react';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // If redirected here by RequireAuth, go back to the page they were trying to reach
   const from = (location.state as { from?: string })?.from || '/dashboard';
+  const wasRedirected = !!(location.state as { from?: string })?.from;
+
+  // Human-readable page name from path
+  const redirectedPageName = from
+    .replace('#/', '')
+    .replace('/', '')
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase()) || 'your page';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -77,6 +85,16 @@ const Login: React.FC = () => {
       </div>
 
       <div className="w-full max-w-md relative z-10">
+
+        {/* Redirect context banner — only shown when RequireAuth sent user here */}
+        {wasRedirected && (
+          <div className="mb-5 flex items-start gap-3 px-4 py-3 bg-amber-500/10 border border-amber-500/25 rounded-xl">
+            <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-300/90">
+              Sign in to continue to <span className="font-bold">{redirectedPageName}</span>.
+            </p>
+          </div>
+        )}
 
         {/* Back to Home Button */}
         <button

@@ -134,9 +134,9 @@ const Landing: React.FC = () => {
 
       {/* SECTION: Hero */}
       <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden z-10">
-        {/* Top Right Brand Label */}
-        <div className="absolute top-10 right-10 z-20 hidden md:block group cursor-default">
-          <div className="flex flex-col items-end">
+        {/* Top Right Nav — Brand + Sign In */}
+        <div className="absolute top-8 right-10 z-20 hidden md:flex items-center gap-6">
+          <div className="flex flex-col items-end group cursor-default">
             <p className="text-[12px] font-black text-slate-300 tracking-[0.2em] uppercase transition-colors group-hover:text-primary">
               PPN Portal
             </p>
@@ -145,6 +145,12 @@ const Landing: React.FC = () => {
               <div className="size-1 rounded-full bg-clinical-green animate-pulse"></div>
             </div>
           </div>
+          <button
+            onClick={() => navigate('/login')}
+            className="px-5 py-2.5 bg-slate-900/80 border border-slate-700 hover:border-primary/50 hover:bg-slate-800 text-slate-300 text-sm font-bold rounded-xl transition-all backdrop-blur-sm"
+          >
+            Sign In
+          </button>
         </div>
 
 
@@ -202,23 +208,34 @@ const Landing: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/partner-demo')}
                   className="flex-1 px-6 py-4 bg-transparent border-2 border-slate-600 hover:border-slate-500 text-slate-300 text-base font-semibold rounded-xl transition-all hover:bg-slate-900/50 active:scale-95"
                 >
                   Watch Demo (2 min)
                 </button>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-400" />
-                  <span>No credit card required</span>
+              {/* Trust Indicators + Sign In link */}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <span>No credit card required</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                    <span>Full access for 14 days</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-emerald-400" />
-                  <span>Full access for 14 days</span>
-                </div>
+                <p className="text-sm text-slate-500 text-center lg:text-left">
+                  Already have an account?{' '}
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="text-primary hover:text-blue-400 font-bold underline underline-offset-2 transition-colors"
+                  >
+                    Sign In →
+                  </button>
+                </p>
               </div>
             </motion.div>
 
