@@ -1,9 +1,24 @@
 /**
- * Stripe Client Configuration
- * 
- * Manages Stripe subscription tiers, pricing, and client initialization.
- * 
- * @see /Users/trevorcalton/.gemini/antigravity/brain/2e1f5871-bb94-43c4-bd75-775f905e85ec/stripe_integration_spec.md
+ * Stripe Client Configuration — WO-097 "Data Bounty" Pricing Model
+ *
+ * Tier structure (approved 2026-02-19):
+ *   1. Protocol Access   — FREE   (no Stripe price, UI-only)
+ *   2. Clinic OS         — $199/mo standard OR $49/mo with Data Bounty (75% discount)
+ *   3. Risk Shield       — Custom / Contact Sales  ($999+/site/mo)
+ *   4. Pharma Partner    — Data licensing ($50K+/yr, handled outside Stripe)
+ *
+ * Required Stripe products/prices to create in dashboard:
+ *   VITE_STRIPE_PRICE_CLINIC_OS_STANDARD     — $199/month (recurring)
+ *   VITE_STRIPE_PRICE_CLINIC_OS_DATA_BOUNTY  — $49/month  (recurring, Data Bounty rate)
+ *   VITE_STRIPE_PRICE_CLINIC_OS_ANNUAL       — $1,908/year (recurring, equiv ~$159/mo, 20% off)
+ *
+ * Vercel env vars to set:
+ *   VITE_STRIPE_PUBLISHABLE_KEY
+ *   VITE_STRIPE_PRICE_CLINIC_OS_STANDARD
+ *   VITE_STRIPE_PRICE_CLINIC_OS_DATA_BOUNTY
+ *   VITE_STRIPE_PRICE_CLINIC_OS_ANNUAL        (optional, if offering annual)
+ *
+ * Previous tiers deprecated: solo ($99), clinic ($499) — replaced by this model.
  */
 
 import { loadStripe, Stripe } from '@stripe/stripe-js';
@@ -15,8 +30,7 @@ const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || ''
 let stripePromise: Promise<Stripe | null> | null = null;
 
 /**
- * Get Stripe client instance
- * Lazy-loads Stripe.js on first call
+ * Get Stripe client instance — lazy-loads Stripe.js on first call
  */
 export const getStripe = (): Promise<Stripe | null> => {
     if (!stripePromise) {
@@ -26,150 +40,198 @@ export const getStripe = (): Promise<Stripe | null> => {
 };
 
 /**
- * Subscription tier configuration
- * Matches pricing strategy from MARKETER
+ * Subscription tier configuration — WO-097 Data Bounty model
  */
 export const SUBSCRIPTION_TIERS = {
-    solo: {
-        id: 'solo',
-        name: 'Solo Practitioner',
-        priceId: import.meta.env.VITE_STRIPE_PRICE_SOLO_MONTHLY || 'price_solo_monthly',
-        priceIdAnnual: import.meta.env.VITE_STRIPE_PRICE_SOLO_ANNUAL || 'price_solo_annual',
-        priceMonthly: 99,
-        priceAnnual: 79, // 20% discount
+
+    /**
+     * Tier 1: Protocol Access — FREE
+     * Goal: Lead generation, students, observers. No Stripe price needed.
+     */
+    free: {
+        id: 'free',
+        name: 'Protocol Access',
+        tagline: 'Start Learning. Zero Risk.',
+        priceId: null,                  // No Stripe charge
+        priceIdAnnual: null,
+        priceMonthly: 0,
+        priceAnnual: 0,
         currency: 'usd',
-        interval: 'month' as const,
-        trialDays: 14,
+        trialDays: null,
+        badge: null,
         features: [
-            '1 practitioner account',
-            'Unlimited protocols',
-            'Unlimited patients',
-            '1 clinic site',
-            'Protocol Builder with Clinical Decision Support',
-            'Safety Surveillance & Drug Interaction Alerts',
-            'Patient Outcomes Tracking',
-            'Alliance Benchmarking (peer de-identified data)',
-            'Basic Analytics Dashboard',
-            'Data Export (CSV)',
-            'HIPAA-Compliant Storage',
-            'Email Support',
+            'Read-only Protocol Library',
+            'Public benchmark access (aggregated, N≥10)',
+            'Interaction Checker (basic)',
+            'Educational content & field resources',
         ],
+        limitations: [
+            'Cannot create or submit protocols',
+            'No access to full benchmarking dashboard',
+            'No data export',
+            'No safety surveillance alerts',
+        ],
+        cta: 'Start Exploring',
+        ctaPath: '/signup?tier=free',
         limits: {
             users: 1,
-            sites: 1,
-            protocols: -1, // unlimited
+            sites: 0,
+            protocols: 0,
         },
     },
-    clinic: {
-        id: 'clinic',
-        name: 'Clinic',
-        priceId: import.meta.env.VITE_STRIPE_PRICE_CLINIC_MONTHLY || 'price_clinic_monthly',
-        priceIdAnnual: import.meta.env.VITE_STRIPE_PRICE_CLINIC_ANNUAL || 'price_clinic_annual',
-        priceMonthly: 499,
-        priceAnnual: 399, // 20% discount
+
+    /**
+     * Tier 2: Clinic OS — $199/month standard, OR $49/month with Data Bounty
+     * The core paid tier. Data Bounty = practitioners contribute ≥5 de-identified
+     * protocols/month and receive a 75% discount.
+     *
+     * Business logic: data record is worth ~$150/yr to PPN. Discounting by $150/mo
+     * is breakeven financially but guarantees data liquidity. Win-win.
+     */
+    clinic_os: {
+        id: 'clinic_os',
+        name: 'Clinic OS',
+        tagline: 'The Practice Operating System for Psychedelic Therapy',
+        priceId: import.meta.env.VITE_STRIPE_PRICE_CLINIC_OS_STANDARD || 'price_clinic_os_standard',
+        priceIdAnnual: import.meta.env.VITE_STRIPE_PRICE_CLINIC_OS_ANNUAL || 'price_clinic_os_annual',
+        priceIdDataBounty: import.meta.env.VITE_STRIPE_PRICE_CLINIC_OS_DATA_BOUNTY || 'price_clinic_os_data_bounty',
+        priceMonthly: 199,
+        priceMonthlyDataBounty: 49,     // 75% off — the Data Bounty rate
+        priceAnnual: 159,               // ~$1,908/yr — ~20% annual discount (standard rate)
+        dataBountySavingsMonthly: 150,  // $150/mo saved = $1,800/yr
         currency: 'usd',
-        interval: 'month' as const,
         trialDays: 14,
+        badge: 'Most Popular',
         features: [
-            'Everything in Solo, PLUS:',
-            'Up to 10 practitioner accounts',
-            'Up to 3 clinic sites',
-            'Team Collaboration & Role-Based Permissions',
-            'Advanced Analytics (12 Deep Dives)',
-            'Custom Reporting & Scheduled Exports',
-            'Team Performance Dashboards',
-            'Activity Logs & Audit Trails',
-            'Protocol Templates (save & share)',
-            'Priority Email Support',
-            '1-hour Onboarding Call',
+            'Full Protocol Builder (unlimited protocols)',
+            'Patient Outcomes Tracking (de-identified)',
+            'Real-Time Benchmarking Dashboard',
+            'Safety Surveillance & Drug Interaction Alerts',
+            'Wellness Journey Tracking (longitudinal)',
+            'Data Export (CSV / PDF)',
+            'Interaction Checker (full)',
+            'Alliance Benchmarking (peer de-identified data)',
+            'HIPAA-Compliant Storage',
+            'Email Support',
+            '14-Day Free Trial',
         ],
-        limits: {
-            users: 10,
-            sites: 3,
-            protocols: -1, // unlimited
+        dataBountyRequirements: {
+            minProtocolsPerMonth: 5,
+            minQualityScore: 'Bronze',    // completeness threshold
+            gracePeriodMonths: 2,         // 2 consecutive months below threshold = discount ends
         },
-        addOns: {
-            additionalUser: {
-                name: 'Additional User',
-                price: 40,
-                priceId: import.meta.env.VITE_STRIPE_PRICE_ADDON_USER || 'price_addon_user',
-            },
-            additionalSite: {
-                name: 'Additional Site',
-                price: 100,
-                priceId: import.meta.env.VITE_STRIPE_PRICE_ADDON_SITE || 'price_addon_site',
-            },
+        cta: 'Start 14-Day Free Trial',
+        ctaDataBounty: 'Start with Data Bounty ($49/mo)',
+        ctaPath: '/signup?tier=clinic_os',
+        limits: {
+            users: 1,           // per-practitioner pricing
+            sites: 1,
+            protocols: -1,      // unlimited
         },
     },
-    enterprise: {
-        id: 'enterprise',
-        name: 'Enterprise',
-        priceId: null, // Custom pricing
+
+    /**
+     * Tier 3: Risk Shield — Custom pricing ($999+/site/month)
+     * Multi-site networks, group malpractice insurance, Center of Excellence cert.
+     * Handled via Contact Sales — no self-serve Stripe checkout.
+     */
+    risk_shield: {
+        id: 'risk_shield',
+        name: 'Risk Shield',
+        tagline: 'Enterprise-Grade Risk Management for Multi-Site Networks',
+        priceId: null,          // Custom — contact sales
         priceIdAnnual: null,
-        priceMonthly: null, // Custom
+        priceMonthly: null,     // Starts at $999/site/month
         priceAnnual: null,
         currency: 'usd',
-        interval: 'month' as const,
-        trialDays: null, // Custom demo
+        trialDays: null,
+        badge: 'Enterprise',
         features: [
-            'Everything in Clinic, PLUS:',
-            'Unlimited practitioners',
+            'Everything in Clinic OS, PLUS:',
+            'Multi-site dashboards (compare across locations)',
+            'Group malpractice insurance access (negotiated rates)',
+            'Insurance dossier generator (automated prior auth)',
+            '"Center of Excellence" certification badge',
+            'Unlimited practitioner accounts',
             'Unlimited sites',
-            'API Access & Webhooks',
-            'Custom Integrations (EHR, scheduling)',
-            'White-Labeling (patient-facing reports)',
-            'Advanced Data Validation & Quality Controls',
-            'Multi-Site Coordination Tools',
-            'Custom Export Formats (FDA submissions)',
             'Dedicated Account Manager',
-            '24/7 Priority Support',
+            'Priority Support',
             'Custom Training & Onboarding',
             'Research Collaboration Opportunities',
-            'Advisory Board Participation',
         ],
+        cta: 'Contact Sales',
+        ctaPath: '/contact?subject=risk_shield',
         limits: {
-            users: -1, // unlimited
-            sites: -1, // unlimited
-            protocols: -1, // unlimited
+            users: -1,
+            sites: -1,
+            protocols: -1,
         },
     },
+
 } as const;
 
 export type SubscriptionTier = keyof typeof SUBSCRIPTION_TIERS;
 export type BillingInterval = 'monthly' | 'annual';
+export type ClinicOsPricingMode = 'standard' | 'data_bounty';
 
 /**
- * Get price ID for a tier and billing interval
+ * Get price ID for a tier and billing interval.
+ * For clinic_os, pass pricingMode to get the Data Bounty rate.
  */
-export const getPriceId = (tier: SubscriptionTier, interval: BillingInterval): string | null => {
-    const tierConfig = SUBSCRIPTION_TIERS[tier];
-    if (interval === 'annual' && tierConfig.priceIdAnnual) {
-        return tierConfig.priceIdAnnual;
+export const getPriceId = (
+    tier: SubscriptionTier,
+    interval: BillingInterval,
+    pricingMode?: ClinicOsPricingMode
+): string | null => {
+    const t = SUBSCRIPTION_TIERS[tier];
+
+    // Data Bounty rate (only for clinic_os, monthly only)
+    if (tier === 'clinic_os' && pricingMode === 'data_bounty') {
+        return (SUBSCRIPTION_TIERS.clinic_os as typeof SUBSCRIPTION_TIERS['clinic_os']).priceIdDataBounty;
     }
-    return tierConfig.priceId;
+
+    if (interval === 'annual' && 'priceIdAnnual' in t && t.priceIdAnnual) {
+        return t.priceIdAnnual;
+    }
+
+    return t.priceId;
 };
 
 /**
- * Get price amount for a tier and billing interval
+ * Get display price for a tier
  */
-export const getPrice = (tier: SubscriptionTier, interval: BillingInterval): number | null => {
-    const tierConfig = SUBSCRIPTION_TIERS[tier];
-    if (interval === 'annual' && tierConfig.priceAnnual) {
-        return tierConfig.priceAnnual;
+export const getPrice = (
+    tier: SubscriptionTier,
+    interval: BillingInterval,
+    pricingMode?: ClinicOsPricingMode
+): number | null => {
+    const t = SUBSCRIPTION_TIERS[tier];
+
+    if (tier === 'clinic_os' && pricingMode === 'data_bounty') {
+        return SUBSCRIPTION_TIERS.clinic_os.priceMonthlyDataBounty;
     }
-    return tierConfig.priceMonthly;
+
+    if (interval === 'annual' && 'priceAnnual' in t && t.priceAnnual) {
+        return t.priceAnnual;
+    }
+
+    return 'priceMonthly' in t ? t.priceMonthly : null;
 };
 
 /**
- * Calculate annual savings
+ * Calculate annual savings vs monthly billing
  */
 export const getAnnualSavings = (tier: SubscriptionTier): number => {
-    const tierConfig = SUBSCRIPTION_TIERS[tier];
-    if (!tierConfig.priceMonthly || !tierConfig.priceAnnual) return 0;
+    const t = SUBSCRIPTION_TIERS[tier];
+    if (!('priceMonthly' in t) || !t.priceMonthly || !('priceAnnual' in t) || !t.priceAnnual) return 0;
+    return (t.priceMonthly - t.priceAnnual) * 12;
+};
 
-    const monthlyTotal = tierConfig.priceMonthly * 12;
-    const annualTotal = tierConfig.priceAnnual * 12;
-    return monthlyTotal - annualTotal;
+/**
+ * Calculate Data Bounty annual savings (clinic_os only)
+ */
+export const getDataBountySavings = (): number => {
+    return SUBSCRIPTION_TIERS.clinic_os.dataBountySavingsMonthly * 12; // $1,800/yr
 };
 
 /**
@@ -193,10 +255,13 @@ export interface SubscriptionData {
     stripeCustomerId: string;
     stripeSubscriptionId: string;
     tier: SubscriptionTier;
+    pricingMode?: ClinicOsPricingMode;
     status: SubscriptionStatus;
     trialEnd: Date | null;
     currentPeriodEnd: Date;
     cancelAtPeriodEnd: boolean;
+    isDataContributor: boolean;             // WO-097: tracks Data Bounty enrollment
+    dataContributionAgreementSignedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -221,12 +286,8 @@ export const hasFeatureAccess = (
     requiredTier: SubscriptionTier
 ): boolean => {
     if (!userTier) return false;
-
-    const tierHierarchy: SubscriptionTier[] = ['solo', 'clinic', 'enterprise'];
-    const userTierIndex = tierHierarchy.indexOf(userTier);
-    const requiredTierIndex = tierHierarchy.indexOf(requiredTier);
-
-    return userTierIndex >= requiredTierIndex;
+    const hierarchy: SubscriptionTier[] = ['free', 'clinic_os', 'risk_shield'];
+    return hierarchy.indexOf(userTier) >= hierarchy.indexOf(requiredTier);
 };
 
 export default {
@@ -235,6 +296,7 @@ export default {
     getPriceId,
     getPrice,
     getAnnualSavings,
+    getDataBountySavings,
     formatCurrency,
     hasFeatureAccess,
 };
