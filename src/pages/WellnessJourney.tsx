@@ -40,6 +40,8 @@ import { getCurrentSiteId } from '../services/arcOfCareApi';
 
 interface PatientJourney {
     patientId: string;
+    /** UUID — maps to log_clinical_records.id for the active session */
+    sessionId?: string;
     /** Non-PII clinical characteristics — used for quick verification at session start */
     demographics?: {
         age?: number;        // e.g. 34
@@ -156,7 +158,18 @@ const WellnessJourney: React.FC = () => {
     };
 
     const handlePatientSelect = useCallback((patientId: string, isNew: boolean, phase: string) => {
-        setJourney(prev => ({ ...prev, patientId, demographics: undefined }));
+        // For a new patient, generate a session UUID now — this will be used as
+        // log_clinical_records.id for all form saves in this session.
+        // For an existing patient, sessionId stays undefined until a session record
+        // is selected/looked up from the DB (future: PatientSelectModal returns sessionId).
+        const newSessionId = isNew ? crypto.randomUUID() : undefined;
+
+        setJourney(prev => ({
+            ...prev,
+            patientId,
+            sessionId: newSessionId,
+            demographics: undefined,
+        }));
         setShowPatientModal(false);
         // Next time the modal opens, start in the right view for the patient's phase
         setPatientModalView(isNew ? 'choose' : 'existing');
@@ -452,7 +465,7 @@ const WellnessJourney: React.FC = () => {
                     <WellnessFormRouter
                         formId={activeFormId}
                         patientId={journey.patientId}
-                        sessionId={1}
+                        sessionId={journey.sessionId}
                         siteId={clinicianSiteId}
                         onComplete={() => handleFormComplete(activeFormId)}
                     />

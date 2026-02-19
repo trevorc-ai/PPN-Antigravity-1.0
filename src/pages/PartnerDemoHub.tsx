@@ -329,12 +329,12 @@ const PartnerDemoHub: React.FC = () => {
                     </p>
                     <div className="flex items-center justify-center gap-4 pt-4">
                         <div className="text-center">
-                            <div className="text-3xl font-black text-slate-300">80+</div>
-                            <div className="text-sm text-slate-300">Active Features</div>
+                            <div className="text-3xl font-black text-slate-300">38</div>
+                            <div className="text-sm text-slate-300">Features</div>
                         </div>
                         <div className="h-12 w-px bg-slate-700"></div>
                         <div className="text-center">
-                            <div className="text-3xl font-black text-slate-300">13</div>
+                            <div className="text-3xl font-black text-slate-300">14</div>
                             <div className="text-sm text-slate-300">Deep Dives</div>
                         </div>
                         <div className="h-12 w-px bg-slate-700"></div>
@@ -431,13 +431,10 @@ const PartnerDemoHub: React.FC = () => {
                 </div>
             </Section>
 
-            {/* Quick Stats */}
+            {/* Footer */}
             <Section spacing="tight">
-                <div className="text-center text-slate-500 text-sm space-y-2">
-                    <p>Partner Demo Hub • Last Updated: {new Date().toLocaleDateString()}</p>
-                    <p className="font-mono text-sm">
-                        Access URL: <span className="text-primary">http://localhost:3000/#/partner-demo</span>
-                    </p>
+                <div className="text-center text-slate-500 text-sm">
+                    <p>Partner Demo Hub • PPN Portal • {new Date().getFullYear()}</p>
                 </div>
             </Section>
         </PageContainer>

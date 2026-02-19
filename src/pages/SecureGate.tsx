@@ -130,7 +130,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               </h1>
 
               <h2 className="text-[#f59e0b] text-2xl sm:text-4xl font-black tracking-tight opacity-90 leading-tight">
-                Clinical Research & Practitioner Insights Portal
+                Clinical & Practitioner Insights Portal
               </h2>
             </div>
           </div>

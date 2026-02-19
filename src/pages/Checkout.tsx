@@ -216,7 +216,7 @@ export const Checkout: FC = () => {
                         Custom solutions for research institutions and large-scale operations.
                     </p>
                     <a
-                        href="mailto:sales@ppnresearch.com"
+                        href="mailto:sales@ppnportal.net"
                         className="inline-block px-8 py-3 border-2 border-emerald-500 text-emerald-400 font-semibold rounded-lg hover:bg-emerald-500/10 transition focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                         Contact Sales

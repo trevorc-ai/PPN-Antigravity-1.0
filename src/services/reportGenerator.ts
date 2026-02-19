@@ -61,7 +61,7 @@ function formatDate(iso?: string): string {
 
 function generateAuditReport(data: PatientReportData): string {
     const lines: string[] = [
-        'PPN RESEARCH PORTAL — AUDIT REPORT',
+        'PPN PORTAL — AUDIT REPORT',
         `Generated: ${new Date().toLocaleString('en-US')}`,
         '',
         `Patient ID: ${data.patientId}`,

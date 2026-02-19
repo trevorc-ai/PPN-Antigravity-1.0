@@ -144,7 +144,7 @@ const AuditLogs: React.FC = () => {
             <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-400">Audit Logs</h1>
           </div>
           <p className="text-slate-400 text-sm font-bold tracking-[0.2em] uppercase">
-            Institutional Research Ledger • <span className="text-emerald-500">Node Synchronized</span>
+            Institutional Activity Ledger • <span className="text-emerald-500">Node Synchronized</span>
           </p>
         </div>
 

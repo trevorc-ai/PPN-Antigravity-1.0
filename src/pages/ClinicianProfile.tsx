@@ -334,7 +334,7 @@ const ClinicianProfile: React.FC = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Email Address</span>
-                    <span className="text-sm font-bold text-slate-300 lowercase">{clinician.name.toLowerCase().replace(' ', '.').replace('dr.', '')}@ppn-research.org</span>
+                    <span className="text-sm font-bold text-slate-300 lowercase">{clinician.name.toLowerCase().replace(' ', '.').replace('dr.', '')}@ppnportal.net</span>
                   </div>
                 </div>
 

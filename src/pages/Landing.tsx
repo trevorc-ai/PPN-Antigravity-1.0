@@ -237,24 +237,26 @@ const Landing: React.FC = () => {
 
 
 
-            {/* Quick Stats */}
+            {/* Early Access Badge */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1 }}
-              className="grid grid-cols-3 gap-6 w-full max-w-md lg:mx-0 mx-auto pt-8 border-t border-slate-800/50"
+              className="flex flex-col gap-3 w-full max-w-md lg:mx-0 mx-auto pt-8 border-t border-slate-800/50"
             >
-              <div className="text-center">
-                <p className="text-2xl font-black text-slate-300">12k+</p>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Records</p>
+              <div className="flex items-center gap-3 px-4 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl">
+                <span className="material-symbols-outlined text-indigo-400 text-lg">lock</span>
+                <div>
+                  <p className="text-sm font-black text-slate-300">Invitation-Only Early Access</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Founding practitioners are shaping the platform — apply to join.</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-2xl font-black text-slate-300">840+</p>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Clinicians</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-black text-clinical-green">98%</p>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1">Uptime</p>
+              <div className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+                <span className="material-symbols-outlined text-emerald-400 text-lg">verified</span>
+                <div>
+                  <p className="text-sm font-black text-slate-300">Purpose-Built Infrastructure</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Enterprise-grade data architecture designed for clinical scale from day one.</p>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -312,17 +314,15 @@ const Landing: React.FC = () => {
               </div>
             </div>
 
-            {/* City Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl relative z-10">
-              {['Baltimore', 'London', 'Zurich', 'Palo Alto'].map(loc => (
-                <div key={loc} className="space-y-2">
-                  <p className="text-2xl font-black text-slate-300">{loc}</p>
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="size-1.5 rounded-full bg-clinical-green animate-pulse"></span>
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Active Practitioner</span>
-                  </div>
-                </div>
-              ))}
+            {/* Network Status */}
+            <div className="flex flex-col items-center gap-4 w-full max-w-2xl relative z-10">
+              <div className="flex items-center gap-3 px-6 py-4 bg-slate-900/60 border border-slate-700 rounded-2xl">
+                <span className="size-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+                <p className="text-sm font-bold text-slate-300">Early access open to licensed practitioners — <span className="text-primary">apply at ppnportal.net</span></p>
+              </div>
+              <p className="text-xs text-slate-600 font-medium italic max-w-md">
+                As our founding practitioner network grows, this section will display real participating cities — updated live from the network registry.
+              </p>
             </div>
           </div>
         </div>
@@ -342,7 +342,7 @@ const Landing: React.FC = () => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <ShieldCheck className="w-12 h-12 mx-auto mb-3 text-clinical-green" />
-              <p className="text-sm font-bold text-slate-300">HIPAA Compliant</p>
+              <p className="text-sm font-bold text-slate-300">HIPAA Architecture</p>
             </motion.div>
             <motion.div
               className="text-center"
@@ -358,7 +358,7 @@ const Landing: React.FC = () => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <Database className="w-12 h-12 mx-auto mb-3 text-purple-400" />
-              <p className="text-sm font-bold text-slate-300">12,482+ Records</p>
+              <p className="text-sm font-bold text-slate-300">Enterprise Infrastructure</p>
             </motion.div>
             <motion.div
               className="text-center"
@@ -366,7 +366,7 @@ const Landing: React.FC = () => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <Users className="w-12 h-12 mx-auto mb-3 text-indigo-400" />
-              <p className="text-sm font-bold text-slate-300">Multi-Site Network</p>
+              <p className="text-sm font-bold text-slate-300">Multi-Site Ready</p>
             </motion.div>
           </div>
         </div>
@@ -642,20 +642,24 @@ const Landing: React.FC = () => {
               <div className="relative bg-[#111418]/60 border border-slate-800 rounded-[3rem] p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                    <span className="text-3xl font-black text-slate-300">12k+</span>
-                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Enrolled Subjects</p>
+                    <span className="material-symbols-outlined text-4xl text-primary">inventory_2</span>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Structured Clinical Records</p>
+                    <p className="text-xs text-slate-600">Built for scale from day one</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                    <span className="text-3xl font-black text-clinical-green">04</span>
-                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Global Hubs</p>
+                    <span className="material-symbols-outlined text-4xl text-clinical-green">share</span>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Multi-Site Architecture</p>
+                    <p className="text-xs text-slate-600">Network-ready from launch</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                    <span className="text-3xl font-black text-primary">85%</span>
-                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Avg. Outcome Lift</p>
+                    <span className="material-symbols-outlined text-4xl text-primary">query_stats</span>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Longitudinal Outcomes</p>
+                    <p className="text-xs text-slate-600">PHQ-9, GAD-7, MEQ-30 tracking</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
-                    <span className="text-3xl font-black text-accent-amber">99.9%</span>
-                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Data Integrity</p>
+                    <span className="material-symbols-outlined text-4xl text-accent-amber">shield</span>
+                    <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Zero Compromise Security</p>
+                    <p className="text-xs text-slate-600">RLS + encryption by default</p>
                   </div>
                 </div>
               </div>
@@ -800,11 +804,11 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-2xl text-indigo-400">military_tech</span>
               </div>
               <div>
-                <h4 className="text-xl font-black text-slate-300 mb-2">Supporting Our Veterans</h4>
+                <h4 className="text-xl font-black text-slate-300 mb-2">Committed to Veteran Care</h4>
                 <p className="text-sm text-slate-300 leading-relaxed">
                   We are committed to supporting <span className="text-gradient-primary inline-block font-bold pb-1">veterans with PTSD</span> through
-                  evidence-based psychedelic therapy research. A portion of our network's de-identified data contributes to
-                  VA-partnered studies on MDMA-assisted therapy and psilocybin for treatment-resistant PTSD.
+                  evidence-based psychedelic therapy research. Our platform is designed to support multi-site outcomes tracking that can contribute
+                  to emerging research on MDMA-assisted therapy and psilocybin for treatment-resistant PTSD.
                 </p>
               </div>
             </div>
