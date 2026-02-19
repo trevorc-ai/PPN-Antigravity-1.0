@@ -24,15 +24,21 @@ import { supabase } from '../supabaseClient';
  * Returns null if user has no active site assignment.
  */
 export async function getCurrentSiteId(): Promise<string | null> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    // Use getSession() (reads local cache) rather than getUser() which makes
+    // a network round-trip to the Auth server and can fail or timeout.
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session?.user) {
+        console.warn('[getCurrentSiteId] No active session:', sessionError?.message);
+        return null;
+    }
+    const userId = session.user.id;
 
     // NOTE: Do NOT filter by is_active — the PostgREST schema cache may not
     // include columns added after the initial schema load, causing HTTP 404.
     const { data, error } = await supabase
         .from('log_user_sites')
         .select('site_id')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .limit(1);
 
     if (error) {
@@ -40,7 +46,7 @@ export async function getCurrentSiteId(): Promise<string | null> {
         return null;
     }
     if (!data || data.length === 0) {
-        console.warn('[getCurrentSiteId] No site membership found for user:', user.id);
+        console.warn('[getCurrentSiteId] No site membership found for user:', userId);
         return null;
     }
     return data[0].site_id as string;

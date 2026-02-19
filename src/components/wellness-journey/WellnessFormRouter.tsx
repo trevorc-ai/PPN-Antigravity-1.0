@@ -101,6 +101,7 @@ interface WellnessFormRouterProps {
     formId: WellnessFormId;
     patientId?: string;
     sessionId?: string;  // UUID — log_clinical_records.id
+    siteId?: string;     // Resolved by parent (WellnessJourney) at page load
     onComplete?: () => void;
 }
 
@@ -108,15 +109,22 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     formId,
     patientId = '',
     sessionId,
+    siteId: siteIdProp,
     onComplete,
 }) => {
     const { addToast } = useToast();
-    const [siteId, setSiteId] = useState<string | null>(null);
+    const [siteId, setSiteId] = useState<string | null>(siteIdProp ?? null);
 
-    // Resolve site_id from authenticated user's log_user_sites membership at mount
+    // Only fetch internally if the parent didn't provide siteId as a prop.
+    // When siteIdProp is provided this effect does nothing, eliminating the
+    // race condition between component mount and the user clicking Save.
     useEffect(() => {
+        if (siteIdProp) {
+            setSiteId(siteIdProp);
+            return;
+        }
         getCurrentSiteId().then(setSiteId);
-    }, []);
+    }, [siteIdProp]);
 
     // ── Shared success/error helpers ─────────────────────────────────────────
 
@@ -140,8 +148,11 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     // in its dependency array. Without stable reference, every WellnessFormRouter 
     // re-render (e.g. siteId resolving) triggers a new save attempt → 50 error spam.
     const handleConsentSave = useCallback(async (data: ConsentData): Promise<boolean> => {
-        if (!siteId) { onError('Consent', 'No site ID resolved'); return false; }
-        const result = await createConsent(data.consent_types, siteId);
+        // Belt-and-suspenders: if the pre-fetched siteId is still null (race
+        // condition or slow page load), try to resolve it live at save time.
+        const resolvedSiteId = siteId ?? await getCurrentSiteId();
+        if (!resolvedSiteId) { onError('Consent', 'No site ID resolved'); return false; }
+        const result = await createConsent(data.consent_types, resolvedSiteId);
         if (result.success) {
             onSuccess('Informed Consent');
             return true;
@@ -150,6 +161,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return false;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
+
     }, [siteId]);
 
     const handleBaselineObservationsSave = async (data: BaselineObservationsData) => {

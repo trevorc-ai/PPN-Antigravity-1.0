@@ -21,6 +21,7 @@ import { Phase1Tour, Phase2Tour, Phase3Tour, CompassTourButton } from '../compon
 import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
+import { getCurrentSiteId } from '../services/arcOfCareApi';
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -183,6 +184,17 @@ const WellnessJourney: React.FC = () => {
 
     // ── Phase 1 guided flow: tracks which forms have been saved ──────────────
     const [completedForms, setCompletedForms] = useState<Set<string>>(() => new Set());
+
+    // ── Clinician site ID — resolved ONCE at page load, passed to all forms ──
+    // Resolving here prevents the race condition where a form mounts and the
+    // user clicks Save before the internal async fetch completes.
+    const [clinicianSiteId, setClinicianSiteId] = useState<string | undefined>(undefined);
+    useEffect(() => {
+        getCurrentSiteId().then(id => {
+            if (id) setClinicianSiteId(id);
+            else console.warn('[WellnessJourney] Could not resolve siteId at page load');
+        });
+    }, []);
 
     const FORM_LABELS: Record<WellnessFormId, string> = {
         'meq30': 'MEQ-30 Questionnaire',
@@ -427,6 +439,7 @@ const WellnessJourney: React.FC = () => {
                         formId={activeFormId}
                         patientId={journey.patientId}
                         sessionId={1}
+                        siteId={clinicianSiteId}
                         onComplete={() => handleFormComplete(activeFormId)}
                     />
                 )}
