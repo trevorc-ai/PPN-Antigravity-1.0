@@ -807,9 +807,8 @@ const Landing: React.FC = () => {
             <div className="space-y-4">
               <h4 className="text-sm font-black uppercase tracking-widest text-slate-300">Legal & Privacy</h4>
               <ul className="space-y-2 text-sm text-slate-500 font-medium">
-                <li className="hover:text-primary transition-colors cursor-pointer">Terms of Service</li>
-                <li className="hover:text-primary transition-colors cursor-pointer">De-identification Policy</li>
-                <li className="hover:text-primary transition-colors cursor-pointer">Registry Consensus</li>
+                <li><a href="/#/terms" className="hover:text-primary transition-colors">Terms of Service</a></li>
+                <li><a href="/#/privacy" className="hover:text-primary transition-colors">Privacy &amp; De-identification Policy</a></li>
               </ul>
             </div>
 

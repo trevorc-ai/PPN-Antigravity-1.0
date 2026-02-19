@@ -33,6 +33,8 @@ import SignUp from './pages/SignUp';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Landing from './pages/Landing';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import PhysicsDemo from './pages/PhysicsDemo';
 import HiddenComponentsShowcase from './pages/HiddenComponentsShowcase';
 import ComponentShowcase from './pages/ComponentShowcase';
@@ -223,6 +225,8 @@ const AppContent: React.FC = () => {
         <Route path="/landing" element={<Landing />} />
         <Route path="/about" element={<About />} />
         <Route path="/secure-gate" element={<SecureGate />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         {/* Dev/test routes removed from public router — use /hidden-components locally only */}
         <Route path="/arc-of-care" element={<ArcOfCareDemo />} />
         <Route path="/arc-of-care-phase2" element={<ArcOfCarePhase2Demo />} />
@@ -290,7 +294,7 @@ const AppContent: React.FC = () => {
             <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
             <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
 
-            <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Logout</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out of Node</button></div>} />
+            <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Sign Out</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out</button></div>} />
 
             {/* Catch-all for undefined protected routes */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
