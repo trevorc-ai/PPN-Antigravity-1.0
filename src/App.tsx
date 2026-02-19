@@ -43,6 +43,7 @@ import ArcOfCarePhase3Demo from './pages/ArcOfCarePhase3Demo';
 import ArcOfCareDashboard from './pages/ArcOfCareDashboard';
 import WellnessJourney from './pages/WellnessJourney';
 import MEQ30Page from './pages/MEQ30Page';
+import PatientFormPage from './pages/PatientFormPage';
 import AdaptiveAssessmentPage from './pages/AdaptiveAssessmentPage';
 import Checkout from './pages/Checkout';
 import BillingPortal from './pages/BillingPortal';
@@ -194,6 +195,7 @@ const AppContent: React.FC = () => {
         <Route path="/arc-of-care-phase3" element={<ArcOfCarePhase3Demo />} />
         <Route path="/arc-of-care-dashboard" element={<ArcOfCareDashboard />} />
         <Route path="/meq30" element={<MEQ30Page />} />
+        <Route path="/patient-form/:formId" element={<PatientFormPage />} />
         <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />

@@ -4,9 +4,7 @@ import { ChevronRight, CheckCircle } from 'lucide-react';
 // Import all 20 forms
 import {
     // Phase 1
-    MentalHealthScreeningForm,
     SetAndSettingForm,
-    BaselinePhysiologyForm,
     BaselineObservationsForm,
     ConsentForm,
     // Phase 2
@@ -14,7 +12,6 @@ import {
     SessionVitalsForm,
     SessionTimelineForm,
     SessionObservationsForm,
-    PostSessionAssessmentsForm,
     MEQ30QuestionnaireForm,
     AdverseEventForm,
     SafetyEventObservationsForm,
@@ -45,20 +42,17 @@ interface FormDefinition {
 }
 
 const FORMS: FormDefinition[] = [
-    // Phase 1: Preparation (5 forms - All Compliant)
-    { id: 'mental-health', name: 'Mental Health Screening', component: MentalHealthScreeningForm, phase: 'Phase 1: Preparation' },
+    // Phase 1: Preparation (4 forms - All Compliant)
+    { id: 'meq30', name: 'MEQ-30 Questionnaire', component: MEQ30QuestionnaireForm, phase: 'Phase 1: Preparation' },
     { id: 'set-setting', name: 'Set & Setting', component: SetAndSettingForm, phase: 'Phase 1: Preparation' },
-    { id: 'baseline-physiology', name: 'Baseline Physiology', component: BaselinePhysiologyForm, phase: 'Phase 1: Preparation' },
     { id: 'baseline-observations', name: 'Baseline Observations', component: BaselineObservationsForm, phase: 'Phase 1: Preparation' },
     { id: 'consent', name: 'Informed Consent', component: ConsentForm, phase: 'Phase 1: Preparation' },
 
-    // Phase 2: Dosing Session (9 forms - All Compliant)
+    // Phase 2: Dosing Session (8 forms - All Compliant)
     { id: 'dosing-protocol', name: 'Dosing Protocol', component: DosingProtocolForm, phase: 'Phase 2: Dosing Session' },
     { id: 'session-vitals', name: 'Session Vitals', component: SessionVitalsForm, phase: 'Phase 2: Dosing Session' },
     { id: 'session-timeline', name: 'Session Timeline', component: SessionTimelineForm, phase: 'Phase 2: Dosing Session' },
     { id: 'session-observations', name: 'Session Observations', component: SessionObservationsForm, phase: 'Phase 2: Dosing Session' },
-    { id: 'post-session', name: 'Post-Session Assessments', component: PostSessionAssessmentsForm, phase: 'Phase 2: Dosing Session' },
-    { id: 'meq30', name: 'MEQ-30 Questionnaire', component: MEQ30QuestionnaireForm, phase: 'Phase 2: Dosing Session' },
     { id: 'adverse-event', name: 'Adverse Event Report', component: AdverseEventForm, phase: 'Phase 2: Dosing Session' },
     { id: 'safety-observations', name: 'Safety Event Observations', component: SafetyEventObservationsForm, phase: 'Phase 2: Dosing Session' },
     { id: 'rescue-protocol', name: 'Rescue Protocol', component: RescueProtocolForm, phase: 'Phase 2: Dosing Session' },
@@ -127,8 +121,8 @@ const FormsShowcase: React.FC = () => {
                                                     key={form.id}
                                                     onClick={() => setSelectedFormId(form.id)}
                                                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all ${isSelected
-                                                        ? 'bg-blue-500 text-slate-300 shadow-lg shadow-blue-500/30'
-                                                        : 'text-slate-300 hover:bg-slate-800/50'
+                                                        ? 'bg-blue-600 text-white font-semibold shadow-lg shadow-blue-600/30 border-l-4 border-white/60'
+                                                        : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                                                         }`}
                                                 >
                                                     <span className="text-sm font-medium">{form.name}</span>

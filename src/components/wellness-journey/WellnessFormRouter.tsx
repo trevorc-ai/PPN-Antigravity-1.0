@@ -1,65 +1,76 @@
 import React from 'react';
 import { useToast } from '../../contexts/ToastContext';
 
-// All 20 pre-built arc-of-care forms
+// All arc-of-care forms — in clinical sequence
 import {
     // Phase 1: Preparation
-    MentalHealthScreeningForm,
-    SetAndSettingForm,
-    BaselinePhysiologyForm,
-    BaselineObservationsForm,
     ConsentForm,
+    StructuredSafetyCheckForm,
+    BaselineObservationsForm,
+    SetAndSettingForm,
+    MentalHealthScreeningForm,
     // Phase 2: Dosing Session
     DosingProtocolForm,
+    SessionTimelineForm,
     SessionVitalsForm,
     SessionObservationsForm,
-    PostSessionAssessmentsForm,
-    MEQ30QuestionnaireForm,
-    AdverseEventForm,
-    SafetyEventObservationsForm,
+    SafetyAndAdverseEventForm,
     RescueProtocolForm,
-    SessionTimelineForm,
-    // Phase 3: Integration
+    // Phase 3: Integration — Early Follow-up
     DailyPulseCheckForm,
-    LongitudinalAssessmentForm,
+    MEQ30QuestionnaireForm,
+    // Phase 3: Integration — Integration Work
     StructuredIntegrationSessionForm,
     BehavioralChangeTrackerForm,
-    // Ongoing Safety
-    StructuredSafetyCheckForm,
+    LongitudinalAssessmentForm,
 } from '../arc-of-care-forms';
 
 /**
  * WellnessFormRouter — WO-113
  *
- * Maps QuickActionsMenu formId strings to the correct pre-built form component.
- * All forms log to console (mock) and show a toast on save.
- * Swap console.log for Supabase mutations after Arc of Care schema deployment.
+ * Maps a formId string to the correct pre-built form component.
+ * Clinical sequence matches the arc-of-care protocol:
+ *
+ * Phase 1 — Preparation:
+ *   consent → structured-safety → baseline-observations → set-and-setting
+ *
+ * Phase 2 — Dosing Session:
+ *   dosing-protocol → session-timeline → session-vitals → session-observations
+ *   → safety-and-adverse-event → rescue-protocol
+ *
+ * Phase 3 — Integration (Early, 0–72 hrs):
+ *   structured-safety → daily-pulse → meq30 (optional, provider-discretion)
+ *
+ * Phase 3 — Integration (Longitudinal):
+ *   structured-integration → behavioral-tracker → longitudinal-assessment
+ *
+ * Note: MEQ-30 is phase-agnostic. It is available as a persistent button
+ * at all phases. Timing is per individual protocol.
+ *
+ * TODO: replace console.log with Supabase mutations after schema deployment.
  */
 
 export type WellnessFormId =
     // Phase 1
-    | 'mental-health'
-    | 'set-and-setting'
-    | 'baseline-physiology'
-    | 'baseline-observations'
     | 'consent'
+    | 'structured-safety'
+    | 'baseline-observations'
+    | 'set-and-setting'
+    | 'mental-health'
     // Phase 2
     | 'dosing-protocol'
-    | 'session-vitals'
     | 'session-timeline'
+    | 'session-vitals'
     | 'session-observations'
-    | 'post-session-assessments'
-    | 'meq30'
-    | 'adverse-event'
-    | 'safety-observations'
+    | 'safety-and-adverse-event'
     | 'rescue-protocol'
-    // Phase 3
+    // Phase 3 — Early follow-up
     | 'daily-pulse'
-    | 'longitudinal-assessment'
+    | 'meq30'
+    // Phase 3 — Integration work
     | 'structured-integration'
     | 'behavioral-tracker'
-    // Ongoing
-    | 'structured-safety';
+    | 'longitudinal-assessment';
 
 interface WellnessFormRouterProps {
     formId: WellnessFormId;
@@ -76,10 +87,8 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 }) => {
     const { addToast } = useToast();
 
-    // Generic save handler — each form calls this on submit
-    const handleSave = (label: string) => (data: any) => {
-        // TODO: replace with real Supabase mutation after schema deployment
-        console.log(`[MOCK] Saved "${label}" for patient ${patientId}:`, data);
+    const handleSave = (label: string) => (data: unknown) => {
+        console.log(`[MOCK] Saved "${label}" for patient ${patientId} session ${sessionId}:`, data);
         addToast({
             title: `${label} Saved`,
             message: 'Data recorded. Pending DB sync after schema deployment.',
@@ -89,66 +98,59 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     };
 
     switch (formId) {
-        // ── Phase 1: Preparation ─────────────────────────────────────────────
-        case 'mental-health':
-            return <MentalHealthScreeningForm onSave={handleSave('Mental Health Screening')} />;
 
-        case 'set-and-setting':
-            return <SetAndSettingForm onSave={handleSave('Set & Setting')} />;
+        // ── Phase 1: Preparation ──────────────────────────────────────────────
+        case 'consent':
+            return <ConsentForm onSave={handleSave('Informed Consent')} />;
 
-        case 'baseline-physiology':
-            return <BaselinePhysiologyForm onSave={handleSave('Baseline Physiology')} />;
+        case 'structured-safety':
+            return <StructuredSafetyCheckForm onSave={handleSave('Safety Screen')} />;
 
         case 'baseline-observations':
             return <BaselineObservationsForm onSave={handleSave('Baseline Observations')} />;
 
-        case 'consent':
-            return <ConsentForm onSave={handleSave('Informed Consent')} />;
+        case 'set-and-setting':
+            return <SetAndSettingForm onSave={handleSave('Set & Setting')} />;
 
-        // ── Phase 2: Dosing Session ──────────────────────────────────────────
+        case 'mental-health':
+            return <MentalHealthScreeningForm patientId={patientId} onComplete={handleSave('Mental Health Screening')} />;
+
+        // ── Phase 2: Dosing Session ───────────────────────────────────────────
         case 'dosing-protocol':
             return <DosingProtocolForm onSave={handleSave('Dosing Protocol')} />;
-
-        case 'session-vitals':
-            return <SessionVitalsForm onSave={handleSave('Session Vitals')} />;
 
         case 'session-timeline':
             return <SessionTimelineForm onSave={handleSave('Session Timeline')} />;
 
+        case 'session-vitals':
+            return <SessionVitalsForm onSave={handleSave('Session Vitals')} />;
+
         case 'session-observations':
             return <SessionObservationsForm onSave={handleSave('Session Observations')} />;
 
-        case 'post-session-assessments':
-            return <PostSessionAssessmentsForm onSave={handleSave('Post-Session Assessments')} />;
-
-        case 'meq30':
-            return <MEQ30QuestionnaireForm onSave={handleSave('MEQ-30 Questionnaire')} />;
-
-        case 'adverse-event':
-            return <AdverseEventForm onSave={handleSave('Adverse Event')} />;
-
-        case 'safety-observations':
-            return <SafetyEventObservationsForm onSave={handleSave('Safety Observations')} />;
+        case 'safety-and-adverse-event':
+            return <SafetyAndAdverseEventForm onSave={handleSave('Safety & Adverse Events')} />;
 
         case 'rescue-protocol':
             return <RescueProtocolForm onSave={handleSave('Rescue Protocol')} />;
 
-        // ── Phase 3: Integration ─────────────────────────────────────────────
+        // ── Phase 3: Integration — Early Follow-up ───────────────────────────
         case 'daily-pulse':
             return <DailyPulseCheckForm onSave={handleSave('Daily Pulse Check')} />;
 
-        case 'longitudinal-assessment':
-            return <LongitudinalAssessmentForm onSave={handleSave('Longitudinal Assessment')} />;
+        case 'meq30':
+            // Phase-agnostic — available at any phase per provider protocol
+            return <MEQ30QuestionnaireForm onSave={handleSave('MEQ-30 Questionnaire')} />;
 
+        // ── Phase 3: Integration — Integration Work ──────────────────────────
         case 'structured-integration':
             return <StructuredIntegrationSessionForm onSave={handleSave('Integration Session')} />;
 
         case 'behavioral-tracker':
-            return <BehavioralChangeTrackerForm onSave={handleSave('Behavioral Change')} />;
+            return <BehavioralChangeTrackerForm onSave={handleSave('Behavioral Change Tracker')} />;
 
-        // ── Ongoing Safety ───────────────────────────────────────────────────
-        case 'structured-safety':
-            return <StructuredSafetyCheckForm onSave={handleSave('Safety Check')} />;
+        case 'longitudinal-assessment':
+            return <LongitudinalAssessmentForm onSave={handleSave('Longitudinal Assessment')} />;
 
         default:
             return (

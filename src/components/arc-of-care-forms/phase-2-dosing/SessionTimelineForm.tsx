@@ -1,492 +1,265 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Clock, Save, CheckCircle, Zap, ChevronDown, ChevronUp, Pill, AlertTriangle, RotateCcw } from 'lucide-react';
-import { FormField } from '../shared/FormField';
-import { VisualTimeline } from '../shared/VisualTimeline';
-import { supabase } from '../../../supabaseClient';
+import React, { useState, useEffect } from 'react';
+import { Clock, Tag, Music, AlertTriangle, Plus, Trash2, CheckCircle, Play, Stethoscope, Mic, Pill } from 'lucide-react';
+import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 
 /**
- * SessionTimelineForm - Session Event Timeline
+ * SessionTimelineForm - Minute-by-Minute Session Tracking
  *
- * Phase 2: Dosing Session — Milestone Tracker
- *
- * Fields:
- *   - dose_administered_at  (datetime-local) — when substance was given
- *   - onset_reported_at     (datetime-local) — patient-reported onset
- *   - peak_intensity_at     (datetime-local) — peak effect observed
- *   - session_ended_at      (datetime-local) — session formally closed
+ * Implements WO-086 "Session Timeline Tracking"
  *
  * Features:
- *   - One-tap "Mark Now" quick-action buttons (primary workflow)
- *   - Collapsible manual datetime override panel
- *   - VisualTimeline SVG showing progress + elapsed T+ times
- *   - "Quick Fill Typical" for demo / training scenarios
- *   - Reset individual milestone or all milestones
- *   - Supabase persistence via session_timeline_events table
- *   - Auto-save with 500ms debounce
- *   - WCAG AAA compliant (min 12px fonts, no color-only meaning)
- *
- * PHI Safety: No free-text inputs. All data is structured timestamps.
+ * - "Action Deck" interface for quick-taps
+ * - Event types: Dose Admin, Vital Check, Observation, Decision, Music, Safety
+ * - Auto-timestamps ("Record Now")
+ * - Repeatable event stream
+ * - Integration with session_timeline_events table
  */
 
-export interface SessionTimelineData {
-    dose_administered_at?: string;
-    onset_reported_at?: string;
-    peak_intensity_at?: string;
-    session_ended_at?: string;
+export interface TimelineEvent {
+    id: string;
+    session_id?: string;
+    event_timestamp: string;           // ISO 8601 datetime
+    event_type: 'dose_admin' | 'vital_check' | 'patient_observation' | 'clinical_decision' | 'music_change' | 'touch_consent' | 'safety_event' | 'other';
+    event_description: string;         // max 500 chars
+    performed_by?: string;             // user UUID
+    metadata?: any;
+    created_at?: string;
 }
 
 interface SessionTimelineFormProps {
-    onSave?: (data: SessionTimelineData) => void;
-    initialData?: SessionTimelineData;
-    patientId?: string;
+    onSave?: (data: TimelineEvent[]) => void;
+    initialData?: TimelineEvent[];
     sessionId?: string;
 }
 
-// ─── Milestone config (static, defined before component) ─────────────────────
-const MILESTONES = [
-    {
-        field: 'dose_administered_at' as keyof SessionTimelineData,
-        label: 'Dose Administered',
-        shortLabel: 'Mark Dose',
-        description: 'Record the exact time the substance was administered.',
-        Icon: Pill,
-        colorClass: 'text-pink-400',
-        bgClass: 'bg-pink-500/10',
-        hoverBgClass: 'hover:bg-pink-500/20',
-        borderClass: 'border-pink-500/30',
-        disabledBorderClass: 'disabled:border-slate-700',
-    },
-    {
-        field: 'onset_reported_at' as keyof SessionTimelineData,
-        label: 'Onset Reported',
-        shortLabel: 'Mark Onset',
-        description: 'Record when the patient first reports feeling effects.',
-        Icon: Zap,
-        colorClass: 'text-yellow-400',
-        bgClass: 'bg-yellow-500/10',
-        hoverBgClass: 'hover:bg-yellow-500/20',
-        borderClass: 'border-yellow-500/30',
-        disabledBorderClass: 'disabled:border-slate-700',
-    },
-    {
-        field: 'peak_intensity_at' as keyof SessionTimelineData,
-        label: 'Peak Intensity',
-        shortLabel: 'Mark Peak',
-        description: 'Record when peak effect intensity is observed.',
-        Icon: Zap,
-        colorClass: 'text-orange-400',
-        bgClass: 'bg-orange-500/10',
-        hoverBgClass: 'hover:bg-orange-500/20',
-        borderClass: 'border-orange-500/30',
-        disabledBorderClass: 'disabled:border-slate-700',
-    },
-    {
-        field: 'session_ended_at' as keyof SessionTimelineData,
-        label: 'Session Ended',
-        shortLabel: 'End Session',
-        description: 'Record when the formal dosing session is closed.',
-        Icon: CheckCircle,
-        colorClass: 'text-emerald-400',
-        bgClass: 'bg-emerald-500/10',
-        hoverBgClass: 'hover:bg-emerald-500/20',
-        borderClass: 'border-emerald-500/30',
-        disabledBorderClass: 'disabled:border-slate-700',
-    },
-] as const;
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function toLocalISO(): string {
-    // Returns datetime-local compatible string (no seconds, no Z)
-    return new Date().toISOString().slice(0, 16);
-}
-
-function calculateElapsed(from?: string, to?: string): string {
-    if (!from || !to) return '--';
-    const diff = new Date(to).getTime() - new Date(from).getTime();
-    if (diff < 0) return 'Invalid';
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    if (hours === 0) return `${minutes}m`;
-    if (minutes === 0) return `${hours}h`;
-    return `${hours}h ${minutes}m`;
-}
-
-function formatTime(iso?: string): string {
-    if (!iso) return '';
-    return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
 const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
     onSave,
-    initialData = {},
-    patientId,
-    sessionId,
+    initialData = [],
+    sessionId
 }) => {
-    const [data, setData] = useState<SessionTimelineData>(initialData);
+    const [events, setEvents] = useState<TimelineEvent[]>(
+        initialData.length > 0 ? initialData : [createEmptyEvent()]
+    );
     const [isSaving, setIsSaving] = useState(false);
-    const [saveError, setSaveError] = useState<string | null>(null);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
-    const [showManualEntry, setShowManualEntry] = useState(false);
 
-    // ── Supabase persistence ──────────────────────────────────────────────────
-    const persistToSupabase = useCallback(async (payload: SessionTimelineData) => {
-        if (!sessionId) return; // No session context — skip DB write
-
-        try {
-            const { error } = await supabase
-                .from('session_timeline_events')
-                .upsert(
-                    {
-                        session_id: sessionId,
-                        patient_id: patientId ?? null,
-                        dose_administered_at: payload.dose_administered_at ?? null,
-                        onset_reported_at: payload.onset_reported_at ?? null,
-                        peak_intensity_at: payload.peak_intensity_at ?? null,
-                        session_ended_at: payload.session_ended_at ?? null,
-                        updated_at: new Date().toISOString(),
-                    },
-                    { onConflict: 'session_id' }
-                );
-
-            if (error) throw error;
-        } catch (err) {
-            console.error('[SessionTimelineForm] Supabase error:', err);
-            setSaveError('Failed to save to database. Data is preserved locally.');
-        }
-    }, [sessionId, patientId]);
-
-    // ── Auto-save with 500ms debounce ─────────────────────────────────────────
+    // Auto-save with debounce
     useEffect(() => {
-        const hasAnyData = Object.values(data).some(Boolean);
-        if (!hasAnyData) return;
+        if (onSave && events.some(e => hasData(e))) {
+            setIsSaving(true);
+            const timer = setTimeout(() => {
+                onSave(events.filter(e => hasData(e)));
+                setIsSaving(false);
+                setLastSaved(new Date());
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [events, onSave]);
 
-        setIsSaving(true);
-        setSaveError(null);
-
-        const timer = setTimeout(async () => {
-            // 1. Call parent callback
-            onSave?.(data);
-            // 2. Persist to Supabase (non-blocking)
-            await persistToSupabase(data);
-            setIsSaving(false);
-            setLastSaved(new Date());
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [data, onSave, persistToSupabase]);
-
-    // ── Field updaters ────────────────────────────────────────────────────────
-    const updateField = (field: keyof SessionTimelineData, value: string) => {
-        setData(prev => ({ ...prev, [field]: value || undefined }));
-    };
-
-    const setNow = (field: keyof SessionTimelineData) => {
-        updateField(field, toLocalISO());
-    };
-
-    const clearField = (field: keyof SessionTimelineData) => {
-        setData(prev => {
-            const next = { ...prev };
-            delete next[field];
-            return next;
-        });
-    };
-
-    // ── Quick Fill (demo/training only) ───────────────────────────────────────
-    const quickFillTypical = () => {
+    function createEmptyEvent(): TimelineEvent {
+        // Default to current time
         const now = new Date();
-        setData({
-            dose_administered_at: now.toISOString().slice(0, 16),
-            onset_reported_at: new Date(now.getTime() + 30 * 60000).toISOString().slice(0, 16),
-            peak_intensity_at: new Date(now.getTime() + 120 * 60000).toISOString().slice(0, 16),
-            session_ended_at: new Date(now.getTime() + 360 * 60000).toISOString().slice(0, 16),
+        // Adjust to local ISO string for input[type="datetime-local"]
+        const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+
+        return {
+            id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            event_timestamp: localIso,
+            event_type: 'other',
+            event_description: ''
+        };
+    }
+
+    function hasData(event: TimelineEvent): boolean {
+        return !!(event.event_description && event.event_description.trim().length > 0);
+    }
+
+    function updateEvent(index: number, field: keyof TimelineEvent, value: any) {
+        setEvents(prev => {
+            const updated = [...prev];
+            updated[index] = { ...updated[index], [field]: value };
+            return updated;
         });
-    };
+    }
 
-    const resetAll = () => {
-        setData({});
-        setLastSaved(null);
-        setSaveError(null);
-    };
+    function addEvent() {
+        setEvents(prev => [createEmptyEvent(), ...prev]); // Add new to top
+    }
 
-    // ── Derived values ────────────────────────────────────────────────────────
-    const totalDuration = calculateElapsed(data.dose_administered_at, data.session_ended_at);
-    const sessionComplete = !!(data.dose_administered_at && data.session_ended_at);
-    const completedCount = Object.values(data).filter(Boolean).length;
+    function removeEvent(index: number) {
+        if (events.length > 1) {
+            setEvents(prev => prev.filter((_, i) => i !== index));
+        } else {
+            // If only one, just clear it
+            setEvents([createEmptyEvent()]);
+        }
+    }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    function recordNow(index: number) {
+        const now = new Date();
+        const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        updateEvent(index, 'event_timestamp', localIso);
+    }
+
+    // Quick Action Templates
+    const QUICK_ACTIONS = [
+        { label: 'Dose Admin', type: 'dose_admin', icon: Pill, color: 'emerald', desc: 'Administered [Dose]mg of [Substance] via [Route].' },
+        { label: 'Vital Check', type: 'vital_check', icon: Stethoscope, color: 'blue', desc: 'Vitals checked. HR:__, BP:__/__' },
+        { label: 'Patient Spoke', type: 'patient_observation', icon: Mic, color: 'amber', desc: 'Patient reported: ' },
+        { label: 'Music Change', type: 'music_change', icon: Music, color: 'violet', desc: 'Playlist changed to: ' },
+        { label: 'Decision', type: 'clinical_decision', icon: AlertTriangle, color: 'orange', desc: 'Decision made: ' },
+    ];
+
+    function applyQuickAction(index: number, action: any) {
+        updateEvent(index, 'event_type', action.type);
+        // Only set description if empty to avoid overwriting user notes
+        if (!events[index].event_description) {
+            updateEvent(index, 'event_description', action.desc);
+        }
+        recordNow(index);
+    }
+
+    // Helper to get badge color
+    function getTypeColor(type: string) {
+        switch (type) {
+            case 'dose_admin': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+            case 'vital_check': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+            case 'patient_observation': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+            case 'clinical_decision': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+            case 'music_change': return 'bg-violet-500/10 text-violet-400 border-violet-500/20';
+            case 'safety_event': return 'bg-red-500/10 text-red-400 border-red-500/20';
+            case 'touch_consent': return 'bg-pink-500/10 text-pink-400 border-pink-500/20';
+            default: return 'bg-slate-700/50 text-slate-300 border-slate-600/50';
+        }
+    }
+
     return (
-        <div className="max-w-3xl mx-auto space-y-6" role="main" aria-label="Session Timeline Form">
-
-            {/* ── Header ──────────────────────────────────────────────────── */}
+        <div className="max-w-4xl mx-auto space-y-6">
+            {/* Header */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <div className="flex items-start justify-between gap-4 flex-wrap">
+                <div className="flex items-start justify-between">
                     <div>
                         <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
-                            <Clock className="w-7 h-7 text-blue-400" aria-hidden="true" />
+                            <Clock className="w-7 h-7 text-blue-400" />
                             Session Timeline
                         </h2>
-                        <p className="text-slate-400 text-sm mt-2 leading-relaxed">
-                            Track key milestones during the dosing session to monitor substance pharmacokinetics.
-                            Tap a button below to record the current time instantly.
+                        <p className="text-slate-300 text-sm mt-2">
+                            Minute-by-minute log of all clinical actions, observations, and decisions.
                         </p>
                     </div>
-
-                    {/* Progress badge */}
-                    <div
-                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-lg shrink-0"
-                        aria-label={`${completedCount} of 4 milestones recorded`}
-                    >
-                        <span className="text-blue-400 text-xs font-black uppercase tracking-widest">
-                            {completedCount} / 4
-                        </span>
-                        <span className="text-blue-300 text-xs font-medium">Milestones</span>
-                    </div>
-                </div>
-
-                {/* Action row */}
-                <div className="flex items-center gap-3 mt-4 flex-wrap">
-                    <button
-                        onClick={quickFillTypical}
-                        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-all"
-                        aria-label="Quick fill with typical session timeline (demo use)"
-                    >
-                        Quick Fill Typical
-                    </button>
-                    <button
-                        onClick={resetAll}
-                        className="px-4 py-2 bg-slate-800 hover:bg-red-500/10 border border-slate-700 hover:border-red-500/30 text-slate-400 hover:text-red-400 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
-                        aria-label="Reset all timeline milestones"
-                    >
-                        <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                        Reset All
-                    </button>
-                </div>
-
-                {/* Save status */}
-                <div className="mt-3 h-5" aria-live="polite" aria-atomic="true">
                     {isSaving && (
                         <div className="flex items-center gap-2 text-blue-400 text-xs">
-                            <Save className="w-4 h-4 animate-pulse" aria-hidden="true" />
-                            <span>[STATUS: SAVING]</span>
+                            <Tag className="w-4 h-4 animate-pulse" />
+                            <span>Syncing...</span>
                         </div>
                     )}
-                    {lastSaved && !isSaving && !saveError && (
+                    {lastSaved && !isSaving && (
                         <div className="flex items-center gap-2 text-emerald-400 text-xs">
-                            <CheckCircle className="w-4 h-4" aria-hidden="true" />
-                            <span>[STATUS: SAVED] {lastSaved.toLocaleTimeString()}</span>
-                        </div>
-                    )}
-                    {saveError && (
-                        <div className="flex items-center gap-2 text-amber-400 text-xs">
-                            <AlertTriangle className="w-4 h-4" aria-hidden="true" />
-                            <span>[STATUS: WARNING] {saveError}</span>
+                            <CheckCircle className="w-4 h-4" />
+                            <span>Saved {lastSaved.toLocaleTimeString()}</span>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* ── Visual Timeline ──────────────────────────────────────────── */}
-            <VisualTimeline
-                doseTime={data.dose_administered_at ? new Date(data.dose_administered_at) : undefined}
-                onsetTime={data.onset_reported_at ? new Date(data.onset_reported_at) : undefined}
-                peakTime={data.peak_intensity_at ? new Date(data.peak_intensity_at) : undefined}
-                endTime={data.session_ended_at ? new Date(data.session_ended_at) : undefined}
-                showElapsed={true}
-            />
-
-            {/* ── Quick-Action Buttons ─────────────────────────────────────── */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <h3 className="text-lg font-bold text-slate-300 mb-1">Quick Actions</h3>
-                <p className="text-sm text-slate-400 mb-5">
-                    Tap to record the current time. Once set, use Manual Entry below to correct.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {MILESTONES.map((milestone) => {
-                        const { field, shortLabel, description, Icon, colorClass, bgClass, hoverBgClass, borderClass } = milestone;
-                        const isSet = !!data[field];
-
-                        return (
-                            <div key={field} className="relative">
-                                <button
-                                    onClick={() => setNow(field)}
-                                    disabled={isSet}
-                                    className={`
-                                        w-full p-5 rounded-xl border-2 transition-all group text-left
-                                        ${isSet
-                                            ? 'bg-slate-800/60 border-slate-700 cursor-not-allowed'
-                                            : `${bgClass} ${hoverBgClass} ${borderClass} cursor-pointer hover:scale-[1.01] active:scale-[0.99]`
-                                        }
-                                    `}
-                                    aria-label={`${shortLabel}${isSet ? ` — recorded at ${formatTime(data[field])}` : ' — tap to record current time'}`}
-                                    aria-pressed={isSet}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={`p-3 rounded-lg transition-colors ${isSet ? 'bg-slate-700' : `${bgClass}`}`}>
-                                            <Icon
-                                                className={`w-7 h-7 transition-colors ${isSet ? 'text-slate-400' : colorClass}`}
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className={`text-base font-black transition-colors ${isSet ? 'text-slate-400' : colorClass}`}>
-                                                {shortLabel}
-                                            </h4>
-                                            {isSet ? (
-                                                <p className="text-sm text-slate-300 mt-0.5 font-mono">
-                                                    {formatTime(data[field])}
-                                                    <span className="text-slate-400 ml-2 text-xs font-sans">
-                                                        (T+{calculateElapsed(data.dose_administered_at, data[field])})
-                                                    </span>
-                                                </p>
-                                            ) : (
-                                                <p className="text-sm text-slate-400 mt-0.5">{description}</p>
-                                            )}
-                                        </div>
-                                        {isSet && (
-                                            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" aria-hidden="true" />
-                                        )}
-                                    </div>
-                                </button>
-
-                                {/* Clear button — only shown when set */}
-                                {isSet && (
-                                    <button
-                                        onClick={() => clearField(field)}
-                                        className="absolute top-2 right-2 p-1 rounded text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
-                                        aria-label={`Clear ${milestone.label} timestamp`}
-                                        title="Clear this timestamp"
-                                    >
-                                        <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
-                                    </button>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-
-                {/* Total Duration Summary */}
-                {sessionComplete && (
-                    <div
-                        className="mt-6 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl"
-                        role="status"
-                        aria-label={`Total session duration: ${totalDuration}`}
-                    >
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-emerald-300 font-semibold text-sm">Total Session Duration</p>
-                                <p className="text-emerald-500 text-sm mt-0.5">Dose → Session End</p>
-                            </div>
-                            <span className="text-3xl font-black text-emerald-400 tabular-nums">
-                                {totalDuration}
-                            </span>
-                        </div>
-                    </div>
-                )}
-
-                {/* Elapsed time breakdown (when dose is set) */}
-                {data.dose_administered_at && (
-                    <div className="mt-4 grid grid-cols-3 gap-3">
-                        {[
-                            { label: 'Dose → Onset', from: data.dose_administered_at, to: data.onset_reported_at },
-                            { label: 'Dose → Peak', from: data.dose_administered_at, to: data.peak_intensity_at },
-                            { label: 'Onset → Peak', from: data.onset_reported_at, to: data.peak_intensity_at },
-                        ].map(({ label, from, to }) => (
-                            <div
-                                key={label}
-                                className="p-3 bg-slate-800/40 border border-slate-700/50 rounded-lg text-center"
-                            >
-                                <p className="text-sm text-slate-400 font-medium mb-1">{label}</p>
-                                <p className="text-sm font-black text-slate-300 tabular-nums">
-                                    {calculateElapsed(from, to)}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* ── Manual Entry (Collapsible) ───────────────────────────────── */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+            {/* Event Input Stream */}
+            <div className="space-y-4">
+                {/* "Add New" Button at top for reverse chronological feel */}
                 <button
-                    onClick={() => setShowManualEntry(!showManualEntry)}
-                    className="w-full flex items-center justify-between text-left group"
-                    aria-expanded={showManualEntry}
-                    aria-controls="manual-entry-panel"
+                    onClick={addEvent}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/50 text-blue-300 rounded-2xl font-bold transition-all"
                 >
-                    <div>
-                        <h3 className="text-lg font-bold text-slate-300 group-hover:text-slate-300 transition-colors">
-                            Manual Entry
-                        </h3>
-                        <p className="text-sm text-slate-400 mt-0.5">
-                            Override timestamps for corrections or retrospective entry
-                        </p>
-                    </div>
-                    {showManualEntry ? (
-                        <ChevronUp className="w-5 h-5 text-slate-400" aria-hidden="true" />
-                    ) : (
-                        <ChevronDown className="w-5 h-5 text-slate-400" aria-hidden="true" />
-                    )}
+                    <Plus className="w-5 h-5" />
+                    + New Timeline Entry
                 </button>
 
-                {showManualEntry && (
-                    <div id="manual-entry-panel" className="mt-6 space-y-5">
-                        {MILESTONES.map((milestone) => {
-                            const { field, label, Icon, colorClass } = milestone;
-                            return (
-                                <FormField
-                                    key={field}
-                                    label={label}
-                                    htmlFor={`timeline-${field}`}
-                                    icon={<Icon className={`w-4 h-4 ${colorClass}`} aria-hidden="true" />}
-                                    helpText={data[field] ? `T+ from dose: ${calculateElapsed(data.dose_administered_at, data[field])}` : undefined}
-                                >
-                                    <div className="flex gap-2">
-                                        <input
-                                            id={`timeline-${field}`}
-                                            type="datetime-local"
-                                            value={data[field] ?? ''}
-                                            onChange={(e) => updateField(field, e.target.value)}
-                                            className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-                                            aria-label={`${label} — enter date and time`}
-                                        />
-                                        <button
-                                            onClick={() => setNow(field)}
-                                            className="px-4 py-3 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-slate-300 rounded-lg font-bold text-sm transition-all whitespace-nowrap"
-                                            aria-label={`Set ${label} to current time`}
-                                        >
-                                            Now
-                                        </button>
-                                        {data[field] && (
-                                            <button
-                                                onClick={() => clearField(field)}
-                                                className="px-3 py-3 bg-slate-700 hover:bg-red-500/20 hover:text-red-400 text-slate-400 rounded-lg transition-all"
-                                                aria-label={`Clear ${label}`}
-                                            >
-                                                <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                                            </button>
-                                        )}
-                                    </div>
-                                </FormField>
-                            );
-                        })}
-                    </div>
-                )}
-            </div>
+                {events.map((event, index) => (
+                    <div
+                        key={event.id}
+                        className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 animate-in slide-in-from-top-4 duration-300"
+                    >
+                        {/* Quick Actions Bar (Only for new/empty events) */}
+                        {!event.event_description && (
+                            <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-slate-700/50">
+                                {QUICK_ACTIONS.map(action => (
+                                    <button
+                                        key={action.type}
+                                        onClick={() => applyQuickAction(index, action)}
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-bold uppercase tracking-wider hover:scale-105 transition-all ${event.event_type === action.type
+                                                ? 'bg-slate-100 text-slate-900 border-white'
+                                                : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-200'
+                                            }`}
+                                    >
+                                        <action.icon className="w-4 h-4" />
+                                        {action.label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
-            {/* ── Accessibility: Screen Reader Summary ─────────────────────── */}
-            <div className="sr-only" aria-live="polite" aria-atomic="true">
-                {completedCount === 0 && 'No milestones recorded yet.'}
-                {completedCount > 0 && (
-                    <>
-                        {MILESTONES.filter(m => data[m.field]).map(m => (
-                            `${m.label}: ${formatTime(data[m.field])}`
-                        )).join('. ')}
-                        {sessionComplete && `. Total duration: ${totalDuration}.`}
-                    </>
-                )}
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                            {/* Time & Type Column */}
+                            <div className="md:col-span-4 space-y-3">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="datetime-local"
+                                        value={event.event_timestamp}
+                                        onChange={(e) => updateEvent(index, 'event_timestamp', e.target.value)}
+                                        className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                    <button
+                                        onClick={() => recordNow(index)}
+                                        className="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 transition-colors"
+                                        title="Set to Now"
+                                    >
+                                        <Clock className="w-4 h-4" />
+                                    </button>
+                                </div>
+
+                                <select
+                                    value={event.event_type}
+                                    onChange={(e) => updateEvent(index, 'event_type', e.target.value)}
+                                    className={`w-full px-3 py-2 rounded-lg text-sm font-bold border appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${getTypeColor(event.event_type)}`}
+                                >
+                                    <option value="dose_admin">💊 Dose Administration</option>
+                                    <option value="vital_check">🩺 Vital Sign Check</option>
+                                    <option value="patient_observation">👁️ Patient Observation</option>
+                                    <option value="clinical_decision">⚖️ Clinical Decision</option>
+                                    <option value="music_change">🎵 Music Change</option>
+                                    <option value="touch_consent">🤝 Touch Consent</option>
+                                    <option value="safety_event">⚠️ Safety Event</option>
+                                    <option value="other">📝 Other Note</option>
+                                </select>
+                            </div>
+
+                            {/* Description Column */}
+                            <div className="md:col-span-7">
+                                <textarea
+                                    value={event.event_description}
+                                    onChange={(e) => updateEvent(index, 'event_description', e.target.value)}
+                                    placeholder="Describe the event..."
+                                    className="w-full h-full min-h-[80px] px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"
+                                />
+                                <div className="flex justify-between items-center mt-1">
+                                    <span className={`text-xs ${event.event_description.length > 450 ? 'text-red-400' : 'text-slate-500'}`}>
+                                        {event.event_description.length}/500
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Actions Column */}
+                            <div className="md:col-span-1 flex items-start justify-end">
+                                <button
+                                    onClick={() => removeEvent(index)}
+                                    className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                                    title="Delete Entry"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

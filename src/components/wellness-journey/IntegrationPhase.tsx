@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart } from 'lucide-react';
+import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activity, Calendar, Award } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import SymptomDecayCurve from '../arc-of-care/SymptomDecayCurve';
 import PulseCheckWidget from '../arc-of-care/PulseCheckWidget';
@@ -8,7 +8,7 @@ interface IntegrationPhaseProps {
     journey: any;
 }
 
-// WO-064: Mock 7-day pulse check trend data
+// Mock 7-day pulse check trend data
 const MOCK_PULSE_TREND = [
     { day: 'Mon', connection: 3, sleep: 2, date: '2025-10-13' },
     { day: 'Tue', connection: 3, sleep: 3, date: '2025-10-14' },
@@ -20,9 +20,9 @@ const MOCK_PULSE_TREND = [
 ];
 
 export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) => {
-    const [showPulseCheck, setShowPulseCheck] = useState(true); // WO-064
+    const [showPulseCheck, setShowPulseCheck] = useState(true);
 
-    // WO-064: Export 7-day trend as CSV
+    // Export 7-day trend as CSV
     const handleExportTrend = () => {
         const csvRows = [
             'date,day,connection_level,sleep_quality',
@@ -37,252 +37,256 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
         URL.revokeObjectURL(url);
     };
 
-    // WO-064: Calculate 7-day averages for trend display
+    // Calculate 7-day averages for trend display
     const avgConnection = (MOCK_PULSE_TREND.reduce((s, d) => s + d.connection, 0) / MOCK_PULSE_TREND.length).toFixed(1);
     const avgSleep = (MOCK_PULSE_TREND.reduce((s, d) => s + d.sleep, 0) / MOCK_PULSE_TREND.length).toFixed(1);
 
     return (
-        <div className="space-y-6">
-            {/* Symptom Decay Curve - REUSE EXISTING COMPONENT */}
-            <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 border-2 border-emerald-500/50 rounded-3xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp className="w-8 h-8 text-emerald-400" />
-                    <h3 className="text-2xl font-black text-emerald-100">Symptom Decay Curve</h3>
-                </div>
+        <div className="space-y-6 animate-in fade-in duration-500">
 
-                {/* USE EXISTING SymptomDecayCurve COMPONENT */}
-                <SymptomDecayCurve
-                    baselinePhq9={journey.baseline.phq9}
-                    dataPoints={[
-                        { day: 7, phq9: 14 },
-                        { day: 14, phq9: 11 },
-                        { day: 30, phq9: 9 },
-                        { day: 60, phq9: 7 },
-                        { day: 90, phq9: 6 },
-                        { day: 120, phq9: 5 },
-                        { day: 180, phq9: journey.integration.currentPhq9 }
-                    ]}
-                />
-            </div>
-
-            {/* WO-064: Daily Pulse Check Widget + 7-Day Trend */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                        <Heart className="w-8 h-8 text-pink-400" />
-                        <h3 className="text-2xl font-bold text-slate-300">Daily Pulse Check</h3>
-                        <span className="text-sm text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
-                            7-day streak ✓
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <AdvancedTooltip content="Export 7-day pulse check trend as CSV for integration session review." tier="micro">
-                            <button
-                                onClick={handleExportTrend}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 text-slate-300 text-sm rounded-lg transition-colors"
-                            >
-                                <Download className="w-4 h-4" />
-                                Export CSV
-                            </button>
-                        </AdvancedTooltip>
-                        <button
-                            onClick={() => setShowPulseCheck(!showPulseCheck)}
-                            className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-700/50 hover:bg-slate-700/70 transition-colors"
-                            aria-label={showPulseCheck ? 'Collapse pulse check' : 'Expand pulse check'}
-                        >
-                            {showPulseCheck ? <ChevronUp className="w-4 h-4 text-slate-300" /> : <ChevronDown className="w-4 h-4 text-slate-300" />}
-                        </button>
-                    </div>
-                </div>
-
-                {showPulseCheck && (
-                    <div className="space-y-6 animate-in slide-in-from-top duration-200">
-                        {/* 7-Day Trend Summary */}
-                        <div className="grid grid-cols-2 gap-3">
-                            <div className="p-3 bg-slate-800/40 rounded-xl text-center">
-                                <p className="text-sm text-slate-500 uppercase tracking-wide mb-1">Avg Connection</p>
-                                <p className="text-2xl font-black text-pink-400">{avgConnection}<span className="text-sm text-slate-500">/5</span></p>
-                            </div>
-                            <div className="p-3 bg-slate-800/40 rounded-xl text-center">
-                                <p className="text-sm text-slate-500 uppercase tracking-wide mb-1">Avg Sleep</p>
-                                <p className="text-2xl font-black text-blue-400">{avgSleep}<span className="text-sm text-slate-500">/5</span></p>
-                            </div>
-                        </div>
-
-                        {/* 7-Day Bar Chart */}
-                        <div>
-                            <p className="text-sm text-slate-500 uppercase tracking-wide mb-3">7-Day Trend</p>
-                            <div className="grid grid-cols-7 gap-1">
-                                {MOCK_PULSE_TREND.map((d) => (
-                                    <div key={d.day} className="flex flex-col items-center gap-1">
-                                        {/* Connection bar */}
-                                        <div className="w-full flex flex-col items-center gap-0.5">
-                                            <div
-                                                className="w-full bg-pink-500/70 rounded-sm transition-all"
-                                                style={{ height: `${(d.connection / 5) * 40}px` }}
-                                                title={`Connection: ${d.connection}/5`}
-                                            />
-                                            {/* Sleep bar */}
-                                            <div
-                                                className="w-full bg-blue-500/70 rounded-sm transition-all"
-                                                style={{ height: `${(d.sleep / 5) * 40}px` }}
-                                                title={`Sleep: ${d.sleep}/5`}
-                                            />
-                                        </div>
-                                        <span className="text-sm text-slate-400">{d.day.slice(0, 1)}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex items-center gap-4 mt-2">
-                                <div className="flex items-center gap-1">
-                                    <div className="w-3 h-3 rounded-sm bg-pink-500/70" />
-                                    <span className="text-sm text-slate-400">Connection</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                    <div className="w-3 h-3 rounded-sm bg-blue-500/70" />
-                                    <span className="text-sm text-slate-400">Sleep</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Today's Pulse Check Widget */}
-                        <div>
-                            <p className="text-sm text-slate-500 uppercase tracking-wide mb-3">Today's Check-In</p>
-                            <PulseCheckWidget
-                                patientId="patient-001"
-                                sessionId={journey.session.sessionNumber}
-                                onSubmit={(data) => {
-                                    console.log('[WO-064] Pulse check submitted:', data);
-                                }}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* 2x2 Grid of Cards */}
+            {/* 1. TOP ROW: Symptom Decay & Pulse Check Widget */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                {/* Compliance Metrics */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <CheckCircle className="w-8 h-8 text-emerald-400" />
-                        <h3 className="text-2xl font-black text-slate-300">Compliance</h3>
+                {/* Symptom Decay Curve */}
+                <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 border-2 border-emerald-500/50 rounded-3xl p-6 shadow-lg shadow-emerald-900/20">
+                    <div className="flex items-center gap-3 mb-6">
+                        <TrendingUp className="w-8 h-8 text-emerald-400" />
+                        <div>
+                            <h3 className="text-2xl font-black text-emerald-100">Symptom Decay</h3>
+                            <p className="text-xs text-emerald-400/70 font-bold uppercase tracking-widest">PHQ-9 Trajectory</p>
+                        </div>
+                    </div>
+                    <SymptomDecayCurve
+                        baselinePhq9={journey.baseline.phq9}
+                        dataPoints={[
+                            { day: 7, phq9: 14 },
+                            { day: 14, phq9: 11 },
+                            { day: 30, phq9: 9 },
+                            { day: 60, phq9: 7 },
+                            { day: 90, phq9: 6 },
+                            { day: 120, phq9: 5 },
+                            { day: 180, phq9: journey.integration.currentPhq9 }
+                        ]}
+                    />
+                </div>
+
+                {/* Daily Pulse Check Widget + 7-Day Trend */}
+                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Heart className="w-32 h-32 text-pink-500" />
                     </div>
 
-                    <div className="space-y-4">
-                        <AdvancedTooltip
-                            content="Daily pulse checks measure mood, sleep, and well-being. High compliance (>90%) correlates with better outcomes."
-                            tier="standard"
-                            type="clinical"
-                        >
-                            <div className="cursor-help">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="text-sm text-slate-300">Daily Pulse Checks</div>
-                                    <div className="text-sm font-bold text-emerald-400">{journey.integration.pulseCheckCompliance}%</div>
-                                </div>
-                                <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500" style={{ width: `${journey.integration.pulseCheckCompliance}%` }}></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <Heart className="w-8 h-8 text-pink-400" />
+                                <div>
+                                    <h3 className="text-2xl font-bold text-slate-200">Daily Pulse</h3>
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Mood & Sleep Tracking</p>
                                 </div>
                             </div>
-                        </AdvancedTooltip>
+                            <div className="flex items-center gap-2">
+                                <AdvancedTooltip content="Export 7-day pulse check trend as CSV for integration session review." tier="micro">
+                                    <button
+                                        onClick={handleExportTrend}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-400 hover:text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
+                                    >
+                                        <Download className="w-3 h-3" />
+                                        CSV
+                                    </button>
+                                </AdvancedTooltip>
+                                <button
+                                    onClick={() => setShowPulseCheck(!showPulseCheck)}
+                                    className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700"
+                                    aria-label={showPulseCheck ? 'Collapse pulse check' : 'Expand pulse check'}
+                                >
+                                    {showPulseCheck ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                                </button>
+                            </div>
+                        </div>
 
-                        <AdvancedTooltip
-                            content="Weekly PHQ-9 assessments track depression symptoms over time. 100% compliance indicates excellent engagement."
-                            tier="standard"
-                            type="clinical"
-                        >
-                            <div className="cursor-help">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="text-sm text-slate-300">Weekly PHQ-9</div>
-                                    <div className="text-sm font-bold text-emerald-400">{journey.integration.phq9Compliance}%</div>
+                        {showPulseCheck && (
+                            <div className="space-y-6 animate-in slide-in-from-top duration-300">
+                                {/* 7-Day Trend Summary */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="p-4 bg-slate-800/40 rounded-xl text-center border border-slate-700/50">
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Connection</p>
+                                        <p className="text-3xl font-black text-pink-400">{avgConnection}<span className="text-base text-slate-600 font-normal">/5</span></p>
+                                    </div>
+                                    <div className="p-4 bg-slate-800/40 rounded-xl text-center border border-slate-700/50">
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Sleep</p>
+                                        <p className="text-3xl font-black text-blue-400">{avgSleep}<span className="text-base text-slate-600 font-normal">/5</span></p>
+                                    </div>
                                 </div>
-                                <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500" style={{ width: `${journey.integration.phq9Compliance}%` }}></div>
-                                </div>
-                            </div>
-                        </AdvancedTooltip>
 
-                        <div className="pt-3 border-t border-slate-800">
-                            <div className="px-3 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-center">
-                                <div className="text-2xl font-black text-emerald-400">
-                                    {journey.integration.integrationSessionsAttended}/{journey.integration.integrationSessionsScheduled}
+                                {/* 7-Day Bar Chart */}
+                                <div>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">7-Day Trend</p>
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-pink-500" />
+                                                <span className="text-[10px] text-slate-500 font-bold uppercase">Connection</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                                <span className="text-[10px] text-slate-500 font-bold uppercase">Sleep</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-7 gap-2 h-32 items-end pb-2">
+                                        {MOCK_PULSE_TREND.map((d) => (
+                                            <div key={d.day} className="flex flex-col items-center gap-2 h-full justify-end group/bar">
+                                                {/* Stacked Bars */}
+                                                <div className="w-full relative flex flex-col items-center gap-1">
+                                                    <div
+                                                        className="w-full bg-blue-500/20 border-t-2 border-blue-500 rounded-sm transition-all group-hover/bar:bg-blue-500/40"
+                                                        style={{ height: `${(d.sleep / 5) * 40}px` }}
+                                                        title={`Sleep: ${d.sleep}/5`}
+                                                    />
+                                                    <div
+                                                        className="w-full bg-pink-500/20 border-t-2 border-pink-500 rounded-sm transition-all group-hover/bar:bg-pink-500/40"
+                                                        style={{ height: `${(d.connection / 5) * 40}px` }}
+                                                        title={`Connection: ${d.connection}/5`}
+                                                    />
+                                                </div>
+                                                <span className="text-[10px] font-bold text-slate-500 group-hover/bar:text-slate-300">{d.day.slice(0, 1)}</span>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="text-sm text-emerald-300 uppercase tracking-wide">Integration Sessions</div>
+
+                                {/* Today's Pulse Check Widget */}
+                                <div className="pt-4 border-t border-slate-800">
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Today's Check-In</p>
+                                    <PulseCheckWidget
+                                        patientId="patient-001"
+                                        sessionId={journey.session.sessionNumber}
+                                        onSubmit={(data) => {
+                                            console.log('[WO-064] Pulse check submitted:', data);
+                                        }}
+                                    />
+                                </div>
                             </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* 2. BOTTOM ROW: 3-Column Layout for Compliance, Outcomes, and Insights */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                {/* Compliance Metrics */}
+                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col">
+                    <div className="flex items-center gap-3 mb-6">
+                        <Activity className="w-6 h-6 text-indigo-400" />
+                        <h3 className="text-xl font-bold text-slate-200">Compliance</h3>
+                    </div>
+
+                    <div className="space-y-6 flex-1">
+                        {/* Pulse Check Compliance */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
+                                <span>Daily Pulse</span>
+                                <span className={journey.integration.pulseCheckCompliance >= 80 ? "text-emerald-400" : "text-amber-400"}>
+                                    {journey.integration.pulseCheckCompliance}%
+                                </span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full ${journey.integration.pulseCheckCompliance >= 80 ? "bg-emerald-500" : "bg-amber-500"}`}
+                                    style={{ width: `${journey.integration.pulseCheckCompliance}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* PHQ-9 Compliance */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
+                                <span>Weekly PHQ-9</span>
+                                <span className={journey.integration.phq9Compliance >= 90 ? "text-emerald-400" : "text-amber-400"}>
+                                    {journey.integration.phq9Compliance}%
+                                </span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full ${journey.integration.phq9Compliance >= 90 ? "bg-emerald-500" : "bg-amber-500"}`}
+                                    style={{ width: `${journey.integration.phq9Compliance}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Integration Sessions */}
+                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center mt-auto">
+                            <div className="text-3xl font-black text-indigo-400 mb-1">
+                                {journey.integration.integrationSessionsAttended}<span className="text-xl text-slate-500 font-normal">/{journey.integration.integrationSessionsScheduled}</span>
+                            </div>
+                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Integration Sessions</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Quality of Life Improvements */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <TrendingUp className="w-8 h-8 text-blue-400" />
-                        <h3 className="text-2xl font-black text-slate-300">Quality of Life</h3>
-                    </div>
-
-                    <div className="space-y-3">
-                        <div className="p-3 bg-slate-800/40 rounded-xl">
-                            <div className="text-sm text-slate-300 mb-1">WHOQOL-BREF</div>
-                            <div className="text-2xl font-black text-emerald-400">68 → 82 (+21%)</div>
-                        </div>
-
-                        <div className="text-sm text-slate-300 uppercase tracking-wide mb-2">Behavioral Changes:</div>
-                        <div className="space-y-2">
-                            {journey.integration.behavioralChanges.map((change: string, index: number) => (
-                                <div key={index} className="flex items-center gap-2 text-sm text-slate-300">
-                                    <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                                    <span>{change}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Alerts & Next Steps */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <CheckCircle className="w-8 h-8 text-emerald-400" />
-                        <h3 className="text-2xl font-black text-slate-300">Status</h3>
+                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+                    <div className="flex items-center gap-3 mb-6">
+                        <Award className="w-6 h-6 text-amber-400" />
+                        <h3 className="text-xl font-bold text-slate-200">Key Outcomes</h3>
                     </div>
 
                     <div className="space-y-4">
-                        <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
-                            <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-                            <div className="text-sm font-bold text-emerald-300">No active alerts ✓</div>
-                            <div className="text-sm text-slate-300 mt-1">Patient is stable and progressing well</div>
+                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl flex items-center justify-between">
+                            <div>
+                                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">WHOQOL-BREF</div>
+                                <div className="text-lg font-bold text-slate-300">Quality of Life</div>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-2xl font-black text-emerald-400">+21%</div>
+                                <div className="text-[10px] text-emerald-500/70 font-bold">68 → 82</div>
+                            </div>
                         </div>
 
-                        <div className="text-sm text-slate-300 uppercase tracking-wide">Next Steps:</div>
-                        <div className="space-y-2">
-                            <div className="flex items-start gap-2 p-2 bg-slate-800/40 rounded-lg">
-                                <span className="text-sm text-slate-300">📅 Schedule PHQ-9 at Day 60</span>
-                            </div>
-                            <div className="flex items-start gap-2 p-2 bg-slate-800/40 rounded-lg">
-                                <span className="text-sm text-slate-300">📅 Integration Session #4 due</span>
+                        <div>
+                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-3">Behavioral Wins</div>
+                            <div className="space-y-2">
+                                {journey.integration.behavioralChanges.map((change: string, index: number) => (
+                                    <div key={index} className="flex items-center gap-3 p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-lg">
+                                        <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                                        <span className="text-sm font-medium text-emerald-100">{change}</span>
+                                    </div>
+                                ))}
+                                {journey.integration.behavioralChanges.length === 0 && (
+                                    <div className="p-3 bg-slate-800/20 border border-slate-700/30 rounded-lg text-center">
+                                        <span className="text-sm text-slate-500 italic">No behavioral changes recorded yet.</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Personalized Insights */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <span className="text-3xl">💡</span>
-                        <h3 className="text-2xl font-black text-slate-300">Personalized Insight</h3>
+                {/* AI Insights (Behavioral Correlation) */}
+                <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-indigo-500/20 rounded-2xl p-6 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Activity className="w-32 h-32 text-indigo-400" />
                     </div>
 
-                    <div className="p-4 bg-gradient-to-br from-amber-500/10 to-amber-900/10 border border-amber-500/20 rounded-2xl">
-                        <div className="flex items-start gap-3">
-                            <span className="text-2xl flex-shrink-0">💡</span>
-                            <div>
-                                <div className="text-sm font-medium text-slate-300 leading-relaxed">
-                                    Your anxiety (GAD-7) drops by 40% on weeks where you log at least 3 "Nature Walks" in your journal. Keep it up! 🌲
-                                </div>
-                                <div className="text-sm text-slate-500 mt-2">
-                                    Based on 26 weeks of data correlation
-                                </div>
+                    <div className="relative z-10 flex flex-col h-full">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="text-2xl">💡</span>
+                            <h3 className="text-xl font-bold text-slate-200">Smart Insight</h3>
+                        </div>
+
+                        <div className="text-sm font-medium text-slate-300 leading-relaxed flex-1">
+                            "Your anxiety (GAD-7) drops by <span className="text-emerald-400 font-bold">40%</span> on weeks where you log at least 3 'Nature Walks' in your journal."
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-white/5">
+                            <div className="flex items-center gap-2 text-[10px] text-indigo-300 font-bold uppercase tracking-widest">
+                                <Activity className="w-3 h-3" />
+                                Correlation Found
                             </div>
+                            <p className="text-xs text-slate-500 mt-1">Based on 26 weeks of behavioral data.</p>
                         </div>
                     </div>
                 </div>

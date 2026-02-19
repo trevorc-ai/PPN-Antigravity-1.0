@@ -143,26 +143,22 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
                                 </button>
                             </div>
 
-                            {/* Checkboxes */}
-                            <div className="space-y-3">
+                            {/* Toggle Buttons */}
+                            <div className="flex flex-col gap-2">
                                 {observations.map((obs) => {
-                                    const isChecked = data.observations.includes(obs.id);
+                                    const isSelected = data.observations.includes(obs.id);
                                     return (
-                                        <label
+                                        <button
                                             key={obs.id}
-                                            className="flex items-center gap-3 cursor-pointer group"
+                                            type="button"
+                                            onClick={() => toggleObservation(obs.id)}
+                                            className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-left transition-all active:scale-95 ${isSelected
+                                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-500'
+                                                    : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                }`}
                                         >
-                                            <input
-                                                type="checkbox"
-                                                checked={isChecked}
-                                                onChange={() => toggleObservation(obs.id)}
-                                                className="w-5 h-5 rounded border-slate-600 bg-slate-800/50 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
-                                            />
-                                            <span className={`text-sm transition-colors ${isChecked ? 'text-slate-300 font-medium' : 'text-slate-300 group-hover:text-slate-300'
-                                                }`}>
-                                                {obs.label}
-                                            </span>
-                                        </label>
+                                            {obs.label}
+                                        </button>
                                     );
                                 })}
                             </div>

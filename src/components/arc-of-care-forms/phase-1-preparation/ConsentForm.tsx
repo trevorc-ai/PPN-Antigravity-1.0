@@ -12,7 +12,7 @@ import { SegmentedControl } from '../shared/SegmentedControl';
  */
 
 export interface ConsentData {
-    consent_type?: string;
+    consent_types: string[];
     consent_obtained: boolean;
     verification_datetime?: string;
 }
@@ -32,7 +32,7 @@ const CONSENT_TYPES = [
 
 const ConsentForm: React.FC<ConsentFormProps> = ({
     onSave,
-    initialData = { consent_obtained: false },
+    initialData = { consent_types: [], consent_obtained: false },
     patientId
 }) => {
     const [data, setData] = useState<ConsentData>(initialData);
@@ -41,7 +41,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
 
     // Auto-save with debounce
     useEffect(() => {
-        if (onSave && data.consent_obtained && data.consent_type) {
+        if (onSave && data.consent_obtained && data.consent_types.length > 0) {
             setIsSaving(true);
             const timer = setTimeout(() => {
                 onSave(data);
@@ -61,7 +61,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
         }));
     };
 
-    const canSave = data.consent_obtained && data.consent_type && data.verification_datetime;
+    const canSave = data.consent_obtained && data.consent_types.length > 0 && data.verification_datetime;
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
@@ -100,30 +100,37 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                     tooltip="Select the type of consent being documented"
                     required
                 >
-                    <div className="space-y-3">
-                        {CONSENT_TYPES.map((type) => (
-                            <label
-                                key={type.value}
-                                className="flex items-center gap-3 p-4 bg-slate-800/50 border border-slate-700/50 rounded-lg cursor-pointer hover:border-blue-500/50 transition-all"
-                            >
-                                <input
-                                    type="radio"
-                                    name="consent_type"
-                                    value={type.value}
-                                    checked={data.consent_type === type.value}
-                                    onChange={(e) => setData(prev => ({ ...prev, consent_type: e.target.value }))}
-                                    className="w-5 h-5 text-blue-500 border-slate-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
-                                />
-                                <span className="text-slate-300 font-medium">{type.label}</span>
-                            </label>
-                        ))}
+                    <div className="grid grid-cols-2 gap-3">
+                        {CONSENT_TYPES.map((type) => {
+                            const isSelected = data.consent_types.includes(type.value);
+                            return (
+                                <button
+                                    key={type.value}
+                                    type="button"
+                                    onClick={() =>
+                                        setData(prev => ({
+                                            ...prev,
+                                            consent_types: isSelected
+                                                ? prev.consent_types.filter(t => t !== type.value)
+                                                : [...prev.consent_types, type.value]
+                                        }))
+                                    }
+                                    className={`px-5 py-4 rounded-xl text-base font-semibold text-left transition-all active:scale-95 ${isSelected
+                                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 border border-emerald-500'
+                                        : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                        }`}
+                                >
+                                    {type.label}
+                                </button>
+                            );
+                        })}
                     </div>
                 </FormField>
 
                 {/* Consent Obtained Checkbox */}
                 <div className={`p-6 rounded-lg border-2 transition-all ${data.consent_obtained
-                        ? 'bg-emerald-500/5 border-emerald-500/50'
-                        : 'bg-slate-800/30 border-slate-700/50'
+                    ? 'bg-emerald-500/5 border-emerald-500/50'
+                    : 'bg-slate-800/30 border-slate-700/50'
                     }`}>
                     <label className="flex items-start gap-4 cursor-pointer group">
                         <input

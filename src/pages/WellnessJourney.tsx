@@ -19,6 +19,7 @@ import { ArcOfCareOnboarding } from '../components/arc-of-care';
 import { Phase1Tour, Phase2Tour, Phase3Tour, CompassTourButton } from '../components/arc-of-care/PhaseTours';
 import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport } from '../services/reportGenerator';
+import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -78,6 +79,8 @@ interface PatientJourney {
         setAndSettingDate?: string;
         hasSafetyCheck: boolean;
         safetyCheckDate?: string;
+        hasConsent: boolean;
+        consentDate?: string;
     };
 
     risk: {
@@ -132,25 +135,62 @@ const WellnessJourney: React.FC = () => {
     // Onboarding state
     const [showOnboarding, setShowOnboarding] = useState(false);
 
+    // Patient selection gate — blocks until provider chooses new or existing patient
+    const [showPatientModal, setShowPatientModal] = useState(true);
+
+    const PHASE_TAB_MAP: Record<string, 1 | 2 | 3> = {
+        'Preparation': 1,
+        'Treatment': 2,
+        'Integration': 3,
+        'Complete': 3,
+    };
+
+    const handlePatientSelect = useCallback((patientId: string, isNew: boolean, phase: string) => {
+        setJourney(prev => ({ ...prev, patientId }));
+        setShowPatientModal(false);
+        const targetPhase = isNew ? 1 : (PHASE_TAB_MAP[phase] ?? 1);
+        setActivePhase(targetPhase);
+
+        if (isNew) {
+            addToast({
+                title: 'New Patient Created',
+                message: `Session started for ${patientId} — Phase 1: Preparation`,
+                type: 'success',
+            });
+            // Consent is always the first form for new patients
+            setTimeout(() => {
+                setActiveFormId('consent');
+                setActiveFormTitle('Informed Consent');
+                setIsFormOpen(true);
+            }, 150);
+        } else {
+            const phaseLabel = targetPhase === 1 ? 'Preparation' : targetPhase === 2 ? 'Treatment' : 'Integration';
+            addToast({
+                title: 'Patient Loaded',
+                message: `${patientId} — continuing Phase ${targetPhase}: ${phaseLabel}`,
+                type: 'info',
+            });
+        }
+    }, [addToast, navigate]);
+
     // WO-113: SlideOut form panel state
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [activeFormId, setActiveFormId] = useState<WellnessFormId | null>(null);
     const [activeFormTitle, setActiveFormTitle] = useState('Clinical Form');
+    // Forms queued to open automatically after the current one closes
+    const [queuedFormId, setQueuedFormId] = useState<WellnessFormId | null>(null);
 
     const FORM_LABELS: Record<WellnessFormId, string> = {
+        'meq30': 'MEQ-30 Questionnaire',
         'mental-health': 'Mental Health Screening',
         'set-and-setting': 'Set & Setting',
-        'baseline-physiology': 'Baseline Physiology',
         'baseline-observations': 'Clinical Observations',
         'consent': 'Informed Consent',
         'dosing-protocol': 'Dosing Protocol',
         'session-vitals': 'Session Vitals',
         'session-timeline': 'Session Timeline',
         'session-observations': 'Session Observations',
-        'post-session-assessments': 'Post-Session Assessments',
-        'meq30': 'MEQ-30 Questionnaire',
-        'adverse-event': 'Adverse Event Log',
-        'safety-observations': 'Safety Observations',
+        'safety-and-adverse-event': 'Safety & Adverse Events',
         'rescue-protocol': 'Rescue Protocol',
         'daily-pulse': 'Daily Pulse Check',
         'longitudinal-assessment': 'Longitudinal Assessment',
@@ -168,8 +208,18 @@ const WellnessJourney: React.FC = () => {
 
     const handleCloseForm = useCallback(() => {
         setIsFormOpen(false);
-        setTimeout(() => setActiveFormId(null), 350);
-    }, []);
+        setTimeout(() => {
+            setActiveFormId(null);
+            // Dequeue the next mandatory form if one is waiting
+            if (queuedFormId) {
+                setQueuedFormId(null);
+                setActiveFormId(queuedFormId);
+                setActiveFormTitle(FORM_LABELS[queuedFormId] ?? 'Clinical Form');
+                setIsFormOpen(true);
+            }
+        }, 350);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [queuedFormId]);
 
     const handleQuickAction = useCallback((formId: string) => {
         handleOpenForm(formId as WellnessFormId);
@@ -216,7 +266,7 @@ const WellnessJourney: React.FC = () => {
     }, [handlePhaseChange]);
 
     // Mock data
-    const [journey] = useState<PatientJourney>({
+    const [journey, setJourney] = useState<PatientJourney>({
         patientId: 'PT-RISK9W2P',
         sessionDate: '2025-10-15',
         daysPostSession: 0,
@@ -256,8 +306,11 @@ const WellnessJourney: React.FC = () => {
             hasDosingProtocol: true,
             dosingProtocolDate: '2025-10-15',
             hasSetAndSetting: true,
-            setAndSettingDate: '2025-10-15',
-            hasSafetyCheck: false
+            setAndSettingDate: '2025-10-14',
+            hasSafetyCheck: true,
+            safetyCheckDate: '2025-10-15',
+            hasConsent: true,
+            consentDate: '2025-10-01'
         },
 
         risk: {
@@ -328,6 +381,11 @@ const WellnessJourney: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#0a1628] px-4 py-4 sm:px-8 sm:py-6 lg:px-16 lg:py-8 xl:px-24">
+            {/* Patient Selection Gate — blocks until provider picks new or existing patient */}
+            {showPatientModal && (
+                <PatientSelectModal onSelect={handlePatientSelect} />
+            )}
+
             {/* Onboarding Modal */}
             {showOnboarding && (
                 <ArcOfCareOnboarding
@@ -359,98 +417,68 @@ const WellnessJourney: React.FC = () => {
             </SlideOutPanel>
 
             <div className="max-w-6xl mx-auto space-y-6">
-                {/* Export Report - Secondary Position (Top Right) */}
-                <div className="flex justify-end">
-                    <ExportReportButton patientData={exportPatientData} />
-                </div>
-
-                {/* Hero Section */}
-                <div className="bg-gradient-to-br from-blue-600/10 to-emerald-600/10 border border-slate-700/50 rounded-2xl p-8 lg:p-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                        {/* Left: Title & Description */}
+                {/* ─── Patient Context Bar ─── */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
+                    {/* Left: Patient identity + phase label */}
+                    <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
+                            <Target className="w-5 h-5 text-blue-400" />
+                        </div>
                         <div>
-                            <h1 className="text-4xl lg:text-5xl font-black tracking-tight mb-4 flex items-center gap-4" style={{ color: '#8BA5D3' }}>
-                                Wellness Journey
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-base font-bold" style={{ color: '#8B9DC3' }}>Patient</h1>
+                                <span className="text-base font-black text-white">{journey.patientId}</span>
                                 <CompassTourButton phase={activePhase} onClick={() => {
                                     if (activePhase === 1) setShowTour1(true);
                                     if (activePhase === 2) setShowTour2(true);
                                     if (activePhase === 3) setShowTour3(true);
                                 }} />
-                            </h1>
-                            <p className="text-lg mb-2" style={{ color: '#8B9DC3' }}>
-                                Patient: <span className="font-bold">{journey.patientId}</span>
+                            </div>
+                            <p className="text-sm" style={{ color: '#8B9DC3' }}>
+                                {activePhase === 1 && 'Pre-treatment preparation — complete baseline assessments before session'}
+                                {activePhase === 2 && `Dosing session in progress · ${journey.sessionDate} · Session #${journey.session.sessionNumber}`}
+                                {activePhase === 3 && `Integration phase · ${journey.daysPostSession} days post-session · Monitoring recovery`}
                             </p>
-                            <p className="text-base mb-6" style={{ color: '#8B9DC3' }}>
-                                Track complete patient progress across 3 phases of psychedelic-assisted therapy
-                            </p>
+                        </div>
+                    </div>
 
-                            {/* Primary CTA — accessible: icon + text label, focus ring, aria-label */}
+                    {/* Right: Phase-aware primary action + export */}
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                        {activePhase === 1 && (
                             <button
-                                onClick={() => {
-                                    setActivePhase(1);
-                                    addToast({ title: 'Phase 1 Started', message: 'Preparation Phase activated.', type: 'success' });
-                                }}
-                                className="inline-flex items-center gap-2 px-6 py-4 bg-slate-700 hover:bg-slate-600 border-2 border-emerald-500 text-slate-300 font-bold rounded-lg transition-all active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-500/50"
-                                tabIndex={1}
-                                aria-label="Begin Phase 1: Preparation"
+                                onClick={() => handleOpenForm('mental-health')}
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
+                                aria-label="Open Mental Health Screening form"
                             >
-                                <span className="material-symbols-outlined text-emerald-400 text-lg" aria-hidden="true">play_arrow</span>
-                                <span>Start with Phase 1 — Preparation</span>
-                                <ArrowRight className="w-5 h-5 text-emerald-400" aria-hidden="true" />
+                                <span className="material-symbols-outlined text-base" aria-hidden="true">psychology</span>
+                                Start Screening
                             </button>
-
-                            {/* Keyboard Shortcut Hint */}
-
-                        </div>
-
-                        {/* Right: Key Benefits */}
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="flex items-start gap-3 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50">
-                                <div className="p-2 bg-blue-500/20 rounded-lg flex-shrink-0">
-                                    <Target className="w-5 h-5 text-blue-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-300 mb-1">
-                                        Predict Outcomes
-                                    </p>
-                                    <p className="text-sm text-slate-400">
-                                        Algorithm-based predictions for integration needs
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50">
-                                <div className="p-2 bg-emerald-500/20 rounded-lg flex-shrink-0">
-                                    <Shield className="w-5 h-5 text-emerald-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-300 mb-1">
-                                        Ensure Safety
-                                    </p>
-                                    <p className="text-sm text-slate-400">
-                                        Real-time vitals and rescue protocol tracking
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3 p-4 bg-slate-900/50 rounded-lg border border-slate-700/50">
-                                <div className="p-2 bg-purple-500/20 rounded-lg flex-shrink-0">
-                                    <TrendingUp className="w-5 h-5 text-purple-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-300 mb-1">
-                                        Prove Value
-                                    </p>
-                                    <p className="text-sm text-slate-400">
-                                        Longitudinal data for insurance and research
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        )}
+                        {activePhase === 2 && (
+                            <button
+                                onClick={() => handleOpenForm('session-vitals')}
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
+                                aria-label="Record session vitals"
+                            >
+                                <span className="material-symbols-outlined text-base" aria-hidden="true">ecg_heart</span>
+                                Record Vitals
+                            </button>
+                        )}
+                        {activePhase === 3 && (
+                            <button
+                                onClick={() => handleOpenForm('daily-pulse')}
+                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
+                                aria-label="Open Daily Pulse Check form"
+                            >
+                                <span className="material-symbols-outlined text-base" aria-hidden="true">favorite</span>
+                                Daily Pulse
+                            </button>
+                        )}
+                        <ExportReportButton patientData={exportPatientData} />
                     </div>
                 </div>
 
-                {/* Phase Indicator (Tabbed Navigation) with Compass Tour Buttons */}
+                {/* Phase Indicator (Tabbed Navigation) */}
                 <div className="flex items-center gap-3">
                     <div className="flex-1">
                         <PhaseIndicator
@@ -459,7 +487,15 @@ const WellnessJourney: React.FC = () => {
                             onPhaseChange={handlePhaseChange}
                         />
                     </div>
-
+                    {/* MEQ-30 — always available, provider-discretion instrument */}
+                    <button
+                        onClick={() => handleOpenForm('meq30')}
+                        className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-base"
+                        title="MEQ-30 available at any phase — timing per protocol"
+                    >
+                        <span className="material-symbols-outlined text-lg">quiz</span>
+                        MEQ-30
+                    </button>
                 </div>
 
                 {/* Phase Lock Status */}
@@ -481,97 +517,92 @@ const WellnessJourney: React.FC = () => {
                     </div>
                 )}
 
-                {/* Benchmark Readiness Section */}
-                {!isLoading && result && (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Readiness Score Widget */}
-                        <div data-tour="baseline-metrics">
-                            <ReadinessScore
-                                result={result}
-                                onViewBenchmarks={() => console.log('View benchmarks clicked')}
+                {/* Benchmark Readiness + Risk — Phase 1 only */}
+                {activePhase === 1 && !isLoading && result && (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Readiness Score Widget */}
+                            <div data-tour="baseline-metrics">
+                                <ReadinessScore
+                                    result={result}
+                                    onViewBenchmarks={() => console.log('View benchmarks clicked')}
+                                />
+                            </div>
+                            {/* Requirements List */}
+                            <div data-tour="schedule-integration" className="lg:col-span-2">
+                                <RequirementsList
+                                    result={result}
+                                    onCompleteRequirement={(name) => {
+                                        addToast({ title: 'Opening Requirement', message: `Navigating to ${name}...`, type: 'info' });
+                                        if (name.toLowerCase().includes('safety')) {
+                                            setTimeout(() => navigate('/assessment'), 500);
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        {/* Risk Indicators */}
+                        <div data-tour="risk-flags">
+                            <RiskIndicators
+                                overallRiskLevel={riskDetection.overallRiskLevel}
+                                patientId={journey.patientId}
+                                patientCharacteristics={patientCharacteristics}
+                                baselineFlags={riskDetection.baselineFlags}
+                                vitalFlags={riskDetection.vitalFlags}
+                                progressFlags={riskDetection.progressFlags}
+                                sessionTime="2h 15min"
                             />
                         </div>
-
-                        {/* Algorithm predictions placeholder */}
-                        <div data-tour="algorithm-predictions" className="hidden" aria-hidden="true" />
-
-                        {/* Requirements List (full width) */}
-                        <div data-tour="schedule-integration" className={result.isBenchmarkReady ? 'lg:col-span-2' : 'lg:col-span-2'}>
-                            <RequirementsList
-                                result={result}
-                                onCompleteRequirement={(name) => {
-                                    addToast({ title: 'Opening Requirement', message: `Navigating to ${name}...`, type: 'info' });
-                                    if (name.toLowerCase().includes('safety')) {
-                                        setTimeout(() => navigate('/assessment'), 500);
-                                    }
-                                }}
-                            />
-                        </div>
+                        {/* Safety Timeline */}
+                        <SafetyTimeline
+                            events={journey.safety.events}
+                            patientId={journey.patientId}
+                            onExport={() => downloadReport({
+                                patientId: journey.patientId,
+                                baseline: {
+                                    phq9: journey.baseline?.phq9Score,
+                                    gad7: journey.baseline?.gad7Score,
+                                }
+                            }, 'audit')}
+                        />
                     </div>
                 )}
-
-                {/* Risk Indicators Section */}
-                <div data-tour="risk-flags">
-                    <RiskIndicators
-                        overallRiskLevel={riskDetection.overallRiskLevel}
-                        patientId={journey.patientId}
-                        patientCharacteristics={patientCharacteristics}
-                        baselineFlags={riskDetection.baselineFlags}
-                        vitalFlags={riskDetection.vitalFlags}
-                        progressFlags={riskDetection.progressFlags}
-                        sessionTime="2h 15min"
-                    />
-                </div>
-
-                {/* Safety Timeline Section */}
-                <SafetyTimeline
-                    events={journey.safety.events}
-                    patientId={journey.patientId}
-                    onExport={() => downloadReport({
-                        patientId: journey.patientId,
-                        baseline: {
-                            phq9: journey.baseline?.phq9Score,
-                            gad7: journey.baseline?.gad7Score,
-                        }
-                    }, 'audit')}
-                />
 
                 {/* Phase Content — WO-113: Each phase has CTA buttons to open forms */}
                 <div className="animate-in fade-in duration-300 space-y-6">
                     {activePhase === 1 && (
                         <>
-                            <PreparationPhase journey={journey} />
+                            <PreparationPhase
+                                journey={journey}
+                                onOpenForm={handleOpenForm}
+                            />
+                            {/* Phase 1 form sequence — in clinical order */}
                             <div className="flex flex-wrap gap-3 pt-2">
-                                <button onClick={() => handleOpenForm('mental-health')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">psychology</span>Mental Health Screening
+                                <button onClick={() => handleOpenForm('consent')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">check_circle</span>Informed Consent
                                 </button>
-                                <button onClick={() => handleOpenForm('baseline-physiology')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">monitor_heart</span>Baseline Physiology
+                                <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">shield</span>Safety Screen &amp; Eligibility
+                                </button>
+                                <button onClick={() => handleOpenForm('baseline-observations')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">visibility</span>Baseline Observations
                                 </button>
                                 <button onClick={() => handleOpenForm('set-and-setting')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
                                     <span className="material-symbols-outlined text-base">home_health</span>Set &amp; Setting
-                                </button>
-                                <button onClick={() => handleOpenForm('consent')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">check_circle</span>Informed Consent
                                 </button>
                             </div>
                         </>
                     )}
                     {activePhase === 2 && (
                         <>
-                            <TreatmentPhase journey={journey} />
+                            <TreatmentPhase journey={journey} onOpenForm={handleOpenForm} />
+                            {/* Phase 2 form sequence — Setup & Emergency Only (Live actions are in Cockpit) */}
                             <div className="flex flex-wrap gap-3 pt-2">
                                 <button onClick={() => handleOpenForm('dosing-protocol')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
                                     <span className="material-symbols-outlined text-base">medication</span>Dosing Protocol
                                 </button>
-                                <button onClick={() => handleOpenForm('session-vitals')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">ecg_heart</span>Record Vitals
-                                </button>
-                                <button onClick={() => handleOpenForm('meq30')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">self_improvement</span>MEQ-30 Assessment
-                                </button>
-                                <button onClick={() => handleOpenForm('adverse-event')} className="flex items-center gap-2 px-5 py-3 bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">warning</span>Log Adverse Event
+                                <button onClick={() => handleOpenForm('rescue-protocol')} className="flex items-center gap-2 px-5 py-3 bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                    <span className="material-symbols-outlined text-base">emergency</span>Rescue Protocol Log
                                 </button>
                             </div>
                         </>
@@ -579,19 +610,32 @@ const WellnessJourney: React.FC = () => {
                     {activePhase === 3 && (
                         <>
                             <IntegrationPhase journey={journey} />
-                            <div className="flex flex-wrap gap-3 pt-2">
-                                <button onClick={() => handleOpenForm('daily-pulse')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">favorite</span>Daily Pulse Check
-                                </button>
-                                <button onClick={() => handleOpenForm('structured-integration')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">edit_note</span>Integration Session
-                                </button>
-                                <button onClick={() => handleOpenForm('behavioral-tracker')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">trending_up</span>Behavioral Change
-                                </button>
-                                <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-slate-700/60 hover:bg-slate-700/80 border border-slate-600/40 text-slate-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">shield</span>Safety Check
-                                </button>
+                            {/* Phase 3 — Early Follow-up (0–72 hrs) */}
+                            <div>
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Early Follow-up · 0–72 hrs</p>
+                                <div className="flex flex-wrap gap-3">
+                                    <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                        <span className="material-symbols-outlined text-base">shield</span>Structured Safety Check
+                                    </button>
+                                    <button onClick={() => handleOpenForm('daily-pulse')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                        <span className="material-symbols-outlined text-base">favorite</span>Daily Pulse Check
+                                    </button>
+                                </div>
+                            </div>
+                            {/* Phase 3 — Integration Work (days to weeks) */}
+                            <div>
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Integration Work · Days to Weeks</p>
+                                <div className="flex flex-wrap gap-3">
+                                    <button onClick={() => handleOpenForm('structured-integration')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                        <span className="material-symbols-outlined text-base">edit_note</span>Integration Session
+                                    </button>
+                                    <button onClick={() => handleOpenForm('behavioral-tracker')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                        <span className="material-symbols-outlined text-base">trending_up</span>Behavioral Change Tracker
+                                    </button>
+                                    <button onClick={() => handleOpenForm('longitudinal-assessment')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                        <span className="material-symbols-outlined text-base">timeline</span>Longitudinal Assessment
+                                    </button>
+                                </div>
                             </div>
                         </>
                     )}

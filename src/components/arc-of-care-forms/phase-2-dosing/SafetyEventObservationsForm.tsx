@@ -95,17 +95,19 @@ const SafetyEventObservationsForm: React.FC<SafetyEventObservationsFormProps> = 
                 {Object.entries(OBSERVATION_CATEGORIES).map(([category, observations]) => (
                     <div key={category} className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-5 space-y-4">
                         <h3 className="text-sm font-bold text-slate-300">{category}</h3>
-                        <div className="space-y-3">
+                        <div className="flex flex-col gap-2">
                             {observations.map((obs) => (
-                                <label key={obs.id} className="flex items-center gap-3 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={data.observations.includes(obs.id)}
-                                        onChange={() => toggleObservation(obs.id)}
-                                        className="w-5 h-5 rounded border-slate-600 bg-slate-800/50 text-green-500"
-                                    />
-                                    <span className="text-sm text-slate-300">{obs.label}</span>
-                                </label>
+                                <button
+                                    key={obs.id}
+                                    type="button"
+                                    onClick={() => toggleObservation(obs.id)}
+                                    className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-left transition-all active:scale-95 ${data.observations.includes(obs.id)
+                                            ? 'bg-green-700 text-white shadow-lg shadow-green-700/30 border border-green-600'
+                                            : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                        }`}
+                                >
+                                    {obs.label}
+                                </button>
                             ))}
                         </div>
                     </div>

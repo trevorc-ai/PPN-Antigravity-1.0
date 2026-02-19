@@ -132,16 +132,26 @@ export default function ClinicPerformanceRadar() {
                             <Radar
                                 name="Network Avg"
                                 dataKey="B"
-                                stroke="#475569"
+                                stroke="#94a3b8"
                                 strokeWidth={2}
-                                fill="#475569"
-                                fillOpacity={0.1}
-                                strokeDasharray="4 4"
+                                fill="#94a3b8"
+                                fillOpacity={0.15}
+                                strokeDasharray="5 3"
                             />
-                            <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '20px' }} />
                             <Tooltip content={<CustomTooltip />} />
                         </RadarChart>
                     </ResponsiveContainer>
+                    {/* Custom Legend */}
+                    <div className="flex items-center justify-center gap-6 pt-3">
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full bg-indigo-500" />
+                            <span className="text-sm font-bold text-slate-300">My Clinic</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-0.5 bg-slate-400" style={{ borderTop: '2px dashed #94a3b8' }} />
+                            <span className="text-sm font-bold text-slate-400">Network Avg</span>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Insights Panel - Scrollable if content overflows */}

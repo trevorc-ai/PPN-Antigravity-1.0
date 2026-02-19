@@ -1,7 +1,7 @@
 /**
  * Arc of Care Forms - Central Export
  * 
- * 20 modular form components organized by phase
+ * 18 modular form components organized by phase
  */
 
 // ========== SHARED COMPONENTS ==========
@@ -21,15 +21,12 @@ export type { DeviceData } from './shared/DeviceRegistrationModal';
 export { VisualTimeline } from './shared/VisualTimeline';
 export type { VisualTimelineProps } from './shared/VisualTimeline';
 
-// ========== PHASE 1: PREPARATION (5 forms) ==========
-export { default as MentalHealthScreeningForm } from './phase-1-preparation/MentalHealthScreeningForm';
-export type { MentalHealthScreeningData } from './phase-1-preparation/MentalHealthScreeningForm';
+// ========== PHASE 1: PREPARATION (4 forms) ==========
+export { default as MEQ30QuestionnaireForm } from './phase-1-preparation/MEQ30QuestionnaireForm';
+export type { MEQ30Data } from './phase-1-preparation/MEQ30QuestionnaireForm';
 
 export { default as SetAndSettingForm } from './phase-1-preparation/SetAndSettingForm';
 export type { SetAndSettingData } from './phase-1-preparation/SetAndSettingForm';
-
-export { default as BaselinePhysiologyForm } from './phase-1-preparation/BaselinePhysiologyForm';
-export type { BaselinePhysiologyData } from './phase-1-preparation/BaselinePhysiologyForm';
 
 export { default as BaselineObservationsForm } from './phase-1-preparation/BaselineObservationsForm';
 export type { BaselineObservationsData } from './phase-1-preparation/BaselineObservationsForm';
@@ -37,7 +34,8 @@ export type { BaselineObservationsData } from './phase-1-preparation/BaselineObs
 export { default as ConsentForm } from './phase-1-preparation/ConsentForm';
 export type { ConsentData } from './phase-1-preparation/ConsentForm';
 
-// ========== PHASE 2: DOSING SESSION (9 forms) ==========
+export { default as MentalHealthScreeningForm } from '../wizards/BaselineAssessmentWizard';
+// ========== PHASE 2: DOSING SESSION (7 forms) ==========
 export { default as DosingProtocolForm } from './phase-2-dosing/DosingProtocolForm';
 export type { DosingProtocolData } from './phase-2-dosing/DosingProtocolForm';
 
@@ -45,25 +43,22 @@ export { default as SessionVitalsForm } from './phase-2-dosing/SessionVitalsForm
 export type { VitalSignReading } from './phase-2-dosing/SessionVitalsForm';
 
 export { default as SessionTimelineForm } from './phase-2-dosing/SessionTimelineForm';
-export type { SessionTimelineData } from './phase-2-dosing/SessionTimelineForm';
+export type { TimelineEvent } from './phase-2-dosing/SessionTimelineForm';
 
-export { default as SessionEventLogForm } from './phase-2-dosing/SessionEventLogForm';
-export type { TimelineEvent, EventType } from './phase-2-dosing/SessionEventLogForm';
+
 
 export { default as SessionObservationsForm } from './phase-2-dosing/SessionObservationsForm';
 export type { SessionObservationsData } from './phase-2-dosing/SessionObservationsForm';
-
-export { default as PostSessionAssessmentsForm } from './phase-2-dosing/PostSessionAssessmentsForm';
-export type { PostSessionAssessmentsData } from './phase-2-dosing/PostSessionAssessmentsForm';
-
-export { default as MEQ30QuestionnaireForm } from './phase-2-dosing/MEQ30QuestionnaireForm';
-export type { MEQ30Data } from './phase-2-dosing/MEQ30QuestionnaireForm';
 
 export { default as AdverseEventForm } from './phase-2-dosing/AdverseEventForm';
 export type { AdverseEventData } from './phase-2-dosing/AdverseEventForm';
 
 export { default as SafetyEventObservationsForm } from './phase-2-dosing/SafetyEventObservationsForm';
 export type { SafetyEventObservationsData } from './phase-2-dosing/SafetyEventObservationsForm';
+
+// Unified replacement for AdverseEventForm + SafetyEventObservationsForm
+export { default as SafetyAndAdverseEventForm } from './phase-2-dosing/SafetyAndAdverseEventForm';
+export type { SafetyAndAdverseEventData, ObservationLogEntry } from './phase-2-dosing/SafetyAndAdverseEventForm';
 
 export { default as RescueProtocolForm } from './phase-2-dosing/RescueProtocolForm';
 export type { RescueProtocolData } from './phase-2-dosing/RescueProtocolForm';

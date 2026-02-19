@@ -1,16 +1,53 @@
 import React, { useState } from 'react';
-import { Calendar, Brain, TrendingUp, Shield, ChevronDown, ChevronUp, CheckCircle } from 'lucide-react';
+import { Calendar, Brain, TrendingUp, Shield, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, FileText, ArrowRight, Lock } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
+import { WellnessFormId } from './WellnessFormRouter';
 
 interface PreparationPhaseProps {
-    journey: any; // Use your existing journey data type
+    journey: any;
+    onOpenForm: (formId: WellnessFormId) => void;
 }
 
-export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) => {
+export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onOpenForm }) => {
     const [showAI, setShowAI] = useState(false);
     const [showBenchmarks, setShowBenchmarks] = useState(false);
 
-    // Helper: Get severity label and emoji
+    // Gate Status Logic (Derived from journey data)
+    const gates = {
+        consent: {
+            isComplete: journey.benchmark?.hasConsent,
+            date: journey.benchmark?.consentDate,
+            label: "Informed Consent",
+            action: () => onOpenForm('consent'),
+            description: "Verify patient understanding and signature."
+        },
+        assessment: {
+            isComplete: journey.benchmark?.hasBaselineAssessment,
+            date: journey.benchmark?.baselineAssessmentDate,
+            label: "Baseline Assessments",
+            action: () => onOpenForm('mental-health'),
+            description: "PHQ-9, GAD-7, and vital signs."
+        },
+        observations: {
+            // Mocking this check as strictly true for now or derived if available
+            isComplete: journey.benchmark?.hasSetAndSetting,
+            date: journey.benchmark?.setAndSettingDate,
+            label: "Baseline Observations",
+            action: () => onOpenForm('baseline-observations'),
+            description: "Clinical state and mindset check."
+        },
+        protocol: {
+            isComplete: journey.benchmark?.hasDosingProtocol,
+            date: journey.benchmark?.dosingProtocolDate,
+            label: "Dosing Protocol",
+            action: () => onOpenForm('dosing-protocol'),
+            description: "Substance, dosage, and guide assignment."
+        }
+    };
+
+    const allGatesPassed = Object.values(gates).every(g => g.isComplete);
+
+    // Helper: Get severity label and emoji (kept from original)
     const getSeverityInfo = (score: number, type: 'phq9' | 'gad7') => {
         if (type === 'phq9') {
             if (score >= 20) return { label: 'Severe Depression', emoji: '😰', color: 'text-red-400' };
@@ -30,299 +67,128 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey }) =
     const gad7Info = getSeverityInfo(journey.baseline.gad7, 'gad7');
 
     return (
-        <div className="space-y-6">
-            {/* Baseline Metrics Card — standard glass card */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <div className="flex items-center gap-3 mb-4">
-                    <Brain className="w-7 h-7 text-slate-400" />
-                    <h3 className="text-2xl font-black text-slate-200">Baseline Metrics</h3>
+        <div className="space-y-6 animate-in fade-in duration-500">
+
+            {/* 1. SESSION GATES CARD */}
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Shield className="w-32 h-32 text-slate-400" />
                 </div>
 
-                {/* 2x2 grid of metric cards */}
-                <div className="grid grid-cols-2 gap-4">
-                    {/* PHQ-9 */}
-                    <AdvancedTooltip
-                        content={`PHQ-9: ${journey.baseline.phq9} - ${phq9Info.label}. Patient Health Questionnaire measures depression severity on a 0-27 scale.`}
-                        tier="standard"
-                        type="clinical"
-                        title="PHQ-9"
-                    >
-                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                                <span className={`text-3xl ${phq9Info.color}`}>{phq9Info.emoji}</span>
-                                <span className={`text-4xl font-black ${phq9Info.color}`}>{journey.baseline.phq9}</span>
-                            </div>
-                            <div className="text-base text-slate-300 font-bold">PHQ-9</div>
+                <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-2xl font-black text-slate-200">Session Readiness</h2>
+                            <p className="text-slate-400 mt-1">Complete all safety gates to unlock the dosing session.</p>
                         </div>
-                    </AdvancedTooltip>
-
-                    {/* GAD-7 */}
-                    <AdvancedTooltip
-                        content={`GAD-7: ${journey.baseline.gad7} - ${gad7Info.label}. Generalized Anxiety Disorder scale measures anxiety severity on a 0-21 scale.`}
-                        tier="standard"
-                        type="clinical"
-                        title="GAD-7"
-                    >
-                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                                <span className={`text-3xl ${gad7Info.color}`}>{gad7Info.emoji}</span>
-                                <span className={`text-4xl font-black ${gad7Info.color}`}>{journey.baseline.gad7}</span>
-                            </div>
-                            <div className="text-base text-slate-300 font-bold">GAD-7</div>
+                        <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${allGatesPassed
+                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                                : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                            }`}>
+                            {allGatesPassed ? 'Ready to Start' : 'Action Required'}
                         </div>
-                    </AdvancedTooltip>
-
-                    {/* ACE Score */}
-                    <AdvancedTooltip
-                        content={`ACE Score: ${journey.baseline.aceScore}. Adverse Childhood Experiences score (0-10). Higher scores correlate with increased trauma and may predict challenging experiences during therapy.`}
-                        tier="standard"
-                        type="warning"
-                        title="ACE Score"
-                    >
-                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                                <span className="text-3xl">⚠️</span>
-                                <span className="text-4xl font-black text-amber-400">{journey.baseline.aceScore}</span>
-                            </div>
-                            <div className="text-base text-slate-300 font-bold">ACE</div>
-                        </div>
-                    </AdvancedTooltip>
-
-                    {/* Expectancy */}
-                    <AdvancedTooltip
-                        content={`Expectancy: ${journey.baseline.expectancy}/100 - High. Patient's belief in treatment efficacy. High expectancy (>75) correlates with 25% better outcomes.`}
-                        tier="standard"
-                        type="success"
-                        title="Expectancy"
-                    >
-                        <div className="p-4 bg-slate-800/60 border border-slate-700/40 rounded-xl flex flex-col items-center justify-center cursor-help hover:bg-slate-800/80 transition-colors text-center">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                                <span className="text-3xl">✨</span>
-                                <span className="text-4xl font-black text-emerald-400">{journey.baseline.expectancy}</span>
-                            </div>
-                            <div className="text-base text-slate-300 font-bold">Expect</div>
-                        </div>
-                    </AdvancedTooltip>
-                </div>
-            </div>
-
-            {/* Predictions Card — standard glass card */}
-            <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-
-                {/* Tooltip — top-right, opens bottom-left */}
-                <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>
-                    <AdvancedTooltip
-                        tier="guide"
-                        type="science"
-                        side="bottom-left"
-                        title="Prediction Methodology"
-                        width="w-96"
-                        content={
-                            <div className="space-y-2 text-sm">
-                                <div><span className="font-bold text-slate-200">Success Rate (72%):</span> Defined as PHQ-9 &lt; 5 at 6-month follow-up. Derived from MAPS Phase 3 MDMA-AT trials (Mitchell et al., 2021, <em>Nature Medicine</em>) and Carhart-Harris et al. psilocybin depression studies (2021, <em>NEJM</em>).</div>
-                                <div><span className="font-bold text-slate-200">Challenging Experience (45%):</span> Defined as CEQ (Challenging Experience Questionnaire) score &gt; 50 during session. Barrett et al. (2017), <em>J Psychopharmacology</em>. Elevated ACE score and high baseline anxiety are the primary predictors.</div>
-                                <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Predictions are population-level estimates from patients with similar baseline profiles — not individual guarantees. Clinical decision support only.</div>
-                            </div>
-                        }
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                    </AdvancedTooltip>
-                </div>
-
-                <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp className="w-7 h-7 text-emerald-400" />
-                    <h3 className="text-2xl font-black text-slate-200">Predicted Outcomes</h3>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Success Rate */}
-                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex flex-col justify-between gap-3 min-h-[110px]">
-                        <div className="flex items-stretch justify-between flex-1">
-                            <div className="text-xl font-black text-slate-300">Success Rate</div>
-                            <div className="text-5xl font-black text-emerald-400/70 self-center">72%</div>
-                        </div>
-                        <div className="text-sm text-slate-400">Based on similar profiles</div>
                     </div>
 
-                    {/* Challenging Experience */}
-                    <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl flex flex-col justify-between gap-3 min-h-[110px]">
-                        <div className="flex items-stretch justify-between flex-1">
-                            <div className="text-xl font-black text-slate-300">Challenging Experience</div>
-                            <div className="text-5xl font-black text-amber-400/70 self-center">45%</div>
-                        </div>
-                        <div className="text-sm text-slate-400">Likelihood of difficult moments</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {Object.entries(gates).map(([key, gate]) => (
+                            <button
+                                key={key}
+                                onClick={gate.action}
+                                className={`relative flex flex-col p-4 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98]
+                                    ${gate.isComplete
+                                        ? 'bg-emerald-900/10 border-emerald-500/30 hover:bg-emerald-900/20'
+                                        : 'bg-slate-800/40 border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/60'
+                                    }`}
+                            >
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${gate.isComplete ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'
+                                        }`}>
+                                        {gate.isComplete ? <CheckCircle className="w-5 h-5" /> : <div className="w-3 h-3 rounded-full bg-slate-500" />}
+                                    </div>
+                                    {gate.isComplete && <span className="text-[10px] font-mono text-emerald-500/70">{gate.date}</span>}
+                                </div>
+                                <div>
+                                    <h3 className={`font-bold ${gate.isComplete ? 'text-emerald-100' : 'text-slate-200'}`}>{gate.label}</h3>
+                                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{gate.description}</p>
+                                </div>
+                                {!gate.isComplete && (
+                                    <div className="mt-4 flex items-center gap-1 text-xs font-bold text-blue-400">
+                                        COMPLETE <ArrowRight className="w-3 h-3" />
+                                    </div>
+                                )}
+                            </button>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* Collapsible AI Panel */}
-            <button
-                onClick={() => setShowAI(!showAI)}
-                className="w-full p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-center justify-between hover:bg-blue-500/20 transition-colors group"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-blue-500/20 flex items-center justify-center">
-                        <span className="text-blue-400 text-sm font-bold">AI</span>
+            {/* 2. BASELINE METRICS (Preserved & Compacted) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2 bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                        <Brain className="w-6 h-6 text-slate-400" />
+                        <h3 className="text-xl font-bold text-slate-200">Baseline Clinical Profile</h3>
                     </div>
-                    <span className="text-blue-200 text-base font-semibold">Statistical Insights</span>
-                    <span className="text-blue-300 text-sm">(2,847 patients)</span>
-                </div>
-                {showAI ? <ChevronUp className="w-4 h-4 text-blue-400" /> : <ChevronDown className="w-4 h-4 text-blue-400 group-hover:animate-bounce" />}
-            </button>
 
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        {/* PHQ-9 */}
+                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className={`text-2xl font-black mb-1 ${phq9Info.color}`}>{journey.baseline.phq9}</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">PHQ-9</div>
+                            <div className="text-[10px] text-slate-500 mt-1 truncat">{phq9Info.label}</div>
+                        </div>
+                        {/* GAD-7 */}
+                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className={`text-2xl font-black mb-1 ${gad7Info.color}`}>{journey.baseline.gad7}</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">GAD-7</div>
+                            <div className="text-[10px] text-slate-500 mt-1 truncat">{gad7Info.label}</div>
+                        </div>
+                        {/* ACE */}
+                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className="text-2xl font-black text-amber-400 mb-1">{journey.baseline.aceScore}</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">ACE Score</div>
+                            <div className="text-[10px] text-slate-500 mt-1">Trauma Hist.</div>
+                        </div>
+                        {/* Expectancy */}
+                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center">
+                            <div className="text-2xl font-black text-emerald-400 mb-1">{journey.baseline.expectancy}</div>
+                            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Expectancy</div>
+                            <div className="text-[10px] text-slate-500 mt-1">High Belief</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. PREDICTIONS (Preserved) */}
+                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col">
+                    <div className="flex items-center gap-3 mb-4">
+                        <TrendingUp className="w-6 h-6 text-emerald-400" />
+                        <h3 className="text-xl font-bold text-slate-200">Forecast</h3>
+                    </div>
+                    <div className="space-y-3 flex-1">
+                        <div className="flex justify-between items-center p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                            <span className="text-sm text-slate-300 font-medium">Success Probability</span>
+                            <span className="text-xl font-black text-emerald-400">72%</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                            <span className="text-sm text-slate-300 font-medium">Challenge Risk</span>
+                            <span className="text-xl font-black text-amber-400">45%</span>
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setShowAI(!showAI)}
+                        className="mt-4 w-full py-2 text-xs font-bold text-slate-500 uppercase tracking-widest hover:text-slate-300 transition-colors flex items-center justify-center gap-1"
+                    >
+                        AI Insights {showAI ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                </div>
+            </div>
+
+            {/* AI Insights Panel (Collapsible) */}
             {showAI && (
-                <div className="space-y-3 animate-in slide-in-from-top duration-300">
-
-                    {/* Historical Success Rate */}
-                    <div className="relative p-4 bg-slate-900/40 rounded-xl">
-                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
-                            <AdvancedTooltip
-                                tier="guide"
-                                type="science"
-                                side="bottom-left"
-                                title="Evidence Sources"
-                                width="w-96"
-                                content={
-                                    <div className="space-y-2 text-sm">
-                                        <div><span className="font-bold text-slate-200">Success Rate:</span> Mitchell et al. (2021). MDMA-assisted therapy for severe PTSD. <em>Nature Medicine</em>. Carhart-Harris et al. (2021). Trial of psilocybin versus escitalopram for depression. <em>NEJM</em>.</div>
-                                        <div><span className="font-bold text-slate-200">Remission definition:</span> PHQ-9 &lt; 5 at 6-month follow-up.</div>
-                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Population-level estimates only — not individual predictions.</div>
-                                    </div>
-                                }
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            </AdvancedTooltip>
-                        </div>
-                        <p className="text-base font-bold text-slate-300 mb-1">Historical Success Rate</p>
-                        <p className="text-emerald-400 text-lg font-bold">72% achieved remission (PHQ-9 &lt; 5)</p>
-                        <p className="text-slate-400 text-base mt-1">At 6-month follow-up</p>
-                    </div>
-
-                    {/* Experience Pattern */}
-                    <div className="relative p-4 bg-slate-900/40 rounded-xl">
-                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
-                            <AdvancedTooltip
-                                tier="guide"
-                                type="warning"
-                                side="bottom-left"
-                                title="Evidence Sources"
-                                width="w-96"
-                                content={
-                                    <div className="space-y-2 text-sm">
-                                        <div><span className="font-bold text-slate-200">Challenging Experience:</span> Barrett et al. (2017). Qualitative and quantitative features of challenging experiences. <em>J Psychopharmacology</em>.</div>
-                                        <div><span className="font-bold text-slate-200">CEQ definition:</span> Challenging Experience Questionnaire score &gt; 50. Elevated ACE score and high baseline GAD-7 are primary predictors.</div>
-                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Population-level estimates only — not individual predictions.</div>
-                                    </div>
-                                }
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            </AdvancedTooltip>
-                        </div>
-                        <p className="text-base font-bold text-slate-300 mb-1">Experience Pattern</p>
-                        <p className="text-amber-400 text-lg font-bold">45% experienced challenging moments</p>
-                        <p className="text-slate-400 text-base mt-1">CEQ score &gt; 50 during session</p>
-                    </div>
-
-                    {/* Integration Pattern */}
-                    <div className="relative p-4 bg-slate-900/40 rounded-xl">
-                        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem' }}>
-                            <AdvancedTooltip
-                                tier="guide"
-                                type="info"
-                                side="bottom-left"
-                                title="Evidence Sources"
-                                width="w-96"
-                                content={
-                                    <div className="space-y-2 text-sm">
-                                        <div><span className="font-bold text-slate-200">Integration sessions:</span> Mithoefer et al. (2019). MAPS treatment manual for MDMA-AT. Typical protocol: 3 MDMA sessions + 12 integration sessions over 18 weeks.</div>
-                                        <div><span className="font-bold text-slate-200">ACE ≥ 4 subgroup:</span> Felitti et al. (1998). ACE Study. Higher ACE scores correlate with longer integration requirements.</div>
-                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Population-level estimates only — not individual predictions.</div>
-                                    </div>
-                                }
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            </AdvancedTooltip>
-                        </div>
-                        <p className="text-base font-bold text-slate-300 mb-1">Integration Pattern</p>
-                        <p className="text-blue-400 text-lg font-bold">Average: 6 sessions over 6 months</p>
-                        <p className="text-slate-400 text-base mt-1">Among patients with ACE ≥ 4</p>
-                    </div>
-
-                    <AdvancedTooltip
-                        content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
-                        tier="standard"
-                        type="warning"
-                        title="Legal Disclaimer"
-                    >
-                        <div className="flex items-center justify-center gap-1 text-slate-500 text-sm cursor-help hover:text-slate-300 transition-colors">
-                            <span>⚠️</span>
-                            <span className="italic">For informational purposes only</span>
-                        </div>
-                    </AdvancedTooltip>
-                </div>
-            )}
-
-            {/* Collapsible Benchmarks */}
-            <button
-                onClick={() => setShowBenchmarks(!showBenchmarks)}
-                className="w-full p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg flex items-center justify-between hover:bg-purple-500/20 transition-colors group"
-            >
-                <span className="text-purple-300 text-sm font-semibold">Comparative Benchmarks</span>
-                {showBenchmarks ? <ChevronUp className="w-4 h-4 text-purple-400" /> : <ChevronDown className="w-4 h-4 text-purple-400 group-hover:animate-bounce" />}
-            </button>
-
-            {showBenchmarks && (
-                <div className="space-y-3 animate-in slide-in-from-top duration-300">
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between mb-3">
-                            <p className="text-xl font-black text-purple-300">PHQ-9 Comparison</p>
-                            <AdvancedTooltip
-                                tier="guide"
-                                type="science"
-                                side="bottom-left"
-                                title="PHQ-9 Benchmark Sources"
-                                width="w-96"
-                                content={
-                                    <div className="space-y-2 text-sm">
-                                        <div><span className="font-bold text-slate-200">PHQ-9 Scale:</span> Kroenke & Spitzer (2002). The PHQ-9: Validity of a brief depression severity measure. <em>J Gen Intern Med</em>. Scored 0–27; ≥20 = severe depression.</div>
-                                        <div><span className="font-bold text-slate-200">Clinic Average (18):</span> Mean PHQ-9 at intake across patients enrolled in PAT programs. Internal aggregate data.</div>
-                                        <div><span className="font-bold text-slate-200">Global Average (17):</span> Population-level PHQ-9 mean for treatment-seeking adults with MDD. NIMH Epidemiology data (2022).</div>
-                                        <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Benchmarks are population-level estimates — not individual comparisons. Clinical decision support only.</div>
-                                    </div>
-                                }
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 cursor-help hover:text-slate-300 transition-colors"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                            </AdvancedTooltip>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <span className="w-20 text-base font-bold text-slate-300">Subject</span>
-                            <div className="flex-1 h-3 bg-slate-900/60 rounded-full overflow-hidden">
-                                <div className="h-full bg-red-400" style={{ width: `${(journey.baseline.phq9 / 27) * 100}%` }} />
-                            </div>
-                            <span className="w-10 text-base font-black text-red-400 text-right">{journey.baseline.phq9}</span>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <span className="w-20 text-base font-bold text-slate-300">Clinic</span>
-                            <div className="flex-1 h-3 bg-slate-900/60 rounded-full overflow-hidden">
-                                <div className="h-full bg-slate-400" style={{ width: `${(18 / 27) * 100}%` }} />
-                            </div>
-                            <span className="w-10 text-base font-black text-slate-300 text-right">18</span>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <span className="w-20 text-base font-bold text-slate-300">Global</span>
-                            <div className="flex-1 h-3 bg-slate-900/60 rounded-full overflow-hidden">
-                                <div className="h-full bg-slate-400" style={{ width: `${(17 / 27) * 100}%` }} />
-                            </div>
-                            <span className="w-10 text-base font-black text-slate-300 text-right">17</span>
-                        </div>
-                    </div>
-
-                    <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-base font-bold text-emerald-300">
-                        💡 High expectancy (85) correlates with 25% better outcomes
-                    </div>
+                <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-4 animate-in slide-in-from-top duration-300">
+                    <p className="text-slate-400 text-sm leading-relaxed">
+                        <strong className="text-slate-300">Analysis:</strong> Patient profile (High ACE, Severe TRD) matches cluster B2. Historical data suggests slower initial response but durable remission if integration protocol is strictly followed. Recommended strict adherence to 3+ integration sessions.
+                    </p>
                 </div>
             )}
         </div>
