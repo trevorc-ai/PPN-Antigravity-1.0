@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Calendar, TrendingUp, Star, ChevronDown } from 'lucide-react';
 import { createBehavioralChange } from '../../services/clinicalLog';
+import { RefPicker, RefPickerItem } from '../ui/RefPicker';
 
 interface BehavioralChangeTrackerProps {
     patientId: string;
@@ -11,7 +12,7 @@ interface BehavioralChangeTrackerProps {
 interface BehavioralChangeData {
     change_date: string;
     change_type: string;
-    what_changed_ids: string[];
+    what_changed_ids: number[];   // FK integer IDs — WO-214
     is_positive: boolean;
     impact_level: 'highly_positive' | 'moderately_positive' | 'neutral' | 'moderately_negative' | 'highly_negative';
     confidence_score: number;
@@ -29,15 +30,17 @@ const CHANGE_TYPES = [
     { id: 'nutrition', label: 'Nutrition', icon: '🥗' },
 ];
 
-const WHAT_CHANGED_OPTIONS = [
-    { id: 'set_boundaries', label: 'Set new boundaries' },
-    { id: 'new_practice', label: 'Started new practice / habit' },
-    { id: 'ended_pattern', label: 'Ended unhealthy pattern' },
-    { id: 'reached_out', label: 'Reached out to someone' },
-    { id: 'forgave_someone', label: 'Forgave someone / let go' },
-    { id: 'expressed_needs', label: 'Expressed needs openly' },
-    { id: 'reduced_avoidance', label: 'Reduced avoidance behavior' },
-    { id: 'increased_presence', label: 'Increased present-moment awareness' },
+// WO-214: Numeric IDs are interim (1-8) — will align to ref_behavioral_change_actions
+// PKs once that table is seeded. Using offset 301+ to avoid collision.
+const WHAT_CHANGED_ITEMS: RefPickerItem[] = [
+    { id: 301, label: 'Set new boundaries' },
+    { id: 302, label: 'Started new practice / habit' },
+    { id: 303, label: 'Ended unhealthy pattern' },
+    { id: 304, label: 'Reached out to someone' },
+    { id: 305, label: 'Forgave someone / let go' },
+    { id: 306, label: 'Expressed needs openly' },
+    { id: 307, label: 'Reduced avoidance behavior' },
+    { id: 308, label: 'Increased present-moment awareness' },
 ];
 
 const IMPACT_OPTIONS = [
@@ -91,7 +94,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
     const [form, setForm] = useState<BehavioralChangeData>({
         change_date: today,
         change_type: '',
-        what_changed_ids: [],
+        what_changed_ids: [],  // number[] — RefPicker (WO-214)
         is_positive: true,
         impact_level: 'moderately_positive',
         confidence_score: 0,
@@ -100,14 +103,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
 
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-    const toggleWhatChanged = (id: string) => {
-        setForm((f) => ({
-            ...f,
-            what_changed_ids: f.what_changed_ids.includes(id)
-                ? f.what_changed_ids.filter((i) => i !== id)
-                : [...f.what_changed_ids, id],
-        }));
-    };
+    // WO-214: RefPicker handles toggle internally — onChange provides full number[] directly
 
     const handleSave = useCallback(async () => {
         if (!form.change_type || form.confidence_score === 0) return;
@@ -119,12 +115,11 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 session_id: sessionId !== undefined ? String(sessionId) : undefined,
                 change_date: form.change_date,
                 change_type: form.change_type,
-                change_description: JSON.stringify(form.what_changed_ids),
+                change_type_ids: form.what_changed_ids,       // ✅ WO-214: integer FK IDs
                 is_positive: ['highly_positive', 'moderately_positive'].includes(form.impact_level),
                 impact_on_wellbeing: form.impact_level,
                 confidence_sustaining: form.confidence_score,
                 related_to_dosing: form.session_relation,
-                // TODO (WO-214): Replace string arrays with integer FK IDs once RefPicker is built
             });
             if (!result.success) throw result.error;
             setSaveStatus('saved');
@@ -191,32 +186,14 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 </div>
             </div>
 
-            {/* What Changed */}
-            <div>
-                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">What Changed? (select all that apply)</p>
-                <div className="space-y-2">
-                    {WHAT_CHANGED_OPTIONS.map((opt) => {
-                        const checked = form.what_changed_ids.includes(opt.id);
-                        return (
-                            <label
-                                key={opt.id}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${checked
-                                    ? 'bg-blue-500/10 border-blue-500/30 text-slate-300'
-                                    : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
-                                    }`}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={() => toggleWhatChanged(opt.id)}
-                                    className="w-4 h-4 rounded accent-blue-500"
-                                />
-                                <span className="text-sm font-medium">{opt.label}</span>
-                            </label>
-                        );
-                    })}
-                </div>
-            </div>
+            {/* What Changed — RefPicker WO-214 */}
+            <RefPicker
+                items={WHAT_CHANGED_ITEMS}
+                selected={form.what_changed_ids}
+                onChange={(ids) => setForm((f) => ({ ...f, what_changed_ids: ids }))}
+                label="What Changed? (select all that apply)"
+                multi={true}
+            />
 
             {/* Impact on Well-Being */}
             <div>

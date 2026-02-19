@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Calendar, Clock, CheckSquare, Star, BookOpen, ChevronDown } from 'lucide-react';
 import { createIntegrationSession } from '../../services/clinicalLog';
+import { RefPicker, RefPickerItem } from '../ui/RefPicker';
 
 interface StructuredIntegrationSessionProps {
     patientId: string;
@@ -14,12 +15,12 @@ interface IntegrationSessionData {
     session_duration_minutes: number;
     attendance_status: 'attended' | 'cancelled' | 'no_show';
     cancellation_reason_id: number | null;
-    focus_areas: string[];
+    focus_area_ids: number[];      // WO-214: integer FK IDs via RefPicker
     insight_integration_score: number;
     emotional_processing_score: number;
     behavioral_application_score: number;
     engagement_level_score: number;
-    homework_assigned: string[];
+    homework_ids: number[];        // WO-214: integer FK IDs via RefPicker
     next_session_date: string;
 }
 
@@ -30,26 +31,28 @@ const DURATION_OPTIONS = [
     { label: '90 min', value: 90 },
 ];
 
-const FOCUS_AREAS = [
-    'Processing Dosing Experience',
-    'Relationship Insights',
-    'Career / Purpose Exploration',
-    'Grief / Loss Processing',
-    'Trauma Integration',
-    'Spiritual / Meaning-Making',
-    'Family Dynamics',
-    'Somatic Awareness',
+// WO-214: Numeric IDs are interim — will align to ref_session_focus_areas PKs once seeded (offset 101+)
+const FOCUS_AREA_ITEMS: RefPickerItem[] = [
+    { id: 101, label: 'Processing Dosing Experience' },
+    { id: 102, label: 'Relationship Insights' },
+    { id: 103, label: 'Career / Purpose Exploration' },
+    { id: 104, label: 'Grief / Loss Processing' },
+    { id: 105, label: 'Trauma Integration' },
+    { id: 106, label: 'Spiritual / Meaning-Making' },
+    { id: 107, label: 'Family Dynamics' },
+    { id: 108, label: 'Somatic Awareness' },
 ];
 
-const HOMEWORK_OPTIONS = [
-    'Daily Journaling (10 min/day)',
-    'Meditation Practice (10 min/day)',
-    'Gratitude List (3 items/day)',
-    'Nature Walk (30 min)',
-    'Creative Expression',
-    'Breathwork Practice',
-    'Body Scan Exercise',
-    'Reach Out to Support Person',
+// WO-214: Numeric IDs are interim — will align to ref_homework_assignments PKs once seeded (offset 201+)
+const HOMEWORK_ITEMS: RefPickerItem[] = [
+    { id: 201, label: 'Daily Journaling (10 min/day)' },
+    { id: 202, label: 'Meditation Practice (10 min/day)' },
+    { id: 203, label: 'Gratitude List (3 items/day)' },
+    { id: 204, label: 'Nature Walk (30 min)' },
+    { id: 205, label: 'Creative Expression' },
+    { id: 206, label: 'Breathwork Practice' },
+    { id: 207, label: 'Body Scan Exercise' },
+    { id: 208, label: 'Reach Out to Support Person' },
 ];
 
 const CANCELLATION_REASONS = [
@@ -109,19 +112,18 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
         session_duration_minutes: 45,
         attendance_status: 'attended',
         cancellation_reason_id: null,
-        focus_areas: [],
+        focus_area_ids: [],   // number[] — RefPicker (WO-214)
         insight_integration_score: 0,
         emotional_processing_score: 0,
         behavioral_application_score: 0,
         engagement_level_score: 0,
-        homework_assigned: [],
+        homework_ids: [],     // number[] — RefPicker (WO-214)
         next_session_date: nextWeek,
     });
 
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-    const toggleArrayItem = (arr: string[], item: string): string[] =>
-        arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item];
+    // WO-214: RefPicker handles toggle internally — onChange provides full number[] directly
 
     const handleSave = useCallback(async () => {
         setSaveStatus('saving');
@@ -142,7 +144,8 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                 emotional_processing_rating: form.emotional_processing_score,
                 behavioral_application_rating: form.behavioral_application_score,
                 engagement_level_rating: form.engagement_level_score,
-                // session_focus_ids and homework_assigned_ids pending RefPicker (WO-214)
+                session_focus_ids: form.focus_area_ids,        // ✅ WO-214: integer FK IDs
+                homework_assigned_ids: form.homework_ids,      // ✅ WO-214: integer FK IDs
             });
             if (!result.success) throw result.error;
             setSaveStatus('saved');
@@ -276,36 +279,24 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
             {/* Focus Areas — only if attended */}
             {isAttended && (
                 <>
-                    <div>
-                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">
-                            <CheckSquare className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5" />
-                            Session Focus Areas
-                        </p>
-                        <div className="grid grid-cols-1 gap-2">
-                            {FOCUS_AREAS.map((area) => {
-                                const checked = form.focus_areas.includes(area);
-                                return (
-                                    <label
-                                        key={area}
-                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${checked
-                                            ? 'bg-primary/10 border-primary/40 text-slate-300'
-                                            : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
-                                            }`}
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={checked}
-                                            onChange={() => setForm((f) => ({ ...f, focus_areas: toggleArrayItem(f.focus_areas, area) }))}
-                                            className="w-4 h-4 rounded accent-primary"
-                                        />
-                                        <span className="text-sm font-medium">{area}</span>
-                                    </label>
-                                );
-                            })}
-                        </div>
-                    </div>
+                    {/* Focus Areas — RefPicker WO-214 */}
+                    <RefPicker
+                        items={FOCUS_AREA_ITEMS}
+                        selected={form.focus_area_ids}
+                        onChange={(ids) => setForm((f) => ({ ...f, focus_area_ids: ids }))}
+                        label="Session Focus Areas"
+                        multi={true}
+                    />
 
-                    {/* Progress Indicators */}
+                    {/* Homework — RefPicker WO-214 */}
+                    <RefPicker
+                        items={HOMEWORK_ITEMS}
+                        selected={form.homework_ids}
+                        onChange={(ids) => setForm((f) => ({ ...f, homework_ids: ids }))}
+                        label="Homework Assigned"
+                        multi={true}
+                    />
+                    {/* Patient Progress Indicators */}
                     <div>
                         <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Patient Progress Indicators</p>
                         <div className="bg-slate-800/30 rounded-2xl px-4 py-2 divide-y divide-slate-700/50">
@@ -317,33 +308,6 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                                     onChange={(v) => setForm((f) => ({ ...f, [key]: v }))}
                                 />
                             ))}
-                        </div>
-                    </div>
-
-                    {/* Homework */}
-                    <div>
-                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-3">Homework Assigned</p>
-                        <div className="grid grid-cols-1 gap-2">
-                            {HOMEWORK_OPTIONS.map((hw) => {
-                                const checked = form.homework_assigned.includes(hw);
-                                return (
-                                    <label
-                                        key={hw}
-                                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${checked
-                                            ? 'bg-emerald-500/10 border-emerald-500/30 text-slate-300'
-                                            : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
-                                            }`}
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={checked}
-                                            onChange={() => setForm((f) => ({ ...f, homework_assigned: toggleArrayItem(f.homework_assigned, hw) }))}
-                                            className="w-4 h-4 rounded accent-emerald-500"
-                                        />
-                                        <span className="text-sm font-medium">{hw}</span>
-                                    </label>
-                                );
-                            })}
                         </div>
                     </div>
                 </>
