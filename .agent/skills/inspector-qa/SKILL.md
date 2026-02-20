@@ -64,16 +64,20 @@ grep -n "bg-gradient-to-b" src/components/TargetFile.tsx
 
 ## Step 4: Accessibility Audit
 
-- [ ] All text elements have font-size >= 12px (no `text-[10px]`, `text-[11px]`, `text-[9px]`)
+- [ ] All text elements have font-size >= 14px (`text-sm` minimum). `text-xs` is **BANNED** except in SVG chart labels and tooltip badges.
 - [ ] No UI state relies on color alone (always paired with text label or icon)
 - [ ] Interactive elements have visible focus rings
 - [ ] Button text contrast >= 4.5:1
 
-Grep check for font violations:
+Grep checks — run BOTH, paste results:
 ```bash
+# Check for sub-12px explicit size violations
 grep -rn 'text-\[1[01]px\]\|text-\[9px\]\|font-size.*[89]px' src/ | grep -v ".test."
+
+# Check for text-xs usage (BANNED in body/label/paragraph/button contexts)
+grep -rn '"[^"]*text-xs[^"]*"' src/ --include="*.tsx" --include="*.ts" | grep -v "svg\|chart\|recharts\|tooltip\|badge\|node_modules" | wc -l
 ```
-Any results = FAIL.
+If either grep returns ANY results, list them and **FAIL**.
 
 ---
 
@@ -95,15 +99,37 @@ For any page or component modified, verify:
 
 ---
 
+## Step 7: 🚨 MANDATORY GIT PUSH VERIFICATION (NEW — NON-NEGOTIABLE)
+
+**INSPECTOR cannot issue a PASS without confirming the code is on GitHub.**
+
+Run:
+```bash
+git status
+git log --oneline -3
+```
+
+Check the output for `(HEAD -> main, origin/main)` on the top commit.
+
+- If `origin/main` matches `HEAD` → ✅ Push confirmed, proceed to APPROVAL.
+- If local is **ahead of** `origin/main` by ANY commits → run `git push origin main` immediately before approving.
+- If push fails → **HOLD APPROVAL.** Escalate to LEAD. Do not issue [STATUS: PASS] until code is confirmed on remote.
+
+**Rationale:** Changes that are only committed locally will be lost when a new session loads from remote. Every regression Trevor has experienced has been caused by code that was committed but never pushed. This step cannot be skipped or deferred.
+
+
+
 ## APPROVAL PROTOCOL ✅
 
 Only approve if ALL of the following are true:
 1. All acceptance criteria are `[x]` checked — **zero deferred items**
 2. `## BUILDER IMPLEMENTATION COMPLETE` section exists in the ticket
 3. Grep evidence was run for every major claimed implementation
-4. Accessibility audit passes
+4. Accessibility audit passes (`text-xs` count = 0 in non-exempt contexts)
 5. Security audit passes
 6. No font violations found
+7. **`git log --oneline -1` shows `(HEAD -> main, origin/main)` — code is on GitHub** ✅
+
 
 Append to the ticket:
 ```markdown
