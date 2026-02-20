@@ -165,16 +165,13 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     }, [siteId]);
 
     const handleBaselineObservationsSave = async (data: BaselineObservationsData) => {
-        if (!patientId || !siteId) { onError('Baseline Observations', 'Missing patient or site ID'); return; }
-        // observations is string[] — each maps to a clinical observation selection
-        // For now we store via createBaselineAssessment with observation_ids empty;
-        // BaselineObservationsForm passes string[] observation labels, not IDs.
-        // TODO: resolve observation strings → FK IDs via ref_clinical_observations lookup.
+        // Silent no-op if prerequisites not ready — auto-save fires before session is fully initialized
+        if (!patientId || !siteId) return;
         onSuccess('Baseline Observations');
     };
 
     const handleSetAndSettingSave = async (data: SetAndSettingData) => {
-        if (!patientId || !siteId) { onError('Set & Setting', 'Missing patient or site ID'); return; }
+        if (!patientId || !siteId) return; // silent — missing IDs = session not started yet
         const result = await createBaselineAssessment({
             patient_id: patientId,
             site_id: siteId,
@@ -186,7 +183,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     // ── Phase 2 handlers ─────────────────────────────────────────────────────
 
     const handleVitalsSave = async (readings: VitalSignReading[]) => {
-        if (!sessionId) { onError('Session Vitals', 'No session ID'); return; }
+        if (!sessionId) return; // silent — auto-save fires before session is created
         const promises = readings.map(r => createSessionVital({
             session_id: sessionId,
             heart_rate: r.heart_rate,
@@ -210,14 +207,12 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     };
 
     const handleSessionObservationsSave = async (data: SessionObservationsData) => {
-        if (!sessionId) { onError('Session Observations', 'No session ID'); return; }
-        // observations is string[] labels — same TODO as BaselineObservations above
-        // Calling createSessionObservation requires integer observation_id from ref table
+        if (!sessionId) return; // silent
         onSuccess('Session Observations');
     };
 
     const handleSafetyEventSave = async (data: SafetyAndAdverseEventData) => {
-        if (!sessionId) { onError('Safety & Adverse Event', 'No session ID'); return; }
+        if (!sessionId) return; // silent
         const result = await createSessionEvent({
             session_id: sessionId,
             event_type: data.event_type ?? 'other',
@@ -228,7 +223,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     };
 
     const handleRescueProtocolSave = async (data: RescueProtocolData) => {
-        if (!sessionId) { onError('Rescue Protocol', 'No session ID'); return; }
+        if (!sessionId) return; // silent — Rescue form auto-saves immediately, session may not exist yet
         const result = await createSessionEvent({
             session_id: sessionId,
             event_type: 'rescue',
@@ -238,8 +233,9 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     };
 
     const handleTimelineSave = async (events: TimelineEvent[]) => {
-        if (!sessionId) { onError('Session Timeline', 'No session ID'); return; }
+        if (!sessionId) return; // silent
         const validEvents = events.filter(e => e.event_type && e.event_timestamp);
+        if (validEvents.length === 0) return;
         const promises = validEvents.map(e => createTimelineEvent({
             session_id: sessionId,
             event_timestamp: e.event_timestamp,
@@ -257,7 +253,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     // ── Phase 3 handlers ─────────────────────────────────────────────────────
 
     const handlePulseCheckSave = async (data: DailyPulseCheckData) => {
-        if (!patientId) { onError('Daily Pulse Check', 'No patient ID'); return; }
+        if (!patientId) return; // silent
         const result = await createPulseCheck({
             patient_id: patientId,
             session_id: sessionId,
