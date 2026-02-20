@@ -695,7 +695,7 @@ export const CompassTourButton: React.FC<CompassTourButtonProps> = ({ phase, onC
     return (
         <button
             onClick={onClick}
-            className={`p-2 border rounded-lg transition-all group ${colorMap[phase]}`}
+            className={`w-10 h-10 flex items-center justify-center flex-shrink-0 border rounded-xl transition-all group ${colorMap[phase]}`}
             aria-label={`Take guided tour of Phase ${phase}`}
             title={`Phase ${phase} Guided Tour`}
         >

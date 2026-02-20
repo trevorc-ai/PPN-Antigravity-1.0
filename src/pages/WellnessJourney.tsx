@@ -499,9 +499,11 @@ const WellnessJourney: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
                     {/* Left: Patient identity + demographics pills */}
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-                            <Target className="w-5 h-5 text-blue-400" />
-                        </div>
+                        <CompassTourButton phase={activePhase} onClick={() => {
+                            if (activePhase === 1) setShowTour1(true);
+                            if (activePhase === 2) setShowTour2(true);
+                            if (activePhase === 3) setShowTour3(true);
+                        }} />
                         <div>
                             {/* Patient ID — large + mono for quick visual verification */}
                             <div className="flex items-center gap-3 flex-wrap">
@@ -539,11 +541,6 @@ const WellnessJourney: React.FC = () => {
                                 >
                                     {activePhase === 1 ? 'Change' : 'Lookup'}
                                 </button>
-                                <CompassTourButton phase={activePhase} onClick={() => {
-                                    if (activePhase === 1) setShowTour1(true);
-                                    if (activePhase === 2) setShowTour2(true);
-                                    if (activePhase === 3) setShowTour3(true);
-                                }} />
                             </div>
                             <p className="text-sm mt-0.5" style={{ color: '#8B9DC3' }}>
                                 {activePhase === 1 && 'Pre-treatment preparation — complete baseline assessments before session'}
