@@ -4,135 +4,212 @@ status: 02_DESIGN
 owner: DESIGNER
 failure_count: 0
 created: 2026-02-19
+updated: 2026-02-19
 priority: HIGH
 ticket_type: design + build
+archived_parent_wos:
+  - WO-004_Regulatory_Map_Consolidation (DESIGNER signed off 2026-02-18, BUILDER never executed)
 pages_affected:
   - src/pages/Dashboard.tsx
   - src/pages/Analytics.tsx
   - src/pages/News.tsx
   - src/components/analytics/RegulatoryMosaic.tsx
-user_prompt_verbatim: "@lead please assign a work order to have Designer improve the layout of the dashboard, fix the component on the Analytics page (not displaying properly), finish the integration of the Intelligence/News page RegulatoryMap upgrade."
+  - src/components/ui/ConnectFeedButton.tsx
+  - src/hooks/useSafetyBenchmark.ts
+  - src/hooks/useAnalyticsData.ts
+user_prompt_verbatim: |
+  Dashboard has a massive component in the middle of the page now that wasn't requested; also all of the buttons and components on this page need to be activated. And I'd like to see some live data flowing through the dashboard to see what it really looks like.
+  The integration of the news page and the regulatory map is a long-standing work order that was in the queue for a long time. Check the archives for the details. RSS feeds and API also need to be connected with filters. Designer has a new react map creator for an upgrade on the map mosaic. They connect.
+  Your blog button is blue but probably should be green because it's different than other kinds of buttons, we also need to offer functionality for people to submit their blog or URL probably just via email or if there's some way we can have them uploaded RSS feed or something like that to automate it that would be better, but this isn't a mandatory feature.
+  Analytics page has good components, they just need layout refinement and filters, and need to be connected to the database.
 ---
 
 ## LEAD ARCHITECTURE
 
-Three scoped tasks in one ticket. All are frontend/UI — no DB changes required.
-SOOP is deactivated; LEAD handles SQL if needed (none required here).
+Three parallel tracks, each spawning a BUILDER subtask. SOOP is deactivated — LEAD handles any SQL.
+No new database tables required. Live data comes from existing hooks + Supabase queries.
 
 ---
 
-## TASK 1 — Dashboard Layout Polish
+## TRACK A — DASHBOARD: SHRINK MATRIX + WIRE ALL BUTTONS + LIVE DATA
 
-### Problem (from screenshot)
-The dashboard currently feels vertically cramped and has several cosmetic layout issues:
-- **Recommended Next Steps** section uses small pill-list layout — items feel small and low-hierarchy
-- **Clinic Performance Cards** have inconsistent border treatment (`border-indigo-500/30` hardcoded on all 4 regardless of status)
-- **Safety Risk Assessment** section is dominant — takes ~40% of the screen — while being non-interactive for most users
-- **Quick Actions** row is fine but the `bg-amber-500` on "Check Interactions" conflicts with the cool-blue design system (should match the others)
-- **Network Activity** cards at the bottom are weak — the `bg-slate-500` icon color makes them look deactivated vs. the vivid KPI cards above
-- Overall vertical rhythm: sections don't have enough visual separation — the page reads as one long blob
+### Problem Summary (from screenshot + user feedback)
+The `SafetyRiskMatrix` (Pharmacovigilance Matrix) occupies ~40% of the Dashboard viewport — user did not request it was added here and it dominates the page. All Quick Action buttons navigate to routes but many underlying pages have no DB connection. KPI cards ("23 protocols", "71% success rate") are hardcoded strings.
 
-### DESIGNER Deliverables
-1. **Recommended Next Steps**: upgrade from tight list to a `3-column card grid` — each step gets an icon, number badge, and a clear CTA arrow. Urgent items get a red accent border (not color-only — also add "⚠ Urgent" label text).
-2. **Clinic Performance Cards**: standardize border treatment. Active/positive = `border-emerald-500/30`. Alert card (Safety Alerts) = `border-amber-500/30`. Neutral = `border-slate-700/50`. Remove the hardcoded `border-indigo-500/30` on all 4.
-3. **Safety Risk Matrix**: reduce its visual weight. Wrap in a collapsible `<details>` or add a toggle. Default state: **collapsed** with a summary line showing "2 high-risk interactions detected". Expanded: shows full matrix. This prevents the matrix from dominating new users who haven't logged any protocols yet.
-4. **Quick Actions**: the `bg-amber-500` hover on "Check Interactions" should be `bg-rose-500` to differentiate it as a safety/check action rather than an edit action. Update button text to "Interaction Checker".
-5. **Network Activity Cards**: change icon color from `bg-slate-500` to themed colors: `bg-blue-500` for Protocols, `bg-emerald-500` for Sites, `bg-amber-500` for Success Rate.
-6. **Section spacing**: add `border-t border-slate-800/60` between major sections to restore visual rhythm.
-7. **Minimum font size audit**: all visible text ≥ 12px. No `text-xs` on primary content labels.
+### BUILDER Actions
 
-### Do NOT change
-- Header ("Dashboard" h1) — intentional design
-- CTA button ("Log New Session") — wired correctly
-- The search bar section — correct as-is
-- Route links on all cards
+**A1. Collapse the Safety Risk Matrix by default**
+- Wrap `<SafetyRiskMatrix />` in a `<details>` element styled as a card
+- Default: `open={false}` — shows only a summary strip: `"Pharmacovigilance Matrix — 2 interactions flagged. Click to expand."`
+- Expand arrow on right side. `summary` element uses `text-sm font-bold text-slate-300`
+- When protocols.length === 0, hide the section entirely (it already has this logic — enforce it)
 
----
+**A2. Wire all Quick Action buttons to live routes**
+- "LOG PROTOCOL" → `/wellness-journey` ✅ already wired
+- "ANALYTICS" → `/analytics` ✅ already wired
+- "CHECK INTERACTIONS" → `/interactions` — verify this route exists in App.tsx; if not, wire to `/deep-dives/molecular-pharmacology`
+- "EXPORT DATA" → `/data-export` — verify route; if not yet built show a `toast("Coming soon")` notification
+- "BENCHMARKS" → `/deep-dives/clinic-performance` ✅ already wired
+- Network Activity cards (Total Protocols, Active Sites, Network Avg Success) — each has an `→` arrow that should navigate: Protocols → `/analytics`, Sites → `/news`, Success → `/analytics`
 
-## TASK 2 — Analytics Page: Fix Non-Displaying Component
+**A3. Live data in KPI cards**
+Replace hardcoded values with data from `usePractitionerProtocols()` which is already imported:
+- "Protocols Logged" value → `protocols.length` (already available)
+- "Success Rate" → derive from protocols: count sessions with outcome PHQ-9 reduction ≥50%. If insufficient data, show `"—"` not `"71%"`
+- "Safety Alerts" → query `log_safety_events` COUNT where `site_id = userSiteId AND is_resolved = false`. Wire via new `useSafetyAlertCount()` hook or inline useEffect.
+- "Avg Session Time" → hardcoded until session timing is in DB. Display `"—"` for now, not `"4.2 hrs"`.
+- Network Activity cards: Total Protocols → `protocols.length` of full network query, Active Sites → fetch COUNT from `log_sites`, Network Avg Success → derive or show `"—"`.
 
-### Problem
-The `SafetyBenchmark` component block (lines 162–221 in `Analytics.tsx`) is not displaying properly. From code inspection:
+**A4. "Recommended Next Steps" — make content dynamic**
+If `protocols.length === 0`: show onboarding steps (Log Protocol, Set up site, Complete first session).
+If `alerts > 0`: Step 1 = "Review {n} safety alerts" (urgent).
+Otherwise: show generic progress steps.
+Leave placeholder logic as fallback if queries haven't resolved.
 
-1. The component renders inside a conditional: `benchmark ? (<SafetyBenchmark />) : (empty state)`. If `useSafetyBenchmark()` returns `null` for `benchmark`, the entire section shows the empty state — even if live data exists.
-2. Likely root cause: `useSafetyBenchmark` hook is querying `log_user_sites` (the old table name) or getting a `null` site_id because `fetchUserSite()` at line 31 also queries `log_user_sites`. If the current user has no row in that table yet, `siteId` stays null, `benchmark` stays null, and both sections show empty/loading states forever.
-3. The `Analytics.tsx` also has a `style jsx global` block (line 317) that isn't valid in standard React — requires `styled-jsx` which is not in the dependency list.
-
-### DESIGNER Deliverables
-
-**For the non-displaying `SafetyBenchmark`:**
-- Check `src/hooks/useSafetyBenchmark.ts` and identify what query it uses
-- If it fails due to missing site data, add a **graceful degraded state** that shows the component with mock/demo data when `benchmark === null` and `benchmarkLoading === false`
-- The degraded state should display a banner: `"Showing demo data — log 10+ sessions to unlock your live benchmark"` with `[STATUS: INFO]` label text (not color-only)
-
-**For the `style jsx global` syntax error:**
-- Replace with a standard `<style>` tag or move print styles to `index.css` under a `@media print` block
-
-**Layout fix:**
-- The 5 chart components (ClinicPerformanceRadar, PatientConstellation, MolecularPharmacology, MetabolicRiskGauge, ProtocolEfficiency) all use `xl:col-span-2` making them full-width. Charts 3 and 4 (Molecular Bridge, Genomic Safety) are spec'd to be side-by-side at xl breakpoint. The grid parent is `xl:grid-cols-2` but both charts are `col-span-2` which overrides the intent. Fix: Charts 3 and 4 should NOT have `xl:col-span-2`.
+**A5. Remove hardcoded mock percentile badge**
+`ClinicPerformanceCard` for Success Rate shows `"62nd percentile"` hardcoded. Remove or replace with `"Calculating..."` when real benchmarks aren't available.
 
 ---
 
-## TASK 3 — Intelligence/News Page: Finish RegulatoryMosaic Integration
+## TRACK B — ANALYTICS: LAYOUT + FILTERS + DB CONNECTION
 
-### Current State
-`News.tsx` lines 155–162 already import and render `<RegulatoryMosaic>` with:
-```tsx
-<RegulatoryMosaic
-  onStateSelect={handleStateSelect}
-  externalSelectedState={selectedStateFilter}
-  showDetailPanel={false}
-/>
-```
-The handler `handleStateSelect` works — it maps state codes to names and sets the search query. The state filter indicator (lines 165–181) is wired correctly.
+### Problems
+1. Charts 3 (MolecularPharmacology) and 4 (MetabolicRiskGauge) both have `xl:col-span-2` — they should sit side-by-side at desktop. Remove `xl:col-span-2` from charts 3 and 4 only.
+2. `SafetyBenchmark` renders in an empty state when `useSafetyBenchmark()` returns null (user has < 10 sessions). Add a **labeled demo-mode banner**: `"[DEMO] Showing illustrative data. Log 10+ sessions to unlock live benchmarks."` Use `text-amber-400` + amber border. Keep the chart rendering with example data so the page doesn't look broken.
+3. `style jsx global` block at lines 317–333 is not standard React — move print styles to `index.css` under `@media print {}`.
+4. Sticky filter bar (lines 224–249) has only molecule + date selects. Add a third filter: **Outcome Type** (`All | PHQ-9 | GAD-7 | MEQ-30`). Wire all three filters to the `useAnalyticsData(siteId)` hook by passing filter state as params.
+5. The `useAnalyticsData` hook likely returns `activeProtocols`, `patientAlerts`, `networkEfficiency`, `riskScore` — verify these are fetching live from Supabase and not returning mock fallbacks. If mocks, replace with real queries against `log_clinical_records` and `log_safety_events`.
 
-### Problem
-The integration is 80% done but has three gaps:
-1. **`showDetailPanel={false}`** — the detail panel is suppressed, but the UX intent was to show it *below* the mosaic on the same page (not in a modal). The panel should slide in beneath the map when a state is clicked.
-2. **No visual connection** between the RegulatoryMosaic and the news feed below — when a state is selected, the news articles below filter but there's no animated/visual transition indicating the connection (e.g., a highlight, a count badge, a scroll).
-3. **The `RegulatoryMosaic` is missing a section header** — it sits inside the feed with no label explaining what it is. New users don't know what the color-coded US map means.
+### BUILDER Actions
+- Remove `xl:col-span-2` from charts 3 + 4
+- Add demo-mode banner to SafetyBenchmark empty state
+- Move `style jsx global` print CSS → `index.css`
+- Add Outcome Type filter to sticky bar
+- Pass filter state to `useAnalyticsData` hook
+- Audit hook for mock data and replace with live Supabase counts
 
-### DESIGNER Deliverables
-1. **Add section header** above `<RegulatoryMosaic>`:
+---
+
+## TRACK C — INTELLIGENCE/NEWS + REGULATORY MAP (WO-004 COMPLETION)
+
+### Archive Context (WO-004, DESIGNER signed off 2026-02-18)
+WO-004 had a full DESIGNER brief: consolidate `/regulatory` route into the News page as a tabbed view. The DESIGNER delivered: tab navigation spec, routing redirect spec (`/regulatory` → `/news?tab=regulatory`), sidebar cleanup, and accessibility spec. The BUILDER never executed it. That work is now superseded by a simpler, better integration (mosaic already embedded in News.tsx) — but the following features from WO-004 were **never built**:
+- URL-param tab switching (`?tab=news` | `?tab=regulatory`)
+- Inline detail panel in News context
+- Route redirect from `/regulatory`
+- RSS feed connection with filters
+
+### BUILDER Actions — C1: Current Mosaic Integration Finish
+
+The RegulatoryMosaic is already embedded in News.tsx (lines 155–162) with `showDetailPanel={false}`. The integration is 80% done. Complete it:
+
+1. **Add section header** above `<RegulatoryMosaic>` in News.tsx:
+   ```tsx
+   <div className="mb-4">
+     <h2 className="text-2xl font-black" style={{ color: '#A8B5D1' }}>🗺 Regulatory Landscape</h2>
+     <p className="text-sm text-slate-400">Click any state to filter news articles below</p>
+   </div>
    ```
-   🗺 Regulatory Landscape   [subtitle: Click any state to filter news]
-   ```
-   Header should use the `text-2xl font-black` style with the standard page color `#A8B5D1`. Subtitle in `text-sm text-slate-400`.
 
-2. **Enable the detail panel inline**: Change `showDetailPanel={false}` to `showDetailPanel={true}`. Inspect `RegulatoryMosaic.tsx` — if the detail panel is already built, just enable it. If it's missing, add a compact info strip below the map that shows:
-   - State name + regulatory status label (Approved / Decriminalized / Prohibited)
-   - A "View N articles" count badge that reflects `filteredNews.length` after selection
+2. **Enable the detail panel**: Change `showDetailPanel={false}` → `showDetailPanel={true}`. The panel is already built in `RegulatoryMosaic.tsx` (lines 136–198) — it just needs to be un-suppressed.
 
-3. **Add a scroll-to-feed animation**: After `handleStateSelect` fires, call:
+3. **Scroll-to-feed after state select**: Add `id="news-feed"` to the `<div className="space-y-6 pt-6">` at line 224. In `handleStateSelect`, add after the setters:
    ```ts
-   document.getElementById('news-feed')?.scrollIntoView({ behavior: 'smooth' });
+   setTimeout(() => document.getElementById('news-feed')?.scrollIntoView({ behavior: 'smooth' }), 100);
    ```
-   Add `id="news-feed"` to the `<div className="space-y-6 pt-6">` at line 224.
 
-4. **Add result count to filter indicator** (line 165–181): Change the text from:
-   `"Showing news for: {searchQuery}"` → `"Showing {filteredNews.length} articles for: {searchQuery}"`
+4. **Filter count in indicator** (line 169): Change to `"Showing {filteredNews.length} articles for: {searchQuery}"`
+
+5. **Bug fix in RegulatoryMosaic.tsx line 29**: `ny` key should be `NY` (lowercase bug causing NY state to not match correctly):
+   ```ts
+   NY: { code: 'NY', name: 'New York', ... }
+   ```
+
+### BUILDER Actions — C2: React Map Upgrade (DESIGNER to spec first)
+
+DESIGNER: The user mentioned they have a **new React map creator** for upgrading the mosaic from the current grid view to an actual US state map. 
+
+**DESIGNER deliverable needed:** Spec out the upgrade path:
+- Does the new map use `react-simple-maps`, `d3-geo`, `@visx/geo`, or custom SVG? Confirm with user.
+- The new map needs to accept the same props as current `RegulatoryMosaic`: `onStateSelect`, `highlightedStates`, `externalSelectedState`, `showDetailPanel`
+- States should be colored by regulatory status (same 4-status color scheme as current grid)
+- On hover: tooltip with state name + status
+- On click: same `handleStateClick` behavior
+- The detail panel (right sidebar showing selected state details) should remain unchanged
+- Accessibility: keyboard navigable states, ARIA labels per state
+
+Proposed component name: `RegulatoryMap` (replacing `RegulatoryMosaic` for the interactive map; keep mosaic as fallback)
+
+### BUILDER Actions — C3: RSS Feed + API Connection
+
+Current state: `NEWS_ARTICLES` in `src/constants` is a static array. The page needs real feeds.
+
+**RSS Integration approach** (no backend required — use a CORS proxy):
+- Use `https://api.rss2json.com/v1/api.json?rss_url=<RSS_URL>` as a free RSS-to-JSON bridge
+- Seed with 3 relevant RSS feeds:
+  - `https://maps.googleapis.com/...` — (placeholder, get actual URLs)
+  - Psychedelic Alpha: `https://psychedelicalpha.com/feed`
+  - MAPS: `https://maps.org/feed/`
+  - Erowid: skip (not appropriate for clinical context)
+  - Use: `https://clinicaltrials.gov/api/rss` for trials feed
+- Create `src/hooks/useNewsFeed.ts` that fetches from 2–3 RSS sources, maps to `NewsArticle` shape, merges with `NEWS_ARTICLES` constants (constants act as fallback if fetch fails)
+- Filter the merged array by `category`, `sentiment`, `searchQuery` (existing logic)
+
+**ConnectFeedButton fix**: 
+- Change from `bg-indigo-500` (blue) to `bg-emerald-600 hover:bg-emerald-500` (green) — it's a content submission action, not a navigation action
+- Add `onClick` handler that opens a mailto link: `mailto:feeds@ppn.com?subject=RSS Feed Submission&body=My blog/feed URL: ` OR opens a small inline modal with instructions
+- Non-mandatory: if the user wants RSS auto-submission, build a simple form that POSTs to a Supabase edge function or just sends an email. Keep as Phase 2.
+
+### BUILDER Actions — C4: Blog/Feed Submission (Non-Mandatory, Phase 2)
+
+If bandwidth allows:
+- Add a "Submit Your Feed" modal triggered by ConnectFeedButton
+- Fields: Feed URL (text input), Contact Email, Brief description (textarea — this is non-PHI, UI context only)
+- On submit: `mailto:` fallback OR POST to `/api/submit-feed` edge function
+- Mark with "PHASE 2 — Optional" comment in code
 
 ---
 
-## Acceptance Criteria (INSPECTOR will verify all)
-- [ ] `text-xs` not used on primary content labels (font ≥ 12px everywhere)
-- [ ] No color-only status signals — all status differences also have text labels
-- [ ] Dashboard layout improvements visible without scrolling (hero section cleaner)
-- [ ] Analytics `SafetyBenchmark` either renders live data OR a labeled demo-mode fallback
-- [ ] Analytics charts 3+4 render side-by-side at desktop width
-- [ ] Intelligence page has RegulatoryMosaic section header
-- [ ] State click on map scrolls to and filters the news feed
-- [ ] `filteredNews.length` count shown in filter indicator
-- [ ] No new TypeScript errors in `src/`
-- [ ] No free-text PHI inputs introduced
+## ACCEPTANCE CRITERIA (INSPECTOR checklist)
 
-## Files to Modify
-- `src/pages/Dashboard.tsx`
-- `src/pages/Analytics.tsx`
-- `src/pages/News.tsx`
-- `src/components/analytics/RegulatoryMosaic.tsx` (inspect before editing)
-- `src/hooks/useSafetyBenchmark.ts` (inspect before editing)
+### Dashboard
+- [ ] Pharmacovigilance Matrix collapsed by default, expandable
+- [ ] `protocols.length` drives "Protocols Logged" KPI (not hardcoded "23")
+- [ ] "Safety Alerts" value comes from live DB query or shows `"—"` with label
+- [ ] All 5 Quick Action buttons navigate to correct routes or show toast if unbuilt
+- [ ] Network Activity cards link on arrow click
+- [ ] No hardcoded mock percentiles displayed as real data
 
-## HANDOFF NOTE TO BUILDER
-DESIGNER should produce a design brief + spec. BUILDER implements.
-If tasks are self-contained enough, DESIGNER may implement directly and route to INSPECTOR.
+### Analytics
+- [ ] Charts 3 + 4 render side-by-side at xl breakpoint
+- [ ] SafetyBenchmark shows demo-mode banner when `benchmark === null`
+- [ ] Print styles moved to `index.css`
+- [ ] Outcome Type filter added to sticky bar
+- [ ] `useAnalyticsData` returns live data (not mocked zeros)
+
+### Intelligence/News
+- [ ] Section header "🗺 Regulatory Landscape" above mosaic
+- [ ] `showDetailPanel={true}` — detail panel visible when state selected
+- [ ] State click scrolls to `#news-feed`
+- [ ] Filter count shows `filteredNews.length`
+- [ ] `NY` key bug fixed in `RegulatoryMosaic.tsx`
+- [ ] `ConnectFeedButton` is green, not blue
+- [ ] `useNewsFeed` hook fetches from at least 1 live RSS source with constants fallback
+
+### Global
+- [ ] No new TS errors in `src/`
+- [ ] All fonts ≥ 12px
+- [ ] No color-only status signals
+- [ ] No PHI/free-text inputs introduced
+
+---
+
+## ROUTING REMINDER (from WO-004)
+- Add redirect: `<Route path="/regulatory" element={<Navigate to="/news" replace />} />`  
+- Sidebar: confirm "Regulatory Map" nav item is already removed (WO-004 said to remove it — verify)
+
+## FILES TO INSPECT BEFORE EDITING
+- `src/hooks/useAnalyticsData.ts` — check for mock data
+- `src/hooks/useSafetyBenchmark.ts` — check query + null handling  
+- `src/App.tsx` — check `/interactions` and `/data-export` routes exist
+- `src/components/layouts/Sidebar.tsx` — check if Regulatory Map nav item still present
