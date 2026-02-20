@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-// Corrected import for named export
 import { useNavigate } from 'react-router-dom';
-import { CLINICIANS } from '../constants';
+import { useClinicianDirectory } from '../hooks/useClinicianDirectory';
+import { supabase } from '../supabaseClient';
 import { GoogleGenAI } from "@google/genai";
 
 const PractitionerCard: React.FC<{ practitioner: any, onMessage: (p: any) => void }> = ({ practitioner, onMessage }) => {
@@ -84,9 +84,11 @@ const MessageDrawer: React.FC<{ practitioner: any | null, onClose: () => void }>
     if (!practitioner) return;
     setIsAiDrafting(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error('No API key configured');
+      const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.0-flash',
         contents: `Write a brief, professional inquiry to practitioner ${practitioner.name}.`,
       });
       setMessage(response.text || '');
@@ -208,23 +210,44 @@ import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 
 const ClinicianDirectory: React.FC = () => {
+  const { practitioners, loading } = useClinicianDirectory();
   const [searchName, setSearchName] = useState('');
   const [selectedRole, setSelectedRole] = useState('All');
   const [selectedLocation, setSelectedLocation] = useState('All');
   const [activeMessagePractitioner, setActiveMessagePractitioner] = useState<any | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [showListingModal, setShowListingModal] = useState(false);
+  const [listingForm, setListingForm] = useState({ displayName: '', role: '', city: '', country: 'United States', licenseType: '', website: '', email: '' });
+  const [listingSubmitted, setListingSubmitted] = useState(false);
+
+  const handleListingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from('log_feature_requests').insert({
+        user_id: user?.id ?? null,
+        request_type: 'practitioner_listing',
+        requested_text: JSON.stringify(listingForm),
+        category: 'directory',
+        status: 'pending',
+      });
+      setListingSubmitted(true);
+    } catch (err) {
+      console.error('Listing submission failed', err);
+    }
+  };
 
   const roles = useMemo(() => {
-    const r = new Set(CLINICIANS.map(c => c.role));
+    const r = new Set(practitioners.map((c: any) => c.role));
     return ['All', ...Array.from(r)];
-  }, []);
+  }, [practitioners]);
 
   const locations = useMemo(() => {
-    const l = new Set(CLINICIANS.map(c => c.location));
+    const l = new Set(practitioners.map((c: any) => c.location));
     return ['All', ...Array.from(l)];
-  }, []);
+  }, [practitioners]);
 
-  const filteredPractitioners = CLINICIANS.filter(c => {
+  const filteredPractitioners = practitioners.filter((c: any) => {
     const matchesName = c.name.toLowerCase().includes(searchName.toLowerCase());
     const matchesRole = selectedRole === 'All' || c.role === selectedRole;
     const matchesLocation = selectedLocation === 'All' || c.location === selectedLocation;
@@ -237,10 +260,17 @@ const ClinicianDirectory: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
           <div className="space-y-1">
             <h1 className="text-3xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Practitioners</h1>
-            <p className="text-slate-500 text-sm sm:text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
+            <p className="text-slate-500 text-sm font-medium uppercase tracking-widest">Global Practitioner Registry</p>
           </div>
 
-          <div className="hidden sm:flex items-center gap-3 bg-slate-900/60 border border-slate-800 p-2.5 rounded-2xl shadow-2xl backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <button
+              id="list-your-practice-btn"
+              onClick={() => setShowListingModal(true)}
+              className="px-4 py-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all"
+            >
+              + List Your Practice
+            </button>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
               <input
@@ -311,21 +341,80 @@ const ClinicianDirectory: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-12">
-          {filteredPractitioners.map((p) => (
-            <PractitionerCard
-              key={p.id}
-              practitioner={p}
-              onMessage={(pract) => setActiveMessagePractitioner(pract)}
-            />
-          ))}
+          {loading ? (
+            // Loading skeleton — 8 ghost cards
+            Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5 animate-pulse flex flex-col gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="size-14 rounded-xl bg-slate-800" />
+                  <div className="flex-1 space-y-2 pt-1">
+                    <div className="h-4 bg-slate-800 rounded w-3/4" />
+                    <div className="h-3 bg-slate-800 rounded w-1/2" />
+                    <div className="h-3 bg-slate-800 rounded w-1/3 mt-2" />
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-auto pt-4 border-t border-slate-800/50">
+                  <div className="flex-1 h-9 bg-slate-800 rounded-lg" />
+                  <div className="size-9 bg-slate-800 rounded-lg" />
+                </div>
+              </div>
+            ))
+          ) : (
+            filteredPractitioners.map((p: any) => (
+              <PractitionerCard
+                key={p.id}
+                practitioner={p}
+                onMessage={(pract) => setActiveMessagePractitioner(pract)}
+              />
+            ))
+          )}
 
-          {filteredPractitioners.length === 0 && (
+          {!loading && filteredPractitioners.length === 0 && (
             <div className="col-span-full py-24 text-center space-y-5 bg-slate-900/20 rounded-[4rem] border-2 border-dashed border-slate-800/50">
               <span className="material-symbols-outlined text-6xl text-slate-700 opacity-20">person_off</span>
               <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-sm">Zero Registry Hits</p>
             </div>
           )}
         </div>
+
+        {/* List Your Practice Modal */}
+        {showListingModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="bg-[#0d1829] border border-slate-700 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+              {listingSubmitted ? (
+                <div className="text-center space-y-4 py-6">
+                  <span className="material-symbols-outlined text-5xl text-cyan-400">check_circle</span>
+                  <h2 className="text-xl font-black text-slate-200">Request Submitted</h2>
+                  <p className="text-sm text-slate-400">Your listing request has been submitted. Our team will review and activate within 2–3 business days.</p>
+                  <button onClick={() => { setShowListingModal(false); setListingSubmitted(false); }} className="mt-4 px-6 py-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-sm font-bold">Close</button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-lg font-black text-slate-200">List Your Practice</h2>
+                    <button onClick={() => setShowListingModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-slate-500 hover:text-slate-300 transition-all">
+                      <span className="material-symbols-outlined text-lg">close</span>
+                    </button>
+                  </div>
+                  <form onSubmit={handleListingSubmit} className="space-y-4">
+                    <input required placeholder="Display Name" value={listingForm.displayName} onChange={e => setListingForm(f => ({ ...f, displayName: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
+                    <select required value={listingForm.role} onChange={e => setListingForm(f => ({ ...f, role: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none">
+                      <option value="">Select Role</option>
+                      <option>Psychiatrist</option><option>Facilitator</option><option>LCSW</option><option>LPC</option><option>PhD Researcher</option><option>Nurse Practitioner</option><option>Other</option>
+                    </select>
+                    <input required placeholder="City" value={listingForm.city} onChange={e => setListingForm(f => ({ ...f, city: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
+                    <select value={listingForm.country} onChange={e => setListingForm(f => ({ ...f, country: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none">
+                      <option>United States</option><option>Canada</option><option>United Kingdom</option><option>Australia</option><option>Netherlands</option><option>Other</option>
+                    </select>
+                    <input placeholder="Website URL (optional)" value={listingForm.website} onChange={e => setListingForm(f => ({ ...f, website: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
+                    <input required type="email" placeholder="Contact Email (admin use only)" value={listingForm.email} onChange={e => setListingForm(f => ({ ...f, email: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
+                    <button type="submit" className="w-full py-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-400 font-bold text-sm transition-all">Submit Listing Request</button>
+                  </form>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </Section>
 
       <MessageDrawer

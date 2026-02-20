@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS public.benchmark_trials (
 
 ALTER TABLE public.benchmark_trials ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "benchmark_trials_authenticated_select" ON public.benchmark_trials;
 CREATE POLICY "benchmark_trials_authenticated_select"
   ON public.benchmark_trials
   FOR SELECT
@@ -101,6 +102,7 @@ CREATE TABLE IF NOT EXISTS public.benchmark_cohorts (
 
 ALTER TABLE public.benchmark_cohorts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "benchmark_cohorts_authenticated_select" ON public.benchmark_cohorts;
 CREATE POLICY "benchmark_cohorts_authenticated_select"
   ON public.benchmark_cohorts
   FOR SELECT
@@ -151,6 +153,7 @@ CREATE TABLE IF NOT EXISTS public.population_baselines (
 
 ALTER TABLE public.population_baselines ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "population_baselines_authenticated_select" ON public.population_baselines;
 CREATE POLICY "population_baselines_authenticated_select"
   ON public.population_baselines
   FOR SELECT

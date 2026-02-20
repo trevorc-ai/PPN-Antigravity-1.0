@@ -1,11 +1,12 @@
 ---
 id: WO-231a
 title: "Global Benchmark Tables — SQL Migration (Child of WO-231)"
-status: 03_BUILD
-owner: SOOP
+status: 06_COMPLETE
+owner: COMPLETE
 parent: WO-231
 created: 2026-02-20
 created_by: LEAD
+completed: 2026-02-20
 failure_count: 0
 priority: HIGH
 tags: [database, migration, benchmark, rls, soop]
