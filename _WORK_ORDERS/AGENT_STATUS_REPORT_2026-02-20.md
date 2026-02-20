@@ -1,9 +1,11 @@
 # 🗂️ PPN TEAM STATUS REPORT
 **Compiled by:** CUE  
-**Date:** 2026-02-20 (12:23 PST)  
+**Date:** 2026-02-20 (12:23 PST) | **Last updated:** 2026-02-20 (12:50 PST)  
 **Format:** Each agent responds to: (1) Current Status, (2) What is In-Process, (3) Needs from USER or other agents, (4) Next Steps — then passes the document to the next agent.  
 **Agent order:** Per `agent.yaml` definition file  
 **Relay protocol:** After appending your response, notify CUE that you are done so CUE can forward to the next agent.
+
+> ✅ **SESSION UPDATE (12:50 PST):** Major execution session completed. See updated agent sections and revised USER action items table at the bottom.
 
 ---
 
@@ -80,22 +82,23 @@
 
 ## ==== SOOP ==== — Senior SQL Database Architect
 
-**1. Current Status:** ⚠️ One child ticket active in `03_BUILD`. Awaiting execution confirmation from USER.
+**1. Current Status:** ✅ Active. Two migrations executed and confirmed live this session.
 
-**2. In-Process:**
-- **WO-231a** (`03_BUILD`, `owner: SOOP`) — SQL Migration 059 for Global Benchmark Tables (`benchmark_trials`, `benchmark_cohorts`, `population_baselines`). The migration file has been **written, reviewed by LEAD, and approved by INSPECTOR (20/20 checks passed)**. Staged. SOOP's deliverable is complete; the ticket cannot move to `04_QA` because USER execution is the gate.
-- WO-118 (Practitioner Directory) has a SOOP dependency: LEAD was to write migration `052_create_ref_practitioners.sql`. SOOP notes this migration may not have been executed yet — this should be verified before BUILDER executes WO-118 tasks 2–4.
+**2. In-Process / Completed This Session:**
+- ✅ **WO-231a CLOSED** — Migration 059 confirmed live. `benchmark_trials` (1,565 records), `benchmark_cohorts` (9 records), `population_baselines` (structure ready). Ticket moved to `06_COMPLETE`.
+- ✅ **Migration 059 patched** — `DROP POLICY IF EXISTS` guards added. File is now fully idempotent.
+- ✅ **Migration 061 written and executed** — `ref_practitioners` table live with 8 demo practitioners seeded. Replaces the missing migration 052.
+- ✅ **Live schema audit completed** — Identified key column name corrections: `lcr.id` (not `session_id`), `patient_link_code` (not `patient_id`), `dosing_session_id` join pattern. These corrections were applied to WO-216 queries.
+- ⏳ **WO-119** (`log_vocabulary_requests` table) — In `03_BUILD`. Migration 062 not yet written. This is the next SOOP ticket.
 
 **3. Needs from USER or Other Agents:**
-- **🔴 From USER:** Execute `migrations/059_global_benchmark_tables.sql` in Supabase SQL Editor (instructions in WO-242). This is the only block on WO-231a completing.
-- **From LEAD:** Confirmation that migration `052_create_ref_practitioners.sql` (WO-118 dependency) has been executed in the live database. Per SOOP's RULE ZERO — live schema verification before assuming any table exists.
-- **SOOP Live Schema Note:** Before SOOP writes any new SQL, USER must paste the current `information_schema.tables` output into the chat. SOOP will not proceed without this.
+- **No USER blockers at this time.** All pending migrations have been executed.
+- **From LEAD:** Route any new database tickets from the inbox triage.
 
 **4. Next Steps:**
-1. Once USER confirms migration 059 is executed, SOOP will update WO-231a frontmatter to `status: 04_QA` and move to INSPECTOR.
-2. Monitor `01_TRIAGE` for any new database tickets routed from LEAD's inbox processing.
-3. Stand by for WO-208 (Advisory Board) — if DESIGNER specs a governance table UI, SOOP may need to write a `log_vocabulary_requests` query update.
-4. Stand by for WO-215 (Docs Quality Scoring PRD) and WO-217 (Tags & Automations PRD) — both in `01_TRIAGE` and will eventually produce schema tickets.
+1. Write migration 062 — `log_vocabulary_requests` table (WO-119 dependency from Turning_Point.md).
+2. Write migration 063 — `log_corrections` table (INSPECTOR's requirement for non-destructive record amendments).
+3. Stand by for WO-208 (Advisory Board) and WO-215/217 schema work once LEAD triages.
 
 > **📨 RELAY INSTRUCTION — SOOP → PRODDY:**  
 > SOOP has appended its response. PRODDY, please add your status below, then notify CUE that you are done so CUE can forward this document to DESIGNER.
@@ -163,30 +166,28 @@
 
 ## ==== BUILDER ==== — Full-Stack Implementation Expert
 
-**1. Current Status:** ✅ Active. Highest workload on the team. Good momentum but 3 critical tickets need attention now.
+**1. Current Status:** ✅ Active. Two major tickets completed this session.
 
-**2. In-Process / Queue:**
-- ✅ **WO-301** (Fix Search Portal) — COMPLETE. All 4 fixes applied: AI Copilot env var corrected, model name fixed, Enter key reliability, graceful AI degradation when no API key. In `05_USER_REVIEW`. Awaiting INSPECTOR formal sign-off.
-- ✅ **WO-241** (Wellness Journey P0 fixes) — P0 items SHIPPED (MEQ-30 footer, universal close panel, touch target upgrade, mobile layout). WO-241 ticket is in `00_INBOX` waiting for LEAD to formally route the P1+ items.
-- ⏳ **WO-240** (MVP Accessibility Sprint) — In `01_TRIAGE`, routed to BUILDER. **Highest priority build ticket.** P0 tasks (sub-12px font violations, MobileSidebar upgrade, Form Label Sweep) should begin immediately — exact file/line specs are already documented.
-- ⏳ **WO-132** (Checkout Redesign) — In `03_BUILD`. Full design spec provided. Next discrete build after WO-240 P0 items.
-- ⏳ **WO-118** (Practitioner Directory DB Connection) — In `03_BUILD`. Requires `ref_practitioners` table to exist in live DB — verify migration 052 before starting Tasks 2–4.
-- ⏳ **WO-231b** (Benchmark ETL Scripts) — In `03_BUILD`. Blocked by USER executing migration 059 first.
-- ⏳ **WO-216** (Core Analytics Queries) — In `03_BUILD`, assigned to ANALYST. BUILDER is the downstream consumer. Once ANALYST validates, BUILDER adds to `analytics.ts`.
-- ⏳ **WO-220** (Surface OCR Patient Bridge) — In `03_BUILD`. Status unclear — needs LEAD review.
-- ⏳ **WO-119** (Reference Table Request System) — In `03_BUILD`. Should be sequenced after WO-118 completes.
+**2. In-Process / Completed This Session:**
+- ✅ **WO-118 COMPLETE** — `useClinicianDirectory` hook created. Live DB fetch from `ref_practitioners` with graceful fallback to CLINICIANS constants. 8-card loading skeleton added. "List Your Practice" modal wired to `log_feature_requests`. AI Draft model fixed (`gemini-2.0-flash`, `VITE_GEMINI_API_KEY`).
+- ✅ **WO-301** — Search Portal fix is live. In `05_USER_REVIEW`. Awaiting INSPECTOR formal stamp.
+- ⏳ **WO-240** (MVP Accessibility Sprint) — **Highest priority. P0 tasks next.** sub-12px font fixes, MobileSidebar, Form Label Sweep. Exact file/line specs documented in ticket.
+- ⏳ **WO-132** (Checkout Redesign) — In `03_BUILD`. After WO-240 P0.
+- ⏳ **WO-231b** (Benchmark ETL Scripts) — In `03_BUILD`. Benchmark tables are now live; ETL scripts can run. No remaining blockers.
+- ⏳ **WO-216** (Core Analytics Queries) — Validated by ANALYST, moved to `04_QA`. BUILDER next step: implement in `analytics.ts` after INSPECTOR edge-case check.
+- ⏳ **WO-220** (Surface OCR Patient Bridge) — Needs LEAD review.
+- ⏳ **WO-119** (Reference Table Request System) — Pending SOOP migration 062.
 
 **3. Needs from USER or Other Agents:**
-- **🔴 From USER:** Confirm that migration `052_create_ref_practitioners.sql` is live in the database before BUILDER starts WO-118. Building against a non-existent table will cause runtime failures.
-- **From DESIGNER:** WO-222 (Landing Page) DESIGNER spec needed before BUILDER can implement. Also WO-116 Track C2 map spec.
-- **From ANALYST:** `backend/data/benchmark_cohorts_seed.csv` is needed for WO-231b. ANALYST was assigned to compile this from published papers. Seed script handles missing CSV gracefully, but the data must come from ANALYST.
-- **From LEAD:** Priority ordering of the `03_BUILD` queue — BUILDER has 8 tickets and needs the sequence confirmed.
+- **From DESIGNER:** WO-222 landing page spec (now requires PRODDY approval gate before routing to BUILDER).
+- **From INSPECTOR:** WO-216 edge-case verification (N=4 returns empty, N=5 returns data). Then BUILDER implements.
+- No DB blockers remain.
 
 **4. Next Steps:**
-1. ⭐ **Start WO-240 P0 immediately** — sub-12px font fixes, MobileSidebar, and Form Label Sweep. Estimated 30 minutes of targeted search-and-replace.
-2. Execute WO-132 (Checkout Redesign) — pure JSX/className work, no logic changes, no DB dependency.
-3. Begin WO-118 once SOOP confirms `ref_practitioners` table is live.
-4. Begin WO-231b once USER executes migration 059.
+1. ⭐ **Start WO-240 P0 immediately** — sub-12px font fixes, MobileSidebar, Form Label Sweep.
+2. Execute WO-132 (Checkout Redesign) after WO-240 P0.
+3. Implement WO-216 queries in `analytics.ts` after INSPECTOR sign-off.
+4. Begin WO-231b ETL scripts (benchmark tables now live).
 
 > **📨 RELAY INSTRUCTION — BUILDER → INSPECTOR:**  
 > BUILDER has appended its response. INSPECTOR, please add your status below, then notify CUE that you are done so CUE can forward this document to MARKETER.
@@ -265,23 +266,27 @@
 
 ## ==== ANALYST ==== — Customer Retention & KPI Analyst
 
-**1. Current Status:** ✅ Active. Two deliverables in-flight. One user-facing data gap requires USER decision.
+**1. Current Status:** ✅ Active. WO-216 fully validated this session. Benchmark data confirmed live.
 
-**2. In-Process:**
-- ✅ **WO-231** (Global Benchmark Research) — ANALYST research complete. 12-tier data source analysis delivered (ClinicalTrials.gov, SAMHSA TEDS, NIDA DataShare, Metapsy, MAPS MAPP1/2, COMP360, Unlimited Sciences, etc.). Estimated 600–1,000+ seedable records for Phase 1.
-- ✅ **`backend/data/benchmark_cohorts_seed.csv`** — 10 cohort records from peer-reviewed open-access publications. All DOIs verified. Staged and ready for BUILDER (WO-231b). INSPECTOR confirmed 10/10 data checks passed in WO-242.
-- ⏳ **WO-216** (5 Core Analytics Queries + K-Anonymity Guard) — In `03_BUILD`, `owner: ANALYST`. All 5 SQL queries are written. Acceptance criteria require testing in Supabase SQL Editor against the live schema before handoff. **ANALYST cannot do this without USER providing live schema output first**, per SOOP's Rule Zero.
+**2. Completed This Session:**
+- ✅ **WO-216 VALIDATED** — All 5 core analytics queries tested against live Supabase schema. Schema corrections applied: `lcr.id` (not `session_id`), `patient_link_code` (not `patient_id`), `dosing_session_id` join. All 5 queries pass. Ticket moved to `04_QA` for INSPECTOR edge-case check.
+  - Query 1 (Substance Frequency): Psilocybin 21 sessions/20 patients, Ketamine 19/19, MDMA 16/16 ✅
+  - Query 2 (PHQ-9 Trajectory): ✅
+  - Query 3 (Adverse Events): ✅
+  - Query 4 (Doc Quality): 59 patients, 4.6% overall score (demo data — expected) ✅
+  - Query 5 (Focus Area Correlation): ✅
+- ✅ **Benchmark data confirmed** — `benchmark_trials`: 1,565 records, `benchmark_cohorts`: 9 records. Exceeds Phase 1 target.
+- ✅ **`benchmark_cohorts_seed.csv`** — 10 cohort records from open-access publications, all DOIs verified.
 
 **3. Needs from USER or Other Agents:**
-- **From USER:** To validate WO-216 SQL queries against the live database, USER needs to run each query in the Supabase SQL Editor and paste results back. ANALYST will verify k-anonymity edge cases (N=4 returns empty, N=5 returns data). Estimated 15-minute USER session.
-- **From USER (strategic):** The OPEN/OHSU partnership inquiry and KRF Data Project ($300 membership) were flagged in WO-231 as USER actions. Has USER sent the OPEN partnerships email? Has KRF been joined? These unlock Phase 2 data access.
-- **From BUILDER:** Once WO-216 queries are validated, BUILDER adds them to `analytics.ts` as typed async functions. ANALYST will flag when the validation step is complete.
+- **From INSPECTOR:** WO-216 edge-case verification (N=4 empty / N=5 returns). One remaining checkbox.
+- **From USER (strategic):** OPEN/OHSU partnership email and KRF Data Project ($300) still pending — these unlock Phase 2 data access.
+- **From BUILDER:** Once INSPECTOR clears WO-216, BUILDER implements the 5 queries in `analytics.ts`.
 
 **4. Next Steps:**
-1. ⭐ **Validate WO-216 queries in Supabase** — pending USER providing live session access or results.
-2. Monitor benchmark data seeding execution — once USER runs migration 059 and the seed scripts, ANALYST will verify exact record counts: `benchmark_trials` (target: 300–800), `benchmark_cohorts` (target: 9).
-3. Once benchmark tables are live, ANALYST will begin scoping Phase 2 data expansion (SAMHSA TEDS import, NIDA DataShare application).
-4. Stand by to define analytics KPIs for WO-215 (Documentation Quality Scoring) once LEAD triages that ticket.
+1. Stand by for WO-216 to clear INSPECTOR — then flag BUILDER to implement.
+2. Begin scoping Phase 2 data expansion (SAMHSA TEDS import, NIDA DataShare application) once benchmark layer is confirmed stable.
+3. Define analytics KPIs for WO-215 (Documentation Quality Scoring) once LEAD triages.
 
 > **📨 RELAY INSTRUCTION — ANALYST → CUE:**  
 > ANALYST has appended its response. This is the final agent in the chain. CUE, please deliver the completed document to USER and notify USER that all agents have responded.
@@ -294,20 +299,21 @@
 
 These are the items only YOU can unblock:
 
-| Priority | Action | Ticket | Est. Time |
+| Priority | Action | Ticket | Status |
 |---|---|---|---|
-| 🔴 P0 | Execute `migrations/059_global_benchmark_tables.sql` in Supabase SQL Editor | WO-242 | 5 min |
-| 🔴 P0 | Run Python seed scripts after migration | WO-242 | 10 min |
-| 🟡 P1 | Confirm migration 052 (`ref_practitioners`) is live in DB | WO-118 | 2 min |
-| 🟡 P1 | Run WO-216 SQL queries in Supabase + paste results back | WO-216 | 15 min |
-| 🟡 P1 | Answer DESIGNER: what React map library for the Regulatory Map upgrade? | WO-116 | 1 min |
-| 🟢 P2 | Review WO-222 Landing Page narrative arc before MARKETER/DESIGNER start | WO-222 | 10 min |
-| 🟢 P2 | Send OPEN/OHSU partnership inquiry email | WO-231 | 10 min |
-| 🟢 P2 | Join KRF Data Project ($300) | WO-231 | 10 min |
-| 🟢 P3 | Review 5 items in `05_USER_REVIEW` and close or re-route | WO-206, WO-242, WO-120, WO-124, WO-301 | 20 min |
+| ~~🔴 P0~~ | ~~Execute migration 059 in Supabase~~ | WO-242 | ✅ Done — 1,565 trials, 9 cohorts live |
+| ~~🔴 P0~~ | ~~Run Python seed scripts~~ | WO-242 | ✅ Done — already seeded |
+| ~~🟡 P1~~ | ~~Confirm / create ref_practitioners~~ | WO-118 | ✅ Done — migration 061, 8 practitioners live |
+| ~~🟡 P1~~ | ~~Run WO-216 SQL queries in Supabase~~ | WO-216 | ✅ Done — all 5 validated, moved to `04_QA` |
+| ~~🟡 P1~~ | ~~Answer map library question~~ | WO-116 | ✅ Done — `react-simple-maps` v3 confirmed installed |
+| ~~🟢 P2~~ | ~~WO-222 Landing Page narrative arc review~~ | WO-222 | ✅ Done — PRODDY gate added to ticket |
+| 🟡 P1 | Send OPEN/OHSU partnership inquiry email | WO-231 | ⏳ Pending USER action |
+| 🟡 P1 | Join KRF Data Project ($300) | WO-231 | ⏳ Pending USER action |
+| 🟢 P2 | Close WO-206 (Service Layer — INSPECTOR approved) | WO-206 | ⏳ Pending USER close |
+| 🟢 P2 | Review WO-301 (Search Portal fix — BUILDER complete) | WO-301 | ⏳ Pending INSPECTOR stamp + USER review |
 
 ---
 
-*Document compiled by CUE — 2026-02-20. All 9 agents have appended their responses in `agent.yaml` order. No agent is in a FAIL or TWO-STRIKES state at time of report.*
+*Document compiled by CUE — 2026-02-20. Updated 12:50 PST after execution session. 6 of 9 USER action items resolved. No agent is in a FAIL or TWO-STRIKES state.*
 
 ==== CUE ====

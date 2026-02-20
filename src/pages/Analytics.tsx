@@ -21,6 +21,7 @@ import { supabase } from '../supabaseClient';
 import { useAnalyticsData } from '../hooks/useAnalyticsData';
 import SafetyBenchmark from '../components/analytics/SafetyBenchmark';
 import { useSafetyBenchmark } from '../hooks/useSafetyBenchmark';
+import GlobalBenchmarkIntelligence from '../components/analytics/GlobalBenchmarkIntelligence';
 
 const Analytics = () => {
     const [siteId, setSiteId] = useState<number | null>(null);
@@ -218,6 +219,22 @@ const Analytics = () => {
                 </div>
             </Section>
 
+
+            {/* GLOBAL BENCHMARK INTELLIGENCE — Live data from benchmark_cohorts + benchmark_trials */}
+            <Section spacing="tight" className="print:break-inside-avoid">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Global Benchmark Intelligence</h2>
+                        <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>Your outcomes grounded in worldwide published clinical evidence</p>
+                    </div>
+                    <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-emerald-500/10 border-emerald-500/30 text-emerald-400 uppercase tracking-widest">
+                        Live Data
+                    </span>
+                </div>
+                <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
+                    <GlobalBenchmarkIntelligence />
+                </div>
+            </Section>
 
             {/* FILTER CONTROLS — positioned above charts, hide on print */}
             <Section spacing="tight" className="print:hidden">

@@ -5,6 +5,7 @@ failure_count: 0
 priority: HIGH
 created: 2026-02-19
 proddy_complete: 2026-02-19
+proddy_review_gate: REQUIRED — DESIGNER proposals must be approved by PRODDY before routing to BUILDER
 ---
 
 # WO-222: Landing Page v2 — Full Redesign
@@ -186,9 +187,19 @@ Solution options:
 - "Protocol Builder. Safety Surveillance. Alliance Benchmarking. One place."
 
 ### Handoff Sequence
-1. MARKETER writes final copy for all 6 sections (this brief as source of truth)
-2. DESIGNER creates layout and visual direction (existing StarField.tsx approved, no recreating the wheel)
-3. BUILDER implements copy and layout updates
-4. INSPECTOR verifies no fabricated stats, clinical credibility maintained, fonts >= 12px
 
-**Owner:** MARKETER (copy) + DESIGNER (layout) | **Status:** Routing both simultaneously
+> 🚨 **USER DIRECTIVE (2026-02-20):** DESIGNER must run all layout and visual proposals past PRODDY for strategic alignment review BEFORE routing to BUILDER. No code changes are made until PRODDY signs off. PRODDY should also check for any updates from recent USER conversations before approving.
+
+1. **MARKETER** writes final copy for all 6 sections (this brief as source of truth)
+2. **DESIGNER** creates layout proposals and visual direction (existing StarField.tsx approved, no recreating the wheel)
+3. **→ DESIGNER submits proposals to PRODDY for review** — PRODDY checks:
+   - Strategic alignment with the latest USER direction
+   - VOC keyword usage (gradient treatment: approved list only)
+   - No fabricated stats or overclaimed language
+   - Narrative arc matches the 6-section structure (Pain → Agitation → Solution → Proof → Mission → CTA)
+   - Any updates from recent USER ↔ PRODDY conversations that should change the brief
+4. **PRODDY approves** → updates frontmatter `proddy_approved: true` and notifies LEAD
+5. **BUILDER** implements copy and layout updates (only after PRODDY approval is on record)
+6. **INSPECTOR** verifies: no fabricated stats, clinical credibility maintained, fonts ≥ 12px, no color-only status signals
+
+**Owner:** MARKETER (copy) + DESIGNER (layout) | **PRODDY Gate:** Required before BUILDER | **Status:** Routing MARKETER + DESIGNER simultaneously
