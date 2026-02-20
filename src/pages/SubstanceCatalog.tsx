@@ -128,7 +128,7 @@ const SubstanceCatalog: React.FC = () => {
                       }`}
                     style={{ color: '#8B9DC3' }}
                   >
-                    {filter.toUpperCase()}
+                    {filter}
                   </button>
                 ))}
               </div>
@@ -166,7 +166,7 @@ const SubstanceCatalog: React.FC = () => {
                     onChange={(e) => setSelectedMatrixSub(e.target.value)}
                     className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-sm font-black focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-colors" style={{ color: '#8B9DC3' }}
                   >
-                    {SUBSTANCES.map(s => <option key={s.id} value={s.name}>{s.name.toUpperCase()}</option>)}
+                    {SUBSTANCES.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none">expand_more</span>
                 </div>
@@ -182,7 +182,7 @@ const SubstanceCatalog: React.FC = () => {
                   >
                     <option value="">Select Medication...</option>
                     {MEDICATIONS_LIST.map(med => (
-                      <option key={med} value={med}>{med.toUpperCase()}</option>
+                      <option key={med} value={med}>{med}</option>
                     ))}
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none">expand_more</span>
@@ -199,25 +199,11 @@ const SubstanceCatalog: React.FC = () => {
               Analyze Interaction
             </button>
 
-            <div className="flex items-center gap-3 p-3 bg-black/40 rounded-xl border border-slate-800/60 relative z-10">
-              <div className="size-1.5 rounded-full bg-clinical-green animate-pulse shadow-[0_0_8px_#53d22d]"></div>
-              <p className="text-sm text-slate-600 font-black uppercase tracking-widest">Node Status: Protected</p>
-            </div>
+
           </div>
         </div>
 
-        <div className="mt-auto pt-8 border-t border-slate-800/60">
-          <div className="bg-indigo-500/5 border border-indigo-500/10 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group">
-            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-10 transition-opacity"></div>
-            <div className="flex items-center gap-3 mb-3 relative z-10">
-              <span className="material-symbols-outlined text-indigo-400 text-2xl font-black">verified</span>
-              <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#8B9DC3' }}>Compliance Status: Active</span>
-            </div>
-            <p className="text-sm text-slate-500 font-medium leading-relaxed italic relative z-10">
-              Institutional access verified. All data presented is for research purposes only.
-            </p>
-          </div>
-        </div>
+
       </aside>
     </div >
   );

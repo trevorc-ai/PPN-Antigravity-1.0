@@ -183,7 +183,6 @@ export default function Dashboard() {
         </button>
       </Section>
 
-      {/* RECOMMENDED NEXT STEPS — raised to top so users always know what to do */}
       <Section spacing="tight">
         <div className="flex items-center gap-3 mb-4">
           <CheckCircle className="w-5 h-5 text-indigo-400" />
@@ -193,14 +192,14 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <NextStepItem
             number={1}
-            text="Review safety alerts from this week"
-            link="/deep-dives/molecular-pharmacology"
-            urgent={true}
+            text="Start a new Wellness Journey session"
+            link="/wellness-journey"
+            urgent={false}
           />
           <NextStepItem
             number={2}
-            text="Check your clinic's Q1 benchmarks vs network"
-            link="/deep-dives/clinic-performance"
+            text="View your Clinical Intelligence report"
+            link="/analytics"
           />
           <NextStepItem
             number={3}
@@ -210,51 +209,10 @@ export default function Dashboard() {
         </div>
       </Section>
 
-      {/* SEARCH BAR SECTION */}
-      <Section spacing="tight">
-        <div className="relative group max-w-4xl mx-auto">
-          {/* Background Glow */}
-          <div className="absolute -inset-2 bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 blur-2xl rounded-full opacity-50 group-focus-within:opacity-80 transition-opacity duration-700 -z-10"></div>
 
-          <div className="relative">
-            {/* AI Sparkle Icon */}
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-              <span className="material-symbols-outlined text-primary text-xl">auto_awesome</span>
-            </div>
-
-            {/* Search Input */}
-            <input
-              type="text"
-              placeholder="Search protocols, substances, adverse events..."
-              onFocus={() => navigate('/advanced-search')}
-              className="
-                w-full h-16 pl-14 pr-16 py-4
-                bg-slate-900/50 border-2 border-slate-700 rounded-[2rem]
-                text-slate-300 placeholder-slate-500
-                focus:outline-none focus:border-primary/50 focus:bg-slate-900/70
-                transition-all duration-300
-                text-base font-bold
-                cursor-pointer
-              "
-            />
-
-            {/* Search Button */}
-            <button
-              onClick={() => navigate('/advanced-search')}
-              className="absolute left-auto right-2 top-1/2 -translate-y-1/2 p-3 bg-primary rounded-xl hover:bg-blue-600 transition-colors z-20"
-            >
-              <span className="material-symbols-outlined text-slate-300">search</span>
-            </button>
-          </div>
-
-          <p className="text-sm text-slate-300 text-center mt-3">
-            AI-powered search across {protocols.length}+ protocols • Advanced filters • Real-time analysis
-          </p>
-        </div>
-      </Section>
 
       {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}
-      <Section spacing="tight">
+      < Section spacing="tight" >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
           <span className="text-xs text-slate-500 font-medium">This Month</span>
@@ -295,70 +253,8 @@ export default function Dashboard() {
             color="bg-blue-500"
           />
         </div>
-      </Section>
+      </Section >
 
-      {/* SAFETY RISK ASSESSMENT */}
-      <Section spacing="tight">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Safety Risk Assessment</h2>
-            <p className="text-sm text-slate-300 mt-1">Your protocols vs. network risk profile</p>
-          </div>
-          <button
-            onClick={() => navigate('/deep-dives/risk-matrix')}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-indigo-500/50 text-sm font-bold text-slate-300 hover:text-slate-300 transition-all flex items-center gap-2"
-          >
-            View Detailed Analysis
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {protocolsLoading ? (
-          <div className="card-glass rounded-3xl p-12 flex items-center justify-center">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-4"></div>
-              <p className="text-sm text-slate-300">Loading safety data...</p>
-            </div>
-          </div>
-        ) : protocols.length > 0 ? (
-          <div className="card-glass rounded-3xl p-6 border-2 border-slate-800">
-            <SafetyRiskMatrix />
-            {protocols.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-slate-800">
-                <p className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-3">Your Active Protocols</p>
-                <div className="flex flex-wrap gap-2">
-                  {protocols.slice(0, 5).map((protocol, index) => (
-                    <div
-                      key={index}
-                      className="px-3 py-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-xs font-medium text-indigo-300"
-                    >
-                      {protocol.substance_name} for {protocol.indication_name} ({protocol.session_count} sessions)
-                    </div>
-                  ))}
-                  {protocols.length > 5 && (
-                    <div className="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-slate-300">
-                      +{protocols.length - 5} more
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="card-glass rounded-3xl p-12 text-center">
-            <p className="text-slate-300 mb-2">No active protocols in the last 90 days</p>
-            <p className="text-sm text-slate-500">Log your first protocol to see safety risk assessment</p>
-            <button
-              onClick={() => navigate('/wellness-journey')}
-              className="mt-4 px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-slate-300 font-bold transition-all cursor-pointer"
-            >
-              Log Protocol
-            </button>
-          </div>
-        )}
-      </Section>
-
-      {/* RECOMMENDED NEXT STEPS — now at bottom for context rather than primary guidance */}
 
       {/* QUICK ACTIONS */}
       <Section spacing="tight">
@@ -446,6 +342,6 @@ export default function Dashboard() {
           Antigravity Clinical OS • v1.2.4 • Encrypted
         </p>
       </div>
-    </PageContainer>
+    </PageContainer >
   );
 }

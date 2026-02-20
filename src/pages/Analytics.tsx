@@ -60,9 +60,6 @@ const Analytics = () => {
                         <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
                             Clinical Intelligence
                         </h1>
-                        <div className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded-md text-xs font-mono text-indigo-400 tracking-widest font-black">
-                            LIVE_NODE_07
-                        </div>
                     </div>
                     <p className="text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed mt-4" style={{ color: '#8B9DC3' }}>
                         Real-time network insights and safety metrics.
@@ -85,7 +82,6 @@ const Analytics = () => {
                 <h1 className="text-4xl font-black text-black mb-2">Clinical Intelligence Report</h1>
                 <div className="flex justify-between text-sm text-slate-600 font-mono">
                     <span>Generated: {new Date().toLocaleDateString()}</span>
-                    <span>Node: LIVE_NODE_07</span>
                     <span>{userEmail || 'PPN Portal User'}</span>
                 </div>
             </div>
