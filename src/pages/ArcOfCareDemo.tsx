@@ -4,6 +4,7 @@ import SetAndSettingCard from '../components/arc-of-care/SetAndSettingCard';
 import ObservationSelector from '../components/common/ObservationSelector';
 import RequestNewOptionModal from '../components/common/RequestNewOptionModal';
 import { Loader2, CheckCircle, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 
 /** Collapsible accordion section */
 const AccordionSection: React.FC<{
@@ -109,9 +110,20 @@ const ArcOfCareDemo: React.FC = () => {
 
                         {/* Treatment Expectancy */}
                         <div className="space-y-2">
-                            <label className="text-slate-300 text-sm font-medium">
-                                Treatment Expectancy: {expectancyScale}
-                            </label>
+                            <div className="flex items-center gap-2">
+                                <label className="text-slate-300 text-sm font-medium">
+                                    Treatment Expectancy: <span className="text-emerald-400 font-bold">{expectancyScale}</span>
+                                </label>
+                                <AdvancedTooltip
+                                    content="Measures the patient's belief that the treatment will help them. Patients with high expectancy (>70) show 25% better outcomes due to positive placebo effects. Set this based on pre-session intake interviews."
+                                    title="Treatment Expectancy"
+                                    type="info"
+                                    tier="detailed"
+                                    side="right"
+                                >
+                                    <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
+                                </AdvancedTooltip>
+                            </div>
                             <input
                                 type="range" min="1" max="100" value={expectancyScale}
                                 onChange={(e) => setExpectancyScale(Number(e.target.value))}
@@ -122,9 +134,20 @@ const ArcOfCareDemo: React.FC = () => {
 
                         {/* ACE Score */}
                         <div className="space-y-2">
-                            <label className="text-slate-300 text-sm font-medium">
-                                ACE Score: {aceScore}
-                            </label>
+                            <div className="flex items-center gap-2">
+                                <label className="text-slate-300 text-sm font-medium">
+                                    ACE Score: <span className="text-amber-400 font-bold">{aceScore}</span>
+                                </label>
+                                <AdvancedTooltip
+                                    content="Adverse Childhood Experiences (ACE) score measures childhood trauma on a 0–10 scale. Scores above 4 are associated with lower baseline resilience and may require additional integration sessions. Source: CDC-Kaiser Permanente ACE Study."
+                                    title="ACE Score (Childhood Trauma)"
+                                    type="warning"
+                                    tier="detailed"
+                                    side="right"
+                                >
+                                    <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
+                                </AdvancedTooltip>
+                            </div>
                             <input
                                 type="range" min="0" max="10" value={aceScore}
                                 onChange={(e) => setAceScore(Number(e.target.value))}
@@ -135,9 +158,20 @@ const ArcOfCareDemo: React.FC = () => {
 
                         {/* GAD-7 */}
                         <div className="space-y-2">
-                            <label className="text-slate-300 text-sm font-medium">
-                                GAD-7 Score: {gad7Score}
-                            </label>
+                            <div className="flex items-center gap-2">
+                                <label className="text-slate-300 text-sm font-medium">
+                                    GAD-7 Score: <span className="text-purple-400 font-bold">{gad7Score}</span>
+                                </label>
+                                <AdvancedTooltip
+                                    content="Generalized Anxiety Disorder 7-item scale (0–21). Scores ≥10 predict a 45% likelihood of challenging session experiences and may warrant anxiolytic support. Mild: 5–9 · Moderate: 10–14 · Severe: 15–21."
+                                    title="GAD-7 (Anxiety Severity)"
+                                    type="warning"
+                                    tier="detailed"
+                                    side="right"
+                                >
+                                    <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
+                                </AdvancedTooltip>
+                            </div>
                             <input
                                 type="range" min="0" max="21" value={gad7Score}
                                 onChange={(e) => setGad7Score(Number(e.target.value))}
@@ -148,9 +182,20 @@ const ArcOfCareDemo: React.FC = () => {
 
                         {/* PHQ-9 */}
                         <div className="space-y-2">
-                            <label className="text-slate-300 text-sm font-medium">
-                                PHQ-9 Score: {phq9Score}
-                            </label>
+                            <div className="flex items-center gap-2">
+                                <label className="text-slate-300 text-sm font-medium">
+                                    PHQ-9 Score: <span className="text-blue-400 font-bold">{phq9Score}</span>
+                                </label>
+                                <AdvancedTooltip
+                                    content="Patient Health Questionnaire-9 (0–27) measures depression severity. Scores ≥10 indicate clinically significant depression. Scores ≥20 require psychiatric consultation before proceeding. Mild: 5–9 · Moderate: 10–14 · Mod-Severe: 15–19 · Severe: 20–27."
+                                    title="PHQ-9 (Depression Severity)"
+                                    type="warning"
+                                    tier="detailed"
+                                    side="right"
+                                >
+                                    <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
+                                </AdvancedTooltip>
+                            </div>
                             <input
                                 type="range" min="0" max="27" value={phq9Score}
                                 onChange={(e) => setPhq9Score(Number(e.target.value))}
@@ -229,8 +274,8 @@ const ArcOfCareDemo: React.FC = () => {
                                 <div className="bg-slate-800/50 rounded-xl p-4">
                                     <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Risk Level</p>
                                     <p className={`text-2xl font-black ${prediction.riskLevel === 'low' ? 'text-emerald-400' :
-                                            prediction.riskLevel === 'moderate' ? 'text-yellow-400' :
-                                                prediction.riskLevel === 'high' ? 'text-orange-400' : 'text-red-400'
+                                        prediction.riskLevel === 'moderate' ? 'text-yellow-400' :
+                                            prediction.riskLevel === 'high' ? 'text-orange-400' : 'text-red-400'
                                         }`}>
                                         {prediction.riskLevel.toUpperCase()}
                                     </p>
