@@ -52,11 +52,16 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
                 .eq('is_active', true)
                 .order('observation_text');
 
-            if (error) throw error;
-            setObservations(data || []);
+            // Table may not exist yet — treat as empty, not an error
+            if (error) {
+                console.warn('[ObservationSelector] ref_clinical_observations not available:', error.message);
+                setObservations([]);
+            } else {
+                setObservations(data || []);
+            }
         } catch (err) {
             console.error('Error fetching observations:', err);
-            setError('Failed to load observations');
+            setObservations([]);
         } finally {
             setLoading(false);
         }
@@ -81,16 +86,6 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
         );
     }
 
-    if (error) {
-        return (
-            <div className={`space-y-4 ${className}`}>
-                <label className="text-slate-300 text-sm font-medium">{label}</label>
-                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                    <p className="text-red-300 text-sm">{error}</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className={`space-y-4 ${className}`}>
@@ -106,15 +101,6 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
                     <Plus className="w-3 h-3" />
                     Request New Option
                 </button>
-            </div>
-
-            {/* PHI Safety Notice */}
-            <div className="flex items-start gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <p className="text-emerald-300 text-sm">
-                    <strong>PHI-Safe:</strong> Select from predefined observations only.
-                    No free-text entry prevents accidental PHI storage.
-                </p>
             </div>
 
             {/* Observation List */}

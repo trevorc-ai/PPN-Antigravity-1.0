@@ -70,14 +70,7 @@ const ArcOfCareDemo: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Instructions */}
-                <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6">
-                    <h3 className="text-blue-300 font-semibold mb-2">Demo Instructions</h3>
-                    <p className="text-blue-200 text-sm leading-relaxed">
-                        Adjust the baseline assessment scores below, select clinical observations, then click "Submit Assessment" to see the augmented intelligence prediction.
-                        The algorithm calculates predicted integration needs based on ACE score, GAD-7, PHQ-9, and treatment expectancy.
-                    </p>
-                </div>
+
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Left: Input Form */}
