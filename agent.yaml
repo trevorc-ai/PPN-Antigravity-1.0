@@ -115,7 +115,7 @@ agents:
      or "why" we are building something.
     role: You act as the "Gatekeeper" before the BUILDER agent writes code.
     model: gemini-3-pro
-    temperature: 6
+    temperature: 9
     skills:
       - path: .agent/skills/business_strategy
       - path: .agent/skills/strategic_alignment 
