@@ -149,14 +149,14 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                 {isVisible && (
                     <div className={`
             absolute z-[100] px-3 py-1.5 rounded-lg
-            ${side === 'top' ? 'bottom-full left-1/2 -translate-x-1/2 mb-2' : ''}
-            ${side === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-2' : ''}
+            ${side === 'top' ? 'bottom-full left-0 mb-2' : ''}
+            ${side === 'bottom' ? 'top-full left-0 mt-2' : ''}
             ${side === 'bottom-left' ? 'top-full right-0 mt-2' : ''}
             ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
             ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
             bg-slate-900 border border-slate-700 text-slate-300 
             text-sm font-bold uppercase tracking-wider
-            whitespace-nowrap shadow-xl animate-in fade-in zoom-in-95 duration-200
+            max-w-[calc(100vw-2rem)] whitespace-nowrap shadow-xl animate-in fade-in zoom-in-95 duration-200
             ${config.glow}
           `}>
                         {content}
@@ -194,12 +194,12 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                     <div
                         className={`
               absolute z-50 p-0
-              ${side === 'top' ? 'bottom-full left-1/2 -translate-x-1/2 mb-3' : ''}
-              ${side === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-3' : ''}
+              ${side === 'top' ? 'bottom-full left-0 mb-3' : ''}
+              ${side === 'bottom' ? 'top-full left-0 mt-3' : ''}
               ${side === 'bottom-left' ? 'top-full right-0 mt-3' : ''}
               ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-3' : ''}
               ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-3' : ''}
-              ${width || 'w-80 sm:w-96'}
+              ${width || 'w-80 sm:w-96'} max-w-[calc(100vw-2rem)]
             `}
                         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
                     >
@@ -288,13 +288,13 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
 
             {isVisible && (
                 <div className={`
-          absolute z-[100] 
-          ${side === 'top' ? 'bottom-full left-1/2 -translate-x-1/2 mb-2' : ''}
-          ${side === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-2' : ''}
+          absolute z-[100]
+          ${side === 'top' ? 'bottom-full left-0 mb-2' : ''}
+          ${side === 'bottom' ? 'top-full left-0 mt-2' : ''}
           ${side === 'bottom-left' ? 'top-full right-0 mt-2' : ''}
           ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
           ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
-          ${width || 'w-64'}
+          ${width || 'w-64'} max-w-[calc(100vw-2rem)]
         `}>
                     <div className={`
             relative rounded-xl p-3.5
