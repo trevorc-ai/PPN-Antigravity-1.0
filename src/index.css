@@ -396,3 +396,44 @@ body,
 .text-slate-400 {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+/* =====================================================
+   DARK DATE / TIME / DATETIME-LOCAL INPUTS (global)
+   color-scheme: dark → browser renders the calendar
+   popup and icon in dark mode automatically.
+   ::-webkit-calendar-picker-indicator → makes the
+   icon white and adds hover feedback.
+   ===================================================== */
+
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+  /* Ensure the field text matches the rest of the form */
+  color: rgb(203 213 225); /* slate-300 */
+  background-color: rgb(30 41 59 / 0.5); /* slate-800/50 */
+}
+
+/* Make the native calendar/clock icon white & hoverable */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.6);
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px;
+  transition: opacity 0.15s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(1) opacity(1);
+  background-color: rgb(59 130 246 / 0.15); /* blue tint on hover */
+}
+
+/* Firefox: color-scheme handles dark popup natively */
+
+/* Shared class for all date/time inputs — apply alongside existing Tailwind classes */
+.date-input {
+  color-scheme: dark;
+}
