@@ -643,8 +643,8 @@ const Landing: React.FC = () => {
       <section className="py-32 px-6 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="text-center space-y-4">
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-              Clinical <span className="text-gradient-primary inline-block pb-1">Intelligence</span> Infrastructure
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-[1.5]">
+              Clinical <span className="text-gradient-primary inline-block pb-3">Intelligence</span> Infrastructure
             </h2>
             <p className="text-[12px] text-slate-500 font-black uppercase tracking-[0.4em]">Structured. Secure. Built for Clinical Scale.</p>
           </div>
