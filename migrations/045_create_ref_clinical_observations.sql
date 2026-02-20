@@ -34,28 +34,18 @@ CREATE INDEX IF NOT EXISTS idx_ref_clinical_obs_category
 -- ============================================
 -- SECTION 2: ROW LEVEL SECURITY
 -- ============================================
+-- Pattern: ref_* tables are seeded via SQL only — no app writes.
+-- Application read access for all authenticated users (matches ref_medications,
+-- ref_assessment_scales, ref_intervention_types, ref_meddra_codes pattern).
 
 ALTER TABLE public.ref_clinical_observations ENABLE ROW LEVEL SECURITY;
 
--- All authenticated users can read observations (it's a reference table)
+DROP POLICY IF EXISTS "ref_clinical_observations_read" ON public.ref_clinical_observations;
 CREATE POLICY "ref_clinical_observations_read"
     ON public.ref_clinical_observations
     FOR SELECT
     TO authenticated
     USING (true);
-
--- Only network admins can modify the vocabulary
-CREATE POLICY "ref_clinical_observations_admin_write"
-    ON public.ref_clinical_observations
-    FOR ALL
-    TO authenticated
-    USING (
-        EXISTS (
-            SELECT 1 FROM user_sites
-            WHERE user_sites.user_id = auth.uid()
-              AND user_sites.role = 'network_admin'
-        )
-    );
 
 -- ============================================
 -- SECTION 3: SEED — BASELINE OBSERVATIONS
