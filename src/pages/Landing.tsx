@@ -151,8 +151,8 @@ const Landing: React.FC = () => {
               transition={{ duration: 1, delay: 0.5 }}
               className="max-w-2xl lg:mx-0 mx-auto p-4 bg-slate-900/40 border border-slate-800 rounded-2xl"
             >
-              <p className="text-[12px] font-black text-slate-500 uppercase tracking-widest leading-relaxed">
-                <span className="text-primary mr-2">Notice:</span>
+              <p className="text-xs font-normal text-slate-500 leading-relaxed">
+                <span className="text-blue-400 font-semibold mr-1">Notice:</span>
                 PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
               </p>
             </motion.div>
