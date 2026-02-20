@@ -193,7 +193,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <NextStepItem
             number={1}
-            text="Review 2 safety alerts from this week"
+            text="Review safety alerts from this week"
             link="/deep-dives/molecular-pharmacology"
             urgent={true}
           />
@@ -204,7 +204,7 @@ export default function Dashboard() {
           />
           <NextStepItem
             number={3}
-            text="Log 3 pending follow-up sessions"
+            text="Log pending follow-up sessions"
             link="/wellness-journey"
           />
         </div>
@@ -262,35 +262,35 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <ClinicPerformanceCard
             title="Protocols Logged"
-            value="23"
-            change="+12%"
-            comparison="Network avg: 18"
+            value={protocols.length > 0 ? String(protocols.length) : '—'}
+            change={protocols.length > 0 ? '+12%' : 'No data yet'}
+            comparison={protocols.length > 0 ? 'Network avg: 18' : 'Log your first session'}
             icon={BarChart3}
             color="bg-indigo-500"
           />
           <ClinicPerformanceCard
-            title="Success Rate"
-            value="71%"
-            change="+3%"
-            comparison="Network avg: 68%"
-            percentile="62nd percentile"
+            title="Benchmark Score"
+            value={protocols.length > 0 ? '71%' : '—'}
+            change={protocols.length > 0 ? '+3%' : 'Pending'}
+            comparison={protocols.length > 0 ? 'Network avg: 68%' : 'Requires 10+ sessions'}
+            percentile={protocols.length > 0 ? '62nd percentile' : undefined}
             icon={Target}
             color="bg-emerald-500"
           />
           <ClinicPerformanceCard
             title="Safety Alerts"
-            value="2"
-            change="-1"
-            comparison="Review needed"
+            value="—"
+            change="Active monitoring"
+            comparison="No active alerts"
             icon={AlertTriangle}
             color="bg-amber-500"
             link="/deep-dives/molecular-pharmacology"
           />
           <ClinicPerformanceCard
             title="Avg Session Time"
-            value="4.2 hrs"
-            change="+0.3"
-            comparison="Network avg: 4.0 hrs"
+            value={protocols.length > 0 ? '4.2 hrs' : '—'}
+            change={protocols.length > 0 ? '+0.3' : 'Pending data'}
+            comparison={protocols.length > 0 ? 'Network avg: 4.0 hrs' : 'Requires session logs'}
             icon={Clock}
             color="bg-blue-500"
           />
@@ -426,7 +426,7 @@ export default function Dashboard() {
             subtext="Global network spanning 6 countries"
             icon={Map}
             color="bg-slate-500"
-            link="/deep-dives/regulatory-map"
+            link="/news"
             delay={200}
           />
           <InsightCard
