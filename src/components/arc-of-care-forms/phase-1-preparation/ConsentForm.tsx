@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { FileCheck, Save, CheckCircle, AlertTriangle } from 'lucide-react';
+import { FileCheck, Save, CheckCircle, AlertTriangle, ShieldCheck, Copy, Check } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 
 /**
@@ -39,7 +39,17 @@ const CONSENT_TYPES = [
 const ConsentForm: React.FC<ConsentFormProps> = ({
     onSave,
     initialData = { consent_types: [], consent_obtained: false },
+    patientId,
 }) => {
+    const [idCopied, setIdCopied] = useState(false);
+
+    const handleCopyId = () => {
+        if (!patientId) return;
+        navigator.clipboard.writeText(patientId).then(() => {
+            setIdCopied(true);
+            setTimeout(() => setIdCopied(false), 2000);
+        });
+    };
     const [data, setData] = useState<ConsentData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -126,6 +136,57 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                     )}
                 </div>
             </div>
+
+            {/* ── Patient Anonymous ID Banner ──────────────────────────────── */}
+            {/* This is the most important identity disclosure on the page.     */}
+            {/* Displayed inline — NOT as a toast — so clinicians always see it  */}
+            {patientId && (
+                <div className="relative overflow-hidden rounded-2xl border-2 border-emerald-500/40 bg-emerald-500/5 p-5">
+                    {/* Subtle glow accent */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/60 via-emerald-400/80 to-emerald-500/60 rounded-t-2xl" />
+
+                    <div className="flex items-start gap-4">
+                        {/* Shield icon */}
+                        <div className="shrink-0 w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                            <ShieldCheck className="w-6 h-6 text-emerald-400" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                            <p className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-1">
+                                Anonymous Patient ID — System Generated
+                            </p>
+                            <p className="text-sm text-slate-300 leading-relaxed mb-3">
+                                A unique random hash has been created for this patient. <strong className="text-slate-200">No name, date of birth, or identifying information is stored.</strong> All clinical records are linked to this ID only.
+                            </p>
+
+                            {/* ID display with copy button */}
+                            <div className="flex items-center gap-3">
+                                <div className="flex-1 flex items-center gap-3 px-4 py-3 bg-slate-950/80 border border-emerald-500/30 rounded-xl">
+                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest shrink-0">Patient ID</span>
+                                    <span className="font-mono text-lg font-black text-emerald-300 tracking-widest">
+                                        {patientId}
+                                    </span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleCopyId}
+                                    title="Copy patient ID to clipboard"
+                                    className="shrink-0 flex items-center gap-2 px-4 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 hover:border-emerald-500/40 text-slate-400 hover:text-emerald-300 transition-all active:scale-95"
+                                >
+                                    {idCopied
+                                        ? <><Check className="w-4 h-4 text-emerald-400" /><span className="text-xs font-bold text-emerald-400">Copied</span></>
+                                        : <><Copy className="w-4 h-4" /><span className="text-xs font-bold">Copy</span></>
+                                    }
+                                </button>
+                            </div>
+
+                            <p className="text-xs text-slate-500 mt-2 font-medium">
+                                Record this ID in your secure paper trail if required by your site's protocol.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* ── Form body ───────────────────────────────────────────────── */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-8">

@@ -334,7 +334,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
         // ── Phase 1: Preparation ──────────────────────────────────────────────
         case 'consent':
-            return <ConsentForm onSave={handleConsentSave} />;
+            return <ConsentForm onSave={handleConsentSave} patientId={patientId} />;
 
         case 'structured-safety':
             return <StructuredSafetyCheckForm onSave={() => onSuccess('Safety Screen')} />;
