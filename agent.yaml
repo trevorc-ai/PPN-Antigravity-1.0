@@ -76,9 +76,8 @@ agents:
       - ".agent/skills/master-data-ux/SKILL.md"
       - ".agent/skills/emerging-tech-ai-data/SKILL.md"
       - ".agent/skills/migration-manager/SKILL.md"
-      - ".agent/skills/database-design/SKILL.md"
-      - ".agent/skills/database-schema-validation/SKILL.md"
-      - ".agent/skills/query-optimization/SKILL.md"
+      - ".agent/skills/database-schema-validator/SKILL.md"
+      - ".agent/skills/query-optimizer/SKILL.md"
     instructions: |
       You strictly follow enterprise SQL Best Practices.
       1. ON STARTUP: Scan `_WORK_ORDERS/03_BUILD` for tickets where `owner: SOOP`.
