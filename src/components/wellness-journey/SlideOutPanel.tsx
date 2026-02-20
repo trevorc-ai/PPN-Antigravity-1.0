@@ -90,7 +90,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                 ref={panelRef}
                 className="fixed top-0 right-0 h-full bg-slate-900 shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out"
                 style={{
-                    width: window.innerWidth < 768 ? '100%' : width,
+                    width: window.innerWidth < 1024 ? '100%' : width,
                     transform: isOpen ? 'translateX(0)' : 'translateX(100%)'
                 }}
                 onTouchStart={handleTouchStart}

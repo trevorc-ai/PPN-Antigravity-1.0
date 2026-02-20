@@ -60,45 +60,47 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
 
                     return (
                         <React.Fragment key={phase.id}>
-                            <AdvancedTooltip
-                                content={phase.tooltip}
-                                title={phase.tooltipTitle}
-                                type={phase.id === 1 ? 'info' : phase.id === 2 ? 'warning' : 'success'}
-                                tier="detailed"
-                                side="bottom"
-                                width="w-80"
-                            >
-                                <button
-                                    onClick={() => onPhaseChange(phase.id)}
-                                    className={`
-                  flex items-center gap-3 px-6 py-4 rounded-t-2xl transition-all
-                  ${isActive
-                                            ? `${phase.bgColor} border-2 ${phase.borderColor} ${phase.textColor} font-bold`
-                                            : isCompleted
-                                                ? 'bg-slate-800/40 border border-slate-700 text-slate-300 hover:text-slate-300'
-                                                : 'bg-slate-900/40 border border-slate-700 text-slate-400 hover:text-slate-300 hover:bg-slate-800/40 cursor-pointer'
-                                        }
-                `}
-                                    role="tab"
-                                    aria-selected={isActive}
-                                    aria-controls={`panel-${phase.id}`}
-                                    aria-label={`Phase ${phase.id}: ${phase.label}`}
+                            <div className="flex-1 flex">
+                                <AdvancedTooltip
+                                    content={phase.tooltip}
+                                    title={phase.tooltipTitle}
+                                    type={phase.id === 1 ? 'info' : phase.id === 2 ? 'warning' : 'success'}
+                                    tier="standard"
+                                    side="bottom"
+                                    width="w-80"
                                 >
-                                    <div className="flex items-center gap-3">
-                                        {isCompleted && !isActive ? (
-                                            <CheckCircle className="w-5 h-5 text-emerald-400" />
-                                        ) : (
-                                            <phase.icon className="w-5 h-5" />
-                                        )}
-                                        <div className="flex items-center gap-2">
-                                            <span className={`text-lg font-black tabular-nums ${isActive ? '' : 'text-slate-500'}`}>{phase.id}</span>
-                                            <span className={`text-base ${isActive ? 'font-black' : 'font-semibold'}`}>
-                                                {phase.label}{isCompleted && !isActive && ' ✓'}
-                                            </span>
+                                    <button
+                                        onClick={() => onPhaseChange(phase.id)}
+                                        className={`
+                      w-full flex items-center justify-center gap-3 px-6 py-4 rounded-t-2xl transition-all
+                      ${isActive
+                                                ? `${phase.bgColor} border-2 ${phase.borderColor} ${phase.textColor} font-bold`
+                                                : isCompleted
+                                                    ? 'bg-slate-800/40 border border-slate-700 text-slate-300 hover:text-slate-300'
+                                                    : 'bg-slate-900/40 border border-slate-700 text-slate-400 hover:text-slate-300 hover:bg-slate-800/40 cursor-pointer'
+                                            }
+                    `}
+                                        role="tab"
+                                        aria-selected={isActive}
+                                        aria-controls={`panel-${phase.id}`}
+                                        aria-label={`Phase ${phase.id}: ${phase.label}`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            {isCompleted && !isActive ? (
+                                                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                                            ) : (
+                                                <phase.icon className="w-5 h-5" />
+                                            )}
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-lg font-black tabular-nums ${isActive ? '' : 'text-slate-500'}`}>{phase.id}</span>
+                                                <span className={`text-base ${isActive ? 'font-black' : 'font-semibold'}`}>
+                                                    {phase.label}{isCompleted && !isActive && ' ✓'}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </button>
-                            </AdvancedTooltip>
+                                    </button>
+                                </AdvancedTooltip>
+                            </div>
 
                             {/* Arrow connector */}
                             {index < phases.length - 1 && (

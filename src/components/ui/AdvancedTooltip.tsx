@@ -94,12 +94,16 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
         };
     }, []);
 
+    const isTouchDevice = () => navigator.maxTouchPoints > 0;
+
     const handleMouseEnter = () => {
-        if (tier === 'guide') return; // Guide is click-only usually, or immediate
+        if (isTouchDevice()) return; // Suppress on tablets/phones — touch tap fires mouseenter
+        if (tier === 'guide') return;
         timeoutRef.current = setTimeout(() => setIsVisible(true), tier === 'micro' ? 200 : delay);
     };
 
     const handleMouseLeave = () => {
+        if (isTouchDevice()) return;
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         setIsVisible(false);
     };
