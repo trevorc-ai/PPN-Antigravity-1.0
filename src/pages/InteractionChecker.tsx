@@ -110,11 +110,10 @@ const InteractionChecker: React.FC = () => {
           return;
         }
 
-        // Step 2: Query ref_knowledge_graph (live table — string-based matching)
-        // Note: ref_knowledge_graph uses substance_name + interactor_name strings, not ID joins.
-        // ref_drug_interactions does not exist in the live DB.
+        // Step 2: Query ref_clinical_interactions (correct table — verified 2026-02-19)
+        // Note: ref_knowledge_graph exists but has wrong schema (legacy alert rules system).
         const { data, error } = await supabase
-          .from('ref_knowledge_graph')
+          .from('ref_clinical_interactions')
           .select('*')
           .eq('substance_name', selectedPsychedelic)
           .eq('interactor_name', selectedMedication)
@@ -128,14 +127,14 @@ const InteractionChecker: React.FC = () => {
           const severityLabel = data.severity_grade ?? 'Low';
 
           setDbRule({
-            id: `KG-${data.interaction_id}`,
+            id: `CI-${data.interaction_id}`,
             substance: selectedPsychedelic,
             interactor: selectedMedication,
             riskLevel: risk,
             severity: severityLabel,
             description: data.clinical_description,
             mechanism: data.mechanism,
-            clinical_recommendation: null, // not in knowledge graph schema
+            clinical_recommendation: null, // not in ref_clinical_interactions schema
             source: data.evidence_source ?? 'National Library of Medicine / PubMed',
             sourceUrl: data.source_url,
             isKnown: true
