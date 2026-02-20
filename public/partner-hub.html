@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
+    <title>PPN Resource Center</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #0a1628;
+            --card: rgba(12, 26, 50, 0.95);
+            --blue: #388bfd;
+            --cyan: #39d0d8;
+            --green: #3fb950;
+            --amber: #f0a500;
+            --purple: #a855f7;
+            --text: #9fb0be;
+            --muted: #6b7a8d;
+            --bdr: rgba(56, 139, 253, 0.15)
+        }
+
+        html,
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        /* NAV */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(10, 22, 40, 0.97);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--bdr);
+            padding: 11px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1
+        }
+
+        .nav-logo svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0
+        }
+
+        .nav-name {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: -0.01em
+        }
+
+        .nav-name span {
+            color: var(--blue)
+        }
+
+        .nav-badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: rgba(56, 139, 253, 0.1);
+            border: 1px solid rgba(56, 139, 253, 0.25);
+            color: var(--blue);
+            padding: 3px 10px;
+            border-radius: 100px
+        }
+
+        .nav-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        /* LAYOUT */
+        .wrap {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px 14px 80px
+        }
+
+        /* SECTION HEADERS */
+        .sh {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 20px 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .sh-line {
+            flex: 1;
+            height: 1px;
+            background: var(--bdr)
+        }
+
+        /* STAT ROW */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 4px
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--bdr);
+            border-radius: 12px;
+            padding: 14px 12px;
+            text-align: center
+        }
+
+        .stat-n {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: var(--blue)
+        }
+
+        .stat-l {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 3px;
+            line-height: 1.4
+        }
+
+        /* LINK CARDS — primary */
+        .lc {
+            background: var(--card);
+            border: 1px solid var(--bdr);
+            border-radius: 14px;
+            padding: 14px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            text-decoration: none;
+            color: inherit
+        }
+
+        .lc:active {
+            transform: scale(0.99)
+        }
+
+        .lc.blue {
+            border-left: 3px solid var(--blue)
+        }
+
+        .lc.cyan {
+            border-left: 3px solid var(--cyan)
+        }
+
+        .lc.green {
+            border-left: 3px solid var(--green)
+        }
+
+        .lc.amber {
+            border-left: 3px solid var(--amber)
+        }
+
+        .lc.purple {
+            border-left: 3px solid var(--purple)
+        }
+
+        .lc-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px
+        }
+
+        .bg-blue {
+            background: rgba(56, 139, 253, 0.12)
+        }
+
+        .bg-cyan {
+            background: rgba(57, 208, 216, 0.1)
+        }
+
+        .bg-green {
+            background: rgba(63, 185, 80, 0.1)
+        }
+
+        .bg-amber {
+            background: rgba(240, 165, 0, 0.1)
+        }
+
+        .bg-purple {
+            background: rgba(168, 85, 247, 0.1)
+        }
+
+        .lc-m {
+            flex: 1;
+            min-width: 0
+        }
+
+        .lc-t {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .lc-s {
+            font-size: 11.5px;
+            color: var(--muted);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .lc-badge {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 100px;
+            white-space: nowrap;
+            flex-shrink: 0
+        }
+
+        .badge-live {
+            background: rgba(63, 185, 80, 0.12);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+            color: var(--green)
+        }
+
+        .badge-demo {
+            background: rgba(57, 208, 216, 0.1);
+            border: 1px solid rgba(57, 208, 216, 0.25);
+            color: var(--cyan)
+        }
+
+        .badge-wait {
+            background: rgba(240, 165, 0, 0.1);
+            border: 1px solid rgba(240, 165, 0, 0.25);
+            color: var(--amber)
+        }
+
+        .lc-arr {
+            font-size: 14px;
+            color: var(--muted);
+            flex-shrink: 0
+        }
+
+        /* DEEP LINK GRID */
+        .dl-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .dl {
+            background: var(--card);
+            border: 1px solid var(--bdr);
+            border-radius: 12px;
+            padding: 13px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s
+        }
+
+        .dl:active {
+            transform: scale(0.98)
+        }
+
+        .dl-icon {
+            font-size: 16px;
+            width: 28px;
+            flex-shrink: 0;
+            text-align: center
+        }
+
+        .dl-m {
+            flex: 1;
+            min-width: 0
+        }
+
+        .dl-t {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .dl-s {
+            font-size: 10.5px;
+            color: var(--muted);
+            margin-top: 1px
+        }
+
+        /* TALKING POINTS */
+        .tp {
+            background: rgba(56, 139, 253, 0.05);
+            border: 1px solid var(--bdr);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 8px
+        }
+
+        .tp-q {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 6px;
+            letter-spacing: 0.04em
+        }
+
+        .tp-a {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.6;
+            font-style: italic
+        }
+
+        /* BOTTOM BAR */
+        .sbot {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 22, 40, 0.97);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--bdr);
+            padding: 10px 14px;
+            display: flex;
+            gap: 8px
+        }
+
+        .btn-p {
+            flex: 1;
+            background: linear-gradient(135deg, var(--blue), #2060cc);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .btn-s {
+            background: rgba(56, 139, 253, 0.08);
+            border: 1px solid var(--bdr);
+            color: var(--blue);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 11px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="nav-logo">
+            <svg viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 1L2 6v10c0 7 5.25 13 12 15 6.75-2 12-8 12-15V6L14 1z" fill="rgba(56,139,253,0.15)"
+                    stroke="#388bfd" stroke-width="1.5" />
+                <path d="M9 16l3.5 3.5 6-6" stroke="#39d0d8" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            <span class="nav-name">PPN <span>Resource Center</span></span>
+        </div>
+        <div class="nav-badge">Partner</div>
+        <div class="nav-time" id="clock"></div>
+    </nav>
+
+    <div class="wrap">
+
+        <!-- STATS — projection-screen safe: no pricing, no strategy -->
+        <div class="sh">At a Glance <div class="sh-line"></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-n" style="color:var(--green)">Live</div>
+                <div class="stat-l">Platform Status</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-n">15k+</div>
+                <div class="stat-l">Active Practitioners</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-n" style="color:var(--cyan)">14d</div>
+                <div class="stat-l">Free Trial</div>
+            </div>
+        </div>
+
+        <!-- LIVE PRODUCT -->
+        <div class="sh">Live Platform <div class="sh-line"></div>
+        </div>
+
+        <a href="https://ppnportal.net" target="_blank" class="lc blue">
+            <div class="lc-icon bg-blue">🧬</div>
+            <div class="lc-m">
+                <div class="lc-t">PPN Portal</div>
+                <div class="lc-s">ppnportal.net</div>
+            </div>
+            <span class="lc-badge badge-live">Live</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <a href="https://ppnportal.net/phantom-shield.html" target="_blank" class="lc cyan">
+            <div class="lc-icon bg-cyan">🛡️</div>
+            <div class="lc-m">
+                <div class="lc-t">Phantom Shield</div>
+                <div class="lc-s">ppnportal.net/phantom-shield.html</div>
+            </div>
+            <span class="lc-badge badge-live">Live</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <a href="https://ppnportal.net/#/academy" target="_blank" class="lc amber">
+            <div class="lc-icon bg-amber">🎓</div>
+            <div class="lc-m">
+                <div class="lc-t">PPN Academy</div>
+                <div class="lc-s">ppnportal.net/#/academy</div>
+            </div>
+            <span class="lc-badge badge-wait">Waitlist Open</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <a href="https://ppnportal.net/phantom-shield-card.html" target="_blank" class="lc green">
+            <div class="lc-icon bg-green">📲</div>
+            <div class="lc-m">
+                <div class="lc-t">Mobile Share Card</div>
+                <div class="lc-s">ppnportal.net/phantom-shield-card.html</div>
+            </div>
+            <span class="lc-badge badge-live">Live</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <a href="https://ppnportal.net/#/checkout" target="_blank" class="lc green">
+            <div class="lc-icon bg-green">💳</div>
+            <div class="lc-m">
+                <div class="lc-t">Sign Up / Pricing</div>
+                <div class="lc-s">ppnportal.net/#/checkout</div>
+            </div>
+            <span class="lc-badge badge-live">Live</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <!-- DEMO RESOURCES -->
+        <div class="sh">Demo Resources <div class="sh-line"></div>
+        </div>
+
+        <a href="jason-tour.html" target="_blank" class="lc cyan">
+            <div class="lc-icon bg-cyan">🗺️</div>
+            <div class="lc-m">
+                <div class="lc-t">Jason's Private Tour</div>
+                <div class="lc-s">Self-guided walkthrough — 11 sections</div>
+            </div>
+            <span class="lc-badge badge-demo">Tour</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <a href="jason-demo.html" target="_blank" class="lc blue">
+            <div class="lc-icon bg-blue">⏱️</div>
+            <div class="lc-m">
+                <div class="lc-t">Demo Script</div>
+                <div class="lc-s">30-min timed walkthrough with talking points</div>
+            </div>
+            <span class="lc-badge badge-demo">Script</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <a href="partner-preview.html" target="_blank" class="lc purple">
+            <div class="lc-icon bg-purple">📋</div>
+            <div class="lc-m">
+                <div class="lc-t">Partner Overview</div>
+                <div class="lc-s">Full platform and campaign brief</div>
+            </div>
+            <span class="lc-badge badge-demo">Brief</span>
+            <div class="lc-arr">↗</div>
+        </a>
+
+        <!-- FEATURE DEEP LINKS -->
+        <div class="sh">Feature Deep Links <div class="sh-line"></div>
+        </div>
+        <div class="dl-grid">
+            <a href="https://ppnportal.net/#/interactions" target="_blank" class="dl">
+                <div class="dl-icon">⚠️</div>
+                <div class="dl-m">
+                    <div class="dl-t">Interaction Checker</div>
+                    <div class="dl-s">Drug safety</div>
+                </div>
+            </a>
+            <a href="https://ppnportal.net/#/wellness-journey" target="_blank" class="dl">
+                <div class="dl-icon">🗺️</div>
+                <div class="dl-m">
+                    <div class="dl-t">Wellness Journey</div>
+                    <div class="dl-s">Session docs</div>
+                </div>
+            </a>
+            <a href="https://ppnportal.net/#/analytics" target="_blank" class="dl">
+                <div class="dl-icon">📈</div>
+                <div class="dl-m">
+                    <div class="dl-t">Analytics</div>
+                    <div class="dl-s">Benchmarks</div>
+                </div>
+            </a>
+            <a href="https://ppnportal.net/#/dashboard" target="_blank" class="dl">
+                <div class="dl-icon">📊</div>
+                <div class="dl-m">
+                    <div class="dl-t">Dashboard</div>
+                    <div class="dl-s">Clinical intel</div>
+                </div>
+            </a>
+            <a href="https://ppnportal.net/#/assessment" target="_blank" class="dl">
+                <div class="dl-icon">📋</div>
+                <div class="dl-m">
+                    <div class="dl-t">Assessments</div>
+                    <div class="dl-s">PHQ-9, GAD-7…</div>
+                </div>
+            </a>
+            <a href="https://ppnportal.net/#/catalog" target="_blank" class="dl">
+                <div class="dl-icon">🧬</div>
+                <div class="dl-m">
+                    <div class="dl-t">Substance Catalog</div>
+                    <div class="dl-s">Pharmacology</div>
+                </div>
+            </a>
+            <a href="https://ppnportal.net/#/search" target="_blank" class="dl">
+                <div class="dl-icon">🔍</div>
+                <div class="dl-m">
+                    <div class="dl-t">Search Portal</div>
+                    <div class="dl-s">AI engine</div>
+                </div>
+            </a>
+            <a href="https://ppnportal.net/#/session-export" target="_blank" class="dl">
+                <div class="dl-icon">📄</div>
+                <div class="dl-m">
+                    <div class="dl-t">Export Center</div>
+                    <div class="dl-s">Legacy transcript</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- QUICK TALKING POINTS -->
+        <div class="sh">Quick Talking Points <div class="sh-line"></div>
+        </div>
+
+        <div class="tp">
+            <div class="tp-q">If they ask why documentation matters legally:</div>
+            <div class="tp-a">"Documentation doesn't create legal exposure. Lack of documentation creates legal
+                exposure. PPN builds the record structurally — without storing what regulations protect."</div>
+        </div>
+
+        <div class="tp">
+            <div class="tp-q">If they ask about patient privacy:</div>
+            <div class="tp-a">"PPN has never stored a single patient name. If the database were handed to the FBI
+                tomorrow, they'd receive encrypted codes and table references. Nothing useful."</div>
+        </div>
+
+        <div class="tp">
+            <div class="tp-q">If they ask about the Interaction Checker:</div>
+            <div class="tp-a">"Right now, practitioners are asking each other about drug conflicts in Signal groups.
+                This ends that. The answer is here, sourced, and defensible."</div>
+        </div>
+
+        <div class="tp">
+            <div class="tp-q">If they ask what sets PPN apart from generic EHR:</div>
+            <div class="tp-a">"EHRs store patient data. PPN stores outcomes. The difference is what ends up in a
+                subpoena versus what protects you in one."</div>
+        </div>
+
+        <div class="tp">
+            <div class="tp-q">If they ask about the training program model:</div>
+            <div class="tp-a">"One training program deal brings their whole cohort with them. A single partnership can
+                mean 40 practitioners from one conversation."</div>
+        </div>
+
+        <div style="height:8px"></div>
+    </div>
+
+    <div class="sbot">
+        <a href="jason-demo.html" target="_blank" class="btn-s">Demo Script</a>
+        <a href="https://ppnportal.net" target="_blank" class="btn-p">Open the Portal ↗</a>
+    </div>
+
+    <script>
+        // Live clock in nav
+        function tick() {
+            const now = new Date();
+            document.getElementById('clock').textContent =
+                now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        }
+        tick();
+        setInterval(tick, 30000);
+    </script>
+
+</body>
+
+</html>
