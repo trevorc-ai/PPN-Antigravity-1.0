@@ -278,7 +278,7 @@ const Landing: React.FC = () => {
                 <p>
                   By pooling de-identified outcomes data across a growing alliance of practitioners, we're building the evidence base that supports insurance coverage, reduces malpractice risk, and elevates the entire field.
                 </p>
-                <p className="text-xl font-semibold text-slate-300">
+                <p className="text-2xl sm:text-3xl font-medium text-slate-300 tracking-tight">
                   You don't have to build this alone.
                 </p>
               </div>
