@@ -581,8 +581,8 @@ const WellnessJourney: React.FC = () => {
                 </div>
 
                 {/* Phase Indicator (Tabbed Navigation) */}
-                <div className="flex items-center gap-3">
-                    <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex-1 min-w-0">
                         <PhaseIndicator
                             currentPhase={activePhase}
                             completedPhases={completedPhases}
