@@ -343,7 +343,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Unified Clinical Operations - NEW */}
-      <section className="py-24 px-6 relative z-10 border-y border-slate-800/50 bg-slate-900/20">
+      <section className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight leading-tight">
