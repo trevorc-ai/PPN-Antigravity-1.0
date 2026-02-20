@@ -248,7 +248,7 @@ const WellnessJourney: React.FC = () => {
         'baseline-observations': 'Clinical Observations',
         'consent': 'Informed Consent',
         'dosing-protocol': 'Dosing Protocol',
-        'session-vitals': 'Session Vitals',
+        'session-vitals': '',
         'session-timeline': 'Session Timeline',
         'session-observations': 'Session Observations',
         'safety-and-adverse-event': 'Safety & Adverse Events',

@@ -15,7 +15,7 @@ import { X } from 'lucide-react';
 interface SlideOutPanelProps {
     isOpen: boolean;
     onClose: () => void;
-    title: string;
+    title?: string;
     children: React.ReactNode;
     width?: string; // Default: 40%
     footer?: React.ReactNode; // Optional custom footer
@@ -102,12 +102,16 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
             >
                 {/* Sticky Header */}
                 <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-700/50 px-6 py-4 flex items-center justify-between">
-                    <h2
-                        id="panel-title"
-                        className="text-xl font-bold text-slate-300"
-                    >
-                        {title}
-                    </h2>
+                    {title ? (
+                        <h2
+                            id="panel-title"
+                            className="text-xl font-bold text-slate-300"
+                        >
+                            {title}
+                        </h2>
+                    ) : (
+                        <span id="panel-title" />
+                    )}
                     <button
                         onClick={onClose}
                         className="p-2 rounded-lg hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
