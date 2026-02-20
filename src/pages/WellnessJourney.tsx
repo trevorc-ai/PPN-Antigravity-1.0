@@ -21,7 +21,7 @@ import { Phase1Tour, Phase2Tour, Phase3Tour, CompassTourButton } from '../compon
 import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
-import { getCurrentSiteId } from '../services/arcOfCareApi';
+import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard

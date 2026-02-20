@@ -6,19 +6,24 @@
  */
 
 import { useState } from 'react';
+// WO-206: canonical imports — arcOfCareApi barrel bypassed
 import {
     createBaselineAssessment,
-    getAugmentedIntelligence,
     createSessionEvent,
     getSessionVitals,
     createPulseCheck,
-    getSymptomTrajectory,
-    validateBaselineAssessment,
-    validatePulseCheck,
     type BaselineAssessmentData,
     type SessionEventData,
     type PulseCheckData
-} from '../services/arcOfCareApi';
+} from '../services/clinicalLog';
+import {
+    getAugmentedIntelligence,
+    getSymptomTrajectory,
+} from '../services/analytics';
+import {
+    validateBaselineAssessment,
+    validatePulseCheck,
+} from '../services/quality';
 
 export function useArcOfCareApi() {
     const [loading, setLoading] = useState(false);
@@ -87,7 +92,7 @@ export function useArcOfCareApi() {
         setLoading(true);
         setError(null);
 
-        const result = await getSessionVitals(sessionId);
+        const result = await getSessionVitals(String(sessionId));
         setLoading(false);
 
         if (!result.success) {

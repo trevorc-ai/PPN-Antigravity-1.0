@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, X, Loader2, AlertCircle } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
-import { getCurrentSiteId } from '../../services/arcOfCareApi';
+import { getCurrentSiteId, generatePatientId } from '../../services/identity';
 
 /**
  * PatientSelectModal — WO-118 Live DB Integration
@@ -49,12 +49,7 @@ function derivePhase(sessionType: string | null): Phase {
     return 'Preparation';
 }
 
-function generatePatientId(): string {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let id = 'PT-';
-    for (let i = 0; i < 10; i++) id += chars[Math.floor(Math.random() * chars.length)];
-    return id;
-}
+// generatePatientId() imported from ../../services/identity (WO-206 service isolation)
 
 const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void }> =
     ({ label, active, onClick }) => {

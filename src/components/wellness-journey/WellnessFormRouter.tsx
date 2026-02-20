@@ -25,9 +25,9 @@ import {
     LongitudinalAssessmentForm,
 } from '../arc-of-care-forms';
 
-// Live API functions (WO-118)
+// WO-206: canonical imports — arcOfCareApi barrel bypassed
+import { getCurrentSiteId } from '../../services/identity';
 import {
-    getCurrentSiteId,
     createConsent,
     createBaselineAssessment,
     createSessionVital,
@@ -38,7 +38,7 @@ import {
     createIntegrationSession,
     createBehavioralChange,
     createLongitudinalAssessment,
-} from '../../services/arcOfCareApi';
+} from '../../services/clinicalLog';
 
 // Form data types
 import type { ConsentData } from '../arc-of-care-forms/phase-1-preparation/ConsentForm';

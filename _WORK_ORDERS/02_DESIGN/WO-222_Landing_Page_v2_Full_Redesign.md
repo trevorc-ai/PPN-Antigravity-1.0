@@ -1,9 +1,10 @@
 ---
-status: 01_TRIAGE
-owner: PRODDY
+status: 02_DESIGN
+owner: DESIGNER
 failure_count: 0
 priority: HIGH
 created: 2026-02-19
+proddy_complete: 2026-02-19
 ---
 
 # WO-222: Landing Page v2 — Full Redesign

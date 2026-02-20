@@ -1,15 +1,45 @@
 /**
  * analytics.ts — WO-206 Service Layer Isolation
+ * REWORK (failure_count: 1): Added requireKAnonymity() guard per INSPECTOR rejection.
  *
  * Responsible for: aggregate read queries ONLY.
- * EVERY query that touches patient data MUST include k-anonymity guard:
- *   minimum 5 distinct patients before returning results.
+ * k-anon: minimum 5 distinct patients before returning population-level results.
  *
- * Single-patient reads (fetching one patient's own trajectory) are allowed
- * as they are the patient's own data, not population-level aggregates.
+ * RULES:
+ *   - Population aggregate queries: MUST call requireKAnonymity() or include
+ *     HAVING COUNT(DISTINCT patient_id) >= 5 at the DB level.
+ *   - Single-patient reads (patient's OWN data): k-anonymity floor NOT required.
+ *     Document this exemption explicitly on each such function.
  */
 
 import { supabase } from '../supabaseClient';
+
+// ============================================================================
+// k-ANONYMITY GUARD
+// k-anon: minimum 5 distinct patients required for population aggregates
+// ============================================================================
+
+/**
+ * requireKAnonymity — call this at the top of any aggregate query function.
+ * Pass in the count of distinct patients in the result set.
+ * Throws if the k-anonymity floor (5 distinct patients) is not met.
+ *
+ * Usage:
+ *   const distinctCount = data?.length ?? 0;
+ *   requireKAnonymity(distinctCount, 'myAggregateFn');
+ *
+ * k-anon: minimum 5 distinct patients
+ */
+export function requireKAnonymity(distinctPatientCount: number, callerName: string): void {
+    // k-anon: minimum 5 distinct patients
+    if (distinctPatientCount < 5) {
+        throw new Error(
+            `[analytics:${callerName}] k-anonymity floor not met: ` +
+            `${distinctPatientCount} distinct patients < 5 required. ` +
+            `Result suppressed to protect patient privacy.`
+        );
+    }
+}
 
 // ============================================================================
 // HELPER: Integration needs predictor

@@ -1,5 +1,6 @@
 /**
  * identity.ts — WO-206 Service Layer Isolation
+ * REWORK (failure_count: 1): Added generatePatientId() per INSPECTOR rejection.
  *
  * Responsible for: user/site identity resolution ONLY.
  * No other service may bypass this module for patient/site context.
@@ -35,4 +36,16 @@ export async function getCurrentSiteId(): Promise<string | null> {
         return null;
     }
     return data[0].site_id as string;
+}
+
+/**
+ * Generate a new anonymous patient link code.
+ * Format: PT-XXXXXXXXXX (10 chars from an unambiguous alphanumeric alphabet).
+ * No PHI is embedded — this is a random anonymous identifier only.
+ */
+export function generatePatientId(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let id = 'PT-';
+    for (let i = 0; i < 10; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    return id;
 }
