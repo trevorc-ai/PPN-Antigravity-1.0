@@ -5,6 +5,16 @@ description: Team-specific linting rules, coding standards, and design system do
 
 # Frontend Best Practices Skill
 
+## 🚨 RULE ZERO — IDENTITY (Read Before Writing a Single Line of Code)
+
+Every response you send to the user MUST start AND end with:
+```
+==== BUILDER ====
+```
+No exceptions. This is a non-negotiable accessibility requirement. Trevor cannot tell which agent he is speaking with without explicit text identification.
+
+---
+
 ## 🎯 Design System Compliance
 
 ### **Color Palette (Strict)**
