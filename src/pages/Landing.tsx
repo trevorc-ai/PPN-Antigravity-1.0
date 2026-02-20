@@ -752,23 +752,10 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION: About PPN */}
-      <section className="py-32 px-6 border-b border-slate-900/50 relative z-10">
-        <div className="max-w-4xl mx-auto text-left space-y-8">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight">
-            About <span className="text-gradient-primary inline-block pb-1">PPN</span>
-          </h2>
-          <div className="space-y-6">
-            <p className="text-lg text-slate-300 leading-relaxed font-medium">
-              The <span className="text-slate-300 font-bold">Psychedelic Practitioners Network (PPN)</span> is a practitioner-only alliance focused on one thing: helping clinics learn faster from real-world care. We standardize the inputs that shape outcomes across preparation, dosing, and integration, then return aggregated benchmarks and safety signals that every site can use to improve consistency.
-            </p>
-            <p className="text-lg text-slate-300 leading-relaxed font-medium">
-              Privacy by design. Structured fields over narrative text. De-identified longitudinal tracking inside each site. Alliance insights shown only in aggregate, never at the patient level.
-            </p>
-          </div>
-
-          {/* Veterans PTSD Statement */}
-          <div className="mt-8 p-8 bg-indigo-600/10 border-2 border-indigo-500/20 rounded-2xl space-y-6">
+      {/* SECTION: Committed to Veteran Care */}
+      <section className="py-24 px-6 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          <div className="p-8 bg-indigo-600/10 border-2 border-indigo-500/20 rounded-2xl space-y-6">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-indigo-500/20 rounded-xl flex-shrink-0">
                 <span className="material-symbols-outlined text-2xl text-indigo-400">military_tech</span>
@@ -799,7 +786,24 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </div>
-      </section >
+      </section>
+
+      {/* SECTION: About PPN */}
+      <section className="py-32 px-6 border-b border-slate-900/50 relative z-10">
+        <div className="max-w-4xl mx-auto text-left space-y-8">
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight">
+            About <span className="text-gradient-primary inline-block pb-1">PPN</span>
+          </h2>
+          <div className="space-y-6">
+            <p className="text-lg text-slate-300 leading-relaxed font-medium">
+              The <span className="text-slate-300 font-bold">Psychedelic Practitioners Network (PPN)</span> is a practitioner-only alliance focused on one thing: helping clinics learn faster from real-world care. We standardize the inputs that shape outcomes across preparation, dosing, and integration, then return aggregated benchmarks and safety signals that every site can use to improve consistency.
+            </p>
+            <p className="text-lg text-slate-300 leading-relaxed font-medium">
+              Privacy by design. Structured fields over narrative text. De-identified longitudinal tracking inside each site. Alliance insights shown only in aggregate, never at the patient level.
+            </p>
+          </div>
+        </div>
+      </section>
       <footer className="py-32 px-6 bg-[#05070a] border-t border-slate-900 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
