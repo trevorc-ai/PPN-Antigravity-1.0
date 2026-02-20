@@ -154,7 +154,7 @@ export default function Dashboard() {
   const { protocols, loading: protocolsLoading } = usePractitionerProtocols();
 
   return (
-    <PageContainer className="min-h-screen bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 flex flex-col gap-8">
+    <PageContainer className="min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] text-slate-300 flex flex-col gap-8">
 
       {/* HEADER SECTION */}
       <Section spacing="tight" data-tour="dashboard-header" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800 pb-8">
@@ -164,8 +164,6 @@ export default function Dashboard() {
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
               <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
             </span>
-            <span className="text-xs font-medium text-slate-500 font-mono">ID: 8842-ALPHA</span>
-            <span className="text-xs font-medium text-slate-500">Last updated: 2 min ago</span>
           </div>
           <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
             Dashboard
@@ -300,48 +298,19 @@ export default function Dashboard() {
         </div>
       </Section>
 
-      {/* NETWORK ACTIVITY (SECONDARY) */}
+      {/* NETWORK ACTIVITY — coming once live Supabase data is connected */}
       <Section spacing="tight">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Network Activity</h2>
-          <span className="text-xs text-slate-500 font-medium">Last 7 Days</span>
+          <span className="text-xs text-slate-500 font-medium">Peer Network</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <InsightCard
-            title="Total Protocols"
-            value="10,247"
-            subtext="127 new protocols this week across 14 sites"
-            icon={BarChart3}
-            color="bg-slate-500"
-            link="/analytics"
-            delay={100}
-          />
-          <InsightCard
-            title="Active Sites"
-            value="14"
-            subtext="Global network spanning 6 countries"
-            icon={Map}
-            color="bg-slate-500"
-            link="/news"
-            delay={200}
-          />
-          <InsightCard
-            title="Network Avg Success"
-            value="68%"
-            subtext="Depression treatment outcomes (PHQ-9 reduction)"
-            icon={Target}
-            color="bg-slate-500"
-            link="/analytics"
-            delay={300}
-          />
+        <div className="card-glass rounded-3xl p-10 flex flex-col items-center justify-center gap-4 text-center border border-dashed border-slate-700/50">
+          <Map className="w-8 h-8 text-slate-600" />
+          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Network benchmarks coming soon</p>
+          <p className="text-sm text-slate-600 max-w-sm">Aggregate outcomes, site comparisons, and protocol success rates will appear here once your clinic data is connected.</p>
         </div>
       </Section>
 
-      <div className="text-center pt-10 border-t border-slate-900 mt-auto">
-        <p className="text-sm text-slate-600 font-mono">
-          Antigravity Clinical OS • v1.2.4 • Encrypted
-        </p>
-      </div>
     </PageContainer >
   );
 }
