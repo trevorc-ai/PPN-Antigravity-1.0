@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
 
 /**
@@ -76,11 +77,11 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
 
     if (!isOpen) return null;
 
-    return (
+    return ReactDOM.createPortal(
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] transition-opacity duration-300"
                 onClick={onClose}
                 aria-hidden="true"
             />
@@ -88,7 +89,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
             {/* Panel */}
             <div
                 ref={panelRef}
-                className="fixed top-0 right-0 h-full bg-slate-900 shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out"
+                className="fixed top-0 right-0 h-full bg-slate-900 shadow-2xl z-[1001] flex flex-col transition-transform duration-300 ease-out"
                 style={{
                     width: window.innerWidth < 1024 ? '100%' : width,
                     transform: isOpen ? 'translateX(0)' : 'translateX(100%)'
@@ -138,6 +139,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                     </div>
                 )}
             </div>
-        </>
+        </>,
+        document.body
     );
 };
