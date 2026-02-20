@@ -12,7 +12,7 @@
  * Required Stripe products/prices (create in dashboard under product "PPN Portal"):
  *   VITE_STRIPE_PRICE_STANDARD           — $199/month recurring (price description: "Standard Plan")
  *   VITE_STRIPE_PRICE_RESEARCH_PARTNER   — $49/month recurring  (price description: "Research Partner Plan")
- *   VITE_STRIPE_PRICE_ANNUAL             — optional annual price
+ *   VITE_STRIPE_PRICE_ANNUAL             — $1,899/year recurring (price_1T2pvyDc55zGK9Db92dmW9rd)
  *
  * Required Vercel environment variables:
  *   VITE_STRIPE_PUBLISHABLE_KEY          — pk_live_... (safe to expose, designed to be public)
@@ -87,7 +87,7 @@ export const SUBSCRIPTION_TIERS = {
         priceId: import.meta.env.VITE_STRIPE_PRICE_STANDARD || 'price_standard',
         priceIdAnnual: import.meta.env.VITE_STRIPE_PRICE_ANNUAL || 'price_annual',
         priceMonthly: 199,
-        priceAnnual: 159,   // ~$1,908/yr — ~20% annual discount
+        priceAnnual: 159,  // $159/mo equivalent, billed as $1,899/yr (Stripe: price_1T2pvyDc55zGK9Db92dmW9rd)
         currency: 'usd',
         trialDays: 14,
         badge: null,

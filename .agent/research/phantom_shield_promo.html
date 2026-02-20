@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phantom Shield — PPN Research Portal</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-primary: #050b18;
+            --bg-card: rgba(13, 25, 48, 0.85);
+            --bg-card-hover: rgba(20, 38, 70, 0.9);
+            --border: rgba(56, 139, 253, 0.18);
+            --border-accent: rgba(56, 139, 253, 0.45);
+            --blue-primary: #388bfd;
+            --blue-glow: rgba(56, 139, 253, 0.15);
+            --cyan: #39d0d8;
+            --amber: #f0a500;
+            --amber-glow: rgba(240, 165, 0, 0.12);
+            --red-soft: #ff6b6b;
+            --green-soft: #3fb950;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #484f58;
+            --shield-gradient: linear-gradient(135deg, #1a3a6e 0%, #0d1930 50%, #0a0f1e 100%);
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── BACKGROUND ─────────────────────────────── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(56, 139, 253, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 110%, rgba(57, 208, 216, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 100% 80% at 50% 50%, rgba(5, 11, 24, 0.95) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 48px 40px 80px;
+        }
+
+        /* ─── HEADER ─────────────────────────────────── */
+        .header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 52px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .confidential-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--amber-glow);
+            border: 1px solid rgba(240, 165, 0, 0.3);
+            color: var(--amber);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+        }
+
+        .shield-wordmark {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .shield-icon {
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+        }
+
+        .brand-name {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #e6edf3 0%, #388bfd 60%, #39d0d8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .brand-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-top: 6px;
+            letter-spacing: 0.01em;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            padding-top: 4px;
+        }
+
+        .header-meta strong {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ─── QUOTE BLOCK ────────────────────────────── */
+        .quote-block {
+            background: linear-gradient(135deg, rgba(56, 139, 253, 0.08) 0%, rgba(57, 208, 216, 0.04) 100%);
+            border: 1px solid var(--border-accent);
+            border-left: 4px solid var(--blue-primary);
+            border-radius: 12px;
+            padding: 28px 32px;
+            margin-bottom: 52px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-block::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 120px;
+            font-weight: 900;
+            color: rgba(56, 139, 253, 0.08);
+            line-height: 1;
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-style: italic;
+            position: relative;
+        }
+
+        .quote-source {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        /* ─── SECTION HEADERS ────────────────────────── */
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--blue-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+
+        .section-body {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 680px;
+        }
+
+        /* ─── PROBLEM SECTION ────────────────────────── */
+        .problem-section {
+            margin-bottom: 56px;
+        }
+
+        .problem-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .problem-card.bad {
+            border-color: rgba(255, 107, 107, 0.3);
+            background: rgba(255, 107, 107, 0.04);
+        }
+
+        .problem-card.bad .prob-label {
+            color: var(--red-soft);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .problem-card.solution {
+            border-color: var(--border-accent);
+            background: var(--blue-glow);
+        }
+
+        .problem-card.solution .prob-label {
+            color: var(--blue-primary);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .problem-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .problem-card strong {
+            color: var(--text-primary);
+        }
+
+        /* ─── FEATURES GRID ──────────────────────────── */
+        .features-section {
+            margin-bottom: 56px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-color, var(--blue-primary)), transparent);
+            opacity: 0.6;
+        }
+
+        .feature-card.span-2 {
+            grid-column: span 2;
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .feature-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            background: var(--icon-bg, rgba(56, 139, 253, 0.12));
+            border: 1px solid var(--icon-border, rgba(56, 139, 253, 0.2));
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 100px;
+            margin-top: 4px;
+        }
+
+        .feature-tag.core {
+            background: rgba(56, 139, 253, 0.15);
+            color: var(--blue-primary);
+        }
+
+        .feature-tag.shield {
+            background: rgba(57, 208, 216, 0.12);
+            color: var(--cyan);
+        }
+
+        .feature-tag.preview {
+            background: rgba(240, 165, 0, 0.12);
+            color: var(--amber);
+        }
+
+        .feature-body {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin-bottom: 14px;
+        }
+
+        .feature-body strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .feature-highlight {
+            background: rgba(56, 139, 253, 0.08);
+            border: 1px solid rgba(56, 139, 253, 0.15);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 12.5px;
+            color: var(--text-primary);
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .feature-steps {
+            list-style: none;
+            counter-reset: steps;
+        }
+
+        .feature-steps li {
+            counter-increment: steps;
+            display: flex;
+            gap: 10px;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            align-items: flex-start;
+            line-height: 1.5;
+        }
+
+        .feature-steps li::before {
+            content: counter(steps);
+            background: var(--blue-glow);
+            border: 1px solid var(--border-accent);
+            color: var(--blue-primary);
+            font-size: 10px;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            background: rgba(56, 139, 253, 0.08);
+            border: 1px solid rgba(56, 139, 253, 0.15);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--cyan);
+        }
+
+        /* ─── PROTECTION MATRIX ──────────────────────── */
+        .matrix-section {
+            margin-bottom: 56px;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 24px;
+            font-size: 13px;
+        }
+
+        .matrix-table thead th {
+            background: rgba(56, 139, 253, 0.08);
+            color: var(--blue-primary);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .matrix-table tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .matrix-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .matrix-table tbody tr:hover td {
+            background: rgba(56, 139, 253, 0.04);
+        }
+
+        .matrix-table td {
+            padding: 14px 20px;
+            color: var(--text-secondary);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        .matrix-table td:first-child {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .matrix-table td .threat {
+            color: var(--red-soft);
+            font-size: 12px;
+        }
+
+        .matrix-table td .how {
+            color: var(--cyan);
+            font-size: 12px;
+        }
+
+        /* ─── REFRAME SECTION ────────────────────────── */
+        .reframe-section {
+            background: var(--shield-gradient);
+            border: 1px solid var(--border-accent);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reframe-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(56, 139, 253, 0.12) 0%, transparent 70%);
+        }
+
+        .reframe-section * {
+            position: relative;
+        }
+
+        .reframe-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--blue-primary);
+            margin-bottom: 16px;
+        }
+
+        .reframe-headline {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .reframe-headline span {
+            background: linear-gradient(135deg, #388bfd, #39d0d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .reframe-body {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 24px;
+            line-height: 1.7;
+        }
+
+        .reframe-tagline {
+            display: inline-block;
+            background: rgba(56, 139, 253, 0.12);
+            border: 1px solid var(--border-accent);
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 700;
+            padding: 10px 24px;
+            border-radius: 100px;
+            letter-spacing: 0.01em;
+        }
+
+        /* ─── FOOTER ─────────────────────────────────── */
+        .footer {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 32px;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-brand {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #e6edf3, #388bfd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .footer-tagline {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-contact {
+            text-align: right;
+        }
+
+        .footer-contact a {
+            color: var(--blue-primary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .footer-contact a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-contact p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .footer-confidential {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* ─── PRINT STYLES ───────────────────────────── */
+        @media print {
+            body {
+                background: #050b18 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            body::before {
+                display: none;
+            }
+
+            .container {
+                padding: 32px;
+            }
+
+            .feature-card {
+                break-inside: avoid;
+            }
+
+            .reframe-section {
+                break-inside: avoid;
+            }
+
+            .matrix-table {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <div class="confidential-badge">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor">
+                        <path
+                            d="M6 1a3 3 0 0 0-3 3v1H2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H9V4a3 3 0 0 0-3-3zm0 1.5A1.5 1.5 0 0 1 7.5 4v1h-3V4A1.5 1.5 0 0 1 6 2.5z" />
+                    </svg>
+                    Confidential — Partner Preview Only
+                </div>
+                <div class="shield-wordmark">
+                    <svg class="shield-icon" viewBox="0 0 56 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="shieldGrad" x1="0" y1="0" x2="56" y2="64"
+                                gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#388bfd" />
+                                <stop offset="1" stop-color="#39d0d8" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M28 2L4 12v20c0 14 10.5 26 24 30 13.5-4 24-16 24-30V12L28 2z" fill="url(#shieldGrad)"
+                            fill-opacity="0.15" stroke="url(#shieldGrad)" stroke-width="1.5" />
+                        <path d="M20 32l6 6 12-12" stroke="url(#shieldGrad)" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M28 18v8" stroke="url(#shieldGrad)" stroke-width="2" stroke-linecap="round"
+                            opacity="0.5" />
+                    </svg>
+                    <div>
+                        <div class="brand-name">Phantom Shield</div>
+                        <div class="brand-subtitle">Privacy-First Clinical Documentation — PPN Research Portal</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-meta">
+                <strong>PPN Research Portal</strong><br />
+                Partner Preview<br />
+                February 2026<br />
+                <span style="color:#388bfd; font-weight:500">trevor@ppnportal.com</span>
+            </div>
+        </header>
+
+        <!-- QUOTE -->
+        <div class="quote-block">
+            <p class="quote-text">
+                "The no-records strategy is actually a trap. The practitioner who can produce a secure, encrypted,
+                timestamped record that documents their standard of care fundamentally shifts the legal narrative — from
+                drug distribution to unlicensed medical practice. That is a massive, massive difference."
+            </p>
+            <p class="quote-source">— From PPN's independent practitioner research synthesis, 2026</p>
+        </div>
+
+        <!-- PROBLEM -->
+        <section class="problem-section">
+            <div class="section-label">The Problem</div>
+            <h2 class="section-title">The Documentation Dilemma</h2>
+            <p class="section-body">Independent practitioners operating in complex legal territory face two bad options
+                — and one they don't know about yet.</p>
+
+            <div class="problem-options">
+                <div class="problem-card bad">
+                    <div class="prob-label">❌ Option A</div>
+                    <strong>Write nothing down.</strong>
+                    <p>You look like a drug dealer in court. No documented standard of care. Maximum criminal and civil
+                        exposure.</p>
+                </div>
+                <div class="problem-card bad">
+                    <div class="prob-label">❌ Option B</div>
+                    <strong>Use a regular app.</strong>
+                    <p>You create a plaintext evidence trail on servers you don't control. One subpoena away from total
+                        exposure.</p>
+                </div>
+                <div class="problem-card solution">
+                    <div class="prob-label">✅ Option C</div>
+                    <strong>Phantom Shield.</strong>
+                    <p>Documented standard of care. Zero identifiable information. Structural protection — not a
+                        promise.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section class="features-section">
+            <div class="section-label">The Suite</div>
+            <h2 class="section-title">Seven Layers of Protection</h2>
+
+            <div class="features-grid">
+
+                <!-- Zero PHI -->
+                <div class="feature-card" style="--accent-color: #388bfd;">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrap"
+                            style="--icon-bg: rgba(56,139,253,0.12); --icon-border: rgba(56,139,253,0.2);">🛡️</div>
+                        <div>
+                            <div class="feature-title">Zero-PHI Architecture</div>
+                            <span class="feature-tag core">Core Foundation</span>
+                        </div>
+                    </div>
+                    <p class="feature-body">
+                        Not a policy — a structural constraint enforced at the database level. The system <strong>never
+                            collects</strong> patient names, email, phone numbers, dates of birth, or geographic
+                        identifiers more specific than state.
+                    </p>
+                    <p class="feature-body" style="margin-bottom: 10px;">Uses <strong>Subject IDs</strong> (hashed
+                        identifiers you create), <strong>year-only dates</strong> (HIPAA Safe Harbor), and
+                        <strong>structured inputs only</strong> — no free-text clinical narratives.</p>
+                    <div class="feature-highlight">
+                        "We cannot produce records we do not have."
+                    </div>
+                </div>
+
+                <!-- Blind Vetting -->
+                <div class="feature-card" style="--accent-color: #39d0d8;">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrap"
+                            style="--icon-bg: rgba(57,208,216,0.1); --icon-border: rgba(57,208,216,0.2);">🔍</div>
+                        <div>
+                            <div class="feature-title">Blind Vetting Scanner</div>
+                            <span class="feature-tag shield">Phantom Shield</span>
+                        </div>
+                    </div>
+                    <p class="feature-body">Screen potential clients for known safety incidents across the network —
+                        without ever sharing a name or phone number.</p>
+                    <ol class="feature-steps">
+                        <li>Enter the client's phone number</li>
+                        <li>App instantly applies <strong>salted cryptographic hashing</strong> (Signal-grade
+                            encryption)</li>
+                        <li>Hash is checked against network-reported bad actors</li>
+                        <li>Match = warning. Server never sees the actual number.</li>
+                    </ol>
+                    <div class="feature-highlight" style="margin-top:10px;">
+                        Community immunity. No PII shared. DEA gets an unreadable string.
+                    </div>
+                </div>
+
+                <!-- Potency Normalizer -->
+                <div class="feature-card" style="--accent-color: #f0a500;">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrap"
+                            style="--icon-bg: rgba(240,165,0,0.1); --icon-border: rgba(240,165,0,0.2);">⚗️</div>
+                        <div>
+                            <div class="feature-title">Potency Normalizer</div>
+                            <span class="feature-tag shield">Phantom Shield</span>
+                        </div>
+                    </div>
+                    <p class="feature-body">
+                        "3 grams" is not a dose — it's a starting point. Batch potency varies 2–3x by strain and
+                        conditions. This variance is the <strong>#1 cause of accidental high-dose events → 911 calls →
+                            practitioner arrests.</strong>
+                    </p>
+                    <p class="feature-body">
+                        Input strain, batch data, and intended dose. Receive an adjusted effective dose recommendation
+                        backed by an aggregated batch database.
+                    </p>
+                    <div class="feature-highlight">
+                        Turns guesswork into math. Turns math into documented standard of care.
+                    </div>
+                </div>
+
+                <!-- Crisis Logger -->
+                <div class="feature-card" style="--accent-color: #ff6b6b;">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrap"
+                            style="--icon-bg: rgba(255,107,107,0.1); --icon-border: rgba(255,107,107,0.2);">🚨</div>
+                        <div>
+                            <div class="feature-title">Crisis Logger — Cockpit Mode</div>
+                            <span class="feature-tag shield">Phantom Shield</span>
+                        </div>
+                    </div>
+                    <p class="feature-body">
+                        Designed for the physiological reality of a safety event: cortisol spike, fine motor
+                        degradation, tunnel vision. No one types coherent notes while managing a psychological
+                        emergency.
+                    </p>
+                    <p class="feature-body">
+                        Large, high-contrast one-tap buttons: <em>Vital Signs Normal / Verbal Support Provided / Rescue
+                            Med Administered / Emergency Services Called.</em>
+                    </p>
+                    <div class="feature-highlight">
+                        Each tap creates a forensic timestamp. <span class="mono">10:02 PM — Distress noted</span> →
+                        <span class="mono">10:21 PM — Patient stable</span>
+                    </div>
+                </div>
+
+                <!-- Banking Hours -->
+                <div class="feature-card" style="--accent-color: #3fb950;">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrap"
+                            style="--icon-bg: rgba(63,185,80,0.1); --icon-border: rgba(63,185,80,0.2);">📚</div>
+                        <div>
+                            <div class="feature-title">Banking Your Hours</div>
+                            <span class="feature-tag shield">Legacy Transcript</span>
+                        </div>
+                    </div>
+                    <p class="feature-body">
+                        A skilled facilitator with 10 years and 500 sessions gets treated like a beginner when
+                        legalization arrives — because they have no verifiable record.
+                    </p>
+                    <p class="feature-body">
+                        Every session documented in PPN builds an <strong>anonymized, cryptographically verified career
+                            ledger.</strong> When licensing opens, present your verified transcript. The board sees your
+                        record — not your name.
+                    </p>
+                    <div class="feature-highlight">
+                        Career insurance for the legal market of tomorrow.
+                    </div>
+                </div>
+
+                <!-- NeuralCopilot + Safety Check side by side -->
+                <div class="feature-card" style="--accent-color: #9c6bff;">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrap"
+                            style="--icon-bg: rgba(156,107,255,0.1); --icon-border: rgba(156,107,255,0.2);">🤖</div>
+                        <div>
+                            <div class="feature-title">NeuralCopilot AI</div>
+                            <span class="feature-tag preview">Preview — Phase 2</span>
+                        </div>
+                    </div>
+                    <p class="feature-body">Google Gemini-powered clinical assistant. Real-time interaction warnings,
+                        safety flag detection, and contextual guidance during documentation — with a reasoning trace
+                        that explains <em>why</em> it flagged something.</p>
+                </div>
+
+                <div class="feature-card" style="--accent-color: #388bfd;">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrap"
+                            style="--icon-bg: rgba(56,139,253,0.12); --icon-border: rgba(56,139,253,0.2);">🔒</div>
+                        <div>
+                            <div class="feature-title">Structured Safety Check</div>
+                            <span class="feature-tag core">Ongoing Monitoring</span>
+                        </div>
+                    </div>
+                    <p class="feature-body">Coded safety monitoring at any point in the arc of care. Risk indicator
+                        tracking, coded status inputs — no free-text — and direct feed into the Safety Risk Matrix
+                        dashboard.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PROTECTION MATRIX -->
+        <section class="matrix-section">
+            <div class="section-label">Protection Map</div>
+            <h2 class="section-title">What Each Feature Defends Against</h2>
+
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Threat Neutralized</th>
+                        <th>Mechanism</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Zero-PHI Architecture</td>
+                        <td><span class="threat">Subpoenas, data breaches, surveillance</span></td>
+                        <td><span class="how">Structural — no identifiable data exists to hand over</span></td>
+                    </tr>
+                    <tr>
+                        <td>Blind Vetting Scanner</td>
+                        <td><span class="threat">Informants, dangerous clients, bad actors</span></td>
+                        <td><span class="how">Salted hashing — network warns without sharing any PII</span></td>
+                    </tr>
+                    <tr>
+                        <td>Potency Normalizer</td>
+                        <td><span class="threat">Accidental overdose → 911 → arrest</span></td>
+                        <td><span class="how">Evidence-based dose calculation + documented standard of care</span></td>
+                    </tr>
+                    <tr>
+                        <td>Crisis Logger</td>
+                        <td><span class="threat">"What did you do for those 20 minutes?"</span></td>
+                        <td><span class="how">Forensic timestamp trail created under physiological stress</span></td>
+                    </tr>
+                    <tr>
+                        <td>Zero Free-Text</td>
+                        <td><span class="threat">Self-incriminating clinical narratives</span></td>
+                        <td><span class="how">Structured inputs only — nothing you'd regret in court</span></td>
+                    </tr>
+                    <tr>
+                        <td>Banking Your Hours</td>
+                        <td><span class="threat">Losing experience when legalization comes</span></td>
+                        <td><span class="how">Anonymized, verified career ledger for future licensing</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- REFRAME -->
+        <div class="reframe-section">
+            <div class="reframe-eyebrow">The Core Principle</div>
+            <h2 class="reframe-headline">This is not about hiding.<br /><span>It is about documentation
+                    discipline.</span></h2>
+            <p class="reframe-body">
+                The practitioners who survive regulatory scrutiny — and thrive when legalization expands — are the ones
+                building a verifiable record of professional standards right now. Phantom Shield makes that possible
+                without creating a paper trail that can be weaponized against them.
+            </p>
+            <div class="reframe-tagline">Audit Defense — Not Evidence Creation.</div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <div class="footer-brand">PPN Research Portal</div>
+                <div class="footer-tagline">Clinical Intelligence for Psychedelic-Assisted Therapy</div>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:trevor@ppnportal.com">trevor@ppnportal.com</a>
+                <p>Beta Preview — Partner Access Available</p>
+                <p>February 2026</p>
+            </div>
+        </footer>
+
+        <div class="footer-confidential">
+            Confidential — For Partner Review Only — Not for Public Distribution
+        </div>
+
+    </div>
+</body>
+
+</html>

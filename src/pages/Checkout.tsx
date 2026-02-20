@@ -168,13 +168,13 @@ export const Checkout: FC = () => {
                                         </span>
                                         {price && (
                                             <span className="text-lg text-slate-300">
-                                                /{billingInterval === 'monthly' ? 'mo' : 'mo'}
+                                                /{billingInterval === 'monthly' ? 'mo' : 'yr'}
                                             </span>
                                         )}
                                     </div>
                                     {billingInterval === 'annual' && savings > 0 && (
                                         <p className="text-sm text-emerald-400 mt-2">
-                                            Save {formatCurrency(savings)}/year
+                                            Save {formatCurrency(savings)}/year vs monthly
                                         </p>
                                     )}
                                     {details.trialDays && (
