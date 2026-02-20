@@ -128,9 +128,12 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     // ── Shared success/error helpers ─────────────────────────────────────────
 
-    const onSuccess = (label: string) => {
+    // onSaved: shows a toast but does NOT close the panel.
+    // The practitioner stays in the form after a successful save.
+    // onComplete (panel close) is triggered only by the X button or backdrop click.
+    const onSaved = (label: string) => {
         addToast({ title: `${label} Saved`, message: 'Recorded to clinical record.', type: 'success' });
-        onComplete?.();
+        // NOTE: intentionally NOT calling onComplete() here.
     };
 
     const onError = (label: string, error: unknown) => {
@@ -154,7 +157,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         if (!resolvedSiteId) { onError('Consent', 'No site ID resolved'); return false; }
         const result = await createConsent(data.consent_types, resolvedSiteId);
         if (result.success) {
-            onSuccess('Informed Consent');
+            onSaved('Informed Consent');
             return true;
         } else {
             onError('Consent', result.error);
@@ -167,7 +170,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     const handleBaselineObservationsSave = async (data: BaselineObservationsData) => {
         // Silent no-op if prerequisites not ready — auto-save fires before session is fully initialized
         if (!patientId || !siteId) return;
-        onSuccess('Baseline Observations');
+        onSaved('Baseline Observations');
     };
 
     const handleSetAndSettingSave = async (data: SetAndSettingData) => {
@@ -177,7 +180,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             site_id: siteId,
             expectancy_scale: data.treatment_expectancy,
         });
-        result.success ? onSuccess('Set & Setting') : onError('Set & Setting', result.error);
+        result.success ? onSaved('Set & Setting') : onError('Set & Setting', result.error);
     };
 
     // ── Phase 2 handlers ─────────────────────────────────────────────────────
@@ -202,13 +205,13 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         const results = await Promise.all(promises);
         const failed = results.filter(r => !r.success);
         failed.length === 0
-            ? onSuccess('Session Vitals')
+            ? onSaved('Session Vitals')
             : onError('Session Vitals', `${failed.length} readings failed to save`);
     };
 
     const handleSessionObservationsSave = async (data: SessionObservationsData) => {
         if (!sessionId) return; // silent
-        onSuccess('Session Observations');
+        onSaved('Session Observations');
     };
 
     const handleSafetyEventSave = async (data: SafetyAndAdverseEventData) => {
@@ -219,7 +222,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             severity_grade_id: data.severity_grade?.toString(),
             is_resolved: data.resolved,
         });
-        result.success ? onSuccess('Safety & Adverse Event') : onError('Safety & Adverse Event', result.error);
+        result.success ? onSaved('Safety & Adverse Event') : onError('Safety & Adverse Event', result.error);
     };
 
     const handleRescueProtocolSave = async (data: RescueProtocolData) => {
@@ -229,7 +232,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             event_type: 'rescue',
             intervention_type_id: data.intervention_type ? undefined : undefined,
         });
-        result.success ? onSuccess('Rescue Protocol') : onError('Rescue Protocol', result.error);
+        result.success ? onSaved('Rescue Protocol') : onError('Rescue Protocol', result.error);
     };
 
     const handleTimelineSave = async (events: TimelineEvent[]) => {
@@ -246,7 +249,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         const results = await Promise.all(promises);
         const failed = results.filter(r => !r.success);
         failed.length === 0
-            ? onSuccess('Session Timeline')
+            ? onSaved('Session Timeline')
             : onError('Session Timeline', `${failed.length} events failed to save`);
     };
 
@@ -263,14 +266,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             mood_level: data.mood_level,
             anxiety_level: data.anxiety_level,
         });
-        result.success ? onSuccess('Daily Pulse Check') : onError('Daily Pulse Check', result.error);
+        result.success ? onSaved('Daily Pulse Check') : onError('Daily Pulse Check', result.error);
     };
 
     const handleMEQ30Save = async (_data: MEQ30Data) => {
         // MEQ-30 score is stored on log_clinical_records.meq30_score (the session record)
         // This requires an UPDATE to the existing session record, not a new insert.
         // For now: record that MEQ-30 was completed. Full wiring requires session UPSERT.
-        onSuccess('MEQ-30 Questionnaire');
+        onSaved('MEQ-30 Questionnaire');
     };
 
     const handleIntegrationSessionSave = async (data: StructuredIntegrationSessionData) => {
@@ -290,7 +293,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             homework_assigned_ids: data.homework_assigned_ids,
             therapist_observation_ids: data.therapist_observation_ids,
         });
-        result.success ? onSuccess('Integration Session') : onError('Integration Session', result.error);
+        result.success ? onSaved('Integration Session') : onError('Integration Session', result.error);
     };
 
     const handleBehavioralChangeSave = async (data: BehavioralChangeData) => {
@@ -305,7 +308,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             confidence_sustaining: data.confidence_sustaining,
             related_to_dosing: data.related_to_dosing,
         });
-        result.success ? onSuccess('Behavioral Change') : onError('Behavioral Change', result.error);
+        result.success ? onSaved('Behavioral Change') : onError('Behavioral Change', result.error);
     };
 
     const handleLongitudinalAssessmentSave = async (data: LongitudinalAssessmentData) => {
@@ -321,7 +324,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             psqi_score: data.psqi_score,
             cssrs_score: data.cssrs_score,
         });
-        result.success ? onSuccess('Longitudinal Assessment') : onError('Longitudinal Assessment', result.error);
+        result.success ? onSaved('Longitudinal Assessment') : onError('Longitudinal Assessment', result.error);
     };
 
     // ── Router ───────────────────────────────────────────────────────────────
@@ -333,7 +336,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <ConsentForm onSave={handleConsentSave} patientId={patientId} />;
 
         case 'structured-safety':
-            return <StructuredSafetyCheckForm onSave={() => onSuccess('Safety Screen')} />;
+            return <StructuredSafetyCheckForm onSave={() => onSaved('Safety Screen')} />;
 
         case 'baseline-observations':
             return <BaselineObservationsForm onSave={handleBaselineObservationsSave} />;
@@ -342,7 +345,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <SetAndSettingForm onSave={handleSetAndSettingSave} />;
 
         case 'mental-health':
-            return <MentalHealthScreeningForm patientId={patientId} onComplete={() => onSuccess('Mental Health Screening')} />;
+            return <MentalHealthScreeningForm patientId={patientId} onComplete={() => onSaved('Mental Health Screening')} />;
 
         // ── Phase 2: Dosing Session ───────────────────────────────────────────
         case 'dosing-protocol':
