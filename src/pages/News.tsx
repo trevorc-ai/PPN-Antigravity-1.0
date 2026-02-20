@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { NewsArticle } from '../types';
-import { NEWS_ARTICLES } from '../constants';
 import ConnectFeedButton from '../components/ui/ConnectFeedButton';
+import { useLiveNews } from '../hooks/useLiveNews';
 
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
@@ -71,20 +71,32 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
         <p className="text-sm text-slate-500 leading-relaxed font-medium line-clamp-3">
           {article.summary}
         </p>
-        <button className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-300 uppercase tracking-[0.2em] transition-all group/btn">
-          Read Research
-          <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
-        </button>
+        {article.externalUrl ? (
+          <a
+            href={article.externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-300 uppercase tracking-[0.2em] transition-all group/btn"
+          >
+            Read Full Article
+            <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">open_in_new</span>
+          </a>
+        ) : (
+          <button className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-300 uppercase tracking-[0.2em] transition-all group/btn">
+            Read Research
+            <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
 const News: React.FC = () => {
-  const [articles, setArticles] = useState<NewsArticle[]>(NEWS_ARTICLES);
+  const { articles, loading: feedLoading, liveCount, lastFetched, refresh } = useLiveNews();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [goodNewsOnly, setGoodNewsOnly] = useState(true); // Default to Smart Filter ON
+  const [goodNewsOnly, setGoodNewsOnly] = useState(true);
   const [sortBy, setSortBy] = useState<'recent' | 'cited'>('recent');
   const [selectedStateFilter, setSelectedStateFilter] = useState<string | null>(null);
 
@@ -146,9 +158,27 @@ const News: React.FC = () => {
         {/* Main Feed Section */}
         <div className="flex-1 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
-            <h1 className="text-5xl font-black tracking-tighter text-slate-300">
-              Intelligence Hub
-            </h1>
+            <div>
+              <h1 className="text-5xl font-black tracking-tighter text-slate-300">
+                Intelligence Hub
+              </h1>
+              <div className="flex items-center gap-3 mt-2">
+                {liveCount > 0 && (
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">{liveCount} live articles</span>
+                  </span>
+                )}
+                {feedLoading && (
+                  <span className="text-xs text-slate-500 font-medium">Fetching feeds…</span>
+                )}
+                {lastFetched && !feedLoading && (
+                  <button onClick={refresh} className="text-xs text-slate-600 hover:text-slate-400 transition-colors font-medium">
+                    Updated {lastFetched.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · Refresh
+                  </button>
+                )}
+              </div>
+            </div>
             <ConnectFeedButton />
           </div>
 

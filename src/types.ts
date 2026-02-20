@@ -144,6 +144,7 @@ export interface NewsArticle {
   verified: boolean;
   sentiment?: 'positive' | 'neutral' | 'negative';
   isPartner?: boolean;
+  externalUrl?: string;
 }
 
 export interface FAQItem {
