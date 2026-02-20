@@ -241,9 +241,9 @@ const Analytics = () => {
                 )}
             </Section>
 
-            {/* FILTER CONTROLS - Hide on Print */}
-            <Section spacing="tight" className="sticky top-4 z-40 print:hidden">
-                <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-[#0a0c12]/80 border border-slate-800/80 p-2 rounded-2xl backdrop-blur-xl shadow-2xl">
+            {/* FILTER CONTROLS — positioned above charts, hide on print */}
+            <Section spacing="tight" className="print:hidden">
+                <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-[#0a0c12]/80 border border-slate-800/80 p-3 rounded-2xl backdrop-blur-xl shadow-2xl">
                     <div className="flex items-center gap-2 px-2">
                         <div className="size-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
                             <span className="material-symbols-outlined text-indigo-400 text-lg">tune</span>
@@ -269,12 +269,12 @@ const Analytics = () => {
                 </div>
             </Section>
 
-            {/* COMPONENT GRID */}
-            <Section spacing="default" className="grid grid-cols-1 xl:grid-cols-2 gap-8 print:block print:space-y-8">
+            {/* ── COMPONENT GRID ──────────────────────────────────────────────── */}
+            <Section spacing="default" className="space-y-8 print:space-y-8">
 
-                {/* CHART 1: PERFORMANCE RADAR */}
-                <div className="xl:col-span-2 print:break-inside-avoid print:mb-8">
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
+                {/* ROW 1: Performance Radar — full width, 3-col internal grid */}
+                <div className="print:break-inside-avoid">
+                    <GlassmorphicCard className="h-[520px] relative overflow-hidden print:h-[420px] print:shadow-none print:border-gray-200 print:bg-white">
                         <div className="absolute top-6 left-6 z-10">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
@@ -283,9 +283,9 @@ const Analytics = () => {
                     </GlassmorphicCard>
                 </div>
 
-                {/* CHART 2: PATIENT GALAXY */}
-                <div className="xl:col-span-2 print:break-inside-avoid print:mb-8">
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
+                {/* ROW 2: Patient Galaxy — full width, large scatter + filter controls */}
+                <div className="print:break-inside-avoid">
+                    <GlassmorphicCard className="h-[580px] relative overflow-hidden print:h-[480px] print:shadow-none print:border-gray-200 print:bg-white">
                         <div className="absolute top-6 left-6 z-10">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</h3>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
@@ -294,35 +294,27 @@ const Analytics = () => {
                     </GlassmorphicCard>
                 </div>
 
-                {/* CHART 3: MOLECULAR */}
-                <div className="print:break-inside-avoid print:mb-8">
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10">
-                            <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Molecular Bridge</h3>
-                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Receptor affinity profiles</p>
-                        </div>
-                        <MolecularPharmacology />
-                    </GlassmorphicCard>
+                {/* ROW 3: Molecular Bridge (full width) + Genomic Safety Gauge (right column) */}
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 print:block print:space-y-8">
+
+                    {/* Molecular Bridge — needs xl:col-span-2 because of internal 3-col grid */}
+                    <div className="xl:col-span-2 print:break-inside-avoid">
+                        <GlassmorphicCard className="h-[540px] relative overflow-hidden print:h-[440px] print:shadow-none print:border-gray-200 print:bg-white">
+                            <MolecularPharmacology />
+                        </GlassmorphicCard>
+                    </div>
+
+                    {/* Genomic Safety / Metabolic Risk Gauge — single column, self-contained */}
+                    <div className="xl:col-span-1 print:break-inside-avoid">
+                        <GlassmorphicCard className="h-[540px] relative overflow-hidden print:h-[440px] print:shadow-none print:border-gray-200 print:bg-white">
+                            <MetabolicRiskGauge />
+                        </GlassmorphicCard>
+                    </div>
                 </div>
 
-                {/* CHART 4: GENOMIC RISK */}
-                <div className="print:break-inside-avoid print:mb-8">
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10">
-                            <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Genomic Safety</h3>
-                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>CYP450 metabolic risk analysis</p>
-                        </div>
-                        <MetabolicRiskGauge />
-                    </GlassmorphicCard>
-                </div>
-
-                {/* CHART 5: ROI */}
-                <div className="xl:col-span-2 print:break-inside-avoid print:mb-8">
-                    <GlassmorphicCard className="h-[500px] relative overflow-hidden print:h-[400px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10">
-                            <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Protocol ROI</h3>
-                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Financial efficiency modeling</p>
-                        </div>
+                {/* ROW 4: Protocol ROI — full width, 3-col internal (scatter + ranking list) */}
+                <div className="print:break-inside-avoid">
+                    <GlassmorphicCard className="h-[560px] relative overflow-hidden print:h-[460px] print:shadow-none print:border-gray-200 print:bg-white">
                         <ProtocolEfficiency />
                     </GlassmorphicCard>
                 </div>
