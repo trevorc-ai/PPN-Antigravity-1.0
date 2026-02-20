@@ -253,15 +253,6 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                         )}
                                     </p>
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={toggleSort}
-                                    className="flex items-center gap-1.5 px-3 py-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
-                                    title={sortDir === 'desc' ? 'Newest first' : 'Oldest first'}
-                                >
-                                    {sortDir === 'desc' ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
-                                    Date
-                                </button>
                             </div>
                         </div>
 
@@ -284,6 +275,15 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 {ALL_PHASES.map(p => (
                                     <FilterChip key={p} label={p} active={phaseFilter === p} onClick={() => togglePhase(p)} />
                                 ))}
+                                <button
+                                    type="button"
+                                    onClick={toggleSort}
+                                    className="ml-auto flex items-center gap-1.5 px-3 py-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
+                                    title={sortDir === 'desc' ? 'Newest first' : 'Oldest first'}
+                                >
+                                    {sortDir === 'desc' ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
+                                    Date
+                                </button>
                             </div>
                         </div>
 
