@@ -10,40 +10,58 @@ Catch SQL errors **before** they reach the user's database. This skill must be r
 
 ---
 
-## STEP 1: Live Schema Verification (MANDATORY FIRST STEP)
+## 🛑 STEP 1: MANDATORY LIVE SCHEMA VERIFICATION — HARD STOP
 
-Before writing any FK references, SOOP must verify actual live table names by checking the source code — **never assume from local migration files**.
+**THIS STEP CANNOT BE SKIPPED. SOOP MUST NOT WRITE A SINGLE LINE OF SQL UNTIL THIS IS COMPLETE.**
+
+Do NOT rely on any hardcoded table list, any prior session's notes, or any migration file to determine what tables exist. Migrations are intentions — they may never have been executed. Only the live database is truth.
+
+### Required Action Before Any SQL Is Written:
+
+**Give the user these two queries and ask them to run them in Supabase SQL Editor. Paste the results into the ticket before proceeding.**
+
+```sql
+-- Query 1: List all live tables in the public schema
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+ORDER BY table_name;
+
+-- Query 2: If working with a specific table, confirm its columns
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'YOUR_TABLE_NAME_HERE'
+ORDER BY ordinal_position;
+```
+
+**Rule: If SOOP cannot confirm a table exists via live query output pasted into the ticket, SOOP treats it as non-existent. Period.**
+
+### Why the Old Table Map Was Removed:
+A hardcoded table list dated 2026-02-17 was previously here. It was stale. It listed tables that never existed in the live DB (e.g., `ref_medications` was assumed to exist because a migration file referenced it — it was never actually created). This caused SOOP to write migrations against phantom tables.
+
+### STOP Check — Paste answer to ALL of these before writing SQL:
+
+```
+## SOOP Live Schema Pre-Flight (MANDATORY — paste real query output here)
+- [ ] Query 1 run: [PASTE TABLE LIST HERE]
+- [ ] Table I am modifying/creating confirmed: [TABLE NAME] → EXISTS / DOES NOT EXIST
+- [ ] All FK targets confirmed live (list each one): [TABLE: status]
+- [ ] Column I am adding/modifying confirmed to not already exist: [COLUMN: status]
+```
+
+**If any FK target does not exist in the live query output: STOP. Create a ticket to build that table first. Do not write the downstream migration.**
+
+---
+
+### Quick Grep Check (for columns/tables the app already uses)
 
 ```bash
-# Find all table names the app actually queries
+# Find all table names the app actually queries in src/
 grep -rn "\.from('" src/ | grep -v ".DS_Store" | sed "s/.*\.from('//;s/').*//" | sort -u
 ```
 
-**Rule:** If a table name appears in `src/` queries, it exists in the live DB. Use those exact names in FKs and RLS policies.
-
-### ✅ Verified Live Table Map (2026-02-17 — source of truth)
-
-| Category | Live Table Name | Notes |
-|----------|----------------|-------|
-| **Sites** | `log_sites` | Has data. `sites` is empty legacy artifact — DO NOT USE |
-| **User-Site Links** | `log_user_sites` | Active RLS table. `user_sites` is empty legacy artifact — DO NOT USE |
-| **Clinical Sessions** | `log_clinical_records` | Core session table. `dosing_sessions` does not exist |
-| **User Profiles** | `log_user_profiles` | `patients` does not exist |
-| **Baseline Assessments** | `log_baseline_assessments` | `baseline_assessments` does not exist |
-| **Safety Events** | `log_safety_events` | `safety_events` does not exist |
-| **Session Vitals** | `log_session_vitals` | Active |
-| **Pulse Checks** | `log_pulse_checks` | Active |
-| **Longitudinal Assessments** | `log_longitudinal_assessments` | Active |
-| **Red Alerts** | `log_red_alerts` | Active |
-| **System/Audit Logs** | `log_system_events` | `audit_logs` does not exist |
-| **Subscriptions** | `log_user_subscriptions` | `user_subscriptions` does not exist |
-| **Interventions** | `log_interventions` | Active |
-| **Patient Flow** | `log_patient_flow_events` | Active |
-
-**Common traps in this codebase:**
-- `sites` and `user_sites` exist but are **empty legacy artifacts** — never reference them
-- The `log_` prefix is NOT universal — `ref_*` tables never use it
-- Always verify before writing `REFERENCES table_name(column)`
+This tells you what the app expects to query. Cross-reference with the live query output above. If the app queries a table that doesn't appear in the live list — that is a bug to report, not a table to assume exists.
 
 ---
 

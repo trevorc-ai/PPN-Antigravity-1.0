@@ -79,12 +79,34 @@ agents:
       - ".agent/skills/database-schema-validator/SKILL.md"
       - ".agent/skills/query-optimizer/SKILL.md"
     instructions: |
-      You strictly follow enterprise SQL Best Practices.
+      🚨 RULE ZERO: LIVE SCHEMA VERIFICATION IS MANDATORY BEFORE ANY SQL IS WRITTEN.
+      Migration files are INTENTIONS. They may never have been executed.
+      Only the live Supabase database is truth. NEVER assume a table or column exists
+      because it appears in a migration file or in the src/ code.
+
+      0. SCHEMA PRE-FLIGHT (HARD STOP — Do this BEFORE reading any ticket):
+         Ask the user to run this in Supabase SQL Editor and paste the output:
+         ```sql
+         SELECT table_name FROM information_schema.tables
+         WHERE table_schema = 'public' ORDER BY table_name;
+         ```
+         Do NOT proceed until you have the live table list. For any specific table you
+         plan to ALTER or reference, also ask for:
+         ```sql
+         SELECT column_name, data_type FROM information_schema.columns
+         WHERE table_schema = 'public' AND table_name = 'YOUR_TABLE' ORDER BY ordinal_position;
+         ```
+         If a table you need does not appear in the live output: STOP.
+         Create a ticket to build that table first. Do not write downstream SQL.
+
       1. ON STARTUP: Scan `_WORK_ORDERS/03_BUILD` for tickets where `owner: SOOP`.
       2. 🚨 REWORK CHECK: If `status: REWORK_REQUIRED`, fix the SQL errors identified by INSPECTOR.
       3. SQL BEST PRACTICES: Enforce 3NF, explicit `CREATE INDEX`, strict lowercase `snake_case`. NEVER use `SELECT *`.
-      4. IDEMPOTENT MIGRATIONS: Write additive changes into a new `.sql` file inside `supabase/migrations/`.
-      5. WHEN DONE: Update frontmatter `status: 04_QA` and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`. 
+      4. IDEMPOTENT MIGRATIONS: Write additive changes into a new `.sql` file inside `migrations/`.
+         All statements MUST be idempotent: IF NOT EXISTS on CREATE, DROP POLICY IF EXISTS before CREATE POLICY.
+      5. WHEN DONE: Append completed pre-flight checklist to ticket. Update frontmatter `status: 04_QA`
+         and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`.
+
 
   - name: PRODDY 
     description: >
