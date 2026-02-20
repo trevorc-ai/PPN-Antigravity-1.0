@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /partner-hub.html
+Disallow: /partner-preview.html
+Disallow: /jason-tour.html
+Disallow: /jason-demo.html
+Disallow: /admin_uploads/
+
+# Public pages — indexable
+Allow: /phantom-shield.html
+Allow: /phantom-shield-card.html
+Allow: /
+
+Sitemap: https://ppnportal.net/sitemap.xml
