@@ -62,6 +62,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         follow_up_timeframe: initialData.follow_up_timeframe
     });
 
+    const [lastSaved, setLastSaved] = useState<string | null>(null);
+
     const updateField = <K extends keyof StructuredSafetyCheckData>(
         field: K,
         value: StructuredSafetyCheckData[K]
@@ -80,6 +82,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
 
     const handleSave = () => {
         onSave?.(data);
+        const now = new Date();
+        setLastSaved(`Saved at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
     };
 
     const setToday = () => {
@@ -347,14 +351,17 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 )}
             </div>
 
-            {/* Save Button */}
-            <div className="flex justify-end">
+            {/* Footer: status + submit — mr-16 clears the FAB + button */}
+            <div className="flex items-center justify-between gap-4 pt-2 mr-16">
+                <span className="text-sm text-emerald-400 font-medium">
+                    {lastSaved ?? ''}
+                </span>
                 <button
                     onClick={handleSave}
-                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium flex items-center gap-2 transition-colors"
+                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
                 >
                     <Save className="w-5 h-5" />
-                    Submit Check
+                    Submit Changes
                 </button>
             </div>
         </div>
