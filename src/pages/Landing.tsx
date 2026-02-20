@@ -166,10 +166,10 @@ const Landing: React.FC = () => {
             >
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => navigate('/signup')}
+                  onClick={() => navigate('/checkout')}
                   className="flex-1 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95"
                 >
-                  Request Early Access
+                  Start Free Trial
                 </button>
 
                 <button
@@ -772,10 +772,10 @@ const Landing: React.FC = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => navigate('/signup')}
+                onClick={() => navigate('/checkout')}
                 className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all"
               >
-                Be Part of What Gets Built
+                Start Free Trial
               </button>
               <a
                 href="mailto:info@ppnportal.net"

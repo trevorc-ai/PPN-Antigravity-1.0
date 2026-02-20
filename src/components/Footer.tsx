@@ -43,11 +43,11 @@ const Footer: React.FC = () => {
                 { label: 'Dashboard', path: '/dashboard' },
                 { label: 'My Protocols', path: '/protocols' },
                 { label: 'Analytics', path: '/analytics' },
-                { label: 'Membership Tiers', action: handlePricingAction }
+                { label: 'Membership Tiers', path: '/checkout' }
               ].map((item) => (
                 <li key={item.label}>
                   <button
-                    onClick={item.action || (() => navigate(item.path || '#'))}
+                    onClick={() => navigate(item.path)}
                     className="text-sm text-slate-500 hover:text-slate-300 transition-colors font-medium"
                   >
                     {item.label}
