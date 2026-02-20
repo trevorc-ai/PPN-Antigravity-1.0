@@ -8,6 +8,7 @@ created: 2026-02-19
 failure_count: 0
 ref_tables_affected: ref_knowledge_graph (seed only — no schema changes)
 depends_on: WO-226 (ref_medications must exist first for label consistency)
+supplementary_script: scripts/seed_knowledge_graph_tripsit.py (TripSit bulk ETL — run after manual seed)
 ---
 
 # WO-227: Seed ref_knowledge_graph with Interaction Data

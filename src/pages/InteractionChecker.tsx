@@ -60,12 +60,14 @@ const InteractionChecker: React.FC = () => {
         ]);
 
         if (subErr) throw subErr;
-        if (medErr) throw medErr;
+        // ref_medications may not exist yet (WO-226 pending) — handle gracefully
+        if (medErr) {
+          console.warn('[InteractionChecker] ref_medications not yet available — WO-226 pending:', medErr.message);
+        }
 
         if (subData) setSubstances(subData);
 
-        // Fallback: if is_active filter returns 0 rows (data not yet seeded),
-        // fetch without the filter so the dropdown is never completely empty.
+        // Populate medications if table exists and has data
         if (medData && medData.length > 0) {
           setMedications(medData);
         } else {
