@@ -144,7 +144,7 @@ export const Tab2_Medications: React.FC<Tab2MedicationsProps> = ({
 
                 {showMoreMedications && (
                     <div className="mt-3 space-y-2">
-                        {Object.entries(medicationsByCategory).map(([category, meds]) => (
+                        {(Object.entries(medicationsByCategory) as [string, Medication[]][]).map(([category, meds]) => (
                             <div key={category} className="border border-slate-700 rounded-lg overflow-hidden">
                                 {/* Category Header */}
                                 <button

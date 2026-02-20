@@ -89,7 +89,7 @@ const StarRating: React.FC<{ value: number; onChange: (value: number) => void; l
 
 const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFormProps> = ({
     onSave,
-    initialData = {},
+    initialData = {} as Partial<StructuredIntegrationSessionData>,
     patientId
 }) => {
     const [data, setData] = useState<StructuredIntegrationSessionData>({

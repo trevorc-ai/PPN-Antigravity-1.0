@@ -24,7 +24,7 @@ interface DailyPulseCheckFormProps {
 
 const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
     onSave,
-    initialData = {},
+    initialData = {} as DailyPulseCheckData,
     patientId
 }) => {
     const [data, setData] = useState<DailyPulseCheckData>({

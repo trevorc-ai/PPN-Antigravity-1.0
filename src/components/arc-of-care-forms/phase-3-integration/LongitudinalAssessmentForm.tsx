@@ -27,8 +27,8 @@ interface LongitudinalAssessmentFormProps {
 
 const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
     onSave,
-    initialData = {},
-    baselineScores = {},
+    initialData = {} as LongitudinalAssessmentData,
+    baselineScores = {} as { phq9?: number; gad7?: number },
     patientId
 }) => {
     const [data, setData] = useState<LongitudinalAssessmentData>({

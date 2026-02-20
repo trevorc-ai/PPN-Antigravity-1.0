@@ -572,14 +572,24 @@ const WellnessJourney: React.FC = () => {
                         />
                     </div>
                     {/* MEQ-30 — always available, provider-discretion instrument */}
-                    <button
-                        onClick={() => handleOpenForm('meq30')}
-                        className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-base"
-                        title="MEQ-30 available at any phase — timing per protocol"
+                    <AdvancedTooltip
+                        content="The Mystical Experience Questionnaire (30-item) is typically administered 24–48 hours post-session while the experience is still fresh. It measures depth of mystical experience across 4 subscales. Higher scores (≥60/100) correlate with sustained therapeutic benefit at 6-month follow-up."
+                        title="MEQ-30 — Provider Discretion"
+                        type="info"
+                        tier="detailed"
+                        side="bottom"
+                        width="w-80"
                     >
-                        <span className="material-symbols-outlined text-lg">quiz</span>
-                        MEQ-30
-                    </button>
+                        <button
+                            onClick={() => handleOpenForm('meq30')}
+                            className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-base"
+                            title="MEQ-30 available at any phase — timing per protocol"
+                        >
+                            <span className="material-symbols-outlined text-lg">quiz</span>
+                            MEQ-30
+                        </button>
+                    </AdvancedTooltip>
+
                 </div>
 
                 {/* Phase Lock Status */}
