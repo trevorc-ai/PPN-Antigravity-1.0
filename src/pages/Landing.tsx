@@ -456,7 +456,7 @@ const Landing: React.FC = () => {
 
       {/* SECTION: Product Showcase - See What's Inside */}
       <section className="py-32 px-6 relative z-10">
-        <div className="max-w-7xl mx-auto space-y-20">
+        <div className="max-w-7xl mx-auto space-y-36">
           {/* Section Header */}
           <div className="text-center space-y-4">
             <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">What's Inside</p>
