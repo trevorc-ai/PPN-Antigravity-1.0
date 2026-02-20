@@ -3,134 +3,118 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>Jason's Private Product Tour: PPN Portal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
+    <title>Jason's Private Tour: PPN Portal</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@700&display=swap"
         rel="stylesheet" />
     <style>
-        *,
-        *::before,
-        *::after {
+        * {
             box-sizing: border-box;
             margin: 0;
-            padding: 0;
+            padding: 0
         }
 
         :root {
             --bg: #0a1628;
-            --card: rgba(12, 26, 50, 0.95);
+            --card: rgba(12, 26, 50, .95);
             --blue: #388bfd;
             --cyan: #39d0d8;
             --green: #3fb950;
             --amber: #f0a500;
             --purple: #a855f7;
-            --text: #b8c4d0;
+            --text: #889aab;
             --muted: #6b7a8d;
-            --border: rgba(56, 139, 253, 0.18);
+            --bdr: rgba(56, 139, 253, .18)
         }
 
         html,
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
+            font-family: Inter, sans-serif;
+            -webkit-font-smoothing: antialiased
         }
 
         a {
             color: var(--blue);
-            text-decoration: none;
+            text-decoration: none
         }
 
-        /* STICKY NAV */
         .nav {
             position: sticky;
             top: 0;
             z-index: 50;
-            background: rgba(10, 22, 40, 0.97);
+            background: rgba(10, 22, 40, .97);
             backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--bdr);
             padding: 10px 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .nav-back {
-            font-size: 18px;
-            color: var(--muted);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
+            gap: 8px
         }
 
         .nav-title {
             font-size: 13px;
             font-weight: 800;
-            color: #d0dae6;
-            flex: 1;
+            color: #9ea7b1;
+            flex: 1
         }
 
-        .nav-progress {
+        .nav-prog {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             color: var(--cyan);
-            font-weight: 700;
+            font-weight: 700
         }
 
-        /* PROGRESS TRACK */
-        .progress-track {
+        .pb {
             height: 3px;
-            background: rgba(56, 139, 253, 0.12);
+            background: rgba(56, 139, 253, .12)
         }
 
-        .progress-fill {
+        .pf {
             height: 3px;
             background: linear-gradient(90deg, var(--blue), var(--cyan));
             width: 0%;
-            transition: width 0.4s ease;
+            transition: width .4s
         }
 
-        .container {
+        .wrap {
             max-width: 560px;
             margin: 0 auto;
-            padding: 0 16px 100px;
+            padding: 0 14px 90px
         }
 
-        /* INTRO HERO */
         .intro {
             text-align: center;
-            padding: 28px 8px 24px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
+            padding: 24px 8px 20px;
+            border-bottom: 1px solid var(--bdr);
+            margin-bottom: 20px
         }
 
-        .intro-badge {
+        .badge {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            background: rgba(57, 208, 216, 0.1);
-            border: 1px solid rgba(57, 208, 216, 0.3);
+            gap: 6px;
+            background: rgba(57, 208, 216, .1);
+            border: 1px solid rgba(57, 208, 216, .3);
             color: var(--cyan);
             font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: .1em;
             text-transform: uppercase;
-            padding: 5px 12px;
+            padding: 4px 12px;
             border-radius: 100px;
-            margin-bottom: 16px;
+            margin-bottom: 12px
         }
 
-        .pulse {
+        .dot {
             width: 7px;
             height: 7px;
             border-radius: 50%;
             background: var(--cyan);
-            animation: pulse 2s ease-in-out infinite;
+            animation: pulse 2s ease-in-out infinite
         }
 
         @keyframes pulse {
@@ -138,7 +122,7 @@
             0%,
             100% {
                 opacity: 1;
-                box-shadow: 0 0 0 0 rgba(57, 208, 216, 0.5)
+                box-shadow: 0 0 0 0 rgba(57, 208, 216, .5)
             }
 
             50% {
@@ -148,345 +132,325 @@
         }
 
         .intro h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 900;
-            color: #d0dae6;
-            letter-spacing: -0.03em;
+            color: #9ea7b1;
+            letter-spacing: -.03em;
             line-height: 1.2;
-            margin-bottom: 10px;
+            margin-bottom: 8px
         }
 
         .intro p {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--muted);
             line-height: 1.65;
-            max-width: 360px;
-            margin: 0 auto;
+            max-width: 340px;
+            margin: 0 auto
         }
 
-        /* SETUP CARD */
-        .setup-card {
-            background: rgba(56, 139, 253, 0.06);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 24px;
-        }
-
-        .setup-label {
+        .sh {
             font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--blue);
-            margin-bottom: 10px;
-        }
-
-        .setup-step {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            font-size: 13px;
-            color: var(--text);
-            line-height: 1.55;
-            padding: 6px 0;
-        }
-
-        .setup-num {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            background: rgba(56, 139, 253, 0.15);
-            border: 1px solid rgba(56, 139, 253, 0.4);
-            color: var(--blue);
-            font-size: 11px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .setup-link {
-            display: inline-block;
-            margin-top: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: var(--blue);
-            background: rgba(56, 139, 253, 0.08);
-            border: 1px solid rgba(56, 139, 253, 0.25);
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: background 0.15s;
-        }
-
-        .setup-link:active {
-            background: rgba(56, 139, 253, 0.16);
-        }
-
-        /* SECTION HEADING */
-        .section-heading {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.14em;
+            letter-spacing: .14em;
             text-transform: uppercase;
             color: var(--muted);
-            padding: 20px 0 10px;
+            padding: 18px 0 8px
         }
 
-        /* TOUR CARD */
-        .tour-card {
+        .tc {
             background: var(--card);
-            border: 1px solid var(--border);
+            border: 1px solid var(--bdr);
             border-radius: 16px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             overflow: hidden;
-            transition: border-color 0.25s;
+            transition: border-color .25s
         }
 
-        .tour-card.explored {
-            border-color: rgba(63, 185, 80, 0.4);
-            background: rgba(63, 185, 80, 0.03);
+        .tc.done {
+            border-color: rgba(63, 185, 80, .4);
+            background: rgba(63, 185, 80, .03)
         }
 
-        .tour-header {
+        .th {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
+            gap: 10px;
+            padding: 13px 14px;
             cursor: pointer;
-            user-select: none;
+            user-select: none
         }
 
-        .tour-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
+        .ti {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 17px
         }
 
-        .icon-blue {
-            background: rgba(56, 139, 253, 0.12);
+        .ib {
+            background: rgba(56, 139, 253, .12)
         }
 
-        .icon-cyan {
-            background: rgba(57, 208, 216, 0.1);
+        .ic {
+            background: rgba(57, 208, 216, .1)
         }
 
-        .icon-green {
-            background: rgba(63, 185, 80, 0.1);
+        .ig {
+            background: rgba(63, 185, 80, .1)
         }
 
-        .icon-amber {
-            background: rgba(240, 165, 0, 0.1);
+        .ia {
+            background: rgba(240, 165, 0, .1)
         }
 
-        .icon-purple {
-            background: rgba(168, 85, 247, 0.1);
+        .ip {
+            background: rgba(168, 85, 247, .1)
         }
 
-        .tour-meta {
+        .tm {
             flex: 1;
-            min-width: 0;
+            min-width: 0
         }
 
-        .tour-num {
+        .tn {
             font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: .08em;
             text-transform: uppercase;
-            color: var(--muted);
+            color: var(--muted)
         }
 
-        .tour-title {
-            font-size: 15px;
+        .tt {
+            font-size: 14px;
             font-weight: 800;
-            color: #d0dae6;
-            margin-top: 1px;
+            color: #9fb0be;
+            margin-top: 1px
         }
 
-        .tour-mark {
-            width: 26px;
-            height: 26px;
+        .mk {
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            border: 2px solid var(--border);
+            border: 2px solid var(--bdr);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
             flex-shrink: 0;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all .2s
         }
 
-        .tour-card.explored .tour-mark {
+        .tc.done .mk {
             background: var(--green);
             border-color: var(--green);
             color: #0a1628;
-            font-weight: 700;
+            font-weight: 700
         }
 
-        .tour-chevron {
-            font-size: 13px;
+        .cv {
+            font-size: 12px;
             color: var(--muted);
-            transition: transform 0.2s;
-            flex-shrink: 0;
+            transition: transform .2s;
+            flex-shrink: 0
         }
 
-        .tour-card.open .tour-chevron {
-            transform: rotate(180deg);
+        .tc.open .cv {
+            transform: rotate(180deg)
         }
 
-        .tour-body {
+        .tb {
             display: none;
-            padding: 0 16px 18px;
+            padding: 0 14px 16px
         }
 
-        .tour-card.open .tour-body {
-            display: block;
+        .tc.open .tb {
+            display: block
         }
 
-        /* WHAT IT IS */
-        .what-it-is {
-            font-size: 14px;
+        .wi {
+            font-size: 13.5px;
             font-weight: 600;
-            color: #c8d6e4;
+            color: #96a8b6;
             line-height: 1.5;
-            margin-bottom: 14px;
-            padding: 12px;
-            background: rgba(56, 139, 253, 0.05);
-            border-radius: 10px;
-            border-left: 3px solid var(--blue);
+            margin-bottom: 12px;
+            padding: 11px;
+            background: rgba(56, 139, 253, .05);
+            border-radius: 9px;
+            border-left: 3px solid var(--blue)
         }
 
-        /* INSTRUCTIONS */
-        .instruction-label {
+        .uct {
             font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: .1em;
             text-transform: uppercase;
-            color: var(--cyan);
-            margin: 12px 0 8px;
+            color: var(--amber);
+            margin: 12px 0 8px
         }
 
-        .instruction {
-            display: flex;
-            gap: 10px;
+        .uc {
+            background: rgba(240, 165, 0, .05);
+            border: 1px solid rgba(240, 165, 0, .15);
+            border-radius: 9px;
+            padding: 10px 12px;
+            margin-bottom: 7px
+        }
+
+        .uc-who {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .07em;
+            text-transform: uppercase;
+            color: var(--amber);
+            margin-bottom: 4px
+        }
+
+        .uc-what {
             font-size: 13px;
             color: var(--text);
-            line-height: 1.6;
-            padding: 5px 0;
+            line-height: 1.6
         }
 
-        .instruction .arrow {
-            color: var(--cyan);
-            flex-shrink: 0;
-        }
-
-        /* TALKING POINTS */
-        .talking-label {
+        .tkt {
             font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: .1em;
             text-transform: uppercase;
             color: var(--blue);
-            margin: 12px 0 8px;
+            margin: 12px 0 6px
         }
 
-        .talking {
+        .tk {
             font-size: 13px;
+            font-style: italic;
             color: var(--text);
             line-height: 1.65;
-            font-style: italic;
-            background: rgba(56, 139, 253, 0.06);
+            background: rgba(56, 139, 253, .06);
             border-left: 2px solid var(--blue);
             border-radius: 0 8px 8px 0;
-            padding: 10px 12px;
-            margin-bottom: 6px;
+            padding: 9px 11px;
+            margin-bottom: 6px
         }
 
-        /* WOW BADGE */
         .wow {
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            background: rgba(240, 165, 0, 0.1);
-            border: 1px solid rgba(240, 165, 0, 0.3);
+            background: rgba(240, 165, 0, .1);
+            border: 1px solid rgba(240, 165, 0, .3);
             color: var(--amber);
             font-size: 10px;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: .08em;
             text-transform: uppercase;
             padding: 3px 8px;
             border-radius: 100px;
-            margin-bottom: 8px;
+            margin-bottom: 8px
         }
 
-        /* OPEN IN PLATFORM */
-        .platform-link {
+        .sv {
+            margin: 12px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(56, 139, 253, .15)
+        }
+
+        .pl {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(56, 139, 253, 0.08);
-            border: 1px solid rgba(56, 139, 253, 0.22);
-            border-radius: 10px;
-            padding: 11px 14px;
-            margin-top: 12px;
+            background: rgba(56, 139, 253, .08);
+            border: 1px solid rgba(56, 139, 253, .22);
+            border-radius: 9px;
+            padding: 10px 13px;
+            margin-top: 10px
         }
 
-        .pl-label {
+        .pl-l {
             font-size: 11px;
-            color: var(--muted);
+            color: var(--muted)
         }
 
-        .pl-url {
+        .pl-u {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 11.5px;
             color: var(--blue);
-            font-weight: 700;
+            font-weight: 700
         }
 
-        .pl-arrow {
-            font-size: 14px;
-            color: var(--blue);
+        .pl-a {
+            font-size: 13px;
+            color: var(--blue)
         }
 
-        /* CALLOUT */
-        .callout {
-            background: rgba(168, 85, 247, 0.07);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 10px;
+        .sub {
+            background: rgba(168, 85, 247, .06);
+            border: 1px solid rgba(168, 85, 247, .22);
+            border-radius: 9px;
+            padding: 11px;
+            margin-top: 8px;
             font-size: 12.5px;
             color: var(--text);
-            line-height: 1.65;
+            line-height: 1.65
         }
 
-        .callout strong {
-            color: #c084fc;
+        .sub strong {
+            color: #c084fc
         }
 
-        /* STICKY BOTTOM */
-        .sticky-bottom {
+        .shield-deep {
+            background: rgba(57, 208, 216, .05);
+            border: 1px solid rgba(57, 208, 216, .2);
+            border-radius: 10px;
+            margin-top: 8px;
+            overflow: hidden
+        }
+
+        .sd-h {
+            padding: 10px 13px;
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--cyan);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none
+        }
+
+        .sd-b {
+            display: none;
+            padding: 0 13px 12px;
+            font-size: 12.5px;
+            color: var(--text);
+            line-height: 1.65
+        }
+
+        .sd-open .sd-b {
+            display: block;
+            padding-top: 10px
+        }
+
+        .sbot {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 22, 40, 0.97);
+            background: rgba(10, 22, 40, .97);
             backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border);
-            padding: 12px 16px;
+            border-top: 1px solid var(--bdr);
+            padding: 11px 14px;
             display: flex;
             gap: 10px;
-            justify-content: center;
+            justify-content: center
         }
 
-        .btn-portal {
+        .btn-p {
             flex: 1;
             max-width: 300px;
             background: linear-gradient(135deg, var(--blue), #2070d0);
@@ -496,527 +460,767 @@
             padding: 13px;
             border-radius: 10px;
             border: none;
-            cursor: pointer;
-            transition: opacity 0.15s;
+            cursor: pointer
         }
 
-        .btn-portal:active {
-            opacity: 0.85;
-        }
-
-        .btn-secondary {
-            background: rgba(56, 139, 253, 0.08);
-            border: 1px solid var(--border);
+        .btn-s {
+            background: rgba(56, 139, 253, .08);
+            border: 1px solid var(--bdr);
             color: var(--blue);
             font-size: 13px;
             font-weight: 700;
-            padding: 12px 16px;
+            padding: 12px 14px;
             border-radius: 10px;
-            cursor: pointer;
+            cursor: pointer
         }
     </style>
 </head>
 
 <body>
-
     <nav class="nav">
         <div class="nav-title">Jason's Private Tour</div>
-        <div class="nav-progress" id="progressLabel">0 / 10</div>
+        <div class="nav-prog" id="pl">0 / 11</div>
     </nav>
-    <div class="progress-track">
-        <div class="progress-fill" id="progressFill"></div>
+    <div class="pb">
+        <div class="pf" id="pf"></div>
     </div>
+    <div class="wrap">
 
-    <div class="container">
-
-        <!-- INTRO -->
         <div class="intro">
-            <div class="intro-badge">
-                <div class="pulse"></div>Private. Just for you.
+            <div class="badge">
+                <div class="dot"></div>Private. Just for you.
             </div>
-            <h1>You're about to meet the full platform for the first time.</h1>
-            <p>This guide walks you through every section at your own pace. Open ppnportal.net on your laptop and follow
-                along here. Tap each section to explore. Check it off when you feel comfortable.</p>
+            <h1>The full platform, explained for someone who's going to sell it.</h1>
+            <p>Open ppnportal.net on your laptop. Keep this guide on your phone. Tap any section to expand use cases.
+                Check it off when you feel it.</p>
         </div>
 
-        <!-- SETUP -->
-        <div class="setup-card">
-            <div class="setup-label">Before You Start</div>
-            <div class="setup-step">
-                <div class="setup-num">1</div><span>Open ppnportal.net in a browser (laptop or phone)</span>
-            </div>
-            <div class="setup-step">
-                <div class="setup-num">2</div><span>Create a free account — or ask Trevor to log you in with a demo
-                    account</span>
-            </div>
-            <div class="setup-step">
-                <div class="setup-num">3</div><span>Keep this guide on your phone. Use it to navigate alongside the
-                    portal.</span>
-            </div>
-            <a href="https://ppnportal.net" target="_blank" class="setup-link">ppnportal.net ↗</a>
-        </div>
-
-        <!-- THE PLATFORM -->
-        <div class="section-heading">The Platform — 10 Sections</div>
-
-        <!-- 1. LANDING PAGE -->
-        <div class="tour-card" id="tc-0">
-            <div class="tour-header" onclick="toggleTour(0)">
-                <div class="tour-icon icon-blue">🌐</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 1</div>
-                    <div class="tour-title">The Landing Page</div>
+        <!-- SECTION: THE PROBLEM -->
+        <div class="sh">Start Here — The Problem We Solve</div>
+        <div class="tc" id="tc-0">
+            <div class="th" onclick="tog(0)">
+                <div class="ti ib">🔨</div>
+                <div class="tm">
+                    <div class="tn">The Setup</div>
+                    <div class="tt">Why Practitioners Are Desperate</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,0)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,0)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="what-it-is">This is the front door. It's what a practitioner sees before they sign up. It
-                    communicates what PPN is and why it matters — in under 10 seconds.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>Read the headline: "Clinical intelligence for
-                    psychedelic wellness practitioners." That's the product in one sentence.</div>
-                <div class="instruction"><span class="arrow">›</span>Scroll down to "The Frankenstein Stack is Real" —
-                    this is the pain point practitioners immediately recognize.</div>
-                <div class="instruction"><span class="arrow">›</span>Notice the trust badges: HIPAA, End-to-End
-                    Encrypted, Clinical-Grade Infrastructure. These matter to every practitioner you'll meet.</div>
-                <div class="talking-label">What this means for your demos</div>
-                <div class="talking">"When I pull this up with a practitioner, I start here. I let them read the
-                    headline and watch their face. They always recognize the problem immediately."</div>
-                <a href="https://ppnportal.net" target="_blank" class="platform-link">
+            <div class="tb">
+                <div class="wi">15,000+ practitioners are guiding psychedelic sessions right now using a patchwork of
+                    disconnected apps. No protection. No community. No data.</div>
+                <div class="sv">
+                    <svg viewBox="0 0 340 120" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%;display:block;background:#0d1e38">
+                        <text x="12" y="18" fill="#6b7a8d" font-size="8" font-family="Inter">BEFORE PPN — The
+                            Frankenstein Stack</text>
+                        <rect x="10" y="28" width="56" height="22" rx="4" fill="rgba(248,81,73,.15)"
+                            stroke="rgba(248,81,73,.4)" stroke-width="1" />
+                        <text x="38" y="43" fill="#f85149" font-size="8" font-family="Inter"
+                            text-anchor="middle">IntakeQ</text>
+                        <rect x="74" y="28" width="56" height="22" rx="4" fill="rgba(248,81,73,.15)"
+                            stroke="rgba(248,81,73,.4)" stroke-width="1" />
+                        <text x="102" y="43" fill="#f85149" font-size="8" font-family="Inter"
+                            text-anchor="middle">Spruce</text>
+                        <rect x="138" y="28" width="56" height="22" rx="4" fill="rgba(248,81,73,.15)"
+                            stroke="rgba(248,81,73,.4)" stroke-width="1" />
+                        <text x="166" y="43" fill="#f85149" font-size="8" font-family="Inter"
+                            text-anchor="middle">Spotify</text>
+                        <rect x="202" y="28" width="56" height="22" rx="4" fill="rgba(248,81,73,.15)"
+                            stroke="rgba(248,81,73,.4)" stroke-width="1" />
+                        <text x="230" y="43" fill="#f85149" font-size="8" font-family="Inter"
+                            text-anchor="middle">Excel</text>
+                        <rect x="266" y="28" width="56" height="22" rx="4" fill="rgba(248,81,73,.15)"
+                            stroke="rgba(248,81,73,.4)" stroke-width="1" />
+                        <text x="294" y="43" fill="#f85149" font-size="8" font-family="Inter"
+                            text-anchor="middle">Notes</text>
+                        <text x="170" y="68" fill="#6b7a8d" font-size="8" font-family="Inter"
+                            text-anchor="middle">vs.</text>
+                        <rect x="100" y="78" width="140" height="32" rx="8" fill="rgba(56,139,253,.15)"
+                            stroke="rgba(56,139,253,.5)" stroke-width="1.5" />
+                        <text x="170" y="97" fill="#388bfd" font-size="11" font-family="Inter" text-anchor="middle"
+                            font-weight="700">PPN Portal</text>
+                        <text x="170" y="108" fill="#39d0d8" font-size="8" font-family="Inter" text-anchor="middle">One
+                            platform. Everything connected.</text>
+                    </svg>
+                </div>
+                <div class="uct">Real Scenarios You'll Hear</div>
+                <div class="uc">
+                    <div class="uc-who">Underground Facilitator, Oregon</div>
+                    <div class="uc-what">Uses a notes app for session logs. If questioned legally, her notes are
+                        evidence against her. PPN documents the same information in a way that protects her.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Church Facilitator (Bridger's network)</div>
+                    <div class="uc-what">Runs 10+ sessions a month. Has no standard intake process. If a member has a
+                        bad reaction, there's no protocol trail. PPN gives him that trail without storing anyone's
+                        identity.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Ketamine Clinic Owner, Hawaii (Dr. Hill)</div>
+                    <div class="uc-what">Buying a clinic with zero operational protocol. Coming from the ER, he knows
+                        outcomes data. He has no idea what dosing standards apply here. PPN answers both problems.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INTERACTION CHECKER -->
+        <div class="sh">The Features — Start With This One</div>
+        <div class="tc" id="tc-1">
+            <div class="th" onclick="tog(1)">
+                <div class="ti ia">⚠️</div>
+                <div class="tm">
+                    <div class="tn">Section 1</div>
+                    <div class="tt">Interaction Checker</div>
+                </div>
+                <div class="mk" onclick="mrk(event,1)">○</div>
+                <div class="cv">▾</div>
+            </div>
+            <div class="tb">
+                <div class="wow">⚡ This Is the Feature That Wins Every Room</div>
+                <div class="wi">Select any psychedelic substance and any concurrent medication. Get an instant safety
+                    flag with the scientific source. No more asking colleagues on WhatsApp.</div>
+                <div class="sv">
+                    <svg viewBox="0 0 340 90" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%;display:block;background:#0d1e38">
+                        <circle cx="70" cy="45" r="28" fill="rgba(56,139,253,.12)" stroke="rgba(56,139,253,.4)"
+                            stroke-width="1.5" />
+                        <text x="70" y="41" fill="#388bfd" font-size="9" font-family="Inter" text-anchor="middle"
+                            font-weight="700">Psilocybin</text>
+                        <text x="70" y="54" fill="#6b7a8d" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">5-HT2A agonist</text>
+                        <text x="170" y="49" fill="#f85149" font-size="22" font-family="Inter"
+                            text-anchor="middle">+</text>
+                        <circle cx="270" cy="45" r="28" fill="rgba(248,81,73,.1)" stroke="rgba(248,81,73,.4)"
+                            stroke-width="1.5" />
+                        <text x="270" y="41" fill="#f85149" font-size="9" font-family="Inter" text-anchor="middle"
+                            font-weight="700">Lithium</text>
+                        <text x="270" y="54" fill="#6b7a8d" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">Mood stabilizer</text>
+                        <rect x="120" y="68" width="100" height="17" rx="4" fill="rgba(248,81,73,.15)"
+                            stroke="rgba(248,81,73,.5)" stroke-width="1" />
+                        <text x="170" y="80" fill="#f85149" font-size="8.5" font-family="Inter" text-anchor="middle"
+                            font-weight="700">⚠ Seizure Risk — See Source</text>
+                    </svg>
+                </div>
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Facilitator pre-screening a new client</div>
+                    <div class="uc-what">Client says they're on an antidepressant. SSRI + MDMA = serotonin syndrome
+                        risk. The checker flags this in seconds with a citation. The practitioner avoids a dangerous
+                        session.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Sarah Honeyut's exact scenario</div>
+                    <div class="uc-what">Clients don't report St. John's Wort because "it's natural." But it's a natural
+                        MAOI. Combined with certain psychedelics it can trigger dramatically extended or dangerous
+                        experiences. The checker catches it.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Church facilitator with no medical background</div>
+                    <div class="uc-what">A member mentions they're on lithium. The facilitator doesn't know why that
+                        matters. They run the check. It tells them — clearly, with source — why they need to consult a
+                        physician before proceeding.</div>
+                </div>
+                <div class="tkt">What to say</div>
+                <div class="tk">"Practitioners are asking each other about drug conflicts in private Signal groups right
+                    now. This ends that. The answer is here, sourced, and defensible in court."</div>
+                <a href="https://ppnportal.net/#/interactions" target="_blank" class="pl">
                     <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net</div>
+                        <div class="pl-l">Open in portal</div>
+                        <div class="pl-u">ppnportal.net › Interactions</div>
                     </div>
-                    <div class="pl-arrow">↗</div>
+                    <div class="pl-a">↗</div>
                 </a>
             </div>
         </div>
 
-        <!-- 2. DASHBOARD -->
-        <div class="tour-card" id="tc-1">
-            <div class="tour-header" onclick="toggleTour(1)">
-                <div class="tour-icon icon-cyan">📊</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 2</div>
-                    <div class="tour-title">The Dashboard</div>
+        <!-- PHANTOM SHIELD — EXPANDED -->
+        <div class="sh">The Phantom Shield — His Primary Interest</div>
+        <div class="tc" id="tc-2">
+            <div class="th" onclick="tog(2)">
+                <div class="ti ic">🛡️</div>
+                <div class="tm">
+                    <div class="tn">Privacy Architecture</div>
+                    <div class="tt">Phantom Shield: Zero-PHI</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,1)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,2)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="what-it-is">The first screen after login. A high-level snapshot of everything happening
-                    across a practitioner's practice — active protocols, safety alerts, outcome trends, and benchmarks
-                    against the global network.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>The stat cards at the top: Active Protocols,
-                    Patients Tracked, Adverse Events, Avg Efficacy Score.</div>
-                <div class="instruction"><span class="arrow">›</span>The charts showing outcomes over time — this is
-                    what "real-time intelligence" looks like in practice.</div>
-                <div class="instruction"><span class="arrow">›</span>The Safety Risk indicators — red/amber/green flags
-                    that require no medical training to interpret.</div>
-                <div class="wow">⚡ Wow Moment for Clinic Owners</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"A clinic owner can open this every Monday morning and know exactly where their
-                    practice stands. No spreadsheet. No manual report. It updates in real time as practitioners add
-                    sessions."</div>
-                <a href="https://ppnportal.net/#/dashboard" target="_blank" class="platform-link">
-                    <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Dashboard</div>
+            <div class="tb">
+                <div class="wi">The foundational guarantee: PPN has never stored a single patient name. If the database
+                    were stolen or subpoenaed tomorrow, it would yield only encrypted codes and standardized medical
+                    table references.</div>
+                <div class="sv">
+                    <svg viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%;display:block;background:#0d1e38">
+                        <text x="12" y="16" fill="#6b7a8d" font-size="8" font-family="Inter">How a session becomes
+                            protected data</text>
+                        <rect x="8" y="24" width="70" height="30" rx="5" fill="rgba(56,139,253,.1)"
+                            stroke="rgba(56,139,253,.3)" stroke-width="1" />
+                        <text x="43" y="37" fill="#b8c4d0" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">Practitioner</text>
+                        <text x="43" y="48" fill="#b8c4d0" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">enters session</text>
+                        <line x1="78" y1="39" x2="100" y2="39" stroke="rgba(56,139,253,.5)" stroke-width="1.5"
+                            marker-end="url(#arr)" />
+                        <rect x="100" y="24" width="76" height="30" rx="5" fill="rgba(57,208,216,.08)"
+                            stroke="rgba(57,208,216,.35)" stroke-width="1" />
+                        <text x="138" y="37" fill="#39d0d8" font-size="7.5" font-family="Inter" text-anchor="middle">PPN
+                            generates</text>
+                        <text x="138" y="48" fill="#39d0d8" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">encrypted key</text>
+                        <line x1="176" y1="39" x2="198" y2="39" stroke="rgba(57,208,216,.5)" stroke-width="1.5" />
+                        <rect x="198" y="24" width="76" height="30" rx="5" fill="rgba(63,185,80,.08)"
+                            stroke="rgba(63,185,80,.35)" stroke-width="1" />
+                        <text x="236" y="37" fill="#3fb950" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">Stored as codes</text>
+                        <text x="236" y="48" fill="#3fb950" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">only. No names.</text>
+                        <text x="12" y="78" fill="#6b7a8d" font-size="8" font-family="Inter">If subpoenaed:</text>
+                        <rect x="8" y="85" width="100" height="26" rx="5" fill="rgba(248,81,73,.1)"
+                            stroke="rgba(248,81,73,.3)" stroke-width="1" />
+                        <text x="58" y="97" fill="#f85149" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">Subpoena / FBI Request</text>
+                        <text x="58" y="107" fill="#f85149" font-size="7" font-family="Inter" text-anchor="middle">→
+                            database handed over</text>
+                        <line x1="110" y1="98" x2="132" y2="98" stroke="rgba(248,81,73,.4)" stroke-width="1.5" />
+                        <rect x="132" y="85" width="100" height="26" rx="5" fill="rgba(57,208,216,.08)"
+                            stroke="rgba(57,208,216,.35)" stroke-width="1" />
+                        <text x="182" y="97" fill="#39d0d8" font-size="7.5" font-family="Inter"
+                            text-anchor="middle">They receive:</text>
+                        <text x="182" y="107" fill="#6b7a8d" font-size="7" font-family="Inter"
+                            text-anchor="middle">8dx7kQp2... nothing useful</text>
+                        <text x="12" y="125" fill="#39d0d8" font-size="8" font-family="Inter">Result: Structural
+                            protection. Not a policy. Not a promise.</text>
+                        <defs>
+                            <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="rgba(56,139,253,.5)" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="uct">Phantom Shield Components — Tap to Deep Dive</div>
+
+                <div class="shield-deep" onclick="toggleSD(this)">
+                    <div class="sd-h">🔍 Blind Vetting Scanner <span>▾</span></div>
+                    <div class="sd-b">Screens a potential client before any session is booked. Practitioners answer
+                        structured questions about the client's medications, mental health history, and risk factors.
+                        The system flags contraindications without ever capturing the client's name or contact
+                        information. If the client is unsuitable, the record of the screening itself proves due
+                        diligence — without creating a client record.<br><br><strong>Why it matters:</strong> Bridger's
+                        facilitators can screen every member before they consume psilocybin tea. If a member has a
+                        reaction and claims no screening occurred, the anonymized screening record proves otherwise.
                     </div>
-                    <div class="pl-arrow">↗</div>
+                </div>
+
+                <div class="shield-deep" onclick="toggleSD(this)">
+                    <div class="sd-h">⏱️ Crisis Logger / Cockpit Mode <span>▾</span></div>
+                    <div class="sd-b">A single-tap timeline tool for use during an active session. Each tap creates a
+                        cryptographic timestamp. "10:14 PM — elevated distress noted." "10:31 PM — client stabilized,
+                        grounded." The log has no names attached. It records the practitioner's actions and the client's
+                        status.<br><br><strong>Why it matters:</strong> If a client later claims they were mishandled,
+                        the Crisis Logger is a forensic record of what the facilitator did and when — without containing
+                        any identifiable information about the client. It's the difference between "I remember it went
+                        fine" and "here is the timestamped log."</div>
+                </div>
+
+                <div class="shield-deep" onclick="toggleSD(this)">
+                    <div class="sd-h">🌿 Potency Normalizer <span>▾</span></div>
+                    <div class="sd-b">Mushrooms are not standardized. "3 grams" means almost nothing if the batch
+                        potency varies 2-3x. The Potency Normalizer lets practitioners log the psilocybin concentration
+                        of their specific batch and converts it to a standardized clinical dose
+                        equivalent.<br><br><strong>Why it matters:</strong> Sarah Honeyut flagged this specifically —
+                        Oregon's max is 50mg psilocybin, which can equate to anywhere from 5g to 15g of dried mushrooms
+                        depending on testing. This tool makes "dose" mean the same thing across every practitioner in
+                        the network.</div>
+                </div>
+
+                <div class="shield-deep" onclick="toggleSD(this)">
+                    <div class="sd-h">📜 Legacy Transcript <span>▾</span></div>
+                    <div class="sd-b">A structured, exportable record of a practitioner's entire documented career —
+                        every session, every outcome, every substance — presented in a format suitable for a licensing
+                        application or review board.<br><br><strong>Why it matters:</strong> When Oregon and Colorado
+                        licensing frameworks mature, the practitioners who've been documenting in PPN will have a
+                        verifiable career record. Everyone else will be starting from zero. Bridger's facilitators could
+                        walk into a licensing process with proof of 500 documented sessions.</div>
+                </div>
+
+                <div class="shield-deep" onclick="toggleSD(this)">
+                    <div class="sd-h">⚖️ Legal Narrative Reframe <span>▾</span></div>
+                    <div class="sd-b">The biggest shift in how practitioners should think: documentation doesn't create
+                        legal exposure. Lack of documentation creates legal exposure.<br><br>A timestamped record of a
+                        standard-of-care protocol shifts the legal narrative from "drug distribution" to "documented
+                        wellness practice." PPN is the tool that creates that record structurally — without storing the
+                        information that regulations protect.<br><br><strong>For Bridger's RFRA case
+                            specifically:</strong> Documentation that demonstrates careful, safety-first ceremonial
+                        practice directly supports his religious freedom legal argument. It shows the court: this is not
+                        drug dealing. This is a serious, documented wellness ritual.</div>
+                </div>
+
+                <div class="tkt">What to say about Phantom Shield</div>
+                <div class="tk">"We didn't just build a privacy policy. We built an architecture that makes certain data
+                    physically impossible to produce. That's a completely different level of protection."</div>
+                <a href="https://ppnportal.net/phantom-shield.html" target="_blank" class="pl">
+                    <div>
+                        <div class="pl-l">Open this page</div>
+                        <div class="pl-u">ppnportal.net/phantom-shield.html</div>
+                    </div>
+                    <div class="pl-a">↗</div>
                 </a>
             </div>
         </div>
 
-        <!-- 3. SEARCH PORTAL -->
-        <div class="tour-card" id="tc-2">
-            <div class="tour-header" onclick="toggleTour(2)">
-                <div class="tour-icon icon-blue">🔍</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 3</div>
-                    <div class="tour-title">Search Portal</div>
+        <!-- WELLNESS JOURNEY -->
+        <div class="sh">Session Documentation</div>
+        <div class="tc" id="tc-3">
+            <div class="th" onclick="tog(3)">
+                <div class="ti ig">🗺️</div>
+                <div class="tm">
+                    <div class="tn">Section 3</div>
+                    <div class="tt">Wellness Journey and Protocol Builder</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,2)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,3)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="what-it-is">A Google-style search engine for psychedelic medicine. Search any substance,
-                    condition, or protocol and instantly see what the community and scientific literature says.</div>
-                <div class="instruction-label">Try this</div>
-                <div class="instruction"><span class="arrow">›</span>Type "psilocybin" in the search bar. Watch what
-                    comes up.</div>
-                <div class="instruction"><span class="arrow">›</span>Look at the substance card that appears — receptor
-                    binding, molecular weight, clinical research links.</div>
-                <div class="instruction"><span class="arrow">›</span>Try filtering by condition (depression, PTSD,
-                    anxiety) to see which protocols appear.</div>
-                <div class="instruction"><span class="arrow">›</span>Notice the AI summary at the top of results — this
-                    is the "neural engine" that synthesizes the data.</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"This is what practitioners actually need. Not a form. An answer. Search psilocybin
-                    — and instantly see what 10 years of community data says about dosing, outcomes, and interactions."
+            <div class="tb">
+                <div class="wi">Where a practitioner actually logs a session. The full journey: preparation, the session
+                    itself, integration, and follow-up. All anonymized. Every field a dropdown. Under 60 seconds to
+                    complete.</div>
+                <div class="sv">
+                    <svg viewBox="0 0 340 60" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%;display:block;background:#0d1e38">
+                        <line x1="20" y1="30" x2="320" y2="30" stroke="rgba(56,139,253,.3)" stroke-width="1.5" />
+                        <circle cx="50" cy="30" r="14" fill="rgba(56,139,253,.15)" stroke="rgba(56,139,253,.5)"
+                            stroke-width="1.5" />
+                        <text x="50" y="27" fill="#388bfd" font-size="7" font-family="Inter" text-anchor="middle"
+                            font-weight="700">Prep</text>
+                        <text x="50" y="37" fill="#6b7a8d" font-size="6.5" font-family="Inter"
+                            text-anchor="middle">intake</text>
+                        <circle cx="135" cy="30" r="14" fill="rgba(57,208,216,.12)" stroke="rgba(57,208,216,.5)"
+                            stroke-width="1.5" />
+                        <text x="135" y="27" fill="#39d0d8" font-size="7" font-family="Inter" text-anchor="middle"
+                            font-weight="700">Session</text>
+                        <text x="135" y="37" fill="#6b7a8d" font-size="6.5" font-family="Inter"
+                            text-anchor="middle">substance+dose</text>
+                        <circle cx="220" cy="30" r="14" fill="rgba(63,185,80,.1)" stroke="rgba(63,185,80,.5)"
+                            stroke-width="1.5" />
+                        <text x="220" y="27" fill="#3fb950" font-size="7" font-family="Inter" text-anchor="middle"
+                            font-weight="700">Integration</text>
+                        <text x="220" y="37" fill="#6b7a8d" font-size="6.5" font-family="Inter"
+                            text-anchor="middle">PHQ9 score</text>
+                        <circle cx="305" cy="30" r="14" fill="rgba(240,165,0,.1)" stroke="rgba(240,165,0,.5)"
+                            stroke-width="1.5" />
+                        <text x="305" y="27" fill="#f0a500" font-size="7" font-family="Inter" text-anchor="middle"
+                            font-weight="700">Follow-Up</text>
+                        <text x="305" y="37" fill="#6b7a8d" font-size="6.5" font-family="Inter"
+                            text-anchor="middle">2-week check</text>
+                    </svg>
                 </div>
-                <a href="https://ppnportal.net/#/search" target="_blank" class="platform-link">
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Facilitator adding a completed session</div>
+                    <div class="uc-what">Opens the form after a session. Selects: age range, gender, psilocybin, 25mg,
+                        clinic setting. Enters PHQ9 score before (22) and after first integration session (14). Done in
+                        45 seconds. The data joins the network benchmark immediately.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Church facilitator tracking a member journey</div>
+                    <div class="uc-what">A member attends three psilocybin tea ceremonies over 6 months. Each one is
+                        logged in PPN. The trend line shows the member's PHQ score declining over the three sessions.
+                        This becomes part of the church's evidence of beneficial practice.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Operator running a training cohort</div>
+                    <div class="uc-what">Singularism trains 40 practitioners this year. Every trainee logs practice
+                        sessions in PPN. The training program can hold up an aggregate outcome report showing its
+                        graduates' session safety records. That's a marketing asset and a regulatory one.</div>
+                </div>
+                <a href="https://ppnportal.net/#/wellness-journey" target="_blank" class="pl">
                     <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Search</div>
+                        <div class="pl-l">Open in portal</div>
+                        <div class="pl-u">ppnportal.net › Wellness Journey</div>
                     </div>
-                    <div class="pl-arrow">↗</div>
+                    <div class="pl-a">↗</div>
                 </a>
             </div>
         </div>
 
-        <!-- 4. SUBSTANCE EXPLORER -->
-        <div class="tour-card" id="tc-3">
-            <div class="tour-header" onclick="toggleTour(3)">
-                <div class="tour-icon icon-purple">🧬</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 4</div>
-                    <div class="tour-title">Molecular Pharmacology</div>
+        <!-- BENCHMARKING -->
+        <div class="sh">The Intelligence Layer</div>
+        <div class="tc" id="tc-4">
+            <div class="th" onclick="tog(4)">
+                <div class="ti ic">📈</div>
+                <div class="tm">
+                    <div class="tn">Section 4</div>
+                    <div class="tt">Benchmarking and Network Intelligence</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,3)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,4)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="what-it-is">A scientific deep-dive on every psychedelic substance in the system. 3D
-                    molecular structures, receptor affinity data, and a spider chart that shows EXACTLY which brain
-                    receptors each substance targets — and why that matters for treatment planning.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>Click into any substance. Look for the spider/radar
-                    chart showing receptor binding affinity.</div>
-                <div class="instruction"><span class="arrow">›</span>The chart shows: serotonin, dopamine, glutamate
-                    binding — all in one visual.</div>
-                <div class="instruction"><span class="arrow">›</span>Each receptor is linked to a condition. This is how
-                    a practitioner picks the right substance for the right patient.</div>
-                <div class="wow">⚡ Wow Moment for Scientists and Doctors</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"Dr. Allen specifically praised this. A practitioner can look at this chart and
-                    understand why psilocybin works differently for depression vs. anxiety — because it targets
-                    different receptor profiles. This is clinical education baked into the tool."</div>
-                <a href="https://ppnportal.net/#/pharmacology" target="_blank" class="platform-link">
+            <div class="tb">
+                <div class="wi">This is what turns individual session data into something no single practitioner could
+                    ever have alone. Every session entered makes the benchmarks more accurate for everyone on the
+                    network.</div>
+                <div class="sv">
+                    <svg viewBox="0 0 340 100" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%;display:block;background:#0d1e38">
+                        <text x="12" y="16" fill="#6b7a8d" font-size="8" font-family="Inter">PHQ-9 Outcome Improvement
+                            by Practice Level</text>
+                        <rect x="40" y="28" width="32" height="55" rx="3" fill="rgba(56,139,253,.25)"
+                            stroke="rgba(56,139,253,.4)" stroke-width="1" />
+                        <text x="56" y="90" fill="#6b7a8d" font-size="7" font-family="Inter" text-anchor="middle">Your
+                            Practice</text>
+                        <text x="56" y="24" fill="#388bfd" font-size="8" font-family="Inter"
+                            text-anchor="middle">-8.2</text>
+                        <rect x="120" y="38" width="32" height="45" rx="3" fill="rgba(57,208,216,.2)"
+                            stroke="rgba(57,208,216,.4)" stroke-width="1" />
+                        <text x="136" y="90" fill="#6b7a8d" font-size="7" font-family="Inter"
+                            text-anchor="middle">Network Avg</text>
+                        <text x="136" y="34" fill="#39d0d8" font-size="8" font-family="Inter"
+                            text-anchor="middle">-6.7</text>
+                        <rect x="200" y="50" width="32" height="33" rx="3" fill="rgba(63,185,80,.18)"
+                            stroke="rgba(63,185,80,.4)" stroke-width="1" />
+                        <text x="216" y="90" fill="#6b7a8d" font-size="7" font-family="Inter"
+                            text-anchor="middle">Global Avg</text>
+                        <text x="216" y="46" fill="#3fb950" font-size="8" font-family="Inter"
+                            text-anchor="middle">-4.9</text>
+                        <text x="290" y="45" fill="#388bfd" font-size="9" font-family="Inter" text-anchor="middle"
+                            font-weight="700">You're</text>
+                        <text x="290" y="57" fill="#388bfd" font-size="9" font-family="Inter" text-anchor="middle"
+                            font-weight="700">above</text>
+                        <text x="290" y="69" fill="#388bfd" font-size="9" font-family="Inter" text-anchor="middle"
+                            font-weight="700">average</text>
+                    </svg>
+                </div>
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Clinic operator reviewing monthly performance</div>
+                    <div class="uc-what">Pulls up the benchmarking dashboard. Her clinic's average PHQ improvement is
+                        -8.2 vs. the network's -6.7. She can show this to her investors as evidence of clinical
+                        superiority. No other platform can produce this data.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Practitioner troubleshooting poor outcomes</div>
+                    <div class="uc-what">A facilitator notices her MDMA outcomes for PTSD patients are below the network
+                        benchmark. She filters by setting and realizes clinic sessions outperform retreat sessions in
+                        the data. She adjusts her practice.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">State government or researcher</div>
+                    <div class="uc-what">Oregon's licensing board wants data on psilocybin outcomes from licensed
+                        facilitators. PPN can produce an anonymized aggregate export showing outcomes across hundreds of
+                        sessions. That data is worth six figures to a state running a research program.</div>
+                </div>
+                <div class="tkt">What to say</div>
+                <div class="tk">"Julian Bareilles got excited about five-point PHQ improvements. That number means
+                    nothing without context. With PPN, it means 'your practice is outperforming 80% of the network.'
+                    That's a different conversation."</div>
+                <a href="https://ppnportal.net/#/analytics" target="_blank" class="pl">
                     <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Pharmacology</div>
+                        <div class="pl-l">Open in portal</div>
+                        <div class="pl-u">ppnportal.net › Analytics</div>
                     </div>
-                    <div class="pl-arrow">↗</div>
+                    <div class="pl-a">↗</div>
                 </a>
             </div>
         </div>
 
-        <!-- 5. INTERACTION CHECKER -->
-        <div class="tour-card" id="tc-4">
-            <div class="tour-header" onclick="toggleTour(4)">
-                <div class="tour-icon icon-amber">⚠️</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 5</div>
-                    <div class="tour-title">Interaction Checker</div>
+        <!-- MOLECULAR PHARMACOLOGY -->
+        <div class="tc" id="tc-5">
+            <div class="th" onclick="tog(5)">
+                <div class="ti ip">🧬</div>
+                <div class="tm">
+                    <div class="tn">Section 5</div>
+                    <div class="tt">Molecular Pharmacology</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,4)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,5)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="wow">⚡ The Feature That Wins Every Room</div>
-                <div class="what-it-is">A real-time drug interaction tool. Select any psychedelic substance plus any
-                    medication a client might be taking. The system instantly flags dangers, explains why, and links to
-                    the scientific source. No guessing. No Google. Sourced and defensible.</div>
-                <div class="instruction-label">Try this</div>
-                <div class="instruction"><span class="arrow">›</span>Select psilocybin as the psychedelic.</div>
-                <div class="instruction"><span class="arrow">›</span>Add lithium as a concurrent medication. Watch the
-                    warning appear.</div>
-                <div class="instruction"><span class="arrow">›</span>Click the source link — it goes directly to the
-                    published research.</div>
-                <div class="instruction"><span class="arrow">›</span>Try: MDMA + SSRIs. Try: ketamine + MAOIs. Each one
-                    has a specific response.</div>
-                <div class="callout"><strong>Why this matters:</strong> Sarah Honeyut (Oregon facilitator, your first
-                    real user) called this the most important feature. Practitioners are asking each other about drug
-                    conflicts in WhatsApp groups right now. This ends that.</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"A client walks in and says they're on lithium. Before PPN, a practitioner had to
-                    call a doctor friend or Google it and hope. Now it takes 10 seconds to know exactly what the risk
-                    is, why, and where that information comes from."</div>
-                <a href="https://ppnportal.net/#/interactions" target="_blank" class="platform-link">
+            <div class="tb">
+                <div class="wi">Scientific profiles for every psychedelic substance. 3D molecular structures, receptor
+                    binding affinity charts, and links to peer-reviewed sources. The same data that lives in NIH
+                    databases — organized for clinical use.</div>
+                <div class="sv">
+                    <svg viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%;display:block;background:#0d1e38">
+                        <text x="170" y="14" fill="#6b7a8d" font-size="8" font-family="Inter"
+                            text-anchor="middle">Psilocybin Receptor Binding Profile</text>
+                        <polygon points="170,25 210,48 210,90 170,113 130,90 130,48" fill="none"
+                            stroke="rgba(56,139,253,.2)" stroke-width="1" />
+                        <polygon points="170,36 198,54 198,78 170,96 142,78 142,54" fill="none"
+                            stroke="rgba(56,139,253,.15)" stroke-width="1" />
+                        <polygon points="170,25 203,61 191,88 147,88 135,61" fill="rgba(56,139,253,.08)"
+                            stroke="rgba(56,139,253,.5)" stroke-width="1.5" />
+                        <circle cx="170" cy="25" r="3" fill="#388bfd" />
+                        <circle cx="203" cy="61" r="3" fill="#388bfd" />
+                        <circle cx="191" cy="88" r="3" fill="#388bfd" />
+                        <circle cx="147" cy="88" r="3" fill="#388bfd" />
+                        <circle cx="135" cy="61" r="3" fill="#388bfd" />
+                        <text x="170" y="18" fill="#39d0d8" font-size="6.5" font-family="Inter"
+                            text-anchor="middle">5-HT2A</text>
+                        <text x="218" y="64" fill="#39d0d8" font-size="6.5" font-family="Inter">5-HT2C</text>
+                        <text x="196" y="100" fill="#39d0d8" font-size="6.5" font-family="Inter">D2</text>
+                        <text x="120" y="100" fill="#39d0d8" font-size="6.5" font-family="Inter"
+                            text-anchor="end">Sigma</text>
+                        <text x="118" y="64" fill="#39d0d8" font-size="6.5" font-family="Inter"
+                            text-anchor="end">5-HT1A</text>
+                    </svg>
+                </div>
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Dr. Allen (scientific reviewer)</div>
+                    <div class="uc-what">He specifically praised the affinity binding charts. A researcher can look at
+                        this and understand exactly why psilocybin's 5-HT2A affinity makes it particularly effective for
+                        treatment-resistant depression vs. anxiety.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Facilitator choosing a substance for a complex patient</div>
+                    <div class="uc-what">A patient has treatment-resistant PTSD AND severe anxiety. Which substance? The
+                        spider charts show MDMA's profile is strongly empathogenic (5-HT release) where psilocybin is
+                        more dissociative. This informs the conversation with a supervising physician.</div>
+                </div>
+                <div class="tkt">What to say</div>
+                <div class="tk">"This is clinical education baked into the tool. A facilitator doesn't need a
+                    pharmacology degree to understand — they just need to see the chart."</div>
+            </div>
+        </div>
+
+        <!-- SEARCH PORTAL -->
+        <div class="tc" id="tc-6">
+            <div class="th" onclick="tog(6)">
+                <div class="ti ib">🔍</div>
+                <div class="tm">
+                    <div class="tn">Section 6</div>
+                    <div class="tt">Search Portal and AI Engine</div>
+                </div>
+                <div class="mk" onclick="mrk(event,6)">○</div>
+                <div class="cv">▾</div>
+            </div>
+            <div class="tb">
+                <div class="wi">Type any substance, condition, or symptom. Get matched protocols from the community
+                    database, filtered by what worked and for whom. The AI engine synthesizes the results at the top.
+                </div>
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Practitioner facing an unfamiliar patient profile</div>
+                    <div class="uc-what">A 58-year-old woman with end-of-life anxiety and a history of SSRI use. Search:
+                        "psilocybin + SSRI + end-of-life." The system returns matching protocols, outcome scores, and
+                        the AI synthesis of what worked across similar cases.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Training program curriculum builder</div>
+                    <div class="uc-what">A training director searches for the highest-efficacy ketamine protocols for
+                        treatment-resistant depression. Filters by clinical setting. Gets a ranked list by PHQ
+                        improvement. Uses this to inform the curriculum.</div>
+                </div>
+                <div class="tkt">What to say</div>
+                <div class="tk">"This is the global hive mind. You contribute one session. You get access to thousands."
+                </div>
+                <a href="https://ppnportal.net/#/search" target="_blank" class="pl">
                     <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Interactions</div>
+                        <div class="pl-l">Open in portal</div>
+                        <div class="pl-u">ppnportal.net › Search</div>
                     </div>
-                    <div class="pl-arrow">↗</div>
+                    <div class="pl-a">↗</div>
                 </a>
             </div>
         </div>
 
-        <!-- 6. WELLNESS JOURNEY / PROTOCOL BUILDER -->
-        <div class="tour-card" id="tc-5">
-            <div class="tour-header" onclick="toggleTour(5)">
-                <div class="tour-icon icon-green">🗺️</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 6</div>
-                    <div class="tour-title">Wellness Journey</div>
+        <!-- ASSESSMENTS -->
+        <div class="tc" id="tc-7">
+            <div class="th" onclick="tog(7)">
+                <div class="ti ib">📋</div>
+                <div class="tm">
+                    <div class="tn">Section 7</div>
+                    <div class="tt">Clinical Assessments</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,5)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,7)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="what-it-is">This is where a practitioner adds a real session. The protocol builder walks
-                    step-by-step through: creating an anonymous client record, documenting the session (substance, dose,
-                    setting), and capturing outcomes. The whole thing takes under 60 seconds.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>The phase timeline at the top: Preparation,
-                    Session, Integration, Follow-Up.</div>
-                <div class="instruction"><span class="arrow">›</span>Every field is a dropdown. No free text. This
-                    protects privacy structurally.</div>
-                <div class="instruction"><span class="arrow">›</span>The client ID field — birth month + birth year
-                    only. No names ever enter the system.</div>
-                <div class="instruction"><span class="arrow">›</span>Try adding a test session: male, age 35-44,
-                    psilocybin, 25mg, clinic setting, PHQ9 score before/after.</div>
-                <div class="callout"><strong>Key thing to understand:</strong> Practitioners don't replace their notes
-                    with this. They add the anonymous treatment data alongside whatever notes they keep privately. PPN
-                    takes 60 seconds. Their existing workflow stays the same.</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"Every field in this form is a dropdown. No writing. The system assigns a random
-                    encrypted ID to the client — only the practitioner can connect that ID back to their actual client.
-                    We never see a name. Never."</div>
-                <a href="https://ppnportal.net/#/wellness-journey" target="_blank" class="platform-link">
+            <div class="tb">
+                <div class="wi">20 pre-built validated assessment forms — PHQ-9, GAD-7, PCL-5, IES-R, and more. Run them
+                    with clients to capture baseline and outcome scores. Data feeds directly into the analytics layer.
+                </div>
+                <div class="sv">
+                    <svg viewBox="0 0 340 70" xmlns="http://www.w3.org/2000/svg"
+                        style="width:100%;display:block;background:#0d1e38">
+                        <text x="12" y="16" fill="#6b7a8d" font-size="8" font-family="Inter">PHQ-9 Score Across 3
+                            Sessions</text>
+                        <line x1="30" y1="55" x2="300" y2="55" stroke="rgba(56,139,253,.2)" stroke-width="1" />
+                        <circle cx="80" cy="20" r="5" fill="#f85149" />
+                        <text x="80" y="15" fill="#f85149" font-size="8" font-family="Inter"
+                            text-anchor="middle">22</text>
+                        <circle cx="170" cy="35" r="5" fill="#f0a500" />
+                        <text x="170" y="30" fill="#f0a500" font-size="8" font-family="Inter"
+                            text-anchor="middle">14</text>
+                        <circle cx="260" cy="48" r="5" fill="#3fb950" />
+                        <text x="260" y="43" fill="#3fb950" font-size="8" font-family="Inter"
+                            text-anchor="middle">7</text>
+                        <polyline points="80,20 170,35 260,48" fill="none" stroke="rgba(56,139,253,.5)"
+                            stroke-width="1.5" stroke-dasharray="4,2" />
+                        <text x="80" y="66" fill="#6b7a8d" font-size="7" font-family="Inter"
+                            text-anchor="middle">Session 1</text>
+                        <text x="170" y="66" fill="#6b7a8d" font-size="7" font-family="Inter"
+                            text-anchor="middle">Session 2</text>
+                        <text x="260" y="66" fill="#6b7a8d" font-size="7" font-family="Inter"
+                            text-anchor="middle">2-week follow-up</text>
+                    </svg>
+                </div>
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Practitioner proving efficacy to a referring doctor</div>
+                    <div class="uc-what">A psychiatrist refers a patient. After 3 psilocybin sessions, the practitioner
+                        can show the referring doctor: PHQ-9 went from 22 to 7. Not anecdotal. Measured. That's a
+                        referral relationship that grows.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Church member tracking their own journey</div>
+                    <div class="uc-what">Bridger's members complete a PHQ-9 before each ceremony. The aggregate of all
+                        members' scores over a year is the strongest possible evidence that psilocybin tea ceremonies
+                        produce measurable wellness improvements. That's the legal argument, in data.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="tc" id="tc-8">
+            <div class="th" onclick="tog(8)">
+                <div class="ti ic">📊</div>
+                <div class="tm">
+                    <div class="tn">Section 8</div>
+                    <div class="tt">Clinical Intelligence Dashboard</div>
+                </div>
+                <div class="mk" onclick="mrk(event,8)">○</div>
+                <div class="cv">▾</div>
+            </div>
+            <div class="tb">
+                <div class="wi">The first screen after login. A real-time snapshot of everything happening across a
+                    practice — active protocols, safety alerts, outcome trends. This is what Jason said "clinic owners
+                    need to see first."</div>
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Monday morning clinic review</div>
+                    <div class="uc-what">A clinic director opens the dashboard before staff huddle. Active protocols:
+                        14. Adverse events this week: 1 (mild, resolved). Safety alerts: 0. Average efficacy: 7.1 PHQ
+                        improvement. That's a board-ready snapshot produced automatically.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Early warning system in action</div>
+                    <div class="uc-what">Three practitioners from different clinics each log an unusual adverse event
+                        after using the same psilocybin batch. The system surfaces a safety signal. They're warned
+                        before a fourth practitioner uses the same batch. This is impossible without a network.</div>
+                </div>
+                <div class="tkt">What to say</div>
+                <div class="tk">"Jason told Trevor in an early meeting that the Clinical Intelligence Dashboard is what
+                    clinic owners need to see first. Put it front and center."</div>
+                <a href="https://ppnportal.net/#/dashboard" target="_blank" class="pl">
                     <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Wellness Journey</div>
+                        <div class="pl-l">Open in portal</div>
+                        <div class="pl-u">ppnportal.net › Dashboard</div>
                     </div>
-                    <div class="pl-arrow">↗</div>
+                    <div class="pl-a">↗</div>
                 </a>
             </div>
         </div>
 
-        <!-- 7. ASSESSMENTS -->
-        <div class="tour-card" id="tc-6">
-            <div class="tour-header" onclick="toggleTour(6)">
-                <div class="tour-icon icon-blue">📋</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 7</div>
-                    <div class="tour-title">Assessments and Forms</div>
+        <!-- EXPORT -->
+        <div class="tc" id="tc-9">
+            <div class="th" onclick="tog(9)">
+                <div class="ti ig">📄</div>
+                <div class="tm">
+                    <div class="tn">Section 9</div>
+                    <div class="tt">Export Center and Legacy Transcript</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,6)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,9)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="what-it-is">20 pre-built clinical assessment forms — PHQ-9, GAD-7, PCL-5, IES-R, and more —
-                    built into the platform. Practitioners run these with clients to capture baseline and outcome
-                    scores. The data feeds directly into the analytics layer.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>Look at the PHQ-9 form — these are the
-                    industry-standard depression outcome scores.</div>
-                <div class="instruction"><span class="arrow">›</span>When a form is completed, the score is
-                    automatically added to the client's treatment record.</div>
-                <div class="instruction"><span class="arrow">›</span>Over time, the system tracks score changes — shows
-                    whether treatment is working in measurable terms.</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"Julian Bareilles — the therapist licensed in four states — got excited
-                    specifically about this. A PHQ9 dropping from 25 to 12 after two sessions is the kind of evidence
-                    that makes other practitioners pay attention. This is how we build the record."</div>
-                <a href="https://ppnportal.net/#/assessments" target="_blank" class="platform-link">
+            <div class="tb">
+                <div class="wi">Export session data, protocol summaries, and outcome reports as formatted PDFs.
+                    Anonymized. Branded. Timestamp-verified. The Legacy Transcript is a practitioner's entire documented
+                    career in one exportable record.</div>
+                <div class="uct">Use Cases</div>
+                <div class="uc">
+                    <div class="uc-who">Practitioner applying for Oregon licensing</div>
+                    <div class="uc-what">Oregon's licensing board asks for documented evidence of supervised sessions.
+                        The practitioner exports their Legacy Transcript: 240 documented sessions over 3 years, with
+                        outcome scores, substance used, and setting type. That's a licensing application, not just an
+                        application.</div>
+                </div>
+                <div class="uc">
+                    <div class="uc-who">Church applying for legal recognition</div>
+                    <div class="uc-what">Bridger's attorneys need to argue the church operates a serious, structured
+                        wellness program. The Export Center produces an aggregate report of all sessions: safety record,
+                        outcome trends, facilitator roster (anonymized). That's the evidence package.</div>
+                </div>
+                <a href="https://ppnportal.net/#/export" target="_blank" class="pl">
                     <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Assessments</div>
+                        <div class="pl-l">Open in portal</div>
+                        <div class="pl-u">ppnportal.net › Export Center</div>
                     </div>
-                    <div class="pl-arrow">↗</div>
+                    <div class="pl-a">↗</div>
                 </a>
             </div>
         </div>
 
-        <!-- 8. ANALYTICS -->
-        <div class="tour-card" id="tc-7">
-            <div class="tour-header" onclick="toggleTour(7)">
-                <div class="tour-icon icon-cyan">📈</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 8</div>
-                    <div class="tour-title">Analytics and Benchmarking</div>
+        <!-- THE BUSINESS CASE -->
+        <div class="sh">The Business Case — For When Jason Meets Operators</div>
+        <div class="tc" id="tc-10">
+            <div class="th" onclick="tog(10)">
+                <div class="ti ia">💡</div>
+                <div class="tm">
+                    <div class="tn">Strategy</div>
+                    <div class="tt">How Singularism Becomes 40 Users Overnight</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,7)">○</div>
-                <div class="tour-chevron">▾</div>
+                <div class="mk" onclick="mrk(event,10)">○</div>
+                <div class="cv">▾</div>
             </div>
-            <div class="tour-body">
-                <div class="wow">⚡ The Feature That Makes This a Network, Not Just a Tool</div>
-                <div class="what-it-is">Where individual session data becomes intelligence. A practitioner can see how
-                    their outcomes compare to the network average, filtered by substance, condition, setting, or
-                    demographic. This is what no other platform in this space offers.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>The Safety Benchmark panel — shows safety
-                    performance vs. peer network.</div>
-                <div class="instruction"><span class="arrow">›</span>Outcome distribution charts — where does this
-                    clinic rank on efficacy?</div>
-                <div class="instruction"><span class="arrow">›</span>Filter by substance — how does ketamine compare to
-                    psilocybin for depression in this clinic vs. the network?</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"This is the network effect. Every session entered by every practitioner makes the
-                    benchmarks more accurate for everyone. After 1,000 sessions across 50 practitioners, the benchmarks
-                    become something no journal article can give you — real-world data, current, field-verified."</div>
-                <a href="https://ppnportal.net/#/analytics" target="_blank" class="platform-link">
-                    <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Analytics</div>
-                    </div>
-                    <div class="pl-arrow">↗</div>
-                </a>
-            </div>
-        </div>
-
-        <!-- 9. PHANTOM SHIELD -->
-        <div class="tour-card" id="tc-8">
-            <div class="tour-header" onclick="toggleTour(8)">
-                <div class="tour-icon icon-cyan">🛡️</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 9</div>
-                    <div class="tour-title">Phantom Shield</div>
+            <div class="tb">
+                <div class="wi">The training program channel: bundle PPN access into any practitioner training program.
+                    Every graduate gets an account. The operator becomes the exclusive network gateway for their
+                    trainees.</div>
+                <div class="uct">The Model Jason Proposed (Feb 2 meeting)</div>
+                <div class="uc">
+                    <div class="uc-who">Singularism training cohort scenario</div>
+                    <div class="uc-what">Singularism trains 40 new practitioners this year. Jason proposed: include PPN
+                        access in the training package. Singularism becomes the sole gateway to the network for those 40
+                        practitioners. PPN gets 40 users from one deal. Singularism gets a competitive differentiator.
+                        Practitioners get the tool. Everyone wins.</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,8)">○</div>
-                <div class="tour-chevron">▾</div>
-            </div>
-            <div class="tour-body">
-                <div class="what-it-is">The privacy and legal protection layer. A separate page that explains — in plain
-                    language — exactly how PPN protects practitioners who are working in complex legal territory. This
-                    is what you share with Bridger's church and every grey market practitioner you meet.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>The Zero-PHI architecture explanation — structural
-                    protection, not a policy.</div>
-                <div class="instruction"><span class="arrow">›</span>The Blind Vetting Scanner — screens clients before
-                    a session without storing any identifiable information.</div>
-                <div class="instruction"><span class="arrow">›</span>The Crisis Logger — creates a timestamped forensic
-                    trail during sessions.</div>
-                <div class="instruction"><span class="arrow">›</span>The Legal Narrative Reframe table — shows how
-                    documentation shifts the legal terrain.</div>
-                <div class="callout"><strong>For Bridger's community:</strong> This is the page to share. The legal
-                    umbrella offer he made means his facilitated sessions need documentation that supports, not
-                    undermines, his RFRA argument. Crisis Logger + zero identifiable records = exactly that.</div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"We designed this specifically for practitioners like Bridger's people. The
-                    question isn't 'how do we hide what we're doing?' The question is how do we prove we ran a serious,
-                    safety-first program. Phantom Shield is the answer."</div>
-                <a href="https://ppnportal.net/phantom-shield.html" target="_blank" class="platform-link">
-                    <div>
-                        <div class="pl-label">Open this page</div>
-                        <div class="pl-url">ppnportal.net/phantom-shield.html</div>
-                    </div>
-                    <div class="pl-arrow">↗</div>
-                </a>
-            </div>
-        </div>
-
-        <!-- 10. EXPORT AND REPORTS -->
-        <div class="tour-card" id="tc-9">
-            <div class="tour-header" onclick="toggleTour(9)">
-                <div class="tour-icon icon-green">📄</div>
-                <div class="tour-meta">
-                    <div class="tour-num">Section 10</div>
-                    <div class="tour-title">Export Center and Reports</div>
+                <div class="uc">
+                    <div class="uc-who">Bridger's church facilitator onboarding</div>
+                    <div class="uc-what">Every new facilitator at Bridger's church is trained on PPN as part of their
+                        certification. The church standardizes documentation across all facilitators. The church's legal
+                        argument becomes: we have a defined, documented process. Not just a ceremony.</div>
                 </div>
-                <div class="tour-mark" onclick="markExplored(event,9)">○</div>
-                <div class="tour-chevron">▾</div>
-            </div>
-            <div class="tour-body">
-                <div class="what-it-is">Practitioners can export their session data, protocol summaries, and outcome
-                    reports as formatted PDFs. These aren't clinical records — they're anonymized intelligence reports a
-                    practitioner can use for board meetings, investor updates, or licensing applications.</div>
-                <div class="instruction-label">What to look at</div>
-                <div class="instruction"><span class="arrow">›</span>The export options: protocol summary, outcome
-                    report, safety incident log.</div>
-                <div class="instruction"><span class="arrow">›</span>The report format — clinical-grade layout, PPN
-                    branded, timestamp verified.</div>
-                <div class="instruction"><span class="arrow">›</span>Think about what a Legacy Transcript means when
-                    Oregon licensing frameworks arrive. Every session in this system is a verifiable career record.
+                <div class="sub"><strong>The revenue math:</strong> One training program deal could be 40 practitioners
+                    at $99/mo = $3,960/mo from a single relationship. At the clinic rate, a 10-location network would be
+                    $499/mo × 10 = $4,990/mo. These are early-stage numbers — but they compound as the network grows.
                 </div>
-                <div class="talking-label">What to say</div>
-                <div class="talking">"When licensing arrives — and it's coming — the practitioners who've been
-                    documenting in PPN will walk into a licensing board with a verifiable record of every session
-                    they've ever run. Everyone else will be starting from zero."</div>
-                <a href="https://ppnportal.net/#/export" target="_blank" class="platform-link">
-                    <div>
-                        <div class="pl-label">Open in portal</div>
-                        <div class="pl-url">ppnportal.net ▸ Export Center</div>
-                    </div>
-                    <div class="pl-arrow">↗</div>
-                </a>
-            </div>
-        </div>
-
-        <!-- WHAT YOU NOW KNOW -->
-        <div class="section-heading">You've Explored the Platform. Here's the Big Picture.</div>
-
-        <div class="setup-card" style="background: rgba(63,185,80,0.06); border-color: rgba(63,185,80,0.25);">
-            <div class="setup-label" style="color: var(--green);">The Three Things That Matter Most</div>
-            <div class="setup-step">
-                <div class="setup-num"
-                    style="background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.4);color:var(--green);">1</div>
-                <span><strong style="color:#d0dae6">Zero-PHI.</strong> We've never stored a single patient name. This is
-                    structural protection, not a policy. Nothing exists to subpoena.</span>
-            </div>
-            <div class="setup-step">
-                <div class="setup-num"
-                    style="background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.4);color:var(--green);">2</div>
-                <span><strong style="color:#d0dae6">Network Effect.</strong> Every session entered makes the benchmarks
-                    more accurate for everyone. The platform gets more valuable as more practitioners use it.</span>
-            </div>
-            <div class="setup-step">
-                <div class="setup-num"
-                    style="background:rgba(63,185,80,0.12);border-color:rgba(63,185,80,0.4);color:var(--green);">3</div>
-                <span><strong style="color:#d0dae6">Licensing Ready.</strong> When regulation arrives, practitioners
-                    with a PPN record have a verifiable career history. Everyone else starts from zero.</span>
+                <div class="tkt">What to say</div>
+                <div class="tk">"We're not selling to individual practitioners one at a time. We're selling to the
+                    training programs, the churches, and the clinic networks — and they bring their whole communities
+                    with them."</div>
             </div>
         </div>
 
         <div style="height:12px"></div>
-
     </div>
 
-    <!-- STICKY BOTTOM -->
-    <div class="sticky-bottom">
-        <button class="btn-secondary" onclick="markAllExplored()">Mark All ✓</button>
-        <button class="btn-portal" onclick="window.open('https://ppnportal.net','_blank')">Open the Portal ↗</button>
+    <div class="sbot">
+        <button class="btn-s" onclick="markAll()">Mark All ✓</button>
+        <button class="btn-p" onclick="window.open('https://ppnportal.net','_blank')">Open the Portal ↗</button>
     </div>
 
     <script>
-        let explored = new Set();
-        const total = 10;
-
-        function updateProgress() {
-            const pct = (explored.size / total) * 100;
-            document.getElementById('progressFill').style.width = pct + '%';
-            document.getElementById('progressLabel').textContent = explored.size + ' / ' + total;
-        }
-
-        function toggleTour(id) {
-            const card = document.getElementById('tc-' + id);
-            card.classList.toggle('open');
-        }
-
-        function markExplored(e, id) {
-            e.stopPropagation();
-            const card = document.getElementById('tc-' + id);
-            const mark = card.querySelector('.tour-mark');
-            if (card.classList.contains('explored')) {
-                card.classList.remove('explored');
-                mark.textContent = '○';
-                explored.delete(id);
-            } else {
-                card.classList.add('explored');
-                mark.textContent = '✓';
-                explored.add(id);
-            }
-            updateProgress();
-        }
-
-        function markAllExplored() {
-            for (let i = 0; i < total; i++) {
-                const card = document.getElementById('tc-' + i);
-                const mark = card.querySelector('.tour-mark');
-                if (!card.classList.contains('explored')) {
-                    card.classList.add('explored');
-                    mark.textContent = '✓';
-                    explored.add(i);
-                }
-            }
-            updateProgress();
-        }
-
-        updateProgress();
+        let exp = new Set(), total = 11;
+        function ud() { let p = (exp.size / total) * 100; document.getElementById('pf').style.width = p + '%'; document.getElementById('pl').textContent = exp.size + ' / ' + total }
+        function tog(id) { let c = document.getElementById('tc-' + id); c.classList.toggle('open') }
+        function mrk(e, id) { e.stopPropagation(); let c = document.getElementById('tc-' + id), m = c.querySelector('.mk'); if (c.classList.contains('done')) { c.classList.remove('done'); m.textContent = '○'; exp.delete(id) } else { c.classList.add('done'); m.textContent = '✓'; exp.add(id) } ud() }
+        function markAll() { for (let i = 0; i < total; i++) { let c = document.getElementById('tc-' + i), m = c.querySelector('.mk'); if (!c.classList.contains('done')) { c.classList.add('done'); m.textContent = '✓'; exp.add(i) } } ud() }
+        function toggleSD(el) { el.classList.toggle('sd-open') }
+        ud();
     </script>
 </body>
 

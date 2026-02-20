@@ -203,20 +203,28 @@ const SearchPortal: React.FC = () => {
     }
   };
 
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+
   const generateAiAnalysis = async (searchVal: string) => {
     if (!searchVal.trim()) return;
+    // If no API key is configured, show a polite offline message and skip the call
+    if (!GEMINI_API_KEY) {
+      setAiAnalysis('AI synthesis is offline — configure VITE_GEMINI_API_KEY to enable Neural Copilot.');
+      return;
+    }
     setIsAiLoading(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.0-flash',
         contents: `Perform a technical clinical cross-reference for "${searchVal}". Focus on recent 2024-2025 research. Provide a concise synthesis (max 40 words) for a clinical intelligence portal.`,
         config: { tools: [{ googleSearch: {} }] }
       });
       setAiAnalysis(response.text || 'Synthesis complete.');
       setGroundingChunks(response.candidates?.[0]?.groundingMetadata?.groundingChunks || []);
-    } catch {
-      setAiAnalysis('Neural link synchronization required for full synthesis.');
+    } catch (err) {
+      console.error('[SearchPortal] AI synthesis error:', err);
+      setAiAnalysis('Synthesis unavailable — check your network connection or API key.');
     } finally {
       setIsAiLoading(false);
     }
@@ -248,11 +256,17 @@ const SearchPortal: React.FC = () => {
     });
 
     const substanceResults = SUBSTANCES.filter(s =>
-      !q || s.name.toLowerCase().includes(q) || s.chemicalName.toLowerCase().includes(q)
+      !q || s.name.toLowerCase().includes(q) || s.chemicalName.toLowerCase().includes(q) || s.class.toLowerCase().includes(q)
     );
 
     const clinicianResults = CLINICIANS.filter(c =>
-      !q || c.name.toLowerCase().includes(q) || c.specialization.toLowerCase().includes(q)
+      !q ||
+      c.name.toLowerCase().includes(q) ||
+      c.specialization.toLowerCase().includes(q) ||
+      c.role.toLowerCase().includes(q) ||
+      (c.institution && c.institution.toLowerCase().includes(q)) ||
+      (c.location && c.location.toLowerCase().includes(q)) ||
+      (c.tags && c.tags.some(t => t.toLowerCase().includes(q)))
     );
 
     return { patientResults, substanceResults, clinicianResults };
@@ -339,8 +353,8 @@ const SearchPortal: React.FC = () => {
                   aria-selected={isActive}
                   onClick={() => handleCategoryChange(cat.label)}
                   className={`px-4 py-2 rounded-full text-[12px] font-bold transition-all border flex items-center gap-2 ${isActive
-                      ? 'bg-slate-800 text-slate-300 border-slate-600 shadow-lg'
-                      : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900 hover:text-slate-300'
+                    ? 'bg-slate-800 text-slate-300 border-slate-600 shadow-lg'
+                    : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900 hover:text-slate-300'
                     }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">{cat.icon}</span>
@@ -362,8 +376,8 @@ const SearchPortal: React.FC = () => {
                   key={opt}
                   onClick={() => setMinEfficacy(opt)}
                   className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all ${minEfficacy === opt
-                      ? 'bg-primary/20 border-primary text-slate-300'
-                      : 'bg-transparent border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300'
+                    ? 'bg-primary/20 border-primary text-slate-300'
+                    : 'bg-transparent border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300'
                     }`}
                   aria-pressed={minEfficacy === opt}
                 >
@@ -397,6 +411,7 @@ const SearchPortal: React.FC = () => {
                     <div className="space-y-3">
                       <div className="h-1.5 bg-indigo-500/10 rounded-full w-3/4 animate-pulse" />
                       <div className="h-1.5 bg-indigo-500/10 rounded-full w-1/2 animate-pulse" />
+                      <p className="text-xs font-medium text-indigo-400/60 mt-2">Querying global research nodes...</p>
                     </div>
                   ) : (
                     <div className="space-y-4" aria-live="polite">

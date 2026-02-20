@@ -1135,10 +1135,10 @@
         }
 
         function initStars() {
-            stars = Array.from({ length: 120 }, () => ({
+            stars = Array.from({ length: 100 }, () => ({
                 x: Math.random() * W,
                 y: Math.random() * H,
-                r: Math.random() * 1.2 + 0.3,
+                r: Math.random() * 1.0 + 0.2,
                 a: Math.random(),
                 speed: Math.random() * 0.003 + 0.001
             }));
@@ -1148,7 +1148,7 @@
             ctx.clearRect(0, 0, W, H);
             stars.forEach(s => {
                 s.a += s.speed;
-                const alpha = 0.2 + 0.3 * Math.abs(Math.sin(s.a));
+                const alpha = 0.08 + 0.12 * Math.abs(Math.sin(s.a));
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(180,200,230,${alpha})`;

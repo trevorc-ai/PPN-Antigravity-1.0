@@ -43,11 +43,24 @@ from datetime import datetime
 # ─────────────────────────────────────────────────────────────────────────────
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+# Support both key names used across the project
+SUPABASE_KEY = (
+    os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or
+    os.environ.get("SUPABASE_SERVICE_KEY") or
+    ""
+)
 
 if not SUPABASE_URL or not SUPABASE_KEY:
-    print("ERROR: Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars.")
-    print("  These are in backend/.env — run `source backend/.env` or set them manually.")
+    print("ERROR: Missing Supabase credentials.")
+    print("  Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in your environment.")
+    print("  ⚠️  The key must be the service_role key (not the anon/publishable key).")
+    print("  Find it: Supabase Dashboard → Settings → API → service_role (secret)")
+    sys.exit(1)
+
+# Guard: warn if user accidentally uses the anon/publishable key
+if SUPABASE_KEY.startswith("sb_publishable") or "anon" in SUPABASE_KEY.lower():
+    print("⚠️  WARNING: The key looks like an anon/publishable key, not a service_role key.")
+    print("   Upserts will fail due to RLS. Get the service_role key from Supabase Dashboard.")
     sys.exit(1)
 
 HEADERS = {

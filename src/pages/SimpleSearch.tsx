@@ -46,7 +46,14 @@ const SimpleSearch: React.FC = () => {
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && query.trim()) {
+                  e.preventDefault();
+                  navigate(`/advanced-search?q=${encodeURIComponent(query.trim())}`);
+                }
+              }}
               placeholder="Search protocols, adverse events, or ask the Neural Copilot..."
+              aria-label="Search the PPN clinical database"
               className="w-full h-16 sm:h-24 bg-slate-900/90 border border-slate-700/50 rounded-[2.5rem] px-10 sm:px-14 text-sm text-slate-300 focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all backdrop-blur-2xl shadow-2xl placeholder:text-slate-600 font-bold"
             />
             <button
