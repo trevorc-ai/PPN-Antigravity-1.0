@@ -49,10 +49,10 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
                 <div className="flex items-center gap-2">
                     {/* Completeness badge */}
                     <span className={`text-xs font-black px-2.5 py-1 rounded-full border uppercase tracking-widest ${narrative.completeness === 100
-                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                            : narrative.completeness >= 60
-                                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                                : 'bg-red-500/10 border-red-500/30 text-red-400'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                        : narrative.completeness >= 60
+                            ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                            : 'bg-red-500/10 border-red-500/30 text-red-400'
                         }`}>
                         {narrative.completeness}% Complete
                     </span>
@@ -73,7 +73,7 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
                     {/* Section-by-section display */}
                     {Object.entries(narrative.sections).map(([title, content]) => (
                         <div key={title} className="space-y-1">
-                            <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">{title}</h4>
+                            <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest">{title}</h4>
                             <p className="text-sm text-slate-300 leading-relaxed bg-slate-800/30 rounded-xl px-4 py-3">
                                 {content}
                             </p>
@@ -93,8 +93,8 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
                 <button
                     onClick={handleCopy}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all border ${copied
-                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                            : 'bg-slate-800/60 border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-slate-800'
+                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                        : 'bg-slate-800/60 border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-slate-800'
                         }`}
                 >
                     {copied ? <CheckCircle className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
