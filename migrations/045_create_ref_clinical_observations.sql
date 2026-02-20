@@ -27,9 +27,6 @@ CREATE TABLE IF NOT EXISTS public.ref_clinical_observations (
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Index for the primary query pattern: filter by category + is_active
-CREATE INDEX IF NOT EXISTS idx_ref_clinical_obs_category
-    ON public.ref_clinical_observations (category, is_active);
 
 -- ============================================
 -- SECTION 2: ROW LEVEL SECURITY
@@ -48,8 +45,29 @@ CREATE POLICY "ref_clinical_observations_read"
     USING (true);
 
 -- ============================================
--- SECTION 3: SEED — BASELINE OBSERVATIONS
+-- SECTION 3: ENSURE ALL COLUMNS EXIST
 -- ============================================
+-- Defensive ALTER TABLE: handles the case where the table already existed
+-- from a partial/aborted prior run that created the table but not all columns.
+-- ADD COLUMN IF NOT EXISTS is safe to run on both new and existing tables.
+
+ALTER TABLE public.ref_clinical_observations
+    ADD COLUMN IF NOT EXISTS sort_order INT NOT NULL DEFAULT 0;
+
+ALTER TABLE public.ref_clinical_observations
+    ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+
+ALTER TABLE public.ref_clinical_observations
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+
+-- Ensure the category index exists
+CREATE INDEX IF NOT EXISTS idx_ref_clinical_obs_category
+    ON public.ref_clinical_observations (category, is_active);
+
+-- ============================================
+-- SECTION 4: SEED — BASELINE OBSERVATIONS
+-- ============================================
+
 -- Used in Phase 1 Preparation (BaselineObservationsForm, ArcOfCareDemo)
 
 INSERT INTO public.ref_clinical_observations
@@ -87,7 +105,7 @@ VALUES
 ON CONFLICT (observation_code) DO NOTHING;
 
 -- ============================================
--- SECTION 4: SEED — SESSION OBSERVATIONS
+-- SECTION 5: SEED — SESSION OBSERVATIONS
 -- ============================================
 -- Used in Phase 2 Dosing (SessionObservationsForm)
 
