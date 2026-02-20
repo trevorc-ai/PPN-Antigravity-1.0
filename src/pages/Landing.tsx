@@ -151,7 +151,7 @@ const Landing: React.FC = () => {
               transition={{ duration: 1, delay: 0.5 }}
               className="max-w-2xl lg:mx-0 mx-auto p-4 bg-slate-900/40 border border-slate-800 rounded-2xl"
             >
-              <p className="text-xs font-normal text-slate-500 leading-relaxed">
+              <p className="text-sm font-normal text-slate-500 leading-relaxed">
                 <span className="text-blue-400 font-semibold mr-1">Notice:</span>
                 PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
               </p>
@@ -167,7 +167,7 @@ const Landing: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigate('/checkout')}
-                  className="flex-1 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95"
+                  className="flex-1 px-8 py-4 bg-primary hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95"
                 >
                   Start Free Trial
                 </button>
@@ -183,10 +183,7 @@ const Landing: React.FC = () => {
               {/* Trust Indicators + Sign In link */}
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-emerald-400" />
-                    <span>Invitation-only · Licensed practitioners</span>
-                  </div>
+
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <span>HIPAA-compliant infrastructure</span>
@@ -214,13 +211,7 @@ const Landing: React.FC = () => {
               transition={{ duration: 1, delay: 1 }}
               className="flex flex-col gap-3 w-full max-w-md lg:mx-0 mx-auto pt-8 border-t border-slate-800/50"
             >
-              <div className="flex items-center gap-3 px-4 py-3 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl">
-                <span className="material-symbols-outlined text-indigo-400 text-lg">lock</span>
-                <div>
-                  <p className="text-sm font-black text-slate-300">Invitation-Only Early Access</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Founding practitioners are shaping the platform — apply to join.</p>
-                </div>
-              </div>
+
               <div className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
                 <span className="material-symbols-outlined text-emerald-400 text-lg">verified</span>
                 <div>
