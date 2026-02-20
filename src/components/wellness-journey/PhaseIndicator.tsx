@@ -27,7 +27,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
         },
         {
             id: 2 as const,
-            label: 'Treatment',
+            label: 'Dosing Session',
             icon: Activity,
             color: 'amber',
             bgColor: 'bg-amber-500/20',
@@ -90,11 +90,11 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                         ) : (
                                             <phase.icon className="w-5 h-5" />
                                         )}
-                                        <div className="text-left">
-                                            <div className="text-sm uppercase tracking-wide">Phase {phase.id}</div>
-                                            <div className={`text-base ${isActive ? 'font-black' : 'font-semibold'}`}>
-                                                {phase.label} {isCompleted && !isActive && '✓'}
-                                            </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-lg font-black tabular-nums ${isActive ? '' : 'text-slate-500'}`}>{phase.id}</span>
+                                            <span className={`text-base ${isActive ? 'font-black' : 'font-semibold'}`}>
+                                                {phase.label}{isCompleted && !isActive && ' ✓'}
+                                            </span>
                                         </div>
                                     </div>
                                 </button>
@@ -123,7 +123,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                 >
                     {phases.map(phase => (
                         <option key={phase.id} value={phase.id}>
-                            Phase {phase.id}: {phase.label}
+                            {phase.id}  {phase.label}
                         </option>
                     ))}
                 </select>
