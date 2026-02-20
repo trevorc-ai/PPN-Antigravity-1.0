@@ -429,11 +429,6 @@ const Landing: React.FC = () => {
                 transition={{ duration: 0.6, delay: i * 0.15 }}
                 className="text-center space-y-4 relative"
               >
-                {/* Connector Line */}
-                {i < 3 && (
-                  <div className="hidden lg:block absolute left-1/2 top-8 h-0.5 w-full bg-gradient-to-r from-primary/50 via-primary/30 to-transparent -z-10" style={{ transform: 'translateX(2rem)' }} />
-                )}
-
                 {/* Step Number Circle */}
                 <div className="relative inline-block">
                   <div className="w-16 h-16 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center mx-auto relative z-10">
@@ -441,6 +436,11 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl" />
                 </div>
+
+                {/* Connector Line — after circle so space-y-4 doesn't push the circle down */}
+                {i < 3 && (
+                  <div className="hidden lg:block absolute left-1/2 top-8 h-0.5 w-full bg-gradient-to-r from-primary/50 via-primary/30 to-transparent -z-10" style={{ transform: 'translateX(2rem)' }} />
+                )}
 
                 {/* Icon */}
                 <item.icon className="w-8 h-8 mx-auto text-slate-300" />
