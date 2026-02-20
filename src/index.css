@@ -6,7 +6,7 @@ body {
 
 /* Enhanced Focus Styles for Accessibility (WCAG 2.4.7 - Focus Visible) */
 :focus-visible {
-  outline: 3px solid #2b74f3;
+  outline: 3px solid #1e40af;
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -14,7 +14,7 @@ body {
 /* Stronger focus for buttons */
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid #2b74f3;
+  outline: 3px solid #1e40af;
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(43, 116, 243, 0.2);
 }
@@ -23,16 +23,16 @@ a:focus-visible {
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #2b74f3;
+  outline: 2px solid #1e40af;
   outline-offset: 0px;
-  border-color: #2b74f3;
+  border-color: #1e40af;
   box-shadow: 0 0 0 3px rgba(43, 116, 243, 0.15);
 }
 
 /* Focus for cards and interactive containers */
 [role="button"]:focus-visible,
 [tabindex]:not([tabindex="-1"]):focus-visible {
-  outline: 2px solid #2b74f3;
+  outline: 2px solid #1e40af;
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(43, 116, 243, 0.15);
 }
@@ -88,12 +88,12 @@ select:focus-visible {
 
 /* Gradient Text Utilities (Accessible - WCAG AA Compliant) */
 .text-gradient-primary {
-  background: linear-gradient(90deg, #2b74f3 0%, #60a5fa 100%);
+  background: linear-gradient(90deg, #1e40af 0%, #60a5fa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   /* Fallback for browsers that don't support background-clip */
-  color: #2b74f3;
+  color: #1e40af;
 }
 
 .text-gradient-purple {
@@ -460,4 +460,34 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .hover\:bg-indigo-500:hover,
 .hover\:bg-indigo-600:hover {
   color: #ffffff;
+}
+
+/* =====================================================
+   ASSESSMENT SLIDER — fat, easy-to-grab thumb
+   ===================================================== */
+.assessment-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #10b981; /* emerald-500 */
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.4);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.assessment-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(16,185,129,0.6);
+}
+.assessment-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.4);
+  cursor: grab;
 }

@@ -120,9 +120,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
     };
 
     const handleComplete = () => {
-        if (answeredCount === config.questions.length) {
-            onComplete(responses, currentScore);
-        }
+        // Always allow completion — assessment is optional, partial saves are valid
+        onComplete(responses, currentScore);
     };
 
     const isComplete = answeredCount === config.questions.length;
@@ -234,18 +233,18 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
 
                             {/* Response Options */}
                             {question.type === 'likert' && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
                                     {question.labels?.map((option) => (
                                         <button
                                             key={option.value}
                                             onClick={() => handleResponse(question.id, option.value)}
-                                            className={`flex flex-col items-center justify-center p-4 rounded-xl transition-all border ${responses[question.id] === option.value
-                                                ? 'bg-emerald-500 border-emerald-400 text-slate-300 shadow-lg shadow-emerald-500/20 transform scale-[1.02]'
-                                                : 'bg-slate-800/40 border-slate-700/50 text-slate-300 hover:bg-slate-700/60 hover:border-slate-600'
+                                            className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all border ${responses[question.id] === option.value
+                                                ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/20 transform scale-[1.02]'
+                                                : 'bg-slate-800/60 border-slate-700/50 text-slate-200 hover:bg-slate-700/60 hover:border-slate-600'
                                                 }`}
                                         >
-                                            <span className="text-lg font-black mb-1">{option.value}</span>
-                                            <span className={`text-base font-medium text-center ${responses[question.id] === option.value ? 'text-slate-300/90' : 'text-slate-400'}`}>
+                                            <span className="text-base font-black mb-0.5">{option.value}</span>
+                                            <span className={`text-xs font-medium text-center leading-tight ${responses[question.id] === option.value ? 'text-white/90' : 'text-slate-400'}`}>
                                                 {option.label}
                                             </span>
                                         </button>
@@ -263,7 +262,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                                         onChange={(e) =>
                                             handleResponse(question.id, parseInt(e.target.value))
                                         }
-                                        className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                                        className="w-full h-5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500 assessment-slider"
                                     />
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-slate-300">{question.min}</span>
@@ -309,27 +308,13 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     ) : (
-                        <AdvancedTooltip
-                            content={
-                                isComplete
-                                    ? 'Click to submit your responses and view your final score.'
-                                    : `Please answer all ${config.questions.length} questions before completing.`
-                            }
-                            tier="standard"
-                            type={isComplete ? 'success' : 'warning'}
+                        <button
+                            onClick={handleComplete}
+                            className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30"
                         >
-                            <button
-                                onClick={handleComplete}
-                                disabled={!isComplete}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all ${isComplete
-                                    ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-300 shadow-lg shadow-emerald-500/30'
-                                    : 'bg-slate-800/50 text-slate-600 cursor-not-allowed'
-                                    }`}
-                            >
-                                <CheckCircle className="w-5 h-5" />
-                                Complete Assessment
-                            </button>
-                        </AdvancedTooltip>
+                            <CheckCircle className="w-5 h-5" />
+                            Complete Assessment
+                        </button>
                     )}
                 </div>
             </div>

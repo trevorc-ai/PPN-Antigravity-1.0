@@ -5,6 +5,8 @@
 **Status:** [DRAFT — Screenshots Pending]
 
 > **PRODDY NOTE TO TREVOR:** This is a living template. Placeholders marked `[SCREENSHOT: ...]` are exactly where your screenshots should be inserted. I've structured each section so you can drop screenshots in without rewriting anything. See the "Screenshot Collection Guide" at the end of this document (Appendix B) for the full capture list.
+>
+> **v1.1 UPDATE (Gap Audit Complete):** Cross-referenced `ComponentShowcase.tsx`, `FormsShowcase.tsx`, `HiddenComponentsShowcase.tsx`, `PartnerDemoHub.tsx`, and all 65+ page files. Added 8 missing sections: Security Suite (Dosage Calculator, Crisis Logger, Blind Vetting), NeuralCopilot AI Assistant, Registry Upload, Substance Monograph, MEQ-30 Assessment Page, Deep Dives, Partner Demo Hub. Also corrected MEQ-30 placement (it belongs to Phase 1 Preparation, not Phase 2).
 
 ---
 
@@ -21,22 +23,32 @@
    - 4.1 Wellness Journey (Arc of Care)
    - 4.2 My Protocols
    - 4.3 Drug Interaction Checker
+   - 4.4 MEQ-30 Assessment Page
 5. [Knowledge Base](#5-knowledge-base)
    - 5.1 Substance Catalog
-   - 5.2 Intelligence Hub
+   - 5.2 Substance Monograph (Individual Substance Pages)
+   - 5.3 Intelligence Hub
 6. [Insights & Analytics](#6-insights--analytics)
    - 6.1 Analytics Dashboard
-   - 6.2 Assessment Tools
-   - 6.3 Data Export & Reporting
-7. [Network Features](#7-network-features)
-   - 7.1 Clinician Directory
-8. [Settings & Account Management](#8-settings--account-management)
-9. [Privacy & Data Security](#9-privacy--data-security)
-10. [Troubleshooting & FAQ](#10-troubleshooting--faq)
-11. [Glossary](#11-glossary)
-12. [Contact & Support](#12-contact--support)
-13. [Appendix A: Form Reference Guide](#appendix-a-form-reference-guide)
-14. [Appendix B: Screenshot Collection Guide](#appendix-b-screenshot-collection-guide)
+   - 6.2 Deep Dive Analytics
+   - 6.3 Adaptive Assessment
+   - 6.4 Data Export & Reporting
+7. [Security Suite (Phantom Shield)](#7-security-suite-phantom-shield)
+   - 7.1 Dosage Calculator (Potency Normalizer)
+   - 7.2 Crisis Logger
+   - 7.3 Blind Vetting Scanner
+8. [AI Features](#8-ai-features)
+   - 8.1 NeuralCopilot AI Assistant
+9. [Registry Upload (Ingestion Hub)](#9-registry-upload-ingestion-hub)
+10. [Network Features](#10-network-features)
+    - 10.1 Clinician Directory
+11. [Settings & Account Management](#11-settings--account-management)
+12. [Privacy & Data Security](#12-privacy--data-security)
+13. [Troubleshooting & FAQ](#13-troubleshooting--faq)
+14. [Glossary](#14-glossary)
+15. [Contact & Support](#15-contact--support)
+16. [Appendix A: Form Reference Guide](#appendix-a-form-reference-guide)
+17. [Appendix B: Screenshot Collection Guide](#appendix-b-screenshot-collection-guide)
 
 ---
 
@@ -323,6 +335,23 @@ Use the filter bar at the top to filter by:
 
 ---
 
+### 4.4 MEQ-30 Assessment Page
+
+The **MEQ-30** (Mystical Experience Questionnaire, 30-item) has a dedicated full-page interface in addition to appearing as a form within the Wellness Journey.
+
+`[SCREENSHOT: MEQ-30 standalone page — full view]`
+
+This page provides:
+- The complete 30-item questionnaire in a clean, single-focus layout
+- Real-time scoring with subscale breakdowns (Mystical, Transcendence, Positive Affect, Noetic Quality)
+- Score interpretation and clinical context
+
+**When to use the standalone page vs. the form:**
+- **Standalone page** (`/meq30`): Useful when conducting a dedicated MEQ scoring session separately from the full Wellness Journey workflow
+- **Wellness Journey form**: Use when MEQ-30 is part of a complete preparation or post-session documentation workflow
+
+---
+
 ### 4.3 Drug Interaction Checker
 
 The **Interaction Checker** screens for potentially dangerous drug interactions before you administer any substance.
@@ -374,6 +403,31 @@ Hover over the **Severity Score** label on any result to see a tooltip explainin
 
 ## 5. Knowledge Base
 
+### 5.2 Substance Monograph (Individual Substance Pages)
+
+Every substance in the catalog has a dedicated **Monograph** page — a deep reference document for that specific compound.
+
+`[SCREENSHOT: Substance Monograph page — Psilocybin — full view]`
+
+**Monograph pages include:**
+- Overview and mechanism of action
+- Receptor affinity profile
+- Dose-response curves
+- Pharmacokinetics (onset, peak, duration by route)
+- Contraindications and drug interactions
+- Clinical evidence summary
+- Safety considerations
+- Regulatory status by jurisdiction
+
+**To navigate to a Monograph:**
+1. Go to **Substance Catalog**
+2. Click on any substance tile
+3. You will be taken directly to that substance's Monograph page
+
+`[SCREENSHOT: Clicking through from Catalog tile to Monograph page]`
+
+---
+
 ### 5.1 Substance Catalog
 
 The **Substance Catalog** is a reference library covering 50+ psychedelic and psychedelic-adjacent substances.
@@ -419,6 +473,35 @@ Use the category filters to narrow the feed by topic area.
 ---
 
 ## 6. Insights & Analytics
+
+### 6.2 Deep Dive Analytics
+
+Beyond the main Analytics Dashboard, PPN offers a suite of **14 Enterprise-grade Deep Dive** visualizations accessible from the Analytics section or via the Partner Demo Hub.
+
+`[SCREENSHOT: Deep Dive navigation grid]`
+
+| Deep Dive | What It Shows | Tier |
+|-----------|--------------|------|
+| Patient Flow Analysis | Sankey diagram — patient retention and drop-off between phases | Enterprise |
+| Clinic Performance Radar | Multi-dimensional performance vs. network average | Enterprise |
+| Patient Constellation | 3D clustering of patient outcomes | Enterprise |
+| Molecular Pharmacology | Receptor binding profiles and pharmacodynamics | Enterprise |
+| Protocol Efficiency | ROI analysis and financial efficiency modeling | Enterprise |
+| Workflow Chaos Analysis | Operational bottleneck identification | Enterprise |
+| Safety Surveillance | Adverse event monitoring over time | Enterprise |
+| Regulatory Mosaic | Multi-jurisdiction compliance tracking | Enterprise |
+| Revenue Forensics | Financial performance deep dive | Enterprise |
+| Metabolic Risk Analysis | CYP450 genetic risk assessment | Enterprise |
+| Confidence Cone | Statistical confidence intervals for outcomes | Enterprise |
+| Safety Benchmark | Comparative safety performance | Enterprise |
+| Regulatory Weather | Regulatory climate and compliance forecasting | Enterprise |
+| Patient Journey Snapshot | Visual arc-of-care progression for a cohort | Enterprise |
+
+> **Access:** Deep Dive pages are available on the **Clinic Benchmark** and **Enterprise** tiers. They are accessible via the Partner Demo Hub during your preview period.
+
+`[SCREENSHOT: Sample Deep Dive — e.g., Patient Flow Sankey]`
+
+---
 
 ### 6.1 Analytics Dashboard
 
@@ -513,9 +596,130 @@ It includes:
 
 ---
 
-## 7. Network Features
+## 7. Security Suite (Phantom Shield)
 
-### 7.1 Clinician Directory
+The **Phantom Shield** is a suite of specialized tools designed for session-level safety, dosing accuracy, and practitioner protection. These components are available from the Component Showcase and, where integrated, from the Wellness Journey quick actions.
+
+> **Note:** Phantom Shield features focus on practitioner-side operational safety. They do not collect PHI.
+
+---
+
+### 7.1 Dosage Calculator (Potency Normalizer)
+
+The **Dosage Calculator** standardizes dose comparisons across different preparations, concentrations, and batch potencies.
+
+`[SCREENSHOT: Dosage Calculator component — active calculation]`
+
+**Use cases:**
+- Converting between different unit systems (mg, μg, mg/kg)
+- Normalizing potency across different batch sources
+- Calculating adjusted doses based on body weight
+- Equivalent dose cross-referencing between substances
+
+**To access:**
+- Via **Component Showcase** → WO_003: Dosage Calculator
+- Via **Wellness Journey** → Phase 2 → Dosing Protocol form (integrated)
+
+---
+
+### 7.2 Crisis Logger
+
+The **Crisis Logger** is a real-time tactical incident logging interface for use during an active dosing session when a safety event occurs.
+
+`[SCREENSHOT: Crisis Logger component — active, during a session]`
+
+**Key features:**
+- Timestamped incident logging (auto-captures current session time)
+- Structured event type selection (no free-text)
+- Escalation level tracking
+- One-tap logging designed for use while managing a clinical situation
+- Exports to the session's Adverse Event record
+
+> **Important:** The Crisis Logger is designed for speed under pressure. Every field uses a structured selector — there is no free-text input. This protects both the practitioner (defensible documentation) and the data network (no PHI).
+
+**To access:**
+- Via **Wellness Journey** → Quick Actions FAB → Crisis Logger
+- Via **Component Showcase** → WO_004: Crisis Logger
+
+---
+
+### 7.3 Blind Vetting Scanner
+
+The **Blind Vetting Scanner** is a practitioner-facing security check for evaluating potential clients with minimum information disclosure.
+
+`[SCREENSHOT: Blind Vetting Scanner — terminal interface]`
+
+This tool allows practitioners to:
+- Screen clients against de-identified risk indicators
+- Evaluate suitability without collecting or storing PHI
+- Generate a structured risk profile using coded inputs only
+
+**To access:**
+- Via **Component Showcase** → WO_005: Blind Vetting Scanner
+
+---
+
+## 8. AI Features
+
+### 8.1 NeuralCopilot AI Assistant
+
+The **NeuralCopilot** is an AI-powered clinical assistant built with Google Gemini integration.
+
+`[SCREENSHOT: NeuralCopilot component — active conversation]`
+
+**Capabilities:**
+- Real-time substance interaction warnings generated by AI
+- Safety flag detection during session documentation
+- Terminal-style neural trace animations showing AI reasoning
+- Contextual clinical support based on the current protocol
+
+> **Status:** NeuralCopilot is currently available as a preview component. It is accessible via the Hidden Components Showcase. Full platform integration is planned for a future release.
+
+**To access (preview):**
+- Navigate to **Hidden Components Showcase** → NeuralCopilot
+- URL: `/#/hidden-components`
+
+---
+
+## 9. Registry Upload (Ingestion Hub)
+
+The **Registry Upload** (also called the **Ingestion Hub**) allows institutional users to contribute legacy clinical data to the PPN registry through two methods.
+
+`[SCREENSHOT: Registry Upload page — full view with both modules]`
+
+### Method 1: Legacy Chart OCR
+
+Upload physical clinical records (PDFs or images) for automated digitization and de-identification.
+
+- **Supported formats:** PDF, JPG, PNG
+- **Privacy Guard:** All documents are automatically de-identified at the edge before storage. PHI is never cached in cleartext.
+- **Process:** Drag-and-drop or select files → automated OCR → review queue → registry sync (24-hour review window)
+
+`[SCREENSHOT: Legacy Chart OCR module — drag-and-drop zone]`
+
+### Method 2: Neural Dictation
+
+Real-time voice-to-protocol synthesis for capturing session notes via audio.
+
+- **HIPAA Buffer:** Audio is processed through an institutional HIPAA buffer — raw audio is not stored
+- **Process:** Initialize recording → speak session observations → AI transcribes and structures into coded protocol fields → review before registry sync
+
+`[SCREENSHOT: Neural Dictation module — recording active state]`
+
+### Upload Queue
+
+All uploaded jobs appear in the **Upload Queue** with real-time status tracking:
+- **Processing** — Active OCR or transcription in progress
+- **Verifying** — De-identification check in progress
+- **Pending** — Awaiting 24-hour practitioner manual review before final registry sync
+
+> **Important:** Records remain in Pending state for 24 hours, giving practitioners the opportunity to review before the data is committed to the registry.
+
+---
+
+## 10. Network Features
+
+### 10.1 Clinician Directory
 
 The **Clinician Directory** is an opt-in network of PPN practitioners.
 
@@ -531,7 +735,7 @@ Search and filter practitioners by:
 
 ---
 
-## 8. Settings & Account Management
+## 11. Settings & Account Management
 
 Access your Settings from the avatar icon in the top right navigation bar.
 
@@ -558,7 +762,7 @@ Access your Settings from the avatar icon in the top right navigation bar.
 
 ---
 
-## 9. Privacy & Data Security
+## 12. Privacy & Data Security
 
 ### Zero-PHI Architecture
 
@@ -612,7 +816,7 @@ You may:
 
 ---
 
-## 10. Troubleshooting & FAQ
+## 13. Troubleshooting & FAQ
 
 ### Common Issues
 
@@ -673,7 +877,7 @@ A: Email **support@ppnportal.com** with:
 
 ---
 
-## 11. Glossary
+## 14. Glossary
 
 | Term | Definition |
 |------|-----------|
@@ -700,7 +904,7 @@ A: Email **support@ppnportal.com** with:
 
 ---
 
-## 12. Contact & Support
+## 15. Contact & Support
 
 ### Getting Help
 
@@ -725,31 +929,30 @@ Fridays at 2:00 PM PT
 
 ## Appendix A: Form Reference Guide
 
-A complete reference of all 19 Arc of Care forms, organized by phase.
+A complete reference of all Arc of Care forms, organized by phase. *(Source of truth: `FormsShowcase.tsx`)*
 
-### Phase 1: Preparation (5 Forms)
+### Phase 1: Preparation (4 Forms)
 
 | Form Name | Key Data Captured | Notes |
 |-----------|------------------|-------|
-| Mental Health Screening | PHQ-9 score, GAD-7 score, ACE score, risk flags | Must be completed before dosing session |
+| MEQ-30 Questionnaire | 30-item mystical experience scale, pre-session expectancy | Also available as standalone `/meq30` page |
 | Set & Setting Assessment | Session location, therapeutic container, support persons | Structured selections only |
-| Baseline Physiology | Heart rate, blood pressure, respiratory rate, SpO2, temperature | Vital presets available for common values |
 | Baseline Observations | Clinical observations, affect, orientation, alertness | Coded taxonomy — no free text |
 | Informed Consent | Consent elements documented, consent date (year), witness role | Structured consent items only |
 
-### Phase 2: Dosing Session (9 Forms)
+### Phase 2: Dosing Session (8 Forms)
 
 | Form Name | Key Data Captured | Notes |
 |-----------|------------------|-------|
-| Dosing Protocol | Substance, route, dose (mg), dose unit, session number, setting type | Use the Potency Normalizer for dose equivalence calculations |
-| Session Vitals | Time-stamped vital signs (HR, BP, SpO2, RR) | Repeat as needed throughout session |
+| Dosing Protocol | Substance, route, dose (mg), dose unit, session number, setting type | Use the Potency Normalizer (Section 7.1) for dose equivalence calculations |
+| Session Vitals | Time-stamped vital signs (HR, BP, SpO2, RR) | Repeat as needed throughout session; also captures baseline physiology |
 | Session Timeline | Timestamped event log (onset, peak, resolution, notable moments) | Tap "Now" button for instant timestamp |
 | Session Observations | Structured clinician observations at session intervals | Coded taxonomy |
+| Safety & Adverse Events | Unified adverse event and safety event form (severity, type, intervention, resolution) | REQUIRED for any adverse event. Triggers auto-flag in Safety Risk Matrix. |
 | Post-Session Assessments | Immediate post-session evaluation across multiple domains | Administered after effects resolve |
-| MEQ-30 Questionnaire | 30-item mystical experience scale, scored | Patient-assisted — practitioner documents responses |
-| Adverse Event Report | Event type, severity, onset, intervention, resolution | REQUIRED for any adverse event |
-| Safety Event Observations | Deeper documentation for safety incidents | Triggers auto-flag in Safety Risk Matrix |
 | Rescue Protocol | Rescue medication, dose, route, rationale, response | Complete within 1 hour of any rescue intervention |
+
+> **Note:** `SafetyAndAdverseEventForm` is a unified replacement for the previously separate Adverse Event Report and Safety Event Observations forms. One form covers both.
 
 ### Phase 3: Integration (4 Forms)
 
