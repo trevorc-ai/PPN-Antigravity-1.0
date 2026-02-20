@@ -108,34 +108,23 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
     return (
         <div className="max-w-3xl mx-auto space-y-6">
 
-            {/* ── Header ──────────────────────────────────────────────────── */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
-                            <FileCheck className="w-7 h-7 text-green-400" />
-                            Informed Consent
-                        </h2>
-                        <p className="text-slate-300 text-sm mt-2">
-                            Document patient consent and authorization before proceeding with treatment.
-                        </p>
-                    </div>
-
-                    {/* Inline save status in header */}
+            {/* Auto-save indicator — compact, doesn't duplicate the panel title */}
+            {(isSaving || lastSaved) && (
+                <div className="flex justify-end">
                     {isSaving && (
-                        <div className="flex items-center gap-2 text-blue-400 text-xs">
-                            <Save className="w-4 h-4 animate-pulse" />
+                        <div className="flex items-center gap-1.5 text-blue-400 text-xs">
+                            <Save className="w-3.5 h-3.5 animate-pulse" />
                             <span>Saving…</span>
                         </div>
                     )}
                     {lastSaved && !isSaving && (
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs">
-                            <CheckCircle className="w-4 h-4" />
+                        <div className="flex items-center gap-1.5 text-emerald-400 text-xs">
+                            <CheckCircle className="w-3.5 h-3.5" />
                             <span>Saved {lastSaved.toLocaleTimeString()}</span>
                         </div>
                     )}
                 </div>
-            </div>
+            )}
 
             {/* ── Patient Anonymous ID Banner ──────────────────────────────── */}
             {/* This is the most important identity disclosure on the page.     */}
