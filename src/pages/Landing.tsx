@@ -271,7 +271,7 @@ const Landing: React.FC = () => {
               <p className="text-2xl sm:text-3xl font-medium text-slate-300 tracking-tight">
                 Where every session makes the field smarter.
               </p>
-              <div className="space-y-4 text-lg text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
+              <div className="space-y-4 text-base text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
                 <p>
                   PPN is not a directory. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
                 </p>
