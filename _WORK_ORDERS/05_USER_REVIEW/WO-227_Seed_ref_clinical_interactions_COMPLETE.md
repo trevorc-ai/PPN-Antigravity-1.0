@@ -1,8 +1,8 @@
 ---
 id: WO-227
 title: "SOOP: Seed ref_knowledge_graph with Interaction Data"
-status: 03_BUILD
-owner: SOOP
+status: 05_USER_REVIEW
+owner: USER
 priority: MEDIUM
 created: 2026-02-19
 failure_count: 0

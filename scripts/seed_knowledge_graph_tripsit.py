@@ -161,7 +161,7 @@ def insert_rows(rows: list, dry_run: bool):
             print(f"  {row['substance_name']} + {row['interactor_name']} → {row['severity_grade']} (risk {row['risk_level']})")
         return
 
-    url = f"{SUPABASE_URL}/rest/v1/ref_knowledge_graph"
+    url = f"{SUPABASE_URL}/rest/v1/ref_clinical_interactions"
     BATCH_SIZE = 100
     inserted = 0
 

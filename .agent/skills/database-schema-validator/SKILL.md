@@ -63,6 +63,17 @@ grep -rn "\.from('" src/ | grep -v ".DS_Store" | sed "s/.*\.from('//;s/').*//" |
 
 This tells you what the app expects to query. Cross-reference with the live query output above. If the app queries a table that doesn't appear in the live list — that is a bug to report, not a table to assume exists.
 
+### ⚠️ Known Schema Traps (Verified 2026-02-19)
+
+| Table | Live? | Notes |
+|-------|-------|-------|
+| `ref_medications` | ✅ YES | Created WO-226. Has `medication_id`, `medication_name`, `medication_category`, `is_active` |
+| `ref_clinical_interactions` | ✅ YES | Created WO-227. Has `substance_name`, `interactor_name`, `severity_grade`, `risk_level`, `clinical_description` |
+| `ref_knowledge_graph` | ✅ YES (wrong schema) | Exists but is a legacy alert rules table: `rule_id`, `substance_a_id`, `substance_b_id`, `condition_code`, `risk_level` (text), `alert_message`. **Do NOT use for clinical interaction lookups.** |
+| `ref_drug_interactions` | ❌ NO | Does not exist in live DB. Never was created. |
+| `log_user_subscriptions` | ✅ YES | Active |
+| `log_subscriptions` | ✅ YES | Also active — confirm which one before referencing |
+
 ---
 
 ## STEP 2: Banned Commands Check

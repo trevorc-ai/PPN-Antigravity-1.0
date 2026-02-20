@@ -1,8 +1,8 @@
 ---
 id: WO-226
 title: "SOOP: Create ref_medications Table"
-status: 03_BUILD
-owner: SOOP
+status: 05_USER_REVIEW
+owner: USER
 priority: HIGH
 created: 2026-02-19
 failure_count: 0
