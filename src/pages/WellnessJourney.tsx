@@ -158,16 +158,17 @@ const WellnessJourney: React.FC = () => {
     };
 
     const handlePatientSelect = useCallback((patientId: string, isNew: boolean, phase: string) => {
-        // For a new patient, generate a session UUID now — this will be used as
+        // Every time a practitioner opens a Wellness Journey session — whether for a new
+        // or existing patient — a fresh session UUID is generated. This UUID becomes the
         // log_clinical_records.id for all form saves in this session.
-        // For an existing patient, sessionId stays undefined until a session record
-        // is selected/looked up from the DB (future: PatientSelectModal returns sessionId).
-        const newSessionId = isNew ? crypto.randomUUID() : undefined;
+        // For existing patients we still generate a new UUID because they are starting
+        // a NEW session visit, not resuming an old one.
+        const sessionId = crypto.randomUUID();
 
         setJourney(prev => ({
             ...prev,
             patientId,
-            sessionId: newSessionId,
+            sessionId,
             demographics: undefined,
         }));
         setShowPatientModal(false);
