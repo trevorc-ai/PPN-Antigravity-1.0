@@ -132,7 +132,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-xs uppercase font-black leading-tight tracking-tight">
+                            <h1 className="text-sm uppercase font-black leading-tight tracking-tight">
                                 <span className="text-slate-300">PPN</span>{' '}
                                 <span className="text-primary">Portal</span>
                             </h1>
@@ -157,7 +157,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                 <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-6">
                     {sections.map((section) => (
                         <nav key={section.title} className="space-y-2">
-                            <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest px-2">
+                            <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest px-2">
                                 {section.title}
                             </h3>
                             <ul className="space-y-1">

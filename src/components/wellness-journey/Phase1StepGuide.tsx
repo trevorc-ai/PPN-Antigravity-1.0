@@ -115,7 +115,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                         Step {currentStepIndex + 1} of {PHASE1_STEPS.length}
                                     </span>
                                     {currentStep.required && (
-                                        <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-widest bg-amber-500/15 border border-amber-500/25 text-amber-400 rounded-md">
+                                        <span className="px-2 py-0.5 text-xs font-black uppercase tracking-widest bg-amber-500/15 border border-amber-500/25 text-amber-400 rounded-md">
                                             Required
                                         </span>
                                     )}
@@ -210,18 +210,14 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                             </div>
 
                             {/* Label */}
-                            <span className={`text-[11px] font-bold leading-tight
+                            <span className={`text-xs font-bold leading-tight
                                 ${isComplete ? 'text-emerald-400' : isCurrent ? step.color : 'text-slate-600'}
                             `}>
                                 {step.label}
                             </span>
 
                             {/* Amend hint on completed */}
-                            {isComplete && (
-                                <span className="text-[9px] font-semibold text-slate-600 uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-                                    Amend
-                                </span>
-                            )}
+                            {/* Removed the amend hint as per instruction */}
                         </button>
                     );
                 })}

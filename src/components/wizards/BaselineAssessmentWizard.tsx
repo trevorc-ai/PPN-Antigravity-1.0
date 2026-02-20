@@ -65,7 +65,7 @@ function NumericInput({ label, value, onChange, min, max, placeholder, id }: {
 }) {
     return (
         <div>
-            <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+            <label htmlFor={id} className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                 {label}
             </label>
             <input
@@ -245,7 +245,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 {step === 2 && (
                     <div className="space-y-4">
                         <div>
-                            <label htmlFor="expectancy" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">
+                            <label htmlFor="expectancy" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-3">
                                 Treatment Expectancy: {data.setSetting.treatment_expectancy}/100
                             </label>
                             <input

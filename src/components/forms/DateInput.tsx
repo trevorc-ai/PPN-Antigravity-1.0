@@ -55,7 +55,7 @@ export const DateInput: React.FC<DateInputProps> = ({
     return (
         <div className="w-full">
             {label && (
-                <label className="text-xs font-black text-slate-300 uppercase tracking-widest mb-2 block">
+                <label className="text-sm font-black text-slate-300 uppercase tracking-widest mb-2 block">
                     {label}
                 </label>
             )}

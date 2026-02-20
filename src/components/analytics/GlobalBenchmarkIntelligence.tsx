@@ -384,7 +384,7 @@ export default function GlobalBenchmarkIntelligence() {
                                                 <div className="text-xl font-black" style={{ color }}>
                                                     {cohort.response_rate_pct}%
                                                 </div>
-                                                <div className="text-[10px] text-slate-500 uppercase tracking-widest">Response</div>
+                                                <div className="text-xs text-slate-500 uppercase tracking-widest">Response</div>
                                             </div>
                                         )}
                                         {improvement != null && (
@@ -392,7 +392,7 @@ export default function GlobalBenchmarkIntelligence() {
                                                 <div className="text-xl font-black text-emerald-400">
                                                     {improvement}%
                                                 </div>
-                                                <div className="text-[10px] text-slate-500 uppercase tracking-widest">Improvement</div>
+                                                <div className="text-xs text-slate-500 uppercase tracking-widest">Improvement</div>
                                             </div>
                                         )}
                                         {cohort.followup_weeks != null && (
@@ -400,7 +400,7 @@ export default function GlobalBenchmarkIntelligence() {
                                                 <div className="text-xl font-black text-slate-400">
                                                     Wk {cohort.followup_weeks}
                                                 </div>
-                                                <div className="text-[10px] text-slate-500 uppercase tracking-widest">Endpoint</div>
+                                                <div className="text-xs text-slate-500 uppercase tracking-widest">Endpoint</div>
                                             </div>
                                         )}
                                     </div>
@@ -443,7 +443,7 @@ export default function GlobalBenchmarkIntelligence() {
                                             {/* Citation */}
                                             <div className="flex items-start gap-1.5 pt-1">
                                                 <ExternalLink className="w-3 h-3 text-slate-600 flex-shrink-0 mt-0.5" />
-                                                <p className="text-[10px] text-slate-600 leading-relaxed break-words">
+                                                <p className="text-xs text-slate-600 leading-relaxed break-words">
                                                     {cohort.source_citation}
                                                 </p>
                                             </div>

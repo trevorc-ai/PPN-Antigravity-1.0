@@ -18,14 +18,14 @@ export const Section2_Treatment = ({ protocol, onChange, autoFilled }) => {
 
       <div className="grid grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Substance</label>
+          <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Substance</label>
           <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-300 font-mono">
             {protocol.substance_id === 1 ? 'Psilocybin (C12H17N2O4P)' : 'Unknown'}
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Route</label>
+          <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Route</label>
           <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-300 font-mono">
             {protocol.route_id === 1 ? 'Oral Administration' : 'Unknown'}
           </div>

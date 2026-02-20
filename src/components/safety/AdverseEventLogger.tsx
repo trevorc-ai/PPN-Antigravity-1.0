@@ -111,7 +111,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
 
             {/* Event Type */}
             <div>
-                <label htmlFor="event-type" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                <label htmlFor="event-type" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                     Event Type
                 </label>
                 <div className="relative">
@@ -161,7 +161,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
             {/* Onset Time + Duration */}
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label htmlFor="onset-time" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                    <label htmlFor="onset-time" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                         <Clock className="inline w-3.5 h-3.5 mr-1 -mt-0.5" />
                         Onset Time
                     </label>
@@ -174,7 +174,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                     />
                 </div>
                 <div>
-                    <label htmlFor="duration" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                    <label htmlFor="duration" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                         Duration (min)
                     </label>
                     <input
@@ -192,7 +192,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
 
             {/* Response Taken */}
             <div>
-                <label htmlFor="response" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                <label htmlFor="response" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                     Response Taken
                 </label>
                 <div className="relative">

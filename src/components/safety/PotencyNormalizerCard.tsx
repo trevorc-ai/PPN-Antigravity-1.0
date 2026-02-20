@@ -180,7 +180,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
                     {/* Step 2: Potency Coefficient */}
                     <div>
-                        <label htmlFor="potency-coeff" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                        <label htmlFor="potency-coeff" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                             Step 2 — Potency Coefficient
                         </label>
                         <AdvancedTooltip
