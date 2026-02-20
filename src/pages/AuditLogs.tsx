@@ -144,7 +144,7 @@ const AuditLogs: React.FC = () => {
             <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-400">Audit Logs</h1>
           </div>
           <p className="text-slate-400 text-sm font-bold tracking-[0.2em] uppercase">
-            Institutional Activity Ledger • <span className="text-emerald-500">Node Synchronized</span>
+            Activity log for all clinical and system events
           </p>
         </div>
 
@@ -325,16 +325,9 @@ const AuditLogs: React.FC = () => {
           </div>
 
           <div className="px-10 py-8 border-t border-slate-800 bg-black/20 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-6">
-              <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">
-                Total Record Nodes: <span className="text-slate-300">{AUDIT_LOGS.length}</span>
-              </span>
-              <div className="h-6 w-px bg-slate-800"></div>
-              <div className="flex items-center gap-3">
-                <div className="size-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></div>
-                <span className="text-sm font-mono text-slate-500 uppercase tracking-widest">Global Uplink: Stable</span>
-              </div>
-            </div>
+            <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">
+              {filteredLogs.length} of {AUDIT_LOGS.length} records
+            </span>
 
             <div className="flex gap-4">
               <button
@@ -353,9 +346,6 @@ const AuditLogs: React.FC = () => {
                     Export CSV
                   </>
                 )}
-              </button>
-              <button className="px-8 py-3 bg-primary hover:bg-blue-600 text-slate-300 rounded-2xl text-xs font-black uppercase tracking-widest shadow-2xl shadow-primary/30 transition-all active:scale-95">
-                Verify Node Integrity
               </button>
             </div>
 
