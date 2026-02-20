@@ -128,7 +128,7 @@ const Landing: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6 w-full"
             >
-              <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-[12px] sm:text-[13px] font-black uppercase tracking-[0.25em] text-blue-300 shadow-lg shadow-primary/20">
+              <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-[12px] sm:text-[13px] font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
