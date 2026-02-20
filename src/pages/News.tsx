@@ -152,8 +152,28 @@ const News: React.FC = () => {
             <ConnectFeedButton />
           </div>
 
-          {/* Regulatory Mosaic - Integrated from standalone page */}
+          {/* Regulatory Mosaic — Section header + map */}
           <div className="mb-14">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">Live</span>
+                  </span>
+                </div>
+                <h2 className="text-2xl font-black tracking-tighter text-slate-300">
+                  Regulatory Intelligence Map
+                </h2>
+                <p className="text-sm text-slate-500 font-medium mt-1">
+                  US state-level psychedelic therapy regulatory status — updated as legislation changes.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl shrink-0">
+                <span className="material-symbols-outlined text-primary text-sm">touch_app</span>
+                <span className="text-xs font-black text-primary uppercase tracking-widest">Click a state to filter news</span>
+              </div>
+            </div>
             <RegulatoryMosaic
               onStateSelect={handleStateSelect}
               externalSelectedState={selectedStateFilter}
