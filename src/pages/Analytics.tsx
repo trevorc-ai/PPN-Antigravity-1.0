@@ -24,6 +24,7 @@ import { useSafetyBenchmark } from '../hooks/useSafetyBenchmark';
 
 const Analytics = () => {
     const [siteId, setSiteId] = useState<number | null>(null);
+    const [userEmail, setUserEmail] = useState<string>('');
     const analytics = useAnalyticsData(siteId);
     const { benchmark, loading: benchmarkLoading } = useSafetyBenchmark();
 
@@ -31,6 +32,7 @@ const Analytics = () => {
         const fetchUserSite = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
+            setUserEmail(user.email ?? '');
 
             const { data: userSite } = await supabase
                 .from('log_user_sites')
@@ -84,7 +86,7 @@ const Analytics = () => {
                 <div className="flex justify-between text-sm text-slate-600 font-mono">
                     <span>Generated: {new Date().toLocaleDateString()}</span>
                     <span>Node: LIVE_NODE_07</span>
-                    <span>User: Dr. Sarah Chen</span>
+                    <span>{userEmail || 'PPN Portal User'}</span>
                 </div>
             </div>
 
@@ -104,12 +106,35 @@ const Analytics = () => {
             {/* EMPTY STATE */}
             {!analytics.loading && !analytics.error && analytics.activeProtocols === 0 && (
                 <Section spacing="tight">
-                    <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-12 text-center">
-                        <Activity className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                        <h3 className="text-xl font-black mb-2" style={{ color: '#A8B5D1' }}>No Clinical Data Yet</h3>
-                        <p className="max-w-md mx-auto" style={{ color: '#8B9DC3' }}>
-                            Submit your first protocol using the Protocol Builder to see analytics and insights here.
-                        </p>
+                    {/* Demo-aware empty state — explains the model, doesn't look broken */}
+                    <div className="relative overflow-hidden bg-[#0a0c12]/60 border border-indigo-500/20 rounded-[2rem] p-10">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/40 via-blue-400/60 to-indigo-500/40" />
+                        <div className="flex flex-col md:flex-row items-start gap-8">
+                            <div className="shrink-0 w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+                                <Activity className="w-8 h-8 text-indigo-400" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">Network Intelligence — Give-to-Get Model</p>
+                                <h3 className="text-2xl font-black tracking-tighter mb-3" style={{ color: '#A8B5D1' }}>
+                                    Analytics unlock after 10+ sessions
+                                </h3>
+                                <p className="text-base mb-6" style={{ color: '#8B9DC3' }}>
+                                    Once your clinic logs sessions via the Wellness Journey, this dashboard populates with real-time outcome benchmarks, safety performance scores, and network-wide comparative data.
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    {[
+                                        { label: 'Performance Radar', desc: 'Your outcomes vs network avg across 6 dimensions' },
+                                        { label: 'Safety Benchmark', desc: 'Adverse event rate percentile — all active sites' },
+                                        { label: 'Patient Galaxy', desc: 'Outcome scatter across substance + indication' },
+                                    ].map((item) => (
+                                        <div key={item.label} className="p-4 bg-slate-900/40 border border-slate-800 rounded-xl">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
+                                            <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </Section>
             )}
