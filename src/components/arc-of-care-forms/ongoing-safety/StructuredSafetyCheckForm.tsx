@@ -48,7 +48,7 @@ const SAFETY_ACTIONS = [
 
 const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     onSave,
-    initialData = {},
+    initialData = {} as Partial<StructuredSafetyCheckData>,
     patientId
 }) => {
     const [data, setData] = useState<StructuredSafetyCheckData>({

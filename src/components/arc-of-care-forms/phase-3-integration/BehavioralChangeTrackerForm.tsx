@@ -62,7 +62,7 @@ const StarRating: React.FC<{ value: number; onChange: (value: number) => void; l
 
 const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = ({
     onSave,
-    initialData = {},
+    initialData = {} as Partial<BehavioralChangeData>,
     patientId
 }) => {
     const [data, setData] = useState<BehavioralChangeData>({

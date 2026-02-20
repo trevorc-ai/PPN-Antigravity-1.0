@@ -67,8 +67,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
 
     const answeredCount = Object.keys(data.responses).length;
     const progressPercentage = Math.round((answeredCount / 30) * 100);
-    const totalScore = Object.values(data.responses).reduce((sum, val) => sum + val, 0);
-    const normalizedScore = Math.round((totalScore / 150) * 100); // Max possible: 30 * 5 = 150
+    const totalScore = (Object.values(data.responses) as number[]).reduce((sum, val) => sum + val, 0);
+    const normalizedScore = Math.round(((totalScore as number) / 150) * 100); // Max possible: 30 * 5 = 150
 
     const isComplete = answeredCount === 30;
     const isMysticalExperience = normalizedScore >= 60;
