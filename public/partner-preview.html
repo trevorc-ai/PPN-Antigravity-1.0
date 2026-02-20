@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PPN Portal: Partner Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0a1628;
+            --bg2: #0d1e38;
+            --card: rgba(12, 26, 50, 0.9);
+            --blue: #388bfd;
+            --cyan: #39d0d8;
+            --green: #3fb950;
+            --amber: #f0a500;
+            --text: #b8c4d0;
+            --muted: #6b7a8d;
+            --border: rgba(56, 139, 253, 0.18);
+            --border-bright: rgba(56, 139, 253, 0.4);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── UTILITY ─────────────────────── */
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #c8d8e8 0%, var(--blue) 50%, var(--cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-green {
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .section {
+            padding: 80px 24px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* ── STARFIELD ───────────────────── */
+        #stars {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* ── NAV ─────────────────────────── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 22, 40, 0.85);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-brand svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .nav-brand span {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-badge {
+            background: rgba(57, 208, 216, 0.12);
+            border: 1px solid rgba(57, 208, 216, 0.3);
+            color: var(--cyan);
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 100px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .nav-cta {
+            background: var(--blue);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        .nav-cta:hover {
+            background: #2070d0;
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO ────────────────────────── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 139, 253, 0.08);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--blue);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 7vw, 72px);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1.08;
+            color: #d8e6f2;
+            max-width: 760px;
+            animation: fadeUp 0.7s 0.1s ease both;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 560px;
+            line-height: 1.65;
+            margin-top: 24px;
+            animation: fadeUp 0.7s 0.2s ease both;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 12px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeUp 0.7s 0.3s ease both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: transform 0.15s, box-shadow 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue), #2070d0);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(56, 139, 253, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 30px rgba(56, 139, 253, 0.45);
+        }
+
+        .btn-ghost {
+            background: rgba(56, 139, 253, 0.08);
+            color: var(--blue);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(56, 139, 253, 0.14);
+        }
+
+        /* ── DIVIDER ─────────────────────── */
+        .divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        /* ── SECTION LABEL ───────────────── */
+        .section-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            color: #d0dae6;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .section-body {
+            font-size: 16px;
+            color: var(--muted);
+            line-height: 1.7;
+            max-width: 640px;
+        }
+
+        /* ── STATS ROW ───────────────────── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-bright);
+            transform: translateY(-3px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(56, 139, 253, 0.06), transparent 70%);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 0.04em;
+        }
+
+        /* ── LIVE ASSETS ─────────────────── */
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 48px;
+        }
+
+        .asset-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s, transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-card:hover {
+            border-color: var(--border-bright);
+            transform: translateY(-4px);
+        }
+
+        .asset-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .asset-card.blue::before {
+            background: linear-gradient(90deg, transparent, var(--blue), transparent);
+        }
+
+        .asset-card.cyan::before {
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+        }
+
+        .asset-card.green::before {
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+        }
+
+        .asset-icon {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .asset-tag {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 100px;
+            margin-bottom: 12px;
+        }
+
+        .tag-live {
+            background: rgba(63, 185, 80, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+
+        .tag-preview {
+            background: rgba(240, 165, 0, 0.1);
+            color: var(--amber);
+            border: 1px solid rgba(240, 165, 0, 0.3);
+        }
+
+        .asset-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #d0dae6;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+
+        .asset-body {
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.65;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .asset-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+
+        .link-blue {
+            color: var(--blue);
+            background: rgba(56, 139, 253, 0.08);
+            border: 1px solid rgba(56, 139, 253, 0.2);
+        }
+
+        .link-blue:hover {
+            background: rgba(56, 139, 253, 0.14);
+        }
+
+        .link-cyan {
+            color: var(--cyan);
+            background: rgba(57, 208, 216, 0.08);
+            border: 1px solid rgba(57, 208, 216, 0.2);
+        }
+
+        .link-cyan:hover {
+            background: rgba(57, 208, 216, 0.14);
+        }
+
+        .link-green {
+            color: var(--green);
+            background: rgba(63, 185, 80, 0.08);
+            border: 1px solid rgba(63, 185, 80, 0.2);
+        }
+
+        .link-green:hover {
+            background: rgba(63, 185, 80, 0.14);
+        }
+
+        /* ── CAMPAIGN ────────────────────── */
+        .campaign-block {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            margin-top: 48px;
+        }
+
+        .campaign-header {
+            padding: 36px 36px 0;
+        }
+
+        .campaign-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        @media (max-width: 680px) {
+            .campaign-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .campaign-left {
+            padding: 32px 36px 36px;
+        }
+
+        .campaign-right {
+            padding: 32px 36px 36px;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(56, 139, 253, 0.03);
+        }
+
+        @media (max-width: 680px) {
+            .campaign-right {
+                border-left: none;
+                border-top: 1px solid var(--border);
+            }
+        }
+
+        .step-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(56, 139, 253, 0.12);
+            border: 1px solid var(--border-bright);
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-text {
+            font-size: 13.5px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .step-text strong {
+            color: #d0dae6;
+            display: block;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        /* QR preview */
+        .qr-preview-wrap {
+            background: rgba(10, 22, 40, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #qr-mini canvas,
+        #qr-mini img {
+            border-radius: 8px;
+        }
+
+        .qr-scan-label {
+            font-size: 11.5px;
+            color: var(--muted);
+            margin-top: 10px;
+            letter-spacing: 0.04em;
+        }
+
+        .qr-url-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            color: var(--blue);
+            margin-top: 6px;
+        }
+
+        /* ── ROLE CARDS ──────────────────── */
+        .roles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 48px;
+        }
+
+        @media (max-width: 600px) {
+            .roles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .role-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .role-card:hover {
+            border-color: var(--border-bright);
+        }
+
+        .role-card.featured {
+            border-color: rgba(57, 208, 216, 0.35);
+            background: rgba(57, 208, 216, 0.04);
+        }
+
+        .role-card.featured::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+        }
+
+        .role-label {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 8px;
+        }
+
+        .role-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #d0dae6;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .role-body {
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .role-list {
+            list-style: none;
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .role-list li {
+            font-size: 13px;
+            color: var(--text);
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            line-height: 1.55;
+        }
+
+        .role-list li::before {
+            content: '›';
+            color: var(--cyan);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ── ROADMAP ─────────────────────── */
+        .roadmap {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-top: 48px;
+            position: relative;
+        }
+
+        .roadmap::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 24px;
+            bottom: 24px;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--blue), var(--cyan), rgba(57, 208, 216, 0.1));
+        }
+
+        .roadmap-item {
+            display: flex;
+            gap: 24px;
+            padding: 24px 0;
+        }
+
+        .roadmap-dot {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dot-now {
+            background: rgba(56, 139, 253, 0.15);
+            border: 2px solid var(--blue);
+            color: var(--blue);
+        }
+
+        .dot-next {
+            background: rgba(57, 208, 216, 0.1);
+            border: 2px solid rgba(57, 208, 216, 0.5);
+            color: var(--cyan);
+        }
+
+        .dot-future {
+            background: rgba(63, 185, 80, 0.08);
+            border: 2px solid rgba(63, 185, 80, 0.3);
+            color: var(--green);
+        }
+
+        .roadmap-content {
+            flex: 1;
+        }
+
+        .roadmap-phase {
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 4px;
+        }
+
+        .roadmap-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #d0dae6;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .roadmap-desc {
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        /* ── CLOSING ─────────────────────── */
+        .closing {
+            text-align: center;
+            padding: 80px 24px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .closing-quote {
+            font-size: clamp(22px, 4vw, 34px);
+            font-weight: 800;
+            color: #d0dae6;
+            letter-spacing: -0.03em;
+            line-height: 1.3;
+            max-width: 680px;
+            margin: 0 auto 32px;
+        }
+
+        .closing-sub {
+            font-size: 15px;
+            color: var(--muted);
+            max-width: 480px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        /* ── FOOTER ──────────────────────── */
+        footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 11.5px;
+            color: var(--muted);
+            letter-spacing: 0.04em;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── ANIMATIONS ──────────────────── */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(57, 208, 216, 0.5);
+            }
+
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 0 5px rgba(57, 208, 216, 0);
+            }
+        }
+
+        /* Scroll-reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Starfield canvas -->
+    <canvas id="stars"></canvas>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-brand">
+            <svg viewBox="0 0 56 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="ng" x1="0" y1="0" x2="56" y2="64" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#388bfd" />
+                        <stop offset="1" stop-color="#39d0d8" />
+                    </linearGradient>
+                </defs>
+                <path d="M28 2L4 12v20c0 14 10.5 26 24 30 13.5-4 24-16 24-30V12L28 2z" fill="url(#ng)"
+                    fill-opacity="0.15" stroke="url(#ng)" stroke-width="1.5" />
+                <path d="M20 32l6 6 12-12" stroke="url(#ng)" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            <span class="gradient-text">PPN Portal</span>
+        </div>
+        <div class="nav-badge">Partner Preview</div>
+        <a href="https://ppnportal.net/#/checkout" class="nav-cta">Start Free Access</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-eyebrow">
+            <div class="pulse-dot"></div>
+            Confidential. February 2026.
+        </div>
+        <h1>The infrastructure<br>psychedelic practice<br><em>has been waiting for.</em></h1>
+        <p class="hero-sub">
+            Real session documentation. Zero patient data ever stored. A network that makes every practitioner safer and
+            every field smarter.
+        </p>
+        <div class="hero-ctas">
+            <a href="https://ppnportal.net" class="btn btn-primary">See the Live Product</a>
+            <a href="#campaign" class="btn btn-ghost">View the Campaign</a>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MARKET REALITY -->
+    <section class="section reveal">
+        <div class="section-label">The Moment</div>
+        <h2 class="section-title">90% of psychedelic therapy<br>is happening right now. Unprotected.</h2>
+        <p class="section-body">
+            Thousands of practitioners across Oregon, Colorado, and every major city are guiding sessions with no
+            documentation, no safety net, and no defensible record. One bad outcome away from losing everything. PPN
+            changes that without changing who they are.
+        </p>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-number gradient-text">15k+</div>
+                <div class="stat-label">Active practitioners right now</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number gradient-text">$0</div>
+                <div class="stat-label">Purpose-built tooling for them</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number gradient-text">2026</div>
+                <div class="stat-label">Year licensing frameworks arrive</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number gradient-green">PPN</div>
+                <div class="stat-label">The only platform built for this</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- LIVE ASSETS -->
+    <section class="section reveal">
+        <div class="section-label">What's Live</div>
+        <h2 class="section-title">Built. Deployed. Running.</h2>
+        <p class="section-body">This is not a pitch deck. Every link below is live right now.</p>
+
+        <div class="assets-grid">
+
+            <div class="asset-card blue">
+                <div class="asset-icon">🧬</div>
+                <span class="asset-tag tag-live">Live</span>
+                <div class="asset-title">PPN Portal</div>
+                <p class="asset-body">Full clinical intelligence platform. Protocol builder, safety surveillance,
+                    outcomes tracking, benchmarking. HIPAA-compliant. Zero free-text PHI by design.</p>
+                <a href="https://ppnportal.net" target="_blank" class="asset-link link-blue">Open the Portal ↗</a>
+            </div>
+
+            <div class="asset-card cyan">
+                <div class="asset-icon">🛡️</div>
+                <span class="asset-tag tag-live">Live</span>
+                <div class="asset-title">Phantom Shield</div>
+                <p class="asset-body">The field-facing privacy layer. Zero-PHI architecture, Blind Vetting Scanner,
+                    Crisis Logger, Potency Normalizer, and Legacy Transcript. Designed for practitioners operating in
+                    complex legal territory.</p>
+                <a href="https://ppnportal.net/phantom-shield.html" target="_blank" class="asset-link link-cyan">Read
+                    the Overview ↗</a>
+            </div>
+
+            <div class="asset-card green">
+                <div class="asset-icon">📲</div>
+                <span class="asset-tag tag-live">Live</span>
+                <div class="asset-title">Mobile Share Card</div>
+                <p class="asset-body">A shareable card with an embedded QR code. Screenshot it, text it on Signal, post
+                    it anywhere. Practitioners scan it, understand Phantom Shield in 60 seconds, sign up. No ad spend
+                    needed.</p>
+                <a href="https://ppnportal.net/phantom-shield-card.html" target="_blank"
+                    class="asset-link link-green">Open the Card ↗</a>
+            </div>
+
+            <div class="asset-card blue">
+                <div class="asset-icon">💳</div>
+                <span class="asset-tag tag-live">Live</span>
+                <div class="asset-title">Checkout and Access</div>
+                <p class="asset-body">14-day free trial. No credit card required. Practitioners can sign up tonight if
+                    they want to. The door is open.</p>
+                <a href="https://ppnportal.net/#/checkout" target="_blank" class="asset-link link-blue">See Pricing
+                    ↗</a>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CAMPAIGN -->
+    <section class="section reveal" id="campaign">
+        <div class="section-label">The Field Campaign</div>
+        <h2 class="section-title">No ads. Peer-to-peer.<br>The whisper network becomes the alliance.</h2>
+        <p class="section-body">
+            This audience doesn't click banner ads. They forward things from people they trust. The campaign is built
+            around that truth.
+        </p>
+
+        <div class="campaign-block">
+            <div class="campaign-header">
+                <div class="section-label">Distribution Strategy</div>
+            </div>
+            <div class="campaign-body">
+                <div class="campaign-left">
+                    <ul class="step-list">
+                        <li class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-text">
+                                <strong>Practitioner shares the card</strong>
+                                They screenshot the share card and text it in Signal groups, 1-on-1, or post it in
+                                private communities.
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-text">
+                                <strong>Colleague scans the QR</strong>
+                                Opens Phantom Shield overview on their phone. Reads it in 90 seconds. Understands
+                                immediately.
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-text">
+                                <strong>They tap "Start Free Access"</strong>
+                                Lands on checkout. 14-day trial, no card required. Barrier to entry is almost nothing.
+                            </div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">4</div>
+                            <div class="step-text">
+                                <strong>They become the next node</strong>
+                                Every new practitioner who joins can forward it to someone they know. Network compounds.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="campaign-right">
+                    <div class="qr-preview-wrap">
+                        <div id="qr-mini"></div>
+                        <p class="qr-scan-label">Scan this right now</p>
+                        <div class="qr-url-label">ppnportal.net/phantom-shield.html</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ROLES -->
+    <section class="section reveal">
+        <div class="section-label">The Partnership</div>
+        <h2 class="section-title">Two roles. One mission.</h2>
+        <p class="section-body">The infrastructure exists. The field is ready. This is how it connects.</p>
+
+        <div class="roles-grid">
+            <div class="role-card">
+                <div class="role-label">The Builder</div>
+                <div class="role-title">The Platform</div>
+                <p class="role-body">The clinical documentation layer is built and live. HIPAA-compliant, Zero-PHI,
+                    fully functional. Behind it: the data alliance that makes every session smarter than the last.</p>
+                <ul class="role-list">
+                    <li>Clinical protocol builder</li>
+                    <li>Safety surveillance and benchmarking</li>
+                    <li>Phantom Shield privacy architecture</li>
+                    <li>Crisis Logger and intervention ledger</li>
+                    <li>Legacy Transcript for licensing readiness</li>
+                </ul>
+            </div>
+
+            <div class="role-card featured">
+                <div class="role-label">The Field</div>
+                <div class="role-title">The Network</div>
+                <p class="role-body">The practitioners, the communities, the trust networks. The whisper network already
+                    exists. The campaign gives it a shareable tool with a scannable door.</p>
+                <ul class="role-list">
+                    <li>Oregon and Colorado practitioner outreach</li>
+                    <li>Signal and Telegram community seeding</li>
+                    <li>In-person introduction at retreats and circles</li>
+                    <li>Feedback from real practitioners to inform roadmap</li>
+                    <li>First wave user activation</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ROADMAP -->
+    <section class="section reveal">
+        <div class="section-label">What Comes Next</div>
+        <h2 class="section-title">From the grey market<br>to the licensed future.</h2>
+        <p class="section-body">The practitioners using this today are the credentialed leaders of tomorrow. PPN is
+            their record.</p>
+
+        <div class="roadmap">
+            <div class="roadmap-item">
+                <div class="roadmap-dot dot-now">1</div>
+                <div class="roadmap-content">
+                    <div class="roadmap-phase">Now. February 2026</div>
+                    <div class="roadmap-title">Field Activation</div>
+                    <p class="roadmap-desc">Deploy the share card through Oregon and Colorado practitioner networks. Get
+                        first 100 sessions documented. Collect feedback on what to build next.</p>
+                </div>
+            </div>
+            <div class="roadmap-item">
+                <div class="roadmap-dot dot-next">2</div>
+                <div class="roadmap-content">
+                    <div class="roadmap-phase">Q2 2026</div>
+                    <div class="roadmap-title">Network Effects and Group Insurance</div>
+                    <p class="roadmap-desc">Use the aggregated anonymous safety data to negotiate group malpractice
+                        coverage that actually covers psychedelic work. This is the moment practitioners stop being
+                        alone.</p>
+                </div>
+            </div>
+            <div class="roadmap-item">
+                <div class="roadmap-dot dot-future">3</div>
+                <div class="roadmap-content">
+                    <div class="roadmap-phase">2027 and Beyond</div>
+                    <div class="roadmap-title">Licensing and Real-World Evidence</div>
+                    <p class="roadmap-desc">When Oregon and Colorado licensing frameworks mature, every practitioner who
+                        documented in PPN has a cryptographically verified career ledger. The Legacy Transcript becomes
+                        a licensing resume. The dataset becomes real-world evidence for FDA submissions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CLOSING -->
+    <div class="closing reveal">
+        <p class="closing-quote">"The practitioners who survive regulatory scrutiny are the ones who practiced as if
+            they were already licensed."</p>
+        <p class="closing-sub">PPN is the tool that makes that possible. The infrastructure is live. The campaign starts
+            today.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="https://ppnportal.net" class="btn btn-primary">See the Live Platform</a>
+            <a href="https://ppnportal.net/phantom-shield.html" class="btn btn-ghost">Read Phantom Shield</a>
+        </div>
+    </div>
+
+    <footer>
+        ppnportal.net &nbsp;·&nbsp; Confidential Partner Preview &nbsp;·&nbsp; February 2026 &nbsp;·&nbsp; Not for
+        public distribution
+    </footer>
+
+    <script>
+        // Starfield
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let W, H, stars = [];
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+
+        function initStars() {
+            stars = Array.from({ length: 120 }, () => ({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                r: Math.random() * 1.2 + 0.3,
+                a: Math.random(),
+                speed: Math.random() * 0.003 + 0.001
+            }));
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, W, H);
+            stars.forEach(s => {
+                s.a += s.speed;
+                const alpha = 0.2 + 0.3 * Math.abs(Math.sin(s.a));
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(180,200,230,${alpha})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        resize();
+        initStars();
+        drawStars();
+        window.addEventListener('resize', () => { resize(); initStars(); });
+
+        // QR code
+        QRCode.toCanvas(
+            document.createElement('canvas'),
+            'https://ppnportal.net/phantom-shield.html',
+            { width: 120, margin: 1, color: { dark: '#e6edf3', light: '#0a1628' } },
+            (err, cvs) => {
+                if (!err) document.getElementById('qr-mini').appendChild(cvs);
+            }
+        );
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+        reveals.forEach(r => observer.observe(r));
+    </script>
+</body>
+
+</html>

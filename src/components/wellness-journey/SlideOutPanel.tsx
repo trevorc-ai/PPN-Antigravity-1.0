@@ -115,10 +115,11 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                     )}
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-lg hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex items-center justify-center w-11 h-11 rounded-xl hover:bg-slate-800 active:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                         aria-label="Close panel"
+                        title="Close"
                     >
-                        <X className="w-6 h-6 text-slate-300" />
+                        <X className="w-5 h-5 text-slate-400" />
                     </button>
                 </div>
 
@@ -132,12 +133,25 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                     {children}
                 </div>
 
-                {/* Sticky Footer */}
-                {footer && (
-                    <div className="sticky bottom-0 z-10 bg-slate-900 border-t border-slate-700/50 px-6 py-4">
-                        {footer}
-                    </div>
-                )}
+                {/* Sticky Footer — custom footer if provided, otherwise universal close */}
+                <div className="sticky bottom-0 z-10 bg-slate-900 border-t border-slate-700/50">
+                    {footer ? (
+                        <div className="px-6 py-4">{footer}</div>
+                    ) : (
+                        /* Universal close button — always accessible at the bottom of any form */
+                        <div className="px-6 py-3 flex items-center justify-end gap-3">
+                            <p className="text-xs text-slate-600 flex-1">Changes auto-save as you go</p>
+                            <button
+                                onClick={onClose}
+                                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700/60 text-slate-300 text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                aria-label="Close panel"
+                            >
+                                <X className="w-4 h-4" />
+                                Close Panel
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
         </>,
         document.body

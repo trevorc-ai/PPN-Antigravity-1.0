@@ -214,7 +214,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => updateField('new_adverse_events', false)}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.new_adverse_events
-                                    ? 'bg-emerald-600 text-slate-300'
+                                    ? 'bg-blue-600 text-white'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -242,7 +242,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => updateField('medication_changes', false)}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.medication_changes
-                                    ? 'bg-emerald-600 text-slate-300'
+                                    ? 'bg-blue-600 text-white'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -317,7 +317,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 updateField('follow_up_timeframe', undefined);
                             }}
                             className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.follow_up_required
-                                ? 'bg-emerald-600 text-slate-300'
+                                ? 'bg-blue-600 text-white'
                                 : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                 }`}
                         >
@@ -358,7 +358,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 </span>
                 <button
                     onClick={handleSave}
-                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
                 >
                     <Save className="w-5 h-5" />
                     Submit Changes

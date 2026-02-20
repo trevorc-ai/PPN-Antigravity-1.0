@@ -125,7 +125,7 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                             />
                             <button
                                 onClick={endIntervention}
-                                className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-slate-300 rounded-lg font-medium"
+                                className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
                             >
                                 End
                             </button>
@@ -152,7 +152,7 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                                 </p>
                                 <button
                                     onClick={endIntervention}
-                                    className="mt-3 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-slate-300 rounded-lg font-medium transition-all"
+                                    className="mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all"
                                 >
                                     End Intervention
                                 </button>

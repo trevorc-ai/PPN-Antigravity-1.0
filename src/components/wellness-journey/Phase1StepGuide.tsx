@@ -106,7 +106,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                     />
 
                     <div className="relative z-10 p-8">
-                        <div className="flex items-start justify-between gap-6">
+                        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-5">
                             {/* Left: Step identity */}
                             <div className="flex-1">
                                 {/* Step counter */}
@@ -139,8 +139,8 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                 </p>
                             </div>
 
-                            {/* Right: CTA */}
-                            <div className="flex-shrink-0 flex flex-col items-center gap-3">
+                            {/* Right: CTA — full-width on mobile, inline on sm+ */}
+                            <div className="w-full sm:w-auto flex-shrink-0 flex flex-col items-stretch sm:items-center gap-2">
                                 <button
                                     id={`phase1-step-${currentStepIndex + 1}-start`}
                                     onClick={() => onStartStep(currentStep.id)}
@@ -171,7 +171,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
             )}
 
             {/* ── Step rail (progress context) ──────────────────────────────── */}
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 {PHASE1_STEPS.map((step, index) => {
                     const isComplete = completedFormIds.has(step.id);
                     const isCurrent = index === currentStepIndex;

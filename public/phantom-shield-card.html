@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="description"
+        content="Phantom Shield: Clinical documentation that protects you. Your data never exists. ppnportal.net" />
+    <title>Phantom Shield: PPN Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0a1628;
+            --card: rgba(12, 24, 48, 0.95);
+            --blue: #388bfd;
+            --cyan: #39d0d8;
+            --text: #b8c4d0;
+            --muted: #6b7a8d;
+            --border: rgba(56, 139, 253, 0.2);
+        }
+
+        html,
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── SHARE CARD ─────────────────────────── */
+        .card {
+            width: 100%;
+            max-width: 380px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px 28px 28px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(56, 139, 253, 0.1), 0 24px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        /* top accent line */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--blue), var(--cyan), transparent);
+        }
+
+        /* background radial glow */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(56, 139, 253, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── HEADER ──── */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .shield-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #b8c4d0 0%, #388bfd 60%, #39d0d8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* ── HOOK ──── */
+        .hook {
+            margin-bottom: 24px;
+        }
+
+        .hook h2 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #d0dae6;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            margin-bottom: 10px;
+        }
+
+        .hook h2 span {
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hook p {
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* ── THREE BULLETS ──── */
+        .bullets {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12.5px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .bullet-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--blue);
+            flex-shrink: 0;
+            margin-top: 5px;
+            box-shadow: 0 0 6px rgba(56, 139, 253, 0.6);
+        }
+
+        /* ── QR block ──── */
+        .qr-block {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            background: rgba(56, 139, 253, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        #qrcode canvas,
+        #qrcode img {
+            border-radius: 8px;
+            display: block;
+        }
+
+        .qr-label {
+            flex: 1;
+        }
+
+        .qr-label p {
+            font-size: 11.5px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+
+        .qr-url {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--blue);
+            word-break: break-all;
+        }
+
+        /* ── CTA ──── */
+        .cta {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1e3a5f, #0f2144);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--blue);
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .cta:active {
+            transform: scale(0.98);
+        }
+
+        .cta:hover {
+            border-color: rgba(56, 139, 253, 0.5);
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, var(--blue), #2070d0);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        /* ── SHARE ROW ──── */
+        .share-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .share-row p {
+            font-size: 11.5px;
+            color: var(--muted);
+        }
+
+        .share-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--blue);
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .share-btn:hover {
+            background: rgba(56, 139, 253, 0.08);
+        }
+
+        /* ── FOOTER ──── */
+        .footer-note {
+            text-align: center;
+            font-size: 10.5px;
+            color: var(--muted);
+            margin-top: 20px;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── ENCRYPTION PULSE ──── */
+        .pulse-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(56, 139, 253, 0.08);
+            border: 1px solid rgba(56, 139, 253, 0.2);
+            border-radius: 100px;
+            padding: 4px 10px;
+            font-size: 10.5px;
+            color: var(--blue);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+        }
+
+        .pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #39d0d8;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(57, 208, 216, 0.5);
+            }
+
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 0 4px rgba(57, 208, 216, 0);
+            }
+        }
+
+        /* ── TOAST ──── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1e3a5f;
+            border: 1px solid var(--border);
+            color: var(--blue);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 100px;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <!-- Brand -->
+        <div class="brand">
+            <svg class="shield-icon" viewBox="0 0 56 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="sg" x1="0" y1="0" x2="56" y2="64" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#388bfd" />
+                        <stop offset="1" stop-color="#39d0d8" />
+                    </linearGradient>
+                </defs>
+                <path d="M28 2L4 12v20c0 14 10.5 26 24 30 13.5-4 24-16 24-30V12L28 2z" fill="url(#sg)"
+                    fill-opacity="0.15" stroke="url(#sg)" stroke-width="1.5" />
+                <path d="M20 32l6 6 12-12" stroke="url(#sg)" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            <div class="brand-text">
+                <h1>Phantom Shield</h1>
+                <p>PPN Portal</p>
+            </div>
+        </div>
+
+        <!-- Encryption badge -->
+        <div class="pulse-badge">
+            <div class="pulse-dot"></div>
+            ZERO-PHI ENCRYPTED
+        </div>
+
+        <!-- Hook -->
+        <div class="hook">
+            <h2>Protect your practice.<br><span>Your data never exists.</span></h2>
+            <p>Documentation built for practitioners working in complex legal territory. Audit-ready. Anonymous.
+                Defensible in court.</p>
+        </div>
+
+        <!-- Bullets -->
+        <div class="bullets">
+            <div class="bullet">
+                <div class="bullet-dot"></div>
+                <span>Zero patient names, emails, or identifiers ever stored</span>
+            </div>
+            <div class="bullet">
+                <div class="bullet-dot"></div>
+                <span>Crisis Logger creates a forensic timestamp trail under pressure</span>
+            </div>
+            <div class="bullet">
+                <div class="bullet-dot"></div>
+                <span>Blind Vetting Scanner screens clients without sharing any PII</span>
+            </div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-block">
+            <div id="qrcode"></div>
+            <div class="qr-label">
+                <p>Scan to see the full Phantom Shield overview. Share with any practitioner who needs this.</p>
+                <div class="qr-url">ppnportal.net/phantom-shield.html</div>
+            </div>
+        </div>
+
+        <!-- CTAs -->
+        <a href="https://ppnportal.net/#/checkout" class="cta cta-primary" id="startBtn">
+            Start Free Access
+        </a>
+        <a href="https://ppnportal.net/phantom-shield.html" class="cta" id="learnBtn">
+            Read Full Overview
+        </a>
+
+        <!-- Share row -->
+        <div class="share-row">
+            <p>Know a practitioner who needs this?</p>
+            <button class="share-btn" onclick="shareCard()">Forward</button>
+        </div>
+
+    </div>
+
+    <div class="footer-note">ppnportal.net &nbsp;·&nbsp; Beta Access &nbsp;·&nbsp; February 2026</div>
+
+    <div class="toast" id="toast">Link copied to clipboard</div>
+
+    <script>
+        // Generate QR code pointing to the Phantom Shield overview page
+        QRCode.toCanvas(
+            document.createElement('canvas'),
+            'https://ppnportal.net/phantom-shield.html',
+            {
+                width: 100,
+                margin: 1,
+                color: {
+                    dark: '#e6edf3',
+                    light: '#0a1628'
+                }
+            },
+            function (err, canvas) {
+                if (!err) {
+                    document.getElementById('qrcode').appendChild(canvas);
+                }
+            }
+        );
+
+        // Share / copy
+        function shareCard() {
+            const url = 'https://ppnportal.net/phantom-shield.html';
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Phantom Shield: PPN Portal',
+                    text: 'Protect your practice. Your data never exists.',
+                    url: url
+                }).catch(() => copyToClipboard(url));
+            } else {
+                copyToClipboard(url);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            });
+        }
+    </script>
+</body>
+
+</html>

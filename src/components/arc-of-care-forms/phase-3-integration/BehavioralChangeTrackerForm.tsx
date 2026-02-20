@@ -156,7 +156,7 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                                 type="button"
                                 onClick={() => updateField('change_category', value as any)}
                                 className={`px-4 py-3 rounded-lg font-medium transition-all ${data.change_category === value
-                                    ? 'bg-emerald-600 text-slate-300'
+                                    ? 'bg-blue-600 text-white'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -180,7 +180,7 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                                 type="button"
                                 onClick={() => toggleChangeType(type.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.change_type_ids.includes(type.id)
-                                    ? 'bg-emerald-600 text-slate-300'
+                                    ? 'bg-blue-600 text-white'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >

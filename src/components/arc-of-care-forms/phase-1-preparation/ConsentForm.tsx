@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { FileCheck, Save, CheckCircle, AlertTriangle, ShieldCheck, Copy, Check } from 'lucide-react';
+import { FileCheck, Save, CheckCircle, AlertTriangle, ShieldCheck, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 
 /**
@@ -27,6 +27,8 @@ interface ConsentFormProps {
     onSave?: (data: ConsentData) => Promise<boolean> | boolean | void;
     initialData?: ConsentData;
     patientId?: string;
+    onNext?: () => void;
+    onBack?: () => void;
 }
 
 const CONSENT_TYPES = [
@@ -40,6 +42,8 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
     onSave,
     initialData = { consent_types: [], consent_obtained: false },
     patientId,
+    onNext,
+    onBack,
 }) => {
     const [idCopied, setIdCopied] = useState(false);
 
@@ -267,7 +271,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                                 }))
                                             }
                                             className={`px-5 py-4 rounded-xl text-base font-semibold text-left transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 ${isSelected
-                                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 border border-emerald-500'
+                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 border border-blue-500'
                                                 : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                                 }`}
                                         >
@@ -285,7 +289,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                 type="button"
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20"
+                                className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-base transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
                             >
                                 <Save className="w-5 h-5" />
                                 {isSaving ? 'Saving…' : 'Save Consent Documentation'}
@@ -299,6 +303,36 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                 <p className="text-emerald-400 font-semibold text-sm">
                                     Consent documented and saved
                                 </p>
+                            </div>
+                        )}
+
+                        {/* ── Next / Back navigation ───────────────────────── */}
+                        {(onBack || onNext) && (
+                            <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-700/50">
+                                {/* Back */}
+                                <button
+                                    id="consent-nav-back"
+                                    type="button"
+                                    onClick={onBack}
+                                    disabled={!onBack}
+                                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 hover:border-slate-500 text-slate-300 font-semibold text-sm transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                    Back
+                                </button>
+
+                                {/* Next — enabled once consent is saved */}
+                                <button
+                                    id="consent-nav-next"
+                                    type="button"
+                                    onClick={onNext}
+                                    disabled={!onNext || !lastSaved}
+                                    title={!lastSaved ? 'Save consent before continuing' : undefined}
+                                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 border border-blue-500 text-white font-semibold text-sm transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none shadow-lg shadow-blue-600/20"
+                                >
+                                    Next
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
                             </div>
                         )}
                     </>

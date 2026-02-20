@@ -312,7 +312,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                                 type="button"
                                 onClick={() => toggleArrayItem('therapist_observation_ids', obs.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.therapist_observation_ids.includes(obs.id)
-                                    ? obs.valence === 'positive' ? 'bg-emerald-600 text-slate-300' : 'bg-yellow-600 text-slate-300'
+                                    ? obs.valence === 'positive' ? 'bg-blue-600 text-white' : 'bg-yellow-600 text-slate-300'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >

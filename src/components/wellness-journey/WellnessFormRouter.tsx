@@ -102,7 +102,8 @@ interface WellnessFormRouterProps {
     patientId?: string;
     sessionId?: string;  // UUID — log_clinical_records.id
     siteId?: string;     // Resolved by parent (WellnessJourney) at page load
-    onComplete?: () => void;
+    onComplete?: () => void;  // Closes the panel (Back from first form, or explicit close)
+    onNavigate?: (formId: WellnessFormId) => void; // Advance to a sibling form
 }
 
 export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
@@ -111,6 +112,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     sessionId,
     siteId: siteIdProp,
     onComplete,
+    onNavigate,
 }) => {
     const { addToast } = useToast();
     const [siteId, setSiteId] = useState<string | null>(siteIdProp ?? null);
@@ -343,7 +345,13 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
         // ── Phase 1: Preparation ──────────────────────────────────────────────
         case 'consent':
-            return <ConsentForm onSave={handleConsentSave} patientId={patientId} />;
+            // Back on the first form closes the panel; Next opens the next form
+            return <ConsentForm
+                onSave={handleConsentSave}
+                patientId={patientId}
+                onBack={onComplete}
+                onNext={onNavigate ? () => onNavigate('structured-safety') : undefined}
+            />;
 
         case 'structured-safety':
             return <StructuredSafetyCheckForm onSave={() => onSaved('Safety Screen')} />;
@@ -384,7 +392,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <DailyPulseCheckForm onSave={handlePulseCheckSave} />;
 
         case 'meq30':
-            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} />;
+            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} />;
 
         // ── Phase 3: Integration — Integration Work ──────────────────────────
         case 'structured-integration':

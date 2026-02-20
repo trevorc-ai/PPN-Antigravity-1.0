@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { useToast } from '../contexts/ToastContext';
@@ -14,8 +14,124 @@ interface RefSubstance {
 interface RefMedication {
   medication_id: number;
   medication_name: string;
-  medication_category: string | null; // WO-096: populated after migration 051 runs
+  medication_category: string | null;
 }
+
+// ─── Custom accessible medication dropdown ───────────────────────────────────
+// Replaces native <select>/<optgroup> whose category labels are uncontrollable
+// OS grey (WCAG fail). This renders category headers in full-contrast white.
+interface MedDropdownProps {
+  medications: RefMedication[];
+  value: string;
+  onChange: (val: string) => void;
+  disabled?: boolean;
+  placeholder?: string;
+}
+
+const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange, disabled, placeholder }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  // Group medications by category
+  const grouped = useMemo(() => {
+    const g: Record<string, RefMedication[]> = {};
+    for (const med of medications) {
+      const cat = med.medication_category ?? 'Uncategorized';
+      if (!g[cat]) g[cat] = [];
+      g[cat].push(med);
+    }
+    return Object.entries(g);
+  }, [medications]);
+
+  const displayValue = value || placeholder || 'Select Interactor...';
+
+  return (
+    <div ref={ref} className="relative">
+      {/* Trigger button — matches the original select styling */}
+      <button
+        type="button"
+        id="medication-select-trigger"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        disabled={disabled}
+        onClick={() => setOpen(o => !o)}
+        className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait text-left"
+        style={{ color: value ? '#8B9DC3' : '#4B5E7A' }}
+      >
+        {/* Dataset icon — matches original absolute-positioned icon */}
+        <span className="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-xl text-slate-300 pointer-events-none">
+          dataset
+        </span>
+        <span className="truncate block">{displayValue}</span>
+        <span className="absolute right-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-600 pointer-events-none">
+          {open ? 'expand_less' : 'expand_more'}
+        </span>
+      </button>
+
+      {/* Dropdown panel */}
+      {open && (
+        <ul
+          role="listbox"
+          aria-label="Select medication"
+          className="absolute z-50 left-0 right-0 mt-2 max-h-80 overflow-y-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-2"
+        >
+          {/* Clear option */}
+          <li
+            role="option"
+            aria-selected={value === ''}
+            onClick={() => { onChange(''); setOpen(false); }}
+            className="px-4 py-2.5 text-sm text-slate-400 hover:bg-slate-800 cursor-pointer transition-colors"
+          >
+            {placeholder || 'Select Interactor...'}
+          </li>
+
+          {grouped.map(([category, meds]) => (
+            <React.Fragment key={category}>
+              {/* Category header — full contrast, visually distinct */}
+              <li
+                role="presentation"
+                className="px-4 pt-3 pb-1 text-xs font-black uppercase tracking-widest text-white border-t border-slate-700/60 mt-1 select-none pointer-events-none"
+              >
+                {category}
+              </li>
+              {meds.map(med => (
+                <li
+                  key={med.medication_id}
+                  role="option"
+                  aria-selected={value === med.medication_name}
+                  onClick={() => { onChange(med.medication_name); setOpen(false); }}
+                  className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
+                      ? 'bg-blue-600 text-white font-semibold'
+                      : 'text-slate-200 hover:bg-slate-800'
+                    }`}
+                >
+                  {med.medication_name}
+                </li>
+              ))}
+            </React.Fragment>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+// ─── End MedDropdown ─────────────────────────────────────────────────────────
 
 const InteractionChecker: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -311,42 +427,13 @@ const InteractionChecker: React.FC = () => {
         {/* Input: Medication */}
         <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
           <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
-          <div className="relative group">
-            <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
-              <span className="material-symbols-outlined text-xl">dataset</span>
-            </div>
-            <select
-              value={selectedMedication}
-              onChange={(e) => setSelectedMedication(e.target.value)}
-              disabled={refLoading}
-              className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait" style={{ color: '#8B9DC3' }}
-            >
-              <option value="">
-                {refLoading ? 'Loading medications...' : medications.length === 0 ? 'No medications in database' : 'Select Interactor...'}
-              </option>
-              {/* WO-096: Group by medication_category using optgroup for clinical clarity */}
-              {medications.length > 0 && (() => {
-                const grouped: Record<string, RefMedication[]> = {};
-                for (const med of medications) {
-                  const cat = med.medication_category ?? 'Uncategorized';
-                  if (!grouped[cat]) grouped[cat] = [];
-                  grouped[cat].push(med);
-                }
-                return Object.entries(grouped).map(([category, meds]) => (
-                  <optgroup key={category} label={category}>
-                    {meds.map(m => (
-                      <option key={m.medication_id} value={m.medication_name}>
-                        {m.medication_name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ));
-              })()}
-            </select>
-            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
-              <span className="material-symbols-outlined">expand_more</span>
-            </div>
-          </div>
+          <MedDropdown
+            medications={medications}
+            value={selectedMedication}
+            onChange={setSelectedMedication}
+            disabled={refLoading}
+            placeholder={refLoading ? 'Loading medications...' : medications.length === 0 ? 'No medications in database' : 'Select Interactor...'}
+          />
 
           {/* Missing Agent Workflow */}
           <div className="px-2">

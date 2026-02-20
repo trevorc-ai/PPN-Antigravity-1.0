@@ -490,6 +490,7 @@ const WellnessJourney: React.FC = () => {
                         sessionId={journey.sessionId}
                         siteId={clinicianSiteId}
                         onComplete={() => handleFormComplete(activeFormId)}
+                        onNavigate={handleOpenForm}
                     />
                 )}
             </SlideOutPanel>
