@@ -28,7 +28,12 @@ export const Checkout: FC = () => {
             // Get current user
             const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-            if (authError) throw authError;
+            if (authError && authError.message.includes('Auth session missing')) {
+                navigate('/login');
+                return;
+            } else if (authError) {
+                throw authError;
+            }
 
             if (!user) {
                 navigate('/login');
