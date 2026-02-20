@@ -209,10 +209,10 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                             disabled={s.id > step}
                             aria-label={`Step ${s.id}: ${s.title}`}
                             className={`transition-all rounded-full ${s.id === step
-                                    ? 'w-6 h-3 bg-primary'
-                                    : s.id < step
-                                        ? 'w-3 h-3 bg-emerald-500 cursor-pointer hover:bg-emerald-400'
-                                        : 'w-3 h-3 bg-slate-700 cursor-not-allowed'
+                                ? 'w-6 h-3 bg-primary'
+                                : s.id < step
+                                    ? 'w-3 h-3 bg-emerald-500 cursor-pointer hover:bg-emerald-400'
+                                    : 'w-3 h-3 bg-slate-700 cursor-not-allowed'
                                 }`}
                         />
                     ))}
@@ -256,18 +256,18 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                 step={5}
                                 value={data.setSetting.treatment_expectancy}
                                 onChange={(e) => updateData('setSetting', { treatment_expectancy: parseInt(e.target.value) })}
-                                className="w-full accent-primary"
+                                className="assessment-slider w-full"
                             />
                             <div className="flex justify-between text-xs text-slate-600 mt-1">
                                 <span>Low confidence</span>
                                 <span>High confidence</span>
                             </div>
                         </div>
-                        <div className={`p-3 rounded-xl border text-xs font-medium ${data.setSetting.treatment_expectancy >= 70
-                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
-                                : data.setSetting.treatment_expectancy >= 40
-                                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-300'
-                                    : 'bg-red-500/10 border-red-500/20 text-red-300'
+                        <div className={`p-3 rounded-xl border text-base font-semibold ${data.setSetting.treatment_expectancy >= 70
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
+                            : data.setSetting.treatment_expectancy >= 40
+                                ? 'bg-amber-500/10 border-amber-500/20 text-amber-300'
+                                : 'bg-red-500/10 border-red-500/20 text-red-300'
                             }`}>
                             {data.setSetting.treatment_expectancy >= 70 ? '✓ High expectancy — positive prognostic indicator'
                                 : data.setSetting.treatment_expectancy >= 40 ? '⚠ Moderate expectancy — discuss realistic outcomes'
@@ -305,8 +305,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                             onClick={() => updateData('observations', { [key]: opt } as Partial<WizardData['observations']>)}
                                             aria-pressed={data.observations[key] === opt}
                                             className={`py-2.5 px-3 rounded-xl border text-sm font-bold transition-all ${data.observations[key] === opt
-                                                    ? 'bg-primary/20 border-primary text-primary'
-                                                    : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
+                                                ? 'bg-primary/20 border-primary text-primary'
+                                                : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600'
                                                 }`}
                                         >
                                             {opt}
@@ -328,8 +328,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                     <label
                                         key={type}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${data.consent.consent_type === type
-                                                ? 'bg-primary/10 border-primary/40 text-slate-300'
-                                                : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                            ? 'bg-primary/10 border-primary/40 text-slate-300'
+                                            : 'bg-slate-800/30 border-slate-700/50 text-slate-400 hover:border-slate-600'
                                             }`}
                                     >
                                         <input
@@ -347,8 +347,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                         </div>
 
                         <label className={`flex items-center gap-3 px-4 py-4 rounded-2xl border cursor-pointer transition-all ${data.consent.consent_obtained
-                                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                                : 'bg-slate-800/30 border-slate-700/50 text-slate-400'
+                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                            : 'bg-slate-800/30 border-slate-700/50 text-slate-400'
                             }`}>
                             <input
                                 type="checkbox"
@@ -385,8 +385,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                     <button
                         onClick={step === 5 ? handleSubmitAll : () => setStep((s) => Math.min(s + 1, 5))}
                         className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ml-auto ${step === 5
-                                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30'
-                                : 'bg-primary/20 border border-primary/40 text-primary hover:bg-primary/30'
+                            ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30'
+                            : 'bg-primary/20 border border-primary/40 text-primary hover:bg-primary/30'
                             }`}
                     >
                         {step === 5 ? (

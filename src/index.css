@@ -396,6 +396,7 @@ body,
 .text-slate-400 {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
 /* =====================================================
    DARK DATE / TIME / DATETIME-LOCAL INPUTS (global)
    color-scheme: dark → browser renders the calendar
@@ -409,8 +410,10 @@ input[type="time"],
 input[type="datetime-local"] {
   color-scheme: dark;
   /* Ensure the field text matches the rest of the form */
-  color: rgb(203 213 225); /* slate-300 */
-  background-color: rgb(30 41 59 / 0.5); /* slate-800/50 */
+  color: rgb(203 213 225);
+  /* slate-300 */
+  background-color: rgb(30 41 59 / 0.5);
+  /* slate-800/50 */
 }
 
 /* Make the native calendar/clock icon white & hoverable */
@@ -428,7 +431,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover,
 input[type="time"]::-webkit-calendar-picker-indicator:hover,
 input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   filter: invert(1) opacity(1);
-  background-color: rgb(59 130 246 / 0.15); /* blue tint on hover */
+  background-color: rgb(59 130 246 / 0.15);
+  /* blue tint on hover */
 }
 
 /* Firefox: color-scheme handles dark popup natively */
@@ -468,27 +472,30 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .assessment-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: #10b981; /* emerald-500 */
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(16,185,129,0.4);
+  background: #f59e0b;
+  /* amber-400 — stands out against the blue track */
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
   cursor: grab;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
 .assessment-slider::-webkit-slider-thumb:active {
   cursor: grabbing;
-  transform: scale(1.1);
-  box-shadow: 0 4px 16px rgba(16,185,129,0.6);
+  transform: scale(1.12);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.7);
 }
+
 .assessment-slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: #10b981;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgba(16,185,129,0.4);
+  background: #f59e0b;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
   cursor: grab;
 }
 
@@ -510,7 +517,8 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 9999px #0c0f14 inset !important;
   box-shadow: 0 0 0px 9999px #0c0f14 inset !important;
-  -webkit-text-fill-color: #cbd5e1 !important; /* slate-300 */
+  -webkit-text-fill-color: #cbd5e1 !important;
+  /* slate-300 */
   caret-color: #cbd5e1;
   transition: background-color 9999s ease-in-out 0s;
 }
