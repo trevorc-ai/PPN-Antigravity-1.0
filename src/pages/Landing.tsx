@@ -139,7 +139,7 @@ const Landing: React.FC = () => {
               <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
                 Real-time safety surveillance, outcomes benchmarking, and protocol management. Built for how you actually practice.
               </p>
-              <p className="text-base text-slate-300 max-w-2xl lg:mx-0 mx-auto font-medium">
+              <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
                 You contribute de-identified outcomes data. You get back benchmarks, safety signals, and peer intelligence. The field gets the evidence base it needs.
               </p>
             </motion.div>
