@@ -38,11 +38,13 @@ jobs:
         VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
     - name: Upload build artifacts
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: dist-${{ matrix.node-version }}
         path: dist/
         retention-days: 7
+        if-no-files-found: warn
 
   lint:
     runs-on: ubuntu-latest

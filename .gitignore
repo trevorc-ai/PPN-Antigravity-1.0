@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# macOS custom folder icon files (contain carriage return in filename)
+Icon?
