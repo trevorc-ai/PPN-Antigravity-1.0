@@ -441,14 +441,19 @@ const InteractionChecker: React.FC = () => {
                       <p className="text-sm font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
                       <p className="text-base font-mono font-black" style={{ color: '#8B9DC3' }}>{analysisResult.id} // SECURE_NODE_0x7</p>
                     </div>
-                    {analysisResult.sourceUrl && (
-                      <div className="flex items-center gap-2">
-                        <a href={analysisResult.sourceUrl} target="_blank" rel="noreferrer" className="text-sm font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors">
-                          Source: {analysisResult.source}
-                          <span className="material-symbols-outlined text-xs">open_in_new</span>
-                        </a>
-                      </div>
-                    )}
+                    {/* Citation — always shown, links to source_url or PubMed search */}
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={analysisResult.sourceUrl || `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(analysisResult.source)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm font-black text-primary hover:text-slate-300 uppercase tracking-widest flex items-center gap-1 transition-colors"
+                      >
+                        Source: {analysisResult.source}
+                        <span className="material-symbols-outlined text-xs">open_in_new</span>
+                      </a>
+                    </div>
+
                   </div>
                 </div>
               </div>
