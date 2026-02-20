@@ -105,61 +105,12 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                         </div>
                     </div>
 
-                    {/* Key Benefits */}
-                    <div className="bg-slate-800/50 rounded-xl p-6 mb-8">
-                        <h3 className="text-lg font-bold text-slate-300 mb-4">
-                            Why Use the Wellness Journey?
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-blue-500/20 rounded-lg flex-shrink-0">
-                                    <Target className="w-5 h-5 text-blue-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-300 mb-1">
-                                        Predict Outcomes
-                                    </p>
-                                    <p className="text-sm text-slate-400">
-                                        Algorithm-based predictions for integration needs
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-emerald-500/20 rounded-lg flex-shrink-0">
-                                    <Shield className="w-5 h-5 text-emerald-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-300 mb-1">
-                                        Ensure Safety
-                                    </p>
-                                    <p className="text-sm text-slate-400">
-                                        Real-time vitals and rescue protocol tracking
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 bg-purple-500/20 rounded-lg flex-shrink-0">
-                                    <TrendingUp className="w-5 h-5 text-purple-400" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-300 mb-1">
-                                        Prove Value
-                                    </p>
-                                    <p className="text-sm text-slate-400">
-                                        Longitudinal data for insurance and research
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     {/* CTAs */}
                     <div className="flex flex-col sm:flex-row gap-3">
                         <button
                             onClick={handleGetStarted}
-                            className="flex-1 px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-slate-300 font-bold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-emerald-500/50"
+                            className="flex-1 px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
                             tabIndex={1}
                         >
                             Get Started with Phase 1

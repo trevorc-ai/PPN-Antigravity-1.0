@@ -124,15 +124,7 @@ export const MyProtocols = () => {
         <div className="min-h-full p-6 sm:p-10 space-y-10 animate-in fade-in duration-700 max-w-[1600px] mx-auto pb-24">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div className="space-y-1">
-                    <div className="flex items-center gap-3 flex-wrap">
-                        <h1 className="text-4xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>My Protocols</h1>
-                        <div className="px-2 py-0.5 bg-clinical-green/10 border border-clinical-green/20 rounded-md text-[8px] font-mono text-clinical-green tracking-widest font-black uppercase">
-                            Standardized_v2.4
-                        </div>
-                    </div>
-                    <p className="text-slate-500 text-sm font-black uppercase tracking-[0.3em]">
-                        Institutional Research Architecture // Node_0x7
-                    </p>
+                    <h1 className="text-4xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>My Protocols</h1>
                 </div>
 
                 <button

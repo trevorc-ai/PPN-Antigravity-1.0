@@ -154,7 +154,7 @@ const Login: React.FC = () => {
                 />
               </div>
 
-              {/* Password Field — Forgot Password is BELOW the input, not beside label */}
+              {/* Password Field */}
               <div>
                 <label htmlFor="login-password" className="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
                   Password
@@ -169,23 +169,13 @@ const Login: React.FC = () => {
                   required
                   disabled={loading}
                 />
-                {/* Forgot Password — below the field, right-aligned, out of primary tab flow */}
-                <div className="flex justify-end mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowResetModal(true)}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
               </div>
 
-              {/* Submit — Pricing CTA style */}
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-indigo-900/40 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -196,6 +186,17 @@ const Login: React.FC = () => {
                   'Sign In'
                 )}
               </button>
+
+              {/* Forgot Password — bottom of card */}
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowResetModal(true)}
+                  className="text-xs text-slate-500 hover:text-indigo-400 font-medium transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
 
               {/* Sign Up */}
               <div className="text-center pt-2 border-t border-slate-800/60">
@@ -215,87 +216,89 @@ const Login: React.FC = () => {
           <ShieldCheck className="w-4 h-4" />
           <span className="font-black uppercase tracking-widest">HIPAA Compliant • End-to-End Encrypted</span>
         </div>
-      </div>
+      </div >
 
       {/* Password Reset Modal — upgraded to match new card style */}
-      {showResetModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="relative w-full max-w-md">
-            <div className="absolute -inset-0.5 bg-indigo-500/10 blur-md opacity-60 rounded-[2.5rem]" />
-            <div className="relative bg-[#1c222d]/80 border border-slate-800 rounded-[2.5rem] p-8 sm:p-10 backdrop-blur-sm">
-              <button
-                onClick={() => {
-                  setShowResetModal(false);
-                  setResetEmail('');
-                  setError(null);
-                  setResetSuccess(false);
-                }}
-                className="absolute top-6 right-6 p-2 hover:bg-slate-800/60 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
+      {
+        showResetModal && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="relative w-full max-w-md">
+              <div className="absolute -inset-0.5 bg-indigo-500/10 blur-md opacity-60 rounded-[2.5rem]" />
+              <div className="relative bg-[#1c222d]/80 border border-slate-800 rounded-[2.5rem] p-8 sm:p-10 backdrop-blur-sm">
+                <button
+                  onClick={() => {
+                    setShowResetModal(false);
+                    setResetEmail('');
+                    setError(null);
+                    setResetSuccess(false);
+                  }}
+                  className="absolute top-6 right-6 p-2 hover:bg-slate-800/60 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
+                >
+                  <span className="material-symbols-outlined">close</span>
+                </button>
 
-              <h2 className="text-3xl font-black tracking-tighter text-slate-300 mb-1">Reset Password</h2>
-              <p className="text-sm text-slate-500 font-medium mb-8 uppercase tracking-widest">
-                We'll send a secure link to your email.
-              </p>
+                <h2 className="text-3xl font-black tracking-tighter text-slate-300 mb-1">Reset Password</h2>
+                <p className="text-sm text-slate-500 font-medium mb-8 uppercase tracking-widest">
+                  We'll send a secure link to your email.
+                </p>
 
-              {resetSuccess ? (
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5 flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-emerald-400 font-bold">Check your email!</p>
-                    <p className="text-sm text-emerald-400/80 mt-1">
-                      Password reset instructions sent to {resetEmail}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <form onSubmit={handlePasswordReset} className="space-y-5">
-                  {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-400">{error}</p>
+                {resetSuccess ? (
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5 flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-emerald-400 font-bold">Check your email!</p>
+                      <p className="text-sm text-emerald-400/80 mt-1">
+                        Password reset instructions sent to {resetEmail}
+                      </p>
                     </div>
-                  )}
-
-                  <div>
-                    <label htmlFor="reset-email" className="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
-                      Email Address
-                    </label>
-                    <input
-                      id="reset-email"
-                      type="email"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
-                      placeholder="your@email.com"
-                      required
-                      disabled={resetLoading}
-                    />
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={resetLoading}
-                    className="w-full py-4 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
-                  >
-                    {resetLoading ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Sending...
-                      </>
-                    ) : (
-                      'Send Reset Link'
+                ) : (
+                  <form onSubmit={handlePasswordReset} className="space-y-5">
+                    {error && (
+                      <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-start gap-3">
+                        <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                        <p className="text-sm text-red-400">{error}</p>
+                      </div>
                     )}
-                  </button>
-                </form>
-              )}
+
+                    <div>
+                      <label htmlFor="reset-email" className="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+                        Email Address
+                      </label>
+                      <input
+                        id="reset-email"
+                        type="email"
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                        placeholder="your@email.com"
+                        required
+                        disabled={resetLoading}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={resetLoading}
+                      className="w-full py-4 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
+                    >
+                      {resetLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        'Send Reset Link'
+                      )}
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 

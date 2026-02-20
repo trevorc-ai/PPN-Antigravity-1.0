@@ -346,7 +346,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
         // ── Phase 2: Dosing Session ───────────────────────────────────────────
         case 'dosing-protocol':
-            return <DosingProtocolForm onSave={() => onSuccess('Dosing Protocol')} />;
+            // NOTE: no-op onSave — DosingProtocolForm auto-saves on every field change.
+            // Calling onSuccess here would immediately trigger onComplete() and close the panel.
+            // A dedicated handleDosingProtocolSave can be wired once sessionId is available.
+            return <DosingProtocolForm onSave={() => { }} />;
 
         case 'session-timeline':
             return <SessionTimelineForm onSave={handleTimelineSave} />;
