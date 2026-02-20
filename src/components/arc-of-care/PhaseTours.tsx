@@ -306,11 +306,12 @@ const PhaseTour: React.FC<PhaseTourProps> = ({
                 zIndex: 10000,
             }
             : {
-                // Mobile: fixed bottom
+                // Fallback: centered bottom bar, capped width so it never stretches full-screen
                 position: 'fixed',
-                bottom: 16,
-                left: 16,
-                right: 16,
+                bottom: 24,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 'min(480px, calc(100vw - 32px))',
                 zIndex: 10000,
             };
 
