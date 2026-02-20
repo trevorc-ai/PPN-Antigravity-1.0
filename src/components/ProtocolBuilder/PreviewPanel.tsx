@@ -34,19 +34,19 @@ export const PreviewPanel = ({ protocol, networkStats, timeSaved, onSave, isVali
           {showStats && (
             <div className="mt-8 pt-8 border-t border-indigo-500/20 space-y-4 animate-in fade-in transition-all duration-700">
               <div className="p-4 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
-                <div className="text-xs uppercase font-bold text-indigo-300 mb-1">Projected Remission Rate</div>
+                <div className="text-sm uppercase font-bold text-indigo-300 mb-1">Projected Remission Rate</div>
                 <div className="text-3xl font-black text-slate-300">{networkStats.remission_rate}%</div>
-                <div className="text-xs text-indigo-400 mt-1">Based on global outcomes</div>
+                <div className="text-sm text-indigo-400 mt-1">Based on global outcomes</div>
               </div>
 
               <div className="flex gap-4">
                 <div className="flex-1 p-3 bg-slate-800/50 rounded-lg text-center">
                   <div className="text-2xl font-bold text-emerald-400">{timeSaved}s</div>
-                  <div className="text-xs uppercase font-bold text-slate-500">Admin Time Saved</div>
+                  <div className="text-sm uppercase font-bold text-slate-500">Admin Time Saved</div>
                 </div>
                 <div className="flex-1 p-3 bg-slate-800/50 rounded-lg text-center">
                   <div className="text-2xl font-bold text-blue-400">{networkStats.confidence}%</div>
-                  <div className="text-xs uppercase font-bold text-slate-500">AI Confidence</div>
+                  <div className="text-sm uppercase font-bold text-slate-500">AI Confidence</div>
                 </div>
               </div>
             </div>

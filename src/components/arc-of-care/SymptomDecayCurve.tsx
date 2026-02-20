@@ -145,7 +145,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                 {trend && (
                     <div className={`flex items-center gap-1 ${trend.color}`}>
                         <trend.icon className="w-4 h-4" />
-                        <span className="text-xs font-semibold">{trend.label}</span>
+                        <span className="text-sm font-semibold">{trend.label}</span>
                     </div>
                 )}
             </div>
@@ -153,13 +153,13 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
             {/* Current Status */}
             <div className="flex flex-wrap items-center gap-3 p-3 bg-slate-900/40 rounded-lg">
                 <div className="flex-shrink-0">
-                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-0.5">Current PHQ-9</p>
+                    <p className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-0.5">Current PHQ-9</p>
                     <p className="text-2xl font-black" style={{ color: currentSeverity.color }}>
                         {currentPhq9}
                     </p>
                 </div>
                 <div className="flex-1 min-w-[120px]">
-                    <p className="text-xs text-slate-400 mb-1">{currentSeverity.label}</p>
+                    <p className="text-sm text-slate-400 mb-1">{currentSeverity.label}</p>
                     <div className="h-2 bg-slate-900/60 rounded-full overflow-hidden">
                         <div
                             className="h-full transition-all duration-500"
@@ -171,7 +171,7 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                     </div>
                 </div>
                 <div className="flex-shrink-0">
-                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-0.5">Improvement</p>
+                    <p className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-0.5">Improvement</p>
                     <p className="text-xl font-black text-emerald-400">
                         -{baselinePhq9 - currentPhq9} pts
                     </p>

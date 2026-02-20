@@ -254,7 +254,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {Object.entries(OBSERVATION_CATEGORIES).map(([category, items]) => (
                             <div key={category} className="space-y-1.5">
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{category}</p>
+                                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">{category}</p>
                                 {items.map(obs => (
                                     <button
                                         key={obs.id}

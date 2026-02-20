@@ -310,7 +310,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
             {/* Results list */}
             <div ref={listRef} className="max-h-48 overflow-y-auto space-y-1 rounded-xl">
                 {!query && recentItems.length > 0 && (
-                    <p className="text-xs font-black text-amber-400 uppercase tracking-widest px-2 py-1">
+                    <p className="text-sm font-black text-amber-400 uppercase tracking-widest px-2 py-1">
                         Recently Used
                     </p>
                 )}
@@ -408,7 +408,7 @@ export const RefPicker: React.FC<RefPickerProps> = ({
         <div className={`space-y-2 ${className}`}>
             {/* Label row */}
             <div className="flex items-center justify-between">
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest">
                     {label}
                 </p>
                 <div className="flex items-center gap-2 text-xs">
@@ -429,7 +429,7 @@ export const RefPicker: React.FC<RefPickerProps> = ({
             {atMax && (
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
                     <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                    <p className="text-xs text-amber-300 font-semibold">
+                    <p className="text-sm text-amber-300 font-semibold">
                         Maximum {maxItems} selections reached. Deselect one to choose another.
                     </p>
                 </div>

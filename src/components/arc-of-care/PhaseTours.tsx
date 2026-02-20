@@ -403,7 +403,7 @@ const PhaseTour: React.FC<PhaseTourProps> = ({
                     </p>
                     {step.detail && (
                         <div className={`p-3 rounded-xl ${colors.bg} border ${colors.border}`}>
-                            <p className="text-xs text-slate-400 leading-relaxed">{step.detail}</p>
+                            <p className="text-sm text-slate-400 leading-relaxed">{step.detail}</p>
                         </div>
                     )}
                 </div>

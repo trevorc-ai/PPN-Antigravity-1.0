@@ -59,7 +59,7 @@ const Settings: React.FC = () => {
 
           <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl divide-y divide-slate-800/40">
             {/* MFA */}
-            <div className="p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-start gap-6">
                 <div className="size-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg">
                   <span className="material-symbols-outlined text-3xl">phonelink_lock</span>
@@ -82,7 +82,7 @@ const Settings: React.FC = () => {
             </div>
 
             {/* Password */}
-            <div className="p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="flex items-start gap-6">
                 <div className="size-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 shadow-lg">
                   <span className="material-symbols-outlined text-3xl">password</span>
@@ -242,7 +242,7 @@ const Settings: React.FC = () => {
             <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
           </div>
 
-          <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] p-8 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-8">
+          <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] p-8 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
             <div className="flex items-start gap-6">
               <div className="size-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shadow-[0_0_20px_rgba(43,116,243,0.2)]">
                 <span className="material-symbols-outlined text-3xl">lock_person</span>
@@ -254,7 +254,7 @@ const Settings: React.FC = () => {
                 </p>
               </div>
             </div>
-            <button className="flex items-center gap-3 px-6 py-4 bg-primary hover:bg-blue-600 text-white text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 whitespace-nowrap group">
+            <button className="flex items-center gap-3 px-6 py-4 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 whitespace-nowrap group">
               <span className="material-symbols-outlined text-lg">vpn_key</span>
               Manage Recovery Keys
             </button>

@@ -37,7 +37,8 @@ export default function PatientFormPage() {
     };
 
     const handleFormSave = (formName: string) => {
-        console.log(`[PatientFormPage] ${formName} saved for ${patientId}`);
+        // Form saved — non-identifying log (no patientId in output)
+        console.log(`[PatientFormPage] Form submitted: ${formName}`);
         setMode('done');
     };
 
@@ -64,8 +65,8 @@ export default function PatientFormPage() {
                     <button
                         onClick={() => setMode('fill')}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${mode === 'fill'
-                                ? 'bg-indigo-600 text-white border-indigo-500'
-                                : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'
+                            ? 'bg-indigo-600 text-white border-indigo-500'
+                            : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'
                             }`}
                     >
                         <Tablet className="w-3.5 h-3.5" />
@@ -74,8 +75,8 @@ export default function PatientFormPage() {
                     <button
                         onClick={() => setMode('share')}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${mode === 'share'
-                                ? 'bg-indigo-600 text-white border-indigo-500'
-                                : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'
+                            ? 'bg-indigo-600 text-white border-indigo-500'
+                            : 'bg-slate-800 text-slate-400 border-slate-700 hover:border-slate-500'
                             }`}
                     >
                         <Share2 className="w-3.5 h-3.5" />
@@ -126,8 +127,8 @@ export default function PatientFormPage() {
                                 <button
                                     onClick={handleCopy}
                                     className={`flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-semibold border transition-all ${copied
-                                            ? 'bg-emerald-600 text-white border-emerald-500'
-                                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                                        ? 'bg-emerald-600 text-white border-emerald-500'
+                                        : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
                                         }`}
                                 >
                                     {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
