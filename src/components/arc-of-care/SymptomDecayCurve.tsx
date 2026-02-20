@@ -298,10 +298,10 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                                         {hoveredPoint === i && (
                                             <g>
                                                 <rect
-                                                    x={xScale(point.day) - 60}
-                                                    y={yScale(point.phq9) - 50}
-                                                    width={120}
-                                                    height={40}
+                                                    x={xScale(point.day) - 64}
+                                                    y={yScale(point.phq9) - 56}
+                                                    width={128}
+                                                    height={50}
                                                     rx={8}
                                                     fill="#0f172a"
                                                     stroke={severity.color}
@@ -309,17 +309,20 @@ const SymptomDecayCurve: React.FC<SymptomDecayCurveProps> = ({
                                                 />
                                                 <text
                                                     x={xScale(point.day)}
-                                                    y={yScale(point.phq9) - 35}
+                                                    y={yScale(point.phq9) - 38}
                                                     textAnchor="middle"
-                                                    className="text-xs fill-slate-300 font-semibold"
+                                                    fontSize={14}
+                                                    fontWeight="600"
+                                                    fill="#cbd5e1"
                                                 >
                                                     Day {point.day}
                                                 </text>
                                                 <text
                                                     x={xScale(point.day)}
-                                                    y={yScale(point.phq9) - 20}
+                                                    y={yScale(point.phq9) - 18}
                                                     textAnchor="middle"
-                                                    className="text-sm font-bold"
+                                                    fontSize={16}
+                                                    fontWeight="700"
                                                     fill={severity.color}
                                                 >
                                                     PHQ-9: {point.phq9}
