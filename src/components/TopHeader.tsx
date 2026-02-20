@@ -291,7 +291,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
                     <button
                       onClick={() => { navigate(`/clinician/${userProfile?.id || 'profile'}`); setIsMenuOpen(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-slate-300 hover:bg-white/5 transition-all text-xs font-bold"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-slate-300 hover:bg-white/5 transition-all text-sm font-bold"
                     >
                       <span className="material-symbols-outlined text-lg">account_circle</span>
                       View Research Profile
@@ -299,7 +299,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
                     <button
                       onClick={() => { navigate('/settings'); setIsMenuOpen(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-slate-300 hover:bg-white/5 transition-all text-xs font-bold"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-slate-300 hover:bg-white/5 transition-all text-sm font-bold"
                     >
                       <span className="material-symbols-outlined text-lg">settings_applications</span>
                       Account Settings
@@ -309,7 +309,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-400/5 transition-all text-xs font-bold"
+                      className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-400/5 transition-all text-sm font-bold"
                     >
                       <span className="material-symbols-outlined text-lg">logout</span>
                       Sign Out
