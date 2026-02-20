@@ -101,8 +101,10 @@ const Landing: React.FC = () => {
       {/* ── Sticky Nav Bar ─────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a1628]/80 backdrop-blur-md border-b border-slate-800/60">
         <div>
-          <p className="text-sm font-black text-slate-200 tracking-[0.15em] uppercase">PPN Portal</p>
-          <p className="text-[11px] font-semibold text-slate-500 tracking-widest uppercase">Clinical Intelligence Platform</p>
+          <div className="flex items-baseline gap-1">
+            <span className="text-lg font-black tracking-tight text-slate-200 leading-none">PPN</span>
+            <span className="text-lg font-black tracking-tight text-primary leading-none">Portal</span>
+          </div>
         </div>
         <button
           onClick={() => navigate('/login')}
