@@ -79,7 +79,7 @@ export const Checkout: FC = () => {
     ) as [SubscriptionTier, typeof SUBSCRIPTION_TIERS[SubscriptionTier]][];
 
     return (
-        <div className="min-h-screen bg-slate-950 p-8">
+        <div className="min-h-screen bg-[#0a1628] p-8">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-12">
