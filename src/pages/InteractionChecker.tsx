@@ -14,7 +14,7 @@ interface RefSubstance {
 interface RefMedication {
   medication_id: number;
   medication_name: string;
-  // medication_category: string; // Removed to prevent 404 if column is missing
+  medication_category: string | null; // WO-096: populated after migration 051 runs
 }
 
 const InteractionChecker: React.FC = () => {
@@ -41,27 +41,50 @@ const InteractionChecker: React.FC = () => {
     if (agentB) setSelectedMedication(agentB);
   }, [searchParams]);
 
-  // Fetch Reference Lists
+  // Fetch Reference Lists — WO-096: live ref_substances + ref_medications with category grouping
   useEffect(() => {
     const fetchRefData = async () => {
       setRefLoading(true);
       try {
-        const [{ data: subData }, { data: medData }] = await Promise.all([
-          supabase.from('ref_substances').select('substance_id, substance_name').order('substance_name'),
-          supabase.from('ref_medications').select('medication_id, medication_name').eq('is_active', true).order('medication_name')
+        const [{ data: subData, error: subErr }, { data: medData, error: medErr }] = await Promise.all([
+          supabase
+            .from('ref_substances')
+            .select('substance_id, substance_name')
+            .order('substance_name'),
+          supabase
+            .from('ref_medications')
+            .select('medication_id, medication_name, medication_category')
+            .eq('is_active', true)
+            .order('medication_category')
+            .order('medication_name')
         ]);
 
+        if (subErr) throw subErr;
+        if (medErr) throw medErr;
+
         if (subData) setSubstances(subData);
-        if (medData) setMedications(medData);
+
+        // Fallback: if is_active filter returns 0 rows (data not yet seeded),
+        // fetch without the filter so the dropdown is never completely empty.
+        if (medData && medData.length > 0) {
+          setMedications(medData);
+        } else {
+          const { data: fallbackMeds } = await supabase
+            .from('ref_medications')
+            .select('medication_id, medication_name, medication_category')
+            .order('medication_category')
+            .order('medication_name');
+          if (fallbackMeds) setMedications(fallbackMeds);
+        }
       } catch (err) {
-        console.error('Ref Fetch Error:', err);
+        console.error('[InteractionChecker] Ref Fetch Error:', err);
         addToast({ title: 'System Error', message: 'Failed to load medication database.', type: 'error' });
       } finally {
         setRefLoading(false);
       }
     };
     fetchRefData();
-  }, []);
+  }, [addToast]);
 
   // Fetch Interaction Logic
   useEffect(() => {
@@ -300,12 +323,27 @@ const InteractionChecker: React.FC = () => {
               disabled={refLoading}
               className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait" style={{ color: '#8B9DC3' }}
             >
-              <option value="">{refLoading ? 'Loading...' : 'Select Interactor...'}</option>
-              {medications.map(m => (
-                <option key={m.medication_id} value={m.medication_name}>
-                  {m.medication_name.toUpperCase()}
-                </option>
-              ))}
+              <option value="">
+                {refLoading ? 'Loading medications...' : medications.length === 0 ? 'No medications in database' : 'Select Interactor...'}
+              </option>
+              {/* WO-096: Group by medication_category using optgroup for clinical clarity */}
+              {medications.length > 0 && (() => {
+                const grouped: Record<string, RefMedication[]> = {};
+                for (const med of medications) {
+                  const cat = med.medication_category ?? 'Uncategorized';
+                  if (!grouped[cat]) grouped[cat] = [];
+                  grouped[cat].push(med);
+                }
+                return Object.entries(grouped).map(([category, meds]) => (
+                  <optgroup key={category} label={category}>
+                    {meds.map(m => (
+                      <option key={m.medication_id} value={m.medication_name}>
+                        {m.medication_name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ));
+              })()}
             </select>
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
               <span className="material-symbols-outlined">expand_more</span>
