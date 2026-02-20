@@ -739,7 +739,7 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="flex gap-4">
                     {['MedDRA', 'LOINC', 'SNOMED'].map(code => (
-                      <span key={code} className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-black text-slate-500 tracking-widest uppercase">{code}</span>
+                      <span key={code} className="px-5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-black text-slate-400 tracking-widest uppercase">{code}</span>
                     ))}
                   </div>
                 </div>
