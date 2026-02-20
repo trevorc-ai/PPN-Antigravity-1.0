@@ -8,7 +8,7 @@ export const ToastContainer: React.FC = () => {
 
     return (
         <div
-            className="fixed top-24 right-6 z-50 flex flex-col gap-3 w-full max-w-md pointer-events-none"
+            className="fixed bottom-8 right-6 z-50 flex flex-col gap-3 w-full max-w-md pointer-events-none"
             role="region"
             aria-live="polite"
         >
@@ -16,9 +16,9 @@ export const ToastContainer: React.FC = () => {
                 {toasts.map((toast) => (
                     <motion.div
                         key={toast.id}
-                        initial={{ opacity: 0, x: 50, scale: 0.9 }}
-                        animate={{ opacity: 1, x: 0, scale: 1 }}
-                        exit={{ opacity: 0, x: 50, scale: 0.9 }}
+                        initial={{ opacity: 0, y: 16, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 16, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
                         className={`
               pointer-events-auto flex items-start gap-3 p-4 rounded-xl border shadow-lg backdrop-blur-md
