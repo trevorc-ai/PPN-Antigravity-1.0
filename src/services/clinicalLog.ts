@@ -117,6 +117,42 @@ export interface ConsentData {
 }
 
 // ============================================================================
+// SESSION CREATION
+// ============================================================================
+
+/**
+ * Creates a stub log_clinical_records row at session start.
+ * Returns the DB-generated UUID which must be used as sessionId for all
+ * subsequent Phase 2 form writes (FK: log_session_vitals.session_id → log_clinical_records.id).
+ *
+ * We use patient_link_code for PHI-safe patient identification.
+ * Substance, dosage etc. are filled in by the Dosing Protocol form.
+ */
+export async function createClinicalSession(
+    patientId: string,
+    siteId: string,
+): Promise<{ success: boolean; sessionId?: string; error?: unknown }> {
+    try {
+        const { data, error } = await supabase
+            .from('log_clinical_records')
+            .insert([{
+                patient_link_code: patientId,
+                site_id: siteId,
+                session_date: new Date().toISOString().split('T')[0],
+                session_type: 'wellness_journey',
+            }])
+            .select('id')
+            .single();
+
+        if (error) throw error;
+        return { success: true, sessionId: data?.id as string };
+    } catch (error) {
+        console.error('[clinicalLog] createClinicalSession:', error);
+        return { success: false, error };
+    }
+}
+
+// ============================================================================
 // PHASE 1: PREPARATION
 // ============================================================================
 

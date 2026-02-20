@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useToast } from '../../contexts/ToastContext';
 
 // All arc-of-care forms — in clinical sequence
@@ -128,11 +128,21 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     // ── Shared success/error helpers ─────────────────────────────────────────
 
+    // Debounce ref: prevents the same "Saved" toast from stacking when
+    // auto-saving forms fire onSave multiple times in quick succession
+    // (e.g. Session Observations fires on every tag click).
+    const lastSavedAt = useRef<number>(0);
+    const TOAST_DEBOUNCE_MS = 5000; // max 1 success toast per 5 s per panel open
+
     // onSaved: shows a toast but does NOT close the panel.
     // The practitioner stays in the form after a successful save.
     // onComplete (panel close) is triggered only by the X button or backdrop click.
     const onSaved = (label: string) => {
-        addToast({ title: `${label} Saved`, message: 'Recorded to clinical record.', type: 'success' });
+        const now = Date.now();
+        if (now - lastSavedAt.current > TOAST_DEBOUNCE_MS) {
+            lastSavedAt.current = now;
+            addToast({ title: `${label} Saved`, message: 'Recorded to clinical record.', type: 'success' });
+        }
         // NOTE: intentionally NOT calling onComplete() here.
     };
 

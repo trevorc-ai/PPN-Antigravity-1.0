@@ -22,6 +22,7 @@ import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
 import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
+import { createClinicalSession } from '../services/clinicalLog';
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -157,13 +158,29 @@ const WellnessJourney: React.FC = () => {
         'Complete': 3,
     };
 
-    const handlePatientSelect = useCallback((patientId: string, isNew: boolean, phase: string) => {
-        // Every time a practitioner opens a Wellness Journey session — whether for a new
-        // or existing patient — a fresh session UUID is generated. This UUID becomes the
-        // log_clinical_records.id for all form saves in this session.
-        // For existing patients we still generate a new UUID because they are starting
-        // a NEW session visit, not resuming an old one.
-        const sessionId = crypto.randomUUID();
+    const handlePatientSelect = useCallback(async (patientId: string, isNew: boolean, phase: string) => {
+        // Create a REAL log_clinical_records row in the DB so that all Phase 2 form
+        // writes (vitals, observations, timeline) satisfy the FK constraint:
+        //   log_session_vitals.session_id → log_clinical_records.id
+        // We do this for BOTH new and existing patients because every Wellness Journey
+        // visit starts a new session record.
+        const resolvedSiteId = await getCurrentSiteId();
+        let sessionId: string | undefined;
+
+        if (resolvedSiteId) {
+            const result = await createClinicalSession(patientId, resolvedSiteId);
+            if (result.success && result.sessionId) {
+                sessionId = result.sessionId;
+            } else {
+                // Non-fatal: fall back to client UUID. Phase 1 forms don't need the FK.
+                // Phase 2 saves will fail until site is resolved — user will see error toasts.
+                console.warn('[WellnessJourney] DB session creation failed; using local UUID fallback', result.error);
+                sessionId = crypto.randomUUID();
+            }
+        } else {
+            // siteId not yet resolved — use local UUID. Phase 2 forms will error gracefully.
+            sessionId = crypto.randomUUID();
+        }
 
         setJourney(prev => ({
             ...prev,
