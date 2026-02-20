@@ -141,7 +141,6 @@ agents:
          - Use the ACTUAL file name to move it to QA: `mv _WORK_ORDERS/03_BUILD/<actual_filename>.md _WORK_ORDERS/04_QA/` (Do NOT use the literal string '<found_path>').
          - Verify: `ls -lh _WORK_ORDERS/04_QA/`
 
-
   - name: "INSPECTOR"
     role: "Senior Systems Architect, QA Lead, and Accessibility Enforcer"
     temperature: 0

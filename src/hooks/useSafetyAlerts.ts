@@ -90,24 +90,13 @@ export const useSafetyAlerts = () => {
 
         fetchAlerts();
 
-        // Set up real-time subscription for safety events
-        const subscription = supabase
-            .channel('safety-alerts')
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'log_safety_events'
-                },
-                () => {
-                    fetchAlerts();
-                }
-            )
-            .subscribe();
+        // Real-time subscription removed (WO-096 fix) — was triggering fetchAlerts()
+        // on every postgres_changes event, causing Supabase ThrottleException.
+        // Safety alerts are MVP/mock — fetch-once on mount is sufficient.
+        // Re-enable with proper debounce when safety_alerts table is production-ready.
 
         return () => {
-            subscription.unsubscribe();
+            // no subscription to clean up
         };
     }, [user]);
 
