@@ -145,7 +145,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                     id={`phase1-step-${currentStepIndex + 1}-start`}
                                     onClick={() => onStartStep(currentStep.id)}
                                     aria-label={`Begin ${currentStep.label}`}
-                                    className="flex items-center gap-3 px-8 py-4 bg-slate-900/80 border border-slate-700 hover:bg-slate-800 hover:border-slate-600 text-slate-200 font-black text-base rounded-2xl transition-all active:scale-95 shadow-xl shadow-black/20 group backdrop-blur-md"
+                                    className="flex items-center gap-3 px-8 py-4 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 hover:border-emerald-400/70 text-emerald-300 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-900/30 group"
                                 >
                                     Begin
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
