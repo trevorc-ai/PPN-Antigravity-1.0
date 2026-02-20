@@ -1162,17 +1162,7 @@
         drawStars();
         window.addEventListener('resize', () => { resize(); initStars(); });
 
-        // QR code
-        QRCode.toCanvas(
-            document.createElement('canvas'),
-            'https://ppnportal.net/phantom-shield.html',
-            { width: 120, margin: 1, color: { dark: '#e6edf3', light: '#0a1628' } },
-            (err, cvs) => {
-                if (!err) document.getElementById('qr-mini').appendChild(cvs);
-            }
-        );
-
-        // Scroll reveal
+        // Scroll reveal — runs FIRST, before QR, so CDN failures never block visibility
         const reveals = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => {
@@ -1182,8 +1172,21 @@
                 }
             });
         }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
-
         reveals.forEach(r => observer.observe(r));
+
+        // QR code — wrapped in try/catch so CDN failures never crash the page
+        try {
+            QRCode.toCanvas(
+                document.createElement('canvas'),
+                'https://ppnportal.net/phantom-shield.html',
+                { width: 120, margin: 1, color: { dark: '#e6edf3', light: '#0a1628' } },
+                (err, cvs) => {
+                    if (!err) document.getElementById('qr-mini').appendChild(cvs);
+                }
+            );
+        } catch (e) {
+            // QR CDN unavailable — non-fatal, page continues normally
+        }
     </script>
 </body>
 
