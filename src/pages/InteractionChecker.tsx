@@ -108,40 +108,37 @@ const InteractionChecker: React.FC = () => {
           return;
         }
 
-        // Step 2: Query ref_drug_interactions
+        // Step 2: Query ref_knowledge_graph (live table — string-based matching)
+        // Note: ref_knowledge_graph uses substance_name + interactor_name strings, not ID joins.
+        // ref_drug_interactions does not exist in the live DB.
         const { data, error } = await supabase
-          .from('ref_drug_interactions')
+          .from('ref_knowledge_graph')
           .select('*')
-          .eq('substance_id', sub.substance_id)
-          .eq('medication_id', med.medication_id)
+          .eq('substance_name', selectedPsychedelic)
+          .eq('interactor_name', selectedMedication)
           .maybeSingle();
 
         if (error) throw error;
 
         if (data) {
-          // Map DB Enum to UI Risk Levels
-          let risk = 1;
-          let severityLabel = 'Low';
-
-          switch (data.interaction_severity) {
-            case 'SEVERE': risk = 9; severityLabel = 'High'; break;
-            case 'MODERATE': risk = 5; severityLabel = 'Moderate'; break;
-            case 'MILD': risk = 3; severityLabel = 'Low'; break;
-          }
+          // Map ref_knowledge_graph columns to UI risk model
+          const risk = data.risk_level ?? 1;
+          const severityLabel = data.severity_grade ?? 'Low';
 
           setDbRule({
-            id: `DB-${data.id}`,
+            id: `KG-${data.interaction_id}`,
             substance: selectedPsychedelic,
             interactor: selectedMedication,
             riskLevel: risk,
             severity: severityLabel,
-            description: data.risk_description,
+            description: data.clinical_description,
             mechanism: data.mechanism,
-            clinical_recommendation: data.clinical_recommendation,
-            source: "National Library of Medicine / PubMed",
-            sourceUrl: data.pubmed_reference,
+            clinical_recommendation: null, // not in knowledge graph schema
+            source: data.evidence_source ?? 'National Library of Medicine / PubMed',
+            sourceUrl: data.source_url,
             isKnown: true
           });
+
         } else {
           // Explicit "No Record Found" -> Nominal Logic
           setDbRule(null);
