@@ -98,7 +98,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#06090F] text-slate-300 font-sans pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] text-slate-300 font-sans pb-20">
       {/* Hero Section with Radial Gradient */}
       <div className="relative pt-24 pb-20 px-8 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,rgba(43,116,243,0.15),transparent_70%)] pointer-events-none" />
@@ -116,7 +116,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               className="w-full bg-[#0D121C] border border-slate-800 rounded-lg py-4 px-14 text-slate-300 focus:outline-none focus:border-primary transition-all shadow-xl"
             />
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-blue-600 text-slate-300 px-4 py-2 sm:px-6 rounded-md font-medium transition-colors">
+            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-blue-600 text-white px-4 py-2 sm:px-6 rounded-md font-medium transition-colors">
               Search
             </button>
           </div>
@@ -219,7 +219,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                 <button className="w-full flex items-center justify-center gap-3 bg-[#1A2233] hover:bg-slate-700 text-slate-300 py-3 rounded-lg text-sm font-medium transition-colors border border-slate-700/50">
                   <Mail size={18} /> Email Support
                 </button>
-                <button className="w-full flex items-center justify-center gap-3 bg-primary hover:bg-blue-600 text-slate-300 py-3 mt-2 rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-900/20">
+                <button className="w-full flex items-center justify-center gap-3 bg-primary hover:bg-blue-600 text-white py-3 mt-2 rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-900/20">
                   <Calendar size={18} /> Schedule Technical Demo
                 </button>
               </div>

@@ -321,7 +321,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           ) : (
             <button
               onClick={handleAuthAction}
-              className="px-6 py-2.5 bg-primary hover:bg-blue-600 text-slate-300 text-[12px] font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
+              className="px-6 py-2.5 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
             >
               Login
             </button>

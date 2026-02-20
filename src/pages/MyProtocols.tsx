@@ -129,7 +129,7 @@ export const MyProtocols = () => {
 
                 <button
                     onClick={() => navigate('/wellness-journey')}
-                    className="px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
+                    className="px-8 py-4 bg-primary hover:bg-blue-600 text-white text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
                 >
                     <PlusCircle size={18} />
                     Create New Protocol

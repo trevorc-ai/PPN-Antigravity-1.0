@@ -75,7 +75,7 @@ const Settings: React.FC = () => {
               {/* WO-109: Wired up MFA button */}
               <button
                 onClick={handleMFA}
-                className="px-6 py-3 bg-primary hover:bg-blue-600 text-slate-300 text-[12px] font-black rounded-xl uppercase tracking-widest transition-all shadow-xl active:scale-95 whitespace-nowrap"
+                className="px-6 py-3 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-xl uppercase tracking-widest transition-all shadow-xl active:scale-95 whitespace-nowrap"
               >
                 Setup MFA
               </button>
@@ -254,7 +254,7 @@ const Settings: React.FC = () => {
                 </p>
               </div>
             </div>
-            <button className="flex items-center gap-3 px-6 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 whitespace-nowrap group">
+            <button className="flex items-center gap-3 px-6 py-4 bg-primary hover:bg-blue-600 text-white text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl active:scale-95 whitespace-nowrap group">
               <span className="material-symbols-outlined text-lg">vpn_key</span>
               Manage Recovery Keys
             </button>

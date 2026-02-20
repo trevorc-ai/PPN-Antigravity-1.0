@@ -437,3 +437,27 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .date-input {
   color-scheme: dark;
 }
+
+/* =====================================================
+   PRIMARY BUTTON CONTRAST FIX (global, accessibility)
+   Solid bg-primary buttons must always show white text.
+   The old pattern "bg-primary text-slate-300" produces
+   a ~2:1 contrast ratio (fails WCAG AA).
+   This rule overrides ALL solid-primary surfaces.
+   Exceptions: bg-primary/N transparency variants are
+   intentionally icon/badge tinted — NOT overridden here.
+   ===================================================== */
+
+/* Match any element that has the exact bg-primary class
+   (Tailwind generates it as background-color: var(--color-primary)) */
+.bg-primary:not([class*="bg-primary/"]) {
+  color: #ffffff !important;
+}
+
+/* Ensure hover state on blue-600 also stays white */
+.hover\:bg-blue-600:hover,
+.hover\:bg-blue-500:hover,
+.hover\:bg-indigo-500:hover,
+.hover\:bg-indigo-600:hover {
+  color: #ffffff;
+}
