@@ -86,8 +86,9 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 </div>
             </div>
 
-            {/* Grid Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {/* Single-column vertical stack — no uneven cell heights */}
+            <div className="space-y-6 divide-y divide-slate-800/60">
                 {/* Expectancy Scale */}
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -111,7 +112,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 </div>
 
                 {/* ACE Score */}
-                <div className="space-y-3">
+                <div className="space-y-3 pt-6">
                     <div className="flex items-center gap-2">
                         <Shield className="w-4 h-4 text-amber-400" />
                         <h4 className="text-slate-300 text-sm font-medium">ACE Score</h4>
@@ -133,7 +134,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 </div>
 
                 {/* GAD-7 Anxiety */}
-                <div className="space-y-3">
+                <div className="space-y-3 pt-6">
                     <div className="flex items-center gap-2">
                         <Brain className="w-4 h-4 text-purple-400" />
                         <h4 className="text-slate-300 text-sm font-medium">Anxiety Severity (GAD-7)</h4>
@@ -155,7 +156,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                 </div>
 
                 {/* Predicted Integration Needs */}
-                <div className="space-y-3">
+                <div className="space-y-3 pt-6">
                     <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-emerald-400" />
                         <h4 className="text-slate-300 text-sm font-medium">Predicted Integration Needs</h4>
@@ -181,8 +182,8 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                     />
                 </div>
 
-                {/* PHQ-9 Depression — WO-060 Phase 1C */}
-                <div className="space-y-3">
+                {/* PHQ-9 Depression */}
+                <div className="space-y-3 pt-6">
                     <div className="flex items-center gap-2">
                         <Brain className="w-4 h-4 text-red-400" />
                         <h4 className="text-slate-300 text-sm font-medium">Depression Severity (PHQ-9)</h4>
@@ -205,7 +206,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
 
                 {/* PCL-5 PTSD — WO-060 Phase 1C */}
                 {pcl5Score !== undefined && (
-                    <div className="space-y-3 lg:col-span-2">
+                    <div className="space-y-3 pt-6">
                         <div className="flex items-center gap-2">
                             <FileText className="w-4 h-4 text-purple-400" />
                             <h4 className="text-slate-300 text-sm font-medium">PTSD Severity (PCL-5)</h4>
