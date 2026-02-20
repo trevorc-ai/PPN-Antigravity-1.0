@@ -70,11 +70,11 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                             <div className="w-16 h-16 mx-auto mb-4 bg-blue-500/20 rounded-full flex items-center justify-center">
                                 <span className="text-3xl font-black text-blue-400">1</span>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-300 mb-2">
-                                Phase 1: Preparation
+                            <h3 className="text-xl font-black text-slate-200 mb-2">
+                                Preparation
                             </h3>
                             <p className="text-sm text-slate-400">
-                                Baseline assessments, safety screening, and set & setting preparation
+                                Baseline assessments, safety screening, and set &amp; setting preparation
                             </p>
                         </div>
 
@@ -83,8 +83,8 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                             <div className="w-16 h-16 mx-auto mb-4 bg-emerald-500/20 rounded-full flex items-center justify-center">
                                 <span className="text-3xl font-black text-emerald-400">2</span>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-300 mb-2">
-                                Phase 2: Dosing Session
+                            <h3 className="text-xl font-black text-slate-200 mb-2">
+                                Dosing Session
                             </h3>
                             <p className="text-sm text-slate-400">
                                 Real-time vitals monitoring, subjective experience tracking, and safety protocols
@@ -96,8 +96,8 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                             <div className="w-16 h-16 mx-auto mb-4 bg-purple-500/20 rounded-full flex items-center justify-center">
                                 <span className="text-3xl font-black text-purple-400">3</span>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-300 mb-2">
-                                Phase 3: Integration
+                            <h3 className="text-xl font-black text-slate-200 mb-2">
+                                Integration
                             </h3>
                             <p className="text-sm text-slate-400">
                                 Longitudinal tracking, symptom decay curves, and behavioral change documentation
