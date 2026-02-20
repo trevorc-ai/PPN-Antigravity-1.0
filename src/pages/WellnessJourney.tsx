@@ -533,16 +533,7 @@ const WellnessJourney: React.FC = () => {
 
                     {/* Right: Phase-aware primary action + export */}
                     <div className="flex items-center gap-3 flex-shrink-0">
-                        {activePhase === 1 && (
-                            <button
-                                onClick={() => handleOpenForm('mental-health')}
-                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
-                                aria-label="Open Mental Health Screening form"
-                            >
-                                <span className="material-symbols-outlined text-base" aria-hidden="true">psychology</span>
-                                Start Screening
-                            </button>
-                        )}
+                        {/* Phase 1: no competing CTA — Phase1StepGuide is the navigator */}
                         {activePhase === 2 && (
                             <button
                                 onClick={() => handleOpenForm('session-vitals')}
@@ -606,31 +597,24 @@ const WellnessJourney: React.FC = () => {
                     </div>
                 )}
 
-                {/* Benchmark Readiness + Risk — Phase 1 only */}
-                {activePhase === 1 && !isLoading && result && (
+                {/* Benchmark + Risk panels — only shown once Phase 1 forms are all done.
+                     Showing mock data upfront is confusing and competes with the step guide. */}
+                {activePhase === 1 && completedForms.size >= 5 && !isLoading && result && (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Readiness Score Widget */}
                             <div data-tour="baseline-metrics">
-                                <ReadinessScore
-                                    result={result}
-                                    onViewBenchmarks={() => console.log('View benchmarks clicked')}
-                                />
+                                <ReadinessScore result={result} onViewBenchmarks={() => { }} />
                             </div>
-                            {/* Requirements List */}
                             <div data-tour="schedule-integration" className="lg:col-span-2">
                                 <RequirementsList
                                     result={result}
                                     onCompleteRequirement={(name) => {
                                         addToast({ title: 'Opening Requirement', message: `Navigating to ${name}...`, type: 'info' });
-                                        if (name.toLowerCase().includes('safety')) {
-                                            setTimeout(() => navigate('/assessment'), 500);
-                                        }
+                                        if (name.toLowerCase().includes('safety')) setTimeout(() => navigate('/assessment'), 500);
                                     }}
                                 />
                             </div>
                         </div>
-                        {/* Risk Indicators */}
                         <div data-tour="risk-flags">
                             <RiskIndicators
                                 overallRiskLevel={riskDetection.overallRiskLevel}
@@ -642,36 +626,18 @@ const WellnessJourney: React.FC = () => {
                                 sessionTime="2h 15min"
                             />
                         </div>
-                        {/* Safety Timeline */}
-                        <SafetyTimeline
-                            events={journey.safety.events}
-                            patientId={journey.patientId}
-                            onExport={() => downloadReport({
-                                patientId: journey.patientId,
-                                baseline: {
-                                    phq9: journey.baseline?.phq9Score,
-                                    gad7: journey.baseline?.gad7Score,
-                                }
-                            }, 'audit')}
-                        />
                     </div>
                 )}
 
                 {/* Phase Content — WO-113: Each phase has CTA buttons to open forms */}
                 <div className="animate-in fade-in duration-300 space-y-6">
                     {activePhase === 1 && (
-                        <>
-                            {/* ── Phase 1 Guided Step Flow — primary navigator ── */}
-                            <Phase1StepGuide
-                                completedFormIds={completedForms}
-                                onStartStep={handleOpenForm}
-                            />
-
-                            <PreparationPhase
-                                journey={journey}
-                                onOpenForm={handleOpenForm}
-                            />
-                        </>
+                        // Phase1StepGuide is the SOLE navigator — no competing cards.
+                        // The hero card shows exactly one next action with a large white CTA.
+                        <Phase1StepGuide
+                            completedFormIds={completedForms}
+                            onStartStep={handleOpenForm}
+                        />
                     )}
                     {activePhase === 2 && (
                         <>

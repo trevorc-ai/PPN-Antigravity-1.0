@@ -1,44 +1,38 @@
-import React from 'react';
-import { CheckCircle, Circle, Lock, ArrowRight, ChevronRight } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
-
-/**
- * Phase1StepGuide
- *
- * A persistent step-by-step guide for Phase 1: Preparation.
- * Replaces the scattered button row with a clear, numbered sequence
- * that always tells the clinician exactly what to do next.
- *
- * UX rules:
- *  - The CURRENT (next incomplete) step has a pulsing CTA and is above the fold
- *  - Completed steps show a green checkmark and are dimmed
- *  - Future steps are locked and muted until the current step is done
- *  - No step is required before the next (clinical discretion), but the
- *    guide strongly signals the recommended order
- */
 
 export interface Phase1Step {
     id: WellnessFormId;
     label: string;
     description: string;
-    required: boolean;        // true = marked as mandatory in clinical protocol
-    icon: string;             // Material Symbols ligature name
+    required: boolean;
+    icon: string;
+    color: string;       // tailwind text color for the hero card accent
+    bgColor: string;     // tailwind bg color for the hero card
+    borderColor: string; // tailwind border color for the hero card
 }
 
 export const PHASE1_STEPS: Phase1Step[] = [
     {
         id: 'consent',
         label: 'Informed Consent',
-        description: 'Document patient consent before any clinical activity.',
+        description: 'Document patient consent before any clinical activity begins.',
         required: true,
         icon: 'check_circle',
+        color: 'text-blue-300',
+        bgColor: 'bg-blue-500/10',
+        borderColor: 'border-blue-500/40',
     },
     {
         id: 'structured-safety',
         label: 'Safety Screen & Eligibility',
-        description: 'Screen for contraindications, suicidality risk, and eligibility.',
+        description: 'Screen for contraindications, suicidality risk, and treatment eligibility.',
         required: true,
         icon: 'shield',
+        color: 'text-amber-300',
+        bgColor: 'bg-amber-500/10',
+        borderColor: 'border-amber-500/40',
     },
     {
         id: 'mental-health',
@@ -46,13 +40,19 @@ export const PHASE1_STEPS: Phase1Step[] = [
         description: 'Administer PHQ-9, GAD-7, and baseline psychological assessment.',
         required: true,
         icon: 'psychology',
+        color: 'text-purple-300',
+        bgColor: 'bg-purple-500/10',
+        borderColor: 'border-purple-500/40',
     },
     {
         id: 'set-and-setting',
         label: 'Set & Setting',
-        description: 'Document therapeutic environment, set expectations, and integration plan.',
+        description: 'Document environment, expectations, and the integration plan.',
         required: true,
         icon: 'home_health',
+        color: 'text-emerald-300',
+        bgColor: 'bg-emerald-500/10',
+        borderColor: 'border-emerald-500/40',
     },
     {
         id: 'baseline-observations',
@@ -60,6 +60,9 @@ export const PHASE1_STEPS: Phase1Step[] = [
         description: 'Record pre-treatment clinical observations and vital notes.',
         required: false,
         icon: 'visibility',
+        color: 'text-slate-300',
+        bgColor: 'bg-slate-500/10',
+        borderColor: 'border-slate-500/40',
     },
 ];
 
@@ -72,146 +75,169 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
     completedFormIds,
     onStartStep,
 }) => {
-    // Find the index of the first incomplete step
+    const heroRef = useRef<HTMLDivElement>(null);
+
     const currentStepIndex = PHASE1_STEPS.findIndex(
         (step) => !completedFormIds.has(step.id)
     );
     const allComplete = currentStepIndex === -1;
+    const currentStep = allComplete ? null : PHASE1_STEPS[currentStepIndex];
+    const completedCount = completedFormIds.size;
+
+    // Scroll the hero card into view whenever the step advances
+    useEffect(() => {
+        if (heroRef.current) {
+            heroRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, [currentStepIndex]);
 
     return (
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
+        <div className="space-y-3">
 
-            {/* ── Header ───────────────────────────────────────────────────── */}
-            <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
-                <div>
-                    <h2 className="text-base font-bold text-slate-200 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-blue-400 text-lg">
-                            route
-                        </span>
-                        Phase 1 — Preparation Checklist
-                    </h2>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                        Complete each step before the treatment session
-                    </p>
-                </div>
-                {allComplete && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
-                        <span className="text-emerald-400 text-xs font-bold">Phase 1 Complete</span>
-                    </div>
-                )}
-                {!allComplete && (
-                    <span className="text-xs text-slate-500 font-medium">
-                        {completedFormIds.size} / {PHASE1_STEPS.length} complete
-                    </span>
-                )}
-            </div>
+            {/* ── HERO: Current Step ─────────────────────────────────────────── */}
+            {!allComplete && currentStep && (
+                <div
+                    ref={heroRef}
+                    className={`relative overflow-hidden rounded-2xl border ${currentStep.borderColor} ${currentStep.bgColor} backdrop-blur-xl shadow-2xl`}
+                >
+                    {/* Subtle ambient glow behind the card */}
+                    <div className="absolute inset-0 opacity-20 pointer-events-none"
+                        style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.3) 0%, transparent 70%)' }}
+                    />
 
-            {/* ── Step list ────────────────────────────────────────────────── */}
-            <div className="divide-y divide-slate-800/60">
-                {PHASE1_STEPS.map((step, index) => {
-                    const isComplete = completedFormIds.has(step.id);
-                    const isCurrent = index === currentStepIndex;
-                    const isLocked = !isComplete && index > currentStepIndex;
-
-                    return (
-                        <div
-                            key={step.id}
-                            className={`flex items-center gap-4 px-6 py-4 transition-all ${isCurrent
-                                    ? 'bg-blue-500/5 border-l-2 border-blue-500'
-                                    : isComplete
-                                        ? 'opacity-60'
-                                        : 'opacity-40'
-                                }`}
-                        >
-                            {/* Step number / status icon */}
-                            <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${isComplete
-                                    ? 'bg-emerald-500/15 text-emerald-400'
-                                    : isCurrent
-                                        ? 'bg-blue-500/20 text-blue-400 ring-2 ring-blue-500/40 animate-pulse'
-                                        : 'bg-slate-800/60 text-slate-600'
-                                }`}>
-                                {isComplete ? (
-                                    <CheckCircle className="w-5 h-5" />
-                                ) : isLocked ? (
-                                    <Lock className="w-4 h-4" />
-                                ) : (
-                                    <span>{index + 1}</span>
-                                )}
-                            </div>
-
-                            {/* Step info */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2">
-                                    <span className={`font-bold text-sm ${isComplete ? 'text-emerald-400 line-through decoration-emerald-600/40' :
-                                            isCurrent ? 'text-slate-100' :
-                                                'text-slate-500'
-                                        }`}>
-                                        {step.label}
+                    <div className="relative z-10 p-8">
+                        <div className="flex items-start justify-between gap-6">
+                            {/* Left: Step identity */}
+                            <div className="flex-1">
+                                {/* Step counter */}
+                                <div className="flex items-center gap-3 mb-4">
+                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+                                        Step {currentStepIndex + 1} of {PHASE1_STEPS.length}
                                     </span>
-                                    {step.required && !isComplete && (
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400/70 border border-amber-400/20 px-1.5 py-0.5 rounded">
+                                    {currentStep.required && (
+                                        <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-widest bg-amber-500/15 border border-amber-500/25 text-amber-400 rounded-md">
                                             Required
                                         </span>
                                     )}
                                 </div>
-                                <p className={`text-xs mt-0.5 ${isCurrent ? 'text-slate-400' : 'text-slate-600'
-                                    }`}>
-                                    {step.description}
+
+                                {/* Icon + Title */}
+                                <div className="flex items-center gap-4 mb-3">
+                                    <div className={`w-14 h-14 rounded-2xl ${currentStep.bgColor} border ${currentStep.borderColor} flex items-center justify-center flex-shrink-0`}>
+                                        <span className={`material-symbols-outlined text-3xl ${currentStep.color}`}>
+                                            {currentStep.icon}
+                                        </span>
+                                    </div>
+                                    <h2 className={`text-2xl font-black ${currentStep.color} leading-tight`}>
+                                        {currentStep.label}
+                                    </h2>
+                                </div>
+
+                                {/* Description */}
+                                <p className="text-slate-400 text-base leading-relaxed max-w-lg">
+                                    {currentStep.description}
                                 </p>
                             </div>
 
-                            {/* Action CTA */}
+                            {/* Right: CTA */}
+                            <div className="flex-shrink-0 flex flex-col items-center gap-3">
+                                <button
+                                    id={`phase1-step-${currentStepIndex + 1}-start`}
+                                    onClick={() => onStartStep(currentStep.id)}
+                                    aria-label={`Begin ${currentStep.label}`}
+                                    className="flex items-center gap-3 px-8 py-4 bg-white text-slate-900 hover:bg-slate-100 font-black text-base rounded-2xl transition-all active:scale-95 shadow-xl shadow-white/10 group"
+                                >
+                                    Begin
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                                <span className="text-xs text-slate-600 font-medium">
+                                    Opens clinical form
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── All complete state ─────────────────────────────────────────── */}
+            {allComplete && (
+                <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-8 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/20 mb-4">
+                        <CheckCircle className="w-8 h-8 text-emerald-400" />
+                    </div>
+                    <h2 className="text-2xl font-black text-emerald-300 mb-2">Phase 1 Complete</h2>
+                    <p className="text-slate-400 text-base">All preparation steps are done. Advance to Phase 2: Treatment Session.</p>
+                </div>
+            )}
+
+            {/* ── Step rail (progress context) ──────────────────────────────── */}
+            <div className="grid grid-cols-5 gap-2">
+                {PHASE1_STEPS.map((step, index) => {
+                    const isComplete = completedFormIds.has(step.id);
+                    const isCurrent = index === currentStepIndex;
+                    const isUpcoming = !isComplete && index > currentStepIndex;
+
+                    return (
+                        <button
+                            key={step.id}
+                            type="button"
+                            onClick={() => onStartStep(step.id)}
+                            aria-label={`${isComplete ? 'Amend' : 'Start'} ${step.label}`}
+                            className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border transition-all text-center group
+                                ${isComplete
+                                    ? 'bg-emerald-500/8 border-emerald-500/25 hover:bg-emerald-500/15 cursor-pointer'
+                                    : isCurrent
+                                        ? `${step.bgColor} ${step.borderColor} cursor-pointer`
+                                        : 'bg-slate-900/40 border-slate-800/60 opacity-40 cursor-pointer hover:opacity-60'
+                                }`}
+                        >
+                            {/* Status icon */}
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all
+                                ${isComplete
+                                    ? 'bg-emerald-500/20'
+                                    : isCurrent
+                                        ? `${step.bgColor} ring-2 ring-offset-1 ring-offset-slate-900`
+                                        : 'bg-slate-800/60'
+                                }`}
+                            >
+                                {isComplete ? (
+                                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                                ) : (
+                                    <span className={`material-symbols-outlined text-sm ${isCurrent ? step.color : 'text-slate-600'}`}>
+                                        {step.icon}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Label */}
+                            <span className={`text-[11px] font-bold leading-tight
+                                ${isComplete ? 'text-emerald-400' : isCurrent ? step.color : 'text-slate-600'}
+                            `}>
+                                {step.label}
+                            </span>
+
+                            {/* Amend hint on completed */}
                             {isComplete && (
-                                <button
-                                    type="button"
-                                    onClick={() => onStartStep(step.id)}
-                                    aria-label={`Re-open ${step.label}`}
-                                    className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-300 border border-slate-700/50 hover:border-slate-600 rounded-lg transition-all"
-                                >
-                                    <span className="material-symbols-outlined text-sm">edit</span>
+                                <span className="text-[9px] font-semibold text-slate-600 uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
                                     Amend
-                                </button>
-                            )}
-
-                            {isCurrent && (
-                                <button
-                                    id={`phase1-step-${index + 1}-start`}
-                                    type="button"
-                                    onClick={() => onStartStep(step.id)}
-                                    aria-label={`Start ${step.label}`}
-                                    className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-600/30"
-                                >
-                                    Start
-                                    <ArrowRight className="w-4 h-4" />
-                                </button>
-                            )}
-
-                            {isLocked && (
-                                <span className="flex-shrink-0 text-xs text-slate-700 font-medium flex items-center gap-1">
-                                    <ChevronRight className="w-3.5 h-3.5" />
-                                    Unlock next
                                 </span>
                             )}
-                        </div>
+                        </button>
                     );
                 })}
             </div>
 
             {/* ── Progress bar ─────────────────────────────────────────────── */}
-            <div className="px-6 pb-5 pt-4">
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                    <span>Preparation progress</span>
-                    <span className="font-bold text-slate-400">
-                        {Math.round((completedFormIds.size / PHASE1_STEPS.length) * 100)}%
-                    </span>
-                </div>
-                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className="flex items-center gap-3 px-1">
+                <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full transition-all duration-700"
-                        style={{ width: `${(completedFormIds.size / PHASE1_STEPS.length) * 100}%` }}
+                        className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 rounded-full transition-all duration-700"
+                        style={{ width: `${(completedCount / PHASE1_STEPS.length) * 100}%` }}
                     />
                 </div>
+                <span className="text-xs font-bold text-slate-500 flex-shrink-0">
+                    {completedCount}/{PHASE1_STEPS.length} complete
+                </span>
             </div>
         </div>
     );
