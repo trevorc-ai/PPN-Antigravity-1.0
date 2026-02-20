@@ -18,7 +18,7 @@
  *   const primary = await getPrimaryBenchmark('mdma', 'PTSD', 'CAPS-5');
  */
 
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '../supabaseClient';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types — mirror the DB schema exactly

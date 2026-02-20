@@ -52,6 +52,7 @@ import MEQ30Page from './pages/MEQ30Page';
 import PatientFormPage from './pages/PatientFormPage';
 import AdaptiveAssessmentPage from './pages/AdaptiveAssessmentPage';
 import Checkout from './pages/Checkout';
+import Academy from './pages/Academy';
 import BillingPortal from './pages/BillingPortal';
 import PartnerDemoHub from './pages/PartnerDemoHub';
 import FormsShowcase from './pages/FormsShowcase';
@@ -244,6 +245,7 @@ const AppContent: React.FC = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/academy" element={<Academy />} />
         <Route path="/billing" element={<BillingPortal />} />
         <Route path="/partner-demo" element={<PartnerDemoHub />} />
 
