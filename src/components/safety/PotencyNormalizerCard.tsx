@@ -190,7 +190,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                             <div className="flex items-center gap-3 cursor-help">
                                 <input
                                     id="potency-coeff"
-                                    type="number"
+                                    type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                     min={0.1}
                                     max={5.0}
                                     step={0.1}
@@ -265,7 +265,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                                 </label>
                                 <input
                                     id="target-mg"
-                                    type="number"
+                                    type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                     min={1}
                                     max={200}
                                     step={1}
@@ -281,7 +281,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                                 </label>
                                 <input
                                     id="target-grams"
-                                    type="number"
+                                    type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                     min={0.1}
                                     max={20}
                                     step={0.1}

@@ -149,7 +149,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({ sessionId, o
                 </label>
                 <input
                     id="weight-input"
-                    type="number"
+                    type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                     min="0"
                     step="0.01"
                     value={weightGrams}

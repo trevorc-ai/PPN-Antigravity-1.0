@@ -156,7 +156,7 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField label="Session Number">
                         <input
-                            type="number"
+                            type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                             value={data.session_number}
                             onChange={(e) => updateField('session_number', parseInt(e.target.value) || 1)}
                             className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"

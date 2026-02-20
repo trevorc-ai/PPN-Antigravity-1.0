@@ -70,7 +70,7 @@ function NumericInput({ label, value, onChange, min, max, placeholder, id }: {
             </label>
             <input
                 id={id}
-                type="number"
+                type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                 min={min}
                 max={max}
                 placeholder={placeholder}

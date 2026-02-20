@@ -179,7 +179,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                     </label>
                     <input
                         id="duration"
-                        type="number"
+                        type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                         min={1}
                         max={480}
                         placeholder="e.g. 15"

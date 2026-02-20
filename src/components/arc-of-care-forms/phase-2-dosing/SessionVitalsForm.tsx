@@ -250,7 +250,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </label>
                                 <div className="relative">
                                     <input
-                                        type="number"
+                                        type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                         min="40"
                                         max="200"
                                         value={reading.heart_rate ?? ''}
@@ -281,7 +281,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </label>
                                 <div className="relative">
                                     <input
-                                        type="number"
+                                        type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                         step="0.01"
                                         value={reading.hrv ?? ''}
                                         onChange={(e) => updateReading(index, 'hrv', e.target.value ? parseFloat(e.target.value) : undefined)}
@@ -305,7 +305,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </label>
                                 <div className="relative">
                                     <input
-                                        type="number"
+                                        type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                         min="70"
                                         max="100"
                                         value={reading.spo2 ?? ''}
@@ -332,7 +332,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </label>
                                 <div className="relative">
                                     <input
-                                        type="number"
+                                        type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                         min="60"
                                         max="250"
                                         value={reading.bp_systolic ?? ''}
@@ -354,7 +354,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </label>
                                 <div className="relative">
                                     <input
-                                        type="number"
+                                        type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                         min="40"
                                         max="150"
                                         value={reading.bp_diastolic ?? ''}
@@ -402,7 +402,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </label>
                                     <div className="relative">
                                         <input
-                                            type="number"
+                                            type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                             min="0"
                                             max="60"
                                             value={reading.respiratory_rate ?? ''}
@@ -431,7 +431,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </label>
                                     <div className="relative">
                                         <input
-                                            type="number"
+                                            type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                                             min="90"
                                             max="110"
                                             step="0.1"

@@ -180,7 +180,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                     </label>
                     <input
                         id="session-number"
-                        type="number"
+                        type="text" inputMode="numeric" pattern="[0-9]*\.\?[0-9]*"
                         min={1}
                         max={99}
                         value={form.integration_session_number}
