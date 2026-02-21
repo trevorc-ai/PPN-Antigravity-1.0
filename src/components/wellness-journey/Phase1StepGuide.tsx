@@ -204,11 +204,11 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                     <button
                                         id={`phase1-step-${currentStepIndex + 1}-start`}
                                         onClick={() => onStartStep(currentStep.id)}
-                                        aria-label={`Begin ${currentStep.label}`}
-                                        className="flex items-center gap-3 px-7 py-3.5 bg-red-600/20 hover:bg-red-600/35 border border-red-500/50 hover:border-red-400/70 text-red-200 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg shadow-red-900/30 group"
+                                        aria-label={`Continue to ${currentStep.label}`}
+                                        className="flex items-center gap-4 px-10 py-5 bg-red-600/25 hover:bg-red-600/40 border-2 border-red-500/60 hover:border-red-400/80 text-red-100 font-black text-lg rounded-2xl transition-all active:scale-95 shadow-xl shadow-red-900/40 group"
                                     >
-                                        Begin
-                                        <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
+                                        Continue
+                                        <ChevronDown className="w-6 h-6 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
                                     </button>
                                     <span className="text-xs text-slate-500 font-medium pl-1">
                                         Opens clinical form

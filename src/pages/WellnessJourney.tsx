@@ -202,16 +202,7 @@ const WellnessJourney: React.FC = () => {
                 message: `Session started for ${patientId} — Phase 1: Preparation`,
                 type: 'success',
             });
-            // Mark consent as complete immediately — auto-open handles collection.
-            // The hero should advance to Step 2 (Safety Screen) as soon as the
-            // clinician lands on the page, not stay stuck on consent.
-            setCompletedForms(prev => new Set([...prev, 'consent']));
-            // Open the consent form so they can read and sign it
-            setTimeout(() => {
-                setActiveFormId('consent');
-                setActiveFormTitle('Informed Consent');
-                setIsFormOpen(true);
-            }, 150);
+            // Land on Phase 1 with all steps pending — practitioner chooses where to start
         } else {
             const phaseLabel = targetPhase === 1 ? 'Preparation' : targetPhase === 2 ? 'Treatment' : 'Integration';
             addToast({
