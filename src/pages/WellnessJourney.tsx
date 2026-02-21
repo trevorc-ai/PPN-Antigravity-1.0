@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle } from 'lucide-react';
@@ -225,9 +225,6 @@ const WellnessJourney: React.FC = () => {
     const [activeFormId, setActiveFormId] = useState<WellnessFormId | null>(null);
     const [activeFormTitle, setActiveFormTitle] = useState('Clinical Form');
     const [activeFormSubtitle, setActiveFormSubtitle] = useState<string | undefined>(undefined);
-    // Use a ref (not state) so the setTimeout in handleFormComplete always reads
-    // the CURRENT queued value, not the stale closure-captured value.
-    const queuedFormRef = useRef<WellnessFormId | null>(null);
 
     // ── Phase 1 guided flow: tracks which forms have been saved ──────────────
     const [completedForms, setCompletedForms] = useState<Set<string>>(() => new Set());
