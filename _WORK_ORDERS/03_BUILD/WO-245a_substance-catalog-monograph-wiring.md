@@ -10,23 +10,28 @@ sprint: 1
 # WO-245a: Substance Catalog & Monograph — Component Wiring
 
 ## Context
-All components and data are already built. This is an integration task only — wiring existing `IsometricMolecule` and `MoleculeViewer` into the live Catalog and Monograph pages, adding `pubchemCid` to constants, fixing filter pills, and implementing a public layout. See full data spec: `.agent/research/WO244_MOLECULAR_VIZ_ANALYST_BRIEF.md`
+All components and data are already built. This is an integration task only — wiring existing `IsometricMolecule` and `MoleculeViewer` into the live Catalog and Monograph pages. **10-substance catalog** (science-based, USER approved). `pubchemCid`, `color`, and `smiles` are already added to `constants.ts`. See full data spec: `.agent/research/WO244_MOLECULAR_VIZ_ANALYST_BRIEF.md`
+
+> ⚠️ Depends on WO-245e (SOOP) running first to add DMT/Esketamine/Ayahuasca to `ref_substances`.
 
 ## Tasks
 
-### 1. Update `constants.ts` — Add pubchemCid and smiles to each substance
-Add the following fields to the `Substance` type and all 7 substance objects:
+### 1. `constants.ts` — Already updated ✅
+All 10 substances now have `color`, `pubchemCid`, and `smiles`. No further action needed here.
 
-| Substance | pubchemCid | smiles |
-|-----------|-----------|--------|
-| Psilocybin | 10258 (psilocin, active form) | `CN(C)CCc1c[nH]c2ccc(O)cc12` |
-| LSD-25 | 5761 | `CCN(CC)C(=O)[C@H]1CN([C@@H]2Cc3c[nH]c4cccc(c34)C2=C1)C` |
-| DMT | 6089 | `CN(C)CCc1c[nH]c2ccccc12` |
-| 5-MeO-DMT | 1832 | `CN(C)CCc1c[nH]c2ccc(OC)cc12` |
-| MDMA | 1615 | `CC(NC)Cc1ccc2c(c1)OCO2` |
-| Ketamine | 3821 | `CNC1(CCCCC1=O)c2ccccc2Cl` |
-| Mescaline | 4276 | `COc1cc(CCN)cc(OC)c1OC` |
-| Ibogaine | 197101 | `CC[C@H]1CN2CCc3c([nH]c4ccccc34)[C@H]2C[C@@H]1...` |
+| Substance | pubchemCid | Color | Image |
+|-----------|-----------|-------|-------|
+| Psilocybin | 10258 | #6366f1 | `/molecules/Psilocybin.webp` |
+| LSD-25 | 5761 | #ec4899 | `/molecules/LSD-25.webp` |
+| DMT | 6089 | #10b981 | `/molecules/Dimethyltryptamine.webp` |
+| 5-MeO-DMT | 1832 | #06b6d4 | `/molecules/5-MeO-DMT.webp` |
+| MDMA | 1615 | #a855f7 | `/molecules/MDMA.webp` |
+| Ketamine | 3821 | #3b82f6 | `/molecules/Ketamine.webp` |
+| Esketamine | 182137 | #0ea5e9 | `/molecules/Esketamine.webp` |
+| Mescaline | 4276 | #14b8a6 | `/molecules/Mescaline.webp` |
+| Ibogaine | 197101 | #8b5cf6 | `/molecules/Ibogaine.webp` |
+| Ayahuasca | 6089 (DMT) | #f59e0b | `/molecules/Dimethyltryptamine.webp` (temp) |
+
 
 ### 2. Create `<PublicPageLayout>` component (≈ 2 hours)
 `src/components/layouts/PublicPageLayout.tsx`

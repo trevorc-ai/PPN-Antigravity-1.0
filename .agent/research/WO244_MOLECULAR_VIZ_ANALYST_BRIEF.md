@@ -1,7 +1,7 @@
 # WO-244: Substance Catalog & Molecular Visualization
 **Status:** ✅ APPROVED — Ready for BUILDER  
-**Date Compiled:** 2026-02-20  
-**Decision Log:** Five-agent review (ANALYST, PRODDY, DESIGNER, LEAD, INSPECTOR) complete. Full discussion archived in git history.
+**Date Compiled:** 2026-02-20 | **Updated:** 2026-02-20 (10-substance catalog — science authority)
+**Decision Log:** Five-agent review (ANALYST, PRODDY, DESIGNER, LEAD, INSPECTOR) complete. Science-based substance selection approved by USER. Full discussion archived in git history.
 
 ---
 
@@ -11,12 +11,13 @@
 
 | Sprint | What | Component | Auth? |
 |--------|------|-----------|-------|
-| 1a | Isometric molecule cards on Substance Catalog | `IsometricMolecule` (CSS-only) | Public |
-| 1b | 3D WebGL molecule viewer on Monograph hero | `MoleculeViewer` (3Dmol.js) | Auth-required |
-| 1c | Fix Catalog filter pills | Logic fix | Public |
-| 2 | Ki binding affinity radar with real data | Recharts (existing) | Auth-required |
+| 0 | Add 3 missing substances to constants.ts + DB | Data migration | Admin |
+| 1a | Isometric molecule cards on Substance Catalog (10 substances) | `IsometricMolecule` (CSS-only) | Auth |
+| 1b | 3D WebGL molecule viewer on Monograph hero | `MoleculeViewer` (3Dmol.js) | Auth |
+| 1c | Fix Catalog filter pills (updated for 10 substances) | Logic fix | Auth |
+| 2 | Ki binding affinity radar with real data | Recharts (existing) | Auth |
 | 3 | `/safety` Drug Safety Matrix public page | Pure constants.ts | Public |
-| 4 (future) | NGL receptor binding pocket viewer | NGL + DESIGNER spec | Auth-required |
+| 4 (future) | NGL receptor binding pocket viewer | NGL + DESIGNER spec | Auth |
 
 **What we are NOT building:** Full protein-ligand docking. Custom molecule authoring. WebXR/VR. Any new SQL migrations. Sprint 4 is gated on Dr. Allen annotation review.
 

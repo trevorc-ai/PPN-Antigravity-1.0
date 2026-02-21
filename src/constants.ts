@@ -182,8 +182,60 @@ export const SUBSTANCES: Substance[] = [
     color: '#14b8a6',
     pubchemCid: 4276,
     smiles: 'COc1cc(CCN)cc(OC)c1OC'
+  },
+  {
+    id: 'DMT-0601',
+    name: 'DMT',
+    chemicalName: 'N,N-Dimethyltryptamine',
+    class: 'TRYPTAMINE',
+    phase: ResearchPhase.Phase1,
+    schedule: 'Schedule I',
+    cas: '61-50-7',
+    molecularWeight: '188.27 g/mol',
+    formula: 'C12H16N2',
+    efficacy: 0.68,
+    historicalEfficacy: [0.62, 0.68],
+    imageUrl: '/molecules/Dimethyltryptamine.webp',
+    color: '#10b981',
+    pubchemCid: 6089,
+    smiles: 'CN(C)CCc1c[nH]c2ccccc12'
+  },
+  {
+    id: 'ESK-3822',
+    name: 'Esketamine',
+    chemicalName: '(S)-Ketamine · Spravato',
+    class: 'ARYLCYCLOHEXYLAMINE',
+    phase: ResearchPhase.Approved,
+    schedule: 'Schedule III',
+    cas: '33643-46-8',
+    molecularWeight: '237.7 g/mol',
+    formula: 'C13H16ClNO',
+    efficacy: 0.88,
+    historicalEfficacy: [0.75, 0.82, 0.88],
+    imageUrl: '/molecules/Esketamine.webp',
+    color: '#0ea5e9',
+    pubchemCid: 182137,
+    smiles: 'CN[C@@]1(CCCCC1=O)c2ccccc2Cl'
+  },
+  {
+    id: 'AYA-7701',
+    name: 'Ayahuasca',
+    chemicalName: 'DMT + β-Carboline Brew (Banisteriopsis caapi + Psychotria viridis)',
+    class: 'BOTANICAL COMBINATION',
+    phase: ResearchPhase.Phase2,
+    schedule: 'Schedule I',
+    cas: 'N/A',
+    molecularWeight: 'Variable (combination)',
+    formula: 'DMT + Harmine + Harmaline + THH',
+    efficacy: 0.76,
+    historicalEfficacy: [0.68, 0.72, 0.76],
+    imageUrl: '/molecules/Dimethyltryptamine.webp',
+    color: '#f59e0b',
+    pubchemCid: 6089,
+    smiles: 'CN(C)CCc1c[nH]c2ccccc12'
   }
 ];
+
 
 export const SAFETY_EVENT_CODES: Record<string, number> = {
   "Nausea": 10028813,
