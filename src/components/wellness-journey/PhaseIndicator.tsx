@@ -8,15 +8,19 @@ interface PhaseIndicatorProps {
     onPhaseChange: (phase: 1 | 2 | 3) => void;
 }
 
+// ── LOCKED PHASE COLOR SYSTEM ─────────────────────────────────────────────
+// Phase 1 = Indigo  (calm, methodical preparation — blue-violet family)
+// Phase 2 = Amber   (active, focused — warm attention)
+// Phase 3 = Teal    (healing, growth — muted cool)
+// RED is RESERVED for warnings, adverse events, and safety flags ONLY.
 const PHASE_CONFIG = {
     1: {
         icon: Calendar,
         label: 'Preparation',
-        // Active tab styles
-        activeBg: 'bg-red-950/70',
-        activeBorder: 'border-red-600/70',
-        activeText: 'text-red-200',
-        activeTopLine: 'bg-red-500',
+        activeBg: 'bg-indigo-950/70',
+        activeBorder: 'border-indigo-500/70',
+        activeText: 'text-indigo-200',
+        activeTopLine: 'bg-indigo-500',
         tooltipTitle: 'Phase 1: Preparation',
         tooltip: 'Establish the patient baseline before any dosing session. Complete 5 clinical forms: Informed Consent, Safety Screening, Set & Setting, Baseline Observations, and MEQ-30.',
     },
@@ -33,10 +37,10 @@ const PHASE_CONFIG = {
     3: {
         icon: TrendingUp,
         label: 'Integration',
-        activeBg: 'bg-emerald-950/60',
-        activeBorder: 'border-emerald-500/70',
-        activeText: 'text-emerald-200',
-        activeTopLine: 'bg-emerald-500',
+        activeBg: 'bg-teal-950/60',
+        activeBorder: 'border-teal-500/70',
+        activeText: 'text-teal-200',
+        activeTopLine: 'bg-teal-500',
         tooltipTitle: 'Phase 3: Integration',
         tooltip: 'Post-session monitoring. Track behavioral changes, conduct integration sessions, re-administer PHQ-9/GAD-7, and run safety checks. Unlocks when Phase 2 is complete.',
     },
@@ -123,7 +127,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                 )}
 
                                 {isCompleted && !isActive
-                                    ? <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-hidden="true" />
+                                    ? <CheckCircle className="w-4 h-4 text-teal-400 flex-shrink-0" aria-hidden="true" />
                                     : <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                                 }
 
@@ -134,7 +138,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                     {cfg.label}
                                     {isCompleted && !isActive && (
                                         <CheckCircle
-                                            className="inline w-3.5 h-3.5 text-emerald-400 ml-1.5 -mt-0.5"
+                                            className="inline w-3.5 h-3.5 text-teal-400 ml-1.5 -mt-0.5"
                                             aria-label="complete"
                                         />
                                     )}

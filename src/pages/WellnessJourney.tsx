@@ -622,19 +622,19 @@ const WellnessJourney: React.FC = () => {
                 {(() => {
                     const phasePalette = {
                         1: {
-                            border: 'border-violet-500/60',
-                            shadow: '0 0 32px -4px rgba(139,92,246,0.25)',
-                            bg: 'bg-violet-950/20',
+                            border: 'border-indigo-500/50',
+                            shadow: '0 0 32px -4px rgba(99,102,241,0.20)',
+                            bg: 'bg-indigo-950/15',
                         },
                         2: {
-                            border: 'border-amber-500/60',
-                            shadow: '0 0 32px -4px rgba(245,158,11,0.22)',
-                            bg: 'bg-amber-950/20',
+                            border: 'border-amber-500/50',
+                            shadow: '0 0 32px -4px rgba(245,158,11,0.18)',
+                            bg: 'bg-amber-950/15',
                         },
                         3: {
-                            border: 'border-emerald-500/60',
-                            shadow: '0 0 32px -4px rgba(16,185,129,0.22)',
-                            bg: 'bg-emerald-950/20',
+                            border: 'border-teal-500/50',
+                            shadow: '0 0 32px -4px rgba(20,184,166,0.18)',
+                            bg: 'bg-teal-950/15',
                         },
                     }[activePhase];
 
