@@ -108,11 +108,11 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
 
                     return (
                         <div key={category} className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                            <div className="flex items-center justify-between pb-3 border-b border-slate-700/50">
-                                <h3 className="text-sm font-bold text-slate-300">{category}</h3>
+                            <div className="flex items-center justify-between pb-3 border-b border-slate-700/50 gap-2">
+                                <h3 className="text-sm font-bold text-slate-300 truncate min-w-0">{category}</h3>
                                 <button
                                     onClick={() => toggleCategory(category)}
-                                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors flex-shrink-0"
                                 >
                                     {allSelected ? 'Deselect All' : 'Select All'}
                                 </button>
@@ -127,8 +127,8 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
                                             type="button"
                                             onClick={() => toggleObservation(obs.id)}
                                             className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-left transition-all active:scale-95 ${isSelected
-                                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-500'
-                                                    : 'bg-slate-800/60 text-slate-300 border border-slate-700/50 hover:border-slate-500 hover:text-white'
+                                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-500'
+                                                : 'bg-slate-800/60 text-slate-300 border border-slate-700/50 hover:border-slate-500 hover:text-white'
                                                 }`}
                                         >
                                             {obs.label}
@@ -176,8 +176,8 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
                     onClick={handleSaveAndContinue}
                     disabled={saving}
                     className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saving
-                            ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30'
+                        ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30'
                         }`}
                 >
                     {saving ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}

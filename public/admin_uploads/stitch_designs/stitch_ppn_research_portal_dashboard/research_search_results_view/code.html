@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Research Search Results View | PPN Research Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b74f3",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101722",
+                        "slate-card": "#1c2431",
+                        "charcoal-bg": "#0d1117"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #282e39;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white">
+<div class="flex h-screen overflow-hidden">
+<!-- Persistent Left Sidebar -->
+<aside class="w-64 flex flex-col border-r border-[#282e39] bg-[#111318] p-6 justify-between shrink-0">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-10" data-alt="PPN Research minimalist clinical logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDyvXLY-Brfc-KDZCwE0PJC0nAwBu9NOjpZ5H-Q5-lDdBinNOBz8RJo6kCtpqUCNEJnEM47E2MX-l09L8Jo96MFzc_q2h5U3pNziEamzP09CMYcRwpB_fbIEcNGeDRyqKNCiE90Kxyg5sO9u72eUwdDV_iI-gqp_CvxI9YOl1nzjKQmazkUQYx1ctzOlWduvxO0ZHUX1Wxnq4bXFPhNIRqmpR97l-rK27a1ZmKTvgRBYfE6RRmE_fonV1mZ4e2OwHEwOGsnenZJSco");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-bold leading-tight">PPN Research</h1>
+<p class="text-[#9ca7ba] text-xs font-medium uppercase tracking-wider">Medical Portal</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9ca7ba] hover:bg-[#282e39] hover:text-white transition-all group" href="#">
+<span class="material-symbols-outlined text-[22px]">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[#282e39] text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[22px] fill-current">biotech</span>
+<span class="text-sm font-medium">Studies</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9ca7ba] hover:bg-[#282e39] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]">group</span>
+<span class="text-sm font-medium">Patients</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9ca7ba] hover:bg-[#282e39] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]">leaderboard</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#9ca7ba] hover:bg-[#282e39] hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-[22px]">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-4">
+<div class="p-4 rounded-xl bg-primary/10 border border-primary/20">
+<p class="text-xs text-[#9ca7ba] mb-2 font-medium">System Status</p>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="text-xs font-bold text-white uppercase tracking-tighter">Live Connection</span>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Research
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-hidden bg-charcoal-bg">
+<!-- Top Nav Bar -->
+<header class="flex items-center justify-between px-8 py-4 border-b border-[#282e39] bg-[#111318]/50 backdrop-blur-md">
+<div class="flex items-center gap-6 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#9ca7ba] text-[20px]">search</span>
+<input class="w-full bg-[#282e39] border-none rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:ring-1 focus:ring-primary placeholder:text-[#9ca7ba]" placeholder="Search parameters, IDs, or compounds..." type="text"/>
+</div>
+<div class="h-6 w-[1px] bg-[#282e39]"></div>
+<nav class="flex items-center gap-6">
+<a class="text-xs font-bold text-white uppercase tracking-widest hover:text-primary" href="#">Clinical Trials</a>
+<a class="text-xs font-bold text-[#9ca7ba] uppercase tracking-widest hover:text-white" href="#">Cohort Data</a>
+<a class="text-xs font-bold text-[#9ca7ba] uppercase tracking-widest hover:text-white" href="#">Peer Review</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-[#282e39] hover:bg-[#343b48] text-white px-4 py-2 rounded-lg text-sm font-bold transition-all border border-[#3b4454]">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export CSV
+                    </button>
+<button class="p-2 text-[#9ca7ba] hover:text-white transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full border-2 border-charcoal-bg"></span>
+</button>
+<div class="size-9 rounded-full bg-[#282e39] border border-[#3b4454] flex items-center justify-center overflow-hidden" data-alt="User profile avatar">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+<!-- Header and Filter Chips -->
+<div class="mb-8">
+<div class="flex items-end justify-between mb-6">
+<div>
+<h2 class="text-3xl font-extrabold text-white tracking-tight">Search Results</h2>
+<p class="text-[#9ca7ba] mt-1 font-medium">124 Matches found in clinical database</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-[#9ca7ba] uppercase tracking-widest mr-2">Sorted by</span>
+<button class="flex items-center gap-2 bg-[#111318] px-3 py-1.5 rounded-lg border border-[#282e39] text-xs font-bold">
+                                Outcome: High to Low
+                                <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<div class="flex items-center gap-2 bg-primary/20 border border-primary/40 px-3 py-1.5 rounded-lg">
+<span class="text-xs font-bold text-primary uppercase tracking-tighter">Ketamine</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-white">close</span>
+</div>
+<div class="flex items-center gap-2 bg-primary/20 border border-primary/40 px-3 py-1.5 rounded-lg">
+<span class="text-xs font-bold text-primary uppercase tracking-tighter">PTSD</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-white">close</span>
+</div>
+<div class="flex items-center gap-2 bg-primary/20 border border-primary/40 px-3 py-1.5 rounded-lg">
+<span class="text-xs font-bold text-primary uppercase tracking-tighter">Outcome 4+</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-white">close</span>
+</div>
+<button class="text-xs font-bold text-[#9ca7ba] px-3 py-1.5 hover:text-white transition-all underline underline-offset-4 decoration-primary/50">Clear All Filters</button>
+</div>
+</div>
+<!-- High Density Grid -->
+<div class="grid grid-cols-1 @xl:grid-cols-2 @4xl:grid-cols-3 gap-4 mb-8">
+<!-- Card 1 -->
+<div class="bg-slate-card border border-[#282e39] rounded-xl p-5 hover:border-primary/50 transition-all group cursor-pointer relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/10 to-transparent"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="text-primary font-bold text-sm tracking-tighter">KET-9921</span>
+<span class="text-[10px] font-black uppercase bg-[#282e39] px-2 py-0.5 rounded text-[#9ca7ba]">Cohort A</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-1">Ketamine</h3>
+<p class="text-[#9ca7ba] text-sm font-medium mb-4">TR Depression</p>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Dosage</span>
+<span class="text-white font-bold">0.5mg/kg</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Outcome Score</span>
+<span class="text-primary font-bold">85/100</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-slate-card border border-[#282e39] rounded-xl p-5 hover:border-primary/50 transition-all group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-primary font-bold text-sm tracking-tighter">MDM-4410</span>
+<span class="text-[10px] font-black uppercase bg-[#282e39] px-2 py-0.5 rounded text-[#9ca7ba]">Cohort B</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-1">MDMA</h3>
+<p class="text-[#9ca7ba] text-sm font-medium mb-4">Post-Traumatic Stress</p>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Dosage</span>
+<span class="text-white font-bold">120mg</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Outcome Score</span>
+<span class="text-primary font-bold">92/100</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 92%"></div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-slate-card border border-[#282e39] rounded-xl p-5 hover:border-primary/50 transition-all group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-primary font-bold text-sm tracking-tighter">PSL-2201</span>
+<span class="text-[10px] font-black uppercase bg-[#282e39] px-2 py-0.5 rounded text-[#9ca7ba]">Cohort A</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-1">Psilocybin</h3>
+<p class="text-[#9ca7ba] text-sm font-medium mb-4">Generalized Anxiety</p>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Dosage</span>
+<span class="text-white font-bold">25mg</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Outcome Score</span>
+<span class="text-primary font-bold">78/100</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 78%"></div>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-slate-card border border-[#282e39] rounded-xl p-5 hover:border-primary/50 transition-all group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-primary font-bold text-sm tracking-tighter">KET-8832</span>
+<span class="text-[10px] font-black uppercase bg-[#282e39] px-2 py-0.5 rounded text-[#9ca7ba]">Phase III</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-1">Ketamine</h3>
+<p class="text-[#9ca7ba] text-sm font-medium mb-4">Major Depression</p>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Dosage</span>
+<span class="text-white font-bold">0.75mg/kg</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Outcome Score</span>
+<span class="text-primary font-bold">65/100</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-slate-card border border-[#282e39] rounded-xl p-5 hover:border-primary/50 transition-all group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-primary font-bold text-sm tracking-tighter">MDM-1129</span>
+<span class="text-[10px] font-black uppercase bg-[#282e39] px-2 py-0.5 rounded text-[#9ca7ba]">Cohort C</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-1">MDMA</h3>
+<p class="text-[#9ca7ba] text-sm font-medium mb-4">PTSD Recovery</p>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Dosage</span>
+<span class="text-white font-bold">80mg</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Outcome Score</span>
+<span class="text-primary font-bold">88/100</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 88%"></div>
+</div>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-slate-card border border-[#282e39] rounded-xl p-5 hover:border-primary/50 transition-all group cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-primary font-bold text-sm tracking-tighter">DMT-5055</span>
+<span class="text-[10px] font-black uppercase bg-[#282e39] px-2 py-0.5 rounded text-[#9ca7ba]">Exploratory</span>
+</div>
+<h3 class="text-white font-bold text-lg mb-1">DMT</h3>
+<p class="text-[#9ca7ba] text-sm font-medium mb-4">Depressive Episode</p>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Dosage</span>
+<span class="text-white font-bold">20mg</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-[#9ca7ba]">Outcome Score</span>
+<span class="text-primary font-bold">71/100</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 71%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Load More / Pagination -->
+<div class="flex flex-col items-center gap-6 mt-12 mb-8">
+<button class="bg-[#282e39] hover:bg-[#343b48] border border-[#3b4454] text-white font-bold py-3 px-12 rounded-lg transition-all flex items-center gap-3">
+                        Load More Entries
+                        <span class="material-symbols-outlined text-[20px]">expand_more</span>
+</button>
+<div class="flex items-center gap-1">
+<button class="size-8 flex items-center justify-center rounded text-[#9ca7ba] hover:bg-[#282e39] transition-all"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="size-8 flex items-center justify-center rounded bg-primary text-white font-bold text-xs">1</button>
+<button class="size-8 flex items-center justify-center rounded text-[#9ca7ba] hover:bg-[#282e39] text-xs font-bold transition-all">2</button>
+<button class="size-8 flex items-center justify-center rounded text-[#9ca7ba] hover:bg-[#282e39] text-xs font-bold transition-all">3</button>
+<span class="px-2 text-[#9ca7ba]">...</span>
+<button class="size-8 flex items-center justify-center rounded text-[#9ca7ba] hover:bg-[#282e39] text-xs font-bold transition-all">12</button>
+<button class="size-8 flex items-center justify-center rounded text-[#9ca7ba] hover:bg-[#282e39] transition-all"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

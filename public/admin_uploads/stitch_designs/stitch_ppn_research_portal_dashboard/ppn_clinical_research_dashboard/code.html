@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PPN Clinical Research Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3b82f6",
+                        "background-light": "#f9fafb",
+                        "background-dark": "#111827",
+                        "slate-card": "#1e293b",
+                        "cividis-blue": "#00204d",
+                        "cividis-teal": "#407080",
+                        "cividis-yellow": "#ffea46",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+        .table-row-selected {
+            box-shadow: inset 0 0 0 1px #3b82f6, 0 0 12px rgba(59, 130, 246, 0.2);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 bg-background-dark border-r border-slate-800 flex flex-col shrink-0">
+<div class="p-6 flex items-center gap-3">
+<div class="size-9 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20">
+                    P
+                </div>
+<div>
+<h1 class="text-white text-base font-bold leading-none">PPN Research</h1>
+<p class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">Clinical Portal</p>
+</div>
+</div>
+<!-- Sidebar Stats Widget -->
+<div class="px-6 py-4">
+<div class="bg-slate-card/50 rounded-xl p-4 border border-slate-800">
+<p class="text-slate-400 text-xs font-medium mb-3">System Load</p>
+<div class="flex items-end gap-1 h-12">
+<div class="bg-cividis-blue w-full rounded-t-sm" style="height: 40%"></div>
+<div class="bg-cividis-blue w-full rounded-t-sm" style="height: 65%"></div>
+<div class="bg-cividis-teal w-full rounded-t-sm" style="height: 85%"></div>
+<div class="bg-cividis-teal w-full rounded-t-sm" style="height: 55%"></div>
+<div class="bg-cividis-yellow w-full rounded-t-sm" style="height: 95%"></div>
+<div class="bg-cividis-yellow w-full rounded-t-sm" style="height: 35%"></div>
+</div>
+</div>
+</div>
+<!-- Sidebar Navigation -->
+<nav class="flex-1 px-4 py-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">home</span>
+<span class="text-sm font-medium">Home</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 bg-primary/10 text-primary rounded-lg" href="#">
+<span class="material-symbols-outlined text-xl">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">stethoscope</span>
+<span class="text-sm font-medium">Consult Physician</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">package_2</span>
+<span class="text-sm font-medium">Products</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">newspaper</span>
+<span class="text-sm font-medium">News</span>
+</a>
+</nav>
+<!-- Sidebar Footer -->
+<div class="p-4 border-t border-slate-800 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">help</span>
+<span class="text-sm font-medium">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Global Search Area -->
+<header class="h-20 shrink-0 flex items-center px-8 border-b border-slate-800 bg-background-dark">
+<div class="w-full max-w-2xl relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">search</span>
+<input class="w-full h-12 bg-slate-card border-none rounded-xl pl-12 pr-4 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-primary focus:bg-slate-card transition-all" placeholder="Search practitioners, chemicals, or patient IDs..." type="text"/>
+</div>
+<div class="ml-auto flex items-center gap-4">
+<button class="size-10 rounded-full border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-700">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-[1px] bg-slate-800 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-sm font-bold text-white">Dr. Aris Thorne</p>
+<p class="text-[10px] text-slate-500 uppercase">Senior Researcher</p>
+</div>
+<div class="size-10 rounded-full bg-slate-card border border-slate-700 bg-cover bg-center" data-alt="User profile avatar image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDbgJ_0PApgbkBPGFjDi64psP36L02HJpEIzEkC2GJnLl2dFcBnFwV0fmDScVY-R8qw6I1K5u1qBkGTKjw5CrkqVCNUQwG6hI6ZoPivRvz7GihFfKy6y9lAwDThjnOUULE6yK5shDylosGfnGoo28LJVxA_TIyAXn9Sy619kRAov5ilJp6ik6N4VuWpi2c9mEVvpSQuvhu5L4Ay3vehlVHrX6NmgM5GCkQYgpxcj-icZvGMazKmzRdrQkpRkMSU5ozsA0pcWKqvYX4')"></div>
+</div>
+</div>
+</header>
+<!-- Scrollable Body -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
+<!-- Analytics Row (Bento Grid) -->
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-8 bg-slate-card border border-slate-800 rounded-xl p-6">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="text-white text-lg font-bold">Research Trend Analysis</h3>
+<p class="text-slate-400 text-sm">Monthly patient enrollment &amp; retention</p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-slate-800 rounded text-xs text-slate-300 border border-slate-700">Last 30 Days</span>
+<span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded text-xs border border-emerald-500/20">+12.5%</span>
+</div>
+</div>
+<div class="h-48 flex items-end justify-between gap-4 px-2">
+<div class="w-full bg-cividis-blue rounded-t-md relative group" style="height: 35%"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">124</div></div>
+<div class="w-full bg-cividis-blue rounded-t-md relative group" style="height: 55%"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">210</div></div>
+<div class="w-full bg-cividis-teal rounded-t-md relative group" style="height: 75%"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">345</div></div>
+<div class="w-full bg-cividis-teal rounded-t-md relative group" style="height: 45%"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">189</div></div>
+<div class="w-full bg-cividis-teal rounded-t-md relative group" style="height: 95%"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">512</div></div>
+<div class="w-full bg-cividis-yellow rounded-t-md relative group" style="height: 80%"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">422</div></div>
+<div class="w-full bg-cividis-yellow rounded-t-md relative group" style="height: 60%"><div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">312</div></div>
+</div>
+<div class="flex justify-between mt-4 px-2">
+<span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Mon</span>
+<span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Tue</span>
+<span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Wed</span>
+<span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Thu</span>
+<span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Fri</span>
+<span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Sat</span>
+<span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider">Sun</span>
+</div>
+</div>
+<div class="col-span-4 bg-slate-card border border-slate-800 rounded-xl p-6 flex flex-col">
+<div class="mb-4">
+<h3 class="text-white text-lg font-bold">Demographic Split</h3>
+<p class="text-slate-400 text-sm">Age group distribution</p>
+</div>
+<div class="flex-1 flex items-center justify-center relative">
+<!-- Donut Chart Sim -->
+<div class="size-40 rounded-full border-[18px] border-cividis-blue flex items-center justify-center" style="border-right-color: #407080; border-top-color: #ffea46;">
+<div class="text-center">
+<p class="text-2xl font-bold text-white leading-none">1.2k</p>
+<p class="text-[10px] text-slate-500 uppercase mt-1">Total Pts</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-cividis-blue"></div>
+<span class="text-xs text-slate-400">18-35 (45%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-cividis-teal"></div>
+<span class="text-xs text-slate-400">36-55 (30%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-cividis-yellow"></div>
+<span class="text-xs text-slate-400">55+ (25%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Practitioner Row -->
+<section>
+<div class="flex items-center justify-between mb-4 px-1">
+<h2 class="text-white text-xl font-bold tracking-tight">Matched Practitioners</h2>
+<button class="text-primary text-sm font-medium hover:underline">View All Registry</button>
+</div>
+<div class="bg-slate-card border border-slate-800 rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-900/50 border-b border-slate-800">
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Name</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Location</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Specialty</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Email</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-800">
+<tr class="hover:bg-slate-800/30 transition-colors cursor-pointer group">
+<td class="px-6 py-3 text-sm text-white font-medium">Dr. Sarah Chen</td>
+<td class="px-6 py-3 text-sm text-slate-400">Boston, MA</td>
+<td class="px-6 py-3">
+<span class="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 group-hover:border-primary/50">Oncologist</span>
+</td>
+<td class="px-6 py-3 text-sm text-slate-500">s.chen@medical.org</td>
+</tr>
+<tr class="hover:bg-slate-800/30 transition-colors cursor-pointer group">
+<td class="px-6 py-3 text-sm text-white font-medium">Dr. Marcus Thorne</td>
+<td class="px-6 py-3 text-sm text-slate-400">Austin, TX</td>
+<td class="px-6 py-3">
+<span class="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 group-hover:border-primary/50">Neurologist</span>
+</td>
+<td class="px-6 py-3 text-sm text-slate-500">m.thorne@clinical.net</td>
+</tr>
+<tr class="hover:bg-slate-800/30 transition-colors cursor-pointer group">
+<td class="px-6 py-3 text-sm text-white font-medium">Dr. Elena Rodriguez</td>
+<td class="px-6 py-3 text-sm text-slate-400">Chicago, IL</td>
+<td class="px-6 py-3">
+<span class="px-3 py-1 bg-slate-800 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 group-hover:border-primary/50">Immunologist</span>
+</td>
+<td class="px-6 py-3 text-sm text-slate-500">e.rodriguez@hospital.com</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Records Row -->
+<section class="pb-8">
+<div class="flex items-center justify-between mb-4 px-1">
+<h2 class="text-white text-xl font-bold tracking-tight">Active Patient Records</h2>
+<div class="flex gap-2">
+<button class="size-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white"><span class="material-symbols-outlined text-lg">filter_list</span></button>
+<button class="size-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white"><span class="material-symbols-outlined text-lg">download</span></button>
+</div>
+</div>
+<div class="bg-slate-card border border-slate-800 rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-900/50 border-b border-slate-800">
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Patient ID</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Age</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Chemical Agent</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Dosage</th>
+<th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Outcome</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-800">
+<tr class="hover:bg-slate-800/30 transition-colors table-row-selected">
+<td class="px-6 py-3 text-sm text-primary font-bold">#PT-4022</td>
+<td class="px-6 py-3 text-sm text-slate-300">42</td>
+<td class="px-6 py-3 text-sm text-slate-400 font-mono">Compound-B42</td>
+<td class="px-6 py-3 text-sm text-slate-400">12.5mg/kg</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50"></div>
+<span class="text-xs text-emerald-400 font-medium">Positive</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-3 text-sm text-slate-300">#PT-4109</td>
+<td class="px-6 py-3 text-sm text-slate-300">28</td>
+<td class="px-6 py-3 text-sm text-slate-400 font-mono">Compound-Z01</td>
+<td class="px-6 py-3 text-sm text-slate-400">5.0mg/kg</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-slate-500"></div>
+<span class="text-xs text-slate-400 font-medium">Neutral</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-3 text-sm text-slate-300">#PT-3891</td>
+<td class="px-6 py-3 text-sm text-slate-300">55</td>
+<td class="px-6 py-3 text-sm text-slate-400 font-mono">Compound-B42</td>
+<td class="px-6 py-3 text-sm text-slate-400">10.0mg/kg</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-amber-500/80"></div>
+<span class="text-xs text-amber-500 font-medium">Observing</span>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-slate-800/30 transition-colors">
+<td class="px-6 py-3 text-sm text-slate-300">#PT-4211</td>
+<td class="px-6 py-3 text-sm text-slate-300">61</td>
+<td class="px-6 py-3 text-sm text-slate-400 font-mono">Poly-Vex-X</td>
+<td class="px-6 py-3 text-sm text-slate-400">22.0mg/kg</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50"></div>
+<span class="text-xs text-emerald-400 font-medium">Positive</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

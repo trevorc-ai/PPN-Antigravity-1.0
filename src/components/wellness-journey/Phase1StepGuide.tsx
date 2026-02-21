@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, Edit3 } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
 
 export interface Phase1Step {
@@ -65,6 +65,93 @@ export const PHASE1_STEPS: Phase1Step[] = [
         borderColor: 'border-slate-500/40',
     },
 ];
+
+// ── AllCompletePanel ─────────────────────────────────────────────────────────
+// Shown when all Phase 1 steps are done. Primary CTA (Unlock Phase 2) is
+// immediately visible; step review is in a collapsible accordion below it.
+interface AllCompletePanelProps {
+    steps: Phase1Step[];
+    completedFormIds: Set<string>;
+    onStartStep: (formId: WellnessFormId) => void;
+    onCompletePhase?: () => void;
+}
+
+const AllCompletePanel: React.FC<AllCompletePanelProps> = ({
+    steps,
+    completedFormIds,
+    onStartStep,
+    onCompletePhase,
+}) => {
+    const [reviewOpen, setReviewOpen] = useState(false);
+
+    return (
+        <div className="space-y-3">
+            {/* Hero — Unlock CTA immediately visible */}
+            <div className="rounded-2xl border-2 border-emerald-500/50 bg-emerald-500/10 p-6">
+                <div className="flex flex-col sm:flex-row items-center gap-5">
+                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+                        <CheckCircle className="w-7 h-7 text-emerald-400" aria-hidden="true" />
+                    </div>
+                    <div className="flex-1 text-center sm:text-left">
+                        <h2 className="text-xl font-black text-emerald-300 leading-tight">All Preparation Steps Complete</h2>
+                        <p className="text-sm text-slate-400 mt-1">Patient is cleared for Phase 2: Dosing Session.</p>
+                    </div>
+                    {onCompletePhase && (
+                        <button
+                            id="phase1-complete-unlock-phase2"
+                            data-tour="complete-phase-1"
+                            onClick={onCompletePhase}
+                            className="flex-shrink-0 flex items-center gap-3 px-7 py-3.5 bg-emerald-500/25 hover:bg-emerald-500/40 border-2 border-emerald-500/60 hover:border-emerald-400/80 text-emerald-200 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-900/30 group whitespace-nowrap"
+                            aria-label="Mark Phase 1 complete and unlock Phase 2"
+                        >
+                            Unlock Phase 2
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Accordion — Review completed steps */}
+            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/40 overflow-hidden">
+                <button
+                    onClick={() => setReviewOpen(o => !o)}
+                    className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-800/40 transition-colors"
+                    aria-expanded={reviewOpen}
+                    aria-controls="phase1-review-panel"
+                >
+                    <span className="text-sm font-bold text-slate-300">
+                        Review completed steps ({steps.length}/{steps.length})
+                    </span>
+                    {reviewOpen
+                        ? <ChevronUp className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                        : <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0" />}
+                </button>
+
+                {reviewOpen && (
+                    <div id="phase1-review-panel" className="border-t border-slate-700/50 divide-y divide-slate-700/30">
+                        {steps.map((step) => (
+                            <div key={step.id} className="flex items-center gap-4 px-5 py-3.5">
+                                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-hidden="true" />
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-slate-300 truncate">{step.label}</p>
+                                    <p className="text-xs text-slate-500 truncate">{step.description}</p>
+                                </div>
+                                <button
+                                    onClick={() => onStartStep(step.id)}
+                                    className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/60 text-xs font-bold text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-all"
+                                    aria-label={`Amend ${step.label}`}
+                                >
+                                    <Edit3 className="w-3 h-3" aria-hidden="true" />
+                                    Amend
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
 interface Phase1StepGuideProps {
     completedFormIds: Set<string>;
@@ -161,31 +248,14 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                 </div>
             )}
 
-            {/* ── All complete state ─────────────────────────────────────────── */}
+            {/* ── All complete state — compact hero + collapsible step review ──── */}
             {allComplete && (
-                <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-8">
-                    <div className="flex flex-col sm:flex-row items-center gap-6">
-                        <div className="flex-shrink-0 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/20">
-                            <CheckCircle className="w-8 h-8 text-emerald-400" />
-                        </div>
-                        <div className="flex-1 text-center sm:text-left">
-                            <h2 className="text-2xl font-black text-emerald-300 mb-1">All Preparation Steps Complete</h2>
-                            <p className="text-slate-400 text-base">Patient is cleared for Phase 2: Dosing Session. Unlock to continue.</p>
-                        </div>
-                        {onCompletePhase && (
-                            <button
-                                id="phase1-complete-unlock-phase2"
-                                data-tour="complete-phase-1"
-                                onClick={onCompletePhase}
-                                className="flex-shrink-0 flex items-center gap-3 px-8 py-4 bg-emerald-500/25 hover:bg-emerald-500/40 border-2 border-emerald-500/60 hover:border-emerald-400/80 text-emerald-200 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-900/30 group"
-                                aria-label="Mark Phase 1 complete and unlock Phase 2"
-                            >
-                                Unlock Phase 2
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                        )}
-                    </div>
-                </div>
+                <AllCompletePanel
+                    steps={PHASE1_STEPS}
+                    completedFormIds={completedFormIds}
+                    onStartStep={onStartStep}
+                    onCompletePhase={onCompletePhase}
+                />
             )}
 
             {/* ── Step rail (progress context) ──────────────────────────────── */}

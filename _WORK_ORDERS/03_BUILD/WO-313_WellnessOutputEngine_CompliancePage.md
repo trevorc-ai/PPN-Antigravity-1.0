@@ -1,8 +1,8 @@
 ---
 id: WO-313
 title: "Compliance & Regulatory Outputs — Oregon 303 Form + Chain of Custody"
-status: 01_TRIAGE
-owner: LEAD
+status: 03_BUILD
+owner: BUILDER
 created: 2026-02-21
 created_by: CUE
 failure_count: 0
@@ -155,6 +155,8 @@ ALTER TABLE public.log_chain_of_custody ENABLE ROW LEVEL SECURITY;
 ```
 
 SOOP must write this migration as part of WO-313 execution.
+
+> ⚠️ **LEAD ARCHITECTURE NOTE (2026-02-21):** `log_chain_of_custody` was already created by migration 062 (verified live). BUILDER: **SKIP** the migration block — the table exists. Build the UI directly against the live table. The schema in this spec is for reference — the deployed version has additional columns (`storage_location`, `storage_conditions`, `destruction_witness_name`, `administering_clinician_id`, `updated_at`, `created_by`). Use those.
 
 ### UI: Chain of Custody Log Panel
 

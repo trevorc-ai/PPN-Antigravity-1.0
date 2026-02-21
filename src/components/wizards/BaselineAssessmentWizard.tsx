@@ -76,7 +76,7 @@ function NumericInput({
 }) {
     return (
         <div>
-            <label htmlFor={id} className="block text-sm font-black text-slate-300 uppercase tracking-widest mb-2">
+            <label htmlFor={id} className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                 {label}
             </label>
             <input
@@ -89,7 +89,7 @@ function NumericInput({
                 placeholder={placeholder}
                 value={value ?? ''}
                 onChange={(e) => onChange(e.target.value === '' ? null : parseFloat(e.target.value))}
-                className={`w-full bg-slate-800/60 border rounded-xl px-4 py-3.5 text-slate-200 text-sm font-bold focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all ${error ? 'border-red-500/70 focus:ring-red-500' : 'border-slate-700'
+                className={`w-full bg-slate-800/60 border rounded-xl px-4 py-3.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all ${error ? 'border-red-500/70 focus:ring-red-500' : 'border-slate-700'
                     }`}
             />
             {error ? (
@@ -238,13 +238,13 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             <div className="px-6 pt-6 pb-4 border-b border-slate-700/50">
                 <div className="flex items-center justify-between mb-4">
                     <div>
-                        <h2 className="text-lg font-black text-slate-200">Baseline Assessment</h2>
-                        <p className="text-sm text-slate-400 uppercase tracking-widest">
+                        <h2 className="text-lg font-black text-slate-300">Baseline Assessment</h2>
+                        <p className="text-sm text-slate-500 uppercase tracking-widest">
                             Step {step} of {STEPS.length}: {STEPS[step - 1].subtitle}
                         </p>
                     </div>
                     {lastSaved && (
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-500">
                             Saved {lastSaved.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                         </span>
                     )}
@@ -259,14 +259,14 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                             disabled={s.id > step}
                             aria-label={`Step ${s.id}: ${s.title}`}
                             className={`transition-all rounded-full ${s.id === step
-                                    ? 'w-6 h-3 bg-primary'
-                                    : s.id < step
-                                        ? 'w-3 h-3 bg-emerald-500 cursor-pointer hover:bg-emerald-400'
-                                        : 'w-3 h-3 bg-slate-700 cursor-not-allowed'
+                                ? 'w-6 h-3 bg-primary'
+                                : s.id < step
+                                    ? 'w-3 h-3 bg-emerald-500 cursor-pointer hover:bg-emerald-400'
+                                    : 'w-3 h-3 bg-slate-700 cursor-not-allowed'
                                 }`}
                         />
                     ))}
-                    <span className="ml-2 text-xs text-slate-400">{STEPS[step - 1].title}</span>
+                    <span className="ml-2 text-xs text-slate-500">{STEPS[step - 1].title}</span>
                 </div>
             </div>
 
@@ -318,10 +318,10 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                             </div>
                         </div>
                         <div className={`p-3 rounded-xl border text-base font-semibold ${data.setSetting.treatment_expectancy >= 70
-                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
-                                : data.setSetting.treatment_expectancy >= 40
-                                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-300'
-                                    : 'bg-red-500/10 border-red-500/20 text-red-300'
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
+                            : data.setSetting.treatment_expectancy >= 40
+                                ? 'bg-amber-500/10 border-amber-500/20 text-amber-300'
+                                : 'bg-red-500/10 border-red-500/20 text-red-300'
                             }`}>
                             {data.setSetting.treatment_expectancy >= 70 ? '✓ High expectancy — positive prognostic indicator'
                                 : data.setSetting.treatment_expectancy >= 40 ? '⚠ Moderate expectancy — discuss realistic outcomes'
@@ -389,8 +389,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                             onClick={() => updateData('observations', { [key]: opt } as Partial<WizardData['observations']>)}
                                             aria-pressed={data.observations[key] === opt}
                                             className={`py-2.5 px-3 rounded-xl border text-sm font-bold transition-all ${data.observations[key] === opt
-                                                    ? 'bg-primary/20 border-primary text-primary'
-                                                    : 'bg-slate-800/40 border-slate-700 text-slate-300 hover:border-slate-600 hover:text-white'
+                                                ? 'bg-primary/20 border-primary text-primary'
+                                                : 'bg-slate-800/40 border-slate-700 text-slate-300 hover:border-slate-600 hover:text-white'
                                                 }`}
                                         >
                                             {opt}
@@ -421,8 +421,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                     <button
                         onClick={handleSaveAndExit}
                         className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-bold transition-all ${saveExitFlash
-                                ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                                : 'border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white'
+                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                            : 'border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white'
                             }`}
                     >
                         {saveExitFlash ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
@@ -433,10 +433,10 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                         onClick={step === STEPS.length ? handleSubmitAll : () => setStep((s) => Math.min(s + 1, STEPS.length))}
                         disabled={nextDisabled}
                         className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ml-auto ${nextDisabled
-                                ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
-                                : step === STEPS.length
-                                    ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30'
-                                    : 'bg-primary/20 border border-primary/40 text-primary hover:bg-primary/30'
+                            ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
+                            : step === STEPS.length
+                                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30'
+                                : 'bg-primary/20 border border-primary/40 text-primary hover:bg-primary/30'
                             }`}
                     >
                         {step === STEPS.length ? (

@@ -293,31 +293,27 @@ const WellnessJourney: React.FC = () => {
     // Called by WellnessFormRouter's onComplete after a successful save.
     // Marks the form done and auto-advances to the next Phase 1 step.
     const handleFormComplete = useCallback((formId: WellnessFormId | null) => {
+        let nextId: WellnessFormId | null = null;
+
         if (formId && activePhase === 1) {
             setCompletedForms(prev => new Set([...prev, formId]));
 
-            // Determine the next incomplete Phase 1 step and store in ref
-            // (ref is readable synchronously inside the setTimeout below)
             const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
             const next = PHASE1_STEPS[currentIndex + 1];
-            queuedFormRef.current = next ? next.id : null;
-        } else {
-            queuedFormRef.current = null;
+            nextId = next ? next.id : null;
         }
 
-        // Close current panel, then immediately open the next one
-        setIsFormOpen(false);
-        setTimeout(() => {
-            setActiveFormId(null);
-            const nextId = queuedFormRef.current;
-            if (nextId) {
-                queuedFormRef.current = null;
-                setActiveFormId(nextId);
-                setActiveFormTitle(FORM_LABELS[nextId] ?? 'Clinical Form');
-                setActiveFormSubtitle(FORM_SUBTITLES[nextId]);
-                setIsFormOpen(true);
-            }
-        }, 320);
+        if (nextId) {
+            // Same panel, swap content — no close/reopen flash
+            setActiveFormId(nextId);
+            setActiveFormTitle(FORM_LABELS[nextId] ?? 'Clinical Form');
+            setActiveFormSubtitle(FORM_SUBTITLES[nextId]);
+            // Panel stays open (isFormOpen remains true)
+        } else {
+            // No next form: close the panel
+            setIsFormOpen(false);
+            setTimeout(() => setActiveFormId(null), 320);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePhase]);
 
