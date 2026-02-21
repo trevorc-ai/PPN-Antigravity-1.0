@@ -843,8 +843,7 @@ const WellnessJourney: React.FC = () => {
                 currentPhase={activePhase === 1 ? 'phase1' : activePhase === 2 ? 'phase2' : 'phase3'}
                 onActionSelect={handleQuickAction}
             />
-            </div>
-        </div>
+        </div>{/* end max-w-6xl */}
     );
 };
 
