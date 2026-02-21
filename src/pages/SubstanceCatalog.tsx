@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
@@ -26,58 +26,44 @@ const RISK_CONFIG: Record<RiskTier, { icon: string; classes: string; label: stri
   'STANDARD MONITORING': { icon: '○', classes: 'bg-slate-800/70  text-slate-300  border-slate-600/50', label: 'Standard Monitoring' },
 };
 
-// ─── Interaction popover ───────────────────────────────────────────────────────
+// ─── Inline accordion interaction list ───────────────────────────────────────
 interface InteractionEntry { agent: string; severity: string; description: string; isHigh: boolean }
 
-const InteractionBadge: React.FC<{ interactions: InteractionEntry[] }> = ({ interactions }) => {
+const InteractionAccordion: React.FC<{ interactions: InteractionEntry[] }> = ({ interactions }) => {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
-
   if (interactions.length === 0) return null;
   const hasHigh = interactions.some(i => i.isHigh);
-  const count = interactions.length;
 
   return (
-    <div ref={ref} className="relative">
+    <div className="space-y-2">
+      {/* Toggle badge */}
       <button
         onClick={() => setOpen(o => !o)}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
         aria-expanded={open}
-        aria-haspopup="dialog"
-        className={`flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg border transition-all
+        className={`w-full flex items-center justify-between gap-2 text-sm font-medium px-3 py-2 rounded-lg border transition-all
           ${hasHigh
             ? 'bg-red-900/60 text-red-200 border-red-700/50 hover:border-red-600/70'
             : 'bg-amber-900/50 text-amber-200 border-amber-700/40 hover:border-amber-600/60'}`}
       >
-        <span aria-hidden="true">{hasHigh ? '⚠' : '△'}</span>
-        {count} interaction{count > 1 ? 's' : ''} — hover for details
+        <span className="flex items-center gap-2">
+          <span aria-hidden="true">{hasHigh ? '⚠' : '△'}</span>
+          {interactions.length} interaction{interactions.length > 1 ? 's' : ''}
+        </span>
+        <span aria-hidden="true" className={`text-xs transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▼</span>
       </button>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-label="Drug interactions for this substance"
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-          className="absolute bottom-full left-0 mb-2 z-50 w-80 max-h-[60vh] overflow-y-auto bg-[#0d1520] border border-slate-600 rounded-xl shadow-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-150"
-        >
-          <p className="text-base font-semibold text-slate-300">Documented Interactions</p>
+      {/* Inline expanded list — no absolute positioning */}
+      <div
+        className="overflow-hidden transition-all duration-300 ease-in-out"
+        style={{ maxHeight: open ? `${interactions.length * 160}px` : '0px', opacity: open ? 1 : 0 }}
+      >
+        <div className="space-y-2 pt-1">
           {interactions.map((inter, i) => (
-            <div key={i} className={`p-3 rounded-lg border space-y-2
+            <div key={i} className={`p-3 rounded-xl border space-y-1.5
               ${inter.isHigh ? 'bg-red-900/30 border-red-700/40' : 'bg-amber-900/20 border-amber-700/30'}`}>
-              <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-base font-semibold text-slate-200">{inter.agent}</span>
-                <span className={`text-sm px-2.5 py-0.5 rounded-md font-semibold
+              <div className="flex items-start justify-between gap-2 flex-wrap">
+                <span className="text-sm font-semibold text-slate-200">{inter.agent}</span>
+                <span className={`text-xs px-2.5 py-0.5 rounded-md font-semibold shrink-0
                   ${inter.isHigh ? 'bg-red-700/80 text-red-100' : 'bg-amber-700/80 text-amber-100'}`}>
                   {inter.isHigh ? '⚠ ' : '△ '}{inter.severity}
                 </span>
@@ -86,7 +72,7 @@ const InteractionBadge: React.FC<{ interactions: InteractionEntry[] }> = ({ inte
             </div>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -180,7 +166,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
         </div>
 
         {/* Interaction badge with popover */}
-        <InteractionBadge interactions={interactions} />
+        <InteractionAccordion interactions={interactions} />
       </div>
 
       {/* CTA button — blue */}
