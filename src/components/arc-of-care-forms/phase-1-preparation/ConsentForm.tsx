@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { FileCheck, Save, CheckCircle, AlertTriangle, ShieldCheck, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FileCheck, Save, CheckCircle, AlertTriangle, ShieldCheck, Copy, Check } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 
 /**
@@ -27,8 +27,8 @@ interface ConsentFormProps {
     onSave?: (data: ConsentData) => Promise<boolean> | boolean | void;
     initialData?: ConsentData;
     patientId?: string;
+    /** Called automatically on successful save — opens the next Phase 1 form */
     onNext?: () => void;
-    onBack?: () => void;
 }
 
 const CONSENT_TYPES = [
@@ -43,7 +43,6 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
     initialData = { consent_types: [], consent_obtained: false },
     patientId,
     onNext,
-    onBack,
 }) => {
     const [idCopied, setIdCopied] = useState(false);
 
@@ -96,6 +95,9 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                 hasSavedRef.current = false;
             } else {
                 setLastSaved(new Date());
+                // Auto-advance to next step immediately after save
+                // Short delay so the clinician sees the "Saved" confirmation flash
+                setTimeout(() => onNext?.(), 600);
             }
         } catch {
             hasSavedRef.current = false;
@@ -301,38 +303,8 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             <div className="flex items-center gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
                                 <CheckCircle className="w-5 h-5 text-emerald-400" />
                                 <p className="text-emerald-400 font-semibold text-sm">
-                                    Consent documented and saved
+                                    Consent documented and saved — advancing to next step…
                                 </p>
-                            </div>
-                        )}
-
-                        {/* ── Next / Back navigation ───────────────────────── */}
-                        {(onBack || onNext) && (
-                            <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-700/50">
-                                {/* Back */}
-                                <button
-                                    id="consent-nav-back"
-                                    type="button"
-                                    onClick={onBack}
-                                    disabled={!onBack}
-                                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 hover:border-slate-500 text-slate-300 font-semibold text-sm transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
-                                >
-                                    <ChevronLeft className="w-4 h-4" />
-                                    Back
-                                </button>
-
-                                {/* Next — enabled once consent is saved */}
-                                <button
-                                    id="consent-nav-next"
-                                    type="button"
-                                    onClick={onNext}
-                                    disabled={!onNext || !lastSaved}
-                                    title={!lastSaved ? 'Save consent before continuing' : undefined}
-                                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 border border-blue-500 text-white font-semibold text-sm transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none shadow-lg shadow-blue-600/20"
-                                >
-                                    Next
-                                    <ChevronRight className="w-4 h-4" />
-                                </button>
                             </div>
                         )}
                     </>

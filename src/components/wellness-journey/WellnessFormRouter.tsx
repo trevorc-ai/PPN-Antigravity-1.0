@@ -345,12 +345,11 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
         // ── Phase 1: Preparation ──────────────────────────────────────────────
         case 'consent':
-            // Back on the first form closes the panel; Next opens the next form
+            // Save auto-advances — onNext triggers onComplete which queues the next form
             return <ConsentForm
                 onSave={handleConsentSave}
                 patientId={patientId}
-                onBack={onComplete}
-                onNext={onNavigate ? () => onNavigate('structured-safety') : undefined}
+                onNext={onComplete}
             />;
 
         case 'structured-safety':
