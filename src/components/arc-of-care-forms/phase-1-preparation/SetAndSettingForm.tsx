@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Save, CheckCircle } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { CheckCircle, ChevronRight } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 
 /**
  * SetAndSettingForm - Treatment Expectancy Assessment
- * 
+ *
  * Fields: Treatment Expectancy (1-100 slider)
  * Layout: Single field, full width
  * Features: Visual gradient slider, interpretation text
+ * Save: Explicit Save & Continue button only (no auto-save)
  */
 
 export interface SetAndSettingData {
@@ -18,68 +19,56 @@ interface SetAndSettingFormProps {
     onSave?: (data: SetAndSettingData) => void;
     initialData?: SetAndSettingData;
     patientId?: string;
+    /** Called after Save & Continue — advances to the next Phase 1 step */
+    onComplete?: () => void;
 }
 
 const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
     onSave,
     initialData = {},
-    patientId
+    patientId,
+    onComplete,
 }) => {
-    const [data, setData] = useState<SetAndSettingData>(initialData);
-    const [isSaving, setIsSaving] = useState(false);
+    const [data, setData] = useState<SetAndSettingData>({ treatment_expectancy: 50, ...initialData });
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [saving, setSaving] = useState(false);
+    const savedRef = useRef(false);
 
-    // Auto-save with debounce
-    useEffect(() => {
-        if (onSave && data.treatment_expectancy !== undefined) {
-            setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
-                setIsSaving(false);
-                setLastSaved(new Date());
-            }, 500);
-            return () => clearTimeout(timer);
-        }
-    }, [data, onSave]);
-
-    const getInterpretation = (score: number): { label: string; color: string } => {
-        if (score < 33) return { label: 'Low Belief in Treatment', color: 'text-red-400' };
-        if (score < 67) return { label: 'Moderate Expectancy', color: 'text-yellow-400' };
-        return { label: 'High Belief in Treatment', color: 'text-emerald-400' };
+    const handleSaveAndContinue = () => {
+        if (savedRef.current) return;
+        savedRef.current = true;
+        setSaving(true);
+        onSave?.(data);
+        setLastSaved(new Date());
+        // Flash confirmation then auto-advance
+        setTimeout(() => {
+            setSaving(false);
+            onComplete?.();
+        }, 500);
     };
 
-    const interpretation = data.treatment_expectancy !== undefined
-        ? getInterpretation(data.treatment_expectancy)
-        : null;
+    const getInterpretation = (score: number): { label: string; color: string; desc: string } => {
+        if (score < 33) return {
+            label: 'Low Belief in Treatment',
+            color: 'text-red-400',
+            desc: 'Patient may benefit from additional psychoeducation and rapport building.',
+        };
+        if (score < 67) return {
+            label: 'Moderate Expectancy',
+            color: 'text-yellow-400',
+            desc: 'Patient has moderate confidence in treatment. Continue building therapeutic alliance.',
+        };
+        return {
+            label: 'High Belief in Treatment',
+            color: 'text-emerald-400',
+            desc: 'Patient has strong belief in treatment efficacy. Positive prognostic indicator.',
+        };
+    };
+
+    const interpretation = getInterpretation(data.treatment_expectancy ?? 50);
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
-            {/* Header */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
-                            <Sparkles className="w-7 h-7 text-cyan-400" />
-                            Set & Setting
-                        </h2>
-                        <p className="text-slate-300 text-sm mt-2">
-                            Assess patient's mindset and belief in treatment efficacy before the session.
-                        </p>
-                    </div>
-                    {isSaving && (
-                        <div className="flex items-center gap-2 text-blue-400 text-xs">
-                            <Save className="w-4 h-4 animate-pulse" />
-                            <span>Saving...</span>
-                        </div>
-                    )}
-                    {lastSaved && !isSaving && (
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>Saved {lastSaved.toLocaleTimeString()}</span>
-                        </div>
-                    )}
-                </div>
-            </div>
 
             {/* Treatment Expectancy Slider */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-6">
@@ -99,10 +88,10 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                                 onChange={(e) => setData({ treatment_expectancy: parseInt(e.target.value) })}
                                 className="w-full h-4 rounded-lg appearance-none cursor-pointer"
                                 style={{
-                                    background: `linear-gradient(to right, 
-                                        #ef4444 0%, 
-                                        #f59e0b 33%, 
-                                        #10b981 66%, 
+                                    background: `linear-gradient(to right,
+                                        #ef4444 0%,
+                                        #f59e0b 33%,
+                                        #10b981 66%,
                                         #10b981 100%)`
                                 }}
                             />
@@ -112,7 +101,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                         <div className="flex items-center justify-between">
                             <span className="text-slate-400 text-sm">Low (1)</span>
                             <div className="text-center">
-                                <p className="text-5xl font-black text-slate-300">
+                                <p className="text-5xl font-black text-slate-200">
                                     {data.treatment_expectancy ?? 50}
                                 </p>
                                 <p className="text-sm text-slate-400 mt-1">out of 100</p>
@@ -121,20 +110,32 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                         </div>
 
                         {/* Interpretation */}
-                        {interpretation && (
-                            <div className={`p-4 rounded-lg bg-slate-800/50 border ${interpretation.color} border-current/20 text-center`}>
-                                <p className={`text-lg font-bold ${interpretation.color}`}>
-                                    {interpretation.label}
-                                </p>
-                                <p className="text-slate-300 text-sm mt-1">
-                                    {data.treatment_expectancy! < 33 && 'Patient may benefit from additional psychoeducation and rapport building.'}
-                                    {data.treatment_expectancy! >= 33 && data.treatment_expectancy! < 67 && 'Patient has moderate confidence in treatment. Continue building therapeutic alliance.'}
-                                    {data.treatment_expectancy! >= 67 && 'Patient has strong belief in treatment efficacy. Positive prognostic indicator.'}
-                                </p>
-                            </div>
-                        )}
+                        <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-700/50 text-center">
+                            <p className={`text-lg font-bold ${interpretation.color}`}>
+                                {interpretation.label}
+                            </p>
+                            <p className="text-slate-300 text-sm mt-1">{interpretation.desc}</p>
+                        </div>
                     </div>
                 </FormField>
+            </div>
+
+            {/* Footer: save status + Save & Continue */}
+            <div className="flex items-center justify-between gap-4 pt-2 mr-16">
+                <span className="text-sm text-emerald-400 font-medium">
+                    {lastSaved ? `Saved at ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ''}
+                </span>
+                <button
+                    onClick={handleSaveAndContinue}
+                    disabled={saving}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saving
+                            ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30'
+                        }`}
+                >
+                    {saving ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    {saving ? 'Saved!' : 'Save & Continue'}
+                </button>
             </div>
         </div>
     );

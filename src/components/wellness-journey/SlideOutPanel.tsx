@@ -17,6 +17,10 @@ interface SlideOutPanelProps {
     isOpen: boolean;
     onClose: () => void;
     title?: string;
+    /** Optional one-line description shown below the title */
+    subtitle?: string;
+    /** Optional icon element shown left of the title */
+    icon?: React.ReactNode;
     children: React.ReactNode;
     width?: string; // Default: 40%
     footer?: React.ReactNode; // Optional custom footer
@@ -26,6 +30,8 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
     isOpen,
     onClose,
     title,
+    subtitle,
+    icon,
     children,
     width = '40%',
     footer
@@ -102,20 +108,32 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                 aria-labelledby="panel-title"
             >
                 {/* Sticky Header */}
-                <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-700/50 px-6 py-4 flex items-center justify-between">
-                    {title ? (
-                        <h2
-                            id="panel-title"
-                            className="text-xl font-bold text-slate-300"
-                        >
-                            {title}
-                        </h2>
-                    ) : (
-                        <span id="panel-title" />
-                    )}
+                <div className="sticky top-0 z-10 bg-slate-900 border-b border-slate-700/50 px-6 py-4 flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                        {icon && (
+                            <div className="flex-shrink-0 mt-0.5">
+                                {icon}
+                            </div>
+                        )}
+                        <div className="min-w-0">
+                            {title ? (
+                                <h2
+                                    id="panel-title"
+                                    className="text-xl font-bold text-slate-200 truncate"
+                                >
+                                    {title}
+                                </h2>
+                            ) : (
+                                <span id="panel-title" />
+                            )}
+                            {subtitle && (
+                                <p className="text-sm text-slate-400 mt-0.5 leading-snug">{subtitle}</p>
+                            )}
+                        </div>
+                    </div>
                     <button
                         onClick={onClose}
-                        className="flex items-center justify-center w-11 h-11 rounded-xl hover:bg-slate-800 active:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-xl hover:bg-slate-800 active:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                         aria-label="Close panel"
                         title="Close"
                     >
@@ -140,7 +158,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                     ) : (
                         /* Universal close button — always accessible at the bottom of any form */
                         <div className="px-6 py-3 flex items-center justify-end gap-3">
-                            <p className="text-xs text-slate-600 flex-1">Changes auto-save as you go</p>
+                            <p className="text-xs text-slate-600 flex-1">Use Save &amp; Continue or Save &amp; Exit to save your work</p>
                             <button
                                 onClick={onClose}
                                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700/60 text-slate-300 text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"

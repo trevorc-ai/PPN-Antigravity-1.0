@@ -359,13 +359,25 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             />;
 
         case 'baseline-observations':
-            return <BaselineObservationsForm onSave={handleBaselineObservationsSave} />;
+            return <BaselineObservationsForm
+                onSave={handleBaselineObservationsSave}
+                onComplete={onComplete}
+            />;
 
         case 'set-and-setting':
-            return <SetAndSettingForm onSave={handleSetAndSettingSave} />;
+            return <SetAndSettingForm
+                onSave={handleSetAndSettingSave}
+                onComplete={onComplete}
+            />;
 
         case 'mental-health':
-            return <MentalHealthScreeningForm patientId={patientId} onComplete={() => onSaved('Mental Health Screening')} />;
+            // onComplete = Submit All → advances to next Phase 1 step
+            // onExit = Save & Exit → closes panel only, no advance
+            return <MentalHealthScreeningForm
+                patientId={patientId}
+                onComplete={onComplete}
+                onExit={onComplete}
+            />;
 
         // ── Phase 2: Dosing Session ───────────────────────────────────────────
         case 'dosing-protocol':

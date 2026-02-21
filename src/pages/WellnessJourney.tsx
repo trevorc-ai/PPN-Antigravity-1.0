@@ -224,6 +224,7 @@ const WellnessJourney: React.FC = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [activeFormId, setActiveFormId] = useState<WellnessFormId | null>(null);
     const [activeFormTitle, setActiveFormTitle] = useState('Clinical Form');
+    const [activeFormSubtitle, setActiveFormSubtitle] = useState<string | undefined>(undefined);
     // Use a ref (not state) so the setTimeout in handleFormComplete always reads
     // the CURRENT queued value, not the stale closure-captured value.
     const queuedFormRef = useRef<WellnessFormId | null>(null);
@@ -261,9 +262,30 @@ const WellnessJourney: React.FC = () => {
         'structured-safety': 'Safety Check',
     };
 
+    // Per-form subtitle shown in the SlideOut panel header (replaces in-form heading cards)
+    const FORM_SUBTITLES: Partial<Record<WellnessFormId, string>> = {
+        'mental-health': 'Administer PHQ-9, GAD-7, ACE, and PCL-5 baseline psychological assessments.',
+        'set-and-setting': "Assess patient's mindset and belief in treatment efficacy before the session.",
+        'baseline-observations': "Document clinical observations about the patient's presentation, mindset, and readiness before treatment.",
+        'consent': 'Record informed consent type and confirm documentation with the patient.',
+        'structured-safety': 'Monitor patient safety with structured, PHI-safe inputs.',
+        'dosing-protocol': 'Record the medication, dose, and administration details for this session.',
+        'session-vitals': 'Log vital signs at regular intervals throughout the dosing session.',
+        'session-timeline': 'Document key moments and transitions during the session.',
+        'session-observations': 'Record clinical observations about the patient during the session.',
+        'safety-and-adverse-event': 'Document any adverse events or safety concerns that arose.',
+        'rescue-protocol': 'Record any rescue interventions administered during the session.',
+        'daily-pulse': 'Brief daily check-in on mood, sleep, and integration progress.',
+        'meq30': 'Mystical Experience Questionnaire — 30-item retrospective assessment.',
+        'structured-integration': 'Document integration session themes, insights, and action steps.',
+        'behavioral-tracker': 'Track behavioral changes and habit formation since last session.',
+        'longitudinal-assessment': 'Longitudinal outcome assessment for ongoing progress monitoring.',
+    };
+
     const handleOpenForm = useCallback((formId: WellnessFormId) => {
         setActiveFormId(formId);
         setActiveFormTitle(FORM_LABELS[formId] ?? 'Clinical Form');
+        setActiveFormSubtitle(FORM_SUBTITLES[formId]);
         setIsFormOpen(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -292,6 +314,7 @@ const WellnessJourney: React.FC = () => {
                 queuedFormRef.current = null;
                 setActiveFormId(nextId);
                 setActiveFormTitle(FORM_LABELS[nextId] ?? 'Clinical Form');
+                setActiveFormSubtitle(FORM_SUBTITLES[nextId]);
                 setIsFormOpen(true);
             }
         }, 320);
@@ -487,6 +510,7 @@ const WellnessJourney: React.FC = () => {
                 isOpen={isFormOpen}
                 onClose={() => handleFormComplete(null)}
                 title={activeFormTitle}
+                subtitle={activeFormSubtitle}
                 width="45%"
             >
                 {activeFormId && (
