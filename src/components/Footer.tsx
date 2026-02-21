@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
             {/* PPN Portal Logo */}
             <div className="flex items-baseline gap-1 cursor-default">
               <span className="text-3xl font-black tracking-tight text-slate-300 leading-none">PPN</span>
-              <span className="text-3xl font-black tracking-tight text-primary leading-none">Portal</span>
+              <span className="text-3xl font-black tracking-tight bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent leading-none">Portal</span>
             </div>
 
             <p className="text-sm text-slate-500 leading-relaxed font-medium max-w-xs">
