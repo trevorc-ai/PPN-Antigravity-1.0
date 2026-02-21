@@ -22,6 +22,29 @@ export enum ResearchPhase {
   PreClinical = 'Pre-Clinical'
 }
 
+export interface SubstancePKData {
+  bioavailability: string;
+  halfLife: string;
+  tmax: string;
+  primaryRoute: string;
+}
+
+export interface SubstanceKiProfile {
+  ht2a: number;   // 5-HT2A Ki in nM
+  ht1a: number;   // 5-HT1A Ki in nM
+  ht2c: number;   // 5-HT2C Ki in nM
+  d2: number;     // D2 Ki in nM
+  sert: number;   // SERT Ki in nM
+  nmda: number;   // NMDA Ki in nM
+}
+
+export type RiskTier =
+  | 'STANDARD MONITORING'
+  | 'CARDIAC RISK'
+  | 'MAOI INTERACTION RISK'
+  | 'DISSOCIATIVE PROTOCOL'
+  | 'FDA APPROVED · REMS';
+
 export interface Substance {
   id: string;
   name: string;
@@ -39,6 +62,16 @@ export interface Substance {
   color?: string;
   pubchemCid?: number;
   smiles?: string;
+  // Pharmacological data
+  pkData?: SubstancePKData;
+  kiProfile?: SubstanceKiProfile;
+  mechanismText?: string;
+  therapeuticHypothesis?: string;
+  criticalSafetyNote?: string;
+  riskTier?: RiskTier;
+  toxicityHighlights?: string[];
+  absoluteContraindications?: string[];
+  requiredScreening?: string[];
 }
 
 export interface SafetyEvent {

@@ -74,7 +74,16 @@ export const SUBSTANCES: Substance[] = [
     rxnorm_cui: 6130,
     color: '#3b82f6',
     pubchemCid: 3821,
-    smiles: 'CNC1(CCCCC1=O)c2ccccc2Cl'
+    smiles: 'CNC1(CCCCC1=O)c2ccccc2Cl',
+    riskTier: 'DISSOCIATIVE PROTOCOL',
+    pkData: { bioavailability: '93% (IV) / ~20% (oral)', halfLife: '2–3 hours', tmax: 'Varies by route', primaryRoute: 'IV / IM' },
+    kiProfile: { ht2a: 10000, ht1a: 10000, ht2c: 10000, d2: 10000, sert: 10000, nmda: 500 },
+    mechanismText: 'Ketamine acts as a non-competitive NMDA receptor antagonist, binding to the PCP site within the ion channel. Blockade of NMDA receptors reduces excitatory glutamatergic transmission and triggers downstream AMPA receptor potentiation and BDNF release.',
+    therapeuticHypothesis: 'Rapid NMDA blockade followed by a surge in AMPA signaling and synaptogenesis is hypothesized to restore synaptic plasticity in depression-related neural circuits, producing antidepressant effects within hours rather than weeks.',
+    criticalSafetyNote: 'Dissociation, blood pressure elevation, and emergence reactions require monitored clinical settings. Abuse potential and potential for cystitis with chronic use must be assessed.',
+    toxicityHighlights: ['Blood pressure elevation (monitor)', 'Dissociative emergence reactions', 'Urinary tract toxicity with chronic use', 'Abuse/dependence potential (Schedule III)'],
+    absoluteContraindications: ['Uncontrolled hypertension', 'Schizophrenia or active psychosis', 'Recent stroke or elevated intracranial pressure'],
+    requiredScreening: ['Blood pressure baseline', 'Psychiatric history (psychosis screening)', 'Renal/urinary history for repeat dosing']
   },
   {
     id: 'MDM-4410',
@@ -92,7 +101,16 @@ export const SUBSTANCES: Substance[] = [
     rxnorm_cui: 6853,
     color: '#a855f7',
     pubchemCid: 1615,
-    smiles: 'CC(NC)Cc1ccc2c(c1)OCO2'
+    smiles: 'CC(NC)Cc1ccc2c(c1)OCO2',
+    riskTier: 'STANDARD MONITORING',
+    pkData: { bioavailability: '~80–90% (oral)', halfLife: '6–9 hours', tmax: '1–3 hours', primaryRoute: 'Oral' },
+    kiProfile: { ht2a: 10000, ht1a: 1200, ht2c: 1500, d2: 1300, sert: 240, nmda: 10000 },
+    mechanismText: 'MDMA is a substrate for the serotonin, dopamine, and norepinephrine transporters (SERT/DAT/NET), causing massive monoamine release rather than direct receptor agonism. SERT reversal dominates, producing oxytocin release and the characteristic empathogenic state.',
+    therapeuticHypothesis: 'MDMA-facilitated PTSD therapy uses the acute oxytocin surge and fear extinction window to allow patients to re-process traumatic memories without the defensive avoidance that typically limits psychotherapy.',
+    criticalSafetyNote: 'Concurrent SSRI, SNRI, or MAOI use is contraindicated — risk of serotonin syndrome. Cardiovascular effects (tachycardia, hypertension) require monitoring.',
+    toxicityHighlights: ['Serotonin neurotoxicity at high/repeated doses', 'Hyperthermia risk in uncontrolled settings', 'Cardiovascular: tachycardia, hypertension', 'Not for use with serotoninergic medications'],
+    absoluteContraindications: ['Concurrent SSRI/SNRI/MAOI use', 'Cardiovascular disease (uncontrolled)', 'Liver disease', 'History of hyponatremia'],
+    requiredScreening: ['Full cardiovascular assessment', 'Current medication list (serotonergic agents)', 'Liver function tests', 'Psychiatric history']
   },
   {
     id: 'PSL-2201',
@@ -110,7 +128,16 @@ export const SUBSTANCES: Substance[] = [
     rxnorm_cui: 1433,
     color: '#6366f1',
     pubchemCid: 10258,
-    smiles: 'CN(C)CCc1c[nH]c2ccc(O)cc12'
+    smiles: 'CN(C)CCc1c[nH]c2ccc(O)cc12',
+    riskTier: 'STANDARD MONITORING',
+    pkData: { bioavailability: '~50–60% (oral)', halfLife: '2–3 hours (active psilocin)', tmax: '1–2 hours', primaryRoute: 'Oral' },
+    kiProfile: { ht2a: 28, ht1a: 150, ht2c: 63, d2: 10000, sert: 10000, nmda: 10000 },
+    mechanismText: 'Psilocybin is dephosphorylated to psilocin in vivo, which acts as a partial agonist at 5-HT2A receptors in the prefrontal cortex and default mode network. This disrupts normal thalamo-cortical gating, producing the characteristic perceptual and introspective effects.',
+    therapeuticHypothesis: 'Transient 5-HT2A-mediated disruption of the Default Mode Network reduces rigid self-referential thinking patterns associated with depression and OCD, while promoting neuroplasticity and psychological flexibility.',
+    criticalSafetyNote: 'Concurrent lithium is an absolute contraindication — combined with psilocybin/psilocin, lithium significantly lowers the seizure threshold, creating a life-threatening risk of seizures and fugue states.',
+    toxicityHighlights: ['Physiologically well-tolerated at clinical doses', 'Transient anxiety, confusion during acute phase', 'No known direct organ toxicity', 'Psychological distress possible without adequate preparation'],
+    absoluteContraindications: ['Lithium (seizure risk)', 'Personal/family history of psychosis or schizophrenia', 'Pregnancy'],
+    requiredScreening: ['Psychiatric history (psychosis, bipolar screening)', 'Current medication list (lithium, tramadol)', 'Cardiovascular baseline']
   },
   {
     id: 'LSD-2500',
@@ -128,7 +155,16 @@ export const SUBSTANCES: Substance[] = [
     rxnorm_cui: 4439,
     color: '#ec4899',
     pubchemCid: 5761,
-    smiles: 'CCN(CC)C(=O)[C@H]1CN([C@@H]2Cc3c[nH]c4cccc(c34)C2=C1)C'
+    smiles: 'CCN(CC)C(=O)[C@H]1CN([C@@H]2Cc3c[nH]c4cccc(c34)C2=C1)C',
+    riskTier: 'STANDARD MONITORING',
+    pkData: { bioavailability: '~70–71% (oral)', halfLife: '8–12 hours', tmax: '1–3 hours', primaryRoute: 'Oral / Sublingual' },
+    kiProfile: { ht2a: 2.9, ht1a: 5.1, ht2c: 8.5, d2: 250, sert: 10000, nmda: 10000 },
+    mechanismText: 'LSD acts as a high-potency partial agonist at 5-HT2A receptors (Ki 2.9 nM). Uniquely, the extracellular loop 2 (ECL2) of the receptor closes over the LSD molecule after binding, creating a kinetic "lid" that markedly slows dissociation — the structural basis for its 8–12 hour duration.',
+    therapeuticHypothesis: 'LSD\'s prolonged 5-HT2A engagement produces sustained disruption of the Default Mode Network with extended neuroplasticity windows, potentially making it useful for anxiety disorders and addiction where longer experiential processing is beneficial.',
+    criticalSafetyNote: 'The exceptional potency (active at 50–200 mcg) makes dose control critical; the extended duration (8–12 hours) requires dedicated clinical time and experienced monitoring throughout.',
+    toxicityHighlights: ['Physiologically very well-tolerated', 'Extreme potency requires precise dosing (microgram scale)', 'HPPD risk with repeated use', 'Prolonged duration demands extended clinical oversight'],
+    absoluteContraindications: ['Personal/family history of psychosis or schizophrenia', 'Lithium', 'Pregnancy'],
+    requiredScreening: ['Psychiatric history (psychosis screening)', 'Medication reconciliation', 'Time/setting availability >8 hours']
   },
   {
     id: 'DMT-1102',
@@ -145,7 +181,16 @@ export const SUBSTANCES: Substance[] = [
     imageUrl: '/molecules/5-MeO-DMT.webp',
     color: '#06b6d4',
     pubchemCid: 1832,
-    smiles: 'CN(C)CCc1c[nH]c2ccc(OC)cc12'
+    smiles: 'CN(C)CCc1c[nH]c2ccc(OC)cc12',
+    riskTier: 'STANDARD MONITORING',
+    pkData: { bioavailability: '~5–7% oral / high (smoked/IM)', halfLife: '15–30 minutes (smoked)', tmax: '1–5 minutes (smoked)', primaryRoute: 'Insufflated / Smoked / IM' },
+    kiProfile: { ht2a: 295, ht1a: 2.1, ht2c: 820, d2: 10000, sert: 10000, nmda: 10000 },
+    mechanismText: '5-MeO-DMT is distinguished from other tryptamines by its primary activity at 5-HT1A receptors (Ki 2.1 nM) rather than 5-HT2A. This gives it a fundamentally different subjective and physiological profile — more anxiolytic and ego-dissolving at low doses, with a shorter and more intense onset.',
+    therapeuticHypothesis: 'Strong 5-HT1A agonism produces rapid anxiolysis and a complete dissolution of self-referential consciousness, a state associated with high rates of mystical experience scores and sustained reductions in depression and anxiety measures at single-dose follow-up.',
+    criticalSafetyNote: 'Onset is extremely rapid (seconds to 1–2 minutes when smoked) and intensity often overwhelming — requires experienced facilitation and should not be combined with other serotoninergic agents.',
+    toxicityHighlights: ['Rapid, overwhelming onset requires expert facilitation', 'Risk of accidental high doses without precise titration', 'Not for use with serotoninergic drugs'],
+    absoluteContraindications: ['MAOI use (risk of serotonin crisis)', 'Concurrent serotoninergic medications', 'Cardiovascular instability'],
+    requiredScreening: ['Medication list (MAOI, SSRI)', 'Cardiac assessment', 'Facilitation competency (rapid onset risk)']
   },
   {
     id: 'IBO-5501',
@@ -163,7 +208,16 @@ export const SUBSTANCES: Substance[] = [
     rxnorm_cui: 1243,
     color: '#8b5cf6',
     pubchemCid: 197101,
-    smiles: 'CC[C@H]1CN2CCc3c([nH]c4ccccc34)[C@H]2C[C@@H]1CC1NCCc2c1[nH]c1ccccc21'
+    smiles: 'CC[C@H]1CN2CCc3c([nH]c4ccccc34)[C@H]2C[C@@H]1CC1NCCc2c1[nH]c1ccccc21',
+    riskTier: 'CARDIAC RISK',
+    pkData: { bioavailability: '~50–80% (oral)', halfLife: '24–76 hours', tmax: '2–3 hours', primaryRoute: 'Oral' },
+    kiProfile: { ht2a: 700, ht1a: 580, ht2c: 420, d2: 460, sert: 640, nmda: 2000 },
+    mechanismText: 'Ibogaine has the most complex multi-target pharmacology in this class — interacting with opioid receptors (mu/kappa), sigma-2 receptors, NMDA channels, SERT/NET transporters, and multiple 5-HT receptor subtypes. No single receptor accounts for its clinical effects.',
+    therapeuticHypothesis: 'Ibogaine appears to interrupt opioid dependence by resetting receptor sensitivity and dopamine signaling simultaneously with a prolonged introspective state that supports motivational change — a unique combination not replicated by any approved therapy.',
+    criticalSafetyNote: 'CARDIAC RISK: Ibogaine prolongs the QTc interval and has been associated with fatal cardiac arrhythmias. An EKG, electrolyte panel (K+, Mg2+), and cardiac clearance are mandatory before any administration.',
+    toxicityHighlights: ['QTc prolongation — potentially fatal arrhythmia', 'Hepatotoxic potential at high doses', 'Very long duration (24–72 hours) requires sustained monitoring', 'Multiple drug interactions via CYP2D6 inhibition'],
+    absoluteContraindications: ['Long QT syndrome or QTc >450ms', 'Bradycardia or structural heart disease', 'Liver disease (hepatotoxicity risk)', 'Concurrent opioid use without medical supervision'],
+    requiredScreening: ['12-lead EKG (mandatory)', 'Electrolytes: potassium and magnesium', 'Liver function tests', 'Full cardiac history and assessment', 'CYP2D6 inhibitor review']
   },
   {
     id: 'MES-3301',
@@ -181,7 +235,16 @@ export const SUBSTANCES: Substance[] = [
     rxnorm_cui: 6952,
     color: '#14b8a6',
     pubchemCid: 4276,
-    smiles: 'COc1cc(CCN)cc(OC)c1OC'
+    smiles: 'COc1cc(CCN)cc(OC)c1OC',
+    riskTier: 'STANDARD MONITORING',
+    pkData: { bioavailability: '~90% (oral)', halfLife: '6–10 hours', tmax: '1–2 hours', primaryRoute: 'Oral' },
+    kiProfile: { ht2a: 3000, ht1a: 10000, ht2c: 2000, d2: 10000, sert: 10000, nmda: 10000 },
+    mechanismText: 'Mescaline acts as a low-potency 5-HT2A agonist with micromolar affinity — roughly 1,000× less potent than LSD. Its phenethylamine scaffold also gives it mild dopaminergic activity. High doses (300–500mg) are required for clinical effect, compared to microgram quantities for LSD.',
+    therapeuticHypothesis: 'Mescaline\'s long duration (10–12 hours) and relatively gentle onset may make it useful for prolonged processing-focused therapeutic work. The Native American Church has used peyote (the mescaline-containing cactus) sacramentally for centuries with an extensive cultural safety record.',
+    criticalSafetyNote: 'The high doses required produce significant nausea and cardiovascular stimulation; cardiovascular baseline assessment and antiemetic preparation are important for clinical use.',
+    toxicityHighlights: ['Nausea and vomiting at onset (common)', 'Cardiovascular stimulation at high doses', 'Very long duration (10–12 hours) — scheduling constraint', 'Low toxicity overall at clinical doses'],
+    absoluteContraindications: ['Cardiovascular disease (stimulant effect)', 'MAOIs (potentiation risk)'],
+    requiredScreening: ['Cardiovascular baseline', 'Medication list (MAOIs)', 'Antiemetic planning']
   },
   {
     id: 'DMT-0601',
@@ -198,12 +261,21 @@ export const SUBSTANCES: Substance[] = [
     imageUrl: '/molecules/Dimethyltryptamine.webp',
     color: '#10b981',
     pubchemCid: 6089,
-    smiles: 'CN(C)CCc1c[nH]c2ccccc12'
+    smiles: 'CN(C)CCc1c[nH]c2ccccc12',
+    riskTier: 'STANDARD MONITORING',
+    pkData: { bioavailability: '<1% oral without MAOI', halfLife: '10–20 minutes (smoked/IV)', tmax: '1–5 minutes (smoked)', primaryRoute: 'Smoked / IV / IM' },
+    kiProfile: { ht2a: 150, ht1a: 12, ht2c: 60, d2: 10000, sert: 10000, nmda: 10000 },
+    mechanismText: 'DMT acts as a broad serotonin partial agonist (5-HT2A/2C/1A) with rapid clearance. Extraordinarily short duration when smoked (15–30 minutes) is due to rapid MAO-A metabolism in the gut and liver. The sigma-1 receptor is also a significant target and may account for DMT\'s neuroprotective properties.',
+    therapeuticHypothesis: 'IV-infusion DMT studies (Small Pharma Phase 1) are investigating whether sustained DMT delivery can produce therapeutic effects comparable to longer-acting psychedelics, with the advantage of a fully controlled, titratable clinical experience.',
+    criticalSafetyNote: 'Orally inactive without an MAOI co-administration; smoking or IV routes produce immediate, disorienting onset — expert facilitation and monitored setting are required.',
+    toxicityHighlights: ['Immediate, disorienting onset when inhaled/IV', 'Very short duration limits sustained monitoring need', 'Physiologically well-tolerated', 'Risk of falls/injury during acute phase without support'],
+    absoluteContraindications: ['MAOI use (risk of serotonin crisis via oral route)', 'Concurrent serotoninergic medications'],
+    requiredScreening: ['Medication list (MAOIs, SSRIs)', 'Setting and facilitation readiness']
   },
   {
     id: 'ESK-3822',
     name: 'Esketamine',
-    chemicalName: '(S)-Ketamine · Spravato',
+    chemicalName: '(S)-Ketamine (Spravato®)',
     class: 'ARYLCYCLOHEXYLAMINE',
     phase: ResearchPhase.Approved,
     schedule: 'Schedule III',
@@ -215,7 +287,16 @@ export const SUBSTANCES: Substance[] = [
     imageUrl: '/molecules/Esketamine.webp',
     color: '#0ea5e9',
     pubchemCid: 182137,
-    smiles: 'CN[C@@]1(CCCCC1=O)c2ccccc2Cl'
+    smiles: 'CN[C@@]1(CCCCC1=O)c2ccccc2Cl',
+    riskTier: 'FDA APPROVED · REMS',
+    pkData: { bioavailability: '~8% intranasal', halfLife: '7–12 hours', tmax: '20–40 minutes', primaryRoute: 'Intranasal (clinical setting only)' },
+    kiProfile: { ht2a: 10000, ht1a: 10000, ht2c: 10000, d2: 10000, sert: 10000, nmda: 250 },
+    mechanismText: 'Esketamine is the S-enantiomer of racemic ketamine with approximately 2× greater NMDA receptor affinity (Ki ~250 nM vs 500 nM for racemic). Given intranasally (Spravato), it undergoes systemic absorption and crosses the blood-brain barrier to antagonize NMDA receptors.',
+    therapeuticHypothesis: 'Rapid NMDA blockade triggers downstream AMPA upregulation and BDNF release, producing antidepressant effects within hours. FDA-approved for Treatment-Resistant Depression (TRD) and Major Depressive Disorder with acute suicidal ideation.',
+    criticalSafetyNote: 'REMS program required: Spravato must be administered under direct observation in a certified healthcare setting. Patient cannot self-administer. 2-hour monitoring post-dose is mandatory due to dissociation and blood pressure elevation risk.',
+    toxicityHighlights: ['Dissociation during and after administration (monitored)', 'Blood pressure elevation (2-hour post-dose monitoring required)', 'Sedation — patient cannot drive on treatment days', 'REMS certification required for prescribing facility'],
+    absoluteContraindications: ['Aneurysmal vascular disease', 'History of intracerebral hemorrhage', 'Concurrent MAOIs'],
+    requiredScreening: ['Blood pressure baseline', 'REMS program enrollment (facility and patient)', 'Psychiatric assessment (TRD diagnosis criteria)', 'Driving/transportation plan']
   },
   {
     id: 'AYA-7701',
@@ -232,7 +313,16 @@ export const SUBSTANCES: Substance[] = [
     imageUrl: '/molecules/Ayahuasca.webp',
     color: '#f59e0b',
     pubchemCid: 6089,
-    smiles: 'CN(C)CCc1c[nH]c2ccccc12'
+    smiles: 'CN(C)CCc1c[nH]c2ccccc12',
+    riskTier: 'MAOI INTERACTION RISK',
+    pkData: { bioavailability: 'Bioavailable (β-carbolines enable oral DMT)', halfLife: '3–5 hours', tmax: '1–2 hours', primaryRoute: 'Oral (brew)' },
+    kiProfile: { ht2a: 150, ht1a: 12, ht2c: 60, d2: 10000, sert: 10000, nmda: 10000 },
+    mechanismText: 'Ayahuasca combines N,N-DMT (from Psychotria viridis) with β-carboline MAO-A inhibitors — harmine, harmaline, and tetrahydroharmine (from Banisteriopsis caapi). The β-carbolines prevent first-pass DMT metabolism, enabling oral bioavailability. Harmine also inhibits serotonin reuptake, adding a serotoninergic dimension.',
+    therapeuticHypothesis: 'The combination of 5-HT2A agonism (DMT) with serotonin reuptake inhibition (tetrahydroharmine) produces a multi-hour therapeutic window. Emerging evidence supports utility in treatment-resistant depression, substance use disorders, and end-of-life distress.',
+    criticalSafetyNote: 'The β-carboline MAO-A inhibitors create a dangerous interaction with serotoninergic drugs (SSRIs, SNRIs, tryptophan) and tyramine-rich foods. SSRI/SNRI use within 2 weeks is an absolute contraindication due to serotonin syndrome risk.',
+    toxicityHighlights: ['MAOI + SSRI/SNRI = serotonin syndrome risk (serious)', 'Dietary tyramine restriction required (MAO-A inhibition)', 'Intense nausea, purging common ("la purga")', 'Cardiovascular stimulation (tachycardia, hypertension)'],
+    absoluteContraindications: ['SSRI/SNRI within 14 days', 'MAOI medications', 'Lithium (seizure risk with tryptamines)', 'Cardiovascular disease', 'Schizophrenia/active psychosis'],
+    requiredScreening: ['Complete medication reconciliation (serotonergic agents)', 'Dietary history (tyramine-containing foods)', 'Cardiovascular baseline', 'Psychiatric history (psychosis screening)']
   }
 ];
 
