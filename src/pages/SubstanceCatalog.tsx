@@ -15,8 +15,8 @@ const FILTERS = [
   { label: 'Dissociatives', value: 'arylcyclohexylamine', activeClasses: 'bg-blue-600 border-blue-500   text-white', countClasses: 'bg-blue-500   text-white' },
   { label: 'Ibogaoids', value: 'apocynaceel', activeClasses: 'bg-violet-600 border-violet-500 text-white', countClasses: 'bg-violet-500 text-white' },
   { label: 'Botanical', value: 'botanical', activeClasses: 'bg-amber-600  border-amber-500  text-white', countClasses: 'bg-amber-500  text-white' },
-  { label: 'FDA Approved', value: 'approved', activeClasses: 'bg-emerald-600 border-emerald-500 text-white', countClasses: 'bg-emerald-500 text-white' },
 ];
+
 
 // ─── Risk tier chip config ────────────────────────────────────────────────────
 const RISK_CONFIG: Record<RiskTier, { icon: string; classes: string; label: string }> = {
@@ -73,7 +73,7 @@ const InteractionBadge: React.FC<{ interactions: InteractionEntry[] }> = ({ inte
           onMouseLeave={() => setOpen(false)}
           className="absolute bottom-full left-0 mb-2 z-50 w-72 bg-[#0d1117] border border-slate-700 rounded-xl shadow-2xl p-4 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-150"
         >
-          <p className="text-xs font-semibold text-slate-400">Documented Interactions</p>
+          <p className="text-sm font-semibold text-slate-400">Documented Interactions</p>
           {interactions.map((inter, i) => (
             <div key={i} className={`p-3 rounded-lg border text-left space-y-1
               ${inter.isHigh ? 'bg-red-950/20 border-red-700/20' : 'bg-amber-950/15 border-amber-700/15'}`}>
@@ -84,7 +84,7 @@ const InteractionBadge: React.FC<{ interactions: InteractionEntry[] }> = ({ inte
                   {inter.isHigh ? '⚠ ' : '△ '}{inter.severity}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">{inter.description}</p>
+              <p className="text-sm text-slate-400 leading-relaxed">{inter.description}</p>
             </div>
           ))}
         </div>
@@ -145,7 +145,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
             {sub.name}
           </h3>
           {/* Chemical name: hidden by default, revealed on group hover */}
-          <p className="text-xs text-slate-500 leading-snug line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8">
+          <p className="text-sm text-slate-500 leading-snug line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-9">
             {sub.chemicalName}
           </p>
         </div>
@@ -161,7 +161,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
         </div>
 
         {/* Risk tier chip */}
-        <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium ${riskConfig.classes}`}>
+        <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium ${riskConfig.classes}`}>
           <span aria-hidden="true" className="text-base leading-none">{riskConfig.icon}</span>
           <span>{riskConfig.label}</span>
         </div>
@@ -169,8 +169,8 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
         {/* Efficacy bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Aggregate Efficacy</span>
-            <span className="text-xs font-semibold" style={{ color: sub.color || '#64748b' }}>
+            <span className="text-sm font-medium text-slate-500">Aggregate Efficacy</span>
+            <span className="text-sm font-semibold" style={{ color: sub.color || '#64748b' }}>
               {(sub.efficacy * 100).toFixed(0)}%
             </span>
           </div>
