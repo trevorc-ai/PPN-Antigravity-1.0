@@ -8,105 +8,127 @@ interface PhaseIndicatorProps {
     onPhaseChange: (phase: 1 | 2 | 3) => void;
 }
 
+// Per-phase accent tokens
+const PHASE_CONFIG = {
+    1: {
+        icon: Calendar,
+        label: 'Preparation',
+        // Active: tab bg + border colour
+        activeBg: 'bg-red-900/50',
+        activeBorder: 'border-red-500/70',
+        activeText: 'text-red-200',
+        // Indicator line at top of active tab
+        activeLine: 'bg-red-500',
+        tooltipTitle: 'Phase 1: Preparation',
+        tooltip: 'Establish the patient baseline before any dosing session. Complete 5 clinical forms: Informed Consent, Safety Screening, Set & Setting, Baseline Observations, and MEQ-30.',
+    },
+    2: {
+        icon: Activity,
+        label: 'Dosing Session',
+        activeBg: 'bg-amber-900/40',
+        activeBorder: 'border-amber-500/70',
+        activeText: 'text-amber-200',
+        activeLine: 'bg-amber-500',
+        tooltipTitle: 'Phase 2: Treatment Session',
+        tooltip: 'Live documentation during the dosing session. Record vitals, annotate the timeline, log observations, and document adverse events. Unlocks when Phase 1 is complete.',
+    },
+    3: {
+        icon: TrendingUp,
+        label: 'Integration',
+        activeBg: 'bg-emerald-900/40',
+        activeBorder: 'border-emerald-500/70',
+        activeText: 'text-emerald-200',
+        activeLine: 'bg-emerald-500',
+        tooltipTitle: 'Phase 3: Integration',
+        tooltip: 'Post-session monitoring. Track behavioral changes, conduct integration sessions, re-administer PHQ-9/GAD-7, and run safety checks. Unlocks when Phase 2 is complete.',
+    },
+} as const;
+
 export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
     currentPhase,
     completedPhases,
-    onPhaseChange
+    onPhaseChange,
 }) => {
-    const phases = [
-        {
-            id: 1 as const,
-            label: 'Preparation',
-            icon: Calendar,
-            color: 'red',
-            bgColor: 'bg-red-500/20',
-            borderColor: 'border-red-500',
-            textColor: 'text-red-300',
-            tooltipTitle: 'Phase 1: Preparation',
-            tooltip: 'Establish the patient baseline before any dosing session. Complete 5 clinical forms: Informed Consent, Safety Screening, Set & Setting, Baseline Observations, and MEQ-30. All Phase 2 data is anchored to this baseline.'
-        },
-        {
-            id: 2 as const,
-            label: 'Dosing Session',
-            icon: Activity,
-            color: 'amber',
-            bgColor: 'bg-amber-500/20',
-            borderColor: 'border-amber-500',
-            textColor: 'text-amber-300',
-            tooltipTitle: 'Phase 2: Treatment Session',
-            tooltip: 'Live documentation during the dosing session. Record session vitals at intervals, annotate the session timeline, log observations, and document any adverse events or rescue protocol use. Unlocks when Phase 1 is complete.'
-        },
-        {
-            id: 3 as const,
-            label: 'Integration',
-            icon: TrendingUp,
-            color: 'emerald',
-            bgColor: 'bg-emerald-500/20',
-            borderColor: 'border-emerald-500',
-            textColor: 'text-emerald-300',
-            tooltipTitle: 'Phase 3: Integration',
-            tooltip: 'Post-session monitoring and support. Track behavioral changes, conduct structured integration sessions, re-administer PHQ-9/GAD-7 at timepoints, and run safety checks. Outcome metrics are compared against Phase 1 baseline. Unlocks when Phase 2 is complete.'
-        }
-    ];
-
     return (
-        <div className="w-full mb-8">
-            {/* Desktop: Horizontal Tabs */}
-            <div className="hidden md:flex gap-2 border-b border-slate-800 pb-2">
-                {phases.map((phase, index) => {
-                    const isActive = currentPhase === phase.id;
-                    const isCompleted = completedPhases.includes(phase.id);
-                    const isDisabled = !isCompleted && phase.id > 1 && !completedPhases.includes(phase.id - 1);
+        <div className="w-full">
+            {/* ── Desktop: true tab row ──────────────────────────────────────── */}
+            <div className="hidden md:flex items-end gap-0" role="tablist" aria-label="Journey phases">
+                {([1, 2, 3] as const).map((phaseId) => {
+                    const cfg = PHASE_CONFIG[phaseId];
+                    const Icon = cfg.icon;
+                    const isActive = currentPhase === phaseId;
+                    const isCompleted = completedPhases.includes(phaseId);
+                    const isLocked =
+                        phaseId > 1 &&
+                        !completedPhases.includes((phaseId - 1) as 1 | 2 | 3) &&
+                        !isActive;
 
                     return (
-                        <React.Fragment key={phase.id}>
-                            <div className="flex-1 flex">
-                                <button
-                                    onClick={() => onPhaseChange(phase.id)}
-                                    className={`
-                      w-full flex items-center justify-center gap-3 px-6 py-4 rounded-t-2xl transition-all
-                      ${isActive
-                                            ? `${phase.bgColor} border-2 ${phase.borderColor} ${phase.textColor} font-bold`
-                                            : isCompleted
-                                                ? 'bg-slate-800/40 border border-slate-700 text-slate-300 hover:text-slate-300'
-                                                : 'bg-slate-900/40 border border-slate-700 text-slate-400 hover:text-slate-300 hover:bg-slate-800/40 cursor-pointer'
-                                        }
-                    `}
-                                    role="tab"
-                                    aria-selected={isActive}
-                                    aria-controls={`panel-${phase.id}`}
-                                    aria-label={`Phase ${phase.id}: ${phase.label}`}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        {isCompleted && !isActive ? (
-                                            <CheckCircle className="w-5 h-5 text-emerald-400" />
-                                        ) : (
-                                            <phase.icon className="w-5 h-5" />
-                                        )}
-                                        <div className="flex items-center gap-2">
-                                            <span className={`text-lg font-black tabular-nums ${isActive ? '' : 'text-slate-500'}`}>{phase.id}</span>
-                                            <span className={`text-base ${isActive ? 'font-black' : 'font-semibold'}`}>
-                                                {phase.label}{isCompleted && !isActive && ' ✓'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </button>
-                            </div>
+                        <AdvancedTooltip
+                            key={phaseId}
+                            content={cfg.tooltip}
+                            title={cfg.tooltipTitle}
+                            type="info"
+                            tier="detailed"
+                            side="top"
+                            width="w-72"
+                        >
+                            {/* Tab button — bottom border removed when active so it
+                                visually bleeds into the panel below */}
+                            <button
+                                onClick={() => !isLocked && onPhaseChange(phaseId)}
+                                disabled={isLocked}
+                                role="tab"
+                                aria-selected={isActive}
+                                aria-controls={`phase-panel-${phaseId}`}
+                                aria-label={`Phase ${phaseId}: ${cfg.label}${isCompleted && !isActive ? ' — complete' : ''}${isLocked ? ' — locked' : ''}`}
+                                className={[
+                                    // Base shape — top corners rounded, bottom flat to merge with panel
+                                    'relative flex-1 flex items-center justify-center gap-2.5 px-5 py-3.5',
+                                    'rounded-t-xl transition-all duration-200 select-none',
+                                    'border-l border-r border-t',
+                                    // Active: coloured bg, border matches panel's side/top border
+                                    isActive
+                                        ? `${cfg.activeBg} ${cfg.activeBorder} ${cfg.activeText} font-bold`
+                                        : isCompleted
+                                            ? 'bg-slate-800/50 border-slate-700/60 text-slate-300 hover:bg-slate-800/70 hover:text-slate-200 font-semibold cursor-pointer'
+                                            : 'bg-slate-900/40 border-slate-800/60 text-slate-500 font-semibold cursor-pointer hover:text-slate-400',
+                                ].join(' ')}
+                                style={isActive ? {
+                                    // Push active tab 2px down so its bottom overlaps the panel's top border
+                                    marginBottom: '-2px',
+                                    zIndex: 10,
+                                } : { zIndex: 1 }}
+                            >
+                                {/* Accent line at very top of active tab */}
+                                {isActive && (
+                                    <span
+                                        className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-xl ${cfg.activeLine}`}
+                                        aria-hidden="true"
+                                    />
+                                )}
 
-                            {/* Arrow connector */}
-                            {index < phases.length - 1 && (
-                                <div className="flex items-center px-2 text-slate-700">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            )}
-                        </React.Fragment>
+                                {isCompleted && !isActive
+                                    ? <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-hidden="true" />
+                                    : <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />}
+
+                                <span className="text-sm">
+                                    <span className={`font-black mr-1 ${isActive ? '' : 'text-slate-500'}`}>{phaseId}</span>
+                                    {cfg.label}
+                                    {isCompleted && !isActive && (
+                                        <CheckCircle
+                                            className="inline w-3.5 h-3.5 text-emerald-400 ml-1.5 -mt-0.5"
+                                            aria-label="complete"
+                                        />
+                                    )}
+                                </span>
+                            </button>
+                        </AdvancedTooltip>
                     );
                 })}
             </div>
 
-            {/* Mobile: Dropdown Selector */}
+            {/* ── Mobile: select ──────────────────────────────────────────────── */}
             <div className="md:hidden">
                 <select
                     value={currentPhase}
@@ -114,9 +136,9 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                     className="w-full px-4 py-3 bg-slate-900/60 border border-slate-700 rounded-xl text-slate-300 text-sm font-bold"
                     aria-label="Select phase"
                 >
-                    {phases.map(phase => (
-                        <option key={phase.id} value={phase.id}>
-                            {phase.id}  {phase.label}
+                    {([1, 2, 3] as const).map((id) => (
+                        <option key={id} value={id}>
+                            {id} — {PHASE_CONFIG[id].label}
                         </option>
                     ))}
                 </select>
