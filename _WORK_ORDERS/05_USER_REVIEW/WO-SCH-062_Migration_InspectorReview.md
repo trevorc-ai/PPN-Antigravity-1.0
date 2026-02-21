@@ -134,3 +134,50 @@ When executing in Supabase SQL editor:
 3. Click Run
 4. Confirm V1–V5 verification queries return the expected row counts (3 / 3 / 1 / 3 / 4+)
 5. Report back — BUILDER will then proceed with WO-309 and WO-313 implementation
+
+---
+
+## LIVE VERIFICATION RESULTS — 2026-02-21 (USER confirmed in Supabase)
+
+### V1 — Contraindication columns on `log_clinical_records` ✅ PASS
+| column_name | data_type | is_nullable |
+|---|---|---|
+| contraindication_assessed_at | timestamp with time zone | YES |
+| contraindication_verdict | text | YES |
+| contraindication_override_reason | text | YES |
+
+### V2 — AE report columns on `log_safety_events` ✅ PASS
+| column_name | data_type |
+|---|---|
+| report_generated_at | timestamp with time zone |
+| ctcae_grade | smallint |
+| report_pdf_url | text |
+
+### V3 — `log_chain_of_custody` table + RLS ✅ PASS
+| tablename | rowsecurity |
+|---|---|
+| log_chain_of_custody | true |
+
+### V3b — `log_user_sites` dependency ✅ PASS
+| log_user_sites_exists |
+|---|
+| 1 |
+
+### V4 — RLS policies ✅ PASS
+| policyname | cmd |
+|---|---|
+| chain_of_custody_site_insert | INSERT |
+| chain_of_custody_site_select | SELECT |
+| chain_of_custody_site_update | UPDATE |
+
+### V5 — Indexes ✅ PASS
+| indexname |
+|---|
+| log_chain_of_custody_pkey |
+| idx_coc_site_id |
+| idx_coc_session_id |
+| idx_coc_session_date |
+| idx_coc_substance |
+
+## MIGRATION CLOSED — 6/6 VERIFIED IN PRODUCTION ✅
+**BUILDER is now unblocked to proceed with WO-309 and WO-313.**
