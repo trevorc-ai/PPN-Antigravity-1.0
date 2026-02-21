@@ -226,7 +226,7 @@ const SubstanceCatalog: React.FC = () => {
 
   return (
     <div className="min-h-full bg-gradient-to-b from-[#0d1526] via-[#0b1220] to-[#091018] animate-in fade-in duration-500">
-      <PageContainer className="max-w-7xl mx-auto px-6 py-10 sm:px-10 lg:px-12 space-y-10">
+      <PageContainer className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8 space-y-10">
         <Section spacing="default" className="space-y-8">
 
           {/* Page header */}
