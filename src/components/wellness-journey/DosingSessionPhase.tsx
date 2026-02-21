@@ -181,9 +181,9 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="flex flex-col items-center pt-8 border-t border-slate-800">
                         <button
                             onClick={() => setMode('live')}
-                            className="group relative w-full md:w-2/3 py-5 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xl tracking-wide shadow-lg shadow-emerald-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-4"
+                            className="group relative w-full md:w-2/3 py-5 rounded-2xl bg-gradient-to-r from-amber-800 to-amber-700 hover:from-amber-700 hover:to-amber-600 text-amber-100 font-black text-xl tracking-wide shadow-lg shadow-amber-950/60 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-4 border border-amber-600/40"
                         >
-                            <span className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center group-hover:bg-black/20 transition-colors">
+                            <span className="w-10 h-10 rounded-full bg-black/15 flex items-center justify-center group-hover:bg-black/25 transition-colors">
                                 <Play className="w-5 h-5 fill-current ml-0.5" />
                             </span>
                             START DOSING SESSION
@@ -210,8 +210,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                         {/* Timer */}
                         <div className="text-center sm:text-left">
-                            <p className="text-xs uppercase tracking-[0.2em] text-emerald-400 font-bold mb-1 shadow-green-900/50">Session Active</p>
-                            <p className="text-4xl font-black text-white font-mono tracking-tight leading-none drop-shadow-[0_0_10px_rgba(16,185,129,0.5)] tabular-nums">
+                            <p className="text-xs uppercase tracking-[0.2em] text-amber-400 font-bold mb-1">Session Active</p>
+                            <p className="text-4xl font-black text-white font-mono tracking-tight leading-none tabular-nums">
                                 {elapsedTime}
                             </p>
                         </div>

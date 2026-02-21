@@ -622,9 +622,9 @@ const WellnessJourney: React.FC = () => {
                 {(() => {
                     const phasePalette = {
                         1: {
-                            border: 'border-red-600/60',
-                            shadow: '0 0 32px -4px rgba(220,38,38,0.25)',
-                            bg: 'bg-red-950/20',
+                            border: 'border-violet-500/60',
+                            shadow: '0 0 32px -4px rgba(139,92,246,0.25)',
+                            bg: 'bg-violet-950/20',
                         },
                         2: {
                             border: 'border-amber-500/60',
