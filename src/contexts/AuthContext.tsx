@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { User, Session } from '@supabase/supabase-js';
+import { clearDataCache } from '../hooks/useDataCache';
+import { clearBenchmarkCache } from '../hooks/useSafetyBenchmark';
+import { clearAnalyticsCache } from '../hooks/useAnalyticsData';
 
 interface AuthContextType {
     user: User | null;
@@ -50,6 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log('[AuthContext] Supabase signOut successful');
             setUser(null);
             setSession(null);
+            clearDataCache();        // wipe useDataCache session cache
+            clearBenchmarkCache();   // wipe safety benchmark cache
+            clearAnalyticsCache();   // wipe analytics KPI cache
             localStorage.clear();
             sessionStorage.clear();
 

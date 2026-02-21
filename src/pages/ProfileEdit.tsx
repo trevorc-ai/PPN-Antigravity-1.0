@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
+import { useDataCache } from '../hooks/useDataCache';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import { ArrowLeft, Save, X } from 'lucide-react';
@@ -15,7 +16,6 @@ interface ProfileFormData {
 const ProfileEdit: React.FC = () => {
     const navigate = useNavigate();
     const { addToast } = useToast();
-    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [formData, setFormData] = useState<ProfileFormData>({
         display_name: '',
@@ -23,45 +23,34 @@ const ProfileEdit: React.FC = () => {
         is_profile_public: false
     });
     const [errors, setErrors] = useState<Partial<ProfileFormData>>({});
+    const [initialized, setInitialized] = useState(false);
 
-    useEffect(() => {
-        fetchProfile();
-    }, []);
-
-    const fetchProfile = async () => {
-        try {
+    const { data: profileData, loading } = useDataCache(
+        'user-profile',
+        async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                navigate('/');
-                return;
-            }
-
-            const { data: profile, error } = await supabase
+            if (!user) return { data: null, error: 'Not authenticated' };
+            return supabase
                 .from('log_user_profiles')
                 .select('*')
                 .eq('user_id', user.id)
                 .single();
+        },
+        { ttl: 10 * 60 * 1000 }
+    );
 
-            if (error) throw error;
-
-            if (profile) {
-                setFormData({
-                    display_name: profile.display_name || '',
-                    specialty: profile.specialty || '',
-                    is_profile_public: profile.is_profile_public || false
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-            addToast({
-                title: 'Error',
-                message: 'Failed to load profile data',
-                type: 'error'
+    // Populate form once data arrives (only on first load)
+    useEffect(() => {
+        if (profileData && !initialized) {
+            const p = profileData as any;
+            setFormData({
+                display_name: p.display_name || '',
+                specialty: p.specialty || '',
+                is_profile_public: p.is_profile_public || false,
             });
-        } finally {
-            setLoading(false);
+            setInitialized(true);
         }
-    };
+    }, [profileData, initialized]);
 
     const validateForm = (): boolean => {
         const newErrors: Partial<ProfileFormData> = {};
