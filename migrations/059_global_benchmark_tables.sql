@@ -5,8 +5,8 @@
 -- Date: 2026-02-20
 -- Purpose: Create three additive read-only tables to power the Global
 --          Benchmark Intelligence layer of PPN Analytics.
--- Affected Tables: benchmark_trials (NEW), benchmark_cohorts (NEW),
---                  population_baselines (NEW)
+-- Affected Tables: ref_benchmark_trials (NEW), ref_benchmark_cohorts (NEW),
+--                  ref_population_baselines (NEW)
 -- Existing Tables Modified: NONE
 -- ============================================================================
 -- GOVERNANCE RULES APPLIED:
@@ -20,14 +20,14 @@
 -- ============================================================================
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- TABLE 1: benchmark_trials
+-- TABLE 1: ref_benchmark_trials
 -- Source: ClinicalTrials.gov API v2 (U.S. Public Domain)
 -- Populated by: backend/scripts/seed_benchmark_trials.py
 -- Purpose: Registry of psychedelic clinical trials worldwide for
 --          context ("your outcomes are informed by 487 global trials")
 -- ─────────────────────────────────────────────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS public.benchmark_trials (
+CREATE TABLE IF NOT EXISTS public.ref_benchmark_trials (
   id                      UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   nct_id                  TEXT        UNIQUE NOT NULL,     -- e.g. 'NCT03537014'
   title                   TEXT        NOT NULL,
@@ -44,30 +44,30 @@ CREATE TABLE IF NOT EXISTS public.benchmark_trials (
   created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE public.benchmark_trials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ref_benchmark_trials ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "benchmark_trials_authenticated_select" ON public.benchmark_trials;
-CREATE POLICY "benchmark_trials_authenticated_select"
-  ON public.benchmark_trials
+DROP POLICY IF EXISTS "ref_benchmark_trials_authenticated_select" ON public.ref_benchmark_trials;
+CREATE POLICY "ref_benchmark_trials_authenticated_select"
+  ON public.ref_benchmark_trials
   FOR SELECT
   TO authenticated
   USING (true);
 
-CREATE INDEX IF NOT EXISTS idx_bt_modality
-  ON public.benchmark_trials(modality);
+CREATE INDEX IF NOT EXISTS idx_rbt_modality
+  ON public.ref_benchmark_trials(modality);
 
-CREATE INDEX IF NOT EXISTS idx_bt_status
-  ON public.benchmark_trials(status);
+CREATE INDEX IF NOT EXISTS idx_rbt_status
+  ON public.ref_benchmark_trials(status);
 
-CREATE INDEX IF NOT EXISTS idx_bt_country
-  ON public.benchmark_trials(country);
+CREATE INDEX IF NOT EXISTS idx_rbt_country
+  ON public.ref_benchmark_trials(country);
 
-CREATE INDEX IF NOT EXISTS idx_bt_completion_date
-  ON public.benchmark_trials(completion_date DESC);
+CREATE INDEX IF NOT EXISTS idx_rbt_completion_date
+  ON public.ref_benchmark_trials(completion_date DESC);
 
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- TABLE 2: benchmark_cohorts
+-- TABLE 2: ref_benchmark_cohorts
 -- Source: Manually extracted from peer-reviewed open-access publications
 -- Populated by: backend/scripts/seed_benchmark_cohorts.py
 -- Purpose: Aggregate outcome benchmarks for the Benchmark Ribbon chart —
@@ -75,7 +75,7 @@ CREATE INDEX IF NOT EXISTS idx_bt_completion_date
 --           MAPS Phase 3 global benchmark (n=104)?"
 -- ─────────────────────────────────────────────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS public.benchmark_cohorts (
+CREATE TABLE IF NOT EXISTS public.ref_benchmark_cohorts (
   id                      UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   cohort_name             TEXT        NOT NULL,             -- 'MAPS MAPP1 Phase 3 (Mitchell 2021)'
   source_citation         TEXT        NOT NULL,             -- Full DOI — NEVER NULL (enforced at DB level)
@@ -100,33 +100,33 @@ CREATE TABLE IF NOT EXISTS public.benchmark_cohorts (
   created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE public.benchmark_cohorts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ref_benchmark_cohorts ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "benchmark_cohorts_authenticated_select" ON public.benchmark_cohorts;
-CREATE POLICY "benchmark_cohorts_authenticated_select"
-  ON public.benchmark_cohorts
+DROP POLICY IF EXISTS "ref_benchmark_cohorts_authenticated_select" ON public.ref_benchmark_cohorts;
+CREATE POLICY "ref_benchmark_cohorts_authenticated_select"
+  ON public.ref_benchmark_cohorts
   FOR SELECT
   TO authenticated
   USING (true);
 
-CREATE INDEX IF NOT EXISTS idx_bc_modality_condition
-  ON public.benchmark_cohorts(modality, condition);
+CREATE INDEX IF NOT EXISTS idx_rbc_modality_condition
+  ON public.ref_benchmark_cohorts(modality, condition);
 
-CREATE INDEX IF NOT EXISTS idx_bc_instrument
-  ON public.benchmark_cohorts(instrument);
+CREATE INDEX IF NOT EXISTS idx_rbc_instrument
+  ON public.ref_benchmark_cohorts(instrument);
 
-CREATE INDEX IF NOT EXISTS idx_bc_modality
-  ON public.benchmark_cohorts(modality);
+CREATE INDEX IF NOT EXISTS idx_rbc_modality
+  ON public.ref_benchmark_cohorts(modality);
 
-CREATE INDEX IF NOT EXISTS idx_bc_n_participants
-  ON public.benchmark_cohorts(n_participants DESC);
+CREATE INDEX IF NOT EXISTS idx_rbc_n_participants
+  ON public.ref_benchmark_cohorts(n_participants DESC);
 
-CREATE INDEX IF NOT EXISTS idx_bc_condition
-  ON public.benchmark_cohorts(condition);
+CREATE INDEX IF NOT EXISTS idx_rbc_condition
+  ON public.ref_benchmark_cohorts(condition);
 
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- TABLE 3: population_baselines
+-- TABLE 3: ref_population_baselines
 -- Source: SAMHSA TEDS / Global Drug Survey (Phase 2 — structure ready now,
 --         data seeded in future work order)
 -- Purpose: National demographic baselines — what does a typical MDD/PTSD/AUD
@@ -134,7 +134,7 @@ CREATE INDEX IF NOT EXISTS idx_bc_condition
 --          practitioners reviewing their patient mix.
 -- ─────────────────────────────────────────────────────────────────────────────
 
-CREATE TABLE IF NOT EXISTS public.population_baselines (
+CREATE TABLE IF NOT EXISTS public.ref_population_baselines (
   id                        UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   source                    TEXT        NOT NULL,           -- 'SAMHSA_TEDS_2023','GDS_2023','NIMH_2022'
   year                      INTEGER     NOT NULL,
@@ -151,23 +151,23 @@ CREATE TABLE IF NOT EXISTS public.population_baselines (
   created_at                TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE public.population_baselines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ref_population_baselines ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS "population_baselines_authenticated_select" ON public.population_baselines;
-CREATE POLICY "population_baselines_authenticated_select"
-  ON public.population_baselines
+DROP POLICY IF EXISTS "ref_population_baselines_authenticated_select" ON public.ref_population_baselines;
+CREATE POLICY "ref_population_baselines_authenticated_select"
+  ON public.ref_population_baselines
   FOR SELECT
   TO authenticated
   USING (true);
 
-CREATE INDEX IF NOT EXISTS idx_pb_source_year
-  ON public.population_baselines(source, year);
+CREATE INDEX IF NOT EXISTS idx_rpb_source_year
+  ON public.ref_population_baselines(source, year);
 
-CREATE INDEX IF NOT EXISTS idx_pb_condition
-  ON public.population_baselines(condition);
+CREATE INDEX IF NOT EXISTS idx_rpb_condition
+  ON public.ref_population_baselines(condition);
 
-CREATE INDEX IF NOT EXISTS idx_pb_region
-  ON public.population_baselines(region);
+CREATE INDEX IF NOT EXISTS idx_rpb_region
+  ON public.ref_population_baselines(region);
 
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -179,7 +179,7 @@ CREATE INDEX IF NOT EXISTS idx_pb_region
 SELECT table_name, table_type
 FROM information_schema.tables
 WHERE table_schema = 'public'
-  AND table_name IN ('benchmark_trials', 'benchmark_cohorts', 'population_baselines')
+  AND table_name IN ('ref_benchmark_trials', 'ref_benchmark_cohorts', 'ref_population_baselines')
 ORDER BY table_name;
 -- Expected: 3 rows, all table_type = 'BASE TABLE'
 
@@ -187,21 +187,21 @@ ORDER BY table_name;
 SELECT tablename, rowsecurity
 FROM pg_tables
 WHERE schemaname = 'public'
-  AND tablename IN ('benchmark_trials', 'benchmark_cohorts', 'population_baselines')
+  AND tablename IN ('ref_benchmark_trials', 'ref_benchmark_cohorts', 'ref_population_baselines')
 ORDER BY tablename;
 -- Expected: 3 rows, rowsecurity = true for all
 
 -- 3. Confirm policies exist
 SELECT tablename, policyname, cmd, roles
 FROM pg_policies
-WHERE tablename IN ('benchmark_trials', 'benchmark_cohorts', 'population_baselines')
+WHERE tablename IN ('ref_benchmark_trials', 'ref_benchmark_cohorts', 'ref_population_baselines')
 ORDER BY tablename, policyname;
 -- Expected: 3 rows (one SELECT policy per table)
 
 -- 4. Confirm indexes
 SELECT tablename, indexname
 FROM pg_indexes
-WHERE tablename IN ('benchmark_trials', 'benchmark_cohorts', 'population_baselines')
+WHERE tablename IN ('ref_benchmark_trials', 'ref_benchmark_cohorts', 'ref_population_baselines')
 ORDER BY tablename, indexname;
 -- Expected: Multiple index rows per table
 

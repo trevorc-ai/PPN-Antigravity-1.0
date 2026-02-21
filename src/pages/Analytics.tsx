@@ -221,7 +221,7 @@ const Analytics = () => {
             </Section>
 
 
-            {/* GLOBAL BENCHMARK INTELLIGENCE — Live data from benchmark_cohorts + benchmark_trials */}
+            {/* GLOBAL BENCHMARK INTELLIGENCE — Live data from ref_benchmark_cohorts + ref_benchmark_trials */}
             <Section spacing="tight" className="print:break-inside-avoid">
                 <div className="flex items-center justify-between mb-6">
                     <div>

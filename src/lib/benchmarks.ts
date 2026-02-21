@@ -4,9 +4,9 @@
  * WO-231 | BUILDER | TypeScript API layer for Global Benchmark Intelligence.
  *
  * Provides typed query functions for the three benchmark tables:
- *   - benchmark_trials    (ClinicalTrials.gov registry)
- *   - benchmark_cohorts   (Published paper aggregate outcomes)
- *   - population_baselines (SAMHSA/population context — Phase 2)
+ *   - ref_benchmark_trials    (ClinicalTrials.gov registry)
+ *   - ref_benchmark_cohorts   (Published paper aggregate outcomes)
+ *   - ref_population_baselines (SAMHSA/population context — Phase 2)
  *
  * Usage:
  *   import { getBenchmarkCohorts, getPrimaryBenchmark } from '@/lib/benchmarks';
@@ -116,7 +116,7 @@ export async function getBenchmarkCohorts(
     instrument: string
 ): Promise<BenchmarkCohort[]> {
     const { data, error } = await supabase
-        .from('benchmark_cohorts')
+        .from('ref_benchmark_cohorts')
         .select('*')
         .eq('modality', modality.toLowerCase())
         .eq('condition', condition)
@@ -142,7 +142,7 @@ export async function getPrimaryBenchmark(
     instrument: string
 ): Promise<BenchmarkCohort | null> {
     const { data, error } = await supabase
-        .from('benchmark_cohorts')
+        .from('ref_benchmark_cohorts')
         .select('*')
         .eq('modality', modality.toLowerCase())
         .eq('condition', condition)
@@ -167,7 +167,7 @@ export async function getBenchmarkCohortsForModality(
     modality: string
 ): Promise<BenchmarkCohort[]> {
     const { data, error } = await supabase
-        .from('benchmark_cohorts')
+        .from('ref_benchmark_cohorts')
         .select('*')
         .eq('modality', modality.toLowerCase())
         .order('n_participants', { ascending: false });
@@ -188,7 +188,7 @@ export async function getBenchmarkCohortsForCondition(
     condition: string
 ): Promise<BenchmarkCohort[]> {
     const { data, error } = await supabase
-        .from('benchmark_cohorts')
+        .from('ref_benchmark_cohorts')
         .select('*')
         .eq('condition', condition)
         .order('n_participants', { ascending: false });
@@ -207,7 +207,7 @@ export async function getBenchmarkCohortsForCondition(
  */
 export async function getBenchmarkModalities(): Promise<string[]> {
     const { data, error } = await supabase
-        .from('benchmark_cohorts')
+        .from('ref_benchmark_cohorts')
         .select('modality');
 
     if (error) {
@@ -226,7 +226,7 @@ export async function getBenchmarkModalities(): Promise<string[]> {
  */
 export async function getBenchmarkConditions(): Promise<string[]> {
     const { data, error } = await supabase
-        .from('benchmark_cohorts')
+        .from('ref_benchmark_cohorts')
         .select('condition');
 
     if (error) {
@@ -249,7 +249,7 @@ export async function getBenchmarkConditions(): Promise<string[]> {
  */
 export async function getBenchmarkTrialCount(modality?: string): Promise<number> {
     let query = supabase
-        .from('benchmark_trials')
+        .from('ref_benchmark_trials')
         .select('id', { count: 'exact', head: true });
 
     if (modality) {
@@ -275,7 +275,7 @@ export async function getBenchmarkTrials(
     offset = 0
 ): Promise<BenchmarkTrial[]> {
     let query = supabase
-        .from('benchmark_trials')
+        .from('ref_benchmark_trials')
         .select('*')
         .order('completion_date', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -308,8 +308,8 @@ export async function getBenchmarkTrials(
  */
 export async function getBenchmarkSummary(): Promise<BenchmarkSummary> {
     const [trialsResult, cohortsResult] = await Promise.all([
-        supabase.from('benchmark_trials').select('modality'),
-        supabase.from('benchmark_cohorts').select('id', { count: 'exact', head: true }),
+        supabase.from('ref_benchmark_trials').select('modality'),
+        supabase.from('ref_benchmark_cohorts').select('id', { count: 'exact', head: true }),
     ]);
 
     const modalityCounts: Record<string, number> = {};
