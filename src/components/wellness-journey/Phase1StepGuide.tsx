@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, Edit3 } from 'lucide-react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, Edit3, Compass } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
 
 export interface Phase1Step {
@@ -194,54 +194,58 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                         style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.3) 0%, transparent 70%)' }}
                     />
 
-                    <div className="relative z-10 p-8">
-                        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-5">
-                            {/* Left: Step identity */}
-                            <div className="flex-1">
-                                {/* Step counter */}
-                                <div className="flex items-center gap-3 mb-4">
-                                    <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                        Step {currentStepIndex + 1} of {PHASE1_STEPS.length}
+                    <div className="relative z-10 p-6 sm:p-8">
+                        <div className="flex flex-col gap-5">
+                            {/* Top row: CTA LEFT + step identity RIGHT */}
+                            <div className="flex flex-col sm:flex-row items-start gap-5">
+
+                                {/* LEFT: Begin CTA */}
+                                <div className="flex flex-col items-start gap-2 flex-shrink-0">
+                                    <button
+                                        id={`phase1-step-${currentStepIndex + 1}-start`}
+                                        onClick={() => onStartStep(currentStep.id)}
+                                        aria-label={`Begin ${currentStep.label}`}
+                                        className="flex items-center gap-3 px-7 py-3.5 bg-red-600/20 hover:bg-red-600/35 border border-red-500/50 hover:border-red-400/70 text-red-200 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg shadow-red-900/30 group"
+                                    >
+                                        Begin
+                                        <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
+                                    </button>
+                                    <span className="text-xs text-slate-500 font-medium pl-1">
+                                        Opens clinical form
                                     </span>
-                                    {currentStep.required && (
-                                        <span className="px-2 py-0.5 text-xs font-black uppercase tracking-widest bg-amber-500/15 border border-amber-500/25 text-amber-400 rounded-md">
-                                            Required
-                                        </span>
-                                    )}
                                 </div>
 
-                                {/* Icon + Title */}
-                                <div className="flex items-center gap-4 mb-3">
-                                    <div className={`w-14 h-14 rounded-2xl ${currentStep.bgColor} border ${currentStep.borderColor} flex items-center justify-center flex-shrink-0`}>
-                                        <span className={`material-symbols-outlined text-3xl ${currentStep.color}`}>
-                                            {currentStep.icon}
+                                {/* RIGHT: Step identity */}
+                                <div className="flex-1">
+                                    {/* Step counter */}
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+                                            Step {currentStepIndex + 1} of {PHASE1_STEPS.length}
                                         </span>
+                                        {currentStep.required && (
+                                            <span className="px-2 py-0.5 text-xs font-black uppercase tracking-widest bg-amber-500/15 border border-amber-500/25 text-amber-400 rounded-md">
+                                                Required
+                                            </span>
+                                        )}
                                     </div>
-                                    <h2 className={`text-2xl font-black ${currentStep.color} leading-tight`}>
-                                        {currentStep.label}
-                                    </h2>
+
+                                    {/* Icon + Title */}
+                                    <div className="flex items-center gap-4 mb-3">
+                                        <div className={`w-12 h-12 rounded-2xl ${currentStep.bgColor} border ${currentStep.borderColor} flex items-center justify-center flex-shrink-0`}>
+                                            <span className={`material-symbols-outlined text-2xl ${currentStep.color}`}>
+                                                {currentStep.icon}
+                                            </span>
+                                        </div>
+                                        <h2 className={`text-xl font-black ${currentStep.color} leading-tight`}>
+                                            {currentStep.label}
+                                        </h2>
+                                    </div>
+
+                                    {/* Description */}
+                                    <p className="text-slate-400 text-sm leading-relaxed max-w-lg">
+                                        {currentStep.description}
+                                    </p>
                                 </div>
-
-                                {/* Description */}
-                                <p className="text-slate-400 text-base leading-relaxed max-w-lg">
-                                    {currentStep.description}
-                                </p>
-                            </div>
-
-                            {/* Right: CTA — full-width on mobile, inline on sm+ */}
-                            <div className="w-full sm:w-auto flex-shrink-0 flex flex-col items-stretch sm:items-center gap-2">
-                                <button
-                                    id={`phase1-step-${currentStepIndex + 1}-start`}
-                                    onClick={() => onStartStep(currentStep.id)}
-                                    aria-label={`Begin ${currentStep.label}`}
-                                    className="flex items-center gap-3 px-8 py-4 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/50 hover:border-emerald-400/70 text-emerald-300 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-900/30 group"
-                                >
-                                    Begin
-                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </button>
-                                <span className="text-xs text-slate-600 font-medium">
-                                    Opens clinical form
-                                </span>
                             </div>
                         </div>
                     </div>
@@ -258,54 +262,59 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                 />
             )}
 
-            {/* ── Step rail (progress context) ──────────────────────────────── */}
+            {/* ── Step rail — all 5 clearly labeled ───────────────────────── */}
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 {PHASE1_STEPS.map((step, index) => {
                     const isComplete = completedFormIds.has(step.id);
                     const isCurrent = index === currentStepIndex;
-                    const isUpcoming = !isComplete && index > currentStepIndex;
 
                     return (
                         <button
                             key={step.id}
                             type="button"
                             onClick={() => onStartStep(step.id)}
-                            aria-label={`${isComplete ? 'Amend' : 'Start'} ${step.label}`}
-                            className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border transition-all text-center group
-                                ${isComplete
-                                    ? 'bg-emerald-500/8 border-emerald-500/25 hover:bg-emerald-500/15 cursor-pointer'
+                            aria-label={`${isComplete ? 'Amend' : 'Start'} step ${index + 1}: ${step.label}`}
+                            className={[
+                                'relative flex flex-col items-center gap-2 p-3 rounded-xl border transition-all text-center group cursor-pointer',
+                                isComplete
+                                    ? 'bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/18'
                                     : isCurrent
-                                        ? `${step.bgColor} ${step.borderColor} cursor-pointer`
-                                        : 'bg-slate-900/40 border-slate-800/60 opacity-40 cursor-pointer hover:opacity-60'
-                                }`}
+                                        ? `${step.bgColor} ${step.borderColor} ring-1 ring-offset-1 ring-offset-slate-900/80`
+                                        // Upcoming: NO opacity fade — fully readable, just muted tones
+                                        : 'bg-slate-800/30 border-slate-700/40 hover:bg-slate-800/50',
+                            ].join(' ')}
                         >
+                            {/* Step number badge */}
+                            <span className={`text-[10px] font-black uppercase tracking-widest mb-0.5 ${isComplete ? 'text-emerald-500' : isCurrent ? step.color : 'text-slate-500'
+                                }`}>
+                                Step {index + 1}
+                            </span>
+
                             {/* Status icon */}
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all
-                                ${isComplete
+                            <div className={[
+                                'w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all',
+                                isComplete
                                     ? 'bg-emerald-500/20'
                                     : isCurrent
                                         ? `${step.bgColor} ring-2 ring-offset-1 ring-offset-slate-900`
-                                        : 'bg-slate-800/60'
-                                }`}
-                            >
+                                        : 'bg-slate-700/40',
+                            ].join(' ')}>
                                 {isComplete ? (
-                                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                                    // Compass icon instead of check to match "guided tour" theme
+                                    <Compass className="w-4 h-4 text-emerald-400" aria-label="complete" />
                                 ) : (
-                                    <span className={`material-symbols-outlined text-sm ${isCurrent ? step.color : 'text-slate-600'}`}>
+                                    <span className={`material-symbols-outlined text-sm ${isCurrent ? step.color : 'text-slate-400'
+                                        }`}>
                                         {step.icon}
                                     </span>
                                 )}
                             </div>
 
-                            {/* Label */}
-                            <span className={`text-xs font-bold leading-tight
-                                ${isComplete ? 'text-emerald-400' : isCurrent ? step.color : 'text-slate-600'}
-                            `}>
+                            {/* Step label — always fully readable */}
+                            <span className={`text-xs font-semibold leading-tight text-center ${isComplete ? 'text-emerald-400' : isCurrent ? step.color : 'text-slate-300'
+                                }`}>
                                 {step.label}
                             </span>
-
-                            {/* Amend hint on completed */}
-                            {/* Removed the amend hint as per instruction */}
                         </button>
                     );
                 })}

@@ -186,7 +186,9 @@ const WellnessJourney: React.FC = () => {
             ...prev,
             patientId,
             sessionId,
-            demographics: undefined,
+            // Use stored demographics if known; otherwise keep whatever the previous patient had.
+            // In production these come from the patient record lookup.
+            demographics: prev.demographics ?? { age: 34, gender: 'M', weightKg: 78 },
         }));
         setShowPatientModal(false);
         // Next time the modal opens, start in the right view for the patient's phase
@@ -365,6 +367,8 @@ const WellnessJourney: React.FC = () => {
         patientId: 'PT-RISK9W2P',
         sessionDate: '2025-10-15',
         daysPostSession: 0,
+        // Demo demographics — shown in the patient context bar
+        demographics: { age: 34, gender: 'M', weightKg: 78 },
 
         baseline: {
             phq9: 22, // Severe Depression
