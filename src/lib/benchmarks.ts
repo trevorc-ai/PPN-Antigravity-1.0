@@ -239,7 +239,126 @@ export async function getBenchmarkConditions(): Promise<string[]> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// benchmark_trials queries
+// Heatmap query — single round-trip for GlobalCohortHeatmap (WO-307)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Cell in the condition × modality heatmap */
+export interface HeatmapCell {
+    modality: string;
+    condition: string;
+    /** Weighted mean Hedges' g across all cohorts for this cell */
+    effectSize: number | null;
+    /** Total participants across all cohorts for this cell */
+    totalParticipants: number;
+    /** Number of independent cohort records contributing to this cell */
+    cohortCount: number;
+    /** Name of the landmark/largest contributing study */
+    landmarkStudy: string | null;
+    /** Primary citation for the landmark study */
+    primaryCitation: string | null;
+}
+
+/**
+ * Fetch ALL benchmark cohorts in a single query.
+ * Used as the data source for the GlobalCohortHeatmap.
+ * Ordered by n_participants DESC so the first entry per cell is the landmark study.
+ */
+export async function getAllBenchmarkCohorts(): Promise<BenchmarkCohort[]> {
+    const { data, error } = await supabase
+        .from('ref_benchmark_cohorts')
+        .select('*')
+        .order('n_participants', { ascending: false });
+
+    if (error) {
+        console.error('[benchmarks] getAllBenchmarkCohorts error:', error.message);
+        return [];
+    }
+    return data ?? [];
+}
+
+/**
+ * Transform a flat array of BenchmarkCohort records into a heatmap matrix.
+ * Groups by condition × modality, computes weighted-mean effect size.
+ *
+ * Pure function — no DB calls. Call getAllBenchmarkCohorts() first.
+ *
+ * Powers: GlobalCohortHeatmap component (WO-307).
+ */
+export function buildHeatmapMatrix(cohorts: BenchmarkCohort[]): HeatmapCell[] {
+    // Group by condition × modality
+    const groups: Record<string, BenchmarkCohort[]> = {};
+    for (const c of cohorts) {
+        const key = `${c.condition}::${c.modality}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(c);
+    }
+
+    const cells: HeatmapCell[] = Object.entries(groups).map(([key, group]) => {
+        const [condition, modality] = key.split('::');
+
+        // Weighted mean effect size (weight = n_participants)
+        const withEffect = group.filter(c => c.effect_size_hedges_g != null && c.n_participants > 0);
+        let weightedEffectSize: number | null = null;
+        if (withEffect.length > 0) {
+            const totalWeight = withEffect.reduce((s, c) => s + c.n_participants, 0);
+            weightedEffectSize = withEffect.reduce(
+                (s, c) => s + (Math.abs(c.effect_size_hedges_g!) * c.n_participants), 0
+            ) / totalWeight;
+        }
+
+        // Landmark = largest n_participants (already sorted desc from DB)
+        const landmark = group[0];
+
+        return {
+            modality,
+            condition,
+            effectSize: weightedEffectSize != null ? Math.round(weightedEffectSize * 100) / 100 : null,
+            totalParticipants: group.reduce((s, c) => s + c.n_participants, 0),
+            cohortCount: group.length,
+            landmarkStudy: landmark?.cohort_name ?? null,
+            primaryCitation: landmark?.source_citation ?? null,
+        };
+    });
+
+    return cells;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ref_population_baselines queries — Phase 2
+// Table structure exists; data seeding deferred to Phase 2 work order.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Get population baseline records filtered by condition and/or region.
+ * Phase 2 feature — returns empty array until table is seeded with SAMHSA data.
+ *
+ * Powers: Demographic context panel and patient mix comparison (future).
+ */
+export async function getPopulationBaselines(params?: {
+    condition?: string;
+    region?: string;
+    year?: number;
+}): Promise<PopulationBaseline[]> {
+    let query = supabase
+        .from('ref_population_baselines')
+        .select('*')
+        .order('year', { ascending: false });
+
+    if (params?.condition) query = query.eq('condition', params.condition);
+    if (params?.region) query = query.eq('region', params.region);
+    if (params?.year) query = query.eq('year', params.year);
+
+    const { data, error } = await query;
+    if (error) {
+        // Not a hard error — table exists but may be empty until Phase 2 seeding
+        console.warn('[benchmarks] getPopulationBaselines:', error.message);
+        return [];
+    }
+    return data ?? [];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ref_benchmark_trials queries
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
