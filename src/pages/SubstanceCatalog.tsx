@@ -54,7 +54,7 @@ const InteractionBadge: React.FC<{ interactions: InteractionEntry[] }> = ({ inte
         onMouseLeave={() => setOpen(false)}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className={`flex items-center gap-2 text-base font-medium px-3 py-2 rounded-lg border transition-all
+        className={`flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-lg border transition-all
           ${hasHigh
             ? 'bg-red-900/60 text-red-200 border-red-700/50 hover:border-red-600/70'
             : 'bg-amber-900/50 text-amber-200 border-amber-700/40 hover:border-amber-600/60'}`}
@@ -149,16 +149,16 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
 
         {/* Class + Phase chips */}
         <div className="flex flex-wrap gap-2">
-          <span className={`px-2.5 py-1 rounded-md text-sm font-semibold border ${phaseClasses}`}>
+          <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${phaseClasses}`}>
             {sub.phase}
           </span>
-          <span className="px-2.5 py-1 rounded-md text-sm font-medium border bg-slate-800/60 text-slate-400 border-slate-700/40">
+          <span className="px-2.5 py-1 rounded-md text-xs font-medium border bg-slate-800/60 text-slate-400 border-slate-700/40">
             {sub.class.charAt(0) + sub.class.slice(1).toLowerCase()}
           </span>
         </div>
 
         {/* Risk tier chip — icon + label, high contrast */}
-        <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-base font-medium ${riskConfig.classes}`}>
+        <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium ${riskConfig.classes}`}>
           <span aria-hidden="true" className="text-lg leading-none">{riskConfig.icon}</span>
           <span>{riskConfig.label}</span>
         </div>
@@ -166,8 +166,8 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
         {/* Efficacy bar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-base font-medium text-slate-400">Aggregate Efficacy</span>
-            <span className="text-base font-semibold text-slate-300">
+            <span className="text-sm font-medium text-slate-400">Aggregate Efficacy</span>
+            <span className="text-sm font-semibold text-slate-300">
               {(sub.efficacy * 100).toFixed(0)}%
             </span>
           </div>
@@ -187,7 +187,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
       <div className="px-6 pb-6 mt-auto">
         <button
           onClick={() => navigate(`/monograph/${sub.id}`)}
-          className="w-full py-3 bg-blue-700 hover:bg-blue-600 text-slate-100 text-base font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md shadow-blue-900/30"
+          className="w-full py-3 bg-blue-700 hover:bg-blue-600 text-slate-100 text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md shadow-blue-900/30"
         >
           View Full Monograph →
         </button>
