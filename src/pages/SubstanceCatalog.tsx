@@ -10,10 +10,10 @@ import { ResearchPhase, RiskTier, Substance } from '../types';
 const FILTERS = [
   { label: 'All', value: 'all', activeClasses: 'bg-slate-600   border-slate-500  text-slate-100', countClasses: 'bg-slate-500  text-slate-100' },
   { label: 'Tryptamines', value: 'tryptamine', activeClasses: 'bg-indigo-700  border-indigo-600 text-slate-100', countClasses: 'bg-indigo-600 text-slate-100' },
-  { label: 'Lysergamides', value: 'lysergamide', activeClasses: 'bg-pink-700    border-pink-600   text-slate-100', countClasses: 'bg-pink-600   text-slate-100' },
+
   { label: 'Phenethylamines', value: 'phenethylamine', activeClasses: 'bg-purple-700  border-purple-600 text-slate-100', countClasses: 'bg-purple-600 text-slate-100' },
   { label: 'Dissociatives', value: 'arylcyclohexylamine', activeClasses: 'bg-blue-700  border-blue-600   text-slate-100', countClasses: 'bg-blue-600   text-slate-100' },
-  { label: 'Ibogaoids', value: 'apocynaceel', activeClasses: 'bg-violet-700  border-violet-600 text-slate-100', countClasses: 'bg-violet-600 text-slate-100' },
+
   { label: 'Botanical', value: 'botanical', activeClasses: 'bg-amber-700   border-amber-600  text-slate-100', countClasses: 'bg-amber-600  text-slate-100' },
 ];
 
