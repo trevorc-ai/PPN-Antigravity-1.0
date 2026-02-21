@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Shield, Save, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Save, CheckCircle, AlertTriangle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 
 /**
- * StructuredSafetyCheckForm - Structured Safety Check (NEW DESIGN)
- * Replaces free-text safety notes with structured, PHI-safe inputs
- * 100% compliant with Arc of Care Design Guidelines v2.0
+ * StructuredSafetyCheckForm - Structured Safety Check
+ * Replaces free-text safety notes with structured, PHI-safe inputs.
+ * 100% compliant with Arc of Care Design Guidelines v2.0.
+ *
+ * UX: Submit Changes auto-advances to next Phase 1 step via onComplete().
  */
 
 export interface StructuredSafetyCheckData {
@@ -35,7 +37,7 @@ const SAFETY_CONCERNS = [
     { id: 5, name: 'Social isolation increase', severity: 'moderate' },
     { id: 6, name: 'Sleep disturbance worsening', severity: 'moderate' },
     { id: 7, name: 'Panic attacks', severity: 'moderate' },
-    { id: 8, name: 'Psychotic symptoms', severity: 'critical' }
+    { id: 8, name: 'Psychotic symptoms', severity: 'critical' },
 ];
 
 const SAFETY_ACTIONS = [
@@ -45,7 +47,7 @@ const SAFETY_ACTIONS = [
     { id: 4, name: 'Additional therapy session scheduled', urgency: 'urgent' },
     { id: 5, name: 'Crisis hotline information provided', urgency: 'immediate' },
     { id: 6, name: 'Hospitalization recommended', urgency: 'immediate' },
-    { id: 7, name: 'Referred to psychiatrist', urgency: 'urgent' }
+    { id: 7, name: 'Referred to psychiatrist', urgency: 'urgent' },
 ];
 
 const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
@@ -62,7 +64,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         medication_changes: initialData.medication_changes || false,
         action_taken_ids: initialData.action_taken_ids || [],
         follow_up_required: initialData.follow_up_required || false,
-        follow_up_timeframe: initialData.follow_up_timeframe
+        follow_up_timeframe: initialData.follow_up_timeframe,
     });
 
     const [lastSaved, setLastSaved] = useState<string | null>(null);
@@ -79,7 +81,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
             ...prev,
             [field]: prev[field].includes(id)
                 ? prev[field].filter(i => i !== id)
-                : [...prev[field], id]
+                : [...prev[field], id],
         }));
     };
 
@@ -102,27 +104,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         return 'red';
     };
 
-    const severityColor = getSeverityColor(data.cssrs_score);
-
     return (
         <div className="max-w-4xl mx-auto space-y-6">
-            {/* Header */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
-                            <Shield className="w-7 h-7 text-red-400" />
-                            Structured Safety Check
-                        </h2>
-                        <p className="text-slate-300 text-sm mt-2">
-                            Monitor patient safety with structured, PHI-safe inputs
-                        </p>
-                    </div>
-                    <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3 py-1">
-                        <span className="text-xs font-bold text-emerald-400">✓ 100% COMPLIANT</span>
-                    </div>
-                </div>
-            </div>
 
             {/* Monitoring Date */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
@@ -156,8 +139,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     type="button"
                                     onClick={() => updateField('cssrs_score', score as any)}
                                     className={`flex-1 px-4 py-3 rounded-lg font-bold text-lg transition-all ${data.cssrs_score === score
-                                        ? `bg-${getSeverityColor(score)}-500 text-slate-300`
-                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                            ? `bg-${getSeverityColor(score)}-500 text-slate-300`
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                         }`}
                                 >
                                     {score}
@@ -187,10 +170,10 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => toggleArrayItem('safety_concern_ids', concern.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.safety_concern_ids.includes(concern.id)
-                                    ? concern.severity === 'critical' ? 'bg-red-500 text-slate-300' :
-                                        concern.severity === 'high' ? 'bg-orange-600 text-slate-300' :
-                                            'bg-yellow-600 text-slate-300'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        ? concern.severity === 'critical' ? 'bg-red-500 text-slate-300'
+                                            : concern.severity === 'high' ? 'bg-orange-600 text-slate-300'
+                                                : 'bg-yellow-600 text-slate-300'
+                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -210,7 +193,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 </FormField>
             </div>
 
-            {/* New Events */}
+            {/* New Events & Medication Changes */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField label="New Adverse Events Since Last Check?">
@@ -219,8 +202,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => updateField('new_adverse_events', false)}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.new_adverse_events
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 No
@@ -229,8 +212,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => updateField('new_adverse_events', true)}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.new_adverse_events
-                                    ? 'bg-red-500 text-slate-300'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        ? 'bg-red-500 text-slate-300'
+                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 Yes
@@ -249,8 +232,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => updateField('medication_changes', false)}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.medication_changes
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 No
@@ -259,8 +242,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => updateField('medication_changes', true)}
                                 className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.medication_changes
-                                    ? 'bg-yellow-600 text-slate-300'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        ? 'bg-yellow-600 text-slate-300'
+                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 Yes
@@ -285,8 +268,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 type="button"
                                 onClick={() => toggleArrayItem('action_taken_ids', action.id)}
                                 className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.action_taken_ids.includes(action.id)
-                                    ? action.urgency === 'immediate' ? 'bg-red-500 text-slate-300' : 'bg-blue-500 text-slate-300'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        ? action.urgency === 'immediate' ? 'bg-red-500 text-slate-300' : 'bg-blue-500 text-slate-300'
+                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
                                 <div className="flex items-center gap-2">
@@ -313,8 +296,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             type="button"
                             onClick={() => updateField('follow_up_required', true)}
                             className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.follow_up_required
-                                ? 'bg-blue-500 text-slate-300'
-                                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-blue-500 text-slate-300'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                 }`}
                         >
                             Yes
@@ -326,8 +309,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 updateField('follow_up_timeframe', undefined);
                             }}
                             className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.follow_up_required
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                 }`}
                         >
                             No - Continue standard monitoring
@@ -341,15 +324,15 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             {[
                                 { value: '24_hours', label: '24 hours' },
                                 { value: '3_days', label: '3 days' },
-                                { value: '1_week', label: '1 week' }
+                                { value: '1_week', label: '1 week' },
                             ].map(({ value, label }) => (
                                 <button
                                     key={value}
                                     type="button"
                                     onClick={() => updateField('follow_up_timeframe', value as any)}
                                     className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.follow_up_timeframe === value
-                                        ? 'bg-blue-500 text-slate-300'
-                                        : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                            ? 'bg-blue-500 text-slate-300'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                         }`}
                                 >
                                     {label}
@@ -360,7 +343,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 )}
             </div>
 
-            {/* Footer: status + submit — mr-16 clears the FAB + button */}
+            {/* Footer: saved status + submit */}
             <div className="flex items-center justify-between gap-4 pt-2 mr-16">
                 <span className="text-sm text-emerald-400 font-medium">
                     {lastSaved ?? ''}
