@@ -34,17 +34,16 @@ interface StructuredSafetyCheckFormProps {
     onExit?: () => void;
 }
 
-// Ordered by severity to match ref_clinical_observations sort_order (migration 045):
-// Critical (sort 20-21) → High → Moderate
+// Ordered moderate → high → critical (ascending severity)
 const SAFETY_CONCERNS = [
-    { id: 1, name: 'Suicidal ideation increase', severity: 'critical' },  // SAFE_SI_ACTIVE_IDEATION  sort 21
-    { id: 2, name: 'Self-harm behavior', severity: 'critical' },  // SAFE_SELF_HARM_DISCLOSED sort 22
-    { id: 8, name: 'Psychotic symptoms', severity: 'critical' },  // SAFE_PSYCHOTIC_SX        sort 25
-    { id: 3, name: 'Substance use relapse', severity: 'high' },  // SAFE_SUBSTANCE_RELAPSE   sort 23
-    { id: 4, name: 'Medication non-compliance', severity: 'moderate' },  // SAFE_MEDICATION_NONCOMP  sort 24
-    { id: 5, name: 'Social isolation increase', severity: 'moderate' },  // (sort 24+)
+    { id: 4, name: 'Medication non-compliance', severity: 'moderate' },
+    { id: 5, name: 'Social isolation increase', severity: 'moderate' },
     { id: 6, name: 'Sleep disturbance worsening', severity: 'moderate' },
     { id: 7, name: 'Panic attacks', severity: 'moderate' },
+    { id: 3, name: 'Substance use relapse', severity: 'high' },
+    { id: 1, name: 'Suicidal ideation increase', severity: 'critical' },
+    { id: 2, name: 'Self-harm behavior', severity: 'critical' },
+    { id: 8, name: 'Psychotic symptoms', severity: 'critical' },
 ];
 
 // Ordered by urgency to match ref_clinical_observations sort_order (migration 045):
@@ -204,7 +203,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                         'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4',
                                         selected
                                             ? concern.severity === 'critical'
-                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-300'
+                                                ? 'bg-red-900/70 border border-red-500/70 border-l-red-400 text-red-300'
                                                 : concern.severity === 'high'
                                                     ? 'bg-orange-900/70 border border-orange-500/60 border-l-orange-400 text-orange-300'
                                                     : 'bg-sky-900/60 border border-sky-500/50 border-l-sky-400 text-sky-300'
