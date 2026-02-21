@@ -162,10 +162,10 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
             {/* ── Phase sub-header ──────────────────────────────────────────── */}
             <div className="flex items-center justify-between px-1">
-                {/* H3 equivalent: small-caps section label */}
-                <h3 className="text-sm font-bold text-indigo-400/70 uppercase tracking-[0.18em]">
+                {/* Section label using site-standard ppn-label class */}
+                <h2 className="ppn-label" style={{ color: '#818CF8' }}>
                     Preparation · 5 Steps
-                </h3>
+                </h2>
                 <div className="flex items-center gap-3">
                     <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div
@@ -285,7 +285,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                         <button
                                             onClick={() => onStartStep(step.id)}
                                             aria-label={`Open ${step.label}`}
-                                            className="w-full flex items-center justify-center px-3 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-300 transition-all"
+                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
                                         >
                                             Open
                                         </button>

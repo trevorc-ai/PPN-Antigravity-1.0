@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Activity, TrendingUp, CheckCircle } from 'lucide-react';
+import { Calendar, Activity, TrendingUp, CheckCircle, Lock } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface PhaseIndicatorProps {
@@ -126,22 +126,19 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                     />
                                 )}
 
-                                {isCompleted && !isActive
-                                    ? <CheckCircle className="w-4 h-4 text-teal-400 flex-shrink-0" aria-hidden="true" />
-                                    : <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                                {/* Leading icon: Lock if locked, CheckCircle if complete, phase icon if active/upcoming */}
+                                {isLocked
+                                    ? <Lock className="w-4 h-4 text-slate-600 flex-shrink-0" aria-hidden="true" />
+                                    : isCompleted && !isActive
+                                        ? <CheckCircle className="w-4 h-4 text-teal-400 flex-shrink-0" aria-hidden="true" />
+                                        : <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                                 }
 
                                 <span className="text-sm">
-                                    <span className={`font-black mr-1 ${isActive ? '' : 'text-slate-500'}`}>
+                                    <span className={`font-black mr-1 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
                                         {phaseId}
                                     </span>
                                     {cfg.label}
-                                    {isCompleted && !isActive && (
-                                        <CheckCircle
-                                            className="inline w-3.5 h-3.5 text-teal-400 ml-1.5 -mt-0.5"
-                                            aria-label="complete"
-                                        />
-                                    )}
                                 </span>
                             </button>
                         </AdvancedTooltip>

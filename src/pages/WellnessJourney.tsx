@@ -514,6 +514,17 @@ const WellnessJourney: React.FC = () => {
             </SlideOutPanel>
 
             <div className="max-w-6xl mx-auto space-y-6">
+
+                {/* ─── Page Heading ─── */}
+                <div className="px-1">
+                    <h1 className="ppn-page-title">Wellness Journey</h1>
+                    <p className="ppn-body mt-1" style={{ color: '#8B9DC3' }}>
+                        {activePhase === 1 && 'Phase 1 — Preparation: Complete all baseline assessments before the dosing session.'}
+                        {activePhase === 2 && 'Phase 2 — Dosing Session: Live documentation during the active session.'}
+                        {activePhase === 3 && 'Phase 3 — Integration: Post-session monitoring and outcome tracking.'}
+                    </p>
+                </div>
+
                 {/* ─── Patient Context Bar ─── */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
                     {/* Left: Patient identity + demographics pills */}
