@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, Edit3, Compass } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronUp, Edit3, Compass, CheckCircle2 } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
 
 export interface Phase1Step {
@@ -8,11 +8,10 @@ export interface Phase1Step {
     description: string;
     required: boolean;
     icon: string;
-    color: string;       // tailwind text color for the hero card accent
-    bgColor: string;     // tailwind bg color for the hero card
-    borderColor: string; // tailwind border color for the hero card
 }
 
+// All Phase 1 steps share the SAME red color family — the phase owns the palette.
+// Per-step rainbow colors are intentionally removed.
 export const PHASE1_STEPS: Phase1Step[] = [
     {
         id: 'consent',
@@ -20,55 +19,38 @@ export const PHASE1_STEPS: Phase1Step[] = [
         description: 'Document patient consent before any clinical activity begins.',
         required: true,
         icon: 'check_circle',
-        color: 'text-blue-300',
-        bgColor: 'bg-blue-500/10',
-        borderColor: 'border-blue-500/40',
     },
     {
         id: 'structured-safety',
         label: 'Safety Screen & Eligibility',
-        description: 'Screen for contraindications, suicidality risk, and treatment eligibility.',
+        description: 'Screen for contraindications and treatment eligibility.',
         required: true,
         icon: 'shield',
-        color: 'text-amber-300',
-        bgColor: 'bg-amber-500/10',
-        borderColor: 'border-amber-500/40',
     },
     {
         id: 'mental-health',
         label: 'Mental Health Screening',
-        description: 'Administer PHQ-9, GAD-7, and baseline psychological assessment.',
+        description: 'PHQ-9, GAD-7, and baseline psychological assessment.',
         required: true,
         icon: 'psychology',
-        color: 'text-purple-300',
-        bgColor: 'bg-purple-500/10',
-        borderColor: 'border-purple-500/40',
     },
     {
         id: 'set-and-setting',
         label: 'Set & Setting',
-        description: 'Document environment, expectations, and the integration plan.',
+        description: 'Document environment, expectations, and integration plan.',
         required: true,
         icon: 'home_health',
-        color: 'text-emerald-300',
-        bgColor: 'bg-emerald-500/10',
-        borderColor: 'border-emerald-500/40',
     },
     {
         id: 'baseline-observations',
         label: 'Baseline Observations',
-        description: 'Record pre-treatment clinical observations and vital notes.',
+        description: 'Pre-treatment clinical observations and vital notes.',
         required: false,
         icon: 'visibility',
-        color: 'text-slate-300',
-        bgColor: 'bg-slate-500/10',
-        borderColor: 'border-slate-500/40',
     },
 ];
 
 // ── AllCompletePanel ─────────────────────────────────────────────────────────
-// Shown when all Phase 1 steps are done. Primary CTA (Unlock Phase 2) is
-// immediately visible; step review is in a collapsible accordion below it.
 interface AllCompletePanelProps {
     steps: Phase1Step[];
     completedFormIds: Set<string>;
@@ -90,7 +72,7 @@ const AllCompletePanel: React.FC<AllCompletePanelProps> = ({
             <div className="rounded-2xl border-2 border-emerald-500/50 bg-emerald-500/10 p-6">
                 <div className="flex flex-col sm:flex-row items-center gap-5">
                     <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
-                        <CheckCircle className="w-7 h-7 text-emerald-400" aria-hidden="true" />
+                        <CheckCircle2 className="w-7 h-7 text-emerald-400" aria-hidden="true" />
                     </div>
                     <div className="flex-1 text-center sm:text-left">
                         <h2 className="text-xl font-black text-emerald-300 leading-tight">All Preparation Steps Complete</h2>
@@ -112,33 +94,33 @@ const AllCompletePanel: React.FC<AllCompletePanelProps> = ({
             </div>
 
             {/* Accordion — Review completed steps */}
-            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/40 overflow-hidden">
+            <div className="rounded-2xl border border-red-700/30 bg-red-950/15 overflow-hidden">
                 <button
                     onClick={() => setReviewOpen(o => !o)}
-                    className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-800/40 transition-colors"
+                    className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-red-900/10 transition-colors"
                     aria-expanded={reviewOpen}
                     aria-controls="phase1-review-panel"
                 >
-                    <span className="text-sm font-bold text-slate-300">
+                    <span className="text-sm font-bold text-red-300">
                         Review completed steps ({steps.length}/{steps.length})
                     </span>
                     {reviewOpen
-                        ? <ChevronUp className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                        : <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0" />}
+                        ? <ChevronUp className="w-4 h-4 text-red-500 flex-shrink-0" />
+                        : <ChevronDown className="w-4 h-4 text-red-500 flex-shrink-0" />}
                 </button>
 
                 {reviewOpen && (
-                    <div id="phase1-review-panel" className="border-t border-slate-700/50 divide-y divide-slate-700/30">
+                    <div id="phase1-review-panel" className="border-t border-red-700/30 divide-y divide-red-900/30">
                         {steps.map((step) => (
                             <div key={step.id} className="flex items-center gap-4 px-5 py-3.5">
-                                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-hidden="true" />
+                                <Compass className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-hidden="true" />
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-slate-300 truncate">{step.label}</p>
+                                    <p className="text-sm font-semibold text-red-200 truncate">{step.label}</p>
                                     <p className="text-xs text-slate-500 truncate">{step.description}</p>
                                 </div>
                                 <button
                                     onClick={() => onStartStep(step.id)}
-                                    className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700/60 text-xs font-bold text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-all"
+                                    className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-700/40 text-xs font-bold text-red-400 hover:text-red-200 hover:border-red-500 transition-all"
                                     aria-label={`Amend ${step.label}`}
                                 >
                                     <Edit3 className="w-3 h-3" aria-hidden="true" />
@@ -181,78 +163,140 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
     }, [currentStepIndex]);
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-4">
 
-            {/* ── HERO: Current Step ─────────────────────────────────────────── */}
-            {!allComplete && currentStep && (
-                <div
-                    ref={heroRef}
-                    className={`relative overflow-hidden rounded-2xl border ${currentStep.borderColor} ${currentStep.bgColor} backdrop-blur-xl shadow-2xl`}
-                >
-                    {/* Subtle ambient glow behind the card */}
-                    <div className="absolute inset-0 opacity-20 pointer-events-none"
-                        style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.3) 0%, transparent 70%)' }}
+            {/* ── Phase header ────────────────────────────────────────────────── */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-red-400/70">
+                        Phase 1 Sequence
+                    </span>
+                    <span className="text-xs text-slate-500">·</span>
+                    <span className="text-xs font-semibold text-slate-500">
+                        {completedCount}/{PHASE1_STEPS.length} complete
+                    </span>
+                </div>
+                {/* Phase 1 progress bar */}
+                <div className="w-32 h-1.5 bg-red-950/60 rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-gradient-to-r from-red-700 to-red-400 rounded-full transition-all duration-700"
+                        style={{ width: `${(completedCount / PHASE1_STEPS.length) * 100}%` }}
                     />
+                </div>
+            </div>
 
-                    <div className="relative z-10 p-6 sm:p-8">
-                        <div className="flex flex-col gap-5">
-                            {/* Top row: CTA LEFT + step identity RIGHT */}
-                            <div className="flex flex-col sm:flex-row items-start gap-5">
+            {/* ── 5-Step card sequence — all steps always visible ─────────────── */}
+            {/*   Current step = brighter card + Continue CTA                      */}
+            {/*   Completed    = green check + compass icon                        */}
+            {/*   Upcoming     = dimmed red, still readable, still clickable       */}
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                {PHASE1_STEPS.map((step, index) => {
+                    const isComplete = completedFormIds.has(step.id);
+                    const isCurrent = index === currentStepIndex;
 
-                                {/* LEFT: Begin CTA */}
-                                <div className="flex flex-col items-start gap-2 flex-shrink-0">
-                                    <button
-                                        id={`phase1-step-${currentStepIndex + 1}-start`}
-                                        onClick={() => onStartStep(currentStep.id)}
-                                        aria-label={`Continue to ${currentStep.label}`}
-                                        className="flex items-center gap-4 px-10 py-5 bg-red-600/25 hover:bg-red-600/40 border-2 border-red-500/60 hover:border-red-400/80 text-red-100 font-black text-lg rounded-2xl transition-all active:scale-95 shadow-xl shadow-red-900/40 group"
-                                    >
-                                        Continue
-                                        <ChevronDown className="w-6 h-6 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
-                                    </button>
-                                    <span className="text-xs text-slate-500 font-medium pl-1">
-                                        Opens clinical form
+                    return (
+                        <div
+                            key={step.id}
+                            ref={isCurrent ? heroRef : undefined}
+                            className={[
+                                'relative flex flex-col rounded-2xl border-2 transition-all duration-300 overflow-hidden',
+                                isComplete
+                                    ? 'bg-emerald-950/20 border-emerald-600/40'
+                                    : isCurrent
+                                        ? 'bg-red-950/50 border-red-500/80 shadow-lg shadow-red-950/50'
+                                        : 'bg-red-950/10 border-red-900/30 opacity-70 hover:opacity-90',
+                            ].join(' ')}
+                        >
+                            {/* Color accent bar at top — red for all Phase 1 steps */}
+                            <div className={[
+                                'h-0.5 w-full',
+                                isComplete ? 'bg-emerald-500' : isCurrent ? 'bg-red-400' : 'bg-red-900/60',
+                            ].join(' ')} aria-hidden="true" />
+
+                            <div className="flex flex-col flex-1 p-4 gap-3">
+                                {/* Step number + required badge */}
+                                <div className="flex items-center justify-between">
+                                    <span className={`text-[10px] font-black uppercase tracking-widest ${isComplete ? 'text-emerald-500' : isCurrent ? 'text-red-400' : 'text-red-800'
+                                        }`}>
+                                        Step {index + 1}
                                     </span>
+                                    {step.required && !isComplete && (
+                                        <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-900/40 text-red-400 border border-red-800/40">
+                                            REQ
+                                        </span>
+                                    )}
+                                    {isComplete && (
+                                        <Compass className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" aria-hidden="true" />
+                                    )}
                                 </div>
 
-                                {/* RIGHT: Step identity */}
-                                <div className="flex-1">
-                                    {/* Step counter */}
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                            Step {currentStepIndex + 1} of {PHASE1_STEPS.length}
-                                        </span>
-                                        {currentStep.required && (
-                                            <span className="px-2 py-0.5 text-xs font-black uppercase tracking-widest bg-amber-500/15 border border-amber-500/25 text-amber-400 rounded-md">
-                                                Required
+                                {/* Icon + label */}
+                                <div className="flex items-center gap-2">
+                                    <div className={[
+                                        'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0',
+                                        isComplete ? 'bg-emerald-500/15' : isCurrent ? 'bg-red-500/20' : 'bg-red-900/20',
+                                    ].join(' ')}>
+                                        {isComplete ? (
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                                        ) : (
+                                            <span className={`material-symbols-outlined text-base ${isCurrent ? 'text-red-300' : 'text-red-700'
+                                                }`}>
+                                                {step.icon}
                                             </span>
                                         )}
                                     </div>
+                                    <h3 className={`text-xs font-black leading-tight ${isComplete ? 'text-emerald-300' : isCurrent ? 'text-red-100' : 'text-red-400'
+                                        }`}>
+                                        {step.label}
+                                    </h3>
+                                </div>
 
-                                    {/* Icon + Title */}
-                                    <div className="flex items-center gap-4 mb-3">
-                                        <div className={`w-12 h-12 rounded-2xl ${currentStep.bgColor} border ${currentStep.borderColor} flex items-center justify-center flex-shrink-0`}>
-                                            <span className={`material-symbols-outlined text-2xl ${currentStep.color}`}>
-                                                {currentStep.icon}
-                                            </span>
-                                        </div>
-                                        <h2 className={`text-xl font-black ${currentStep.color} leading-tight`}>
-                                            {currentStep.label}
-                                        </h2>
-                                    </div>
-
-                                    {/* Description */}
-                                    <p className="text-slate-400 text-sm leading-relaxed max-w-lg">
-                                        {currentStep.description}
+                                {/* Description — visible on current + completed */}
+                                {(isCurrent || isComplete) && (
+                                    <p className={`text-xs leading-relaxed ${isComplete ? 'text-slate-500' : 'text-red-300/70'
+                                        }`}>
+                                        {step.description}
                                     </p>
+                                )}
+
+                                {/* CTA — spacer + button at bottom of each card */}
+                                <div className="mt-auto pt-2">
+                                    {isComplete ? (
+                                        <button
+                                            onClick={() => onStartStep(step.id)}
+                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-emerald-700/40 text-xs font-bold text-emerald-500 hover:text-emerald-300 hover:border-emerald-500 transition-all"
+                                            aria-label={`Amend ${step.label}`}
+                                        >
+                                            <Edit3 className="w-3 h-3" aria-hidden="true" />
+                                            Amend
+                                        </button>
+                                    ) : isCurrent ? (
+                                        <button
+                                            id={`phase1-step-${index + 1}-start`}
+                                            onClick={() => onStartStep(step.id)}
+                                            aria-label={`Continue to ${step.label}`}
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/30 hover:bg-red-600/50 border-2 border-red-500/70 hover:border-red-400 text-red-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-red-950/60 group"
+                                        >
+                                            Continue
+                                            <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => onStartStep(step.id)}
+                                            aria-label={`Open ${step.label}`}
+                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-red-900/40 text-xs font-semibold text-red-700 hover:text-red-400 hover:border-red-700 transition-all"
+                                        >
+                                            Open
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            )}
+                    );
+                })}
+            </div>
 
-            {/* ── All complete state — compact hero + collapsible step review ──── */}
+            {/* ── All complete state */}
             {allComplete && (
                 <AllCompletePanel
                     steps={PHASE1_STEPS}
@@ -261,77 +305,6 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                     onCompletePhase={onCompletePhase}
                 />
             )}
-
-            {/* ── Step rail — all 5 clearly labeled ───────────────────────── */}
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                {PHASE1_STEPS.map((step, index) => {
-                    const isComplete = completedFormIds.has(step.id);
-                    const isCurrent = index === currentStepIndex;
-
-                    return (
-                        <button
-                            key={step.id}
-                            type="button"
-                            onClick={() => onStartStep(step.id)}
-                            aria-label={`${isComplete ? 'Amend' : 'Start'} step ${index + 1}: ${step.label}`}
-                            className={[
-                                'relative flex flex-col items-center gap-2 p-3 rounded-xl border transition-all text-center group cursor-pointer',
-                                isComplete
-                                    ? 'bg-emerald-500/10 border-emerald-500/30 hover:bg-emerald-500/18'
-                                    : isCurrent
-                                        ? `${step.bgColor} ${step.borderColor} ring-1 ring-offset-1 ring-offset-slate-900/80`
-                                        // Upcoming: NO opacity fade — fully readable, just muted tones
-                                        : 'bg-slate-800/30 border-slate-700/40 hover:bg-slate-800/50',
-                            ].join(' ')}
-                        >
-                            {/* Step number badge */}
-                            <span className={`text-[10px] font-black uppercase tracking-widest mb-0.5 ${isComplete ? 'text-emerald-500' : isCurrent ? step.color : 'text-slate-500'
-                                }`}>
-                                Step {index + 1}
-                            </span>
-
-                            {/* Status icon */}
-                            <div className={[
-                                'w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all',
-                                isComplete
-                                    ? 'bg-emerald-500/20'
-                                    : isCurrent
-                                        ? `${step.bgColor} ring-2 ring-offset-1 ring-offset-slate-900`
-                                        : 'bg-slate-700/40',
-                            ].join(' ')}>
-                                {isComplete ? (
-                                    // Compass icon instead of check to match "guided tour" theme
-                                    <Compass className="w-4 h-4 text-emerald-400" aria-label="complete" />
-                                ) : (
-                                    <span className={`material-symbols-outlined text-sm ${isCurrent ? step.color : 'text-slate-400'
-                                        }`}>
-                                        {step.icon}
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* Step label — always fully readable */}
-                            <span className={`text-xs font-semibold leading-tight text-center ${isComplete ? 'text-emerald-400' : isCurrent ? step.color : 'text-slate-300'
-                                }`}>
-                                {step.label}
-                            </span>
-                        </button>
-                    );
-                })}
-            </div>
-
-            {/* ── Progress bar ─────────────────────────────────────────────── */}
-            <div className="flex items-center gap-3 px-1">
-                <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 rounded-full transition-all duration-700"
-                        style={{ width: `${(completedCount / PHASE1_STEPS.length) * 100}%` }}
-                    />
-                </div>
-                <span className="text-xs font-bold text-slate-500 flex-shrink-0">
-                    {completedCount}/{PHASE1_STEPS.length} complete
-                </span>
-            </div>
         </div>
     );
 };

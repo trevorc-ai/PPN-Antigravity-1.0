@@ -613,227 +613,261 @@ const WellnessJourney: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Phase Indicator (Tabbed Navigation) */}
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex-1 min-w-0">
-                        <PhaseIndicator
-                            currentPhase={activePhase}
-                            completedPhases={completedPhases}
-                            onPhaseChange={handlePhaseChange}
-                        />
-                    </div>
-                </div>
+                {/* ── Phase Panel — one glowing border per phase ───────────────── */}
+                {/*
+                  Phase 1 = red   · Phase 2 = amber   · Phase 3 = emerald
+                  Everything inside shares the same color family so the phase
+                  reads as one coherent unit, not a collection of fragments.
+                */}
+                {(() => {
+                    const phasePalette = {
+                        1: {
+                            border: 'border-red-600/60',
+                            shadow: '0 0 32px -4px rgba(220,38,38,0.25)',
+                            bg: 'bg-red-950/20',
+                        },
+                        2: {
+                            border: 'border-amber-500/60',
+                            shadow: '0 0 32px -4px rgba(245,158,11,0.22)',
+                            bg: 'bg-amber-950/20',
+                        },
+                        3: {
+                            border: 'border-emerald-500/60',
+                            shadow: '0 0 32px -4px rgba(16,185,129,0.22)',
+                            bg: 'bg-emerald-950/20',
+                        },
+                    }[activePhase];
 
-                {/* Phase Lock Status — informational only; the CTA lives at the bottom of Phase1StepGuide */}
-                {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
-                    <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/40 border border-slate-700/50 rounded-xl">
-                        <Lock className="w-4 h-4 text-slate-500 flex-shrink-0" aria-hidden="true" />
-                        <p className="text-sm text-slate-400">
-                            Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
-                        </p>
-                    </div>
-                )}
+                    return (
+                        <div
+                            className={`rounded-2xl border-2 ${phasePalette.border} ${phasePalette.bg} backdrop-blur-xl p-4 sm:p-6 space-y-6`}
+                            style={{ boxShadow: phasePalette.shadow }}
+                        >
+                            {/* Tab row */}
+                            <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex-1 min-w-0">
+                                    <PhaseIndicator
+                                        currentPhase={activePhase}
+                                        completedPhases={completedPhases}
+                                        onPhaseChange={handlePhaseChange}
+                                    />
+                                </div>
+                            </div>
 
-                {/* Benchmark + Risk panels — only shown once Phase 1 forms are all done.
+                            {/* Phase lock notice */}
+                            {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
+                                <div className="flex items-center gap-3 px-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl">
+                                    <Lock className="w-4 h-4 text-slate-500 flex-shrink-0" aria-hidden="true" />
+                                    <p className="text-sm text-slate-400">
+                                        Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Benchmark + Risk panels — only shown once Phase 1 forms are all done.
                      Showing mock data upfront is confusing and competes with the step guide. */}
-                {activePhase === 1 && completedForms.size >= 5 && !isLoading && result && (
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div data-tour="baseline-metrics">
-                                <ReadinessScore result={result} onViewBenchmarks={() => { }} />
-                            </div>
-                            <div data-tour="schedule-integration" className="lg:col-span-2">
-                                <RequirementsList
-                                    result={result}
-                                    onCompleteRequirement={(name) => {
-                                        addToast({ title: 'Opening Requirement', message: `Navigating to ${name}...`, type: 'info' });
-                                        if (name.toLowerCase().includes('safety')) setTimeout(() => navigate('/assessment'), 500);
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        <div data-tour="risk-flags">
-                            <RiskIndicators
-                                overallRiskLevel={riskDetection.overallRiskLevel}
-                                patientId={journey.patientId}
-                                patientCharacteristics={patientCharacteristics}
-                                baselineFlags={riskDetection.baselineFlags}
-                                vitalFlags={riskDetection.vitalFlags}
-                                progressFlags={riskDetection.progressFlags}
-                                sessionTime="2h 15min"
-                            />
-                        </div>
-                    </div>
-                )}
+                            {activePhase === 1 && completedForms.size >= 5 && !isLoading && result && (
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div data-tour="baseline-metrics">
+                                            <ReadinessScore result={result} onViewBenchmarks={() => { }} />
+                                        </div>
+                                        <div data-tour="schedule-integration" className="lg:col-span-2">
+                                            <RequirementsList
+                                                result={result}
+                                                onCompleteRequirement={(name) => {
+                                                    addToast({ title: 'Opening Requirement', message: `Navigating to ${name}...`, type: 'info' });
+                                                    if (name.toLowerCase().includes('safety')) setTimeout(() => navigate('/assessment'), 500);
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div data-tour="risk-flags">
+                                        <RiskIndicators
+                                            overallRiskLevel={riskDetection.overallRiskLevel}
+                                            patientId={journey.patientId}
+                                            patientCharacteristics={patientCharacteristics}
+                                            baselineFlags={riskDetection.baselineFlags}
+                                            vitalFlags={riskDetection.vitalFlags}
+                                            progressFlags={riskDetection.progressFlags}
+                                            sessionTime="2h 15min"
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
-                {/* Phase Content — WO-113: Each phase has CTA buttons to open forms */}
-                <div className="animate-in fade-in duration-300 space-y-6">
-                    {activePhase === 1 && (
-                        // Phase1StepGuide is the SOLE navigator — no competing cards.
-                        // The hero card shows exactly one next action with a large white CTA.
-                        <Phase1StepGuide
-                            completedFormIds={completedForms}
-                            onStartStep={handleOpenForm}
-                            onCompletePhase={completeCurrentPhase}
-                        />
-                    )}
-                    {activePhase === 2 && (
-                        <>
-                            <TreatmentPhase journey={journey} onOpenForm={handleOpenForm} />
-                            {/* Phase 2 form sequence — Setup & Emergency Only (Live actions are in Cockpit) */}
-                            <div className="flex flex-wrap gap-3 pt-2">
-                                <button onClick={() => handleOpenForm('dosing-protocol')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">medication</span>Dosing Protocol
-                                </button>
-                                <button onClick={() => handleOpenForm('rescue-protocol')} className="flex items-center gap-2 px-5 py-3 bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                    <span className="material-symbols-outlined text-base">emergency</span>Rescue Protocol Log
-                                </button>
-                            </div>
-                        </>
-                    )}
-                    {activePhase === 3 && (
-                        <>
-                            <IntegrationPhase journey={journey} />
-                            {/* Phase 3 — Early Follow-up (0–72 hrs) */}
-                            <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Early Follow-up · 0–72 hrs</p>
-                                <div className="flex flex-wrap gap-3">
-                                    <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                        <span className="material-symbols-outlined text-base">shield</span>Structured Safety Check
-                                    </button>
-                                    <button onClick={() => handleOpenForm('daily-pulse')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                        <span className="material-symbols-outlined text-base">favorite</span>Daily Pulse Check
-                                    </button>
-                                </div>
-                            </div>
-                            {/* Phase 3 — Integration Work (days to weeks) */}
-                            <div>
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Integration Work · Days to Weeks</p>
-                                <div className="flex flex-wrap gap-3">
-                                    <button onClick={() => handleOpenForm('structured-integration')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                        <span className="material-symbols-outlined text-base">edit_note</span>Integration Session
-                                    </button>
-                                    <button onClick={() => handleOpenForm('behavioral-tracker')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                        <span className="material-symbols-outlined text-base">trending_up</span>Behavioral Change Tracker
-                                    </button>
-                                    <button onClick={() => handleOpenForm('longitudinal-assessment')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                        <span className="material-symbols-outlined text-base">timeline</span>Longitudinal Assessment
-                                    </button>
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
-
-                {/* Bottom Status Bar — hidden during Phase 1 early stages.
-                     Showing mock PHQ/Risk data before any forms are complete
-                     confuses clinicians about patient state.
-                     Show once at least 3 Phase 1 forms are done (real data available). */}
-                {(activePhase !== 1 || completedForms.size >= 3) && (
-                    <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
-                        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-700/50">
-
-                            {/* Total Improvement */}
-                            <div className="px-6 py-5">
-                                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-3xl font-black text-emerald-400">-{totalImprovement}</span>
-                                    <span className="text-sm" style={{ color: '#8B9DC3' }}>pts (PHQ-9)</span>
-                                </div>
-                                <div className="flex items-center gap-2 mt-1.5 text-xs">
-                                    <span className="text-red-400">Baseline: {journey.baseline.phq9}</span>
-                                    <span className="text-slate-600">→</span>
-                                    <span className="text-emerald-400">Today: {journey.integration.currentPhq9}</span>
-                                </div>
-                                <p className="text-emerald-400 text-xs font-bold mt-2 uppercase tracking-widest">
-                                    {isRemission ? '✓ Remission' : '↗ Improving'}
-                                </p>
-                            </div>
-
-                            {/* MEQ-30 Correlation */}
-                            <div className="px-6 py-5">
-                                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>MEQ-30 Score</p>
-                                <div className="text-3xl font-black">
-                                    {journey.session.meq30Score !== null
-                                        ? <span className="text-emerald-400">{journey.session.meq30Score}/100</span>
-                                        : <span className="text-slate-500 text-base font-semibold">Not recorded</span>
-                                    }
-                                </div>
-                                {journey.session.meq30Score !== null && (
-                                    <p className="text-emerald-400 text-xs mt-2">High mystical experience → Sustained benefit ✓</p>
+                            {/* Phase Content — WO-113: Each phase has CTA buttons to open forms */}
+                            <div className="animate-in fade-in duration-300 space-y-6">
+                                {activePhase === 1 && (
+                                    // Phase1StepGuide is the SOLE navigator — no competing cards.
+                                    // The hero card shows exactly one next action with a large white CTA.
+                                    <Phase1StepGuide
+                                        completedFormIds={completedForms}
+                                        onStartStep={handleOpenForm}
+                                        onCompletePhase={completeCurrentPhase}
+                                    />
+                                )}
+                                {activePhase === 2 && (
+                                    <>
+                                        <TreatmentPhase journey={journey} onOpenForm={handleOpenForm} />
+                                        {/* Phase 2 form sequence — Setup & Emergency Only (Live actions are in Cockpit) */}
+                                        <div className="flex flex-wrap gap-3 pt-2">
+                                            <button onClick={() => handleOpenForm('dosing-protocol')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                                <span className="material-symbols-outlined text-base">medication</span>Dosing Protocol
+                                            </button>
+                                            <button onClick={() => handleOpenForm('rescue-protocol')} className="flex items-center gap-2 px-5 py-3 bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                                <span className="material-symbols-outlined text-base">emergency</span>Rescue Protocol Log
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                                {activePhase === 3 && (
+                                    <>
+                                        <IntegrationPhase journey={journey} />
+                                        {/* Phase 3 — Early Follow-up (0–72 hrs) */}
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Early Follow-up · 0–72 hrs</p>
+                                            <div className="flex flex-wrap gap-3">
+                                                <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                                    <span className="material-symbols-outlined text-base">shield</span>Structured Safety Check
+                                                </button>
+                                                <button onClick={() => handleOpenForm('daily-pulse')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                                    <span className="material-symbols-outlined text-base">favorite</span>Daily Pulse Check
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {/* Phase 3 — Integration Work (days to weeks) */}
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Integration Work · Days to Weeks</p>
+                                            <div className="flex flex-wrap gap-3">
+                                                <button onClick={() => handleOpenForm('structured-integration')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                                    <span className="material-symbols-outlined text-base">edit_note</span>Integration Session
+                                                </button>
+                                                <button onClick={() => handleOpenForm('behavioral-tracker')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                                    <span className="material-symbols-outlined text-base">trending_up</span>Behavioral Change Tracker
+                                                </button>
+                                                <button onClick={() => handleOpenForm('longitudinal-assessment')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
+                                                    <span className="material-symbols-outlined text-base">timeline</span>Longitudinal Assessment
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
                                 )}
                             </div>
 
-                            {/* Risk Level — wired to live riskDetection data */}
-                            <div className="px-6 py-5">
-                                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
-                                <div className="flex items-center gap-2.5">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${riskDetection.overallRiskLevel === 'high' ? 'bg-red-500/20' :
-                                        riskDetection.overallRiskLevel === 'moderate' ? 'bg-amber-500/20' :
-                                            'bg-emerald-500/20'
-                                        }`} aria-hidden="true">
-                                        <svg className={`w-4 h-4 ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                                'text-emerald-400'
-                                            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            {riskDetection.overallRiskLevel === 'high' ? (
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                                            ) : riskDetection.overallRiskLevel === 'moderate' ? (
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01" />
-                                            ) : (
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            {/* Bottom Status Bar — hidden during Phase 1 early stages.
+                     Showing mock PHQ/Risk data before any forms are complete
+                     confuses clinicians about patient state.
+                     Show once at least 3 Phase 1 forms are done (real data available). */}
+                            {(activePhase !== 1 || completedForms.size >= 3) && (
+                                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-700/50">
+
+                                        {/* Total Improvement */}
+                                        <div className="px-6 py-5">
+                                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-3xl font-black text-emerald-400">-{totalImprovement}</span>
+                                                <span className="text-sm" style={{ color: '#8B9DC3' }}>pts (PHQ-9)</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 mt-1.5 text-xs">
+                                                <span className="text-red-400">Baseline: {journey.baseline.phq9}</span>
+                                                <span className="text-slate-600">→</span>
+                                                <span className="text-emerald-400">Today: {journey.integration.currentPhq9}</span>
+                                            </div>
+                                            <p className="text-emerald-400 text-xs font-bold mt-2 uppercase tracking-widest">
+                                                {isRemission ? '✓ Remission' : '↗ Improving'}
+                                            </p>
+                                        </div>
+
+                                        {/* MEQ-30 Correlation */}
+                                        <div className="px-6 py-5">
+                                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>MEQ-30 Score</p>
+                                            <div className="text-3xl font-black">
+                                                {journey.session.meq30Score !== null
+                                                    ? <span className="text-emerald-400">{journey.session.meq30Score}/100</span>
+                                                    : <span className="text-slate-500 text-base font-semibold">Not recorded</span>
+                                                }
+                                            </div>
+                                            {journey.session.meq30Score !== null && (
+                                                <p className="text-emerald-400 text-xs mt-2">High mystical experience → Sustained benefit ✓</p>
                                             )}
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <span className={`text-3xl font-black ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                                'text-emerald-400'
-                                            }`}>
-                                            {riskDetection.overallRiskLevel.toUpperCase()}
-                                        </span>
-                                        <span className="sr-only">Risk Status: {riskDetection.overallRiskLevel.toUpperCase()}</span>
+                                        </div>
+
+                                        {/* Risk Level — wired to live riskDetection data */}
+                                        <div className="px-6 py-5">
+                                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
+                                            <div className="flex items-center gap-2.5">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${riskDetection.overallRiskLevel === 'high' ? 'bg-red-500/20' :
+                                                    riskDetection.overallRiskLevel === 'moderate' ? 'bg-amber-500/20' :
+                                                        'bg-emerald-500/20'
+                                                    }`} aria-hidden="true">
+                                                    <svg className={`w-4 h-4 ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
+                                                        riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
+                                                            'text-emerald-400'
+                                                        }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        {riskDetection.overallRiskLevel === 'high' ? (
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                                                        ) : riskDetection.overallRiskLevel === 'moderate' ? (
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01" />
+                                                        ) : (
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                        )}
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <span className={`text-3xl font-black ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
+                                                        riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
+                                                            'text-emerald-400'
+                                                        }`}>
+                                                        {riskDetection.overallRiskLevel.toUpperCase()}
+                                                    </span>
+                                                    <span className="sr-only">Risk Status: {riskDetection.overallRiskLevel.toUpperCase()}</span>
+                                                </div>
+                                            </div>
+                                            <p className="text-xs mt-2" style={{ color: '#8B9DC3' }}>
+                                                {riskDetection.overallRiskLevel === 'high' ? 'Immediate review required' :
+                                                    riskDetection.overallRiskLevel === 'moderate' ? 'Monitor closely' :
+                                                        'Excellent compliance'}
+                                            </p>
+                                        </div>
+
                                     </div>
                                 </div>
-                                <p className="text-xs mt-2" style={{ color: '#8B9DC3' }}>
-                                    {riskDetection.overallRiskLevel === 'high' ? 'Immediate review required' :
-                                        riskDetection.overallRiskLevel === 'moderate' ? 'Monitor closely' :
-                                            'Excellent compliance'}
-                                </p>
+                            )}
+
+                            {/* Bottom Export Actions */}
+                            <div className="flex justify-end pt-4 pb-2">
+                                <ExportReportButton patientData={exportPatientData} />
                             </div>
 
+                            {/* Global Disclaimer */}
+                            <AdvancedTooltip
+                                content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
+                                tier="standard"
+                                type="warning"
+                                title="Legal Disclaimer"
+                                width="w-96"
+                            >
+                                <div className="bg-slate-900/40 border border-slate-700/30 rounded-lg p-4 cursor-help hover:bg-slate-900/60 transition-colors">
+                                    <p className="text-slate-500 text-sm text-center">
+                                        <strong style={{ color: '#8B9DC3' }}>⚠️ Clinical Decision Support:</strong> This dashboard is for clinical research purposes only. Not for diagnostic use. All data is encrypted and HIPAA-compliant.
+                                    </p>
+                                </div>
+                            </AdvancedTooltip>
                         </div>
-                    </div>
-                )}
+                    );
+                })()}
 
-                {/* Bottom Export Actions */}
-                <div className="flex justify-end pt-4 pb-2">
-                    <ExportReportButton patientData={exportPatientData} />
-                </div>
-
-                {/* Global Disclaimer */}
-                <AdvancedTooltip
-                    content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
-                    tier="standard"
-                    type="warning"
-                    title="Legal Disclaimer"
-                    width="w-96"
-                >
-                    <div className="bg-slate-900/40 border border-slate-700/30 rounded-lg p-4 cursor-help hover:bg-slate-900/60 transition-colors">
-                        <p className="text-slate-500 text-sm text-center">
-                            <strong style={{ color: '#8B9DC3' }}>⚠️ Clinical Decision Support:</strong> This dashboard is for clinical research purposes only. Not for diagnostic use. All data is encrypted and HIPAA-compliant.
-                        </p>
-                    </div>
-                </AdvancedTooltip>
+                {/* WO-113: Quick Actions FAB */}
+                <QuickActionsMenu
+                    currentPhase={activePhase === 1 ? 'phase1' : activePhase === 2 ? 'phase2' : 'phase3'}
+                    onActionSelect={handleQuickAction}
+                />
             </div>
-
-            {/* WO-113: Quick Actions FAB */}
-            <QuickActionsMenu
-                currentPhase={activePhase === 1 ? 'phase1' : activePhase === 2 ? 'phase2' : 'phase3'}
-                onActionSelect={handleQuickAction}
-            />
         </div>
     );
 };
 
 export default WellnessJourney;
+
