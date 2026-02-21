@@ -8,37 +8,35 @@ interface PhaseIndicatorProps {
     onPhaseChange: (phase: 1 | 2 | 3) => void;
 }
 
-// Per-phase accent tokens
 const PHASE_CONFIG = {
     1: {
         icon: Calendar,
         label: 'Preparation',
-        // Active: tab bg + border colour
-        activeBg: 'bg-red-900/50',
-        activeBorder: 'border-red-500/70',
+        // Active tab styles
+        activeBg: 'bg-red-950/70',
+        activeBorder: 'border-red-600/70',
         activeText: 'text-red-200',
-        // Indicator line at top of active tab
-        activeLine: 'bg-red-500',
+        activeTopLine: 'bg-red-500',
         tooltipTitle: 'Phase 1: Preparation',
         tooltip: 'Establish the patient baseline before any dosing session. Complete 5 clinical forms: Informed Consent, Safety Screening, Set & Setting, Baseline Observations, and MEQ-30.',
     },
     2: {
         icon: Activity,
         label: 'Dosing Session',
-        activeBg: 'bg-amber-900/40',
+        activeBg: 'bg-amber-950/60',
         activeBorder: 'border-amber-500/70',
         activeText: 'text-amber-200',
-        activeLine: 'bg-amber-500',
+        activeTopLine: 'bg-amber-500',
         tooltipTitle: 'Phase 2: Treatment Session',
         tooltip: 'Live documentation during the dosing session. Record vitals, annotate the timeline, log observations, and document adverse events. Unlocks when Phase 1 is complete.',
     },
     3: {
         icon: TrendingUp,
         label: 'Integration',
-        activeBg: 'bg-emerald-900/40',
+        activeBg: 'bg-emerald-950/60',
         activeBorder: 'border-emerald-500/70',
         activeText: 'text-emerald-200',
-        activeLine: 'bg-emerald-500',
+        activeTopLine: 'bg-emerald-500',
         tooltipTitle: 'Phase 3: Integration',
         tooltip: 'Post-session monitoring. Track behavioral changes, conduct integration sessions, re-administer PHQ-9/GAD-7, and run safety checks. Unlocks when Phase 2 is complete.',
     },
@@ -51,8 +49,20 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
 }) => {
     return (
         <div className="w-full">
-            {/* ── Desktop: true tab row ──────────────────────────────────────── */}
-            <div className="hidden md:flex items-end gap-0" role="tablist" aria-label="Journey phases">
+            {/* ── Desktop: true tab row ─────────────────────────────── */}
+            {/*
+              The "connected tab" illusion:
+              - Tabs have rounded-t-xl (top corners rounded, bottom flat)
+              - Active tab: marginBottom: -1px so it overlaps the panel's top border
+              - Active tab: has NO bottom border — its bottom bleeds into the panel
+              - Active tab: z-index 10 so it sits in front of the panel border
+              - Inactive tabs: full border, slightly lower opacity bg
+            */}
+            <div
+                className="hidden md:flex items-end w-full"
+                role="tablist"
+                aria-label="Journey phases"
+            >
                 {([1, 2, 3] as const).map((phaseId) => {
                     const cfg = PHASE_CONFIG[phaseId];
                     const Icon = cfg.icon;
@@ -73,47 +83,54 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                             side="top"
                             width="w-72"
                         >
-                            {/* Tab button — bottom border removed when active so it
-                                visually bleeds into the panel below */}
                             <button
                                 onClick={() => !isLocked && onPhaseChange(phaseId)}
                                 disabled={isLocked}
                                 role="tab"
                                 aria-selected={isActive}
                                 aria-controls={`phase-panel-${phaseId}`}
-                                aria-label={`Phase ${phaseId}: ${cfg.label}${isCompleted && !isActive ? ' — complete' : ''}${isLocked ? ' — locked' : ''}`}
+                                aria-label={`Phase ${phaseId}: ${cfg.label}${isCompleted && !isActive ? ' (complete)' : ''}${isLocked ? ' (locked)' : ''}`}
+                                /*
+                                  Key CSS trick for true tab:
+                                  - rounded-t-xl: only top corners rounded
+                                  - border: full border on inactive
+                                  - active: border-l, border-r, border-t only (no border-b)
+                                    achieved via removing bottom border + marginBottom:-1px
+                                    so the tab sits flush on the panel below
+                                */
                                 className={[
-                                    // Base shape — top corners rounded, bottom flat to merge with panel
-                                    'relative flex-1 flex items-center justify-center gap-2.5 px-5 py-3.5',
-                                    'rounded-t-xl transition-all duration-200 select-none',
-                                    'border-l border-r border-t',
-                                    // Active: coloured bg, border matches panel's side/top border
+                                    'relative flex-1 flex items-center justify-center gap-2.5',
+                                    'px-5 py-3.5 rounded-t-xl transition-all duration-200 select-none',
+                                    // Active: no bottom border, sits on top of panel
                                     isActive
-                                        ? `${cfg.activeBg} ${cfg.activeBorder} ${cfg.activeText} font-bold`
+                                        ? `${cfg.activeBg} border-l border-r border-t ${cfg.activeBorder} ${cfg.activeText} font-bold`
                                         : isCompleted
-                                            ? 'bg-slate-800/50 border-slate-700/60 text-slate-300 hover:bg-slate-800/70 hover:text-slate-200 font-semibold cursor-pointer'
-                                            : 'bg-slate-900/40 border-slate-800/60 text-slate-500 font-semibold cursor-pointer hover:text-slate-400',
+                                            ? 'bg-slate-800/50 border border-slate-700/60 text-slate-300 hover:bg-slate-800/70 hover:text-slate-200 font-semibold cursor-pointer'
+                                            : 'bg-slate-900/40 border border-slate-800/50 text-slate-500 font-semibold cursor-pointer hover:text-slate-400',
                                 ].join(' ')}
                                 style={isActive ? {
-                                    // Push active tab 2px down so its bottom overlaps the panel's top border
-                                    marginBottom: '-2px',
+                                    // Overlap the panel's top border so they fuse visually
+                                    marginBottom: '-1px',
                                     zIndex: 10,
                                 } : { zIndex: 1 }}
                             >
-                                {/* Accent line at very top of active tab */}
+                                {/* Accent stripe at top of active tab */}
                                 {isActive && (
                                     <span
-                                        className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-xl ${cfg.activeLine}`}
+                                        className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-xl ${cfg.activeTopLine}`}
                                         aria-hidden="true"
                                     />
                                 )}
 
                                 {isCompleted && !isActive
                                     ? <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" aria-hidden="true" />
-                                    : <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />}
+                                    : <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                                }
 
                                 <span className="text-sm">
-                                    <span className={`font-black mr-1 ${isActive ? '' : 'text-slate-500'}`}>{phaseId}</span>
+                                    <span className={`font-black mr-1 ${isActive ? '' : 'text-slate-500'}`}>
+                                        {phaseId}
+                                    </span>
                                     {cfg.label}
                                     {isCompleted && !isActive && (
                                         <CheckCircle
@@ -128,7 +145,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                 })}
             </div>
 
-            {/* ── Mobile: select ──────────────────────────────────────────────── */}
+            {/* ── Mobile: select ──────────────────────────────────── */}
             <div className="md:hidden">
                 <select
                     value={currentPhase}
