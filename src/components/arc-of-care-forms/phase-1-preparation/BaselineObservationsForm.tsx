@@ -127,8 +127,8 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
                                             type="button"
                                             onClick={() => toggleObservation(obs.id)}
                                             className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-left transition-all active:scale-95 ${isSelected
-                                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-500'
-                                                : 'bg-slate-800/60 text-slate-300 border border-slate-700/50 hover:border-slate-500 hover:text-white'
+                                                ? 'bg-indigo-600 text-slate-200 shadow-lg shadow-indigo-600/30 border border-indigo-500'
+                                                : 'bg-slate-800/60 text-slate-300 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                                 }`}
                                         >
                                             {obs.label}
@@ -177,7 +177,7 @@ const BaselineObservationsForm: React.FC<BaselineObservationsFormProps> = ({
                     disabled={saving}
                     className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saving
                         ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30'
+                        : 'bg-blue-600 hover:bg-blue-500 text-slate-200 shadow-lg shadow-blue-900/30'
                         }`}
                 >
                     {saving ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}

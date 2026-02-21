@@ -32,10 +32,26 @@ interface ConsentFormProps {
 }
 
 const CONSENT_TYPES = [
-    { value: 'informed_consent', label: 'Informed Consent' },
-    { value: 'hipaa_authorization', label: 'HIPAA Authorization' },
-    { value: 'research_participation', label: 'Research Participation' },
-    { value: 'photography_recording', label: 'Photography/Recording' },
+    {
+        value: 'informed_consent',
+        label: 'Informed Consent',
+        selectedClasses: 'bg-emerald-700 text-slate-200 shadow-lg shadow-emerald-700/30 border-emerald-500',
+    },
+    {
+        value: 'hipaa_authorization',
+        label: 'HIPAA Authorization',
+        selectedClasses: 'bg-amber-600 text-slate-200 shadow-lg shadow-amber-600/30 border-amber-500',
+    },
+    {
+        value: 'research_participation',
+        label: 'Research Participation',
+        selectedClasses: 'bg-violet-700 text-slate-200 shadow-lg shadow-violet-700/30 border-violet-500',
+    },
+    {
+        value: 'photography_recording',
+        label: 'Photography / Recording',
+        selectedClasses: 'bg-cyan-700 text-slate-200 shadow-lg shadow-cyan-700/30 border-cyan-500',
+    },
 ];
 
 const ConsentForm: React.FC<ConsentFormProps> = ({
@@ -200,7 +216,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             className="mt-1 w-6 h-6 rounded border-slate-600 bg-slate-800/50 text-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer"
                         />
                         <div className="flex-1">
-                            <p className="text-lg font-bold text-slate-300 group-hover:text-white transition-colors">
+                            <p className="text-lg font-bold text-slate-300 group-hover:text-slate-200 transition-colors">
                                 I confirm that informed consent has been obtained from the patient
                             </p>
                             <p className="text-sm text-slate-400 mt-2">
@@ -272,11 +288,18 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                                         : [...prev.consent_types, type.value],
                                                 }))
                                             }
-                                            className={`px-5 py-4 rounded-xl text-base font-semibold text-left transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 ${isSelected
-                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 border border-blue-500'
-                                                : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                            className={`flex items-center gap-3 px-5 py-4 rounded-xl text-base font-semibold text-left transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 border ${isSelected
+                                                ? type.selectedClasses
+                                                : 'bg-slate-800/60 text-slate-300 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                                 }`}
+                                            aria-pressed={isSelected}
+                                            aria-label={`${isSelected ? 'Deselect' : 'Select'} ${type.label}`}
                                         >
+                                            <CheckCircle
+                                                className={`w-4 h-4 flex-shrink-0 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0'
+                                                    }`}
+                                                aria-hidden="true"
+                                            />
                                             {type.label}
                                         </button>
                                     );
@@ -291,7 +314,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                 type="button"
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-base transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-slate-200 font-bold text-base transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
                             >
                                 <Save className="w-5 h-5" />
                                 {isSaving ? 'Saving…' : 'Save Consent Documentation'}

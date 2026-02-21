@@ -129,8 +129,8 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                     onClick={handleSaveAndContinue}
                     disabled={saving}
                     className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saving
-                            ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30'
+                        ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-500 text-slate-200 shadow-lg shadow-blue-900/30'
                         }`}
                 >
                     {saving ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
