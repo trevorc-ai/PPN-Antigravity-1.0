@@ -229,7 +229,7 @@ export const SUBSTANCES: Substance[] = [
     formula: 'DMT + Harmine + Harmaline + THH',
     efficacy: 0.76,
     historicalEfficacy: [0.68, 0.72, 0.76],
-    imageUrl: '/molecules/Dimethyltryptamine.webp',
+    imageUrl: '/molecules/Ayahuasca.webp',
     color: '#f59e0b',
     pubchemCid: 6089,
     smiles: 'CN(C)CCc1c[nH]c2ccccc12'
