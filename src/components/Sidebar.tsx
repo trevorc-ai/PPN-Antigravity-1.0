@@ -81,9 +81,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <div>
               <h1 className="text-sm font-black tracking-tight">
                 <span style={{ color: '#8B9DC3' }}>PPN</span>{' '}
-                <span className="text-primary">Portal</span>
+                <span className="bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">Portal</span>
               </h1>
-              <p className="text-xs font-mono text-slate-600 uppercase tracking-wider">Clinical Platform</p>
             </div>
           </div>
           <button
