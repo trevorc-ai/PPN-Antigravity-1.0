@@ -353,7 +353,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             />;
 
         case 'structured-safety':
-            return <StructuredSafetyCheckForm onSave={() => onSaved('Safety Screen')} />;
+            return <StructuredSafetyCheckForm
+                onSave={() => onSaved('Safety Screen')}
+                onComplete={onComplete}
+            />;
 
         case 'baseline-observations':
             return <BaselineObservationsForm onSave={handleBaselineObservationsSave} />;

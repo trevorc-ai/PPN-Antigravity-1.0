@@ -23,6 +23,8 @@ interface StructuredSafetyCheckFormProps {
     onSave?: (data: StructuredSafetyCheckData) => void;
     initialData?: Partial<StructuredSafetyCheckData>;
     patientId?: string;
+    /** Called automatically after a successful save — advances to the next Phase 1 step */
+    onComplete?: () => void;
 }
 
 const SAFETY_CONCERNS = [
@@ -49,7 +51,8 @@ const SAFETY_ACTIONS = [
 const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     onSave,
     initialData = {} as Partial<StructuredSafetyCheckData>,
-    patientId
+    patientId,
+    onComplete,
 }) => {
     const [data, setData] = useState<StructuredSafetyCheckData>({
         monitoring_date: initialData.monitoring_date || new Date().toISOString().slice(0, 10),
@@ -84,6 +87,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         onSave?.(data);
         const now = new Date();
         setLastSaved(`Saved at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
+        // Auto-advance to next Phase 1 step after brief confirmation flash
+        setTimeout(() => onComplete?.(), 500);
     };
 
     const setToday = () => {
@@ -232,7 +237,9 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             </button>
                         </div>
                         {data.new_adverse_events && (
-                            <p className="text-sm text-yellow-400 mt-2">→ Complete Adverse Event Report</p>
+                            <p className="text-sm text-yellow-400 mt-2 font-medium">
+                                → You'll complete the Adverse Event Report on the next screen
+                            </p>
                         )}
                     </FormField>
 
@@ -260,7 +267,9 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             </button>
                         </div>
                         {data.medication_changes && (
-                            <p className="text-sm text-yellow-400 mt-2">→ Update Medications list</p>
+                            <p className="text-sm text-yellow-400 mt-2 font-medium">
+                                → You'll update the Medications list on the next screen
+                            </p>
                         )}
                     </FormField>
                 </div>
