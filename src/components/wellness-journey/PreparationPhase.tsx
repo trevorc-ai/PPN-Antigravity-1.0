@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Calendar, Brain, TrendingUp, Shield, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, FileText, ArrowRight, Lock } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import { WellnessFormId } from './WellnessFormRouter';
+import { RiskEligibilityReport } from './RiskEligibilityReport';
+import { runContraindicationEngine, type IntakeScreeningData } from '../../services/contraindicationEngine';
+import { downloadReport } from '../../services/reportGenerator';
 
 interface PreparationPhaseProps {
     journey: any;
     onOpenForm: (formId: WellnessFormId) => void;
+    /** Medication list from baseline observations — normalized lowercase strings */
+    medications?: string[];
+    onProceedToPhase2?: () => void;
 }
 
-export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onOpenForm }) => {
+export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onOpenForm, medications = [], onProceedToPhase2 }) => {
     const [showAI, setShowAI] = useState(false);
     const [showBenchmarks, setShowBenchmarks] = useState(false);
+    const [overrideJustification, setOverrideJustification] = useState('');
 
-    // Gate Status Logic (Derived from journey data)
+    // Gate Status Logic (Derived from journey data) — must be before useMemo
     const gates = {
         consent: {
             isComplete: journey.benchmark?.hasConsent,
@@ -29,7 +36,6 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
             description: "PHQ-9, GAD-7, and vital signs."
         },
         observations: {
-            // Mocking this check as strictly true for now or derived if available
             isComplete: journey.benchmark?.hasSetAndSetting,
             date: journey.benchmark?.setAndSettingDate,
             label: "Baseline Observations",
@@ -46,6 +52,26 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
     };
 
     const allGatesPassed = Object.values(gates).every(g => g.isComplete);
+
+    // Run ContraindicationEngine once all 4 gates are complete
+    const contraindicationResult = useMemo(() => {
+        if (!allGatesPassed) return null;
+        const screeningData: IntakeScreeningData = {
+            patientId: journey.patientId,
+            sessionSubstance: journey.session?.substance?.toLowerCase() ?? 'psilocybin',
+            medications: medications.map(m => m.toLowerCase()),
+            psychiatricHistory: [],
+            familyHistory: [],
+            cssrsScore: journey.safety?.events?.reduce((max: number, e: any) => Math.max(max, e.cssrsScore ?? 0), 0),
+            lastSystolicBP: journey.risk?.vitals?.bloodPressureSystolic,
+            phq9Score: journey.baseline?.phq9,
+            gad7Score: journey.baseline?.gad7,
+            pcl5Score: journey.risk?.baseline?.pcl5,
+            ageYears: journey.demographics?.age,
+            isPregnant: false,
+        };
+        return runContraindicationEngine(screeningData);
+    }, [allGatesPassed, journey.patientId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Helper: Get severity label and emoji (kept from original)
     const getSeverityInfo = (score: number, type: 'phq9' | 'gad7') => {
@@ -190,6 +216,23 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                         <strong className="text-slate-300">Analysis:</strong> Patient profile (High ACE, Severe TRD) matches cluster B2. Historical data suggests slower initial response but durable remission if integration protocol is strictly followed. Recommended strict adherence to 3+ integration sessions.
                     </p>
                 </div>
+            )}
+
+            {/* RISK ELIGIBILITY REPORT — renders only after all 4 gates complete */}
+            {allGatesPassed && contraindicationResult && (
+                <RiskEligibilityReport
+                    result={contraindicationResult}
+                    onOverrideConfirmed={(justification) => {
+                        setOverrideJustification(justification);
+                    }}
+                    onExportPDF={() => {
+                        downloadReport(
+                            { patientId: journey.patientId },
+                            'audit'
+                        );
+                    }}
+                    onProceedToPhase2={onProceedToPhase2}
+                />
             )}
         </div>
     );
