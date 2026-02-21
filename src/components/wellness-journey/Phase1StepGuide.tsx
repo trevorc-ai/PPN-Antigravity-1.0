@@ -69,11 +69,13 @@ export const PHASE1_STEPS: Phase1Step[] = [
 interface Phase1StepGuideProps {
     completedFormIds: Set<string>;
     onStartStep: (formId: WellnessFormId) => void;
+    onCompletePhase?: () => void;
 }
 
 export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
     completedFormIds,
     onStartStep,
+    onCompletePhase,
 }) => {
     const heroRef = useRef<HTMLDivElement>(null);
 
@@ -161,12 +163,28 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
             {/* ── All complete state ─────────────────────────────────────────── */}
             {allComplete && (
-                <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-8 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/20 mb-4">
-                        <CheckCircle className="w-8 h-8 text-emerald-400" />
+                <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-8">
+                    <div className="flex flex-col sm:flex-row items-center gap-6">
+                        <div className="flex-shrink-0 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/20">
+                            <CheckCircle className="w-8 h-8 text-emerald-400" />
+                        </div>
+                        <div className="flex-1 text-center sm:text-left">
+                            <h2 className="text-2xl font-black text-emerald-300 mb-1">All Preparation Steps Complete</h2>
+                            <p className="text-slate-400 text-base">Patient is cleared for Phase 2: Dosing Session. Unlock to continue.</p>
+                        </div>
+                        {onCompletePhase && (
+                            <button
+                                id="phase1-complete-unlock-phase2"
+                                data-tour="complete-phase-1"
+                                onClick={onCompletePhase}
+                                className="flex-shrink-0 flex items-center gap-3 px-8 py-4 bg-emerald-500/25 hover:bg-emerald-500/40 border-2 border-emerald-500/60 hover:border-emerald-400/80 text-emerald-200 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-900/30 group"
+                                aria-label="Mark Phase 1 complete and unlock Phase 2"
+                            >
+                                Unlock Phase 2
+                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        )}
                     </div>
-                    <h2 className="text-2xl font-black text-emerald-300 mb-2">Phase 1 Complete</h2>
-                    <p className="text-slate-400 text-base">All preparation steps are done. Advance to Phase 2: Treatment Session.</p>
                 </div>
             )}
 

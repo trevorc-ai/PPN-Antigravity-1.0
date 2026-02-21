@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle } from 'lucide-react';
@@ -224,8 +224,9 @@ const WellnessJourney: React.FC = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [activeFormId, setActiveFormId] = useState<WellnessFormId | null>(null);
     const [activeFormTitle, setActiveFormTitle] = useState('Clinical Form');
-    // Forms queued to open automatically after the current one closes
-    const [queuedFormId, setQueuedFormId] = useState<WellnessFormId | null>(null);
+    // Use a ref (not state) so the setTimeout in handleFormComplete always reads
+    // the CURRENT queued value, not the stale closure-captured value.
+    const queuedFormRef = useRef<WellnessFormId | null>(null);
 
     // ── Phase 1 guided flow: tracks which forms have been saved ──────────────
     const [completedForms, setCompletedForms] = useState<Set<string>>(() => new Set());
@@ -273,24 +274,29 @@ const WellnessJourney: React.FC = () => {
         if (formId && activePhase === 1) {
             setCompletedForms(prev => new Set([...prev, formId]));
 
-            // Find & queue the next incomplete Phase 1 step
+            // Determine the next incomplete Phase 1 step and store in ref
+            // (ref is readable synchronously inside the setTimeout below)
             const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
             const next = PHASE1_STEPS[currentIndex + 1];
-            if (next) setQueuedFormId(next.id);
+            queuedFormRef.current = next ? next.id : null;
+        } else {
+            queuedFormRef.current = null;
         }
-        // Close the current panel (queuedFormId is dequeued in handleCloseForm)
+
+        // Close current panel, then immediately open the next one
         setIsFormOpen(false);
         setTimeout(() => {
             setActiveFormId(null);
-            if (queuedFormId) {
-                setQueuedFormId(null);
-                setActiveFormId(queuedFormId);
-                setActiveFormTitle(FORM_LABELS[queuedFormId] ?? 'Clinical Form');
+            const nextId = queuedFormRef.current;
+            if (nextId) {
+                queuedFormRef.current = null;
+                setActiveFormId(nextId);
+                setActiveFormTitle(FORM_LABELS[nextId] ?? 'Clinical Form');
                 setIsFormOpen(true);
             }
-        }, 350);
+        }, 320);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activePhase, queuedFormId]);
+    }, [activePhase]);
 
 
 
@@ -606,22 +612,13 @@ const WellnessJourney: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Phase Lock Status */}
+                {/* Phase Lock Status — informational only; the CTA lives at the bottom of Phase1StepGuide */}
                 {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
                     <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/40 border border-slate-700/50 rounded-xl">
                         <Lock className="w-4 h-4 text-slate-500 flex-shrink-0" aria-hidden="true" />
                         <p className="text-sm text-slate-400">
                             Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
                         </p>
-                        <button
-                            data-tour="complete-phase-1"
-                            onClick={completeCurrentPhase}
-                            className="ml-auto flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-lg hover:bg-emerald-500/20 transition-all"
-                            aria-label={`Mark Phase ${activePhase} complete and unlock Phase ${activePhase + 1}`}
-                        >
-                            <CheckCircle className="w-3.5 h-3.5" />
-                            Mark Phase {activePhase} Complete
-                        </button>
                     </div>
                 )}
 
@@ -665,6 +662,7 @@ const WellnessJourney: React.FC = () => {
                         <Phase1StepGuide
                             completedFormIds={completedForms}
                             onStartStep={handleOpenForm}
+                            onCompletePhase={completeCurrentPhase}
                         />
                     )}
                     {activePhase === 2 && (
