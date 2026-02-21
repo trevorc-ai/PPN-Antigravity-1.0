@@ -202,7 +202,7 @@ const Login: React.FC = () => {
               <div className="text-center pt-2 border-t border-slate-800/60">
                 <p className="text-sm text-slate-500 font-medium">
                   Don't have an account?{' '}
-                  <Link to="/signup" className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors">
+                  <Link to="/academy" className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors">
                     Sign Up
                   </Link>
                 </p>

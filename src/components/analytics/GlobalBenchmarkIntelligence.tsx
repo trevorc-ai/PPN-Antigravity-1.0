@@ -65,9 +65,9 @@ const CONDITION_LABELS: Record<string, string> = {
 
 function StatusChip({ label, positive }: { label: string; positive: boolean }) {
     return (
-        <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${positive
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+        <span className={`text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${positive
+            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+            : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
             }`}>
             {label}
         </span>
@@ -246,7 +246,7 @@ export default function GlobalBenchmarkIntelligence() {
                         <div key={i} className={`${stat.bg} border ${stat.border} rounded-2xl p-4 flex flex-col gap-2`}>
                             <div className="flex items-center gap-2">
                                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{stat.label}</span>
+                                <span className="text-xs font-black uppercase tracking-widest text-slate-500">{stat.label}</span>
                             </div>
                             <div className={`text-3xl font-black tracking-tight ${stat.color}`}>{stat.value}</div>
                             <div className="text-xs text-slate-500">{stat.sub}</div>
@@ -279,7 +279,7 @@ export default function GlobalBenchmarkIntelligence() {
 
                     <div className="bg-[#0a0c12]/60 border border-slate-800/50 rounded-2xl p-5">
                         {/* Reference lines */}
-                        <div className="flex items-center gap-6 mb-3 text-[10px] font-bold uppercase tracking-widest text-slate-600">
+                        <div className="flex items-center gap-6 mb-3 text-xs font-bold uppercase tracking-widest text-slate-600">
                             <span className="flex items-center gap-1"><span className="w-3 h-px bg-slate-700 inline-block" /> Small effect (0.2)</span>
                             <span className="flex items-center gap-1"><span className="w-3 h-px bg-slate-600 inline-block" /> Medium (0.5)</span>
                             <span className="flex items-center gap-1"><span className="w-3 h-px bg-indigo-700 inline-block" /> Large (0.8)</span>
@@ -359,7 +359,7 @@ export default function GlobalBenchmarkIntelligence() {
                                             {cohort.cohort_name.replace(/ \(.*?\)$/, '')}
                                         </p>
                                         <span
-                                            className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border flex-shrink-0"
+                                            className="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full border flex-shrink-0"
                                             style={{ color, borderColor: `${color}40`, backgroundColor: `${color}10` }}
                                         >
                                             {MODALITY_LABELS[cohort.modality] ?? cohort.modality}

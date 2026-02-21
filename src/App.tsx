@@ -241,10 +241,10 @@ const AppContent: React.FC = () => {
         <Route path="/patient-form/:formId" element={<PatientFormPage />} />
         <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
-        <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <SignUp />} />
+        <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/academy" replace />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout" element={<Navigate to="/academy" replace />} />
         <Route path="/academy" element={<Academy />} />
         <Route path="/billing" element={<BillingPortal />} />
         <Route path="/partner-demo" element={<PartnerDemoHub />} />

@@ -375,7 +375,7 @@ export const Academy: FC = () => {
                     </span>
                     <span style={{ fontSize: 13, color: '#6b7a8d' }}>
                         Not a user yet?{' '}
-                        <a href="/#/checkout" style={{ color: '#39d0d8', textDecoration: 'none', fontWeight: 600 }}>Start Free Trial</a>
+                        <a href="/#/academy" style={{ color: '#39d0d8', textDecoration: 'none', fontWeight: 600 }}>Join the Waitlist</a>
                     </span>
                 </footer>
 

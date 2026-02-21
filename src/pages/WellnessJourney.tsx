@@ -508,7 +508,7 @@ const WellnessJourney: React.FC = () => {
                         <div>
                             {/* Patient ID — large + mono for quick visual verification */}
                             <div className="flex items-center gap-3 flex-wrap">
-                                <h1 className="text-xs font-black text-slate-500 uppercase tracking-widest">Patient</h1>
+                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest">Patient</span>
                                 <span className="text-xl font-black text-white font-mono tracking-wide">{journey.patientId}</span>
                                 {/* Verification Pills — Age / Gender / Weight */}
                                 {[{
