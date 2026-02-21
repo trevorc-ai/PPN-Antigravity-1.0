@@ -126,6 +126,7 @@ ALTER TABLE public.log_chain_of_custody ENABLE ROW LEVEL SECURITY;
 -- Policy: Authenticated users can only read/write records for their own site.
 -- site_id must match the clinician's site from their profile.
 
+DROP POLICY IF EXISTS "chain_of_custody_site_select" ON public.log_chain_of_custody;
 CREATE POLICY "chain_of_custody_site_select"
   ON public.log_chain_of_custody
   FOR SELECT
@@ -137,6 +138,7 @@ CREATE POLICY "chain_of_custody_site_select"
     )
   );
 
+DROP POLICY IF EXISTS "chain_of_custody_site_insert" ON public.log_chain_of_custody;
 CREATE POLICY "chain_of_custody_site_insert"
   ON public.log_chain_of_custody
   FOR INSERT
@@ -148,6 +150,7 @@ CREATE POLICY "chain_of_custody_site_insert"
     )
   );
 
+DROP POLICY IF EXISTS "chain_of_custody_site_update" ON public.log_chain_of_custody;
 CREATE POLICY "chain_of_custody_site_update"
   ON public.log_chain_of_custody
   FOR UPDATE
