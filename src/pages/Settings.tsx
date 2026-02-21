@@ -60,7 +60,7 @@ const Settings: React.FC = () => {
           <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl divide-y divide-slate-800/40">
             {/* MFA */}
             <div className="p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-start gap-6">
+              <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                 <div className="size-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg">
                   <span className="material-symbols-outlined text-3xl">phonelink_lock</span>
                 </div>
@@ -75,7 +75,7 @@ const Settings: React.FC = () => {
               {/* WO-109: Wired up MFA button */}
               <button
                 onClick={handleMFA}
-                className="px-6 py-3 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-xl uppercase tracking-widest transition-all shadow-xl active:scale-95 whitespace-nowrap"
+                className="px-6 py-3 bg-primary hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl active:scale-95 whitespace-nowrap"
               >
                 Setup MFA
               </button>
@@ -83,7 +83,7 @@ const Settings: React.FC = () => {
 
             {/* Password */}
             <div className="p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-start gap-6">
+              <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                 <div className="size-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 shadow-lg">
                   <span className="material-symbols-outlined text-3xl">password</span>
                 </div>
@@ -95,7 +95,7 @@ const Settings: React.FC = () => {
               </div>
               <button
                 onClick={handleChangePassword}
-                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-300 border border-slate-700 text-[12px] font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
+                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-300 border border-slate-700 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 whitespace-nowrap"
               >
                 Change Password
               </button>
@@ -243,7 +243,7 @@ const Settings: React.FC = () => {
           </div>
 
           <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] p-8 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
-            <div className="flex items-start gap-6">
+            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
               <div className="size-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shadow-[0_0_20px_rgba(43,116,243,0.2)]">
                 <span className="material-symbols-outlined text-3xl">lock_person</span>
               </div>
