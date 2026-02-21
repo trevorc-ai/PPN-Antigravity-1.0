@@ -14,7 +14,7 @@ const Breadcrumbs: React.FC = () => {
   const labels: Record<string, string> = {
     dashboard: 'Dashboard',
     analytics: 'Clinical Intelligence',
-    catalog: 'Substance Catalog',
+    catalog: 'Substance Library',
     monograph: 'Molecular Profile',
     interactions: 'Interaction Checker',
     audit: 'Audit Logs',

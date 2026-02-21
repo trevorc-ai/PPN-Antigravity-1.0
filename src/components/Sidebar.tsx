@@ -37,7 +37,7 @@ const navSections: NavSection[] = [
   {
     title: 'Knowledge Base',
     items: [
-      { label: 'Substance Catalog', icon: 'science', path: '/catalog' },
+      { label: 'Substance Library', icon: 'science', path: '/catalog' },
       { label: 'Intelligence Hub', icon: 'newspaper', path: '/news' },
     ],
   },
