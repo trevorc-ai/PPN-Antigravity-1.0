@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, AlertTriangle, ChevronLeft, LogOut, ChevronRight } from 'lucide-react';
+import { CheckCircle, AlertTriangle, ChevronLeft, LogOut, ChevronRight, ArrowUp, Minus, Zap, Clock } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 
 /**
@@ -199,23 +199,26 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     key={concern.id}
                                     type="button"
                                     onClick={() => toggleArrayItem('safety_concern_ids', concern.id)}
-                                    className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${selected
+                                    aria-pressed={selected}
+                                    className={[
+                                        'px-4 py-4 rounded-lg text-left font-medium transition-all border-l-4',
+                                        selected
                                             ? concern.severity === 'critical'
-                                                ? 'bg-red-800/60 border border-red-600/60 text-red-100'
+                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-100'
                                                 : concern.severity === 'high'
-                                                    ? 'bg-orange-800/50 border border-orange-600/50 text-orange-100'
-                                                    : 'bg-yellow-800/40 border border-yellow-600/40 text-yellow-100'
-                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                        }`}
+                                                    ? 'bg-orange-900/70 border border-orange-500/60 border-l-orange-400 text-orange-100'
+                                                    : 'bg-sky-900/60 border border-sky-500/50 border-l-sky-400 text-sky-100'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
+                                    ].join(' ')}
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
-                                        <div className="flex-1">
-                                            <div className="text-sm">{concern.name}</div>
-                                            <div className="text-xs opacity-70 mt-0.5">
-                                                {concern.severity === 'critical' && '🔴 Critical'}
-                                                {concern.severity === 'high' && '🟠 High'}
-                                                {concern.severity === 'moderate' && '🟡 Moderate'}
+                                    <div className="flex items-start gap-2.5">
+                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 mt-0.5 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-sm font-semibold leading-snug">{concern.name}</div>
+                                            <div className="flex items-center gap-1 text-xs font-bold mt-1 opacity-80">
+                                                {concern.severity === 'critical' && <><AlertTriangle className="w-3 h-3" aria-hidden="true" /> Critical</>}
+                                                {concern.severity === 'high' && <><ArrowUp className="w-3 h-3" aria-hidden="true" /> High</>}
+                                                {concern.severity === 'moderate' && <><Minus className="w-3 h-3" aria-hidden="true" /> Moderate</>}
                                             </div>
                                         </div>
                                     </div>
@@ -302,20 +305,23 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     key={action.id}
                                     type="button"
                                     onClick={() => toggleArrayItem('action_taken_ids', action.id)}
-                                    className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${selected
+                                    aria-pressed={selected}
+                                    className={[
+                                        'px-4 py-4 rounded-lg text-left font-medium transition-all border-l-4',
+                                        selected
                                             ? action.urgency === 'immediate'
-                                                ? 'bg-red-800/60 border border-red-600/60 text-red-100'
-                                                : 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
-                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                        }`}
+                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-100'
+                                                : 'bg-amber-900/70 border border-amber-500/60 border-l-amber-400 text-amber-100'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
+                                    ].join(' ')}
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
-                                        <div className="flex-1">
-                                            <div className="text-sm">{action.name}</div>
-                                            <div className="text-xs opacity-70 mt-0.5">
-                                                {action.urgency === 'immediate' && '🔴 Immediate'}
-                                                {action.urgency === 'urgent' && '🟠 Urgent'}
+                                    <div className="flex items-start gap-2.5">
+                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 mt-0.5 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-sm font-semibold leading-snug">{action.name}</div>
+                                            <div className="flex items-center gap-1 text-xs font-bold mt-1 opacity-80">
+                                                {action.urgency === 'immediate' && <><Zap className="w-3 h-3" aria-hidden="true" /> Immediate</>}
+                                                {action.urgency === 'urgent' && <><Clock className="w-3 h-3" aria-hidden="true" /> Urgent</>}
                                             </div>
                                         </div>
                                     </div>
@@ -405,8 +411,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                     type="button"
                     onClick={handleSaveAndExit}
                     className={`flex items-center gap-2 px-5 py-3 rounded-xl border text-sm font-semibold transition-all ${exitFlash
-                            ? 'bg-teal-700/40 border-teal-500/50 text-teal-200'
-                            : 'bg-slate-800/60 hover:bg-slate-700/60 border-slate-600/50 text-slate-300'
+                        ? 'bg-teal-700/40 border-teal-500/50 text-teal-200'
+                        : 'bg-slate-800/60 hover:bg-slate-700/60 border-slate-600/50 text-slate-300'
                         }`}
                     aria-label="Save and exit panel"
                 >
@@ -419,8 +425,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                     type="button"
                     onClick={handleSaveAndContinue}
                     className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg ${continueFlash
-                            ? 'bg-teal-700/40 border border-teal-500/50 text-teal-200 shadow-none'
-                            : 'bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 shadow-indigo-950/50'
+                        ? 'bg-teal-700/40 border border-teal-500/50 text-teal-200 shadow-none'
+                        : 'bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 shadow-indigo-950/50'
                         }`}
                     aria-label="Save and continue to next step"
                 >

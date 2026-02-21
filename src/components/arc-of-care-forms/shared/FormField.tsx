@@ -36,7 +36,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         <div className="space-y-2">
             <label
                 htmlFor={htmlFor}
-                className="flex items-center gap-2 text-sm font-semibold text-slate-300"
+                className="flex items-center gap-2 text-base font-bold text-slate-200"
             >
                 {icon && <span className="w-4 h-4">{icon}</span>}
                 {label}

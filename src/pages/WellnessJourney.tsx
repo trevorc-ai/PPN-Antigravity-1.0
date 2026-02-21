@@ -499,6 +499,11 @@ const WellnessJourney: React.FC = () => {
                 onClose={() => handleFormComplete(null)}
                 title={activeFormTitle}
                 subtitle={activeFormSubtitle}
+                icon={activeFormId === 'structured-safety'
+                    ? <div className="w-9 h-9 rounded-xl bg-indigo-900/50 border border-indigo-500/40 flex items-center justify-center flex-shrink-0">
+                        <Shield className="w-5 h-5 text-indigo-300" aria-hidden="true" />
+                    </div>
+                    : undefined}
                 width="45%"
             >
                 {activeFormId && (
