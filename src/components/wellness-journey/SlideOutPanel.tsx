@@ -151,25 +151,12 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                     {children}
                 </div>
 
-                {/* Sticky Footer — custom footer if provided, otherwise universal close */}
-                <div className="sticky bottom-0 z-10 bg-slate-900 border-t border-slate-700/50">
-                    {footer ? (
+                {/* Sticky Footer — custom footer if provided; forms own their own footers otherwise */}
+                {footer && (
+                    <div className="sticky bottom-0 z-10 bg-slate-900 border-t border-slate-700/50">
                         <div className="px-6 py-4">{footer}</div>
-                    ) : (
-                        /* Universal close button — always accessible at the bottom of any form */
-                        <div className="px-6 py-3 flex items-center justify-end gap-3">
-                            <p className="text-xs text-slate-600 flex-1">Use Save &amp; Continue or Save &amp; Exit to save your work</p>
-                            <button
-                                onClick={onClose}
-                                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700/60 text-slate-300 text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                aria-label="Close panel"
-                            >
-                                <X className="w-4 h-4" />
-                                Close Panel
-                            </button>
-                        </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </>,
         document.body

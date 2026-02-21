@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, CheckCircle, AlertTriangle } from 'lucide-react';
+import { CheckCircle, AlertTriangle, ChevronLeft, LogOut, ChevronRight } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 
 /**
@@ -7,7 +7,8 @@ import { FormField } from '../shared/FormField';
  * Replaces free-text safety notes with structured, PHI-safe inputs.
  * 100% compliant with Arc of Care Design Guidelines v2.0.
  *
- * UX: Submit Changes auto-advances to next Phase 1 step via onComplete().
+ * Footer: Back | Save & Exit | Save & Continue (matches all Phase 1 gates)
+ * Item order: matches ref_clinical_observations sort_order (migration 045)
  */
 
 export interface StructuredSafetyCheckData {
@@ -25,29 +26,37 @@ interface StructuredSafetyCheckFormProps {
     onSave?: (data: StructuredSafetyCheckData) => void;
     initialData?: Partial<StructuredSafetyCheckData>;
     patientId?: string;
-    /** Called automatically after a successful save — advances to the next Phase 1 step */
+    /** Save & Continue — advances to the next Phase 1 step */
     onComplete?: () => void;
+    /** Back — close panel without saving */
+    onBack?: () => void;
+    /** Save & Exit — save then close panel */
+    onExit?: () => void;
 }
 
+// Ordered by severity to match ref_clinical_observations sort_order (migration 045):
+// Critical (sort 20-21) → High → Moderate
 const SAFETY_CONCERNS = [
-    { id: 1, name: 'Suicidal ideation increase', severity: 'critical' },
-    { id: 2, name: 'Self-harm behavior', severity: 'critical' },
-    { id: 3, name: 'Substance use relapse', severity: 'high' },
-    { id: 4, name: 'Medication non-compliance', severity: 'moderate' },
-    { id: 5, name: 'Social isolation increase', severity: 'moderate' },
+    { id: 1, name: 'Suicidal ideation increase', severity: 'critical' },  // SAFE_SI_ACTIVE_IDEATION  sort 21
+    { id: 2, name: 'Self-harm behavior', severity: 'critical' },  // SAFE_SELF_HARM_DISCLOSED sort 22
+    { id: 8, name: 'Psychotic symptoms', severity: 'critical' },  // SAFE_PSYCHOTIC_SX        sort 25
+    { id: 3, name: 'Substance use relapse', severity: 'high' },  // SAFE_SUBSTANCE_RELAPSE   sort 23
+    { id: 4, name: 'Medication non-compliance', severity: 'moderate' },  // SAFE_MEDICATION_NONCOMP  sort 24
+    { id: 5, name: 'Social isolation increase', severity: 'moderate' },  // (sort 24+)
     { id: 6, name: 'Sleep disturbance worsening', severity: 'moderate' },
     { id: 7, name: 'Panic attacks', severity: 'moderate' },
-    { id: 8, name: 'Psychotic symptoms', severity: 'critical' },
 ];
 
+// Ordered by urgency to match ref_clinical_observations sort_order (migration 045):
+// Immediate (sort 30-31) → Urgent (sort 32-34)
 const SAFETY_ACTIONS = [
-    { id: 1, name: 'Increased check-in frequency', urgency: 'urgent' },
-    { id: 2, name: 'Emergency contact notified', urgency: 'immediate' },
+    { id: 6, name: 'Hospitalization recommended', urgency: 'immediate' }, // SAFE_HOSPITALIZATION_DISC    sort 30
+    { id: 2, name: 'Emergency contact notified', urgency: 'immediate' }, // SAFE_EMERGENCY_CONTACT_NOTIF sort 31
+    { id: 5, name: 'Crisis hotline information provided', urgency: 'immediate' }, // (immediate)
+    { id: 7, name: 'Referred to psychiatrist', urgency: 'urgent' }, // SAFE_PSYCHIATRY_REFERRAL     sort 32
+    { id: 1, name: 'Increased check-in frequency', urgency: 'urgent' }, // SAFE_CHECK_IN_FREQ_INCREASED sort 34
     { id: 3, name: 'Medication adjustment recommended', urgency: 'urgent' },
     { id: 4, name: 'Additional therapy session scheduled', urgency: 'urgent' },
-    { id: 5, name: 'Crisis hotline information provided', urgency: 'immediate' },
-    { id: 6, name: 'Hospitalization recommended', urgency: 'immediate' },
-    { id: 7, name: 'Referred to psychiatrist', urgency: 'urgent' },
 ];
 
 const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
@@ -55,6 +64,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     initialData = {} as Partial<StructuredSafetyCheckData>,
     patientId,
     onComplete,
+    onBack,
+    onExit,
 }) => {
     const [data, setData] = useState<StructuredSafetyCheckData>({
         monitoring_date: initialData.monitoring_date || new Date().toISOString().slice(0, 10),
@@ -67,7 +78,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         follow_up_timeframe: initialData.follow_up_timeframe,
     });
 
-    const [lastSaved, setLastSaved] = useState<string | null>(null);
+    const [exitFlash, setExitFlash] = useState(false);
+    const [continueFlash, setContinueFlash] = useState(false);
 
     const updateField = <K extends keyof StructuredSafetyCheckData>(
         field: K,
@@ -85,12 +97,22 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         }));
     };
 
-    const handleSave = () => {
+    const handleSaveAndExit = () => {
         onSave?.(data);
-        const now = new Date();
-        setLastSaved(`Saved at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
-        // Auto-advance to next Phase 1 step after brief confirmation flash
-        setTimeout(() => onComplete?.(), 500);
+        setExitFlash(true);
+        setTimeout(() => {
+            setExitFlash(false);
+            onExit?.() ?? onComplete?.();
+        }, 600);
+    };
+
+    const handleSaveAndContinue = () => {
+        onSave?.(data);
+        setContinueFlash(true);
+        setTimeout(() => {
+            setContinueFlash(false);
+            onComplete?.();
+        }, 500);
     };
 
     const setToday = () => {
@@ -98,7 +120,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     };
 
     const getSeverityColor = (score: number) => {
-        if (score === 0) return 'emerald';
+        if (score === 0) return 'slate';
         if (score <= 2) return 'yellow';
         if (score <= 4) return 'orange';
         return 'red';
@@ -115,12 +137,12 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             type="date"
                             value={data.monitoring_date}
                             onChange={(e) => updateField('monitoring_date', e.target.value)}
-                            className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
+                            className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 text-sm"
                         />
                         <button
                             type="button"
                             onClick={setToday}
-                            className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-colors"
+                            className="px-4 py-3 bg-indigo-700/40 hover:bg-indigo-700/60 border border-indigo-600/40 text-indigo-200 rounded-lg font-medium transition-colors text-sm"
                         >
                             Today
                         </button>
@@ -130,7 +152,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
 
             {/* C-SSRS Score */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <FormField label="C-SSRS Score (0-5)">
+                <FormField label="C-SSRS Score (0–5)">
                     <div className="space-y-4">
                         <div className="flex gap-2">
                             {[0, 1, 2, 3, 4, 5].map((score) => (
@@ -139,7 +161,13 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     type="button"
                                     onClick={() => updateField('cssrs_score', score as any)}
                                     className={`flex-1 px-4 py-3 rounded-lg font-bold text-lg transition-all ${data.cssrs_score === score
-                                        ? `bg-${getSeverityColor(score)}-500 text-slate-300`
+                                        ? score === 0
+                                            ? 'bg-slate-600 text-slate-100'
+                                            : score <= 2
+                                                ? 'bg-yellow-600 text-slate-100'
+                                                : score <= 4
+                                                    ? 'bg-orange-600 text-slate-100'
+                                                    : 'bg-red-700 text-slate-100'
                                         : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                         }`}
                                 >
@@ -149,9 +177,9 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                         </div>
                         {data.cssrs_score >= 3 && (
                             <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 flex items-start gap-3">
-                                <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
                                 <div>
-                                    <p className="text-red-400 font-bold text-sm">⚠️ AUTOMATIC ALERT TRIGGERED</p>
+                                    <p className="text-red-400 font-bold text-sm">AUTOMATIC ALERT TRIGGERED</p>
                                     <p className="text-red-300 text-sm mt-1">Score ≥3 requires immediate clinical review and intervention</p>
                                 </div>
                             </div>
@@ -160,35 +188,40 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 </FormField>
             </div>
 
-            {/* Safety Concerns */}
+            {/* Safety Concerns — ordered critical → high → moderate (ref sort_order) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <FormField label="Safety Concerns" tooltip="Select all that apply">
+                <FormField label="Safety Concerns" tooltip="Select all that apply — ordered by clinical priority">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {SAFETY_CONCERNS.map((concern) => (
-                            <button
-                                key={concern.id}
-                                type="button"
-                                onClick={() => toggleArrayItem('safety_concern_ids', concern.id)}
-                                className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.safety_concern_ids.includes(concern.id)
-                                    ? concern.severity === 'critical' ? 'bg-red-500 text-slate-300'
-                                        : concern.severity === 'high' ? 'bg-orange-600 text-slate-300'
-                                            : 'bg-yellow-600 text-slate-300'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                    }`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle className={`w-4 h-4 ${data.safety_concern_ids.includes(concern.id) ? 'opacity-100' : 'opacity-0'}`} />
-                                    <div className="flex-1">
-                                        <div>{concern.name}</div>
-                                        <div className="text-xs opacity-75 mt-0.5">
-                                            {concern.severity === 'critical' && '🔴 Critical'}
-                                            {concern.severity === 'high' && '🟠 High'}
-                                            {concern.severity === 'moderate' && '🟡 Moderate'}
+                        {SAFETY_CONCERNS.map((concern) => {
+                            const selected = data.safety_concern_ids.includes(concern.id);
+                            return (
+                                <button
+                                    key={concern.id}
+                                    type="button"
+                                    onClick={() => toggleArrayItem('safety_concern_ids', concern.id)}
+                                    className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${selected
+                                            ? concern.severity === 'critical'
+                                                ? 'bg-red-800/60 border border-red-600/60 text-red-100'
+                                                : concern.severity === 'high'
+                                                    ? 'bg-orange-800/50 border border-orange-600/50 text-orange-100'
+                                                    : 'bg-yellow-800/40 border border-yellow-600/40 text-yellow-100'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
+                                        <div className="flex-1">
+                                            <div className="text-sm">{concern.name}</div>
+                                            <div className="text-xs opacity-70 mt-0.5">
+                                                {concern.severity === 'critical' && '🔴 Critical'}
+                                                {concern.severity === 'high' && '🟠 High'}
+                                                {concern.severity === 'moderate' && '🟡 Moderate'}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </button>
-                        ))}
+                                </button>
+                            );
+                        })}
                     </div>
                 </FormField>
             </div>
@@ -201,8 +234,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             <button
                                 type="button"
                                 onClick={() => updateField('new_adverse_events', false)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.new_adverse_events
-                                    ? 'bg-blue-600 text-white'
+                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${!data.new_adverse_events
+                                    ? 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -211,8 +244,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             <button
                                 type="button"
                                 onClick={() => updateField('new_adverse_events', true)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.new_adverse_events
-                                    ? 'bg-red-500 text-slate-300'
+                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${data.new_adverse_events
+                                    ? 'bg-red-800/60 border border-red-600/60 text-red-100'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -220,7 +253,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             </button>
                         </div>
                         {data.new_adverse_events && (
-                            <p className="text-sm text-yellow-400 mt-2 font-medium">
+                            <p className="text-sm text-amber-400 mt-2 font-medium">
                                 → Complete Adverse Event Report on the next screen
                             </p>
                         )}
@@ -231,8 +264,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             <button
                                 type="button"
                                 onClick={() => updateField('medication_changes', false)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.medication_changes
-                                    ? 'bg-blue-600 text-white'
+                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${!data.medication_changes
+                                    ? 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -241,8 +274,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             <button
                                 type="button"
                                 onClick={() => updateField('medication_changes', true)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.medication_changes
-                                    ? 'bg-yellow-600 text-slate-300'
+                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${data.medication_changes
+                                    ? 'bg-amber-800/50 border border-amber-600/50 text-amber-100'
                                     : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                     }`}
                             >
@@ -250,7 +283,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             </button>
                         </div>
                         {data.medication_changes && (
-                            <p className="text-sm text-yellow-400 mt-2 font-medium">
+                            <p className="text-sm text-amber-400 mt-2 font-medium">
                                 → Update Medications list on the next screen
                             </p>
                         )}
@@ -258,32 +291,37 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 </div>
             </div>
 
-            {/* Actions Taken */}
+            {/* Actions Taken — ordered immediate → urgent (ref sort_order) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <FormField label="Actions Taken" tooltip="Select all that apply">
+                <FormField label="Actions Taken" tooltip="Select all that apply — ordered by urgency">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {SAFETY_ACTIONS.map((action) => (
-                            <button
-                                key={action.id}
-                                type="button"
-                                onClick={() => toggleArrayItem('action_taken_ids', action.id)}
-                                className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${data.action_taken_ids.includes(action.id)
-                                    ? action.urgency === 'immediate' ? 'bg-red-500 text-slate-300' : 'bg-blue-500 text-slate-300'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                    }`}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle className={`w-4 h-4 ${data.action_taken_ids.includes(action.id) ? 'opacity-100' : 'opacity-0'}`} />
-                                    <div className="flex-1">
-                                        <div>{action.name}</div>
-                                        <div className="text-xs opacity-75 mt-0.5">
-                                            {action.urgency === 'immediate' && '🔴 Immediate'}
-                                            {action.urgency === 'urgent' && '🟠 Urgent'}
+                        {SAFETY_ACTIONS.map((action) => {
+                            const selected = data.action_taken_ids.includes(action.id);
+                            return (
+                                <button
+                                    key={action.id}
+                                    type="button"
+                                    onClick={() => toggleArrayItem('action_taken_ids', action.id)}
+                                    className={`px-4 py-3 rounded-lg text-left font-medium transition-all ${selected
+                                            ? action.urgency === 'immediate'
+                                                ? 'bg-red-800/60 border border-red-600/60 text-red-100'
+                                                : 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-0'}`} aria-hidden="true" />
+                                        <div className="flex-1">
+                                            <div className="text-sm">{action.name}</div>
+                                            <div className="text-xs opacity-70 mt-0.5">
+                                                {action.urgency === 'immediate' && '🔴 Immediate'}
+                                                {action.urgency === 'urgent' && '🟠 Urgent'}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </button>
-                        ))}
+                                </button>
+                            );
+                        })}
                     </div>
                 </FormField>
             </div>
@@ -295,8 +333,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                         <button
                             type="button"
                             onClick={() => updateField('follow_up_required', true)}
-                            className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.follow_up_required
-                                ? 'bg-blue-500 text-slate-300'
+                            className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${data.follow_up_required
+                                ? 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
                                 : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                 }`}
                         >
@@ -308,12 +346,12 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 updateField('follow_up_required', false);
                                 updateField('follow_up_timeframe', undefined);
                             }}
-                            className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${!data.follow_up_required
-                                ? 'bg-blue-600 text-white'
+                            className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${!data.follow_up_required
+                                ? 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
                                 : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                 }`}
                         >
-                            No - Continue standard monitoring
+                            No — Continue standard monitoring
                         </button>
                     </div>
                 </FormField>
@@ -330,8 +368,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     key={value}
                                     type="button"
                                     onClick={() => updateField('follow_up_timeframe', value as any)}
-                                    className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all ${data.follow_up_timeframe === value
-                                        ? 'bg-blue-500 text-slate-300'
+                                    className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${data.follow_up_timeframe === value
+                                        ? 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
                                         : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                         }`}
                                 >
@@ -343,17 +381,52 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 )}
             </div>
 
-            {/* Footer: saved status + submit */}
-            <div className="flex items-center justify-between gap-4 pt-2 mr-16">
-                <span className="text-sm text-emerald-400 font-medium">
-                    {lastSaved ?? ''}
-                </span>
+            {/* ── Footer: Back | Save & Exit | Save & Continue ─────────────────────
+                Matches the standard 3-button footer across all Phase 1 gates.
+                "Close Panel" has been removed — exit is handled by these buttons.
+            ────────────────────────────────────────────────────────────────────── */}
+            <div className="flex items-center gap-3 pt-2 pb-4 mr-4">
+                {/* Back */}
                 <button
-                    onClick={handleSave}
-                    className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                    type="button"
+                    onClick={onBack ?? onComplete}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-slate-300 text-sm font-semibold transition-all"
+                    aria-label="Go back without saving"
                 >
-                    <Save className="w-5 h-5" />
-                    Submit Changes
+                    <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+                    Back
+                </button>
+
+                {/* Spacer */}
+                <div className="flex-1" />
+
+                {/* Save & Exit */}
+                <button
+                    type="button"
+                    onClick={handleSaveAndExit}
+                    className={`flex items-center gap-2 px-5 py-3 rounded-xl border text-sm font-semibold transition-all ${exitFlash
+                            ? 'bg-teal-700/40 border-teal-500/50 text-teal-200'
+                            : 'bg-slate-800/60 hover:bg-slate-700/60 border-slate-600/50 text-slate-300'
+                        }`}
+                    aria-label="Save and exit panel"
+                >
+                    <LogOut className="w-4 h-4" aria-hidden="true" />
+                    {exitFlash ? 'Saved!' : 'Save & Exit'}
+                </button>
+
+                {/* Save & Continue */}
+                <button
+                    type="button"
+                    onClick={handleSaveAndContinue}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg ${continueFlash
+                            ? 'bg-teal-700/40 border border-teal-500/50 text-teal-200 shadow-none'
+                            : 'bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 shadow-indigo-950/50'
+                        }`}
+                    aria-label="Save and continue to next step"
+                >
+                    <CheckCircle className="w-4 h-4" aria-hidden="true" />
+                    {continueFlash ? 'Saved!' : 'Save & Continue'}
+                    {!continueFlash && <ChevronRight className="w-4 h-4" aria-hidden="true" />}
                 </button>
             </div>
         </div>
