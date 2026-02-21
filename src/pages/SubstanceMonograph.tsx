@@ -1,63 +1,78 @@
+
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SUBSTANCES, INTERACTION_RULES } from '../constants';
-import { GoogleGenAI } from '@google/genai';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { GoogleGenAI } from "@google/genai";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, RadarChart, PolarGrid,
+  PolarAngleAxis, PolarRadiusAxis, Radar
+} from 'recharts';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import { MonographHero } from '../components/substance/MonographHero';
-import SubstanceRegistry from '../components/substance/SubstanceRegistry';
-import AffinityRadar from '../components/substance/AffinityRadar';
-import MechanismPanel from '../components/substance/MechanismPanel';
-import ToxicityRiskPanel from '../components/substance/ToxicityRiskPanel';
-import RiskTierBadge from '../components/substance/RiskTierBadge';
+import { SubstanceKiProfile } from '../types';
 
-/* ─── AI grounding sources ──────────────────────────────────────── */
+// ─── Citation sources from Gemini grounding ───────────────────────────────────
 const ResearchSources: React.FC<{ chunks: any[] }> = ({ chunks }) => {
+  if (!chunks || chunks.length === 0) return null;
   const sources = chunks
-    .filter(c => c.web?.uri)
-    .map(c => ({ title: c.web.title || 'Clinical Research Source', uri: c.web.uri }));
-  if (!sources.length) return null;
+    .filter(chunk => chunk.web?.uri)
+    .map(chunk => ({ title: chunk.web.title || 'Clinical Research Source', uri: chunk.web.uri }));
+  if (sources.length === 0) return null;
   return (
     <div className="mt-6 pt-5 border-t border-white/5 space-y-3">
-      <h4 className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2">
-        <span className="material-symbols-outlined text-sm" aria-hidden="true">database</span>
-        Grounded Research Nodes
+      <h4 className="text-xs font-semibold text-indigo-400 flex items-center gap-2">
+        <span className="material-symbols-outlined text-sm">database</span>
+        Verified Intelligence Nodes
       </h4>
-      <div className="space-y-2">
-        {sources.map((s, i) => (
-          <a
-            key={i}
-            href={s.uri}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center justify-between gap-3 p-3 bg-slate-900/40 border border-slate-800 rounded-xl hover:border-indigo-500/30 hover:bg-indigo-500/5 transition-all"
-          >
+      {sources.map((s, i) => (
+        <a key={i} href={s.uri} target="_blank" rel="noopener noreferrer"
+          className="group flex flex-col gap-1 bg-slate-900/40 p-3 rounded-xl border border-slate-800 hover:border-indigo-500/30 transition-all">
+          <div className="flex items-center justify-between">
             <span className="text-sm text-slate-300 font-medium truncate">{s.title}</span>
-            <span className="material-symbols-outlined text-[14px] text-slate-600 group-hover:text-indigo-400 transition-colors shrink-0" aria-hidden="true">
-              arrow_outward
-            </span>
-          </a>
-        ))}
-      </div>
+            <span className="material-symbols-outlined text-xs text-slate-600 group-hover:text-indigo-400 transition-colors">arrow_outward</span>
+          </div>
+          <span className="text-xs font-mono text-slate-600 truncate">{s.uri}</span>
+        </a>
+      ))}
     </div>
   );
 };
 
-/* ─── SubstanceMonograph ────────────────────────────────────────── */
-/**
- * SubstanceMonograph — detail page for a single substance.
- *
- * This is a thin orchestrator. All section logic lives in dedicated components:
- *   MonographHero → identity + molecule display
- *   SubstanceRegistry → CAS, PK data
- *   AffinityRadar → Ki radar chart
- *   MechanismPanel → mechanism + therapeutic hypothesis + critical safety note
- *   ToxicityRiskPanel → toxicity, contraindications, screening checklist
- *   [inline] Clinical Velocity → efficacy trend chart
- *   [inline] Neural Synthesis AI → Gemini grounded synthesis
- *   [inline] Interactions → drug-drug interaction cards
- */
+// ─── Ki radar normalisation: high affinity (low Ki nM) → high score ───────────
+const normalizeKi = (ki: number): number => {
+  if (ki >= 10000) return 2;
+  return Math.max(Math.round(150 - Math.log10(ki) * 50), 5);
+};
+
+const buildRadarData = (kiProfile: SubstanceKiProfile) => [
+  { subject: '5-HT2A', value: normalizeKi(kiProfile.ht2a), ki: kiProfile.ht2a, fullMark: 150 },
+  { subject: '5-HT1A', value: normalizeKi(kiProfile.ht1a), ki: kiProfile.ht1a, fullMark: 150 },
+  { subject: '5-HT2C', value: normalizeKi(kiProfile.ht2c), ki: kiProfile.ht2c, fullMark: 150 },
+  { subject: 'D2', value: normalizeKi(kiProfile.d2), ki: kiProfile.d2, fullMark: 150 },
+  { subject: 'SERT', value: normalizeKi(kiProfile.sert), ki: kiProfile.sert, fullMark: 150 },
+  { subject: 'NMDA', value: normalizeKi(kiProfile.nmda), ki: kiProfile.nmda, fullMark: 150 },
+];
+
+// ─── Section wrapper card ─────────────────────────────────────────────────────
+const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
+  <section className={`bg-slate-900/40 border border-white/5 rounded-2xl p-6 backdrop-blur-xl shadow-xl ${className}`}>
+    {children}
+  </section>
+);
+
+const SectionLabel: React.FC<{ icon: string; label: string; badge?: React.ReactNode }> = ({ icon, label, badge }) => (
+  <div className="flex items-center justify-between mb-5">
+    <h3 className="text-sm font-semibold text-slate-400 flex items-center gap-3">
+      <span className="material-symbols-outlined text-lg text-slate-500">{icon}</span>
+      {label}
+    </h3>
+    {badge}
+  </div>
+);
+
+// ─── Main component ───────────────────────────────────────────────────────────
 const SubstanceMonograph: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -71,22 +86,21 @@ const SubstanceMonograph: React.FC = () => {
     if (!sub) return [];
     return INTERACTION_RULES.filter(r => r.substance === sub.name).map(rule => ({
       agent: rule.interactor,
-      risk: (rule.severity === 'Life-Threatening' || rule.severity === 'High') ? 'High' : 'Medium',
       severity: rule.severity,
+      isHigh: rule.severity === 'Life-Threatening' || rule.severity === 'High',
       description: rule.description,
-      mechanism: rule.mechanism,
-      source: rule.source,
-      sourceUrl: rule.sourceUrl,
     }));
   }, [sub]);
 
+  const radarData = useMemo(() => {
+    if (!sub?.kiProfile) return [];
+    return buildRadarData(sub.kiProfile);
+  }, [sub]);
+
   const efficacyData = useMemo(() => {
-    if (!sub) return [];
-    if (!sub.historicalEfficacy?.length) {
-      return [{ year: 'Baseline', val: 0.1 }, { year: 'Current', val: sub?.efficacy ?? 0.7 }];
-    }
+    if (!sub?.historicalEfficacy?.length) return [{ phase: 'Current', val: sub?.efficacy || 0 }];
     return sub.historicalEfficacy.map((val, i) => ({
-      year: i === 0 ? 'Initial' : i === sub.historicalEfficacy!.length - 1 ? 'Current' : `v${i}`,
+      phase: i === 0 ? 'Initial' : i === sub.historicalEfficacy!.length - 1 ? 'Current' : `Phase ${i}`,
       val,
     }));
   }, [sub]);
@@ -100,9 +114,9 @@ const SubstanceMonograph: React.FC = () => {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const prompt = `Synthesize a high-fidelity, technical clinical dossier summary for ${sub.name} (${sub.chemicalName}). Use Google Search to find recent (2024-2025) clinical trials, new pharmacology breakthroughs, and current legal/regulatory changes. Provide a highly technical analysis for research leads.`;
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.0-flash',
         contents: prompt,
-        config: { tools: [{ googleSearch: {} }] },
+        config: { tools: [{ googleSearch: {} }] }
       });
       setAiAnalysis(response.text || 'Failed to synthesize grounded data node.');
       setGroundingChunks(response.candidates?.[0]?.groundingMetadata?.groundingChunks || []);
@@ -113,271 +127,323 @@ const SubstanceMonograph: React.FC = () => {
     }
   };
 
-  /* Not found state */
   if (!sub) {
     return (
       <div className="h-full flex flex-col items-center justify-center p-8 text-center space-y-6">
-        <span className="material-symbols-outlined text-7xl text-slate-800" aria-hidden="true">error</span>
+        <span className="material-symbols-outlined text-7xl text-slate-800">error</span>
         <div className="space-y-2">
-          <h2 className="text-2xl font-black uppercase tracking-tight" style={{ color: '#A8B5D1' }}>
-            Compound Not Found
-          </h2>
-          <p className="text-slate-500 text-base font-medium">
-            The identifier <code className="font-mono">{id}</code> does not exist in the registry.
-          </p>
+          <h2 className="text-2xl font-bold text-slate-300">Compound Not Found</h2>
+          <p className="text-slate-500">The requested identifier does not exist in the registry.</p>
         </div>
-        <button
-          onClick={() => navigate('/catalog')}
-          className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl uppercase tracking-widest transition-all"
-        >
+        <button onClick={() => navigate('/catalog')}
+          className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition-all">
           Return to Catalog
         </button>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-full bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] animate-in fade-in duration-700 pb-24 overflow-x-hidden">
+  const subColor = sub.color || '#64748b';
+  const isAyahuasca = sub.id === 'AYA-7701';
+  const isEsketamine = sub.id === 'ESK-3822';
 
-      {/* SLOT 1 — Hero */}
+  return (
+    <div className="min-h-full bg-gradient-to-b from-[#080b14] via-[#060910] to-[#040609] animate-in fade-in duration-500 pb-24">
+
+      {/* Hero */}
       <MonographHero substance={sub} />
 
       <PageContainer width="wide" className="py-10">
-        <Section spacing="default">
+        <Section spacing="default" className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          {/* ── Two-column main layout ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* ── LEFT COLUMN (8 cols) ─────────────────────────────────────────── */}
+          <div className="lg:col-span-8 space-y-6">
 
-            {/* LEFT COLUMN — 8/12 */}
-            <div className="lg:col-span-8 space-y-6">
+            {/* ── SECTION 1: Pharmacological Registry ─── */}
+            <Card>
+              <SectionLabel icon="science" label="Pharmacological Registry"
+                badge={<span className="text-xs font-mono text-slate-600">MOD_0x{id?.slice(-4)}</span>} />
 
-              {/* SLOT 2 — Chemical Registry */}
-              <SubstanceRegistry substance={sub} />
-
-              {/* SLOT 3 — Mechanism of Action */}
-              <MechanismPanel substance={sub} />
-
-              {/* SLOT 4 — Clinical Velocity (efficacy trend) */}
-              <section
-                className="bg-slate-900/40 border border-white/5 rounded-[2rem] p-6 backdrop-blur-3xl shadow-2xl"
-                aria-labelledby="velocity-heading"
-                style={{ height: '320px' }}
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div
-                    className="size-8 rounded-lg flex items-center justify-center border shrink-0"
-                    style={{ background: `${sub.color}15`, borderColor: `${sub.color}30`, color: sub.color }}
-                  >
-                    <span className="material-symbols-outlined text-lg" aria-hidden="true">trending_up</span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {[
+                  { label: 'CAS Registry', value: sub.cas },
+                  { label: 'Molecular Weight', value: sub.molecularWeight },
+                  { label: 'Formula', value: sub.formula },
+                  { label: 'Drug Class', value: sub.class.charAt(0) + sub.class.slice(1).toLowerCase() },
+                  { label: 'DEA Schedule', value: sub.schedule },
+                  { label: 'Primary Route', value: sub.pkData?.primaryRoute || 'See monograph' },
+                  { label: 'Bioavailability', value: sub.pkData?.bioavailability || 'Variable' },
+                  { label: 'Half-Life', value: sub.pkData?.halfLife || 'Variable' },
+                  { label: 'Tmax', value: sub.pkData?.tmax || 'Variable' },
+                ].map((item, i) => (
+                  <div key={i} className="p-3 bg-black/30 border border-white/5 rounded-xl hover:border-white/10 transition-colors">
+                    <p className="text-xs text-slate-600 font-medium mb-1">{item.label}</p>
+                    <p className="text-sm font-mono text-slate-300 break-words">{item.value}</p>
                   </div>
-                  <div>
-                    <h3
-                      id="velocity-heading"
-                      className="text-[13px] font-black tracking-[0.2em] uppercase"
-                      style={{ color: '#A8B5D1' }}
-                    >
-                      Clinical Velocity
-                    </h3>
-                    <p className="text-[11px] text-slate-600 font-black uppercase tracking-widest">
-                      Efficacy validation trend across research phases
-                    </p>
+                ))}
+              </div>
+
+              {/* Esketamine: REMS notice */}
+              {isEsketamine && (
+                <div className="mt-4 p-4 bg-emerald-950/30 border border-emerald-700/30 rounded-xl flex items-start gap-3">
+                  <span className="text-emerald-400 text-lg mt-0.5">✓</span>
+                  <div className="text-sm text-emerald-400/90 space-y-1">
+                    <p className="font-semibold">FDA Approved — REMS Program Required</p>
+                    <p className="text-emerald-500/70 text-xs">Administered under direct clinical observation only. Patients cannot self-administer. 2-hour post-dose monitoring mandatory (Spravato® label).</p>
                   </div>
                 </div>
-                <ResponsiveContainer width="100%" height={220}>
-                  <AreaChart data={efficacyData} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id={`grad-${sub.id}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={sub.color ?? '#6366f1'} stopOpacity={0.4} />
-                        <stop offset="95%" stopColor={sub.color ?? '#6366f1'} stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                    <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 800 }} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 800 }} domain={[0, 1]} />
-                    <Tooltip
-                      formatter={(v: number) => [`${Math.round(v * 100)}%`, 'Efficacy']}
-                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px' }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="val"
-                      stroke={sub.color ?? '#6366f1'}
-                      strokeWidth={3}
-                      fill={`url(#grad-${sub.id})`}
-                      dot={{ r: 5, fill: sub.color ?? '#6366f1', strokeWidth: 0 }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </section>
-            </div>
+              )}
 
-            {/* RIGHT COLUMN — 4/12 */}
-            <div className="lg:col-span-4 space-y-6">
-
-              {/* SLOT 5 — Affinity Radar */}
-              <AffinityRadar substance={sub} />
-
-              {/* SLOT 6 — Neural Synthesis */}
-              <section
-                className="bg-indigo-600/5 border border-indigo-500/20 rounded-[2rem] p-6 shadow-2xl flex flex-col relative overflow-hidden"
-                aria-labelledby="synthesis-heading"
-              >
-                <div className="absolute top-0 right-0 p-5 opacity-5 pointer-events-none" aria-hidden="true">
-                  <span className="material-symbols-outlined text-7xl">psychology</span>
+              {/* Ayahuasca: combination note */}
+              {isAyahuasca && (
+                <div className="mt-4 p-4 bg-amber-950/20 border border-amber-700/20 rounded-xl">
+                  <p className="text-xs font-semibold text-amber-400 mb-1">Combination Brew — Component Note</p>
+                  <p className="text-xs text-amber-500/70 leading-relaxed">Active components: DMT (Psychotria viridis) + Harmine, Harmaline, THH β-carbolines (Banisteriopsis caapi). Registry values above describe the DMT component. β-carbolines enable oral bioavailability via MAO-A inhibition.</p>
                 </div>
+              )}
+            </Card>
 
-                <div className="flex items-center gap-3 mb-6 relative z-10">
-                  <div className="size-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
-                    <span className="material-symbols-outlined text-xl animate-pulse" aria-hidden="true">auto_awesome</span>
-                  </div>
-                  <div>
-                    <h3 id="synthesis-heading" className="text-[13px] font-black text-indigo-300 uppercase tracking-[0.2em]">
-                      Neural Synthesis
-                    </h3>
-                    <p className="text-[11px] font-mono text-indigo-500/60 uppercase tracking-widest">AI Grounded Analysis</p>
-                  </div>
-                </div>
+            {/* ── SECTION 2: Mechanism of Action ─── */}
+            {(sub.mechanismText || sub.therapeuticHypothesis || sub.criticalSafetyNote) && (
+              <Card>
+                <SectionLabel icon="biotech" label="Mechanism of Action" />
 
-                <div className="flex-1 relative z-10">
-                  {isAiLoading ? (
-                    <div className="py-10 flex flex-col items-center gap-3">
-                      <div className="size-10 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" aria-label="Loading" />
-                      <p className="text-sm font-black text-indigo-500/60 uppercase tracking-widest animate-pulse font-mono">
-                        Accessing Grounded Registry…
-                      </p>
+                <div className="space-y-5">
+                  {sub.mechanismText && (
+                    <div className="space-y-1.5">
+                      <h4 className="text-xs font-semibold text-slate-500">Primary Mechanism</h4>
+                      <p className="text-sm text-slate-300 leading-relaxed">{sub.mechanismText}</p>
                     </div>
-                  ) : aiAnalysis ? (
-                    <div className="animate-in fade-in slide-in-from-top-2 duration-500 space-y-3">
-                      <p className="text-sm font-medium leading-relaxed text-slate-400 border-l-2 border-indigo-500/30 pl-4 italic">
-                        "{aiAnalysis}"
-                      </p>
-                      <ResearchSources chunks={groundingChunks} />
+                  )}
+
+                  {sub.therapeuticHypothesis && (
+                    <div className="space-y-1.5 pt-2 border-t border-white/5">
+                      <h4 className="text-xs font-semibold text-slate-500">Therapeutic Hypothesis</h4>
+                      <p className="text-sm text-slate-300 leading-relaxed">{sub.therapeuticHypothesis}</p>
                     </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                        Run a neural synthesis to correlate {sub.name} with the latest grounded clinical
-                        research from 2024–2025.
-                      </p>
-                      <button
-                        onClick={runAiSynthesis}
-                        className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-slate-100 text-sm font-black rounded-xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-2 active:scale-95"
-                        aria-label={`Run neural synthesis for ${sub.name}`}
-                      >
-                        <span className="material-symbols-outlined text-lg" aria-hidden="true">bolt</span>
-                        Initialize Synthesis
-                      </button>
+                  )}
+
+                  {sub.criticalSafetyNote && (
+                    <div className="p-4 bg-red-950/25 border border-red-700/25 rounded-xl space-y-1.5 mt-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-red-400" aria-hidden="true">⚠</span>
+                        <h4 className="text-xs font-semibold text-red-400">Critical Safety Note</h4>
+                      </div>
+                      <p className="text-sm text-red-300/80 leading-relaxed">{sub.criticalSafetyNote}</p>
                     </div>
                   )}
                 </div>
-              </section>
-            </div>
+              </Card>
+            )}
+
+            {/* ── SECTION 3: Toxicity & Risk Analysis ─── */}
+            {(sub.toxicityHighlights || sub.absoluteContraindications || sub.requiredScreening) && (
+              <Card>
+                <SectionLabel icon="gpp_maybe" label="Toxicity & Risk Analysis"
+                  badge={
+                    sub.riskTier ? (
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border
+                        ${sub.riskTier === 'CARDIAC RISK' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                          sub.riskTier === 'MAOI INTERACTION RISK' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                            sub.riskTier === 'FDA APPROVED · REMS' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                              sub.riskTier === 'DISSOCIATIVE PROTOCOL' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                'bg-slate-800 text-slate-400 border-slate-700'}`}>
+                        {sub.riskTier === 'CARDIAC RISK' && '⚠ '}
+                        {sub.riskTier === 'MAOI INTERACTION RISK' && '⚡ '}
+                        {sub.riskTier === 'FDA APPROVED · REMS' && '✓ '}
+                        {sub.riskTier}
+                      </span>
+                    ) : null
+                  }
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {sub.toxicityHighlights && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-semibold text-slate-500">Toxicity Highlights</h4>
+                      <ul className="space-y-2">
+                        {sub.toxicityHighlights.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                            <span className="text-slate-600 mt-0.5 shrink-0">•</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {sub.absoluteContraindications && (
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-semibold text-red-500/70">Absolute Contraindications</h4>
+                      <ul className="space-y-2">
+                        {sub.absoluteContraindications.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                            <span className="text-red-500/60 mt-0.5 shrink-0">✕</span>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {sub.requiredScreening && (
+                  <div className="mt-5 pt-5 border-t border-white/5 space-y-3">
+                    <h4 className="text-xs font-semibold text-slate-500">Required Pre-Session Screening</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {sub.requiredScreening.map((item, i) => (
+                        <span key={i} className="px-3 py-1.5 bg-slate-800/60 border border-slate-700/40 rounded-lg text-xs text-slate-300 font-medium">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </Card>
+            )}
+
+            {/* ── SECTION 4: Clinical Velocity ─── */}
+            <Card className="h-72">
+              <SectionLabel icon="trending_up" label="Efficacy Trend" />
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={efficacyData} margin={{ top: 4, right: 8, left: -24, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="effGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={subColor} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={subColor} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                    <XAxis dataKey="phase" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} domain={[0, 1]} tickFormatter={v => `${Math.round(v * 100)}%`} />
+                    <Tooltip
+                      formatter={(v: number) => [`${Math.round(v * 100)}%`, 'Efficacy']}
+                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px', fontSize: '13px' }} />
+                    <Area type="monotone" dataKey="val" stroke={subColor} strokeWidth={2.5} fill="url(#effGrad)" dot={{ r: 4, fill: subColor, strokeWidth: 0 }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* ── SECTION 5: Drug Interactions ─── */}
+            {interactions.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-red-500/70">gpp_maybe</span>
+                  <h2 className="text-lg font-semibold text-slate-300">
+                    Drug Interactions
+                    <span className="ml-3 text-sm font-normal text-slate-500">
+                      {interactions.length} documented
+                    </span>
+                  </h2>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {interactions.map((inter, i) => (
+                    <div key={i} className={`p-5 rounded-2xl border transition-colors
+                      ${inter.isHigh
+                        ? 'bg-red-950/15 border-red-700/25 hover:border-red-600/40'
+                        : 'bg-slate-900/40 border-white/5 hover:border-white/10'}`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-base font-semibold text-slate-200">{inter.agent}</h4>
+                        <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border
+                          ${inter.isHigh
+                            ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                            : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
+                          {inter.isHigh ? '⚠ ' : '△ '}{inter.severity}
+                        </span>
+                      </div>
+                      <p className="text-sm text-slate-400 leading-relaxed">{inter.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* ── FULL WIDTH SLOTS ── */}
+          {/* ── RIGHT COLUMN (4 cols) ────────────────────────────────────────── */}
+          <div className="lg:col-span-4 space-y-6">
 
-          {/* SLOT 7 — Toxicity & Risk Analysis */}
-          <ToxicityRiskPanel substance={sub} />
+            {/* ── SECTION 6: Receptor Affinity Radar ─── */}
+            {radarData.length > 0 && (
+              <Card>
+                <SectionLabel icon="hexagon" label="Receptor Affinity Profile"
+                  badge={<span className="px-2.5 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-semibold">Ki Binding</span>} />
 
-          {/* SLOT 8 — Drug Interactions */}
-          {interactions.length > 0 && (
-            <section
-              className="space-y-5 pt-2"
-              aria-labelledby="interactions-heading"
-            >
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
-                    <span className="material-symbols-outlined text-xl" aria-hidden="true">gpp_maybe</span>
-                  </div>
-                  <div>
-                    <h2
-                      id="interactions-heading"
-                      className="text-xl font-black tracking-tight"
-                      style={{ color: '#A8B5D1' }}
-                    >
-                      Drug Interactions
-                    </h2>
-                    <p className="text-sm text-slate-600 font-black uppercase tracking-widest">
-                      {interactions.length} documented interaction{interactions.length > 1 ? 's' : ''}
-                    </p>
-                  </div>
+                <div className="h-64 -mx-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart cx="50%" cy="50%" outerRadius="72%" data={radarData}>
+                      <PolarGrid stroke="#1e293b" />
+                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 10, fontWeight: 600 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
+                      <Radar name={sub.name} dataKey="value" stroke={subColor} fill={subColor} fillOpacity={0.2} strokeWidth={1.5} />
+                      <Tooltip
+                        formatter={(_: any, __: any, props: any) => {
+                          const ki = props.payload?.ki;
+                          return [ki >= 10000 ? 'No significant binding' : `Ki = ${ki} nM`, props.payload?.subject];
+                        }}
+                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '10px', fontSize: '12px' }} />
+                    </RadarChart>
+                  </ResponsiveContainer>
                 </div>
-                {sub.riskTier && <RiskTierBadge tier={sub.riskTier} size="md" />}
+
+                <p className="text-xs text-slate-600 text-center mt-2 leading-relaxed">
+                  Higher = stronger binding affinity. Values ≥10,000 nM shown as no significant binding.
+                  {isAyahuasca && ' Values reflect DMT component only.'}
+                </p>
+              </Card>
+            )}
+
+            {/* ── SECTION 7: Neural Synthesis (AI) ─── */}
+            <Card className="bg-indigo-950/10 border-indigo-500/10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="size-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
+                  <span className="material-symbols-outlined text-xl animate-pulse">auto_awesome</span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-indigo-300">Neural Synthesis</h3>
+                  <p className="text-xs text-indigo-500/60">Live research grounding</p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {interactions.map((inter, i) => (
-                  <article
-                    key={i}
-                    className={`bg-slate-900/40 border rounded-[1.75rem] p-5 backdrop-blur-3xl shadow-xl transition-all hover:bg-slate-900/60 ${inter.risk === 'High' ? 'border-red-500/20 hover:border-red-500/40' : 'border-amber-500/15 hover:border-amber-500/30'
-                      }`}
-                  >
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-2.5">
-                        <span
-                          className="material-symbols-outlined text-lg shrink-0"
-                          style={{ color: inter.risk === 'High' ? '#ef4444' : '#f59e0b' }}
-                          aria-hidden="true"
-                        >
-                          {inter.risk === 'High' ? 'emergency' : 'warning'}
-                        </span>
-                        <h4 className="text-base font-black tracking-tight text-slate-200">
-                          {inter.agent}
-                        </h4>
-                      </div>
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-widest border shrink-0 ${inter.risk === 'High'
-                            ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                            : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                          }`}
-                      >
-                        {inter.severity}
-                      </span>
-                    </div>
-                    <p className="text-sm text-slate-400 leading-relaxed mb-3">{inter.description}</p>
-                    {inter.mechanism && (
-                      <p className="text-xs text-slate-600 font-medium leading-snug border-t border-white/5 pt-2 mt-2">
-                        <span className="font-bold text-slate-500">Mechanism:</span> {inter.mechanism}
-                      </p>
-                    )}
-                    {inter.sourceUrl && (
-                      <a
-                        href={inter.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] text-slate-600 hover:text-slate-400 transition-colors mt-2"
-                        aria-label={`View source: ${inter.source}`}
-                      >
-                        <span className="material-symbols-outlined text-[12px]" aria-hidden="true">open_in_new</span>
-                        {inter.source}
-                      </a>
-                    )}
-                  </article>
-                ))}
-              </div>
-            </section>
-          )}
+              {isAiLoading ? (
+                <div className="py-10 flex flex-col items-center gap-4">
+                  <div className="size-8 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
+                  <p className="text-xs text-indigo-500/60 animate-pulse">Accessing grounded registry…</p>
+                </div>
+              ) : aiAnalysis ? (
+                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-500">
+                  <p className="text-sm text-slate-300 leading-relaxed border-l-2 border-indigo-500/30 pl-4">
+                    {aiAnalysis}
+                  </p>
+                  <ResearchSources chunks={groundingChunks} />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Run a neural synthesis to correlate {sub.name} with the latest grounded clinical research from 2024–2025.
+                  </p>
+                  <button onClick={runAiSynthesis}
+                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+                    <span className="material-symbols-outlined text-lg">bolt</span>
+                    Initialize Synthesis
+                  </button>
+                </div>
+              )}
+            </Card>
 
-          {/* SLOT 9 — Clinical Archive placeholder */}
-          <section
-            className="bg-slate-900/20 border border-white/5 rounded-[2rem] p-6 text-center"
-            aria-labelledby="archive-heading"
-          >
-            <span className="material-symbols-outlined text-4xl text-slate-800 mt-2" aria-hidden="true">
-              folder_open
-            </span>
-            <h3
-              id="archive-heading"
-              className="text-sm font-black text-slate-600 uppercase tracking-widest mt-3"
-            >
-              Clinical Archive
-            </h3>
-            <p className="text-sm text-slate-600 font-medium mt-1">
-              No clinical archive entries available for {sub.name} yet.
-              Site-level data uploads will appear here.
-            </p>
-          </section>
+            {/* ── SECTION 8: Clinical Archive placeholder ─── */}
+            <Card>
+              <SectionLabel icon="folder_open" label="Clinical Archive" />
+              <div className="py-8 text-center space-y-2">
+                <span className="material-symbols-outlined text-3xl text-slate-700">inventory_2</span>
+                <p className="text-sm text-slate-600">No clinical archive entries available for {sub.name} yet.</p>
+                <p className="text-xs text-slate-700">Site uploads will appear here when added by authorized practitioners.</p>
+              </div>
+            </Card>
+          </div>
 
         </Section>
       </PageContainer>
