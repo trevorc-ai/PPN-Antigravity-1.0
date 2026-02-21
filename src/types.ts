@@ -36,6 +36,9 @@ export interface Substance {
   historicalEfficacy?: number[];
   imageUrl: string;
   rxnorm_cui?: number;
+  color?: string;
+  pubchemCid?: number;
+  smiles?: string;
 }
 
 export interface SafetyEvent {

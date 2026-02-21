@@ -1,23 +1,17 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
-import {
-  Bar, ResponsiveContainer,
-  BarChart, Cell
-} from 'recharts';
-import { SUBSTANCES, MEDICATIONS_LIST } from '../constants';
+import { SUBSTANCES } from '../constants';
 import { ResearchPhase } from '../types';
 
-const trendData = [
-  { name: 'Jan', val: 30 },
-  { name: 'Feb', val: 45 },
-  { name: 'Mar', val: 70 },
-  { name: 'Apr', val: 55 },
-  { name: 'May', val: 85 },
-  { name: 'Jun', val: 95 },
-  { name: 'Jul', val: 80 },
+const FILTERS = [
+  { label: 'All', value: 'all' },
+  { label: 'Tryptamines', value: 'tryptamine' },
+  { label: 'Phenethylamines', value: 'phenethylamine' },
+  { label: 'Dissociatives', value: 'dissociative' },
+  { label: 'Ibogaoids', value: 'ibogaoid' },
 ];
 
 const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
@@ -55,7 +49,10 @@ const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
 
           <div className="relative size-48 flex items-center justify-center">
             <div className="absolute inset-0 bg-[#030508] rounded-full border border-slate-800/40 shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] group-hover:scale-105 transition-transform duration-700"></div>
-            <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-700 opacity-50"></div>
+            <div
+              className="absolute inset-0 rounded-full blur-3xl opacity-50 group-hover:opacity-80 transition-all duration-700"
+              style={{ background: sub.color ? `${sub.color}25` : 'rgba(99,102,241,0.1)' }}
+            ></div>
 
             <img
               src={sub.imageUrl}
@@ -70,18 +67,32 @@ const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
         <div className="p-8 flex flex-col gap-4">
           <div className="min-w-0 space-y-1.5">
             <h3 className="text-3xl font-black tracking-tighter truncate group-hover:text-primary transition-colors" style={{ color: '#9DAEC8' }}>{sub.name}</h3>
-            <p className="text-[12px] text-slate-500 font-bold italic leading-relaxed line-clamp-2">
+            <p className="text-sm text-slate-500 font-medium italic leading-relaxed line-clamp-2">
               {sub.chemicalName}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="flex flex-wrap gap-2 pt-1">
             <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest border ${getPhaseStyle(sub.phase)}`}>
               {sub.name === 'Ketamine' ? 'APPROVED' : sub.phase.toUpperCase()}
             </span>
             <span className="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-lg text-xs font-black uppercase tracking-widest">
               {sub.class}
             </span>
+          </div>
+
+          {/* Efficacy bar */}
+          <div className="space-y-1.5 pt-1">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Aggregate Efficacy</span>
+              <span className="text-xs font-black" style={{ color: sub.color || '#53d22d' }}>{(sub.efficacy * 100).toFixed(0)}%</span>
+            </div>
+            <div className="w-full bg-slate-800/50 h-1.5 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-1000 ease-out"
+                style={{ width: `${sub.efficacy * 100}%`, background: sub.color || '#53d22d', boxShadow: `0 0 8px ${sub.color || '#53d22d'}60` }}
+              ></div>
+            </div>
           </div>
         </div>
       </div>
@@ -99,113 +110,65 @@ const SubstanceCard: React.FC<{ sub: any }> = ({ sub }) => {
 };
 
 const SubstanceCatalog: React.FC = () => {
-  const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState('Showing: All Classes');
+  const [activeFilter, setActiveFilter] = useState('all');
 
-  const [selectedMatrixSub, setSelectedMatrixSub] = useState(SUBSTANCES[0].name);
-  const [secondaryMed, setSecondaryMed] = useState('');
-
-  const handleSafetyScan = () => {
-    if (!secondaryMed.trim()) return;
-    navigate(`/interactions?agentA=${encodeURIComponent(selectedMatrixSub)}&agentB=${encodeURIComponent(secondaryMed)}`);
-  };
+  const filteredSubstances = activeFilter === 'all'
+    ? SUBSTANCES
+    : SUBSTANCES.filter(s => s.class?.toLowerCase().includes(activeFilter));
 
   return (
-    <div className="min-h-full flex flex-col lg:flex-row bg-gradient-to-br from-[#0a0e1a] via-[#050810] to-[#020408] animate-in fade-in duration-700">
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
-        <PageContainer className="max-w-7xl mx-auto p-6 sm:p-10 lg:p-12 space-y-12">
-          <Section spacing="default" className="space-y-10">
-            <div className="space-y-8">
-              <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Substances</h1>
-              <div className="flex flex-wrap gap-3">
-                {['Showing: All Classes', 'Clinical Stage Only', 'High Binding Affinity'].map(filter => (
-                  <button
-                    key={filter}
-                    onClick={() => setActiveFilter(filter)}
-                    className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all border ${activeFilter === filter
-                      ? 'bg-slate-700 border-slate-600'
-                      : 'bg-slate-900/50 border-slate-800 hover:bg-slate-800'
-                      }`}
-                    style={{ color: '#8B9DC3' }}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
+    <div className="min-h-full bg-gradient-to-br from-[#0a0e1a] via-[#050810] to-[#020408] animate-in fade-in duration-700">
+      <PageContainer className="max-w-7xl mx-auto p-6 sm:p-10 lg:p-12 space-y-12">
+        <Section spacing="default" className="space-y-10">
+
+          {/* Header */}
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Substance Catalog</h1>
+              <p className="text-base text-slate-500 font-medium">
+                {SUBSTANCES.length} substances indexed · Clinical-grade pharmacological reference
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-20">
-              {SUBSTANCES.map(sub => (
-                <SubstanceCard key={sub.id} sub={sub} />
+            {/* Filter pills */}
+            <div className="flex flex-wrap gap-3">
+              {FILTERS.map(filter => (
+                <button
+                  key={filter.value}
+                  onClick={() => setActiveFilter(filter.value)}
+                  className={`px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all border ${activeFilter === filter.value
+                    ? 'bg-slate-700 border-slate-600 text-slate-200'
+                    : 'bg-slate-900/50 border-slate-800 hover:bg-slate-800 text-slate-500'
+                    }`}
+                >
+                  {filter.label}
+                  {filter.value !== 'all' && (
+                    <span className="ml-2 opacity-60">
+                      {SUBSTANCES.filter(s => s.class?.toLowerCase().includes(filter.value)).length}
+                    </span>
+                  )}
+                </button>
               ))}
             </div>
-          </Section>
-        </PageContainer>
-      </div>
-
-      <aside className="w-full lg:w-[440px] border-l border-slate-800/60 bg-[#0a0c10] p-10 lg:sticky lg:top-0 h-full overflow-y-auto custom-scrollbar flex flex-col gap-8 backdrop-blur-xl shrink-0">
-        <div className="space-y-6">
-          <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-accent-amber font-black">health_and_safety</span>
-            <h3 className="text-xs font-black uppercase tracking-[0.2em]" style={{ color: '#A8B5D1' }}>Drug Safety Matrix</h3>
           </div>
 
-          <div className="space-y-5 bg-slate-900/40 p-6 rounded-[2rem] border border-slate-800/40 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-accent-amber/5 opacity-0 group-hover:opacity-10 transition-opacity"></div>
-
-            <p className="text-sm font-medium leading-relaxed italic relative z-10" style={{ color: '#8B9DC3' }}>
-              Perform immediate clinical interaction cross-referencing across the global registry.
-            </p>
-
-            <div className="space-y-4 relative z-10">
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Substance Compound</label>
-                <div className="relative">
-                  <select
-                    value={selectedMatrixSub}
-                    onChange={(e) => setSelectedMatrixSub(e.target.value)}
-                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-sm font-black focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-colors" style={{ color: '#8B9DC3' }}
-                  >
-                    {SUBSTANCES.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none">expand_more</span>
+          {/* Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-20">
+            {filteredSubstances.length > 0
+              ? filteredSubstances.map(sub => (
+                <SubstanceCard key={sub.id} sub={sub} />
+              ))
+              : (
+                <div className="col-span-full py-20 text-center">
+                  <p className="text-slate-500 text-base">No substances match this filter.</p>
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Secondary Medication</label>
-                <div className="relative">
-                  <select
-                    value={secondaryMed}
-                    onChange={(e) => setSecondaryMed(e.target.value)}
-                    className="w-full bg-[#05070a] border border-slate-800 rounded-xl h-12 px-4 text-sm font-black focus:ring-1 focus:ring-accent-amber appearance-none cursor-pointer hover:border-slate-700 transition-all" style={{ color: '#8B9DC3' }}
-                  >
-                    <option value="">Select Medication...</option>
-                    {MEDICATIONS_LIST.map(med => (
-                      <option key={med} value={med}>{med}</option>
-                    ))}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none">expand_more</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={handleSafetyScan}
-              disabled={!secondaryMed}
-              className="w-full py-4 bg-accent-amber hover:bg-amber-500 disabled:opacity-50 text-black text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-accent-amber/10 flex items-center justify-center gap-2 active:scale-95 relative z-10"
-            >
-              <span className="material-symbols-outlined text-lg">verified_user</span>
-              Analyze Interaction
-            </button>
-
-
+              )
+            }
           </div>
-        </div>
 
-
-      </aside>
-    </div >
+        </Section>
+      </PageContainer>
+    </div>
   );
 };
 

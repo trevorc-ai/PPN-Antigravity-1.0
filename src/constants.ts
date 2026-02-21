@@ -70,8 +70,11 @@ export const SUBSTANCES: Substance[] = [
     formula: 'C13H16ClNO',
     efficacy: 0.85,
     historicalEfficacy: [0.65, 0.72, 0.81, 0.85],
-    imageUrl: 'molecules/Ketamine.webp',
-    rxnorm_cui: 6130
+    imageUrl: '/molecules/Ketamine.webp',
+    rxnorm_cui: 6130,
+    color: '#3b82f6',
+    pubchemCid: 3821,
+    smiles: 'CNC1(CCCCC1=O)c2ccccc2Cl'
   },
   {
     id: 'MDM-4410',
@@ -85,8 +88,11 @@ export const SUBSTANCES: Substance[] = [
     formula: 'C11H15NO2',
     efficacy: 0.92,
     historicalEfficacy: [0.70, 0.82, 0.88, 0.92],
-    imageUrl: 'molecules/MDMA.webp',
-    rxnorm_cui: 6853
+    imageUrl: '/molecules/MDMA.webp',
+    rxnorm_cui: 6853,
+    color: '#a855f7',
+    pubchemCid: 1615,
+    smiles: 'CC(NC)Cc1ccc2c(c1)OCO2'
   },
   {
     id: 'PSL-2201',
@@ -100,8 +106,11 @@ export const SUBSTANCES: Substance[] = [
     formula: 'C12H17N2O4P',
     efficacy: 0.78,
     historicalEfficacy: [0.60, 0.68, 0.78],
-    imageUrl: 'molecules/Psilocybin.webp',
-    rxnorm_cui: 1433
+    imageUrl: '/molecules/Psilocybin.webp',
+    rxnorm_cui: 1433,
+    color: '#6366f1',
+    pubchemCid: 10258,
+    smiles: 'CN(C)CCc1c[nH]c2ccc(O)cc12'
   },
   {
     id: 'LSD-2500',
@@ -115,8 +124,11 @@ export const SUBSTANCES: Substance[] = [
     formula: 'C20H25N3O',
     efficacy: 0.82,
     historicalEfficacy: [0.55, 0.74, 0.82],
-    imageUrl: 'molecules/LSD-25.webp',
-    rxnorm_cui: 4439
+    imageUrl: '/molecules/LSD-25.webp',
+    rxnorm_cui: 4439,
+    color: '#ec4899',
+    pubchemCid: 5761,
+    smiles: 'CCN(CC)C(=O)[C@H]1CN([C@@H]2Cc3c[nH]c4cccc(c34)C2=C1)C'
   },
   {
     id: 'DMT-1102',
@@ -130,7 +142,10 @@ export const SUBSTANCES: Substance[] = [
     formula: 'C12H16N2',
     efficacy: 0.91,
     historicalEfficacy: [0.88, 0.91],
-    imageUrl: 'molecules/5-MeO-DMT.webp'
+    imageUrl: '/molecules/5-MeO-DMT.webp',
+    color: '#06b6d4',
+    pubchemCid: 1832,
+    smiles: 'CN(C)CCc1c[nH]c2ccc(OC)cc12'
   },
   {
     id: 'IBO-5501',
@@ -144,8 +159,11 @@ export const SUBSTANCES: Substance[] = [
     formula: 'C20H26N2O',
     efficacy: 0.74,
     historicalEfficacy: [0.65, 0.74],
-    imageUrl: 'molecules/Ibogaine.webp',
-    rxnorm_cui: 1243
+    imageUrl: '/molecules/Ibogaine.webp',
+    rxnorm_cui: 1243,
+    color: '#8b5cf6',
+    pubchemCid: 197101,
+    smiles: 'CC[C@H]1CN2CCc3c([nH]c4ccccc34)[C@H]2C[C@@H]1CC1NCCc2c1[nH]c1ccccc21'
   },
   {
     id: 'MES-3301',
@@ -159,8 +177,11 @@ export const SUBSTANCES: Substance[] = [
     formula: 'C11H17NO3',
     efficacy: 0.65,
     historicalEfficacy: [0.55, 0.60, 0.65],
-    imageUrl: 'molecules/Mescaline.webp',
-    rxnorm_cui: 6952
+    imageUrl: '/molecules/Mescaline.webp',
+    rxnorm_cui: 6952,
+    color: '#14b8a6',
+    pubchemCid: 4276,
+    smiles: 'COc1cc(CCN)cc(OC)c1OC'
   }
 ];
 
