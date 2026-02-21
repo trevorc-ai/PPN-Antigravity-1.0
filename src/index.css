@@ -51,6 +51,172 @@ select:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* =====================================================
+   PPN DESIGN SYSTEM — TYPOGRAPHY & LAYOUT
+   Single source of truth. ALL components must use these.
+   DO NOT write ad-hoc text-size Tailwind classes for
+   headings, body, or labels — use these classes instead.
+
+   Hierarchy:
+     .ppn-page-title   → h1: page title (Dashboard H1 etc)
+     .ppn-section-title → h2: major section heading
+     .ppn-card-title   → h3: card/panel heading
+     .ppn-label        → h4/th/dt: field group label
+     .ppn-body         → p/li: body text (MINIMUM allowed)
+     .ppn-meta         → span/time: metadata, badges, dates
+     .ppn-caption      → small: chart legends, fine print only
+
+   FORBIDDEN below ppn-meta (12px) for UI text.
+   SVG/chart text is the only exception (see svg text rule).
+   ===================================================== */
+
+/* H1 — page-level title */
+.ppn-page-title {
+  font-size: 2.25rem;
+  /* 36px = text-4xl */
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #A8B5D1;
+  /* site default slate */
+}
+
+/* H2 — section heading */
+.ppn-section-title {
+  font-size: 1.5rem;
+  /* 24px = text-2xl */
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #A8B5D1;
+}
+
+/* H3 — card/panel heading */
+.ppn-card-title {
+  font-size: 1.125rem;
+  /* 18px = text-lg */
+  font-weight: 800;
+  line-height: 1.3;
+  color: #cbd5e1;
+  /* slate-300 */
+}
+
+/* H4 / form group label */
+.ppn-label {
+  font-size: 0.875rem;
+  /* 14px = text-sm */
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  /* slate-400 */
+}
+
+/* Body text — MINIMUM for paragraphs, list items, table cells */
+.ppn-body {
+  font-size: 0.9375rem;
+  /* 15px ≈ text-[15px] */
+  font-weight: 400;
+  line-height: 1.65;
+  color: #A8B5D1;
+}
+
+/* Metadata — badges, timestamps, secondary info. 12px min. */
+.ppn-meta {
+  font-size: 0.75rem;
+  /* 12px = text-xs */
+  font-weight: 600;
+  line-height: 1.5;
+  color: #64748b;
+  /* slate-500 */
+}
+
+/* Caption — chart legends ONLY. Not for UI labels. */
+.ppn-caption {
+  font-size: 0.6875rem;
+  /* 11px — chart labels only */
+  font-weight: 500;
+  line-height: 1.4;
+  color: #475569;
+  /* slate-600 */
+}
+
+/* =====================================================
+   PPN PHASE COLOR VARIABLES
+   Use these CSS variables for phase-specific theming.
+   DO NOT use raw Tailwind phase colors in components —
+   pull from these variables so theming stays consistent.
+   ===================================================== */
+:root {
+  /* Phase 1: Preparation — Indigo (calm, methodical) */
+  --phase1-primary: #6366f1;
+  /* indigo-500 */
+  --phase1-bg: rgba(49, 46, 129, 0.15);
+  --phase1-border: rgba(99, 102, 241, 0.45);
+  --phase1-text: #c7d2fe;
+  /* indigo-200 */
+
+  /* Phase 2: Dosing — Amber (active, focused) */
+  --phase2-primary: #f59e0b;
+  /* amber-500 */
+  --phase2-bg: rgba(120, 53, 15, 0.15);
+  --phase2-border: rgba(245, 158, 11, 0.45);
+  --phase2-text: #fde68a;
+  /* amber-200 */
+
+  /* Phase 3: Integration — Teal (healing, growth) */
+  --phase3-primary: #14b8a6;
+  /* teal-500 */
+  --phase3-bg: rgba(19, 78, 74, 0.15);
+  --phase3-border: rgba(20, 184, 166, 0.45);
+  --phase3-text: #99f6e4;
+  /* teal-200 */
+
+  /* Semantic — WARNING/ADVERSE ONLY */
+  --color-warning: #f59e0b;
+  /* amber */
+  --color-danger: #ef4444;
+  /* red — for alerts ONLY */
+  --color-success: #14b8a6;
+  /* teal — completed states */
+  --color-info: #6366f1;
+  /* indigo */
+}
+
+/* =====================================================
+   FORM FIELD STANDARDS
+   Consistent input/label sizing across ALL forms.
+   Use these as the default — override only with reason.
+   ===================================================== */
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  /* 14px */
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.04em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  /* 15px */
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  border-radius: 0.5rem;
+  color: #cbd5e1;
+  transition: border-color 0.15s ease;
+}
+
+.form-input:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 0;
+  border-color: #6366f1;
+}
+
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;

@@ -1,256 +1,196 @@
 ---
 name: frontend-best-practices
-description: Team-specific linting rules, coding standards, and design system documentation for the PPN Research Portal frontend.
+description: |-
+  MANDATORY read before writing ANY React component or CSS.
+  Defines the PPN design system: typography classes, color tokens,
+  phase palette, and component patterns. Violations are QA failures.
 ---
 
-# Frontend Best Practices Skill
+# PPN Frontend Design System — BUILDER Reference
 
-## 🚨 RULE ZERO — IDENTITY (Read Before Writing a Single Line of Code)
-
-Every response you send to the user MUST start AND end with:
-```
-==== BUILDER ====
-```
-No exceptions. This is a non-negotiable accessibility requirement. Trevor cannot tell which agent he is speaking with without explicit text identification.
-
----
-
-## 🎯 Design System Compliance
-
-### **Color Palette (Strict)**
-
-```css
-/* Primary Brand */
---emerald-500: #10b981
---emerald-400: #34d399
-
-/* Backgrounds & Text */
---slate-900: #0f172a
---slate-800: #1e293b
---slate-700: #334155
---slate-300: #cbd5e1
---slate-100: #f1f5f9
-
-/* Semantic */
---rose-500: #f43f5e    /* Error */
---amber-500: #f59e0b   /* Warning */
---blue-500: #3b82f6    /* Info */
-```
-
-**Usage:** ✅ `bg-emerald-500` | ❌ `bg-[#10b981]`
+> **This skill is the single source of truth for all UI consistency.**
+> If you are writing a component and reaching for `text-xl font-bold` or `text-2xl font-black` directly in Tailwind — STOP. Use the CSS classes below instead.
 
 ---
 
-### **Typography**
+## 🚨 RULE ZERO — PRE-CODE CHECKLIST
 
-**Font Sizes (Minimum Enforced):**
-- Body: 16px (`text-base`)
-- Labels: 14px (`text-sm`)
-- Headings: 24px+ (`text-2xl`)
+Before writing a single JSX element, answer YES to all of the below:
 
-**❌ NEVER use `text-xs` (12px) except chart legends**
+- [ ] I have read the **Typography** section and know which `.ppn-*` class to use
+- [ ] I know the **phase color** for this component (indigo/amber/teal — see Color System)
+- [ ] I have NOT used `text-[8px]`, `text-[9px]`, `text-[10px]`, or `text-[11px]` anywhere
+- [ ] I have NOT used red for anything other than a warning/adverse event
+- [ ] I have NOT used `bg-emerald-500` or `bg-emerald-600` as a solid button background
 
----
-
-### **Spacing**
-
-- Card padding: `p-6` or `p-8`
-- Section spacing: `space-y-8`
-- Grid gaps: `gap-6`
+If any answer is NO — fix it before handing off.
 
 ---
 
-## 🔒 Accessibility (Non-Negotiable)
+## 1. TYPOGRAPHY — THE LAW
 
-### **Color Contrast**
+All typography uses CSS classes defined in `src/index.css`. **Use these, not ad-hoc Tailwind sizes.**
 
-- Normal text: 7:1 (AAA) or 4.5:1 (AA minimum)
-- Large text: 4.5:1 (AAA) or 3:1 (AA minimum)
+| Class | Element | Size | Use for |
+|---|---|---|---|
+| `.ppn-page-title` | `<h1>` | 36px / `text-4xl` | Page-level titles (Dashboard, page headers) |
+| `.ppn-section-title` | `<h2>` | 24px / `text-2xl` | Major section headings within a page |
+| `.ppn-card-title` | `<h3>` | 18px / `text-lg` | Card titles, panel headings, form section titles |
+| `.ppn-label` | `<h4>`, `<label>` | 14px / `text-sm` | Form group labels, field headings (uppercase) |
+| `.ppn-body` | `<p>`, `<li>`, `<td>` | 15px | All body text, descriptions, table content |
+| `.ppn-meta` | `<span>`, `<time>`, `<small>` | 12px / `text-xs` | Badges, timestamps, metadata **only** |
+| `.ppn-caption` | `<small>` in charts | 11px | **Chart legends ONLY. Never for UI labels.** |
 
-**Check:** Use browser DevTools Accessibility panel
+### Usage Examples
 
----
+```tsx
+// ✅ CORRECT
+<h1 className="ppn-page-title">Patient Dashboard</h1>
+<h2 className="ppn-section-title">Clinical Timeline</h2>
+<h3 className="ppn-card-title">Session Preparation</h3>
+<label className="ppn-label">Monitoring Date</label>
+<p className="ppn-body">Document patient consent before any clinical activity begins.</p>
+<span className="ppn-meta">Step 1 of 5</span>
 
-### **Color Blindness Support**
-
-**❌ BAD - Color only:**
-```jsx
-<div className="text-rose-500">Error</div>
+// ❌ WRONG — ad-hoc sizes, will be rejected by INSPECTOR
+<h1 className="text-2xl font-bold text-slate-200">Patient Dashboard</h1>
+<p className="text-xs text-slate-300">Some description</p>
+<span className="text-[10px] text-slate-500">Step 1</span>
 ```
 
-**✅ GOOD - Color + Icon + Text:**
-```jsx
-<div className="flex items-center gap-2 text-rose-500">
-  <AlertTriangle className="w-5 h-5" />
-  <span>Error: Unable to save</span>
+### Tailwind Size Override Rules (when you MUST use Tailwind directly)
+Only acceptable when combining a `.ppn-*` class would create conflicts.
+- Minimum body: `text-sm` (14px)
+- Minimum metadata: `text-xs` (12px)
+- **NEVER**: `text-[8px]`, `text-[9px]`, `text-[10px]`, `text-[11px]`
+
+---
+
+## 2. COLOR SYSTEM — THE LAW
+
+### Phase Colors (locked — do not deviate)
+
+```
+Phase 1 — Preparation = INDIGO
+  CSS var:  --phase1-primary (#6366f1)
+  Tailwind: indigo-500 / indigo-900 / indigo-950
+
+Phase 2 — Dosing = AMBER
+  CSS var:  --phase2-primary (#f59e0b)
+  Tailwind: amber-500 / amber-900 / amber-950
+
+Phase 3 — Integration = TEAL
+  CSS var:  --phase3-primary (#14b8a6)
+  Tailwind: teal-500 / teal-900 / teal-950
+```
+
+### Semantic Colors (locked)
+
+```
+RED     → Warnings, adverse events, safety flags ONLY
+          Never use red for a standard UI action or status
+AMBER   → Phase 2 active state, moderate warnings
+TEAL    → Completed/success states, Phase 3
+INDIGO  → Phase 1, info, primary CTA buttons
+SLATE   → Neutral text, borders, backgrounds
+```
+
+### Prohibited Color Uses
+
+```tsx
+// ❌ NEVER — bright solid background buttons
+<button className="bg-emerald-500 ...">Start</button>
+<button className="bg-emerald-600 ...">Submit</button>
+
+// ❌ NEVER — red for non-clinical states
+<div className="bg-red-500/60 ...">Phase 1 Card</div>
+<span className="text-red-400">Completed</span>
+
+// ✅ CORRECT — phase-appropriate button
+<button className="bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 ...">
+  Continue
+</button>
+```
+
+### Text Brightness Cap (protected — do not remove)
+`text-white` renders as `color: rgb(226 232 240)` (slate-200) site-wide via `index.css`. This is intentional — pure white causes eye strain. **Do not override.**
+
+---
+
+## 3. COMPONENT PATTERNS
+
+### Card (standard)
+```tsx
+<div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
+  <h3 className="ppn-card-title mb-4">Card Heading</h3>
+  <p className="ppn-body">Body content here.</p>
 </div>
 ```
 
----
-
-### **Keyboard Navigation**
-
-All interactive elements MUST:
-- Be reachable via Tab
-- Have visible focus states
-- Work with Enter/Space
-
-```jsx
-<button className="
-  focus:outline-none 
-  focus:ring-2 
-  focus:ring-emerald-500
-">
-  Submit
-</button>
-```
-
----
-
-## 📝 Code Standards
-
-### **TypeScript (Strict)**
-
-```typescript
-// ✅ GOOD - Explicit types
-interface ProtocolData {
-  protocol_id: string;
-  substance_id: number;
-}
-
-const fetchProtocol = async (id: string): Promise<ProtocolData> => {
-  // ...
-};
-
-// ❌ BAD - Any types
-const fetchProtocol = async (id: any): Promise<any> => {
-  // ...
-};
-```
-
-**No `any` types allowed**
-
----
-
-### **Component Structure**
-
+### Form Field (standard)
 ```tsx
-import { FC, useState } from 'react';
-
-interface Props {
-  title: string;
-  value: number;
-}
-
-export const Component: FC<Props> = ({ title, value }) => {
-  const [state, setState] = useState<string>('');
-  
-  const handleClick = () => {
-    // Event handler
-  };
-  
-  return <div>{/* Content */}</div>;
-};
+<div className="space-y-2">
+  <label className="ppn-label" htmlFor="field-id">Field Label</label>
+  <input
+    id="field-id"
+    className="form-input"
+    type="text"
+  />
+</div>
 ```
+> `form-input` and `form-label` are defined in `src/index.css`. Use them.
 
----
-
-### **Import Organization**
-
-```typescript
-// 1. React
-import { FC, useState } from 'react';
-
-// 2. Third-party
-import { AlertTriangle } from 'lucide-react';
-
-// 3. Internal
-import { supabase } from '@/lib/supabaseClient';
-
-// 4. Components
-import { Button } from '@/components/ui/Button';
-
-// 5. Types
-import type { Protocol } from '@/types/protocol';
-```
-
----
-
-## 🎨 Component Patterns
-
-### **Card (Glassmorphism)**
-
+### Form Footer — 3 buttons (ALL Phase 1 forms)
 ```tsx
-<div className="
-  bg-slate-800/50 backdrop-blur-sm
-  border border-slate-700/50
-  rounded-xl p-6
-  hover:border-slate-600/50 
-  transition-all
-">
-  {/* Content */}
+<div className="flex items-center gap-3 pt-2 pb-4">
+  <button className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-slate-300 text-sm font-semibold">
+    <ChevronLeft className="w-4 h-4" />
+    Back
+  </button>
+  <div className="flex-1" />
+  <button className="flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-600/50 bg-slate-800/60 text-slate-300 text-sm font-semibold">
+    <LogOut className="w-4 h-4" />
+    Save & Exit
+  </button>
+  <button className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 text-sm font-black uppercase tracking-widest">
+    <CheckCircle className="w-4 h-4" />
+    Save & Continue
+    <ChevronRight className="w-4 h-4" />
+  </button>
 </div>
 ```
 
----
-
-### **Button Variants**
-
+### Phase Panel Outer Border
 ```tsx
-// Primary CTA
-<button className="
-  px-6 py-3
-  bg-emerald-500 hover:bg-emerald-400
-  text-slate-900 font-semibold
-  rounded-lg shadow-lg
-">
-  Primary
-</button>
-
-// Secondary
-<button className="
-  px-6 py-3
-  border border-slate-600
-  text-slate-300
-  rounded-lg
-">
-  Secondary
-</button>
+// Pull from phasePalette in WellnessJourney.tsx — do not duplicate inline
+// Phase 1: border-indigo-500/50 | shadow indigo | bg-indigo-950/15
+// Phase 2: border-amber-500/50  | shadow amber  | bg-amber-950/15
+// Phase 3: border-teal-500/50   | shadow teal   | bg-teal-950/15
 ```
 
 ---
 
-## 🚫 Linting Rules
+## 4. ACCESSIBILITY (Non-Negotiable)
 
-### **ESLint**
-
-```json
-{
-  "rules": {
-    "no-console": "warn",
-    "@typescript-eslint/no-explicit-any": "error",
-    "react-hooks/exhaustive-deps": "warn"
-  }
-}
-```
-
-**Common Violations:**
-- ❌ Console logs in production
-- ❌ Unused variables
-- ❌ Missing useEffect dependencies
+- Min font sizes already enforced by `index.css` global rules
+- Color + icon + text for ALL state indicators (never color alone)
+- Focus rings via `index.css` `:focus-visible` — don't override with `focus:outline-none`
+- `aria-label` on all icon-only buttons
+- `role="progressbar"` with `aria-valuenow`/`aria-valuemax` on progress elements
 
 ---
 
-## ✅ Pre-Commit Checklist
+## 5. PRE-COMMIT CHECKLIST (INSPECTOR verifies all of these)
 
-- [ ] No TypeScript errors
-- [ ] No ESLint errors
-- [ ] All imports organized
-- [ ] No console.log statements
-- [ ] Accessibility requirements met
-- [ ] Font sizes ≥14px
-- [ ] Color + icon + text for states
-- [ ] Responsive at all breakpoints
+- [ ] All heading elements use `.ppn-page-title`, `.ppn-section-title`, or `.ppn-card-title`
+- [ ] All body text uses `.ppn-body` or Tailwind `text-sm` minimum
+- [ ] No `text-[8..11px]` anywhere in the component
+- [ ] No `bg-emerald-500` / `bg-emerald-600` solid backgrounds
+- [ ] No red used outside of warning/adverse-event contexts
+- [ ] Phase color matches: P1=indigo, P2=amber, P3=teal
+- [ ] Form footer uses Back | Save & Exit | Save & Continue pattern
+- [ ] All icon-only buttons have `aria-label`
+- [ ] TypeScript: no `any` types
 
 ---
 
