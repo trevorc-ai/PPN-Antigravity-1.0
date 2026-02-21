@@ -201,21 +201,21 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     onClick={() => toggleArrayItem('safety_concern_ids', concern.id)}
                                     aria-pressed={selected}
                                     className={[
-                                        'px-4 py-4 rounded-lg text-left font-medium transition-all border-l-4',
+                                        'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4',
                                         selected
                                             ? concern.severity === 'critical'
-                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-100'
+                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-300'
                                                 : concern.severity === 'high'
-                                                    ? 'bg-orange-900/70 border border-orange-500/60 border-l-orange-400 text-orange-100'
-                                                    : 'bg-sky-900/60 border border-sky-500/50 border-l-sky-400 text-sky-100'
+                                                    ? 'bg-orange-900/70 border border-orange-500/60 border-l-orange-400 text-orange-300'
+                                                    : 'bg-sky-900/60 border border-sky-500/50 border-l-sky-400 text-sky-300'
                                             : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
                                     ].join(' ')}
                                 >
-                                    <div className="flex items-start gap-2.5">
-                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 mt-0.5 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-sm font-semibold leading-snug">{concern.name}</div>
-                                            <div className="flex items-center gap-1 text-xs font-bold mt-1 opacity-80">
+                                    <div className="flex items-center gap-2.5">
+                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
+                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                            <div className="text-sm font-semibold leading-none">{concern.name}</div>
+                                            <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
                                                 {concern.severity === 'critical' && <><AlertTriangle className="w-3 h-3" aria-hidden="true" /> Critical</>}
                                                 {concern.severity === 'high' && <><ArrowUp className="w-3 h-3" aria-hidden="true" /> High</>}
                                                 {concern.severity === 'moderate' && <><Minus className="w-3 h-3" aria-hidden="true" /> Moderate</>}
@@ -307,19 +307,19 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     onClick={() => toggleArrayItem('action_taken_ids', action.id)}
                                     aria-pressed={selected}
                                     className={[
-                                        'px-4 py-4 rounded-lg text-left font-medium transition-all border-l-4',
+                                        'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4',
                                         selected
                                             ? action.urgency === 'immediate'
-                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-100'
-                                                : 'bg-amber-900/70 border border-amber-500/60 border-l-amber-400 text-amber-100'
+                                                ? 'bg-rose-900/70 border border-rose-500/70 border-l-rose-400 text-rose-300'
+                                                : 'bg-amber-900/70 border border-amber-500/60 border-l-amber-400 text-amber-300'
                                             : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
                                     ].join(' ')}
                                 >
-                                    <div className="flex items-start gap-2.5">
-                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 mt-0.5 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-sm font-semibold leading-snug">{action.name}</div>
-                                            <div className="flex items-center gap-1 text-xs font-bold mt-1 opacity-80">
+                                    <div className="flex items-center gap-2.5">
+                                        <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-30'}`} aria-hidden="true" />
+                                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                                            <div className="text-sm font-semibold leading-none">{action.name}</div>
+                                            <div className="flex items-center gap-1 text-xs font-bold opacity-70 flex-shrink-0">
                                                 {action.urgency === 'immediate' && <><Zap className="w-3 h-3" aria-hidden="true" /> Immediate</>}
                                                 {action.urgency === 'urgent' && <><Clock className="w-3 h-3" aria-hidden="true" /> Urgent</>}
                                             </div>
