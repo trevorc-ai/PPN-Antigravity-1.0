@@ -22,5 +22,6 @@ Now that core forms are wired up and nearly complete, the user requested an upda
 - Mock up the first 3 sub-pages (e.g., Guide: Interaction Checker).
 - Introduce a visual search bar mock at the top.
 - Make it accessible and fluidly responsive.
+- **Image Styling Note:** All `<img>` tags or wrappers containing the user's screenshots must automatically apply `rounded-xl` (or similar) and a subtle drop shadow (`shadow-lg border border-slate-700/50`) via Tailwind. Do NOT rely on the source images to have rounded corners.
 
 **Owner: BUILDER | Status: 03_BUILD**

@@ -105,9 +105,16 @@ const Landing: React.FC = () => {
       {/* ── Sticky Nav Bar ─────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a1628]/80 backdrop-blur-md border-b border-slate-800/60">
         <div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-lg font-black tracking-tight text-slate-200 leading-none">PPN</span>
-            <span className="text-lg font-black tracking-tight text-primary leading-none">Portal</span>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+              <span className="material-symbols-outlined text-slate-300 text-lg">neurology</span>
+            </div>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight leading-none">
+                <span style={{ color: '#8B9DC3' }}>PPN</span>{' '}
+                <span className="bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">Portal</span>
+              </h1>
+            </div>
           </div>
         </div>
         <button
@@ -561,7 +568,7 @@ const Landing: React.FC = () => {
             {[
               {
                 step: 1,
-                title: "Join Alliance",
+                title: "Join the Alliance",
                 desc: "Request access and verify credentials",
                 icon: Users
               },
@@ -949,7 +956,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Committed to Veteran Care */}
-      <section className="py-32 px-6 relative z-10 border-y border-indigo-900/30 bg-gradient-to-b from-indigo-950/20 to-slate-900 overflow-hidden">
+      <section className="py-32 px-6 relative z-10 border-y border-indigo-900/30 bg-gradient-to-b from-indigo-950/20 to-transparent overflow-hidden">
         {/* Subtle patriotic/honor background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
 
@@ -1014,9 +1021,17 @@ const Landing: React.FC = () => {
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div className="space-y-6">
-              <h1 className="text-2xl font-black tracking-tighter cursor-default">
-                PPN <span className="text-primary font-bold">Portal</span>
-              </h1>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-slate-300 text-lg">neurology</span>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-black tracking-tight cursor-default">
+                    <span style={{ color: '#8B9DC3' }}>PPN</span>{' '}
+                    <span className="bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">Portal</span>
+                  </h1>
+                </div>
+              </div>
               <p className="text-sm text-slate-500 leading-relaxed font-medium">
                 Clinical intelligence and safety infrastructure for licensed psychedelic wellness practitioners.
               </p>

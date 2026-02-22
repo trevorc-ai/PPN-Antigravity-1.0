@@ -83,7 +83,7 @@ const QuoteCard: React.FC<{ quote: typeof quotes[0] }> = ({ quote }) => (
 
 export default function AllianceWall() {
     return (
-        <section className="py-32 relative overflow-hidden bg-slate-900 z-10">
+        <section className="py-32 relative overflow-hidden bg-transparent z-10">
             {/* Background Texture & Glows */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,black,transparent)] pointer-events-none" />
             <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-40" />
@@ -100,9 +100,8 @@ export default function AllianceWall() {
                 </p>
             </div>
 
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative h-[600px] sm:h-[800px] overflow-hidden">
-                {/* CSS Mask for vertical fading */}
-                <div className="absolute inset-0 z-20 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #0f172a 0%, transparent 20%, transparent 80%, #0f172a 100%)' }} />
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative h-[600px] sm:h-[800px] overflow-hidden" style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)', maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)' }}>
+                {/* CSS Mask for vertical fading removed from dom and added to parent style */}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full items-start">
 
@@ -110,29 +109,29 @@ export default function AllianceWall() {
                     <motion.div
                         className="flex flex-col gap-0"
                         animate={{ y: [0, -1000] }}
-                        transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+                        transition={{ repeat: Infinity, duration: 80, ease: "linear" }}
                     >
                         {col1.map((quote, idx) => (
                             <QuoteCard key={`col1-${idx}`} quote={quote} />
                         ))}
                     </motion.div>
 
-                    {/* Column 2 - Scrolling DOWN */}
+                    {/* Column 2 - Same Direction but different offset speed */}
                     <motion.div
                         className="hidden md:flex flex-col gap-0"
-                        animate={{ y: [-1000, 0] }}
-                        transition={{ repeat: Infinity, duration: 45, ease: "linear" }}
+                        animate={{ y: [0, -1000] }}
+                        transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
                     >
                         {col2.map((quote, idx) => (
                             <QuoteCard key={`col2-${idx}`} quote={quote} />
                         ))}
                     </motion.div>
 
-                    {/* Column 3 - Scrolling UP (offset speed) */}
+                    {/* Column 3 - Same direction (offset speed) */}
                     <motion.div
                         className="hidden lg:flex flex-col gap-0"
                         animate={{ y: [0, -1000] }}
-                        transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
+                        transition={{ repeat: Infinity, duration: 85, ease: "linear" }}
                     >
                         {col3.map((quote, idx) => (
                             <QuoteCard key={`col3-${idx}`} quote={quote} />

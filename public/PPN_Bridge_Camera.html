@@ -246,6 +246,7 @@
             font-family: var(--font);
             transition: border-color 0.15s, box-shadow 0.15s;
             -webkit-appearance: none;
+            appearance: none;
         }
 
         .field input:focus {
@@ -454,7 +455,18 @@
                 <span class="header__brand">PPN Portal</span>
             </div>
             <h1>Patient Bridge</h1>
-            <p>Scan a patient label to generate a zero-knowledge PPN ID instantly.</p>
+            <p style="margin-bottom: 12px;">Scan a patient label to generate a zero-knowledge PPN ID instantly.</p>
+            <div
+                style="background: rgba(43, 116, 243, 0.1); border-radius: 12px; padding: 16px; text-align: left; font-size: 14px; line-height: 1.6; color: var(--text);">
+                <ol style="margin-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+                    <li><strong>Line up your camera</strong> with the patient's wristband, intake form, or chart label.
+                    </li>
+                    <li><strong>Ensure good lighting</strong> and hold the device steady so the text is clear.</li>
+                    <li><strong>Tap "Scan Patient Label"</strong> to instantly read and extract the data without saving
+                        any image.</li>
+                    <li><strong>Review the generated ID</strong> below, and tap to copy it to your clipboard.</li>
+                </ol>
+            </div>
         </header>
 
         <!-- Privacy guarantee -->
