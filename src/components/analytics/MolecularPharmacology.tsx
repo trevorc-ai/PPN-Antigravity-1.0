@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
@@ -6,6 +6,8 @@ import {
     FlaskConical, Dna, Clock, Zap, Activity,
     ArrowRight, Microscope, Info
 } from 'lucide-react';
+import { ChartSkeleton } from './ChartSkeleton';
+import { CustomTooltip } from './CustomTooltip';
 
 // --- MOCK PHARMACOLOGY DATA ---
 interface MoleculeData {
@@ -77,6 +79,13 @@ const MOLECULES: Record<string, MoleculeData> = {
 
 export default function MolecularPharmacology() {
     const [activeMol, setActiveMol] = useState('Psilocybin');
+    const [chartReady, setChartReady] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setChartReady(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
     const data = MOLECULES[activeMol];
 
     return (
@@ -116,39 +125,43 @@ export default function MolecularPharmacology() {
                     <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest absolute top-4 left-4 z-10">
                         Binding Strength (Relative Potency)
                     </h3>
-                    <div className="flex-1 w-full h-full min-h-[250px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data.affinities} layout="vertical" margin={{ top: 40, right: 30, left: 40, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#334155" opacity={0.3} />
-                                <XAxis type="number" hide domain={[0, 100]} />
-                                <YAxis
-                                    dataKey="receptor"
-                                    type="category"
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                                    width={60}
-                                    interval={0}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: '#ffffff', opacity: 0.05 }}
-                                    content={({ active, payload }) => {
-                                        if (active && payload && payload.length) {
+                    <div className="flex-1 w-full h-full min-h-[250px]" role="img" aria-label={`Bar chart showing receptor binding affinities for ${data.name}`}>
+                        {!chartReady ? (
+                            <ChartSkeleton height="100%" />
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={data.affinities} layout="vertical" margin={{ top: 40, right: 30, left: 40, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#334155" opacity={0.3} />
+                                    <XAxis type="number" hide domain={[0, 100]} />
+                                    <YAxis
+                                        dataKey="receptor"
+                                        type="category"
+                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                                        width={60}
+                                        interval={0}
+                                    />
+                                    <Tooltip
+                                        cursor={{ fill: '#ffffff', opacity: 0.05 }}
+                                        content={({ active, payload, label }) => {
+                                            if (!payload || !payload.length) return null;
                                             return (
-                                                <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl z-50">
-                                                    <p className="text-sm font-bold text-slate-300 mb-1">{payload[0].payload.receptor}</p>
-                                                    <p className="text-sm text-indigo-400 uppercase tracking-widest">{payload[0].payload.role}</p>
-                                                </div>
+                                                <CustomTooltip
+                                                    active={active}
+                                                    payload={[{ ...payload[0], name: 'Binding Affinity', value: `${payload[0].value}%` }]}
+                                                    label={label as string}
+                                                    clinicalContext={`Role: ${payload[0].payload.role}`}
+                                                />
                                             );
-                                        }
-                                        return null;
-                                    }}
-                                />
-                                <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={32} animationDuration={800}>
-                                    {data.affinities.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={data.color} fillOpacity={0.8} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                                        }}
+                                    />
+                                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={32} animationDuration={800}>
+                                        {data.affinities.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={data.color} fillOpacity={0.8} />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Cell, ReferenceArea, ReferenceLine
@@ -7,6 +7,7 @@ import {
     Users, Search, Lightbulb, X, Activity,
     Calendar, Pill, ArrowRight, BrainCircuit, Info, FileText
 } from 'lucide-react';
+import { ChartSkeleton } from './ChartSkeleton';
 
 // --- SCHEMA-READY MOCK DATA ---
 // This structure mimics the future Supabase response interface
@@ -232,9 +233,17 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
     </div>
 );
 
-export default function PatientConstellation() {
+export default function PatientConstellation({ data }: { data?: PatientNode[] }) {
     const [selectedPatient, setSelectedPatient] = useState<PatientNode | null>(null);
     const [showGuide, setShowGuide] = useState(false);
+    const [chartReady, setChartReady] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setChartReady(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const chartData = data || MOCK_DATA;
 
     return (
         <div className="w-full bg-[#0f1218] p-3 sm:p-6 rounded-2xl border border-slate-800 shadow-2xl relative h-[400px] sm:h-[500px] flex flex-col">
@@ -274,56 +283,60 @@ export default function PatientConstellation() {
             )}
 
             {/* Chart Area */}
-            <div className="flex-1 w-full min-h-0 relative z-0">
-                <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.5} />
-                        <XAxis
-                            type="number" dataKey="x" name="Resistance" domain={[0, 100]}
-                            tick={{ fill: '#64748b', fontSize: 11 }}
-                            label={{ value: 'Treatment Resistance Score', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 11, fontWeight: 700 }}
-                        />
-                        <YAxis
-                            type="number" dataKey="y" name="Severity" domain={[0, 30]}
-                            tick={{ fill: '#64748b', fontSize: 11 }}
-                            label={{ value: 'Symptom Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 11, fontWeight: 700 }}
-                        />
-                        <Tooltip
-                            cursor={{ strokeDasharray: '3 3' }}
-                            content={({ active, payload }) => {
-                                if (active && payload && payload.length) {
-                                    const data = payload[0].payload;
-                                    return (
-                                        <div className="bg-slate-900/95 backdrop-blur border border-slate-700 p-3 rounded-lg shadow-xl z-50">
-                                            <p className="text-slate-300 font-bold text-sm mb-1">{data.id}</p>
-                                            <p className="text-sm text-slate-300">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
-                                            <p className="text-sm text-slate-300">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
-                                        </div>
-                                    );
-                                }
-                                return null;
-                            }}
-                        />
+            <div className="flex-1 w-full min-h-0 relative z-0" role="img" aria-label="Scatter plot visualizing patient outcomes based on treatment resistance and symptom severity.">
+                {!chartReady ? (
+                    <ChartSkeleton height="100%" />
+                ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.5} />
+                            <XAxis
+                                type="number" dataKey="x" name="Resistance" domain={[0, 100]}
+                                tick={{ fill: '#64748b', fontSize: 11 }}
+                                label={{ value: 'Treatment Resistance Score', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 11, fontWeight: 700 }}
+                            />
+                            <YAxis
+                                type="number" dataKey="y" name="Severity" domain={[0, 30]}
+                                tick={{ fill: '#64748b', fontSize: 11 }}
+                                label={{ value: 'Symptom Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 11, fontWeight: 700 }}
+                            />
+                            <Tooltip
+                                cursor={{ strokeDasharray: '3 3' }}
+                                content={({ active, payload }) => {
+                                    if (active && payload && payload.length) {
+                                        const data = payload[0].payload;
+                                        return (
+                                            <div className="bg-slate-900/95 backdrop-blur border border-slate-700 p-3 rounded-lg shadow-xl z-50">
+                                                <p className="text-slate-300 font-bold text-sm mb-1">{data.id}</p>
+                                                <p className="text-sm text-slate-300">Diagnosis: <span className="text-slate-300">{data.details.diagnosis}</span></p>
+                                                <p className="text-sm text-slate-300">Outcome: <span className={data.outcome === 'Remission' ? 'text-emerald-400' : 'text-slate-300'}>{data.outcome}</span></p>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                            />
 
-                        {/* Reference Zones */}
-                        {/* @ts-ignore */}
-                        <ReferenceArea x1={60} x2={100} y1={15} y2={30} fill="#6366f1" fillOpacity={0.05} />
-                        <Scatter
-                            name="Patients"
-                            data={MOCK_DATA}
-                            onClick={(node) => setSelectedPatient(node.payload)}
-                            className="cursor-pointer"
-                            fill="#818cf8"
-                        >
-                            {MOCK_DATA.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fillOpacity={entry.cluster === 'cohort' ? 0.8 : 1}
-                                />
-                            ))}
-                        </Scatter>
-                    </ScatterChart>
-                </ResponsiveContainer>
+                            {/* Reference Zones */}
+                            {/* @ts-ignore */}
+                            <ReferenceArea x1={60} x2={100} y1={15} y2={30} fill="#6366f1" fillOpacity={0.05} />
+                            <Scatter
+                                name="Patients"
+                                data={chartData}
+                                onClick={(node: any) => setSelectedPatient(node.payload)}
+                                className="cursor-pointer"
+                                fill="#818cf8"
+                            >
+                                {chartData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fillOpacity={entry.cluster === 'cohort' ? 0.8 : 1}
+                                    />
+                                ))}
+                            </Scatter>
+                        </ScatterChart>
+                    </ResponsiveContainer>
+                )}
                 {/* Overlay Pulse for Current Patient */}
                 <div className="absolute pointer-events-none inset-0 flex items-center justify-center">
                     {/* Maps to where x=75, y=18 roughly is, purely visual for now if needed, but the cell is already there */}

@@ -132,28 +132,31 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex flex-col gap-3">
                 {docs.map((doc) => {
                     const Icon = doc.icon;
                     return (
-                        <div key={doc.id} className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 flex flex-col justify-between">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${doc.bg} ${doc.border} ${doc.color}`}>
+                        <div key={doc.id} className="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center border ${doc.bg} ${doc.border} ${doc.color}`}>
                                     <Icon className="w-5 h-5" />
                                 </div>
-                                {doc.isReady ? (
-                                    <div className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider rounded flex items-center gap-1">
-                                        <CheckCircle className="w-3 h-3" /> Ready
+                                <div>
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <h3 className="font-bold text-slate-200 leading-tight text-sm">{doc.label}</h3>
+                                        {doc.isReady ? (
+                                            <span className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-bold uppercase tracking-wider rounded flex items-center gap-1">
+                                                <CheckCircle className="w-2.5 h-2.5" /> Ready
+                                            </span>
+                                        ) : (
+                                            <span className="px-1.5 py-0.5 bg-slate-800 border border-slate-600 text-slate-400 text-[9px] font-bold uppercase tracking-wider rounded flex items-center gap-1">
+                                                <AlertTriangle className="w-2.5 h-2.5" /> Pending
+                                            </span>
+                                        )}
                                     </div>
-                                ) : (
-                                    <div className="px-2 py-1 bg-slate-800 border border-slate-600 text-slate-400 text-[10px] font-bold uppercase tracking-wider rounded flex items-center gap-1">
-                                        <AlertTriangle className="w-3 h-3" /> Pending
-                                    </div>
-                                )}
+                                    <p className="text-xs text-slate-500">{doc.isReady ? 'Available for export' : doc.requiredLabel}</p>
+                                </div>
                             </div>
-
-                            <h3 className="font-bold text-slate-200 mb-1 leading-tight">{doc.label}</h3>
-                            <p className="text-xs text-slate-500 mb-5">{doc.isReady ? 'Available for export' : doc.requiredLabel}</p>
 
                             <AdvancedTooltip
                                 content={doc.isReady ? 'Download compliant PDF export' : `Complete ${doc.requiredLabel} to unlock`}
@@ -162,7 +165,7 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                                 <button
                                     onClick={doc.onDownload}
                                     disabled={!doc.isReady}
-                                    className={`w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${doc.isReady
+                                    className={`w-full sm:w-auto py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all flex-shrink-0 ${doc.isReady
                                         ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-900/40'
                                         : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                                         }`}

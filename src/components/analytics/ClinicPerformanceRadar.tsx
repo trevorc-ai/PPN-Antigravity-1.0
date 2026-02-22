@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
     ResponsiveContainer, Tooltip, Legend
@@ -7,6 +7,8 @@ import {
     Download, Calendar, TrendingUp, AlertCircle,
     CheckCircle2, FileText, Share2
 } from 'lucide-react';
+import { ChartSkeleton } from './ChartSkeleton';
+import { CustomTooltip } from './CustomTooltip';
 
 // --- MOCK DATA ---
 const DATA_QUARTER = [
@@ -49,37 +51,18 @@ const METRIC_DEFINITIONS: Record<string, string> = {
     'Compliance': 'Documentation Completeness (Audit Score)'
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="bg-slate-900/95 backdrop-blur-sm p-4 border border-slate-700 rounded-lg shadow-xl max-w-[250px] z-50 print:bg-white print:border-gray-200 print:text-black">
-                <h4 className="text-slate-300 font-bold mb-1 text-xs uppercase tracking-wider print:text-black">{label}</h4>
-                <p className="text-sm text-slate-500 mb-3 italic print:text-slate-500">
-                    {METRIC_DEFINITIONS[label] || 'Performance Metric'}
-                </p>
-                <div className="flex flex-col gap-2">
-                    {payload.map((entry: any, index: number) => (
-                        <div key={index} className="flex items-center justify-between gap-4 text-xs">
-                            <div className="flex items-center gap-2">
-                                <div
-                                    className="w-2 h-2 rounded-full"
-                                    style={{ backgroundColor: entry.color }}
-                                />
-                                <span className="text-slate-300 font-medium print:text-slate-700">{entry.name}:</span>
-                            </div>
-                            <span className="text-slate-300 font-bold font-mono print:text-black">{entry.dataKey === 'A' ? entry.payload.A : entry.payload.B}</span>
-                        </div>
-                    ))}
-                </div>
-            </div >
-        );
-    }
-    return null;
-};
+// Replaced by CustomTooltip component
 
-export default function ClinicPerformanceRadar() {
+export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
     const [timeRange, setTimeRange] = useState<'quarter' | 'year'>('quarter');
-    const currentData = timeRange === 'quarter' ? DATA_QUARTER : DATA_YEAR;
+    const [chartReady, setChartReady] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setChartReady(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const currentData = data || (timeRange === 'quarter' ? DATA_QUARTER : DATA_YEAR);
     const insights = METRIC_INSIGHTS[timeRange];
 
     return (
@@ -111,47 +94,53 @@ export default function ClinicPerformanceRadar() {
 
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-0">
                 {/* Radar Chart Section - Added min-h-0 to prevent flex item overflow */}
-                <div className="lg:col-span-2 relative min-h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <RadarChart cx="50%" cy="50%" outerRadius="65%" data={currentData}>
-                            <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
-                            <PolarAngleAxis
-                                dataKey="subject"
-                                tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                            />
-                            <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
+                <div className="lg:col-span-2 relative min-h-[300px]" role="img" aria-label="Radar chart showing clinic performance vs network average across safety, efficacy, retention, speed, revenue, and compliance.">
+                    {!chartReady ? (
+                        <ChartSkeleton height="100%" />
+                    ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart cx="50%" cy="50%" outerRadius="65%" data={currentData}>
+                                <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
+                                <PolarAngleAxis
+                                    dataKey="subject"
+                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                                />
+                                <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
 
-                            <Radar
-                                name="My Clinic"
-                                dataKey="A"
-                                stroke="#6366f1"
-                                strokeWidth={3}
-                                fill="#6366f1"
-                                fillOpacity={0.4}
-                            />
-                            <Radar
-                                name="Network Avg"
-                                dataKey="B"
-                                stroke="#94a3b8"
-                                strokeWidth={2}
-                                fill="#94a3b8"
-                                fillOpacity={0.15}
-                                strokeDasharray="5 3"
-                            />
-                            <Tooltip content={<CustomTooltip />} />
-                        </RadarChart>
-                    </ResponsiveContainer>
-                    {/* Custom Legend */}
-                    <div className="flex items-center justify-center gap-6 pt-3">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-indigo-500" />
-                            <span className="text-sm font-bold text-slate-300">My Clinic</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-4 h-0.5 bg-slate-400" style={{ borderTop: '2px dashed #94a3b8' }} />
-                            <span className="text-sm font-bold text-slate-400">Network Avg</span>
-                        </div>
-                    </div>
+                                <Radar
+                                    name="My Clinic"
+                                    dataKey="A"
+                                    stroke="#6366f1"
+                                    strokeWidth={3}
+                                    fill="#6366f1"
+                                    fillOpacity={0.4}
+                                />
+                                <Radar
+                                    name="Network Avg"
+                                    dataKey="B"
+                                    stroke="#94a3b8"
+                                    strokeWidth={2}
+                                    fill="#94a3b8"
+                                    fillOpacity={0.15}
+                                    strokeDasharray="5 3"
+                                />
+                                <Tooltip
+                                    content={({ active, payload, label }) => (
+                                        <CustomTooltip
+                                            active={active}
+                                            payload={payload}
+                                            label={label}
+                                            clinicalContext={METRIC_DEFINITIONS[label as string]}
+                                        />
+                                    )}
+                                />
+                                <Legend
+                                    wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
+                                    iconType="circle"
+                                />
+                            </RadarChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
 
                 {/* Insights Panel - Scrollable if content overflows */}

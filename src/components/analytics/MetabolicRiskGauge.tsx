@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer, Layer
 } from 'recharts';
@@ -6,6 +6,7 @@ import {
     Dna, AlertTriangle, CheckCircle2, Zap,
     Activity, Pill, ArrowRight, Gauge
 } from 'lucide-react';
+import { ChartSkeleton } from './ChartSkeleton';
 
 // --- MOCK PHARMACOGENOMIC RULES ---
 // In production, this comes from 'ref_metabolic_rules' table
@@ -38,6 +39,12 @@ const METABOLIC_RULES: MetabolicRule[] = [
 export default function MetabolicRiskGauge() {
     const [selectedSubstance, setSelectedSubstance] = useState('MDMA');
     const [selectedStatus, setSelectedStatus] = useState('Normal');
+    const [chartReady, setChartReady] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setChartReady(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Find matching rule
     const activeRule = useMemo(() => {
@@ -107,20 +114,24 @@ export default function MetabolicRiskGauge() {
             {/* GAUGE & RESULT */}
             <div className="flex-1 flex flex-col items-center justify-center relative min-h-[200px]">
                 {/* Chart Layer */}
-                <div className="absolute inset-0 z-0">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <RadialBarChart
-                            innerRadius="70%"
-                            outerRadius="100%"
-                            barSize={20}
-                            data={chartData}
-                            startAngle={180}
-                            endAngle={0}
-                        >
-                            <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-                            <RadialBar background={{ fill: '#1e293b' }} dataKey="value" cornerRadius={10} />
-                        </RadialBarChart>
-                    </ResponsiveContainer>
+                <div className="absolute inset-0 z-0" role="img" aria-label={`Metabolic risk gauge showing ${activeRule.riskLevel} toxicity risk`}>
+                    {!chartReady ? (
+                        <ChartSkeleton height="100%" />
+                    ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadialBarChart
+                                innerRadius="70%"
+                                outerRadius="100%"
+                                barSize={20}
+                                data={chartData}
+                                startAngle={180}
+                                endAngle={0}
+                            >
+                                <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                                <RadialBar background={{ fill: '#1e293b' }} dataKey="value" cornerRadius={10} />
+                            </RadialBarChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
 
                 {/* Center Content */}
