@@ -29,7 +29,7 @@ interface StructuredIntegrationSessionFormProps {
     patientId?: string;
 }
 
-const SESSION_FOCUS_AREAS = [
+export const SESSION_FOCUS_AREAS = [
     { id: 1, name: 'Processing Dosing Experience', category: 'processing' },
     { id: 2, name: 'Relationship Insights', category: 'relational' },
     { id: 3, name: 'Career/Purpose Exploration', category: 'existential' },
@@ -40,7 +40,7 @@ const SESSION_FOCUS_AREAS = [
     { id: 8, name: 'Spiritual/Existential Themes', category: 'existential' }
 ];
 
-const HOMEWORK_TYPES = [
+export const HOMEWORK_TYPES = [
     { id: 1, name: 'Daily Journaling', frequency: '10 min/day' },
     { id: 2, name: 'Meditation Practice', frequency: '10 min/day' },
     { id: 3, name: 'Gratitude List', frequency: '3 items/day' },
@@ -51,7 +51,7 @@ const HOMEWORK_TYPES = [
     { id: 8, name: 'Values Clarification Exercise', frequency: 'once/week' }
 ];
 
-const THERAPIST_OBSERVATIONS = [
+export const THERAPIST_OBSERVATIONS = [
     { id: 1, name: 'Patient shows insight into patterns', valence: 'positive' },
     { id: 2, name: 'Actively applying learnings', valence: 'positive' },
     { id: 3, name: 'Resistance to change noted', valence: 'concern' },

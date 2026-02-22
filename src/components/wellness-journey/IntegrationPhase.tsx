@@ -4,6 +4,8 @@ import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import SymptomDecayCurve from '../arc-of-care/SymptomDecayCurve';
 import PulseCheckWidget from '../arc-of-care/PulseCheckWidget';
 import { PatientOutcomePanel } from './PatientOutcomePanel';
+import { downloadDischargeSummary, type DischargeSummaryData } from '../../services/dischargeSummary';
+import { useToast } from '../../contexts/ToastContext';
 
 interface IntegrationPhaseProps {
     journey: any;
@@ -22,6 +24,7 @@ const MOCK_PULSE_TREND = [
 
 export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) => {
     const [showPulseCheck, setShowPulseCheck] = useState(true);
+    const { addToast } = useToast();
 
     // Export 7-day trend as CSV
     const handleExportTrend = () => {
@@ -41,6 +44,40 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
     // Calculate 7-day averages for trend display
     const avgConnection = (MOCK_PULSE_TREND.reduce((s, d) => s + d.connection, 0) / MOCK_PULSE_TREND.length).toFixed(1);
     const avgSleep = (MOCK_PULSE_TREND.reduce((s, d) => s + d.sleep, 0) / MOCK_PULSE_TREND.length).toFixed(1);
+
+    const handleDischargeSummary = () => {
+        // In a real app, this would be fetched from the database
+        const mockDischargeData: DischargeSummaryData = {
+            patientId: "PT-RISK9W2P",
+            siteId: "SITE-001",
+            clinicianId: "Provider-1",
+            treatmentStart: "2025-08-01",
+            treatmentEnd: "2025-11-20",
+            dosingSessionsCount: 3,
+            integrationSessionsCount: 6,
+            diagnosis: "Treatment-Resistant Depression (F33.2)",
+            substanceName: "Psilocybin Extract",
+            substanceDose: "25mg oral",
+            protocolName: "TRD Standard 3-Dose",
+            baseline: { phq9: 18, gad7: 15, caps5: 20 },
+            final: { phq9: 5, gad7: 6, caps5: 12 },
+            meq30Peak: 78,
+            responseAchieved: 'YES (>=50% reduction)',
+            remissionAchieved: 'YES',
+            adverseEventsCount: 1,
+            grade3EventsCount: 0,
+            chemicalRescueUsed: 'NO',
+            ongoingVulnerabilities: "Mild residual anxiety around social situations. No suicidality.",
+            referralName: "Dr. Sarah Jenkins (CBT)",
+            followUpWeeks: 4,
+            emergencyPlanSummary: "Contact crisis line 988 if symptoms return. Safety plan PDF on file.",
+            selfCareSummary: "Continue daily meditation, maintain sleep hygiene, and exercise 3x/week.",
+            clinicianStatement: "Patient showed remarkable progress and has achieved clinical remission for TRD. Discharging to step-down outpatient care."
+        };
+
+        downloadDischargeSummary(mockDischargeData);
+        addToast({ title: 'Discharge Summary Generated', message: 'Final clinical outcome report exported securely.', type: 'success' });
+    };
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -297,6 +334,17 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Complete Journey (WO-310) */}
+            <div className="pt-8 border-t border-slate-700/50 flex justify-center">
+                <button
+                    onClick={handleDischargeSummary}
+                    className="flex items-center justify-center gap-3 w-full md:w-2/3 py-5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xl tracking-wide rounded-2xl shadow-lg shadow-emerald-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] border border-emerald-500/30"
+                >
+                    <CheckCircle className="w-6 h-6" />
+                    Complete Patient Journey & Generate Discharge Summary
+                </button>
             </div>
         </div>
     );
