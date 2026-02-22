@@ -1,6 +1,5 @@
 import React from 'react';
 import { Calendar, Activity, TrendingUp, CheckCircle, Lock } from 'lucide-react';
-import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface PhaseIndicatorProps {
     currentPhase: 1 | 2 | 3;
@@ -78,70 +77,51 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                         !isActive;
 
                     return (
-                        <AdvancedTooltip
+                        <button
                             key={phaseId}
-                            content={cfg.tooltip}
-                            title={cfg.tooltipTitle}
-                            type="info"
-                            tier="detailed"
-                            side="top"
-                            width="w-72"
+                            onClick={() => !isLocked && onPhaseChange(phaseId)}
+                            disabled={isLocked}
+                            role="tab"
+                            aria-selected={isActive}
+                            aria-controls={`phase-panel-${phaseId}`}
+                            aria-label={`Phase ${phaseId}: ${cfg.label}${isCompleted && !isActive ? ' (complete)' : ''}${isLocked ? ' (locked)' : ''}`}
+                            className={[
+                                'relative flex-1 flex items-center justify-center gap-2.5 overflow-hidden',
+                                'px-6 py-5 rounded-t-xl transition-all duration-200 select-none',
+                                isActive
+                                    ? `${cfg.activeBg} border-l border-r border-t ${cfg.activeBorder} ${cfg.activeText} font-bold`
+                                    : isCompleted
+                                        ? 'bg-slate-800/50 border border-slate-700/60 text-slate-300 hover:bg-slate-800/70 hover:text-slate-200 font-semibold cursor-pointer'
+                                        : 'bg-slate-900/40 border border-slate-800/50 text-slate-500 font-semibold cursor-pointer hover:text-slate-400',
+                            ].join(' ')}
+                            style={isActive ? {
+                                marginBottom: '-2px',
+                                zIndex: 10,
+                            } : { zIndex: 1 }}
                         >
-                            <button
-                                onClick={() => !isLocked && onPhaseChange(phaseId)}
-                                disabled={isLocked}
-                                role="tab"
-                                aria-selected={isActive}
-                                aria-controls={`phase-panel-${phaseId}`}
-                                aria-label={`Phase ${phaseId}: ${cfg.label}${isCompleted && !isActive ? ' (complete)' : ''}${isLocked ? ' (locked)' : ''}`}
-                                /*
-                                  Key CSS trick for true tab:
-                                  - rounded-t-xl: only top corners rounded
-                                  - border: full border on inactive
-                                  - active: border-l, border-r, border-t only (no border-b)
-                                    achieved via removing bottom border + marginBottom:-1px
-                                    so the tab sits flush on the panel below
-                                */
-                                className={[
-                                    'relative flex-1 flex items-center justify-center gap-2.5 overflow-hidden',
-                                    'px-6 py-5 rounded-t-xl transition-all duration-200 select-none',
-                                    // Active: no bottom border, sits on top of panel
-                                    isActive
-                                        ? `${cfg.activeBg} border-l border-r border-t ${cfg.activeBorder} ${cfg.activeText} font-bold`
-                                        : isCompleted
-                                            ? 'bg-slate-800/50 border border-slate-700/60 text-slate-300 hover:bg-slate-800/70 hover:text-slate-200 font-semibold cursor-pointer'
-                                            : 'bg-slate-900/40 border border-slate-800/50 text-slate-500 font-semibold cursor-pointer hover:text-slate-400',
-                                ].join(' ')}
-                                style={isActive ? {
-                                    // Overlap the panel top border (2px) so they fuse visually
-                                    marginBottom: '-2px',
-                                    zIndex: 10,
-                                } : { zIndex: 1 }}
-                            >
-                                {/* Accent stripe at top of active tab */}
-                                {isActive && (
-                                    <span
-                                        className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-xl ${cfg.activeTopLine}`}
-                                        aria-hidden="true"
-                                    />
-                                )}
+                            {/* Accent stripe at top of active tab */}
+                            {isActive && (
+                                <span
+                                    className={`absolute top-0 left-0 right-0 h-0.5 rounded-t-xl ${cfg.activeTopLine}`}
+                                    aria-hidden="true"
+                                />
+                            )}
 
-                                {/* Leading icon: Lock if locked, CheckCircle if complete, phase icon if active/upcoming */}
-                                {isLocked
-                                    ? <Lock className="w-5 h-5 text-slate-600 flex-shrink-0" aria-hidden="true" />
-                                    : isCompleted && !isActive
-                                        ? <CheckCircle className="w-5 h-5 text-teal-400 flex-shrink-0" aria-hidden="true" />
-                                        : <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-                                }
+                            {/* Icon: Lock / CheckCircle / phase icon */}
+                            {isLocked
+                                ? <Lock className="w-5 h-5 text-slate-600 flex-shrink-0" aria-hidden="true" />
+                                : isCompleted && !isActive
+                                    ? <CheckCircle className="w-5 h-5 text-teal-400 flex-shrink-0" aria-hidden="true" />
+                                    : <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+                            }
 
-                                <span className="text-base">
-                                    <span className={`font-black mr-1 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
-                                        {phaseId}
-                                    </span>
-                                    {cfg.label}
+                            <span className="text-base">
+                                <span className={`font-black mr-1 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
+                                    {phaseId}
                                 </span>
-                            </button>
-                        </AdvancedTooltip>
+                                {cfg.label}
+                            </span>
+                        </button>
                     );
                 })}
             </div>
