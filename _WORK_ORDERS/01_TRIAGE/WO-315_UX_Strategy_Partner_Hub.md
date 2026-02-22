@@ -1,6 +1,6 @@
 ---
 status: "01_TRIAGE"
-owner: "PRODDY"
+owner: "LEAD"
 failure_count: 0
 ---
 
@@ -18,8 +18,22 @@ Oh, and please fix the CTA button at the bottom of the partner hub."
 ## LEAD ARCHITECTURE
 Routing directly to PRODDY to handle the strategic UX/UI assessment and provide the checklist to the user.
 
-## PRODDY STRATEGY (In Progress)
+## PRODDY STRATEGY (Final)
 - [x] Fix CTA button on Partner Hub (`public/partner-hub.html` constraint fixed)
-- [ ] Provide Sidebar Organization Strategy
-- [ ] Provide visual showcase recommendations for the Landing Page
-- [ ] Outline how the swarm can build the Help Pages / Guides and what we need from the user.
+
+### 1. Sidebar Organization Strategy
+- **Device-Specific Rendering:** Desktop view should hide "Patient Bridge" since it's a mobile camera utility.
+- **Integrations Hub:** Create a new sidebar category for "Connected Devices / Integrations", encompassing Apple Watch, Mobile Patient Bridge, and Document OCR.
+- **Progressive Disclosure:** Migrate secondary tools to a Quick Actions floating button or Command Center instead of cluttering the sidebar.
+
+### 2. Landing Page Visual Showcase (Bento Box)
+- Transition the Landing Page features to a "Bento Box" grid structure.
+- Emphasize visual representation of UI components (e.g., Interaction Checker passing, Analytics graph rising) instead of static text blocks.
+- Introduce hover effects and micro-animations to simulate product usage and effectively communicate the "Before & After" transformation.
+
+### 3. Help Pages / User Manual Shell
+- Construct an MDX-based Help Center layout with built-in search functionality.
+- Develop placeholder skeleton screens for the user's upcoming screenshots.
+- Ensure the layout matches the platform's visual identity with clean navigation.
+
+**Handoff to LEAD:** The strategy is complete. Break these into 3 distinct engineering / design tickets (WO-316, WO-317, WO-318) and route to the correct queues.
