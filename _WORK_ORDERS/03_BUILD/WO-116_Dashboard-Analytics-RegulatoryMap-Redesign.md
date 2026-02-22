@@ -1,7 +1,7 @@
 ---
 id: WO-116
-status: 02_DESIGN
-owner: DESIGNER
+status: 03_BUILD
+owner: BUILDER
 failure_count: 0
 created: 2026-02-19
 updated: 2026-02-19
@@ -213,3 +213,23 @@ If bandwidth allows:
 - `src/hooks/useSafetyBenchmark.ts` — check query + null handling  
 - `src/App.tsx` — check `/interactions` and `/data-export` routes exist
 - `src/components/layouts/Sidebar.tsx` — check if Regulatory Map nav item still present
+
+---
+
+## DESIGNER BRIEF: Regulatory Map Spec
+
+To the BUILDER: Here is the spec for the improved interactive React Map:
+- **Library:** Use `react-simple-maps`. It is the easiest way to generate an interactive SVG US map that supports custom coloring, hover events, and accessibility. You can load a standard TopoJSON file for US states. Alternatively, if we don't want the TopoJSON overhead, we can use a pre-built static SVG interactive map component (e.g., creating a `USMap.tsx` component with standard SVG paths).
+- **Props:** The new `<RegulatoryMap />` matches `<RegulatoryMosaic />`:
+  - `onStateSelect`: (stateCode: string) => void
+  - `highlightedStates`: string[] (the states in the news feed)
+  - `externalSelectedState`: string | null
+  - `showDetailPanel`: boolean
+- **Color Logic:** Continue to use `REGULATORY_STATUS_COLORS` from `constants.ts`. Color the state SVG fill based on its status. 
+  - Standard fill: `regColor`
+  - Hover fill: lighter version or `brightness-110` with CSS
+  - Selected fill: give it a thick white or colored stroke (`stroke-width="2" stroke="#fff"`)
+- **Tooltip:** On hover, render a `<title>` or use a simple absolute-positioned div containing the state name and regulatory status label.
+- **Accessibility:** Set `tabIndex={0}` on each path, provide an `aria-label={State name, Status}`. Allow Enter key to trigger `onStateSelect`.
+
+This spec satisfies C2. Proceed with Track A, B, and C.

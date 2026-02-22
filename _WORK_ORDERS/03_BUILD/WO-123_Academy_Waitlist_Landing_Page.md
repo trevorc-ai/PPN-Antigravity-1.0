@@ -1,8 +1,8 @@
 ---
 id: WO-123
 title: "PPN Academy — Course Waitlist Landing Page"
-status: 02_DESIGN
-owner: DESIGNER
+status: 03_BUILD
+owner: BUILDER
 failure_count: 0
 created: 2026-02-20
 priority: high
@@ -230,3 +230,31 @@ Suggested threshold: **50 signups** from practitioners (not curious observers).
 ---
 
 *WO-123 created by PRODDY | February 2026*
+
+---
+
+## DESIGNER BRIEF: Tailwind Specifications
+
+**Global Palette & Typography:**
+- Background: `bg-[#0B0E14]` with `bg-[url('/noise.png')] opacity-20` for premium grain.
+- Text: >= 14px everywhere (`text-sm` minimum).
+- Headings: `font-black tracking-tight text-slate-100`.
+- Badges: `bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3 py-1 rounded-full text-sm font-bold tracking-widest uppercase`.
+
+**Section 1: Hero**
+- Container: `min-h-[80vh] flex flex-col justify-center items-center text-center px-4 relative overflow-hidden`.
+- Headline: `text-4xl md:text-6xl font-black mb-6`.
+- Subhead: `text-lg text-slate-400 max-w-2xl mx-auto mb-10`.
+- CTA Button: `bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg shadow-indigo-600/20 transition-all active:scale-95`.
+
+**Section 3: Course Overview Cards**
+- Grid: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mt-12`.
+- Card: `bg-slate-900/50 flex flex-col items-start border border-slate-800 rounded-2xl p-6 hover:bg-slate-800/50 transition-colors`.
+- Icon Box: `text-3xl mb-4 bg-indigo-500/10 w-14 h-14 rounded-xl flex items-center justify-center`.
+- Card Title: `text-xl font-bold text-slate-200 mb-2`.
+- Card Text: `text-sm text-slate-400 leading-relaxed`.
+
+**Section 6: Waitlist Form**
+- Form Container: `bg-slate-900/80 backdrop-blur border border-slate-800 rounded-[2rem] p-8 max-w-md mx-auto shadow-2xl shadow-indigo-900/20`.
+- Inputs/Selects: `w-full bg-[#0c0f14] border border-slate-700/50 rounded-xl px-5 py-3.5 text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all font-medium text-base mb-4 appearance-none`.
+- Submit Button: `w-full bg-primary hover:bg-blue-600 active:scale-95 text-white font-black text-sm uppercase tracking-[0.2em] py-4 rounded-2xl mt-2 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2`.

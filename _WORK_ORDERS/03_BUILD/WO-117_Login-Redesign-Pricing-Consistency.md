@@ -1,7 +1,7 @@
 ---
 id: WO-117
-status: 02_DESIGN
-owner: DESIGNER
+status: 03_BUILD
+owner: BUILDER
 failure_count: 0
 created: 2026-02-19
 priority: HIGH

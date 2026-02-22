@@ -169,13 +169,23 @@ const Login: React.FC = () => {
                   required
                   disabled={loading}
                 />
+                {/* Forgot password — below field, right-aligned */}
+                <div className="flex justify-end mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowResetModal(true)}
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
               </div>
 
               {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-indigo-900/40 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -187,16 +197,7 @@ const Login: React.FC = () => {
                 )}
               </button>
 
-              {/* Forgot Password — bottom of card */}
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={() => setShowResetModal(true)}
-                  className="text-xs text-slate-500 hover:text-indigo-400 font-medium transition-colors"
-                >
-                  Forgot Password?
-                </button>
-              </div>
+
 
               {/* Sign Up */}
               <div className="text-center pt-2 border-t border-slate-800/60">
