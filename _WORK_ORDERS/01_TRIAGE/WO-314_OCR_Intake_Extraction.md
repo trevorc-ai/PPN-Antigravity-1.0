@@ -1,6 +1,6 @@
 ---
 status: "01_TRIAGE"
-owner: "PRODDY"
+owner: "LEAD"
 failure_count: 0
 ---
 # WO-314: OCR Intake Extraction Pipeline
@@ -23,3 +23,26 @@ Implement an OCR/Computer Vision pipeline that enables practitioners to scan han
 
 ## Routing
 Routing to PRODDY to assess business rules, product requirements, and priority placement before BUILDER implementation.
+
+## PRODDY - Product Requirements & Strategy (PRD)
+**1. Strategic Alignment & Value Proposition**
+This feature directly targets practitioners burdened by legacy intake workflows. It bridges the gap between paper-based documentation and PPN's structured environment, turning data entry from a dreaded post-session chore into an automated, seamless flow. This dramatically reduces practitioner friction, meaning faster activation and higher retention rates.
+
+**2. Core Use Cases (V1 - MVP)**
+- **Intake Scan:** Practitioner uploads a photo/scan of a multi-page handwritten intake form (demographics, history, simple questionnaires).
+- **Session Notes Scan:** Practitioner snaps a photo of rough unstructured session notes, and we extract structured vitals or follow-up tasks.
+
+**3. Product Functionality Breakdown**
+- **Trigger:** "Upload Document" via the `QuickActionsMenu` or within the Phase 1: Intake components of the Wellness Journey.
+- **Accepted Files:** JPG, PNG, single/multi-page PDFs.
+- **The "Review & Approve" Interface (Crucial):** Extracted data MUST be placed side-by-side with an image of the original document. We do not automatically save parsed medical data without human-in-the-loop verification. Fields with low confidence should be highlighted visually for closer inspection.
+
+**4. Privacy & Compliance Mandates**
+- Follows the Zero Data Retention Protocol defined by LEAD. 
+- The user interface must clarify to the practitioner that "images are securely processed and immediately purged." Let's treat raw PHI scans as toxic waste—process it, and burn it.
+
+**5. Success Metrics**
+- **Activation:** % of clinics adopting the OCR intake button within 30 days of launch.
+- **Efficiency:** Average manual edits required per scanned form.
+
+**Handoff to LEAD:** The business case is extremely strong. Prioritize. Please review and route to BUILDER/SOOP for architecture schema and implementation.

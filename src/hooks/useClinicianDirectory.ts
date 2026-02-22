@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { CLINICIANS } from '../constants';
+import { useDataCache } from './useDataCache';
 
 export interface Practitioner {
     id: string | number;
@@ -14,13 +14,6 @@ export interface Practitioner {
     accepting_clients?: boolean;
     verified?: boolean;
 }
-
-// Module-level cache — ref_practitioners is essentially static during a session.
-// 10 minute TTL — avoids refetching on every ClinicianDirectory page visit.
-const CACHE_TTL = 10 * 60 * 1000;
-let _cachedPractitioners: Practitioner[] | null = null;
-let _fetchedAt = 0;
-let _fetchPromise: Promise<Practitioner[]> | null = null;
 
 // Maps ref_practitioners DB row to the shape PractitionerCard expects
 function mapDbRowToPractitioner(row: any): Practitioner {
@@ -38,57 +31,32 @@ function mapDbRowToPractitioner(row: any): Practitioner {
     };
 }
 
-async function loadPractitioners(): Promise<Practitioner[]> {
-    const now = Date.now();
-    if (_cachedPractitioners && (now - _fetchedAt) < CACHE_TTL) return _cachedPractitioners;
-    if (_fetchPromise) return _fetchPromise;
-
-    _fetchPromise = (async () => {
-        try {
-            const { data, error } = await supabase
-                .from('ref_practitioners')
-                .select('*')
-                .eq('is_active', true)
-                .order('sort_order', { ascending: true });
-
-            if (error || !data || data.length === 0) {
-                _fetchPromise = null;
-                return CLINICIANS as Practitioner[];
-            }
-
-            _cachedPractitioners = data.map(mapDbRowToPractitioner);
-            _fetchedAt = Date.now();
-            return _cachedPractitioners;
-        } catch {
-            _fetchPromise = null;
-            return CLINICIANS as Practitioner[];
-        }
-    })();
-
-    return _fetchPromise;
-}
-
 export function useClinicianDirectory() {
-    const [practitioners, setPractitioners] = useState<Practitioner[]>(
-        _cachedPractitioners ?? []
+    const { data: cachedPractitioners, loading } = useDataCache(
+        'clinician-directory',
+        async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('ref_practitioners')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('sort_order', { ascending: true });
+
+                if (error || !data || data.length === 0) {
+                    return { data: CLINICIANS as Practitioner[], error: null };
+                }
+
+                return { data: data.map(mapDbRowToPractitioner), error: null };
+            } catch (err) {
+                return { data: CLINICIANS as Practitioner[], error: err };
+            }
+        },
+        { ttl: 10 * 60 * 1000 } // 10 minutes
     );
-    const [loading, setLoading] = useState(!_cachedPractitioners);
-    const [source, setSource] = useState<'live' | 'fallback'>('fallback');
 
-    useEffect(() => {
-        if (_cachedPractitioners) {
-            setPractitioners(_cachedPractitioners);
-            setSource('live');
-            setLoading(false);
-            return;
-        }
-
-        loadPractitioners().then(result => {
-            setPractitioners(result);
-            setSource('live');
-            setLoading(false);
-        });
-    }, []);
-
-    return { practitioners, loading, source };
+    return {
+        practitioners: cachedPractitioners || (CLINICIANS as Practitioner[]),
+        loading,
+        source: cachedPractitioners && cachedPractitioners.length > 0 && cachedPractitioners !== CLINICIANS ? 'live' : 'fallback'
+    };
 }

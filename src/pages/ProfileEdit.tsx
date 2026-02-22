@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
-import { useDataCache } from '../hooks/useDataCache';
+import { useDataCache, clearDataCache } from '../hooks/useDataCache';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import { ArrowLeft, Save, X } from 'lucide-react';
@@ -36,7 +36,7 @@ const ProfileEdit: React.FC = () => {
                 .eq('user_id', user.id)
                 .single();
         },
-        { ttl: 10 * 60 * 1000 }
+        { ttl: 60 * 1000 } // 1 minute TTL per WO-133
     );
 
     // Populate form once data arrives (only on first load)
@@ -104,6 +104,8 @@ const ProfileEdit: React.FC = () => {
                 type: 'success'
             });
 
+            // Burst cache so next fetch gets updated data
+            clearDataCache('user-profile');
             navigate(-1);
         } catch (error) {
             console.error('Error updating profile:', error);

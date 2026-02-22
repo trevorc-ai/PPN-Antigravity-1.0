@@ -151,7 +151,7 @@ const MetricPill: React.FC<MetricPillProps> = ({ icon: Icon, label, value, color
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { protocols, loading: protocolsLoading } = usePractitionerProtocols();
+  const { protocols, loading: protocolsLoading, refetch, lastFetchedAt } = usePractitionerProtocols();
 
   return (
     <PageContainer className="min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] text-slate-300 flex flex-col gap-8">
@@ -164,6 +164,26 @@ export default function Dashboard() {
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
               <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
             </span>
+            <button
+              onClick={refetch}
+              disabled={protocolsLoading}
+              title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Not loaded'}
+              style={{
+                background: 'transparent',
+                border: '1px solid rgba(56,139,253,0.2)',
+                color: '#6b7a8d',
+                fontSize: 12,
+                padding: '4px 10px',
+                borderRadius: 6,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+              }}
+              className="hover:bg-slate-800/50 transition-colors"
+            >
+              {protocolsLoading ? '...' : '↻ Refresh'}
+            </button>
           </div>
           <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
             Dashboard

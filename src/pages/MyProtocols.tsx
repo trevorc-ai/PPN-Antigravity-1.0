@@ -1,5 +1,6 @@
+import { useDataCache } from '../hooks/useDataCache';
 import { supabase } from '../supabaseClient';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Search, ChevronRight, ClipboardList, Activity, Info, ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -22,54 +23,52 @@ type SortDirection = 'asc' | 'desc';
 
 export const MyProtocols = () => {
     const navigate = useNavigate();
-    const [protocols, setProtocols] = useState<Protocol[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortField, setSortField] = useState<SortField>('subject_id');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
-    useEffect(() => {
-        fetchProtocols();
-    }, []);
+    const { data: cachedProtocols, loading, refetch, lastFetchedAt } = useDataCache(
+        'my-protocols',
+        async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('log_clinical_records')
+                    .select(`
+              id,
+              patient_id,
+              session_date,
+              substance_id,
+              patient_sex,
+              ref_substances (substance_name)
+            `)
+                    .order('created_at', { ascending: false })
+                    .limit(100);
 
-    const fetchProtocols = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('log_clinical_records')
-                .select(`
-          id,
-          patient_id,
-          session_date,
-          substance_id,
-          patient_sex,
-          ref_substances (substance_name)
-        `)
-                .order('created_at', { ascending: false })
-                .limit(100);
+                if (error) throw error;
 
-            if (error) throw error;
+                const formattedData = data?.map((record: any) => ({
+                    id: record.id,
+                    subject_id: `PT-${String(record.patient_id).padStart(6, '0')}`,
+                    session_number: 1,
+                    substance_name: record.ref_substances?.substance_name || 'Unknown',
+                    indication_name: 'Research',
+                    session_date: record.session_date || new Date().toISOString().split('T')[0],
+                    submitted_at: record.created_at,
+                    dosage_mg: 25,
+                    dosage_unit: 'mg',
+                    status: 'Completed',
+                    patient_sex: record.patient_sex || 'Unknown',
+                })) || [];
 
-            const formattedData = data?.map((record: any) => ({
-                id: record.id,
-                subject_id: `PT-${String(record.patient_id).padStart(6, '0')}`,
-                session_number: 1,
-                substance_name: record.ref_substances?.substance_name || 'Unknown',
-                indication_name: 'Research',
-                session_date: record.session_date || new Date().toISOString().split('T')[0],
-                submitted_at: record.created_at,
-                dosage_mg: 25,
-                dosage_unit: 'mg',
-                status: 'Completed',
-                patient_sex: record.patient_sex || 'Unknown',
-            })) || [];
-
-            setProtocols(formattedData);
-        } catch (error) {
-            console.error('Error fetching protocols:', error);
-        } finally {
-            setLoading(false);
+                return { data: formattedData, error: null };
+            } catch (error) {
+                console.error('Error fetching protocols:', error);
+                return { data: null, error };
+            }
         }
-    };
+    );
+
+    const protocols = cachedProtocols || [];
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
@@ -127,13 +126,35 @@ export const MyProtocols = () => {
                     <h1 className="text-4xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>My Protocols</h1>
                 </div>
 
-                <button
-                    onClick={() => navigate('/wellness-journey')}
-                    className="px-8 py-4 bg-primary hover:bg-blue-600 text-white text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
-                >
-                    <PlusCircle size={18} />
-                    Create New Protocol
-                </button>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={refetch}
+                        disabled={loading}
+                        title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Not loaded'}
+                        style={{
+                            background: 'transparent',
+                            border: '1px solid rgba(56,139,253,0.2)',
+                            color: '#6b7a8d',
+                            fontSize: 12,
+                            padding: '4px 10px',
+                            borderRadius: 6,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                        }}
+                        className="hover:bg-slate-800/50 transition-colors"
+                    >
+                        {loading ? '...' : '↻ Refresh'}
+                    </button>
+                    <button
+                        onClick={() => navigate('/wellness-journey')}
+                        className="px-8 py-4 bg-primary hover:bg-blue-600 text-white text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
+                    >
+                        <PlusCircle size={18} />
+                        Create New Protocol
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-6">

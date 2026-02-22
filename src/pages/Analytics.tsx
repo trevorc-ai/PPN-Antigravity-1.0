@@ -79,6 +79,26 @@ const Analytics = () => {
 
                 <div className="flex items-center gap-4">
                     <button
+                        onClick={analytics.refetch}
+                        disabled={analytics.loading}
+                        title={analytics.lastFetchedAt ? `Last updated: ${analytics.lastFetchedAt.toLocaleTimeString()}` : 'Not loaded'}
+                        style={{
+                            background: 'transparent',
+                            border: '1px solid rgba(56,139,253,0.2)',
+                            color: '#6b7a8d',
+                            fontSize: 12,
+                            padding: '4px 10px',
+                            borderRadius: 6,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                        }}
+                        className="hover:bg-slate-800/50 transition-colors mr-2"
+                    >
+                        {analytics.loading ? '...' : '↻ Refresh'}
+                    </button>
+                    <button
                         onClick={handlePrint}
                         className="p-3 bg-indigo-600 hover:bg-indigo-500 text-slate-300 rounded-xl flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
                     >

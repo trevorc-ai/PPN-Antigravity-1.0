@@ -4,6 +4,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../supabaseClient';
+import { useDataCache } from '../hooks/useDataCache';
 
 // WO-096: Types for live ref table data
 interface RefSubstance {
@@ -117,8 +118,8 @@ const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange,
                   aria-selected={value === med.medication_name}
                   onClick={() => { onChange(med.medication_name); setOpen(false); }}
                   className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
-                      ? 'bg-blue-600 text-white font-semibold'
-                      : 'text-slate-200 hover:bg-slate-800'
+                    ? 'bg-blue-600 text-white font-semibold'
+                    : 'text-slate-200 hover:bg-slate-800'
                     }`}
                 >
                   {med.medication_name}
@@ -147,20 +148,10 @@ const InteractionChecker: React.FC = () => {
 
   const [substances, setSubstances] = useState<RefSubstance[]>([]);
   const [medications, setMedications] = useState<RefMedication[]>([]);
-  const [refLoading, setRefLoading] = useState(true);
 
-  // Initial Sync from URL
-  useEffect(() => {
-    const agentA = searchParams.get('agentA');
-    const agentB = searchParams.get('agentB');
-    if (agentA) setSelectedPsychedelic(agentA);
-    if (agentB) setSelectedMedication(agentB);
-  }, [searchParams]);
-
-  // Fetch Reference Lists — WO-096: live ref_substances + ref_medications with category grouping
-  useEffect(() => {
-    const fetchRefData = async () => {
-      setRefLoading(true);
+  const { data: refData, loading: refLoading } = useDataCache(
+    'interaction-ref-data',
+    async () => {
       try {
         const [{ data: subData, error: subErr }, { data: medData, error: medErr }] = await Promise.all([
           supabase
@@ -176,33 +167,33 @@ const InteractionChecker: React.FC = () => {
         ]);
 
         if (subErr) throw subErr;
-        // ref_medications may not exist yet (WO-226 pending) — handle gracefully
-        if (medErr) {
-          console.warn('[InteractionChecker] ref_medications not yet available — WO-226 pending:', medErr.message);
-        }
 
-        if (subData) setSubstances(subData);
-
-        // Populate medications if table exists and has data
-        if (medData && medData.length > 0) {
-          setMedications(medData);
-        } else {
+        let finalMeds = medData || [];
+        if (!finalMeds || finalMeds.length === 0) {
           const { data: fallbackMeds } = await supabase
             .from('ref_medications')
             .select('medication_id, medication_name, medication_category')
             .order('medication_category')
             .order('medication_name');
-          if (fallbackMeds) setMedications(fallbackMeds);
+          if (fallbackMeds) finalMeds = fallbackMeds;
         }
+
+        return { data: { substances: subData || [], medications: finalMeds }, error: null };
       } catch (err) {
         console.error('[InteractionChecker] Ref Fetch Error:', err);
         addToast({ title: 'System Error', message: 'Failed to load medication database.', type: 'error' });
-      } finally {
-        setRefLoading(false);
+        return { data: { substances: [], medications: [] }, error: err };
       }
-    };
-    fetchRefData();
-  }, [addToast]);
+    },
+    { ttl: 30 * 60 * 1000 } // 30 min cache
+  );
+
+  useEffect(() => {
+    if (refData) {
+      setSubstances(refData.substances);
+      setMedications(refData.medications);
+    }
+  }, [refData]);
 
   // Fetch Interaction Logic
   useEffect(() => {
