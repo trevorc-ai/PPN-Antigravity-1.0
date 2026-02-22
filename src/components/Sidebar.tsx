@@ -96,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="overflow-y-auto p-4">
+        <nav className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 pb-12">
           <div className="space-y-6">
             {navSections.map((section) => (
               <div key={section.title}>
