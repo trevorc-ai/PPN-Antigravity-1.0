@@ -98,48 +98,74 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
                     {!chartReady ? (
                         <ChartSkeleton height="100%" />
                     ) : (
-                        <ResponsiveContainer width="100%" height="100%">
-                            <RadarChart cx="50%" cy="50%" outerRadius="65%" data={currentData}>
-                                <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
-                                <PolarAngleAxis
-                                    dataKey="subject"
-                                    tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                                />
-                                <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
+                        <div className="relative w-full h-full min-h-[300px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={currentData}>
+                                    <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
+                                    <PolarAngleAxis
+                                        dataKey="subject"
+                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                                    />
+                                    <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
 
-                                <Radar
-                                    name="My Clinic"
-                                    dataKey="A"
-                                    stroke="#6366f1"
-                                    strokeWidth={3}
-                                    fill="#6366f1"
-                                    fillOpacity={0.4}
-                                />
-                                <Radar
-                                    name="Network Avg"
-                                    dataKey="B"
-                                    stroke="#94a3b8"
-                                    strokeWidth={2}
-                                    fill="#94a3b8"
-                                    fillOpacity={0.15}
-                                    strokeDasharray="5 3"
-                                />
-                                <Tooltip
-                                    content={({ active, payload, label }) => (
-                                        <CustomTooltip
-                                            active={active}
-                                            payload={payload}
-                                            label={label}
-                                            clinicalContext={METRIC_DEFINITIONS[label as string]}
-                                        />
-                                    )}
-                                />
-                                <Legend
-                                    wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
-                                    iconType="circle"
-                                />
-                            </RadarChart>
-                        </ResponsiveContainer>
+                                    <Radar
+                                        name="My Clinic"
+                                        dataKey="A"
+                                        stroke="#6366f1"
+                                        strokeWidth={3}
+                                        fill="#6366f1"
+                                        fillOpacity={0.4}
+                                    />
+                                    <Radar
+                                        name="Network Avg"
+                                        dataKey="B"
+                                        stroke="#94a3b8"
+                                        strokeWidth={2}
+                                        fill="#94a3b8"
+                                        fillOpacity={0.15}
+                                        strokeDasharray="5 3"
+                                    />
+                                    <Tooltip
+                                        content={({ active, payload, label }) => (
+                                            <CustomTooltip
+                                                active={active}
+                                                payload={payload}
+                                                label={label}
+                                                clinicalContext={METRIC_DEFINITIONS[label as string]}
+                                            />
+                                        )}
+                                    />
+                                    <Legend
+                                        wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
+                                        iconType="circle"
+                                    />
+                                </RadarChart>
+                            </ResponsiveContainer>
+
+                            {/* Persistent Tooltip over "Efficacy" (Top Spoke) */}
+                            <div className="absolute top-[18%] left-1/2 -translate-x-1/2 -translate-y-full z-10 pointer-events-none hidden sm:block animate-in fade-in zoom-in duration-1000 delay-700 fill-mode-both">
+                                <div className="bg-[#0f1218] border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-xl p-3 min-w-[150px] flex flex-col">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 border-b border-slate-800 pb-1">Efficacy Insight</span>
+
+                                    <div className="flex justify-between items-center mb-1">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
+                                            <span className="text-[11px] font-bold text-slate-300">My Clinic</span>
+                                        </div>
+                                        <span className="text-[11px] font-black text-indigo-400">{currentData[0].A}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
+                                            <span className="text-[11px] font-bold text-slate-300">Network Avg</span>
+                                        </div>
+                                        <span className="text-[11px] font-black text-slate-400">{currentData[0].B}</span>
+                                    </div>
+
+                                    <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0f1218] border-b border-r border-indigo-500/30 rotate-45"></div>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
 
