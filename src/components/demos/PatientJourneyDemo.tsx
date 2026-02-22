@@ -77,21 +77,34 @@ const PatientJourneyDemo: React.FC = () => {
                         dataKey="phq9"
                         stroke="#2b74f3"
                         strokeWidth={3}
+                        animationBegin={300}
+                        animationDuration={2500}
+                        animationEasing="ease-in-out"
                         dot={(props: any) => {
-                            const { cx, cy, payload } = props;
+                            const { cx, cy, payload, index } = props;
+                            const isLast = index === journeyData.length - 1;
+
                             if (payload.session) {
                                 return (
-                                    <circle
-                                        cx={cx}
-                                        cy={cy}
-                                        r={6}
-                                        fill="#10b981"
-                                        stroke="#fff"
-                                        strokeWidth={2}
-                                    />
+                                    <g key={`dot-${index}`}>
+                                        {isLast && (
+                                            <>
+                                                <circle cx={cx} cy={cy} r={12} fill="#10b981" opacity="0.3" className="animate-ping" style={{ transformOrigin: `${cx}px ${cy}px` }} />
+                                                <circle cx={cx} cy={cy} r={20} fill="#10b981" opacity="0.1" className="animate-pulse" style={{ transformOrigin: `${cx}px ${cy}px` }} />
+                                            </>
+                                        )}
+                                        <circle
+                                            cx={cx}
+                                            cy={cy}
+                                            r={6}
+                                            fill="#10b981"
+                                            stroke="#fff"
+                                            strokeWidth={2}
+                                        />
+                                    </g>
                                 );
                             }
-                            return <circle cx={cx} cy={cy} r={3} fill="#2b74f3" />;
+                            return <circle key={`dot-${index}`} cx={cx} cy={cy} r={3} fill="#2b74f3" />;
                         }}
                     />
                 </LineChart>

@@ -892,36 +892,46 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Committed to Veteran Care */}
-      <section className="py-24 px-6 relative z-10" >
-        <div className="max-w-4xl mx-auto">
-          <div className="p-8 bg-indigo-600/10 border-2 border-indigo-500/20 rounded-2xl space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="p-3 bg-indigo-500/20 rounded-xl flex-shrink-0">
-                <span className="material-symbols-outlined text-2xl text-indigo-400">military_tech</span>
+      <section className="py-32 px-6 relative z-10 border-y border-indigo-900/30 bg-gradient-to-b from-indigo-950/20 to-slate-900 overflow-hidden">
+        {/* Subtle patriotic/honor background glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
+
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="text-center space-y-8">
+            <div className="inline-flex items-center justify-center p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl mb-4">
+              <span className="material-symbols-outlined text-4xl text-indigo-400">military_tech</span>
+            </div>
+
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-200">
+              A profound commitment to <br className="hidden sm:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-400">Veteran Care.</span>
+            </h2>
+
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium">
+              MDMA-assisted therapy is showing unprecedented PTSD remission rates in Phase 3 trials. Our veterans have sacrificed everything; they deserve an infrastructure built on precision and evidence, not guesswork and scattered spreadsheets.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
+              <div className="flex flex-col items-center">
+                <p className="text-4xl font-black text-indigo-400 mb-2">67%</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest text-center">Phase 3 Trial<br />Remission Rate</p>
               </div>
-              <div className="space-y-3">
-                <h4 className="text-xl font-black text-slate-300">Committed to Veteran Care</h4>
-                <p className="text-base text-slate-300 leading-relaxed">
-                  MDMA-assisted therapy is showing 67% PTSD remission rates in Phase 3 trials. Veterans deserve practitioners who are supported by real data infrastructure, not spreadsheets.
-                </p>
-                <p className="text-base text-slate-300 leading-relaxed">
-                  PPN supports multi-site outcomes tracking for <span className="text-indigo-300 font-bold">MDMA-assisted therapy and psilocybin research for treatment-resistant PTSD</span>. Every session logged contributes to the evidence base that matters.
-                </p>
+              <div className="w-px h-16 bg-slate-800 hidden sm:block"></div>
+              <div className="flex flex-col items-center">
+                <p className="text-4xl font-black text-indigo-400 mb-2">100%</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest text-center">Structured Data<br />Support</p>
+              </div>
+              <div className="w-px h-16 bg-slate-800 hidden sm:block"></div>
+              <div className="flex flex-col items-center">
+                <p className="text-4xl font-black text-indigo-400 mb-2">Zero</p>
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest text-center">Patient PII<br />Retained</p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={() => navigate('/checkout')}
-                className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all"
-              >
-                Start Free Trial
+
+            <div className="pt-12">
+              <button onClick={() => window.location.href = 'mailto:info@ppnportal.net'} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 border border-indigo-400/50 hover:border-indigo-300">
+                Join the Mission
               </button>
-              <a
-                href="mailto:info@ppnportal.net"
-                className="px-8 py-4 bg-transparent border border-indigo-500/30 hover:border-indigo-500/60 text-indigo-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all text-center"
-              >
-                Contact Us
-              </a>
             </div>
           </div>
         </div>
