@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download, Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
+import { WorkflowActionCard } from './WorkflowCards';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import { WellnessFormId } from './WellnessFormRouter';
 import { LiveSessionTimeline } from './LiveSessionTimeline';
@@ -54,12 +55,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
             switch (e.key.toLowerCase()) {
                 case 'v':
                     onOpenForm('session-vitals');
-                    break;
-                case 'o':
-                    onOpenForm('session-observations');
-                    break;
-                case 'n':
-                    onOpenForm('session-timeline');
                     break;
                 case 'a':
                     onOpenForm('safety-and-adverse-event');
@@ -255,87 +250,23 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                 </div>
 
                 {/* THE "BIG 3" ACTION DECK + SAFETY */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-
-                    {/* 1. Log Vitals (Blue -> Indigo/Slate) */}
-                    <button
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <WorkflowActionCard
+                        phase={2}
+                        status="active"
+                        title="Log Vitals"
+                        description="Check & Log BP, HR, SpO2."
+                        icon={<Activity className="w-5 h-5 text-fuchsia-400" />}
                         onClick={() => onOpenForm('session-vitals')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-[#121E2E] to-[#0A121A] border border-[#1E334D]/50 rounded-3xl hover:border-[#2D4A6B]/80 hover:from-[#16253A] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
-                    >
-                        <div className="absolute inset-0 bg-[#3B82F6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
-                        <div className="absolute top-0 right-0 p-5 mt-1 opacity-70 group-hover:opacity-100 group-hover:rotate-[8deg] transition-all duration-500">
-                            <div className="w-11 h-11 rounded-xl bg-[#0F2038] flex items-center justify-center border border-[#1E334D] group-hover:border-[#3B82F6]/30 shadow-inner">
-                                <Activity className="w-5 h-5 text-[#3B82F6]/70 group-hover:text-[#3B82F6] transition-colors" />
-                            </div>
-                        </div>
-                        <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2 gap-2">
-                                <p className="text-3xl font-bold text-[#8FA8C7] leading-tight tracking-tight group-hover:text-[#E2E8F0] transition-colors">Vitals</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#1E334D]/30 border border-[#1E334D] text-[10px] font-mono font-bold text-[#64748B]">V</kbd>
-                            </div>
-                            <p className="text-[11px] text-[#475E7A] font-bold uppercase tracking-[0.15em] group-hover:text-[#64748B] transition-colors">Check & Log</p>
-                        </div>
-                    </button>
-
-                    {/* 2. Observations (Deep Purple / Amethyst) */}
-                    <button
-                        onClick={() => onOpenForm('session-observations')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-[#1B112C] to-[#0D0814] border border-[#301A4A]/50 rounded-3xl hover:border-[#482670]/80 hover:from-[#26163A] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
-                    >
-                        <div className="absolute inset-0 bg-[#8B5CF6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
-                        <div className="absolute top-0 right-0 p-5 mt-1 opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
-                            <div className="w-11 h-11 rounded-xl bg-[#180F24] flex items-center justify-center border border-[#301A4A] group-hover:border-[#8B5CF6]/30 shadow-inner">
-                                <Sparkles className="w-5 h-5 text-[#8B5CF6]/60 group-hover:text-[#8B5CF6] transition-colors" />
-                            </div>
-                        </div>
-                        <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2 gap-2">
-                                <p className="text-3xl font-bold text-[#A78BFA] leading-tight tracking-tight group-hover:text-[#EDE9FE] transition-colors">Observe</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#301A4A]/30 border border-[#301A4A] text-[10px] font-mono font-bold text-[#A78BFA]">O</kbd>
-                            </div>
-                            <p className="text-[11px] text-[#7C3AED] font-bold uppercase tracking-[0.15em] group-hover:text-[#A78BFA] transition-colors">Behavior</p>
-                        </div>
-                    </button>
-
-                    {/* 3. Timeline Note (Emerald -> Deep Pine) */}
-                    <button
-                        onClick={() => onOpenForm('session-timeline')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-[#12261E] to-[#08140F] border border-[#1C3B2F]/50 rounded-3xl hover:border-[#275241]/80 hover:from-[#173026] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
-                    >
-                        <div className="absolute inset-0 bg-[#10B981]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
-                        <div className="absolute top-0 right-0 p-5 mt-1 opacity-70 group-hover:opacity-100 group-hover:-rotate-[8deg] transition-all duration-500">
-                            <div className="w-11 h-11 rounded-xl bg-[#0D1F18] flex items-center justify-center border border-[#1C3B2F] group-hover:border-[#10B981]/30 shadow-inner">
-                                <Clock className="w-5 h-5 text-[#10B981]/60 group-hover:text-[#10B981] transition-colors" />
-                            </div>
-                        </div>
-                        <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2 gap-2">
-                                <p className="text-3xl font-bold text-[#71A68F] leading-tight tracking-tight group-hover:text-[#D1E8DD] transition-colors">Note</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#1C3B2F]/30 border border-[#1C3B2F] text-[10px] font-mono font-bold text-[#55806C]">N</kbd>
-                            </div>
-                            <p className="text-[11px] text-[#426B57] font-bold uppercase tracking-[0.15em] group-hover:text-[#588A72] transition-colors">Timeline</p>
-                        </div>
-                    </button>
-
-                    {/* 4. SAFETY ALARM (Red -> Muted Burgundy) */}
-                    <button
+                    />
+                    <WorkflowActionCard
+                        phase={2}
+                        status="active"
+                        title="Adverse Safety Event"
+                        description="Immediately log any severe safety concerns."
+                        icon={<AlertTriangle className="w-5 h-5 text-red-500" />}
                         onClick={() => onOpenForm('safety-and-adverse-event')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-[#2E1616] to-[#170B0B] border border-[#4A2424]/50 rounded-3xl hover:border-[#6B3333]/80 hover:from-[#381B1B] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
-                    >
-                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(239,68,68,0.02)_10px,rgba(239,68,68,0.02)_20px)] mix-blend-overlay" />
-                        <div className="absolute top-0 right-0 p-5 mt-1">
-                            <div className="w-11 h-11 rounded-xl bg-[#1F0F0F] flex items-center justify-center border border-[#4A2424] group-hover:border-[#EF4444]/40 group-hover:bg-[#2A1212] transition-all duration-500 shadow-inner">
-                                <AlertTriangle className="w-5 h-5 text-[#EF4444]/70 group-hover:text-[#EF4444] transition-colors" />
-                            </div>
-                        </div>
-                        <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2 gap-2">
-                                <p className="text-3xl font-bold text-[#B87C7C] leading-tight tracking-tight group-hover:text-[#E8C8C8] transition-colors">Adverse</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#4A2424]/30 border border-[#4A2424] text-[10px] font-mono font-bold text-[#8A5151]">A</kbd>
-                            </div>
-                            <p className="text-[11px] text-[#804242] font-bold uppercase tracking-[0.15em] group-hover:text-[#A65B5B] transition-colors">Safety Event</p>
-                        </div>
-                    </button>
+                    />
                 </div>
 
                 {/* Keyboard Shortcut Legend */}
@@ -343,8 +274,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <p className="text-xs font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
                     {[
                         { key: 'V', label: 'Vitals' },
-                        { key: 'O', label: 'Observe' },
-                        { key: 'N', label: 'Note' },
                         { key: 'A', label: 'Adverse' },
                     ].map(({ key, label }) => (
                         <div key={key} className="flex items-center gap-1.5">

@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
-import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock } from 'lucide-react';
-import { getTimelineEvents } from '../../services/clinicalLog';
+import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock, Mic, Music, AlertTriangle, Send } from 'lucide-react';
+import { getTimelineEvents, createTimelineEvent } from '../../services/clinicalLog';
 
 export interface TimelineEvent {
     id: string;
@@ -33,12 +33,44 @@ const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string, symbo
     CLOSE: { icon: <CheckCircle className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '✓', label: '[CLOSE]' },
 };
 
+const QUICK_ACTIONS = [
+    { label: 'Patient Spoke', type: 'patient_observation', icon: Mic, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30 hover:bg-amber-500/30', desc: 'Patient reported: ' },
+    { label: 'Music Change', type: 'music_change', icon: Music, color: 'text-violet-400 bg-violet-500/20 border-violet-500/30 hover:bg-violet-500/30', desc: 'Playlist changed to: ' },
+    { label: 'Decision', type: 'clinical_decision', icon: AlertTriangle, color: 'text-orange-400 bg-orange-500/20 border-orange-500/30 hover:bg-orange-500/30', desc: 'Decision made: ' },
+    { label: 'Admin Dose', type: 'dose_admin', icon: Pill, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30 hover:bg-emerald-500/30', desc: 'Administered additional dose.' },
+];
+
 function formatTimeAMPM(date: Date): string {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
 export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, active }) => {
     const [events, setEvents] = useState<TimelineEvent[]>([]);
+    const [draftNote, setDraftNote] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleAddNote = async (e?: React.FormEvent, presetType?: string, presetDesc?: string) => {
+        if (e) e.preventDefault();
+
+        const type = presetType || 'general_note';
+        const description = presetDesc || draftNote.trim();
+
+        if (!description) return;
+
+        setIsSubmitting(true);
+        const eventData = {
+            session_id: sessionId,
+            event_timestamp: new Date().toISOString(),
+            event_type: type,
+            performed_by: 'Current Clinician',
+            metadata: { event_description: description }
+        };
+
+        await createTimelineEvent(eventData);
+        if (!presetDesc) setDraftNote('');
+        setIsSubmitting(false);
+        fetchLocalEvents();
+    };
 
     const fetchLocalEvents = useCallback(async () => {
         const result = await getTimelineEvents(sessionId);
@@ -134,6 +166,48 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
                     Export Log
                 </button>
             </div>
+
+            {active && (
+                <div className="p-4 border-b border-slate-700/50 bg-slate-800/40">
+                    <form onSubmit={handleAddNote} className="relative flex items-center">
+                        <input
+                            type="text"
+                            value={draftNote}
+                            onChange={(e) => setDraftNote(e.target.value)}
+                            placeholder="Type a clinical note to timestamp..."
+                            disabled={isSubmitting}
+                            className="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl py-3 pl-4 pr-12 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all font-medium"
+                        />
+                        <button
+                            type="submit"
+                            disabled={isSubmitting || !draftNote.trim()}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            <Send className="w-4 h-4" />
+                        </button>
+                    </form>
+
+                    <div className="flex flex-wrap gap-2 mt-4">
+                        {QUICK_ACTIONS.map(action => (
+                            <button
+                                key={action.type}
+                                onClick={() => {
+                                    if (action.desc.endsWith(': ')) {
+                                        setDraftNote(action.desc);
+                                    } else {
+                                        handleAddNote(undefined, action.type, action.desc);
+                                    }
+                                }}
+                                disabled={isSubmitting}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wider transition-colors ${action.color}`}
+                            >
+                                <action.icon className="w-3.5 h-3.5" />
+                                {action.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="p-6 max-h-[400px] overflow-y-auto space-y-6">
                 {events.length === 0 ? (
