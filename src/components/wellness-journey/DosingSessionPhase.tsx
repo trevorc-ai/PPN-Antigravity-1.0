@@ -84,74 +84,81 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
     if (mode === 'pre') {
         return (
             <div className="space-y-6 animate-in fade-in duration-500">
-                {/* ── PREREQUISITE BUTTONS ── */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button onClick={() => onOpenForm('dosing-protocol')} className="flex justify-center items-center gap-2 px-5 py-4 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-400 font-bold rounded-2xl transition-all active:scale-95 text-base shadow-[0_0_15px_rgba(0,0,0,0.1)]">
-                        <span className="material-symbols-outlined text-[20px]">medication</span>Dosing Protocol
-                    </button>
-                    <button onClick={() => onOpenForm('session-vitals')} className="flex justify-center items-center gap-2 px-5 py-4 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-400 font-bold rounded-2xl transition-all active:scale-95 text-base shadow-[0_0_15px_rgba(0,0,0,0.1)]">
-                        <span className="material-symbols-outlined text-[20px]">monitor_heart</span>Record Vitals
-                    </button>
-                    <button onClick={() => onOpenForm('rescue-protocol')} className="flex justify-center items-center gap-2 px-5 py-4 bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 font-bold rounded-2xl transition-all active:scale-95 text-base shadow-[0_0_15px_rgba(0,0,0,0.1)]">
-                        <span className="material-symbols-outlined text-[20px]">emergency</span>Log Rescue Protocol
-                    </button>
-                </div>
-
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
-                    <div className="flex items-start justify-between mb-8">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
                         <div>
                             <h2 className="text-2xl font-black text-slate-200">Session Preparation</h2>
                             <p className="text-slate-400 mt-1">Verify all safety gates before initiating dosing.</p>
                         </div>
-                        <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-bold uppercase tracking-wider">
-                            Phase 2: Dosing
-                        </div>
+                        {/* Emergency Protocol Button (Top Right) */}
+                        <button
+                            onClick={() => onOpenForm('rescue-protocol')}
+                            className="flex-shrink-0 flex items-center gap-2.5 px-6 py-3 bg-red-950/40 hover:bg-red-900/50 border-2 border-red-500/50 hover:border-red-500 text-red-100 font-bold rounded-xl transition-all active:scale-95 text-base shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
+                        >
+                            <span className="material-symbols-outlined text-red-500 group-hover:animate-pulse">emergency</span>
+                            Rescue Protocol Log
+                        </button>
                     </div>
 
-                    {/* Pre-Flight Checklist */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 items-stretch">
-                        <div className="space-y-4 h-full">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-1">Session Plan</h3>
-                            {/* Protocol Card */}
-                            <div className="px-5 py-5 bg-slate-800/40 border border-slate-700/50 rounded-xl transition-colors h-full min-h-[148px]">
-                                <div className="h-full flex flex-col justify-between">
-                                    <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
-                                        <span className="text-slate-400 text-base">Substance</span>
-                                        <span className="text-slate-200 font-bold bg-slate-700/50 px-3 py-1 rounded text-[17px]">{journey.session.substance}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
-                                        <span className="text-slate-400 text-base">Dosage</span>
-                                        <span className="text-slate-200 font-bold text-[17px]">{journey.session.dosage}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-slate-400 text-base">Guide</span>
-                                        <span className="text-slate-200 font-bold text-[17px]">Dr. Calton</span>
-                                    </div>
+                    {/* Pre-Flight Checklist Columns */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-stretch">
+
+                        {/* COLUMN 1: Session Plan & Protocol */}
+                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-slate-100/90 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
+                            <button
+                                onClick={() => onOpenForm('dosing-protocol')}
+                                className="w-fit flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">medication</span>
+                                Dosing Protocol
+                            </button>
+
+                            <div className="flex-1 px-5 py-5 bg-slate-800/40 border border-slate-700/50 rounded-xl transition-colors min-h-[148px] flex flex-col justify-between mt-auto">
+                                <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
+                                    <span className="text-slate-400 text-base">Substance</span>
+                                    <span className="text-slate-200 font-bold bg-slate-700/50 px-3 py-1 rounded text-[17px]">{journey.session.substance}</span>
+                                </div>
+                                <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
+                                    <span className="text-slate-400 text-base">Dosage</span>
+                                    <span className="text-slate-200 font-bold text-[17px]">{journey.session.dosage}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-400 text-base">Guide</span>
+                                    <span className="text-slate-200 font-bold text-[17px]">Dr. Calton</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="space-y-4 h-full flex flex-col">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-1">Required Gates</h3>
+                        {/* COLUMN 2: Required Gates & Vitals */}
+                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-slate-100/90 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
+                            <button
+                                onClick={() => onOpenForm('session-vitals')}
+                                className="w-fit flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">monitor_heart</span>
+                                Record Vitals
+                            </button>
 
-                            <div className="flex-1 flex flex-col justify-between gap-3">
+                            <div className="flex-1 flex flex-col justify-between gap-3 min-h-[148px] mt-auto">
                                 {/* Gate 1: Consent */}
-                                <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full">
-                                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                                <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0 z-10">
                                         <CheckCircle className="w-5 h-5" />
                                     </div>
-                                    <div>
+                                    <div className="z-10">
                                         <p className="text-slate-200 font-bold text-[15px]">Informed Consent</p>
                                         <p className="text-sm text-slate-400 mt-0.5">Verified signed • Oct 14, 2025</p>
                                     </div>
                                 </div>
 
                                 {/* Gate 2: Vitals */}
-                                <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full">
-                                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                                <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0 z-10">
                                         <CheckCircle className="w-5 h-5" />
                                     </div>
-                                    <div>
+                                    <div className="z-10">
                                         <p className="text-slate-200 font-bold text-[15px]">Baseline Vitals</p>
                                         <p className="text-sm text-slate-400 mt-0.5">Within range • HR 72, BP 118/76</p>
                                     </div>
