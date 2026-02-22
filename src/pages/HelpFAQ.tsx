@@ -22,13 +22,25 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
 
   const faqs = [
     {
-      q: "Why can't I enter notes in the Protocol Builder?",
+      q: "Why can't I enter free-text session notes?",
       a: (
-        <span>
-          To maintain Zero-PHI compliance, we do not allow free-text entry. This prevents accidental sharing of patient identifiers.
-          <br /><br />
-          Need a specific field? <a href="mailto:features@ppn.portal?subject=Feature%20Request%20-%20PPN%20Portal" className="text-primary hover:underline font-bold">Click here</a> to request a feature.
-        </span>
+        <div className="space-y-4">
+          <p>
+            To maintain Zero-PHI (Protected Health Information) compliance, the PPN platform operates completely free of manual text input. We do not collect or store patient names, locations, narratives, or identifiable markers.
+          </p>
+          <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl">
+            <p className="text-indigo-300 font-bold mb-1">Missing a specific clinical variable?</p>
+            <p className="text-slate-400 text-sm leading-relaxed mb-3">
+              Our clinical vocabulary is actively curated by a standing <strong>Advisory Board</strong> of leading psychedelic practitioners. If you encounter a substance, symptom, or protocol iteration not currently in our database, you can submit a request directly to the board for inclusion. Once approved, the new variable becomes available network-wide.
+            </p>
+            <button
+              onClick={() => alert("Opening Vocabulary Request Form (WO-119 Integration)")}
+              className="text-xs font-black text-indigo-400 uppercase tracking-widest hover:text-indigo-300 transition-colors flex items-center gap-1.5"
+            >
+              Submit Vocabulary Request <span className="material-symbols-outlined text-xs">arrow_forward</span>
+            </button>
+          </div>
+        </div>
       ),
       category: "Regulatory"
     },
@@ -231,6 +243,28 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                   <Calendar size={16} /> Schedule Tech Demo
                 </button>
               </div>
+            </div>
+
+            {/* Clinical Vocabulary Request Block */}
+            <div className="bg-slate-900/40 backdrop-blur-xl border border-indigo-500/30 p-8 rounded-3xl shadow-[0_0_30px_rgba(99,102,241,0.1)] relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
+              <div className="flex items-center gap-3 mb-3 relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                  <span className="material-symbols-outlined text-[20px]">library_add</span>
+                </div>
+                <h3 className="text-slate-200 font-black tracking-tight text-lg">Curate the Network</h3>
+              </div>
+
+              <p className="text-sm text-slate-400 mb-6 leading-relaxed font-medium relative z-10">
+                The PPN Data Ledger relies on an Advisory Board-managed vocabulary. Encountering variables not listed in our interface?
+              </p>
+
+              <button
+                onClick={() => alert("Opening Vocabulary Request Form (WO-119 Integration)")}
+                className="w-full flex items-center justify-between gap-3 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 py-3.5 px-5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border border-indigo-500/30 hover:border-indigo-500/50"
+              >
+                <span>Request Addition</span>
+                <span className="material-symbols-outlined text-sm">open_in_new</span>
+              </button>
             </div>
 
             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 p-6 rounded-3xl flex items-center gap-5 shadow-lg">
