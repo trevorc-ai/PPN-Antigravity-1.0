@@ -336,14 +336,18 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
 
                     {/* Optional note + Log Entry button */}
                     <div className="flex items-center gap-3 pt-1">
-                        <input
-                            type="text"
+                        <select
                             value={entryNote}
                             onChange={e => setEntryNote(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && logEntry()}
-                            placeholder="Optional note…"
-                            className="flex-1 px-3 py-2 bg-slate-800/40 border border-slate-700/40 rounded-lg text-sm text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                        />
+                            className="flex-1 px-3 py-2 bg-slate-800/40 border border-slate-700/40 rounded-lg text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+                        >
+                            <option value="">Select an optional note...</option>
+                            <option value="Patient requested pause in session">Patient requested pause in session</option>
+                            <option value="Consulting with presiding physician">Consulting with presiding physician</option>
+                            <option value="Intervention successful, monitoring closely">Intervention successful, monitoring closely</option>
+                            <option value="Symptoms escalating, preparing rescue meds">Symptoms escalating, preparing rescue meds</option>
+                            <option value="Environmental factors adjusted">Environmental factors adjusted</option>
+                        </select>
                         <button
                             type="button"
                             onClick={logEntry}
@@ -577,13 +581,19 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
 
                             <div className="md:col-span-2">
                                 <FormField label="Follow-up Plan" tooltip="Required for Grade 3+ or unresolved events">
-                                    <textarea
+                                    <select
                                         value={data.follow_up_plan ?? ''}
                                         onChange={e => update('follow_up_plan', e.target.value)}
-                                        rows={3}
-                                        placeholder="Describe next steps, monitoring requirements, or referrals…"
-                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm resize-none"
-                                    />
+                                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm appearance-none"
+                                    >
+                                        <option value="">Select predefined follow-up plan...</option>
+                                        <option value="Routine remote monitoring (24h)">Routine remote monitoring (24h)</option>
+                                        <option value="In-person follow-up required (48h)">In-person follow-up required (48h)</option>
+                                        <option value="Referral to primary care / specialist">Referral to primary care / specialist</option>
+                                        <option value="Psychiatric evaluation recommended">Psychiatric evaluation recommended</option>
+                                        <option value="Discharged to emergency care">Discharged to emergency care</option>
+                                        <option value="No follow-up required">No follow-up required (Resolved)</option>
+                                    </select>
                                 </FormField>
                             </div>
 

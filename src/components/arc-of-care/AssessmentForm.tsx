@@ -151,11 +151,11 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                         <span className="text-slate-300">
                             Progress: {answeredCount}/{config.questions.length} questions
                         </span>
-                        <span className="text-emerald-400 font-bold">{progressPercentage}%</span>
+                        <span className="text-indigo-400 font-bold">{progressPercentage}%</span>
                     </div>
                     <div className="h-2 bg-slate-900/60 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-emerald-400 transition-all duration-500"
+                            className="h-full bg-indigo-400 transition-all duration-500"
                             style={{ width: `${progressPercentage}%` }}
                         />
                     </div>
@@ -163,12 +163,12 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
 
                 {/* Current Score */}
                 {answeredCount > 0 && (
-                    <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                    <div className="mt-4 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
                         <div className="flex items-center justify-between">
-                            <span className="text-emerald-300 text-base font-semibold">
+                            <span className="text-indigo-300 text-base font-semibold">
                                 Current {config.shortName} Score
                             </span>
-                            <span className="text-2xl font-black text-emerald-400">
+                            <span className="text-2xl font-black text-indigo-400">
                                 {currentScore}/100
                             </span>
                         </div>
@@ -186,7 +186,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                         <div
                             key={question.id}
                             className={`bg-slate-900/60 backdrop-blur-xl border rounded-2xl p-8 transition-all ${isAnswered
-                                ? 'border-emerald-500/50 bg-emerald-500/5'
+                                ? 'border-indigo-500/50 bg-indigo-500/5'
                                 : 'border-slate-700/50'
                                 }`}
                         >
@@ -194,7 +194,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                             <div className="flex items-start gap-4 mb-6">
                                 <div
                                     className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isAnswered
-                                        ? 'bg-emerald-500/20 text-emerald-400'
+                                        ? 'bg-indigo-500/20 text-indigo-400'
                                         : 'bg-slate-700/50 text-slate-300'
                                         }`}
                                 >
@@ -239,7 +239,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                                             key={option.value}
                                             onClick={() => handleResponse(question.id, option.value)}
                                             className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all border ${responses[question.id] === option.value
-                                                ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/20 transform scale-[1.02]'
+                                                ? 'bg-indigo-500 border-indigo-400 text-white shadow-lg shadow-indigo-500/20 transform scale-[1.02]'
                                                 : 'bg-slate-800/60 border-slate-700/50 text-[#A8B5D1] hover:bg-slate-700/60 hover:border-slate-600'
                                                 }`}
                                         >
@@ -262,11 +262,11 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                                         onChange={(e) =>
                                             handleResponse(question.id, parseInt(e.target.value))
                                         }
-                                        className="w-full h-5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500 assessment-slider"
+                                        className="w-full h-5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500 assessment-slider"
                                     />
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-slate-300">{question.min}</span>
-                                        <span className="text-emerald-400 font-bold text-lg">
+                                        <span className="text-indigo-400 font-bold text-lg">
                                             {responses[question.id] ?? 50}
                                         </span>
                                         <span className="text-slate-300">{question.max}</span>
@@ -310,7 +310,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                     ) : (
                         <button
                             onClick={handleComplete}
-                            className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30"
+                            className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
                         >
                             <CheckCircle className="w-5 h-5" />
                             Complete Assessment
