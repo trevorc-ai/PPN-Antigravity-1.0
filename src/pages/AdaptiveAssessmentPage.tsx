@@ -34,9 +34,10 @@ interface AssessmentScores {
 interface AdaptiveAssessmentPageProps {
     onComplete?: (scores: { meq: number; edi: number; ceq: number }) => void;
     showBackButton?: boolean;
+    onClose?: () => void;
 }
 
-const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onComplete, showBackButton = true }) => {
+const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onComplete, showBackButton = true, onClose }) => {
     const navigate = useNavigate();
     const [phase, setPhase] = useState<AssessmentPhase>('quick');
     const [currentAssessment, setCurrentAssessment] = useState<CurrentAssessment>('meq');
@@ -246,10 +247,10 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                     {/* Actions */}
                     <div className="flex items-center justify-center gap-4">
                         <button
-                            onClick={() => navigate('/wellness-journey')}
+                            onClick={() => onClose ? onClose() : navigate('/wellness-journey')}
                             className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all"
                         >
-                            View Your Journey
+                            {onClose ? 'Close Assessment & Return to Journey' : 'View Your Journey'}
                         </button>
                     </div>
                 </div>

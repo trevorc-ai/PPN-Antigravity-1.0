@@ -466,8 +466,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                     onComplete={(scores) => {
                                         setAssessmentScores(scores);
                                         setAssessmentCompleted(true);
-                                        setTimeout(() => setShowAssessmentModal(false), 3000);
                                     }}
+                                    onClose={() => setShowAssessmentModal(false)}
                                 />
                             </div>
                         </div>
