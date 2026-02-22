@@ -101,6 +101,7 @@ interface WellnessFormRouterProps {
     siteId?: string;     // Resolved by parent (WellnessJourney) at page load
     onComplete?: () => void;  // Advance to next form / mark complete
     onNavigate?: (formId: WellnessFormId) => void; // Open a sibling form
+    onExit?: () => void;      // Mark complete but close panel (Save & Exit)
     onClose?: () => void;     // Close panel without marking complete (used by Back buttons)
 }
 
@@ -111,6 +112,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     siteId: siteIdProp,
     onComplete,
     onNavigate,
+    onExit,
     onClose,
 }) => {
     const { addToast } = useToast();
@@ -344,15 +346,15 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 patientId={patientId}
                 onNext={onComplete}
                 onBack={onClose ?? onComplete}
-                onExit={onClose ?? onComplete}
+                onExit={onExit ?? onClose ?? onComplete}
             />;
 
         case 'structured-safety':
             return <StructuredSafetyCheckForm
                 onSave={() => onSaved('Safety Screen')}
                 onComplete={onComplete}
-                onBack={onComplete}
-                onExit={onComplete}
+                onBack={onClose ?? onComplete}
+                onExit={onExit ?? onClose ?? onComplete}
             />;
 
         case 'set-and-setting':
@@ -360,14 +362,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 onSave={handleSetAndSettingSave}
                 onComplete={onComplete}
                 onBack={onClose ?? onComplete}
-                onExit={onClose ?? onComplete}
+                onExit={onExit ?? onClose ?? onComplete}
             />;
 
         case 'mental-health':
             return <MentalHealthScreeningForm
                 patientId={patientId}
                 onComplete={onComplete}
-                onExit={onClose ?? onComplete}
+                onExit={onExit ?? onClose ?? onComplete}
                 onBack={onClose ?? onComplete}
             />;
 
@@ -376,39 +378,39 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             // NOTE: no-op onSave — DosingProtocolForm auto-saves on every field change.
             // Calling onSuccess here would immediately trigger onComplete() and close the panel.
             // A dedicated handleDosingProtocolSave can be wired once sessionId is available.
-            return <DosingProtocolForm onSave={() => { }} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <DosingProtocolForm onSave={() => { }} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'session-timeline':
-            return <SessionTimelineForm onSave={handleTimelineSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <SessionTimelineForm onSave={handleTimelineSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'session-vitals':
-            return <SessionVitalsForm onSave={handleVitalsSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <SessionVitalsForm onSave={handleVitalsSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'session-observations':
-            return <SessionObservationsForm onSave={handleSessionObservationsSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <SessionObservationsForm onSave={handleSessionObservationsSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'safety-and-adverse-event':
-            return <SafetyAndAdverseEventForm onSave={handleSafetyEventSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <SafetyAndAdverseEventForm onSave={handleSafetyEventSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'rescue-protocol':
-            return <RescueProtocolForm onSave={handleRescueProtocolSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <RescueProtocolForm onSave={handleRescueProtocolSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         // ── Phase 3: Integration — Early Follow-up ───────────────────────────
         case 'daily-pulse':
-            return <DailyPulseCheckForm onSave={handlePulseCheckSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <DailyPulseCheckForm onSave={handlePulseCheckSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'meq30':
-            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         // ── Phase 3: Integration — Integration Work ──────────────────────────
         case 'structured-integration':
-            return <StructuredIntegrationSessionForm onSave={handleIntegrationSessionSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <StructuredIntegrationSessionForm onSave={handleIntegrationSessionSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'behavioral-tracker':
-            return <BehavioralChangeTrackerForm onSave={handleBehavioralChangeSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <BehavioralChangeTrackerForm onSave={handleBehavioralChangeSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'longitudinal-assessment':
-            return <LongitudinalAssessmentForm onSave={handleLongitudinalAssessmentSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onClose ?? onComplete} />;
+            return <LongitudinalAssessmentForm onSave={handleLongitudinalAssessmentSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         default:
             return (

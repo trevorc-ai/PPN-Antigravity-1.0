@@ -278,9 +278,7 @@ const WellnessJourney: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Called by WellnessFormRouter's onComplete after a successful save.
-    // Marks the form done and auto-advances to the next Phase 1 step.
-    const handleFormComplete = useCallback((formId: WellnessFormId | null) => {
+    const handleFormComplete = useCallback((formId: WellnessFormId | null, exit: boolean = false) => {
         let nextId: WellnessFormId | null = null;
         let isLastPhase1Form = false;
 
@@ -288,16 +286,27 @@ const WellnessJourney: React.FC = () => {
             const updatedForms = new Set([...completedForms, formId]);
             setCompletedForms(updatedForms);
 
-            const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
-            const next = PHASE1_STEPS[currentIndex + 1];
-            nextId = next ? next.id : null;
+            if (!exit) {
+                const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
+                const next = PHASE1_STEPS[currentIndex + 1];
+                nextId = next ? next.id : null;
+            }
 
             // If no next step — all Phase 1 forms saved, complete the phase
-            if (!nextId) {
+            if (!nextId && !exit) {
                 isLastPhase1Form = true;
                 const updatedPhases = [...new Set([...completedPhases, 1 as number])];
                 setCompletedPhases(updatedPhases);
                 localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updatedPhases));
+            } else if (!nextId && exit) {
+                // Even if we exit, check if all are done
+                const allDone = PHASE1_STEPS.every(s => updatedForms.has(s.id));
+                if (allDone && !completedPhases.includes(1)) {
+                    isLastPhase1Form = true;
+                    const updatedPhases = [...new Set([...completedPhases, 1 as number])];
+                    setCompletedPhases(updatedPhases);
+                    localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updatedPhases));
+                }
             }
         }
 
@@ -539,6 +548,7 @@ const WellnessJourney: React.FC = () => {
                         sessionId={journey.sessionId}
                         siteId={clinicianSiteId}
                         onComplete={() => handleFormComplete(activeFormId)}
+                        onExit={() => handleFormComplete(activeFormId, true)}
                         onClose={() => handleFormComplete(null)}
                         onNavigate={handleOpenForm}
                     />

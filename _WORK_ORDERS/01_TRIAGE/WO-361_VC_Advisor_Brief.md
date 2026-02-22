@@ -1,0 +1,33 @@
+---
+status: 01_TRIAGE
+owner: LEAD
+failure_count: 0
+---
+
+# WO-361_VC_Advisor_Brief.md
+
+## PRODDY STRATEGY (VC Attorney Prep)
+**Objective**: Prepare high-impact materials for an upcoming advisory session with a retired VC Attorney to maximize feedback, derisk the product, and validate our regulatory / IP strategy.
+
+### Core Strategic Focus Areas
+This advisor will naturally look for risks that would scare away a Series A Lead Investor. We need to front-run those concerns by showing we have structural answers.
+
+#### 1. The Zero-PHI "Data Moat" Summary
+- **Why it matters**: VC attorneys get extremely nervous around healthcare data due to HIPAA breaches and compliance overhead. 
+- **Our Prep**: We must document how PPN uses synthetic `Subject_ID`s and strict separation of PII from clinical outcomes. We need to clearly show how this creates a defensible, proprietary dataset *without* the regulatory liability of an EHR.
+
+#### 2. Regulatory Stance & CPOM (Corporate Practice of Medicine)
+- **Why it matters**: The psychedelic space is a regulatory grey area (state vs. federal). 
+- **Our Prep**: Provide a 1-pager establishing that PPN is a strict B2B software and analytics layer, not a provider of medical advice or therapy. Ask for his framework on how investors currently diligence digital health tools in the psychedelic space.
+
+#### 3. IP & Defensibility Strategy
+- **Why it matters**: Investors invest in moats. Is our tech patentable, or is our data our trade secret?
+- **Our Prep**: Briefly describe our algorithmic approach (like the NNT cards or Outcome Benchmarking). Ask him: "Are we better off protecting the algorithms as trade secrets, or pursuing defensive patents?"
+
+#### 4. The Targeted "Ask" List
+VC attorney time is incredibly high-leverage. Prepare 3 specific, tough questions to send him *before* the meeting. 
+Example: *"Based on your experience with digital health exits, what is the single most common legal pitfall you've seen technical founders make in their first 12 months?"*
+
+---
+## LEAD ARCHITECTURE
+(Pending LEAD review: Architect a sprint or specific agent tasks to generate the actual 1-pagers based on PRODDY's strategy above.)

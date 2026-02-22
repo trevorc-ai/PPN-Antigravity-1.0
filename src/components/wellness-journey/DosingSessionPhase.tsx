@@ -177,17 +177,17 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="flex flex-col items-center pt-8 border-t border-slate-800">
                         <button
                             onClick={() => setMode('live')}
-                            className="group relative w-full py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-amber-50 font-black text-lg sm:text-xl tracking-wide shadow-lg shadow-amber-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex flex-wrap items-center justify-center gap-2 sm:gap-4 border border-amber-500/40 px-4"
+                            className="group relative w-full py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-[#1A3631] to-[#122A26] hover:from-[#21433D] hover:to-[#173631] text-emerald-100 font-black text-lg sm:text-xl tracking-wide shadow-lg shadow-black/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex flex-wrap items-center justify-center gap-2 sm:gap-4 border border-emerald-800/40 px-4"
                         >
-                            <span className="text-2xl sm:text-3xl font-bold text-white mr-0 sm:mr-2">Step 3:</span>
-                            <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/15 flex items-center justify-center group-hover:bg-black/25 transition-colors">
-                                <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5" />
+                            <span className="text-2xl sm:text-3xl font-bold text-emerald-300/80 mr-0 sm:mr-2">Step 3:</span>
+                            <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-950/50 flex items-center justify-center group-hover:bg-emerald-900/50 border border-emerald-800/50 transition-colors">
+                                <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-emerald-400 text-emerald-400 ml-0.5" />
                             </span>
-                            <span className="text-center">START DOSING SESSION</span>
-                            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 opacity-60 group-hover:translate-x-1 transition-transform" />
+                            <span className="text-center text-emerald-50">START DOSING SESSION</span>
+                            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 opacity-60 group-hover:translate-x-1 transition-transform text-emerald-400" />
                         </button>
-                        <p className="text-[13px] text-slate-400 mt-4 flex items-center gap-2">
-                            <Info className="w-4 h-4 text-amber-500/70" />
+                        <p className="text-[13px] text-slate-500 mt-4 flex items-center gap-2 font-medium">
+                            <Info className="w-4 h-4 text-emerald-600/70" />
                             Timer will start and all activity will be timestamped until the session ends.
                         </p>
                     </div>
@@ -202,43 +202,43 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-500 pb-20">
 
                 {/* HEADS-UP DISPLAY (HUD) */}
-                <div className="sticky top-4 z-30 bg-slate-900/90 backdrop-blur-2xl border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden ring-1 ring-white/5">
-                    <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-500 via-blue-500 to-amber-500 w-full animate-pulse" />
-                    <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="sticky top-4 z-30 bg-[#061115]/95 backdrop-blur-3xl border border-[#14343B]/60 rounded-2xl shadow-2xl shadow-black/80 overflow-hidden ring-1 ring-emerald-900/20">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0C3831] via-[#104A41] to-[#0C3831] w-full" />
+                    <div className="p-5 flex flex-col sm:flex-row items-center justify-between gap-5">
                         {/* Timer */}
                         <div className="text-center sm:text-left">
-                            <p className="text-xs uppercase tracking-[0.2em] text-amber-400 font-bold mb-1">Session Active</p>
-                            <p className="text-4xl font-black text-white font-mono tracking-tight leading-none tabular-nums">
+                            <p className="text-[10px] md:text-xs uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-1">Session Active</p>
+                            <p className="text-4xl font-black text-emerald-50/90 font-mono tracking-tight leading-none tabular-nums drop-shadow-sm">
                                 {elapsedTime}
                             </p>
                         </div>
                         {/* Live Vitals Ticker */}
-                        <div className="flex items-center gap-5 bg-slate-950/50 p-3 rounded-xl border border-white/5 shadow-inner">
+                        <div className="flex items-center gap-6 bg-[#040C0E]/60 p-3.5 rounded-xl border border-[#14343B]/40 shadow-inner">
                             <div className="text-right">
-                                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">HR</p>
+                                <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
                                 <div className="flex items-center gap-1.5 justify-end">
-                                    <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse" />
-                                    <p className="text-xl font-black text-[#A8B5D1] leading-none">{liveVitals.hr}</p>
+                                    <Heart className="w-3.5 h-3.5 text-rose-500/80 fill-rose-500/30 animate-pulse" />
+                                    <p className="text-xl font-bold text-emerald-100 leading-none">{liveVitals.hr}</p>
                                 </div>
                             </div>
-                            <div className="w-px h-8 bg-slate-800" />
+                            <div className="w-px h-8 bg-[#14343B]/50" />
                             <div className="text-right">
-                                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">BP</p>
-                                <p className="text-xl font-black text-[#A8B5D1] leading-none">{liveVitals.bp}</p>
+                                <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
+                                <p className="text-xl font-bold text-emerald-100 leading-none">{liveVitals.bp}</p>
                             </div>
-                            <div className="w-px h-8 bg-slate-800" />
+                            <div className="w-px h-8 bg-[#14343B]/50" />
                             <div className="text-right">
-                                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">SpO2</p>
-                                <p className={`text-xl font-black leading-none ${liveVitals.spo2 < 95 ? 'text-amber-400' : 'text-[#A8B5D1]'}`}>{liveVitals.spo2}%</p>
+                                <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
+                                <p className={`text-xl font-bold leading-none ${liveVitals.spo2 < 95 ? 'text-amber-500/90' : 'text-emerald-100'}`}>{liveVitals.spo2}%</p>
                             </div>
                         </div>
                         {/* End Button */}
                         <button
                             onClick={() => setMode('post')}
-                            className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold rounded-xl border border-slate-700 transition-colors uppercase tracking-wide text-xs flex items-center gap-2 group"
+                            className="px-6 py-3.5 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2.5 group shadow-sm"
                         >
                             End Session
-                            <ArrowRight className="w-3.5 h-3.5 opacity-50 group-hover:translate-x-0.5 transition-transform" />
+                            <ArrowRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
                         </button>
                     </div>
                 </div>
@@ -246,84 +246,83 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                 {/* THE "BIG 3" ACTION DECK + SAFETY */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
 
-                    {/* 1. Log Vitals */}
+                    {/* 1. Log Vitals (Blue -> Indigo/Slate) */}
                     <button
                         onClick={() => onOpenForm('session-vitals')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-blue-900/20 via-slate-900 to-slate-900 border border-blue-900/30 rounded-3xl hover:border-blue-500/50 hover:from-blue-900/30 hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.2)] transition-all duration-300 active:scale-[0.98] text-left overflow-hidden ring-1 ring-white/5"
+                        className="group relative h-44 p-6 bg-gradient-to-br from-[#121E2E] to-[#0A121A] border border-[#1E334D]/50 rounded-3xl hover:border-[#2D4A6B]/80 hover:from-[#16253A] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
                     >
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="absolute top-0 right-0 p-5 opacity-80 group-hover:opacity-100 group-hover:rotate-12 transition-all duration-500">
-                            <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center border border-blue-500/30 group-hover:border-blue-500/50 group-hover:bg-blue-500/30 transition-colors shadow-lg shadow-blue-900/20">
-                                <Activity className="w-6 h-6 text-blue-300 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
+                        <div className="absolute inset-0 bg-[#3B82F6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
+                        <div className="absolute top-0 right-0 p-5 mt-1 opacity-70 group-hover:opacity-100 group-hover:rotate-[8deg] transition-all duration-500">
+                            <div className="w-11 h-11 rounded-xl bg-[#0F2038] flex items-center justify-center border border-[#1E334D] group-hover:border-[#3B82F6]/30 shadow-inner">
+                                <Activity className="w-5 h-5 text-[#3B82F6]/70 group-hover:text-[#3B82F6] transition-colors" />
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <p className="text-3xl font-black text-[#A8B5D1] leading-tight tracking-tight group-hover:text-white transition-colors">Vitals</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-blue-500/20 border border-blue-500/30 text-xs font-mono font-bold text-blue-300">V</kbd>
+                            <div className="flex items-center justify-between mb-2 gap-2">
+                                <p className="text-3xl font-bold text-[#8FA8C7] leading-tight tracking-tight group-hover:text-[#E2E8F0] transition-colors">Vitals</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#1E334D]/30 border border-[#1E334D] text-[10px] font-mono font-bold text-[#64748B]">V</kbd>
                             </div>
-                            <p className="text-xs text-blue-200/60 font-bold uppercase tracking-widest group-hover:text-blue-200 transition-colors">Check & Log</p>
+                            <p className="text-[11px] text-[#475E7A] font-bold uppercase tracking-[0.15em] group-hover:text-[#64748B] transition-colors">Check & Log</p>
                         </div>
                     </button>
 
-                    {/* 2. Observations */}
+                    {/* 2. Observations (Amber -> Deep Ochre) */}
                     <button
                         onClick={() => onOpenForm('session-observations')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-amber-900/20 via-slate-900 to-slate-900 border border-amber-900/30 rounded-3xl hover:border-amber-500/50 hover:from-amber-900/30 hover:shadow-[0_0_30px_-5px_rgba(245,158,11,0.2)] transition-all duration-300 active:scale-[0.98] text-left overflow-hidden ring-1 ring-white/5"
+                        className="group relative h-44 p-6 bg-gradient-to-br from-[#291F13] to-[#120D08] border border-[#402D1A]/50 rounded-3xl hover:border-[#5C4024]/80 hover:from-[#332516] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
                     >
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="absolute top-0 right-0 p-5 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500">
-                            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30 group-hover:border-amber-500/50 group-hover:bg-amber-500/30 transition-colors shadow-lg shadow-amber-900/20">
-                                <Sparkles className="w-6 h-6 text-amber-300" />
+                        <div className="absolute inset-0 bg-[#F59E0B]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
+                        <div className="absolute top-0 right-0 p-5 mt-1 opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                            <div className="w-11 h-11 rounded-xl bg-[#241B10] flex items-center justify-center border border-[#402D1A] group-hover:border-[#F59E0B]/30 shadow-inner">
+                                <Sparkles className="w-5 h-5 text-[#F59E0B]/60 group-hover:text-[#F59E0B] transition-colors" />
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <p className="text-3xl font-black text-[#A8B5D1] leading-tight tracking-tight group-hover:text-white transition-colors">Observe</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 border border-amber-500/30 text-xs font-mono font-bold text-amber-300">O</kbd>
+                            <div className="flex items-center justify-between mb-2 gap-2">
+                                <p className="text-3xl font-bold text-[#A88B6E] leading-tight tracking-tight group-hover:text-[#E2D5C8] transition-colors">Observe</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#402D1A]/30 border border-[#402D1A] text-[10px] font-mono font-bold text-[#7A634E]">O</kbd>
                             </div>
-                            <p className="text-xs text-amber-200/60 font-bold uppercase tracking-widest group-hover:text-amber-200 transition-colors">Behavior & Mood</p>
+                            <p className="text-[11px] text-[#705843] font-bold uppercase tracking-[0.15em] group-hover:text-[#8B7158] transition-colors">Behavior</p>
                         </div>
                     </button>
 
-                    {/* 3. Timeline Note (Secondary Action) */}
+                    {/* 3. Timeline Note (Emerald -> Deep Pine) */}
                     <button
                         onClick={() => onOpenForm('session-timeline')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-emerald-900/20 via-slate-900 to-slate-900 border border-emerald-900/30 rounded-3xl hover:border-emerald-500/50 hover:from-emerald-900/30 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.2)] transition-all duration-300 active:scale-[0.98] text-left overflow-hidden ring-1 ring-white/5"
+                        className="group relative h-44 p-6 bg-gradient-to-br from-[#12261E] to-[#08140F] border border-[#1C3B2F]/50 rounded-3xl hover:border-[#275241]/80 hover:from-[#173026] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
                     >
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="absolute top-0 right-0 p-5 opacity-80 group-hover:opacity-100 group-hover:-rotate-12 transition-all duration-500">
-                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 group-hover:border-emerald-500/50 group-hover:bg-emerald-500/30 transition-colors shadow-lg shadow-emerald-900/20">
-                                <Clock className="w-6 h-6 text-emerald-300" />
+                        <div className="absolute inset-0 bg-[#10B981]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
+                        <div className="absolute top-0 right-0 p-5 mt-1 opacity-70 group-hover:opacity-100 group-hover:-rotate-[8deg] transition-all duration-500">
+                            <div className="w-11 h-11 rounded-xl bg-[#0D1F18] flex items-center justify-center border border-[#1C3B2F] group-hover:border-[#10B981]/30 shadow-inner">
+                                <Clock className="w-5 h-5 text-[#10B981]/60 group-hover:text-[#10B981] transition-colors" />
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <p className="text-3xl font-black text-[#A8B5D1] leading-tight tracking-tight group-hover:text-white transition-colors">Note</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-emerald-500/20 border border-emerald-500/30 text-xs font-mono font-bold text-emerald-300">N</kbd>
+                            <div className="flex items-center justify-between mb-2 gap-2">
+                                <p className="text-3xl font-bold text-[#71A68F] leading-tight tracking-tight group-hover:text-[#D1E8DD] transition-colors">Note</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#1C3B2F]/30 border border-[#1C3B2F] text-[10px] font-mono font-bold text-[#55806C]">N</kbd>
                             </div>
-                            <p className="text-xs text-emerald-200/60 font-bold uppercase tracking-widest group-hover:text-emerald-200 transition-colors">Add to Timeline</p>
+                            <p className="text-[11px] text-[#426B57] font-bold uppercase tracking-[0.15em] group-hover:text-[#588A72] transition-colors">Timeline</p>
                         </div>
                     </button>
 
-
-                    {/* 4. SAFETY ALARM (Always Red) */}
+                    {/* 4. SAFETY ALARM (Red -> Muted Burgundy) */}
                     <button
                         onClick={() => onOpenForm('safety-and-adverse-event')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-red-950/40 via-red-950/20 to-red-950/10 border border-red-500/30 rounded-3xl hover:border-red-500 hover:bg-red-900/40 hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.3)] transition-all duration-300 active:scale-[0.98] text-left overflow-hidden ring-1 ring-red-500/10"
+                        className="group relative h-44 p-6 bg-gradient-to-br from-[#2E1616] to-[#170B0B] border border-[#4A2424]/50 rounded-3xl hover:border-[#6B3333]/80 hover:from-[#381B1B] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
                     >
-                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(239,68,68,0.05)_10px,rgba(239,68,68,0.05)_20px)] opacity-50" />
-                        <div className="absolute top-0 right-0 p-5">
-                            <div className="w-12 h-12 rounded-2xl bg-red-500/20 flex items-center justify-center border border-red-500/30 animate-pulse group-hover:animate-none group-hover:bg-red-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-red-900/20">
-                                <AlertTriangle className="w-6 h-6 text-red-400 group-hover:text-white" />
+                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(239,68,68,0.02)_10px,rgba(239,68,68,0.02)_20px)] mix-blend-overlay" />
+                        <div className="absolute top-0 right-0 p-5 mt-1">
+                            <div className="w-11 h-11 rounded-xl bg-[#1F0F0F] flex items-center justify-center border border-[#4A2424] group-hover:border-[#EF4444]/40 group-hover:bg-[#2A1212] transition-all duration-500 shadow-inner">
+                                <AlertTriangle className="w-5 h-5 text-[#EF4444]/70 group-hover:text-[#EF4444] transition-colors" />
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
-                            <div className="flex items-center justify-between mb-2">
-                                <p className="text-3xl font-black text-red-100 leading-tight tracking-tight group-hover:text-white transition-colors">Adverse</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-red-500/20 border border-red-500/30 text-xs font-mono font-bold text-red-300">A</kbd>
+                            <div className="flex items-center justify-between mb-2 gap-2">
+                                <p className="text-3xl font-bold text-[#B87C7C] leading-tight tracking-tight group-hover:text-[#E8C8C8] transition-colors">Adverse</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#4A2424]/30 border border-[#4A2424] text-[10px] font-mono font-bold text-[#8A5151]">A</kbd>
                             </div>
-                            <p className="text-xs text-red-400/80 font-bold uppercase tracking-widest group-hover:text-red-200 transition-colors">Log Safety Event</p>
+                            <p className="text-[11px] text-[#804242] font-bold uppercase tracking-[0.15em] group-hover:text-[#A65B5B] transition-colors">Safety Event</p>
                         </div>
                     </button>
                 </div>
