@@ -27,6 +27,8 @@ import InsightFeedPanel from '../components/analytics/InsightFeedPanel';
 const Analytics = () => {
     const [siteId, setSiteId] = useState<number | null>(null);
     const [userEmail, setUserEmail] = useState<string>('');
+    const [selectedSubstance, setSelectedSubstance] = useState<string>('all');
+    const [selectedDateRange, setSelectedDateRange] = useState<string>('30');
     const analytics = useAnalyticsData(siteId);
     const { benchmark, loading: benchmarkLoading } = useSafetyBenchmark();
 
@@ -257,16 +259,27 @@ const Analytics = () => {
                     <div className="h-6 w-px bg-slate-800 hidden xl:block"></div>
 
                     <div className="flex-1 flex flex-col md:flex-row gap-2">
-                        <select className="bg-black/40 border border-slate-700/50 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider" style={{ color: '#8B9DC3' }}>
-                            <option>All Molecules</option>
-                            <option>Psilocybin</option>
-                            <option>MDMA</option>
-                            <option>Ketamine</option>
+                        <select
+                            className="bg-black/40 border border-slate-700/50 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider"
+                            style={{ color: '#8B9DC3' }}
+                            value={selectedSubstance}
+                            onChange={(e) => setSelectedSubstance(e.target.value)}
+                        >
+                            <option value="all">All Molecules</option>
+                            <option value="psilocybin">Psilocybin</option>
+                            <option value="mdma">MDMA</option>
+                            <option value="ketamine">Ketamine</option>
                         </select>
-                        <select className="bg-black/40 border border-slate-700/50 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider" style={{ color: '#8B9DC3' }}>
-                            <option>Last 30 Days</option>
-                            <option>Last Quarter</option>
-                            <option>YTD</option>
+                        <select
+                            className="bg-black/40 border border-slate-700/50 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-indigo-500/50 uppercase tracking-wider"
+                            style={{ color: '#8B9DC3' }}
+                            value={selectedDateRange}
+                            onChange={(e) => setSelectedDateRange(e.target.value)}
+                        >
+                            <option value="7">Last 7 Days</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="all">All Time</option>
                         </select>
                     </div>
                 </div>

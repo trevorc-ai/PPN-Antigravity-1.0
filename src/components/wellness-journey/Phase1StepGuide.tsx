@@ -260,14 +260,17 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                 {/* CTA buttons — text-sm minimum */}
                                 <div className="mt-auto pt-2">
                                     {isComplete ? (
-                                        <button
-                                            onClick={() => onStartStep(step.id)}
-                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-teal-400 transition-all"
-                                            aria-label={`Amend ${step.label}`}
-                                        >
-                                            <Edit3 className="w-3.5 h-3.5" aria-hidden="true" />
-                                            Amend
-                                        </button>
+                                        <div className="flex flex-col items-center gap-1">
+                                            <span className="text-[11px] font-black uppercase tracking-widest text-teal-400/80">Completed</span>
+                                            <button
+                                                onClick={() => onStartStep(step.id)}
+                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-500 hover:text-teal-400 transition-all"
+                                                aria-label={`Amend ${step.label}`}
+                                            >
+                                                <Edit3 className="w-3.5 h-3.5" aria-hidden="true" />
+                                                Amend
+                                            </button>
+                                        </div>
                                     ) : isCurrent ? (
                                         <button
                                             id={`phase1-step-${index + 1}-start`}

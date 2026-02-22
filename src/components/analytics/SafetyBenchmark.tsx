@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
     ReferenceLine, LabelList, Cell
 } from 'recharts';
 import { ShieldCheck, TrendingDown, Award } from 'lucide-react';
+import { ChartSkeleton } from './ChartSkeleton';
+import { CustomTooltip } from './CustomTooltip';
 
 interface SafetyBenchmarkProps {
     /** Adverse event rate for this practitioner (%). Defaults to live mock. */
@@ -22,23 +24,7 @@ interface SafetyBenchmarkProps {
 
 const ALERT_THRESHOLD = 20; // events per 100 sessions — hard safety limit
 
-const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-        const d = payload[0].payload;
-        return (
-            <div className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 shadow-2xl">
-                <p className="text-sm font-black text-slate-300 mb-1">{d.name}</p>
-                <p className="text-sm text-slate-400">{d.value.toFixed(1)} events / 100 sessions</p>
-                {d.name === 'Your Node' && (
-                    <p className="text-xs text-emerald-400 mt-1 font-bold">
-                        {Math.round((1 - d.value / ALERT_THRESHOLD) * 100)}% below alert threshold
-                    </p>
-                )}
-            </div>
-        );
-    }
-    return null;
-};
+// CustomTooltip imported from shared
 
 export default function SafetyBenchmark({
     practitionerRate = 4.2,
@@ -48,6 +34,13 @@ export default function SafetyBenchmark({
     percentile = 91,
     status = 'excellent',
 }: SafetyBenchmarkProps) {
+    const [chartReady, setChartReady] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setChartReady(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
+
     const chartData = [
         { name: 'Your Node', value: practitionerRate, fill: '#10b981' },
         { name: 'Network Avg', value: networkRate, fill: '#64748b' },
@@ -101,62 +94,75 @@ export default function SafetyBenchmark({
             </div>
 
             {/* ── BENCHMARK CHART ────────────────────────────────────────── */}
-            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5">
+            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5" role="img" aria-label="Bar chart comparing your adverse event rate with the network average">
                 <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-4">
                     Benchmark Comparison — events per 100 sessions
                 </p>
                 <div className="h-36">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart
-                            data={chartData}
-                            layout="vertical"
-                            margin={{ top: 4, right: 60, left: 90, bottom: 4 }}
-                        >
-                            <XAxis
-                                type="number"
-                                domain={[0, 25]}
-                                tick={{ fill: '#475569', fontSize: 11 }}
-                                axisLine={false}
-                                tickLine={false}
-                            />
-                            <YAxis
-                                type="category"
-                                dataKey="name"
-                                tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
-                                axisLine={false}
-                                tickLine={false}
-                                width={82}
-                            />
-                            <Tooltip
-                                content={<CustomTooltip />}
-                                cursor={{ fill: 'rgba(100,116,139,0.06)' }}
-                            />
-                            <ReferenceLine
-                                x={ALERT_THRESHOLD}
-                                stroke="#f43f5e"
-                                strokeDasharray="4 3"
-                                strokeWidth={1.5}
-                                label={{
-                                    value: `Alert: ${ALERT_THRESHOLD}`,
-                                    position: 'insideTopRight',
-                                    fill: '#f43f5e',
-                                    fontSize: 11,
-                                    fontWeight: 700,
-                                }}
-                            />
-                            <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={28}>
-                                {chartData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.fill} fillOpacity={0.85} />
-                                ))}
-                                <LabelList
-                                    dataKey="value"
-                                    position="right"
-                                    formatter={(v: number) => `${v.toFixed(1)}`}
-                                    style={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                    {!chartReady ? (
+                        <ChartSkeleton height="100%" />
+                    ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                                data={chartData}
+                                layout="vertical"
+                                margin={{ top: 4, right: 60, left: 90, bottom: 4 }}
+                            >
+                                <XAxis
+                                    type="number"
+                                    domain={[0, 25]}
+                                    tick={{ fill: '#475569', fontSize: 11 }}
+                                    axisLine={false}
+                                    tickLine={false}
                                 />
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
+                                <YAxis
+                                    type="category"
+                                    dataKey="name"
+                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    width={82}
+                                />
+                                <Tooltip
+                                    cursor={{ fill: 'rgba(100,116,139,0.06)' }}
+                                    content={({ active, payload }) => {
+                                        if (!payload || !payload.length) return null;
+                                        const d = payload[0].payload;
+                                        const clinicalContext = d.name === 'Your Node'
+                                            ? `${Math.round((1 - d.value / ALERT_THRESHOLD) * 100)}% below alert threshold`
+                                            : undefined;
+
+                                        return (
+                                            <CustomTooltip
+                                                active={active}
+                                                label={d.name}
+                                                payload={[{ name: 'Rate', value: `${d.value.toFixed(1)} events / 100 sessions`, color: d.fill }]}
+                                                clinicalContext={clinicalContext}
+                                            />
+                                        );
+                                    }}
+                                />
+                                <ReferenceLine
+                                    x={ALERT_THRESHOLD}
+                                    stroke="#f43f5e"
+                                    strokeDasharray="4 3"
+                                    strokeWidth={1.5}
+                                    label={{
+                                        value: `Alert: ${ALERT_THRESHOLD}`,
+                                        position: 'insideTopRight',
+                                        fill: '#f43f5e',
+                                        fontSize: 11,
+                                        fontWeight: 700,
+                                    }}
+                                />
+                                <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={28}>
+                                    {chartData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} fillOpacity={0.85} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
             </div>
 

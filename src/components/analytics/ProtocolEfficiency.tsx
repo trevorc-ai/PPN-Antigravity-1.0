@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, ReferenceLine, Cell
@@ -7,6 +7,8 @@ import {
     DollarSign, Clock, TrendingUp, AlertCircle,
     Calculator, PieChart, ArrowUpRight, Filter
 } from 'lucide-react';
+import { ChartSkeleton } from './ChartSkeleton';
+import { CustomTooltip } from './CustomTooltip';
 
 // --- MOCK DATA ---
 interface ProtocolData {
@@ -28,54 +30,27 @@ const PROTOCOLS: ProtocolData[] = [
     { id: 'INT-COACH', name: 'Integration Coaching', revenue: 150, hours: 1, satisfaction: 7.5, type: 'Integration' },
 ];
 
-const CustomTooltip = ({ active, payload, overhead }: any) => {
-    if (active && payload && payload.length) {
-        const data = payload[0].payload;
-        const cost = data.hours * overhead;
-        const profit = data.revenue - cost;
-        const margin = ((profit / data.revenue) * 100).toFixed(1);
+// CustomTooltip imported from shared
 
-        return (
-            <div className="bg-slate-900 border border-slate-700 p-4 rounded-xl shadow-2xl z-50 min-w-[200px]">
-                <h4 className="font-black text-slate-300 text-sm mb-2">{data.name}</h4>
-                <div className="space-y-2 text-xs">
-                    <div className="flex justify-between">
-                        <span className="text-slate-300">Revenue:</span>
-                        <span className="font-mono text-emerald-400">${data.revenue.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-slate-300">Operational Load:</span>
-                        <span className="font-mono text-slate-300">{data.hours} Staff Hrs</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-slate-300">Cost (@${overhead}/hr):</span>
-                        <span className="font-mono text-rose-400">-${cost.toLocaleString()}</span>
-                    </div>
-                    <div className="pt-2 border-t border-slate-800 flex justify-between font-bold">
-                        <span className="text-slate-300">Net Profit:</span>
-                        <span className={`font-mono ${profit > 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
-                            ${profit.toLocaleString()} ({margin}%)
-                        </span>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-    return null;
-};
-
-export default function ProtocolEfficiency() {
+export default function ProtocolEfficiency({ data }: { data?: any[] }) {
     const [overhead, setOverhead] = useState(150); // Hourly cost
+    const [chartReady, setChartReady] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setChartReady(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Dynamic Calculations
     const processedData = useMemo(() => {
-        return PROTOCOLS.map(p => ({
+        const baseData = data || PROTOCOLS;
+        return baseData.map(p => ({
             ...p,
             cost: p.hours * overhead,
             profit: p.revenue - (p.hours * overhead),
             roi: ((p.revenue - (p.hours * overhead)) / (p.hours * overhead)) * 100
         })).sort((a, b) => b.profit - a.profit);
-    }, [overhead]);
+    }, [overhead, data]);
 
     const totalPotentialProfit = processedData.reduce((acc, curr) => acc + (curr.profit > 0 ? curr.profit : 0), 0);
 
@@ -117,36 +92,65 @@ export default function ProtocolEfficiency() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1">
 
                 {/* CHART AREA */}
-                <div className="lg:col-span-2 bg-slate-900/30 border border-slate-800/50 rounded-2xl p-6 relative min-h-[350px] flex flex-col">
+                <div className="lg:col-span-2 bg-slate-900/30 border border-slate-800/50 rounded-2xl p-6 relative min-h-[350px] flex flex-col" role="img" aria-label="Scatter chart showing protocol financial efficiency by plotting revenue vs hours required">
                     <div className="flex-1 w-full h-full min-h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
-                                <XAxis
-                                    type="number" dataKey="hours" name="Time" unit="hr"
-                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                                    label={{ value: 'Staff Hours Required', position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 11 }}
-                                />
-                                <YAxis
-                                    type="number" dataKey="revenue" name="Revenue" unit="$"
-                                    tick={{ fill: '#94a3b8', fontSize: 11 }}
-                                    label={{ value: 'Revenue per Unit', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }}
-                                />
-                                <Tooltip content={<CustomTooltip overhead={overhead} />} />
+                        {!chartReady ? (
+                            <ChartSkeleton height="100%" />
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+                                    <XAxis
+                                        type="number" dataKey="hours" name="Time" unit="hr"
+                                        tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                        label={{ value: 'Staff Hours Required', position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 11 }}
+                                    />
+                                    <YAxis
+                                        type="number" dataKey="revenue" name="Revenue" unit="$"
+                                        tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                        label={{ value: 'Revenue per Unit', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }}
+                                    />
+                                    <Tooltip
+                                        content={({ active, payload }) => {
+                                            if (!payload || !payload.length) return null;
+                                            const data = payload[0].payload;
+                                            const cost = data.hours * overhead;
+                                            const profit = data.revenue - cost;
+                                            const margin = ((profit / data.revenue) * 100).toFixed(1);
 
-                                <Scatter name="Protocols" data={processedData}>
-                                    {processedData.map((entry, index) => (
-                                        <Cell
-                                            key={`cell-${index}`}
-                                            fill={entry.profit > 0 ? '#10b981' : '#f43f5e'}
-                                            fillOpacity={0.6}
-                                            stroke={entry.profit > 0 ? '#10b981' : '#f43f5e'}
-                                            strokeWidth={2}
-                                        />
-                                    ))}
-                                </Scatter>
-                            </ScatterChart>
-                        </ResponsiveContainer>
+                                            // Format for CustomTooltip
+                                            const mappedPayload = [
+                                                { name: 'Revenue', value: `$${data.revenue.toLocaleString()}`, color: '#10b981' },
+                                                { name: 'Cost', value: `$${cost.toLocaleString()}`, color: '#f43f5e' },
+                                                { name: 'Staff Hrs', value: data.hours, color: '#6366f1' },
+                                                { name: 'Net Profit', value: `$${profit.toLocaleString()} (${margin}%)`, color: profit > 0 ? '#10b981' : '#f43f5e' }
+                                            ];
+
+                                            return (
+                                                <CustomTooltip
+                                                    active={active}
+                                                    label={data.name}
+                                                    payload={mappedPayload}
+                                                    clinicalContext={`Type: ${data.type}`}
+                                                />
+                                            );
+                                        }}
+                                    />
+
+                                    <Scatter name="Protocols" data={processedData}>
+                                        {processedData.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={entry.profit > 0 ? '#10b981' : '#f43f5e'}
+                                                fillOpacity={0.6}
+                                                stroke={entry.profit > 0 ? '#10b981' : '#f43f5e'}
+                                                strokeWidth={2}
+                                            />
+                                        ))}
+                                    </Scatter>
+                                </ScatterChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                     {/* Legend Overlay */}
                     <div className="absolute top-6 right-6 flex flex-col gap-2 text-xs font-bold uppercase tracking-widest bg-slate-900/80 p-2 rounded-lg border border-slate-800 z-10">
