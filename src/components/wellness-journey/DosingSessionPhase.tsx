@@ -177,18 +177,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="flex flex-col items-center pt-8 border-t border-slate-800">
                         <button
                             onClick={() => setMode('live')}
-                            className="group relative w-full py-5 rounded-2xl bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-amber-50 font-black text-xl tracking-wide shadow-lg shadow-amber-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-4 border border-amber-500/40 overflow-hidden"
+                            className="group relative w-full py-5 rounded-2xl bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-amber-50 font-black text-xl tracking-wide shadow-lg shadow-amber-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-4 border border-amber-500/40"
                         >
-                            <div className="absolute left-0 top-0 bottom-0 w-1/3 md:w-1/4 bg-black/20 flex items-center justify-center border-r border-amber-500/30">
-                                <span className="text-3xl font-bold text-white">Step 3:</span>
-                            </div>
-                            <div className="pl-[33%] md:pl-[25%] flex items-center justify-center gap-4 w-full">
-                                <span className="w-10 h-10 rounded-full bg-black/15 flex items-center justify-center group-hover:bg-black/25 transition-colors">
-                                    <Play className="w-5 h-5 fill-current ml-0.5" />
-                                </span>
-                                START DOSING SESSION
-                                <ChevronRight className="w-6 h-6 opacity-60 group-hover:translate-x-1 transition-transform" />
-                            </div>
+                            <span className="text-3xl font-bold text-white mr-2">Step 3:</span>
+                            <span className="w-10 h-10 rounded-full bg-black/15 flex items-center justify-center group-hover:bg-black/25 transition-colors">
+                                <Play className="w-5 h-5 fill-current ml-0.5" />
+                            </span>
+                            START DOSING SESSION
+                            <ChevronRight className="w-6 h-6 opacity-60 group-hover:translate-x-1 transition-transform" />
                         </button>
                         <p className="text-[13px] text-slate-400 mt-4 flex items-center gap-2">
                             <Info className="w-4 h-4 text-amber-500/70" />
