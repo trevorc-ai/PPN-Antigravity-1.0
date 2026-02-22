@@ -251,6 +251,15 @@ const AppContent: React.FC = () => {
         <Route path="/billing" element={<BillingPortal />} />
         <Route path="/partner-demo" element={<PartnerDemoHub />} />
 
+        {/* Deep Dives (Public Marketing Pages) */}
+        <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
+        <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
+        <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
+        <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacologyPage />} />
+        <Route path="/deep-dives/protocol-efficiency" element={<ProtocolEfficiencyPage />} />
+        <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
+        <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
+        <Route path="/deep-dives/risk-matrix" element={<RiskMatrixPage />} />
         {/* Protected Routes — RequireAuth gates all children behind a valid session */}
         <Route element={<RequireAuth />}>
           <Route element={
@@ -300,16 +309,6 @@ const AppContent: React.FC = () => {
 
             {/* Forms Showcase - Testing Page for Arc of Care Forms */}
             <Route path="/forms-showcase" element={<FormsShowcase />} />
-
-            {/* Deep Dives */}
-            <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
-            <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
-            <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
-            <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacologyPage />} />
-            <Route path="/deep-dives/protocol-efficiency" element={<ProtocolEfficiencyPage />} />
-            <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
-            <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
-            <Route path="/deep-dives/risk-matrix" element={<RiskMatrixPage />} />
 
             <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Sign Out</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out</button></div>} />
 
