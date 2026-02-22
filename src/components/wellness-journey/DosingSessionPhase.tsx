@@ -145,16 +145,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             <div className="px-5 py-6 bg-slate-800/40 border border-slate-700/50 rounded-xl transition-colors h-full min-h-[148px]">
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
-                                        <span className="text-slate-300 text-sm">Substance</span>
-                                        <span className="text-white font-bold bg-slate-700/50 px-3 py-1 rounded text-[15px]">{journey.session.substance}</span>
+                                        <span className="text-slate-400 text-sm">Substance</span>
+                                        <span className="text-slate-200 font-bold bg-slate-700/50 px-3 py-1 rounded text-[15px]">{journey.session.substance}</span>
                                     </div>
                                     <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
-                                        <span className="text-slate-300 text-sm">Dosage</span>
-                                        <span className="text-white font-bold text-[15px]">{journey.session.dosage}</span>
+                                        <span className="text-slate-400 text-sm">Dosage</span>
+                                        <span className="text-slate-200 font-bold text-[15px]">{journey.session.dosage}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-slate-300 text-sm">Guide</span>
-                                        <span className="text-white font-bold text-[15px]">Dr. Calton</span>
+                                        <span className="text-slate-400 text-sm">Guide</span>
+                                        <span className="text-slate-200 font-bold text-[15px]">Dr. Calton</span>
                                     </div>
                                 </div>
                             </div>
@@ -170,8 +170,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                         <CheckCircle className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="text-white font-bold text-[15px]">Informed Consent</p>
-                                        <p className="text-sm text-slate-300 mt-0.5">Verified signed • Oct 14, 2025</p>
+                                        <p className="text-slate-200 font-bold text-[15px]">Informed Consent</p>
+                                        <p className="text-sm text-slate-400 mt-0.5">Verified signed • Oct 14, 2025</p>
                                     </div>
                                 </div>
 
@@ -181,8 +181,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                         <CheckCircle className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="text-white font-bold text-[15px]">Baseline Vitals</p>
-                                        <p className="text-sm text-slate-300 mt-0.5">Within range • HR 72, BP 118/76</p>
+                                        <p className="text-slate-200 font-bold text-[15px]">Baseline Vitals</p>
+                                        <p className="text-sm text-slate-400 mt-0.5">Within range • HR 72, BP 118/76</p>
                                     </div>
                                 </div>
                             </div>
