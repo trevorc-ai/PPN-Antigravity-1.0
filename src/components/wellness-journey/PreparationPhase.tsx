@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Calendar, Brain, TrendingUp, Shield, ChevronDown, ChevronUp, CheckCircle, AlertTriangle, FileText, ArrowRight, Lock } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
+import { WorkflowActionCard } from './WorkflowCards';
 import { WellnessFormId } from './WellnessFormRouter';
 import { RiskEligibilityReport } from './RiskEligibilityReport';
 import { runContraindicationEngine, type IntakeScreeningData } from '../../services/contraindicationEngine';
@@ -118,32 +119,16 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {Object.entries(gates).map(([key, gate]) => (
-                            <button
+                            <WorkflowActionCard
                                 key={key}
+                                phase={1}
+                                status={gate.isComplete ? 'completed' : 'active'}
+                                title={gate.label}
+                                description={gate.description}
+                                icon={<FileText className={`w-5 h-5 ${gate.isComplete ? 'text-emerald-500' : 'text-sky-400'}`} />}
+                                date={gate.date}
                                 onClick={gate.action}
-                                className={`relative flex flex-col p-3 rounded-xl border text-left transition-all hover:scale-[1.02] active:scale-[0.98]
-                                    ${gate.isComplete
-                                        ? 'bg-emerald-900/10 border-emerald-500/30 hover:bg-emerald-900/20'
-                                        : 'bg-slate-800/40 border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/60'
-                                    }`}
-                            >
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${gate.isComplete ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'
-                                        }`}>
-                                        {gate.isComplete ? <CheckCircle className="w-3.5 h-3.5" /> : <div className="w-2 h-2 rounded-full bg-slate-500" />}
-                                    </div>
-                                    {gate.isComplete && <span className="text-xs font-mono text-emerald-500/70">{gate.date}</span>}
-                                </div>
-                                <div>
-                                    <h3 className={`font-bold text-sm ${gate.isComplete ? 'text-emerald-100' : 'text-[#A8B5D1]'}`}>{gate.label}</h3>
-                                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{gate.description}</p>
-                                </div>
-                                {!gate.isComplete && (
-                                    <div className="mt-2 flex items-center gap-1 text-xs font-bold text-blue-400">
-                                        COMPLETE <ArrowRight className="w-2.5 h-2.5" />
-                                    </div>
-                                )}
-                            </button>
+                            />
                         ))}
                     </div>
                 </div>
