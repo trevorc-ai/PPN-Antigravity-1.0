@@ -221,7 +221,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                                 <h4 className="text-lg font-bold text-white mb-1.5 leading-tight">{domain.title}</h4>
                                                 <p className="text-sm text-slate-400 leading-relaxed">{domain.description}</p>
                                             </div>
-                                            <AdvancedTooltip content={domain.tooltipText} tier="standard" type="info" side="top" width="w-[300px]">
+                                            <AdvancedTooltip content={domain.tooltipText} tier="standard" type="info" side="bottom" width="w-[280px]">
                                                 <HelpCircle className="w-5 h-5 text-slate-500 hover:text-indigo-400 transition-colors cursor-help mt-0.5 flex-shrink-0" />
                                             </AdvancedTooltip>
                                         </div>
