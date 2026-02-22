@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TrendingUp, Save, CheckCircle, Star } from 'lucide-react';
 import { FormField } from '../shared/FormField';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * BehavioralChangeTrackerForm - Behavioral Change Tracker (NEW DESIGN)
@@ -21,6 +22,9 @@ interface BehavioralChangeTrackerFormProps {
     onSave?: (data: BehavioralChangeData) => void;
     initialData?: Partial<BehavioralChangeData>;
     patientId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 const CHANGE_TYPES = [
@@ -63,8 +67,12 @@ const StarRating: React.FC<{ value: number; onChange: (value: number) => void; l
 const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = ({
     onSave,
     initialData = {} as Partial<BehavioralChangeData>,
-    patientId
+    patientId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
+    const [isSaving, setIsSaving] = useState(false);
     const [data, setData] = useState<BehavioralChangeData>({
         change_date: initialData.change_date || new Date().toISOString().slice(0, 10),
         change_category: initialData.change_category || 'relationship',
@@ -90,8 +98,30 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
         }));
     };
 
-    const handleSave = () => {
-        onSave?.(data);
+    const handleSaveAndExit = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
+        }
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
     };
 
     const setToday = () => {
@@ -255,16 +285,13 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                 </FormField>
             </div>
 
-            {/* Save Button */}
-            <div className="flex justify-end">
-                <button
-                    onClick={handleSave}
-                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium flex items-center gap-2 transition-colors"
-                >
-                    <Save className="w-5 h-5" />
-                    Log Change
-                </button>
-            </div>
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={true}
+            />
         </div>
     );
 };

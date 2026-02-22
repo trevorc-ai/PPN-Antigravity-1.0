@@ -20,6 +20,8 @@ export { DeviceRegistrationModal } from './shared/DeviceRegistrationModal';
 export type { DeviceData } from './shared/DeviceRegistrationModal';
 export { VisualTimeline } from './shared/VisualTimeline';
 export type { VisualTimelineProps } from './shared/VisualTimeline';
+export { FormFooter } from './shared/FormFooter';
+export type { FormFooterProps } from './shared/FormFooter';
 
 // ========== PHASE 1: PREPARATION (4 forms) ==========
 export { default as MEQ30QuestionnaireForm } from './phase-1-preparation/MEQ30QuestionnaireForm';

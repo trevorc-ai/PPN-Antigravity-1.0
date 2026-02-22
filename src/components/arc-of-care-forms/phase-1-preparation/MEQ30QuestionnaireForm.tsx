@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Brain, Save, CheckCircle, Award, ChevronDown } from 'lucide-react';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * MEQ30QuestionnaireForm - Full MEQ-30 Detailed Assessment
@@ -24,6 +25,8 @@ interface MEQ30QuestionnaireFormProps {
     initialData?: MEQ30Data;
     patientId?: string;
     sessionId?: string;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 // Simplified MEQ-30 questions (in production, load from database)
@@ -48,25 +51,39 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     initialData = { responses: {} },
     patientId,
     sessionId,
+    onExit,
+    onBack
 }) => {
     const [data, setData] = useState<MEQ30Data>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [isDone, setIsDone] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
-    const footerRef = useRef<HTMLDivElement>(null);
 
-    // Auto-save with debounce on every answer change
-    useEffect(() => {
-        if (onSave && Object.keys(data.responses).length > 0) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
+            onSave(data);
+            setTimeout(() => {
                 setIsSaving(false);
-                setLastSaved(new Date());
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [data, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setIsDone(true);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     const updateResponse = (questionNumber: number, value: number) => {
         setData(prev => ({
@@ -82,16 +99,6 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     const isComplete = answeredCount === 30;
     const isMysticalExperience = normalizedScore >= 60;
 
-    const handleSaveAndDone = () => {
-        // Flush pending auto-save immediately, then close
-        if (onSave) onSave(data);
-        setIsDone(true);
-        // Small delay so the ✓ state is visible before the panel slides out
-        setTimeout(() => {
-            if (onComplete) onComplete();
-        }, 400);
-    };
-
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             {/* ── Sticky Header ─────────────────────────────────────────────── */}
@@ -105,20 +112,6 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                         <p className="text-slate-300 text-sm mt-2">
                             30-item Mystical Experience Questionnaire
                         </p>
-                    </div>
-                    <div className="flex items-center gap-2 min-h-[24px]">
-                        {isSaving && (
-                            <div className="flex items-center gap-2 text-blue-400 text-xs">
-                                <Save className="w-4 h-4 animate-pulse" />
-                                <span>Saving…</span>
-                            </div>
-                        )}
-                        {!isSaving && lastSaved && (
-                            <div className="flex items-center gap-1.5 text-emerald-400 text-xs">
-                                <CheckCircle className="w-3.5 h-3.5" />
-                                <span>Auto-saved</span>
-                            </div>
-                        )}
                     </div>
                 </div>
 
@@ -173,15 +166,15 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                         <div
                             key={question.number}
                             className={`bg-slate-900/60 backdrop-blur-xl border rounded-2xl p-6 transition-all ${isAnswered
-                                    ? 'border-emerald-500/50 bg-emerald-500/5'
-                                    : 'border-slate-700/50'
+                                ? 'border-emerald-500/50 bg-emerald-500/5'
+                                : 'border-slate-700/50'
                                 }`}
                         >
                             <div className="flex items-start gap-3 mb-4">
                                 <div
                                     className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isAnswered
-                                            ? 'bg-emerald-500/20 text-emerald-400'
-                                            : 'bg-slate-700/50 text-slate-300'
+                                        ? 'bg-emerald-500/20 text-emerald-400'
+                                        : 'bg-slate-700/50 text-slate-300'
                                         }`}
                                 >
                                     {isAnswered ? (
@@ -207,8 +200,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                                         type="button"
                                         onClick={() => updateResponse(question.number, option.value)}
                                         className={`flex-1 min-w-[70px] px-3 py-2 rounded-lg font-medium text-sm transition-all active:scale-95 ${data.responses[question.number] === option.value
-                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                                                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
+                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                             }`}
                                         aria-label={`Question ${question.number}: ${option.label} (${option.value})`}
                                         aria-pressed={data.responses[question.number] === option.value}
@@ -225,64 +218,39 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 })}
             </div>
 
-            {/* ── Save & Done Footer ───────────────────────────────────────── */}
-            {/* Always visible after the last question — the primary exit point */}
-            <div
-                ref={footerRef}
-                className="sticky bottom-0 z-10 bg-slate-900/95 backdrop-blur-xl border-t border-slate-700/50 rounded-2xl p-5 shadow-2xl mt-2"
-            >
-                <div className="flex items-center justify-between gap-4">
-                    {/* Completion status */}
-                    <div className="flex-1 min-w-0">
-                        {isComplete ? (
-                            <div className="flex items-center gap-2">
-                                <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                                <div>
-                                    <p className="text-sm font-bold text-emerald-300">All 30 questions answered</p>
-                                    <p className="text-xs text-slate-500">Score: {normalizedScore}/100
-                                        {isMysticalExperience ? ' · Mystical experience threshold met' : ''}
-                                    </p>
-                                </div>
-                            </div>
-                        ) : (
-                            <div>
-                                <p className="text-sm font-semibold text-slate-300">
-                                    {30 - answeredCount} question{30 - answeredCount !== 1 ? 's' : ''} remaining
-                                </p>
-                                <p className="text-xs text-slate-500">
-                                    You can save partial responses and return later
-                                </p>
-                            </div>
-                        )}
+            {/* ── Progress Indicators ──────────────────────────────────────── */}
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
+                {isComplete ? (
+                    <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                        <div>
+                            <p className="text-sm font-bold text-emerald-300">All 30 questions answered</p>
+                            <p className="text-xs text-slate-500">Score: {normalizedScore}/100
+                                {isMysticalExperience ? ' · Mystical experience threshold met' : ''}
+                            </p>
+                        </div>
                     </div>
-
-                    {/* Primary action — always enabled */}
-                    <button
-                        type="button"
-                        onClick={handleSaveAndDone}
-                        disabled={isDone}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all active:scale-95 flex-shrink-0 ${isDone
-                                ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 cursor-default'
-                                : isComplete
-                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/40'
-                                    : 'bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-200'
-                            }`}
-                        aria-label={isDone ? 'Saved and closing' : isComplete ? 'Save MEQ-30 and close panel' : 'Save progress and close panel'}
-                    >
-                        {isDone ? (
-                            <>
-                                <CheckCircle className="w-4 h-4" />
-                                Saved
-                            </>
-                        ) : (
-                            <>
-                                <Save className="w-4 h-4" />
-                                {isComplete ? 'Save & Done' : 'Save Progress & Close'}
-                            </>
-                        )}
-                    </button>
-                </div>
+                ) : (
+                    <div>
+                        <p className="text-sm font-semibold text-slate-300">
+                            {30 - answeredCount} question{30 - answeredCount !== 1 ? 's' : ''} remaining
+                        </p>
+                        <p className="text-xs text-slate-500">
+                            You can save partial responses and return later
+                        </p>
+                    </div>
+                )}
             </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={Object.keys(data.responses).length > 0}
+                saveAndContinueLabel={isComplete ? 'Save & Done' : 'Save & Continue'}
+                isDone={isDone}
+            />
         </div>
     );
 };

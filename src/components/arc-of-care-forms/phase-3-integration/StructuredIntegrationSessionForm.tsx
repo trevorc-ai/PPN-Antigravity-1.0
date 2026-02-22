@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Brain, Save, CheckCircle, Star } from 'lucide-react';
 import { FormField } from '../shared/FormField';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * StructuredIntegrationSessionForm - Structured Integration Session (NEW DESIGN)
@@ -27,6 +28,9 @@ interface StructuredIntegrationSessionFormProps {
     onSave?: (data: StructuredIntegrationSessionData) => void;
     initialData?: Partial<StructuredIntegrationSessionData>;
     patientId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 export const SESSION_FOCUS_AREAS = [
@@ -90,8 +94,12 @@ const StarRating: React.FC<{ value: number; onChange: (value: number) => void; l
 const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFormProps> = ({
     onSave,
     initialData = {} as Partial<StructuredIntegrationSessionData>,
-    patientId
+    patientId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
+    const [isSaving, setIsSaving] = useState(false);
     const [data, setData] = useState<StructuredIntegrationSessionData>({
         session_number: initialData.session_number || 1,
         session_date: initialData.session_date || new Date().toISOString().slice(0, 10),
@@ -123,8 +131,30 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
         }));
     };
 
-    const handleSave = () => {
-        onSave?.(data);
+    const handleSaveAndExit = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
+        }
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
     };
 
     const setToday = () => {
@@ -338,17 +368,14 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                 </FormField>
             </div>
 
-            {/* Save Button */}
-            <div className="flex justify-end">
-                <button
-                    onClick={handleSave}
-                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium flex items-center gap-2 transition-colors"
-                >
-                    <Save className="w-5 h-5" />
-                    Save Session
-                </button>
-            </div>
-        </div>
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={true}
+            />
+        </div >
     );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { CheckCircle, ChevronRight, X } from 'lucide-react';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * SetAndSettingForm — Treatment Expectancy + Clinical Observations (combined)
@@ -23,8 +24,9 @@ interface SetAndSettingFormProps {
     onSave?: (data: SetAndSettingData) => void;
     initialData?: SetAndSettingData;
     patientId?: string;
-    /** Called after Save & Continue — advances to next Phase 1 step */
     onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 // ── Clinical Observation options ──────────────────────────────────────────────
@@ -72,6 +74,8 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
     initialData = {} as SetAndSettingData,
     patientId,
     onComplete,
+    onExit,
+    onBack
 }) => {
     const [expectancy, setExpectancy] = useState<number>(
         initialData.treatment_expectancy ?? 50,
@@ -83,12 +87,22 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
     const [saving, setSaving] = useState(false);
     const savedRef = useRef(false);
 
+    const handleSaveAndExit = () => {
+        if (savedRef.current) return;
+        savedRef.current = true;
+        setSaving(true);
+        onSave?.({ treatment_expectancy: expectancy, observations });
+        setTimeout(() => {
+            setSaving(false);
+            if (onExit) onExit();
+        }, 500);
+    };
+
     const handleSaveAndContinue = () => {
         if (savedRef.current) return;
         savedRef.current = true;
         setSaving(true);
         onSave?.({ treatment_expectancy: expectancy, observations });
-        setLastSaved(new Date());
         setTimeout(() => {
             setSaving(false);
             onComplete?.();
@@ -231,25 +245,13 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                 )}
             </section>
 
-            {/* ── Footer ───────────────────────────────────────────────── */}
-            <div className="flex items-center justify-between gap-4 pt-1 pr-1">
-                <span className="text-sm text-emerald-400 font-medium">
-                    {lastSaved
-                        ? `Saved at ${lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-                        : ''}
-                </span>
-                <button
-                    onClick={handleSaveAndContinue}
-                    disabled={saving}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saving
-                        ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-500 text-slate-200 shadow-lg shadow-blue-900/30'
-                        }`}
-                >
-                    {saving ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                    {saving ? 'Saved!' : 'Save & Continue'}
-                </button>
-            </div>
+            <FormFooter
+                onBack={onBack ?? onComplete}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={saving}
+                hasChanges={true}
+            />
         </div>
     );
 };

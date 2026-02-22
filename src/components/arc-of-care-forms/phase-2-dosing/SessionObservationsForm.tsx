@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Eye, Save, CheckCircle, X } from 'lucide-react';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * SessionObservationsForm - Clinical Observations During Session
@@ -18,6 +19,9 @@ interface SessionObservationsFormProps {
     initialData?: SessionObservationsData;
     patientId?: string;
     sessionId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 // Mock data - in production, fetch from ref_clinical_observations WHERE category='session'
@@ -63,24 +67,39 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
     onSave,
     initialData = { observations: [] },
     patientId,
-    sessionId
+    sessionId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [data, setData] = useState<SessionObservationsData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-    // Auto-save with debounce
-    useEffect(() => {
-        if (onSave && data.observations.length > 0) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
+            onSave(data);
+            setTimeout(() => {
                 setIsSaving(false);
-                setLastSaved(new Date());
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [data, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     const toggleObservation = (id: string) => {
         setData(prev => ({
@@ -137,18 +156,6 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
                             Document clinical observations during the dosing session to track session quality and patient experience.
                         </p>
                     </div>
-                    {isSaving && (
-                        <div className="flex items-center gap-2 text-blue-400 text-xs">
-                            <Save className="w-4 h-4 animate-pulse" />
-                            <span>Saving...</span>
-                        </div>
-                    )}
-                    {lastSaved && !isSaving && (
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>Saved {lastSaved.toLocaleTimeString()}</span>
-                        </div>
-                    )}
                 </div>
 
                 {/* Quick Select Buttons */}
@@ -186,8 +193,8 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
                                         type="button"
                                         onClick={() => toggleObservation(obs.id)}
                                         className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-left transition-all active:scale-95 ${isSelected
-                                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-500'
-                                                : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-500'
+                                            : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                             }`}
                                     >
                                         {obs.label}
@@ -223,7 +230,15 @@ const SessionObservationsForm: React.FC<SessionObservationsFormProps> = ({
                     </div>
                 </div>
             )}
-        </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={data.observations.length > 0}
+            />
+        </div >
     );
 };
 

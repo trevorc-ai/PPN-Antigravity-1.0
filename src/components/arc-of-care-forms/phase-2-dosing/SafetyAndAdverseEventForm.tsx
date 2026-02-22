@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Shield, Save, CheckCircle, Clock, Plus, Trash2, FileText } from 'lucide-react';
 import { FormField } from '../shared/FormField';
-import { NowButton, RelativeTimeDisplay } from '../shared/NowButton';
 import { useToast } from '../../../contexts/ToastContext';
 import { generateAEReport, type AEReportData, type CTCAEGrade } from '../../../services/aeReportGenerator';
+import { NowButton, RelativeTimeDisplay } from '../shared/NowButton';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * SafetyAndAdverseEventForm — Phase 2: Dosing Session
@@ -42,11 +43,13 @@ export interface SafetyAndAdverseEventData {
 }
 
 interface SafetyAndAdverseEventFormProps {
-    onSave?: (data: SafetyAndAdverseEventData) => void;
     initialData?: Partial<SafetyAndAdverseEventData>;
     patientId?: string;
     sessionId?: string;
     doseTime?: Date;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -137,6 +140,9 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
     onSave,
     initialData,
     doseTime,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [data, setData] = useState<SafetyAndAdverseEventData>({
         observation_log: [],
@@ -149,22 +155,35 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
 
     const [isSaving, setIsSaving] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const [showEventReport, setShowEventReport] = useState(!!initialData?.event_type);
 
     const { addToast } = useToast();
 
-    // Auto-save with debounce
-    useEffect(() => {
-        if (!onSave) return;
-        setIsSaving(true);
-        const timer = setTimeout(() => {
+    const handleSaveAndExit = () => {
+        if (onSave) {
+            setIsSaving(true);
             onSave(data);
-            setIsSaving(false);
-            setLastSaved(new Date());
-        }, 600);
-        return () => clearTimeout(timer);
-    }, [data, onSave]);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
+        }
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     const update = (field: keyof SafetyAndAdverseEventData, value: unknown) => {
         setData(prev => ({ ...prev, [field]: value }));
@@ -258,7 +277,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
         <div className="max-w-4xl mx-auto space-y-6">
 
             {/* ── Header ───────────────────────────────────────────────────── */}
-            <div className="flex items-center justify-between">
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex items-start justify-between">
                 <div>
                     <h2 className="text-xl font-black text-white flex items-center gap-2">
                         <Shield className="w-5 h-5 text-red-400" />
@@ -267,18 +286,6 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                     <p className="text-sm text-slate-400 mt-0.5">
                         Log observations at any point during the session. Each entry is timestamped.
                     </p>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                    {isSaving && (
-                        <span className="flex items-center gap-1 text-blue-400">
-                            <Save className="w-3.5 h-3.5 animate-pulse" />Saving…
-                        </span>
-                    )}
-                    {lastSaved && !isSaving && (
-                        <span className="flex items-center gap-1 text-emerald-400">
-                            <CheckCircle className="w-3.5 h-3.5" />Saved {lastSaved.toLocaleTimeString()}
-                        </span>
-                    )}
                 </div>
             </div>
 
@@ -600,7 +607,15 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                     </div>
                 )}
             </div>
-        </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={data.observation_log.length > 0 || !!data.event_type}
+            />
+        </div >
     );
 };
 

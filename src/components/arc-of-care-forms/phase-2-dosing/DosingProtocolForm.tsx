@@ -5,6 +5,7 @@ import { NumberInput } from '../shared/NumberInput';
 import { UserPicker, UserOption } from '../shared/UserPicker';
 import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationModal';
 import { DeviceRegistrationModal, DeviceData } from '../shared/DeviceRegistrationModal';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * DosingProtocolForm - Substance Administration Details
@@ -28,6 +29,9 @@ interface DosingProtocolFormProps {
     initialData?: DosingProtocolData;
     patientId?: string;
     sessionId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 // Mock data - in production, fetch from ref_substances
@@ -59,11 +63,13 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     onSave,
     initialData = {},
     patientId,
-    sessionId
+    sessionId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [data, setData] = useState<DosingProtocolData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
     const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
 
@@ -81,18 +87,31 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         { id: 3, device_type: 'Oura Ring', model: 'Gen 3', serial: 'OR-003' }
     ]);
 
-    // Auto-save with debounce
-    useEffect(() => {
-        if (onSave && Object.keys(data).length > 0) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
+            onSave(data);
+            setTimeout(() => {
                 setIsSaving(false);
-                setLastSaved(new Date());
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [data, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     const updateField = (field: keyof DosingProtocolData, value: any) => {
         setData(prev => ({ ...prev, [field]: value }));
@@ -138,18 +157,6 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                             Document substance administration details for regulatory compliance and safety tracking.
                         </p>
                     </div>
-                    {isSaving && (
-                        <div className="flex items-center gap-2 text-blue-400 text-xs">
-                            <Save className="w-4 h-4 animate-pulse" />
-                            <span>Saving...</span>
-                        </div>
-                    )}
-                    {lastSaved && !isSaving && (
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>Saved {lastSaved.toLocaleTimeString()}</span>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -298,6 +305,14 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                 </div>
             </div>
 
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={Object.keys(data).length > 0}
+            />
+
             {/* Modals */}
             <BatchRegistrationModal
                 isOpen={isBatchModalOpen}
@@ -309,7 +324,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                 onClose={() => setIsDeviceModalOpen(false)}
                 onSave={handleDeviceSave}
             />
-        </div>
+        </div >
     );
 };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, Save, CheckCircle, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { NumberInput } from '../shared/NumberInput';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * LongitudinalAssessmentForm - Follow-up Assessments
@@ -23,13 +24,19 @@ interface LongitudinalAssessmentFormProps {
     initialData?: LongitudinalAssessmentData;
     baselineScores?: { phq9?: number; gad7?: number };
     patientId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
     onSave,
     initialData = {} as LongitudinalAssessmentData,
     baselineScores = {} as { phq9?: number; gad7?: number },
-    patientId
+    patientId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [data, setData] = useState<LongitudinalAssessmentData>({
         ...initialData,
@@ -38,16 +45,31 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
     const [isSaving, setIsSaving] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
 
-    useEffect(() => {
-        if (onSave && Object.keys(data).length > 1) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
+            onSave(data);
+            setTimeout(() => {
                 setIsSaving(false);
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [data, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     useEffect(() => {
         if (data.cssrs_score && data.cssrs_score >= 3) {
@@ -165,6 +187,14 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                     </FormField>
                 </div>
             </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={Object.keys(data).length > 1}
+            />
         </div>
     );
 };

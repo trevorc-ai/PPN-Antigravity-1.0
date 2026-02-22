@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Save, CheckCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { StarRating } from '../shared/StarRating';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * DailyPulseCheckForm - Daily Wellness Check-In
@@ -20,12 +21,18 @@ interface DailyPulseCheckFormProps {
     onSave?: (data: DailyPulseCheckData) => void;
     initialData?: DailyPulseCheckData;
     patientId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
     onSave,
     initialData = {} as DailyPulseCheckData,
-    patientId
+    patientId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [data, setData] = useState<DailyPulseCheckData>({
         ...initialData,
@@ -33,16 +40,31 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
     });
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        if (onSave && Object.keys(data).length > 1) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
+            onSave(data);
+            setTimeout(() => {
                 setIsSaving(false);
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [data, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     const updateField = (field: keyof DailyPulseCheckData, value: any) => {
         setData(prev => ({ ...prev, [field]: value }));
@@ -103,10 +125,18 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
                 {isComplete && (
                     <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg text-center">
                         <CheckCircle className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-                        <p className="text-emerald-400 font-semibold">Check-in complete! Thank you.</p>
+                        <p className="text-emerald-400 font-semibold">Check-in ready to save!</p>
                     </div>
                 )}
             </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={Object.keys(data).length > 1}
+            />
         </div>
     );
 };

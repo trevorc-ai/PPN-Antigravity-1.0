@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Activity, Droplet, Clock, Save, Plus, Trash2, CheckCircle, Wind, Thermometer, AlertTriangle } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * SessionVitalsForm - Real-Time Vital Signs Tracking
@@ -46,32 +47,56 @@ interface SessionVitalsFormProps {
     initialData?: VitalSignReading[];
     patientId?: string;
     sessionId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     onSave,
     initialData = [],
     patientId,
-    sessionId
+    sessionId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [readings, setReadings] = useState<VitalSignReading[]>(
         initialData.length > 0 ? initialData : [createEmptyReading()]
     );
     const [isSaving, setIsSaving] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-    // Auto-save with debounce
-    useEffect(() => {
-        if (onSave && readings.some(r => hasData(r))) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(readings.filter(r => hasData(r)));
+            const validReadings = readings.filter(r => hasData(r));
+            if (validReadings.length > 0) {
+                onSave(validReadings);
+            }
+            setTimeout(() => {
                 setIsSaving(false);
-                setLastSaved(new Date());
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [readings, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            const validReadings = readings.filter(r => hasData(r));
+            if (validReadings.length > 0) {
+                onSave(validReadings);
+            }
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     function createEmptyReading(): VitalSignReading {
         return {
@@ -192,18 +217,6 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             Track real-time vital signs during the dosing session. Add multiple readings to monitor trends.
                         </p>
                     </div>
-                    {isSaving && (
-                        <div className="flex items-center gap-2 text-blue-400 text-xs">
-                            <Save className="w-4 h-4 animate-pulse" />
-                            <span>Saving...</span>
-                        </div>
-                    )}
-                    {lastSaved && !isSaving && (
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>Saved {lastSaved.toLocaleTimeString()}</span>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -574,6 +587,14 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                 <Plus className="w-5 h-5" />
                 Add Another Reading
             </button>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={readings.some(r => hasData(r))}
+            />
         </div>
     );
 };

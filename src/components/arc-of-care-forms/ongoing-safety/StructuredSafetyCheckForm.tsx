@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle, AlertTriangle, ChevronLeft, LogOut, ChevronRight, ArrowUp, Minus, Zap, Clock } from 'lucide-react';
 import { FormField } from '../shared/FormField';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * StructuredSafetyCheckForm - Structured Safety Check
@@ -77,8 +78,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         follow_up_timeframe: initialData.follow_up_timeframe,
     });
 
-    const [exitFlash, setExitFlash] = useState(false);
-    const [continueFlash, setContinueFlash] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const updateField = <K extends keyof StructuredSafetyCheckData>(
         field: K,
@@ -97,21 +97,29 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     };
 
     const handleSaveAndExit = () => {
-        onSave?.(data);
-        setExitFlash(true);
-        setTimeout(() => {
-            setExitFlash(false);
-            onExit?.() ?? onComplete?.();
-        }, 600);
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
+        }
     };
 
     const handleSaveAndContinue = () => {
-        onSave?.(data);
-        setContinueFlash(true);
-        setTimeout(() => {
-            setContinueFlash(false);
-            onComplete?.();
-        }, 500);
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
     };
 
     const setToday = () => {
@@ -385,55 +393,13 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                     </FormField>
                 )}
             </div>
-
-            {/* ── Footer: Back | Save & Exit | Save & Continue ─────────────────────
-                Matches the standard 3-button footer across all Phase 1 gates.
-                "Close Panel" has been removed — exit is handled by these buttons.
-            ────────────────────────────────────────────────────────────────────── */}
-            <div className="flex items-center gap-3 pt-2 pb-4 mr-4">
-                {/* Back */}
-                <button
-                    type="button"
-                    onClick={onBack ?? onComplete}
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 border border-slate-700/50 text-slate-300 text-sm font-semibold transition-all"
-                    aria-label="Go back without saving"
-                >
-                    <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-                    Back
-                </button>
-
-                {/* Spacer */}
-                <div className="flex-1" />
-
-                {/* Save & Exit */}
-                <button
-                    type="button"
-                    onClick={handleSaveAndExit}
-                    className={`flex items-center gap-2 px-5 py-3 rounded-xl border text-sm font-semibold transition-all ${exitFlash
-                        ? 'bg-teal-700/40 border-teal-500/50 text-teal-200'
-                        : 'bg-slate-800/60 hover:bg-slate-700/60 border-slate-600/50 text-slate-300'
-                        }`}
-                    aria-label="Save and exit panel"
-                >
-                    <LogOut className="w-4 h-4" aria-hidden="true" />
-                    {exitFlash ? 'Saved!' : 'Save & Exit'}
-                </button>
-
-                {/* Save & Continue */}
-                <button
-                    type="button"
-                    onClick={handleSaveAndContinue}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg ${continueFlash
-                        ? 'bg-teal-700/40 border border-teal-500/50 text-teal-200 shadow-none'
-                        : 'bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 shadow-indigo-950/50'
-                        }`}
-                    aria-label="Save and continue to next step"
-                >
-                    <CheckCircle className="w-4 h-4" aria-hidden="true" />
-                    {continueFlash ? 'Saved!' : 'Save & Continue'}
-                    {!continueFlash && <ChevronRight className="w-4 h-4" aria-hidden="true" />}
-                </button>
-            </div>
+            <FormFooter
+                onBack={onBack ?? onComplete}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={true}
+            />
         </div>
     );
 };

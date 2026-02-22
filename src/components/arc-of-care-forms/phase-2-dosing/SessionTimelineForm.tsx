@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Tag, Music, AlertTriangle, Plus, Trash2, CheckCircle, Play, Stethoscope, Mic, Pill } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * SessionTimelineForm - Minute-by-Minute Session Tracking
@@ -30,31 +31,55 @@ interface SessionTimelineFormProps {
     onSave?: (data: TimelineEvent[]) => void;
     initialData?: TimelineEvent[];
     sessionId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
     onSave,
     initialData = [],
-    sessionId
+    sessionId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [events, setEvents] = useState<TimelineEvent[]>(
         initialData.length > 0 ? initialData : [createEmptyEvent()]
     );
     const [isSaving, setIsSaving] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-    // Auto-save with debounce
-    useEffect(() => {
-        if (onSave && events.some(e => hasData(e))) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(events.filter(e => hasData(e)));
+            const validData = events.filter(e => hasData(e));
+            if (validData.length > 0) {
+                onSave(validData);
+            }
+            setTimeout(() => {
                 setIsSaving(false);
-                setLastSaved(new Date());
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [events, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            const validData = events.filter(e => hasData(e));
+            if (validData.length > 0) {
+                onSave(validData);
+            }
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     function createEmptyEvent(): TimelineEvent {
         // Default to current time
@@ -147,18 +172,6 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                             Minute-by-minute log of all clinical actions, observations, and decisions.
                         </p>
                     </div>
-                    {isSaving && (
-                        <div className="flex items-center gap-2 text-blue-400 text-xs">
-                            <Tag className="w-4 h-4 animate-pulse" />
-                            <span>Syncing...</span>
-                        </div>
-                    )}
-                    {lastSaved && !isSaving && (
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs">
-                            <CheckCircle className="w-4 h-4" />
-                            <span>Saved {lastSaved.toLocaleTimeString()}</span>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -186,8 +199,8 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                                         key={action.type}
                                         onClick={() => applyQuickAction(index, action)}
                                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-bold uppercase tracking-wider hover:scale-105 transition-all ${event.event_type === action.type
-                                                ? 'bg-slate-100 text-slate-900 border-white'
-                                                : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-200'
+                                            ? 'bg-slate-100 text-slate-900 border-white'
+                                            : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-200'
                                             }`}
                                     >
                                         <action.icon className="w-4 h-4" />
@@ -261,6 +274,14 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                     </div>
                 ))}
             </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={events.some(e => hasData(e))}
+            />
         </div>
     );
 };

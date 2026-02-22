@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Siren, Save, CheckCircle, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Siren, Clock } from 'lucide-react';
 import { FormField } from '../shared/FormField';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * RescueProtocolForm - Rescue Protocol/Intervention Tracking
@@ -19,6 +20,9 @@ interface RescueProtocolFormProps {
     initialData?: RescueProtocolData;
     patientId?: string;
     sessionId?: string;
+    onComplete?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 const INTERVENTION_TYPES = [
@@ -34,21 +38,39 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
     onSave,
     initialData = {},
     patientId,
-    sessionId
+    sessionId,
+    onComplete,
+    onExit,
+    onBack
 }) => {
     const [data, setData] = useState<RescueProtocolData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        if (onSave && data.intervention_type) {
+    const handleSaveAndExit = () => {
+        if (onSave) {
             setIsSaving(true);
-            const timer = setTimeout(() => {
-                onSave(data);
+            onSave(data);
+            setTimeout(() => {
                 setIsSaving(false);
-            }, 500);
-            return () => clearTimeout(timer);
+                if (onExit) onExit();
+            }, 300);
+        } else if (onExit) {
+            onExit();
         }
-    }, [data, onSave]);
+    };
+
+    const handleSaveAndContinue = () => {
+        if (onSave) {
+            setIsSaving(true);
+            onSave(data);
+            setTimeout(() => {
+                setIsSaving(false);
+                if (onComplete) onComplete();
+            }, 300);
+        } else if (onComplete) {
+            onComplete();
+        }
+    };
 
     const updateField = (field: keyof RescueProtocolData, value: any) => {
         const updated = { ...data, [field]: value };
@@ -175,6 +197,14 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                     </div>
                 )}
             </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={!!data.intervention_type}
+            />
         </div>
     );
 };

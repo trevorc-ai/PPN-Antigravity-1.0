@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Brain, Save, CheckCircle, ChevronLeft, ChevronRight, LogOut, Info } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import { generateBaselineNarrative, NarrativeInput } from '../../services/narrativeGenerator';
-import { NarrativeViewer } from '../narrative/NarrativeViewer';
+import { FormFooter } from '../arc-of-care-forms/shared/FormFooter';
 
 interface BaselineAssessmentWizardProps {
     patientId: string;
@@ -178,8 +178,6 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const [saveExitFlash, setSaveExitFlash] = useState(false);
     const [saveContFlash, setSaveContFlash] = useState(false);
-    const [completed, setCompleted] = useState(false);
-    const [narrative, setNarrative] = useState<ReturnType<typeof generateBaselineNarrative> | null>(null);
 
     // Auto-save every 30s
     useEffect(() => {
@@ -227,8 +225,6 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             consent: { consent_type: undefined, consent_obtained: false },
         };
         const gen = generateBaselineNarrative(input);
-        setNarrative(gen);
-        setCompleted(true);
         try { localStorage.removeItem(STORAGE_KEY(patientId)); } catch { /* ignore */ }
 
         setSaveContFlash(true);
@@ -260,13 +256,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 : { text: 'Low expectancy — consider additional preparation', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
 
     // ── Completed state ───────────────────────────────────────────────────────
-    if (completed && narrative) {
-        return (
-            <div className="p-6">
-                <NarrativeViewer narrative={narrative} onClose={onExit} />
-            </div>
-        );
-    }
+    // Removed: NarrativeViewer was flashing right before advancing
 
     return (
         <div className="space-y-3 pb-4">
@@ -386,49 +376,14 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 ))}
             </section>
 
-            {/* ── Footer: Back | Save & Exit | Save & Continue ─────────── */}
-            <div className="flex items-center justify-between gap-3 pt-1">
-                {/* Back */}
-                <button
-                    type="button"
-                    onClick={onBack}
-                    className="flex items-center gap-2 px-4 py-3 rounded-xl border border-slate-700 text-sm font-bold text-slate-400 hover:border-slate-500 hover:text-slate-300 transition-all"
-                >
-                    <ChevronLeft className="w-4 h-4" />
-                    Back
-                </button>
-
-                <div className="flex items-center gap-3">
-                    {/* Save & Exit */}
-                    <button
-                        type="button"
-                        onClick={handleSaveAndExit}
-                        className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-bold transition-all ${saveExitFlash
-                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                            : 'border-slate-700 text-slate-300 hover:border-slate-500 hover:text-slate-200'
-                            }`}
-                    >
-                        {saveExitFlash ? <CheckCircle className="w-4 h-4" /> : <LogOut className="w-4 h-4" />}
-                        {saveExitFlash ? 'Saved!' : 'Save & Exit'}
-                    </button>
-
-                    {/* Save & Continue */}
-                    <button
-                        type="button"
-                        onClick={handleSubmitAll}
-                        disabled={!canSubmit || saveContFlash}
-                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saveContFlash
-                            ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
-                            : !canSubmit
-                                ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
-                                : 'bg-indigo-600 hover:bg-indigo-500 text-slate-200 shadow-lg shadow-indigo-900/30'
-                            }`}
-                    >
-                        {saveContFlash ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                        {saveContFlash ? 'Saved!' : 'Save & Continue'}
-                    </button>
-                </div>
-            </div>
+            {/* ── Footer ──────────────────────────────────────────────────────── */}
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSubmitAll}
+                isSaving={saveContFlash || saveExitFlash}
+                hasChanges={canSubmit}
+            />
 
             {/* Hint if scores missing */}
             {!canSubmit && (

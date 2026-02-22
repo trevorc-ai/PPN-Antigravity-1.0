@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { FileCheck, Save, CheckCircle, AlertTriangle, ShieldCheck, Copy, Check } from 'lucide-react';
 import { FormField } from '../shared/FormField';
+import { FormFooter } from '../shared/FormFooter';
 
 /**
  * ConsentForm — Informed Consent Documentation
@@ -27,8 +28,9 @@ interface ConsentFormProps {
     onSave?: (data: ConsentData) => Promise<boolean> | boolean | void;
     initialData?: ConsentData;
     patientId?: string;
-    /** Called automatically on successful save — opens the next Phase 1 form */
     onNext?: () => void;
+    onExit?: () => void;
+    onBack?: () => void;
 }
 
 const CONSENT_TYPES = [
@@ -59,6 +61,8 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
     initialData = { consent_types: [], consent_obtained: false },
     patientId,
     onNext,
+    onExit,
+    onBack
 }) => {
     const [idCopied, setIdCopied] = useState(false);
 
@@ -111,9 +115,6 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                 hasSavedRef.current = false;
             } else {
                 setLastSaved(new Date());
-                // Auto-advance to next step immediately after save
-                // Short delay so the clinician sees the "Saved" confirmation flash
-                setTimeout(() => onNext?.(), 600);
             }
         } catch {
             hasSavedRef.current = false;
@@ -126,6 +127,22 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
     const canSave =
         data.consent_obtained &&
         !!data.verification_datetime;
+
+    const handleSaveAndExit = async () => {
+        if (!canSave) return;
+        await handleSave();
+        if (hasSavedRef.current) {
+            setTimeout(() => onExit?.(), 600);
+        }
+    };
+
+    const handleSaveAndContinue = async () => {
+        if (!canSave) return;
+        await handleSave();
+        if (hasSavedRef.current) {
+            setTimeout(() => onNext?.(), 600);
+        }
+    };
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
@@ -307,32 +324,27 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             </div>
                         </FormField>
 
-                        {/* ── Save button — visible once ready, hidden after save ── */}
-                        {canSave && !lastSaved && (
-                            <button
-                                id="consent-save-button"
-                                type="button"
-                                onClick={handleSave}
-                                disabled={isSaving}
-                                className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-slate-200 font-bold text-base transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
-                            >
-                                <Save className="w-5 h-5" />
-                                {isSaving ? 'Saving…' : 'Save Consent Documentation'}
-                            </button>
-                        )}
-
                         {/* ── Saved confirmation ───────────────────────────── */}
                         {lastSaved && (
                             <div className="flex items-center gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
                                 <CheckCircle className="w-5 h-5 text-emerald-400" />
                                 <p className="text-emerald-400 font-semibold text-sm">
-                                    Consent documented and saved — advancing to next step…
+                                    Consent documented and saved — advancing...
                                 </p>
                             </div>
                         )}
                     </>
                 )}
             </div>
+
+            <FormFooter
+                onBack={onBack}
+                onSaveAndExit={handleSaveAndExit}
+                onSaveAndContinue={handleSaveAndContinue}
+                isSaving={isSaving}
+                hasChanges={canSave && !lastSaved}
+                saveAndContinueLabel="Save Consent Documentation"
+            />
         </div>
     );
 };
