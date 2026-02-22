@@ -67,10 +67,10 @@ HEADERS = {
     "apikey": SUPABASE_KEY,
     "Authorization": f"Bearer {SUPABASE_KEY}",
     "Content-Type": "application/json",
-    "Prefer": "resolution=ignore-duplicates",   # ON CONFLICT DO NOTHING
+    "Prefer": "resolution=merge-duplicates",   # ON CONFLICT DO UPDATE
 }
 
-UPSERT_URL = f"{SUPABASE_URL}/rest/v1/benchmark_trials"
+UPSERT_URL = f"{SUPABASE_URL}/rest/v1/benchmark_trials?on_conflict=nct_id"
 BATCH_SIZE = 50
 
 # ─────────────────────────────────────────────────────────────────────────────
