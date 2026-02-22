@@ -46,7 +46,7 @@ const navSections: NavSection[] = [
   {
     title: 'Clinical Safety',
     items: [
-      { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
+      { label: 'Interactions', icon: 'warning', path: '/interactions' },
       { label: 'Audit Logs', icon: 'history', path: '/audit' },
     ],
   },

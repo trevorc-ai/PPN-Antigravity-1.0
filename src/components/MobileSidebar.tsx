@@ -76,7 +76,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
         {
             title: 'Clinical Safety',
             items: [
-                { label: 'Interaction Checker', icon: 'security', path: '/interactions' },
+                { label: 'Interactions', icon: 'security', path: '/interactions' },
                 { label: 'Audit Logs', icon: 'manage_search', path: '/audit' },
             ]
         },
