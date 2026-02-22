@@ -93,10 +93,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         {/* Emergency Protocol Button (Top Right) */}
                         <button
                             onClick={() => onOpenForm('rescue-protocol')}
-                            className="flex-shrink-0 flex items-center gap-2.5 px-6 py-3 bg-red-950/40 hover:bg-red-900/50 border-2 border-red-500/50 hover:border-red-500 text-red-100 font-bold rounded-xl transition-all active:scale-95 text-base shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
+                            className="flex-shrink-0 flex items-center gap-2.5 px-6 py-3 bg-slate-950 hover:bg-slate-900 border-2 border-red-500/80 hover:border-red-400 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-base shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
                         >
-                            <span className="material-symbols-outlined text-red-500 group-hover:animate-pulse">emergency</span>
-                            Rescue Protocol Log
+                            <span className="material-symbols-outlined text-red-400 group-hover:animate-pulse">emergency</span>
+                            Log Rescue Protocol
                         </button>
                     </div>
 
@@ -104,7 +104,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-stretch">
 
                         {/* COLUMN 1: Session Plan & Protocol */}
-                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-slate-100/90 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
+                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-amber-500/40 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
                             <button
                                 onClick={() => onOpenForm('dosing-protocol')}
                                 className="w-fit flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
@@ -130,7 +130,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         </div>
 
                         {/* COLUMN 2: Required Gates & Vitals */}
-                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-slate-100/90 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
+                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-amber-500/40 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
                             <button
                                 onClick={() => onOpenForm('session-vitals')}
                                 className="w-fit flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
