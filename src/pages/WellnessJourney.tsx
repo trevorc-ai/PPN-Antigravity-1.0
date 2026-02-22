@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
-import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart } from 'lucide-react';
+import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart, AlertTriangle } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
@@ -920,21 +920,16 @@ const WellnessJourneyInternal: React.FC = () => {
                                 {/* Bottom row: disclaimer label + info tooltip | Phase lock | Export Report button */}
                                 <div className="flex items-center justify-between gap-4 pt-3 pb-1 border-t border-slate-700/30 mt-6 md:mt-8">
                                     <div className="flex items-center gap-6 flex-wrap">
-                                        {/* Compact disclaimer with info-icon tooltip */}
-                                        <AdvancedTooltip
-                                            content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
-                                            tier="detailed"
-                                            type="warning"
-                                            title="Legal Disclaimer"
-                                            side="top"
-                                            width="w-96"
-                                        >
-                                            <span className="inline-flex items-center gap-1.5 text-sm text-slate-500 cursor-help hover:text-slate-400 transition-colors select-none">
-                                                <span style={{ color: '#f59e0b', fontSize: '1.1em' }}>⚠️</span>
-                                                <strong className="text-slate-400">Clinical Decision Support</strong>
-                                                <Info className="w-4 h-4 text-slate-600 hover:text-slate-400" aria-label="Legal disclaimer info" />
-                                            </span>
-                                        </AdvancedTooltip>
+                                        {/* Always-visible legal disclaimer container */}
+                                        <div className="flex gap-3 items-start max-w-xl bg-slate-900/60 border border-slate-700/50 p-4 rounded-xl shadow-inner">
+                                            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                                            <div>
+                                                <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-1">Clinical Decision Support Disclaimer</h4>
+                                                <p className="text-xs text-slate-400 leading-relaxed">
+                                                    This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider.
+                                                </p>
+                                            </div>
+                                        </div>
 
                                         {/* Phase lock notice inline */}
                                         {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
