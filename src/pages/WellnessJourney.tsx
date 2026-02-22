@@ -24,6 +24,8 @@ import { downloadReport } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
 import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
 import { createClinicalSession } from '../services/clinicalLog';
+import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
+import { ProtocolConfiguratorModal } from '../components/wellness-journey/ProtocolConfiguratorModal';
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -124,7 +126,7 @@ interface PatientJourney {
 
 const PHASE_STORAGE_KEY = 'ppn_wellness_completed_phases';
 
-const WellnessJourney: React.FC = () => {
+const WellnessJourneyInternal: React.FC = () => {
     const navigate = useNavigate();
     const { addToast } = useToast();
 
@@ -139,6 +141,8 @@ const WellnessJourney: React.FC = () => {
         } catch { return []; }
     });
 
+    const { config } = useProtocol();
+
     // Tour state
     const [showTour1, setShowTour1] = useState(false);
     const [showTour2, setShowTour2] = useState(false);
@@ -151,6 +155,9 @@ const WellnessJourney: React.FC = () => {
     const [showPatientModal, setShowPatientModal] = useState(true);
     // Controls which view the modal opens to: 'choose' (Phase 1) or 'existing' (Phase 2/3)
     const [patientModalView, setPatientModalView] = useState<'choose' | 'existing'>('choose');
+
+    // Protocol Configurator Gate (wo-363)
+    const [showProtocolConfigurator, setShowProtocolConfigurator] = useState(false);
 
     const PHASE_TAB_MAP: Record<string, 1 | 2 | 3> = {
         'Preparation': 1,
@@ -215,6 +222,8 @@ const WellnessJourney: React.FC = () => {
                 message: `Session started for ${patientId} — Phase 1: Preparation`,
                 type: 'success',
             });
+            // Show config modal right after selection for new sessions
+            setShowProtocolConfigurator(true);
             // Land on Phase 1 with all steps pending — practitioner chooses where to start
         } else {
             const phaseLabel = targetPhase === 1 ? 'Preparation' : targetPhase === 2 ? 'Treatment' : 'Integration';
@@ -522,6 +531,13 @@ const WellnessJourney: React.FC = () => {
                 />
             )}
 
+            {/* Protocol Configurator Gate */}
+            {showProtocolConfigurator && (
+                <ProtocolConfiguratorModal
+                    onClose={() => setShowProtocolConfigurator(false)}
+                />
+            )}
+
             {/* Onboarding Modal */}
             {showOnboarding && (
                 <ArcOfCareOnboarding
@@ -640,7 +656,7 @@ const WellnessJourney: React.FC = () => {
                         {/* Phase 1: no competing CTA — Phase1StepGuide is the navigator */}
                         {/* Phase 1 & 2: no competing CTA — phase navigators handle it */}
 
-                        {activePhase === 3 && (
+                        {activePhase === 3 && config.enabledFeatures.includes('daily-pulse') && (
                             <button
                                 onClick={() => handleOpenForm('daily-pulse')}
                                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
@@ -651,23 +667,25 @@ const WellnessJourney: React.FC = () => {
                             </button>
                         )}
                         {/* MEQ-30 — always available, provider-discretion instrument */}
-                        <AdvancedTooltip
-                            content="The Mystical Experience Questionnaire (30-item) is typically administered 24–48 hours post-session while the experience is still fresh. It measures depth of mystical experience across 4 subscales. Higher scores (≥60/100) correlate with sustained therapeutic benefit at 6-month follow-up."
-                            title="MEQ-30 — Provider Discretion"
-                            type="info"
-                            tier="detailed"
-                            side="bottom"
-                            width="w-80"
-                        >
-                            <button
-                                onClick={() => handleOpenForm('meq30')}
-                                className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
-                                title="MEQ-30 available at any phase — timing per protocol"
+                        {config.enabledFeatures.includes('meq30') && (
+                            <AdvancedTooltip
+                                content="The Mystical Experience Questionnaire (30-item) is typically administered 24–48 hours post-session while the experience is still fresh. It measures depth of mystical experience across 4 subscales. Higher scores (≥60/100) correlate with sustained therapeutic benefit at 6-month follow-up."
+                                title="MEQ-30 — Provider Discretion"
+                                type="info"
+                                tier="detailed"
+                                side="bottom"
+                                width="w-80"
                             >
-                                <span className="material-symbols-outlined text-base">quiz</span>
-                                MEQ-30
-                            </button>
-                        </AdvancedTooltip>
+                                <button
+                                    onClick={() => handleOpenForm('meq30')}
+                                    className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
+                                    title="MEQ-30 available at any phase — timing per protocol"
+                                >
+                                    <span className="material-symbols-outlined text-base">quiz</span>
+                                    MEQ-30
+                                </button>
+                            </AdvancedTooltip>
+                        )}
                     </div>
                 </div>
 
@@ -731,52 +749,62 @@ const WellnessJourney: React.FC = () => {
                                             <div className="mt-8">
                                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Early Follow-up · 0–72 hrs</p>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <WorkflowActionCard
-                                                        phase={3}
-                                                        status="active"
-                                                        title="Structured Safety Check"
-                                                        description="Assess post-session risk and physical stability."
-                                                        icon={<Shield className="w-5 h-5 text-emerald-400" />}
-                                                        onClick={() => handleOpenForm('structured-safety')}
-                                                    />
-                                                    <WorkflowActionCard
-                                                        phase={3}
-                                                        status="active"
-                                                        title="Daily Pulse Check"
-                                                        description="Log basic mood and sleep metrics."
-                                                        icon={<Heart className="w-5 h-5 text-emerald-400" />}
-                                                        onClick={() => handleOpenForm('daily-pulse')}
-                                                    />
+                                                    {config.enabledFeatures.includes('structured-safety') && (
+                                                        <WorkflowActionCard
+                                                            phase={3}
+                                                            status="active"
+                                                            title="Structured Safety Check"
+                                                            description="Assess post-session risk and physical stability."
+                                                            icon={<Shield className="w-5 h-5 text-emerald-400" />}
+                                                            onClick={() => handleOpenForm('structured-safety')}
+                                                        />
+                                                    )}
+                                                    {config.enabledFeatures.includes('daily-pulse') && (
+                                                        <WorkflowActionCard
+                                                            phase={3}
+                                                            status="active"
+                                                            title="Daily Pulse Check"
+                                                            description="Log basic mood and sleep metrics."
+                                                            icon={<Heart className="w-5 h-5 text-emerald-400" />}
+                                                            onClick={() => handleOpenForm('daily-pulse')}
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                             {/* Phase 3 — Integration Work (days to weeks) */}
                                             <div className="mt-8">
                                                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Integration Work · Days to Weeks</p>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    <WorkflowActionCard
-                                                        phase={3}
-                                                        status="active"
-                                                        title="Integration Session"
-                                                        description="Log clinical narrative and thematic insights."
-                                                        icon={<span className="material-symbols-outlined text-emerald-400">edit_note</span>}
-                                                        onClick={() => handleOpenForm('structured-integration')}
-                                                    />
-                                                    <WorkflowActionCard
-                                                        phase={3}
-                                                        status="active"
-                                                        title="Behavioral Change Tracker"
-                                                        description="Monitor behavioral modifications over time."
-                                                        icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
-                                                        onClick={() => handleOpenForm('behavioral-tracker')}
-                                                    />
-                                                    <WorkflowActionCard
-                                                        phase={3}
-                                                        status="active"
-                                                        title="Longitudinal Assessment"
-                                                        description="Detailed milestone check (PHQ-9/GAD-7)."
-                                                        icon={<span className="material-symbols-outlined text-emerald-400">timeline</span>}
-                                                        onClick={() => handleOpenForm('longitudinal-assessment')}
-                                                    />
+                                                    {config.enabledFeatures.includes('structured-integration') && (
+                                                        <WorkflowActionCard
+                                                            phase={3}
+                                                            status="active"
+                                                            title="Integration Session"
+                                                            description="Log clinical narrative and thematic insights."
+                                                            icon={<span className="material-symbols-outlined text-emerald-400">edit_note</span>}
+                                                            onClick={() => handleOpenForm('structured-integration')}
+                                                        />
+                                                    )}
+                                                    {config.enabledFeatures.includes('behavioral-tracker') && (
+                                                        <WorkflowActionCard
+                                                            phase={3}
+                                                            status="active"
+                                                            title="Behavioral Change Tracker"
+                                                            description="Monitor behavioral modifications over time."
+                                                            icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
+                                                            onClick={() => handleOpenForm('behavioral-tracker')}
+                                                        />
+                                                    )}
+                                                    {config.enabledFeatures.includes('longitudinal-assessment') && (
+                                                        <WorkflowActionCard
+                                                            phase={3}
+                                                            status="active"
+                                                            title="Longitudinal Assessment"
+                                                            description="Detailed milestone check (PHQ-9/GAD-7)."
+                                                            icon={<span className="material-symbols-outlined text-emerald-400">timeline</span>}
+                                                            onClick={() => handleOpenForm('longitudinal-assessment')}
+                                                        />
+                                                    )}
                                                 </div>
                                             </div>
                                         </>
@@ -911,6 +939,12 @@ const WellnessJourney: React.FC = () => {
         </div>
     );
 };
+
+const WellnessJourney = () => (
+    <ProtocolProvider>
+        <WellnessJourneyInternal />
+    </ProtocolProvider>
+);
 
 export default WellnessJourney;
 

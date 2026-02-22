@@ -7,6 +7,7 @@ import { WellnessFormId } from './WellnessFormRouter';
 import { LiveSessionTimeline } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
+import { useProtocol } from '../../contexts/ProtocolContext';
 
 interface TreatmentPhaseProps {
     journey: any;
@@ -20,6 +21,7 @@ type SessionMode = 'pre' | 'live' | 'post';
 
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenForm, onCompletePhase }) => {
     const { addToast } = useToast();
+    const { config } = useProtocol();
     // Session State Management (Simulating the DB status)
     const [mode, setMode] = useState<SessionMode>('pre');
 
@@ -87,13 +89,15 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             <p className="text-slate-400 mt-1">Verify all safety gates before initiating dosing.</p>
                         </div>
                         {/* Emergency Protocol Button (Top Right) */}
-                        <button
-                            onClick={() => onOpenForm('rescue-protocol')}
-                            className="w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2.5 px-6 py-3 bg-slate-950 hover:bg-slate-900 border-2 border-red-500/80 hover:border-red-400 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-base shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
-                        >
-                            <span className="material-symbols-outlined text-red-400 group-hover:animate-pulse">emergency</span>
-                            Log Rescue Protocol
-                        </button>
+                        {config.enabledFeatures.includes('rescue-protocol') && (
+                            <button
+                                onClick={() => onOpenForm('rescue-protocol')}
+                                className="w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2.5 px-6 py-3 bg-slate-950 hover:bg-slate-900 border-2 border-red-500/80 hover:border-red-400 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-base shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
+                            >
+                                <span className="material-symbols-outlined text-red-400 group-hover:animate-pulse">emergency</span>
+                                Log Rescue Protocol
+                            </button>
+                        )}
                     </div>
 
                     {/* Pre-Flight Checklist Columns */}
@@ -132,13 +136,15 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-amber-500/40 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
                             <div className="flex flex-wrap items-center justify-between gap-4">
                                 <span className="text-2xl sm:text-3xl font-bold text-[#A8B5D1]">Step 2:</span>
-                                <button
-                                    onClick={() => onOpenForm('session-vitals')}
-                                    className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
-                                >
-                                    <span className="material-symbols-outlined text-[18px]">monitor_heart</span>
-                                    Record Vitals
-                                </button>
+                                {config.enabledFeatures.includes('session-vitals') && (
+                                    <button
+                                        onClick={() => onOpenForm('session-vitals')}
+                                        className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">monitor_heart</span>
+                                        Record Vitals
+                                    </button>
+                                )}
                             </div>
 
                             <div className="flex-1 flex flex-col justify-between gap-3 min-h-[148px] mt-auto">
@@ -155,16 +161,18 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                 </div>
 
                                 {/* Gate 2: Vitals */}
-                                <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0 z-10">
-                                        <CheckCircle className="w-5 h-5" />
+                                {config.enabledFeatures.includes('session-vitals') && (
+                                    <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full relative overflow-hidden group">
+                                        <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0 z-10">
+                                            <CheckCircle className="w-5 h-5" />
+                                        </div>
+                                        <div className="z-10">
+                                            <p className="text-[#A8B5D1] font-bold text-[15px]">Baseline Vitals</p>
+                                            <p className="text-sm text-slate-400 mt-0.5">Within range • HR 72, BP 118/76</p>
+                                        </div>
                                     </div>
-                                    <div className="z-10">
-                                        <p className="text-[#A8B5D1] font-bold text-[15px]">Baseline Vitals</p>
-                                        <p className="text-sm text-slate-400 mt-0.5">Within range • HR 72, BP 118/76</p>
-                                    </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -209,25 +217,27 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             </p>
                         </div>
                         {/* Live Vitals Ticker */}
-                        <div className="flex items-center gap-6 bg-[#040C0E]/60 p-3.5 rounded-xl border border-[#14343B]/40 shadow-inner">
-                            <div className="text-right">
-                                <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
-                                <div className="flex items-center gap-1.5 justify-end">
-                                    <Heart className="w-3.5 h-3.5 text-rose-500/80 fill-rose-500/30 animate-pulse" />
-                                    <p className="text-xl font-bold text-emerald-100 leading-none">{liveVitals.hr}</p>
+                        {config.enabledFeatures.includes('session-vitals') && (
+                            <div className="flex items-center gap-6 bg-[#040C0E]/60 p-3.5 rounded-xl border border-[#14343B]/40 shadow-inner">
+                                <div className="text-right">
+                                    <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
+                                    <div className="flex items-center gap-1.5 justify-end">
+                                        <Heart className="w-3.5 h-3.5 text-rose-500/80 fill-rose-500/30 animate-pulse" />
+                                        <p className="text-xl font-bold text-emerald-100 leading-none">{liveVitals.hr}</p>
+                                    </div>
+                                </div>
+                                <div className="w-px h-8 bg-[#14343B]/50" />
+                                <div className="text-right">
+                                    <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
+                                    <p className="text-xl font-bold text-emerald-100 leading-none">{liveVitals.bp}</p>
+                                </div>
+                                <div className="w-px h-8 bg-[#14343B]/50" />
+                                <div className="text-right">
+                                    <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
+                                    <p className={`text-xl font-bold leading-none ${liveVitals.spo2 < 95 ? 'text-amber-500/90' : 'text-emerald-100'}`}>{liveVitals.spo2}%</p>
                                 </div>
                             </div>
-                            <div className="w-px h-8 bg-[#14343B]/50" />
-                            <div className="text-right">
-                                <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
-                                <p className="text-xl font-bold text-emerald-100 leading-none">{liveVitals.bp}</p>
-                            </div>
-                            <div className="w-px h-8 bg-[#14343B]/50" />
-                            <div className="text-right">
-                                <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
-                                <p className={`text-xl font-bold leading-none ${liveVitals.spo2 < 95 ? 'text-amber-500/90' : 'text-emerald-100'}`}>{liveVitals.spo2}%</p>
-                            </div>
-                        </div>
+                        )}
                         <div className="flex flex-wrap items-center gap-3">
                             {/* Launch Companion App */}
                             <a
@@ -251,14 +261,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
 
                 {/* THE "BIG 3" ACTION DECK + SAFETY */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <WorkflowActionCard
-                        phase={2}
-                        status="active"
-                        title="Log Vitals"
-                        description="Check & Log BP, HR, SpO2."
-                        icon={<Activity className="w-5 h-5 text-fuchsia-400" />}
-                        onClick={() => onOpenForm('session-vitals')}
-                    />
+                    {config.enabledFeatures.includes('session-vitals') && (
+                        <WorkflowActionCard
+                            phase={2}
+                            status="active"
+                            title="Log Vitals"
+                            description="Check & Log BP, HR, SpO2."
+                            icon={<Activity className="w-5 h-5 text-fuchsia-400" />}
+                            onClick={() => onOpenForm('session-vitals')}
+                        />
+                    )}
                     <WorkflowActionCard
                         phase={2}
                         status="active"
@@ -285,18 +297,20 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
 
                 {/* Live Session Outputs (WO-311) */}
                 <div className="space-y-6">
-                    <SessionVitalsTrendChart
-                        sessionId={journey.session?.sessionNumber?.toString() || "1"}
-                        substance={journey.session?.substance}
-                        onThresholdViolation={(vital, value) => {
-                            addToast({
-                                title: `[ALERT] ${vital} threshold exceeded`,
-                                message: `${vital}: ${value} — review immediately`,
-                                type: 'error',
-                                persistent: true
-                            });
-                        }}
-                    />
+                    {config.enabledFeatures.includes('session-vitals') && (
+                        <SessionVitalsTrendChart
+                            sessionId={journey.session?.sessionNumber?.toString() || "1"}
+                            substance={journey.session?.substance}
+                            onThresholdViolation={(vital, value) => {
+                                addToast({
+                                    title: `[ALERT] ${vital} threshold exceeded`,
+                                    message: `${vital}: ${value} — review immediately`,
+                                    type: 'error',
+                                    persistent: true
+                                });
+                            }}
+                        />
+                    )}
 
                     <LiveSessionTimeline
                         sessionId={journey.session?.sessionNumber?.toString() || "1"}

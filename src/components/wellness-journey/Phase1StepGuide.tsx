@@ -6,6 +6,7 @@ import { ComplianceDocumentsPanel } from './ComplianceDocumentsPanel';
 import { runContraindicationEngine, type IntakeScreeningData } from '../../services/contraindicationEngine';
 import { useToast } from '../../contexts/ToastContext';
 import { exportRiskReportToPDF } from '../../services/pdfGenerator';
+import { useProtocol } from '../../contexts/ProtocolContext';
 
 // ── PHASE 1 COLOR: INDIGO ─────────────────────────────────────────────────────
 // Red = warnings/adverse events ONLY.
@@ -115,12 +116,15 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 }) => {
     const heroRef = useRef<HTMLDivElement>(null);
     const [canProceedToPhase2, setCanProceedToPhase2] = useState(false);
+    const { config } = useProtocol();
 
-    const currentStepIndex = PHASE1_STEPS.findIndex(
+    const activeSteps = PHASE1_STEPS.filter(step => config.enabledFeatures.includes(step.id));
+
+    const currentStepIndex = activeSteps.findIndex(
         (step) => !completedFormIds.has(step.id)
     );
     const allComplete = currentStepIndex === -1;
-    const completedCount = completedFormIds.size;
+    const completedCount = activeSteps.filter(step => completedFormIds.has(step.id)).length;
 
     useEffect(() => {
         if (heroRef.current) {
@@ -135,21 +139,21 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
             <div className="flex items-center justify-between px-1">
                 {/* Section label using site-standard ppn-label class */}
                 <h2 className="ppn-label" style={{ color: '#818CF8' }}>
-                    Preparation · 4 Steps
+                    Preparation · {activeSteps.length} Steps
                 </h2>
                 <div className="flex items-center gap-3">
                     <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div
                             className="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full transition-all duration-700"
-                            style={{ width: `${(completedCount / PHASE1_STEPS.length) * 100}% ` }}
+                            style={{ width: `${(completedCount / Math.max(1, activeSteps.length)) * 100}% ` }}
                             role="progressbar"
                             aria-valuenow={completedCount}
-                            aria-valuemax={PHASE1_STEPS.length}
+                            aria-valuemax={activeSteps.length}
                             aria-label="Preparation progress"
                         />
                     </div>
                     <span className="text-sm font-semibold text-slate-400">
-                        {completedCount}/{PHASE1_STEPS.length}
+                        {completedCount}/{activeSteps.length}
                     </span>
                 </div>
             </div>
@@ -165,8 +169,8 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                 Design: no individual card borders — background fills only.
                 Active = indigo fill · Completed = teal tint · Upcoming = slate/dimmed
             ──────────────────────────────────────────────────────────────────── */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                {PHASE1_STEPS.map((step, index) => {
+            <div className={`grid grid-cols-1 sm:grid-cols-${Math.min(activeSteps.length, 4)} gap-2`}>
+                {activeSteps.map((step, index) => {
                     const isComplete = completedFormIds.has(step.id);
                     const isCurrent = index === currentStepIndex;
 
