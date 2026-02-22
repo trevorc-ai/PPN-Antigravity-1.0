@@ -183,6 +183,10 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                     <div>
                         <h2 className="text-2xl font-black text-slate-300">{config.name}</h2>
                         <p className="text-slate-300 text-base mt-1">{config.description}</p>
+                        <div className="mt-4 hidden md:inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
+                            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/20 px-2 py-0.5 rounded">Pro Tip</span>
+                            <span className="text-xs text-indigo-300/80">Use your keyboard numbers (1-5) to quickly answer questions.</span>
+                        </div>
                     </div>
                     {isSaving && (
                         <div className="flex items-center gap-2 text-blue-400 text-sm">

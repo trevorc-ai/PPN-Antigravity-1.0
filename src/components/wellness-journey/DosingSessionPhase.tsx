@@ -10,13 +10,14 @@ import { useToast } from '../../contexts/ToastContext';
 interface TreatmentPhaseProps {
     journey: any;
     onOpenForm: (formId: WellnessFormId) => void;
+    onCompletePhase: () => void;
 }
 
 
 
 type SessionMode = 'pre' | 'live' | 'post';
 
-export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenForm }) => {
+export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenForm, onCompletePhase }) => {
     const { addToast } = useToast();
     // Session State Management (Simulating the DB status)
     const [mode, setMode] = useState<SessionMode>('pre');
@@ -433,6 +434,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="flex flex-col items-center pt-8 border-t border-slate-800">
                         <button
                             disabled={!assessmentCompleted}
+                            onClick={onCompletePhase}
                             className={`w-full md:w-2/3 py-5 rounded-2xl font-black text-xl tracking-wide shadow-lg transition-all flex items-center justify-center gap-4 ${assessmentCompleted
                                 ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-blue-900/40 cursor-pointer hover:scale-[1.01] active:scale-[0.99]'
                                 : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'

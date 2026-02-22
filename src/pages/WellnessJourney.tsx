@@ -708,7 +708,7 @@ const WellnessJourney: React.FC = () => {
                                         />
                                     )}
                                     {activePhase === 2 && (
-                                        <TreatmentPhase journey={journey} onOpenForm={handleOpenForm} />
+                                        <TreatmentPhase journey={journey} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
                                     )}
 
                                     {activePhase === 3 && (
