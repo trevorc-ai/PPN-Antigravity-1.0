@@ -55,14 +55,9 @@ interface EligibilityPanelProps {
     onCompletePhase?: () => void;
 }
 
-const EligibilityPanel: React.FC<EligibilityPanelProps> = ({
-    steps,
-    onStartStep,
-    onCompletePhase,
-}) => {
-    const [reviewOpen, setReviewOpen] = useState(false);
-
-    // Mock data for the engine — in production this comes from the saved DB records
+export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, completedFormIds, onStartStep, onCompletePhase }) => {
+    // Generate risk report based on mock patient data.
+    // In production, this would use live clinical records.
     const mockIntakeData: IntakeScreeningData = {
         patientId: 'PT-RISK9W2P',
         sessionSubstance: 'Psilocybin',
@@ -82,49 +77,12 @@ const EligibilityPanel: React.FC<EligibilityPanelProps> = ({
     const result = runContraindicationEngine(mockIntakeData);
 
     return (
-        <div className="space-y-4">
-            <RiskEligibilityReport
-                result={result}
-                onOverrideConfirmed={(justification) => console.log('Override saved:', justification)}
-                onExportPDF={() => console.log('Exporting PDF...')}
-                onProceedToPhase2={onCompletePhase}
-            />
-
-            <div className="rounded-2xl bg-slate-800/30 overflow-hidden">
-                <button
-                    onClick={() => setReviewOpen(o => !o)}
-                    className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-slate-800/50 transition-colors"
-                    aria-expanded={reviewOpen}
-                    aria-controls="phase1-review-panel"
-                >
-                    <span className="text-sm font-bold text-slate-400">
-                        Review completed steps ({steps.length}/{steps.length})
-                    </span>
-                    {reviewOpen
-                        ? <ChevronUp className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                        : <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0" />}
-                </button>
-
-                {reviewOpen && (
-                    <div id="phase1-review-panel" className="divide-y divide-slate-700/30">
-                        {steps.map((step) => (
-                            <div key={step.id} className="flex items-center gap-4 px-5 py-3.5">
-                                <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0" aria-hidden="true" />
-                                <p className="text-sm font-semibold text-slate-300 flex-1 truncate">{step.label}</p>
-                                <button
-                                    onClick={() => onStartStep(step.id)}
-                                    className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-300 transition-all"
-                                    aria-label={`Amend ${step.label} `}
-                                >
-                                    <Edit3 className="w-3.5 h-3.5" aria-hidden="true" />
-                                    Amend
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
+        <RiskEligibilityReport
+            result={result}
+            onOverrideConfirmed={(justification) => console.log('Override saved:', justification)}
+            onExportPDF={() => console.log('Exporting PDF...')}
+            onProceedToPhase2={onCompletePhase}
+        />
     );
 };
 
@@ -309,9 +267,9 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                     </div>
 
                     {/* Action Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
                         {/* Left Column: Administrative (Export Docs) */}
-                        <div className="w-full">
+                        <div className="w-full h-full">
                             <ComplianceDocumentsPanel
                                 patientId="PT-RISK9W2P"
                                 completedForms={Array.from(completedFormIds)}
@@ -319,7 +277,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                         </div>
 
                         {/* Right Column: Clinical (Risk & Clearance) */}
-                        <div className="w-full">
+                        <div className="w-full h-full">
                             <EligibilityPanel
                                 steps={PHASE1_STEPS}
                                 completedFormIds={completedFormIds}
