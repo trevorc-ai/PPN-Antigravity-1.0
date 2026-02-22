@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
-import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain } from 'lucide-react';
+import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
@@ -854,25 +854,27 @@ const WellnessJourney: React.FC = () => {
                                     </div>
                                 )}
 
-                                {/* Bottom Export Actions */}
-                                <div className="flex justify-end pt-4 pb-2">
+                                {/* Bottom row: disclaimer label + info tooltip | Export Report button */}
+                                <div className="flex items-center justify-between gap-4 pt-3 pb-1">
+                                    {/* Compact disclaimer with info-icon tooltip */}
+                                    <AdvancedTooltip
+                                        content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
+                                        tier="detailed"
+                                        type="warning"
+                                        title="Legal Disclaimer"
+                                        side="top"
+                                        width="w-96"
+                                    >
+                                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 cursor-help hover:text-slate-400 transition-colors select-none">
+                                            <span style={{ color: '#f59e0b' }}>⚠️</span>
+                                            <strong className="text-slate-400">Clinical Decision Support</strong>
+                                            <Info className="w-3.5 h-3.5 text-slate-600 hover:text-slate-400" aria-label="Legal disclaimer info" />
+                                        </span>
+                                    </AdvancedTooltip>
+
+                                    {/* Export Report */}
                                     <ExportReportButton patientData={exportPatientData} />
                                 </div>
-
-                                {/* Global Disclaimer */}
-                                <AdvancedTooltip
-                                    content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
-                                    tier="standard"
-                                    type="warning"
-                                    title="Legal Disclaimer"
-                                    width="w-96"
-                                >
-                                    <div className="bg-slate-900/40 border border-slate-700/30 rounded-lg p-4 cursor-help hover:bg-slate-900/60 transition-colors">
-                                        <p className="text-slate-500 text-sm text-center">
-                                            <strong style={{ color: '#8B9DC3' }}>⚠️ Clinical Decision Support:</strong> This dashboard is for clinical research purposes only. Not for diagnostic use. All data is encrypted and HIPAA-compliant.
-                                        </p>
-                                    </div>
-                                </AdvancedTooltip>
                             </div>
                         </div>
                     );
