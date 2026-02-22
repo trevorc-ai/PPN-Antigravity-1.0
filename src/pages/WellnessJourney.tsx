@@ -642,6 +642,31 @@ const WellnessJourneyInternal: React.FC = () => {
                                 >
                                     {activePhase === 1 ? 'Change' : 'Lookup'}
                                 </button>
+                                {/* QA Fast-Forward Button (DEV ONLY) */}
+                                {import.meta.env.DEV && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const allForms = [
+                                                'consent', 'structured-safety', 'set-and-setting', 'mental-health', 'dosing-protocol',
+                                                'session-vitals', 'session-observations', 'safety-and-adverse-event', 'rescue-protocol'
+                                            ];
+                                            setCompletedForms(new Set(allForms));
+                                            setCompletedPhases([1, 2]);
+                                            setActivePhase(3);
+                                            addToast({
+                                                title: 'QA Fast-Forward',
+                                                message: 'Injected Phase 1 & 2 mock data. Jumping to Phase 3 Analytics.',
+                                                type: 'success'
+                                            });
+                                        }}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-[13px] md:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group"
+                                        title="QA Tool: Auto-complete Phase 1 & 2 forms and jump to Phase 3"
+                                    >
+                                        <span className="material-symbols-outlined text-sm group-hover:animate-pulse">fast_forward</span>
+                                        QA Skip to Ph3
+                                    </button>
+                                )}
                             </div>
                             <p className="text-sm md:text-base mt-0.5" style={{ color: '#8B9DC3' }}>
                                 {activePhase === 1 && 'Pre-treatment preparation — complete baseline assessments before session'}
