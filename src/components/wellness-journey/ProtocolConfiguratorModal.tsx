@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useProtocol, type ProtocolArchetype } from '../../contexts/ProtocolContext';
-import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle } from 'lucide-react';
+import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal } from 'lucide-react';
 
 interface ProtocolConfiguratorModalProps {
     onClose: () => void;
@@ -30,6 +30,60 @@ const ARCHETYPES = [
             'consent', 'set-and-setting', 'dosing-protocol', 'session-timeline',
             'daily-pulse', 'meq30', 'structured-integration', 'behavioral-tracker'
         ]
+    },
+    {
+        id: 'custom' as ProtocolArchetype,
+        title: 'Custom Framework',
+        icon: SlidersHorizontal,
+        color: 'sky',
+        description: 'Build your own workflow. Hand-pick features across clinical and subjective domains.',
+        features: [] // Dynamically managed via customFeatures
+    }
+];
+
+const CUSTOM_DOMAINS = [
+    {
+        id: 'domain-a',
+        title: 'Domain A: Medical & Physiological Gates',
+        description: 'Vitals tracking, SpO2, and emergency protocols.',
+        features: [
+            { id: 'session-vitals', label: 'Vitals Tracking (HR, BP, SpO₂)' },
+            { id: 'rescue-protocol', label: 'Rescue Protocol & Medical Tapering' },
+            { id: 'safety-and-adverse-event', label: 'Adverse Event Logging' },
+            { id: 'session-observations', label: 'Clinical Session Observations' },
+        ]
+    },
+    {
+        id: 'domain-b',
+        title: 'Domain B: Clinical Symptom Tracking',
+        description: 'Diagnoses, risk matrices, and baseline/follow-up scales.',
+        features: [
+            { id: 'structured-safety', label: 'Safety Screen & Eligibility (ECG, Medical Hx)' },
+            { id: 'mental-health', label: 'Baseline Scales (PHQ-9, GAD-7)' },
+            { id: 'longitudinal-assessment', label: 'Longitudinal Scales (CAPS-5, Post-Session)' },
+        ]
+    },
+    {
+        id: 'domain-c',
+        title: 'Domain C: Subjective & Spiritual Experience',
+        description: 'Phenomenological scales and meaning-making tools.',
+        features: [
+            { id: 'set-and-setting', label: 'Intention Setting Planner' },
+            { id: 'meq30', label: 'Mystical Experience Questionnaire (MEQ-30)' },
+            { id: 'structured-integration', label: 'Narrative Integration Journaling' },
+            { id: 'behavioral-tracker', label: 'Behavioral Breakthrough Tracker' },
+            { id: 'daily-pulse', label: 'Daily Pulse Check' },
+        ]
+    },
+    {
+        id: 'domain-d',
+        title: 'Domain D: Regulatory & Logistics',
+        description: 'Consent, chain of custody, and timeline maps.',
+        features: [
+            { id: 'consent', label: 'Dynamic Touch & Informed Consent' },
+            { id: 'dosing-protocol', label: 'Chain of Custody / Medicine Log' },
+            { id: 'session-timeline', label: 'Session Timeline / Wave Mapping' },
+        ]
     }
 ];
 
@@ -37,13 +91,20 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const { config, setConfig } = useProtocol();
     const [selectedId, setSelectedId] = useState<ProtocolArchetype>(config.protocolType);
     const [saveAsDefault, setSaveAsDefault] = useState(true);
+    const [customFeatures, setCustomFeatures] = useState<string[]>(
+        config.protocolType === 'custom' ? config.enabledFeatures : ARCHETYPES[0].features
+    );
+
+    const toggleFeature = (id: string) => {
+        setCustomFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+    };
 
     const handleSave = () => {
         const archetype = ARCHETYPES.find(a => a.id === selectedId);
         if (archetype) {
             setConfig({
                 protocolType: selectedId,
-                enabledFeatures: archetype.features
+                enabledFeatures: selectedId === 'custom' ? customFeatures : archetype.features
             });
             // If we had API wired up, we would save to user_profiles here if saveAsDefault is true
         }
@@ -67,7 +128,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 </div>
 
                 {/* Body */}
-                <div className="p-6 md:p-8 space-y-6">
+                <div className="p-6 md:p-8 space-y-6 overflow-y-auto max-h-[85vh] custom-scrollbar">
                     {/* Educational Callout */}
                     <div className="flex items-start gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                         <Info className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
@@ -80,7 +141,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         {ARCHETYPES.map(arch => {
                             const Icon = arch.icon;
                             const isSelected = selectedId === arch.id;
@@ -122,11 +183,59 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                                 <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500" /> Integration Worksheets</div>
                                             </>
                                         )}
+                                        {arch.id === 'custom' && (
+                                            <>
+                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500 flex-shrink-0" /> Hand-picked modules</div>
+                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500 flex-shrink-0" /> Cross-domain flexibility</div>
+                                                <div className="text-xs text-sky-400 flex items-center gap-2 mt-1 font-semibold">{customFeatures.length} features selected</div>
+                                            </>
+                                        )}
                                     </div>
                                 </button>
                             );
                         })}
                     </div>
+
+                    {/* Custom Domains UI */}
+                    {selectedId === 'custom' && (
+                        <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300 border-t border-slate-800/60 pt-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-sky-500/10 rounded-lg border border-sky-500/20">
+                                    <SlidersHorizontal className="w-5 h-5 text-sky-400" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-white leading-tight">Custom Configuration</h3>
+                                    <p className="text-sm text-slate-400">Select specific modules to include in your personalized workflow.</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {CUSTOM_DOMAINS.map(domain => (
+                                    <div key={domain.id} className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-5 space-y-4 shadow-lg transition-colors hover:border-slate-600">
+                                        <div className="border-b border-slate-800/60 pb-3">
+                                            <h4 className="text-[15px] font-bold text-white mb-1 leading-tight">{domain.title}</h4>
+                                            <p className="text-xs text-slate-400 leading-relaxed">{domain.description}</p>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {domain.features.map(feat => {
+                                                const isEnabled = customFeatures.includes(feat.id);
+                                                return (
+                                                    <label key={feat.id} className="flex items-start gap-3 cursor-pointer group">
+                                                        <input type="checkbox" className="hidden" checked={isEnabled} onChange={() => toggleFeature(feat.id)} />
+                                                        <div className={`mt-0.5 w-[18px] h-[18px] rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm ${isEnabled ? 'bg-sky-500 text-white border-sky-500 shadow-sky-500/20' : 'bg-slate-800 border border-slate-600 group-hover:border-sky-400 group-hover:bg-slate-800/80'}`}>
+                                                            {isEnabled && <svg className="w-3.5 h-3.5 fill-current animate-in zoom-in duration-200" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z" /></svg>}
+                                                        </div>
+                                                        <span className={`text-sm select-none leading-snug pt-[1px] ${isEnabled ? 'text-slate-200 font-medium' : 'text-slate-400 group-hover:text-slate-300'}`}>
+                                                            {feat.label}
+                                                        </span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex items-center mt-6 p-4 bg-slate-800/30 rounded-xl border border-slate-700/50">
                         <input
@@ -152,6 +261,6 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
