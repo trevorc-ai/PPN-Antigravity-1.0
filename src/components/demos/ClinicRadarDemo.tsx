@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from 'recharts';
 
 // Simplified Clinic Radar Demo for Landing Page
@@ -6,13 +6,22 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 
 const ClinicRadarDemo: React.FC = () => {
     const radarData = [
-        { metric: 'Safety Score', yourClinic: 92, networkAvg: 74 },
+        { metric: 'Safety Score', yourClinic: 88, networkAvg: 74 },
         { metric: 'Retention', yourClinic: 85, networkAvg: 68 },
-        { metric: 'Efficacy', yourClinic: 88, networkAvg: 72 },
+        { metric: 'Efficacy', yourClinic: 92, networkAvg: 72 },
         { metric: 'Adherence', yourClinic: 90, networkAvg: 76 },
         { metric: 'Response Time', yourClinic: 82, networkAvg: 70 },
         { metric: 'Data Quality', yourClinic: 95, networkAvg: 80 },
     ];
+
+    const [activeIndex, setActiveIndex] = useState(2);
+
+    // Recharts height is 300, center is 150, outerRadius is 75% -> 112.5px
+    const maxRadius = 112.5;
+    const activeData = radarData[activeIndex] || radarData[2];
+    const spokeLength = (activeData.yourClinic / 100) * maxRadius;
+    const spokeAngle = -90 + (activeIndex * 60); // 0 corresponds to -90 (top), going clockwise
+
 
     return (
         <div className="w-full h-full bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
@@ -30,9 +39,18 @@ const ClinicRadarDemo: React.FC = () => {
                 </div>
             </div>
 
-            <div className="relative">
+            <div className="relative cursor-crosshair">
                 <ResponsiveContainer width="100%" height={300}>
-                    <RadarChart data={radarData} outerRadius="75%">
+                    <RadarChart
+                        data={radarData}
+                        outerRadius="75%"
+                        onMouseMove={(e: any) => {
+                            if (e && e.activeTooltipIndex !== undefined) {
+                                setActiveIndex(e.activeTooltipIndex);
+                            }
+                        }}
+                        onMouseLeave={() => setActiveIndex(2)}
+                    >
                         <PolarGrid stroke="#334155" strokeWidth={1} polarRadius={[20, 40, 60, 80, 100]} gridType="polygon" />
 
                         {/* Dark pulsing background shadow for depth */}
@@ -106,15 +124,39 @@ const ClinicRadarDemo: React.FC = () => {
                     </RadarChart>
                 </ResponsiveContainer>
 
-                {/* Persistent Tooltip over "Safety Score" (Top Spoke) */}
-                <div className="absolute top-[18%] left-1/2 -translate-x-1/2 -translate-y-full z-10 pointer-events-none animate-in fade-in zoom-in duration-1000 delay-700 fill-mode-both">
-                    <div className="bg-[#0f1218] border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-xl p-3 min-w-[130px] flex flex-col items-center">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-0.5">Safety Score</span>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-2xl font-black text-indigo-400">92</span>
-                            <span className="text-[10px] font-bold text-slate-500 uppercase">/ 100</span>
+                {/* Spoke overlay */}
+                <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+                    <div className="relative w-0 h-0">
+                        {/* Center dot */}
+                        <div className="absolute left-0 top-0 w-1.5 h-1.5 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_8px_rgba(255,255,255,0.8)] z-20" />
+                        {/* Dynamic Line */}
+                        <div
+                            className="absolute left-0 top-0 h-[1.5px] bg-white origin-left shadow-[0_0_8px_rgba(255,255,255,0.8)] z-10 transition-all duration-300 ease-out"
+                            style={{
+                                width: `${spokeLength}px`,
+                                transform: `rotate(${spokeAngle}deg)`
+                            }}
+                        />
+                        {/* End dot */}
+                        <div
+                            className="absolute w-2 h-2 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,1)] z-20 transition-all duration-300 ease-out"
+                            style={{
+                                left: `${spokeLength * Math.cos(spokeAngle * Math.PI / 180)}px`,
+                                top: `${spokeLength * Math.sin(spokeAngle * Math.PI / 180)}px`
+                            }}
+                        />
+                    </div>
+                </div>
+
+                {/* Persistent Tooltip over the bottom corner */}
+                <div className="absolute bottom-[5%] right-0 md:right-[5%] z-10 pointer-events-none fill-mode-both">
+                    <div className="bg-[#0f1218]/95 backdrop-blur-md border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-2xl p-4 min-w-[150px] flex flex-col items-center relative overflow-hidden group transition-all duration-300">
+                        <div className="absolute -inset-1 bg-indigo-500/5 blur-md pointer-events-none" />
+                        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1 relative z-10 text-center">{activeData.metric}</span>
+                        <div className="flex items-baseline gap-1.5 relative z-10">
+                            <span className="text-3xl font-black text-indigo-400">{activeData.yourClinic}</span>
+                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">/ 100</span>
                         </div>
-                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0f1218] border-b border-r border-indigo-500/30 rotate-45"></div>
                     </div>
                 </div>
             </div>

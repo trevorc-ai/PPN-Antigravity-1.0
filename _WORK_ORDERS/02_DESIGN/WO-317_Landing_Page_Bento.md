@@ -25,6 +25,6 @@ The user expressed that the current landing page is still too text-heavy. Users 
 - Map out what animations/visuals will live in each grid cell.
 - Remember the accessibility and font-sizing guardrails. 
 - Build the Tailwind utility specs for the layout and outline the DOM structure.
-- Move ticket to `03_BUILD` for BUILDER implementation when finished.
+- **CRITICAL:** The user has explicitly requested to review any landing page architectural updates BEFORE they are built. Therefore, when DESIGNER is done specifying the layout, they MUST update the status to `05_USER_REVIEW` and owner to `USER`, rather than sending it to BUILDER. Moved the file there!
 
 **Owner: DESIGNER | Status: 02_DESIGN**
