@@ -47,22 +47,7 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-2">
-                        <div className="flex flex-row items-center gap-4">
-                            <p className="text-sm font-black text-slate-600 uppercase tracking-[0.2em]">Registry Access</p>
-                            <div className="flex -space-x-3">
-                                {[1, 2, 3, 4].map(i => (
-                                    <div key={i} className="size-10 rounded-full bg-slate-900 border-2 border-[#05070a] flex items-center justify-center shadow-xl">
-                                        <span className="material-symbols-outlined text-slate-500 text-sm">shield_with_heart</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="h-10 w-px bg-white/5 hidden sm:block"></div>
-                        <p className="text-sm font-black text-slate-300 uppercase tracking-widest leading-tight">
-                            <span className="text-slate-300">Live Search Enriched</span><br />Institutional Research Node
-                        </p>
-                    </div>
+
                 </div>
 
                 <div className="flex flex-col items-center lg:items-end gap-8 shrink-0">
@@ -92,7 +77,7 @@ export const MonographHero: React.FC<MonographHeroProps> = ({ substance }) => {
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-10 transition-opacity"></div>
                         <div className="flex items-center justify-between mb-4">
                             <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Aggregate Efficacy</p>
-                            <span className="text-sm font-mono text-clinical-green font-black">NODE_SIGMA</span>
+                            <span className="text-sm font-mono text-slate-500">Global Average</span>
                         </div>
                         <div className="flex items-baseline gap-2 mb-6">
                             <span className="text-5xl font-black text-slate-300 tracking-tighter">{(substance.efficacy * 100).toFixed(1)}</span>

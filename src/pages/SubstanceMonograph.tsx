@@ -79,6 +79,7 @@ const SubstanceMonograph: React.FC = () => {
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [groundingChunks, setGroundingChunks] = useState<any[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [activeRadarIndex, setActiveRadarIndex] = useState(0);
 
   const sub = useMemo(() => SUBSTANCES.find(s => s.id === id), [id]);
 
@@ -304,14 +305,14 @@ const SubstanceMonograph: React.FC = () => {
             )}
 
             {/* ── SECTION 4: Clinical Velocity ─── */}
-            <Card className="h-72">
+            <Card className="h-[360px] flex flex-col">
               <SectionLabel icon="trending_up" label="Efficacy Trend" />
-              <div className="h-48">
+              <div className="flex-1 w-full relative">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={efficacyData} margin={{ top: 4, right: 8, left: -24, bottom: 0 }}>
+                  <AreaChart data={efficacyData} margin={{ top: 10, right: 10, left: -24, bottom: 0 }}>
                     <defs>
                       <linearGradient id="effGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={subColor} stopOpacity={0.3} />
+                        <stop offset="5%" stopColor={subColor} stopOpacity={0.4} />
                         <stop offset="95%" stopColor={subColor} stopOpacity={0} />
                       </linearGradient>
                     </defs>
@@ -319,11 +320,26 @@ const SubstanceMonograph: React.FC = () => {
                     <XAxis dataKey="phase" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} domain={[0, 1]} tickFormatter={v => `${Math.round(v * 100)}%`} />
                     <Tooltip
-                      formatter={(v: number) => [`${Math.round(v * 100)}%`, 'Efficacy']}
-                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px', fontSize: '13px' }} />
-                    <Area type="monotone" dataKey="val" stroke={subColor} strokeWidth={2.5} fill="url(#effGrad)" dot={{ r: 4, fill: subColor, strokeWidth: 0 }} />
+                      formatter={(v: number) => [`${Math.round(v * 100)}%`, 'Network Baseline Efficacy']}
+                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px', fontSize: '13px' }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="val"
+                      stroke={subColor}
+                      strokeWidth={3}
+                      fill="url(#effGrad)"
+                      dot={{ r: 5, fill: '#0f172a', stroke: subColor, strokeWidth: 2 }}
+                      activeDot={{ r: 7, fill: subColor, stroke: '#fff', strokeWidth: 2 }}
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="mt-4 p-3 bg-slate-800/40 rounded-xl border border-slate-700/50 flex items-start gap-3">
+                <span className="material-symbols-outlined text-sm text-indigo-400 mt-0.5">info</span>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  <strong className="text-slate-300 font-semibold">Network Benchmark:</strong> This trend represents the aggregated clinical efficacy baseline across the PPN network. Site-specific tuning will activate here automatically once your clinic begins tracking protocols for this compound.
+                </p>
               </div>
             </Card>
 
@@ -368,31 +384,114 @@ const SubstanceMonograph: React.FC = () => {
 
             {/* ── SECTION 6: Receptor Affinity Radar ─── */}
             {radarData.length > 0 && (
-              <Card>
-                <SectionLabel icon="hexagon" label="Receptor Affinity Profile"
-                  badge={<span className="px-2.5 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-semibold">Ki Binding</span>} />
+              <Card className="relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0a1220] to-[#060a12] opacity-50 z-0 pointer-events-none rounded-2xl" />
+                <div className="relative z-10">
+                  <SectionLabel icon="hexagon" label="Receptor Affinity Profile"
+                    badge={<span className="px-2.5 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-xs font-semibold">Ki Binding</span>} />
 
-                <div className="h-64 -mx-2">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="72%" data={radarData}>
-                      <PolarGrid stroke="#1e293b" />
-                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 10, fontWeight: 600 }} />
-                      <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
-                      <Radar name={sub.name} dataKey="value" stroke={subColor} fill={subColor} fillOpacity={0.2} strokeWidth={1.5} />
-                      <Tooltip
-                        formatter={(_: any, __: any, props: any) => {
-                          const ki = props.payload?.ki;
-                          return [ki >= 10000 ? 'No significant binding' : `Ki = ${ki} nM`, props.payload?.subject];
+                  <div className="h-64 -mx-2 relative cursor-crosshair">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart
+                        cx="50%"
+                        cy="50%"
+                        outerRadius="72%"
+                        data={radarData}
+                        onMouseMove={(e: any) => {
+                          if (e && e.activeTooltipIndex !== undefined) {
+                            setActiveRadarIndex(e.activeTooltipIndex);
+                          }
                         }}
-                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '10px', fontSize: '12px' }} />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
+                        onMouseLeave={() => setActiveRadarIndex(0)}
+                      >
+                        <PolarGrid stroke="#1e293b" />
 
-                <p className="text-xs text-slate-600 text-center mt-2 leading-relaxed">
-                  Higher = stronger binding affinity. Values ≥10,000 nM shown as no significant binding.
-                  {isAyahuasca && ' Values reflect DMT component only.'}
-                </p>
+                        <Radar
+                          name="Depth"
+                          dataKey={() => 150}
+                          stroke="transparent"
+                          fill="#0f172a"
+                          fillOpacity={0.6}
+                          isAnimationActive={false}
+                        />
+
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
+
+                        <Radar
+                          name={sub.name}
+                          dataKey="value"
+                          stroke={subColor}
+                          fill={subColor}
+                          fillOpacity={0.3}
+                          strokeWidth={2}
+                        />
+
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const ki = payload[0].payload.ki;
+                              const subject = payload[0].payload.subject;
+                              return (
+                                <div className="bg-[#0f1218]/95 backdrop-blur-md border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-xl p-3 min-w-[120px] flex flex-col items-center">
+                                  <span className="text-[10px] font-black uppercase tracking-widest text-[#A8B5D1] mb-1">{subject} Receptor</span>
+                                  {ki >= 10000 ? (
+                                    <span className="text-xs font-bold text-slate-500 text-center">No sig. binding<br />(≥10k nM)</span>
+                                  ) : (
+                                    <div className="flex items-baseline gap-1">
+                                      <span className="text-xl font-black" style={{ color: subColor }}>{ki}</span>
+                                      <span className="text-[10px] font-bold text-slate-500 uppercase">nM</span>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                      </RadarChart>
+                    </ResponsiveContainer>
+
+                    {/* Dynamic Spoke Calculation */}
+                    {(() => {
+                      const maxRadius = 90; // Approx 72% of 128px (half of 256px h-64 height)
+                      const activeData = radarData[activeRadarIndex] || radarData[0];
+                      const spokeLength = (activeData.value / 150) * maxRadius;
+                      const spokeAngle = -90 + (activeRadarIndex * (360 / radarData.length));
+
+                      return (
+                        <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+                          <div className="relative w-0 h-0">
+                            {/* Center dot */}
+                            <div className="absolute left-0 top-0 w-1.5 h-1.5 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_8px_rgba(255,255,255,0.8)] z-20" />
+                            {/* Dynamic Line */}
+                            <div
+                              className="absolute left-0 top-0 h-[1.5px] bg-white origin-left shadow-[0_0_8px_rgba(255,255,255,0.8)] z-10 transition-all duration-300 ease-out"
+                              style={{
+                                width: `${spokeLength}px`,
+                                transform: `rotate(${spokeAngle}deg)`
+                              }}
+                            />
+                            {/* End dot */}
+                            <div
+                              className="absolute w-2 h-2 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,1)] z-20 transition-all duration-300 ease-out"
+                              style={{
+                                left: `${spokeLength * Math.cos(spokeAngle * Math.PI / 180)}px`,
+                                top: `${spokeLength * Math.sin(spokeAngle * Math.PI / 180)}px`
+                              }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  <p className="text-xs text-slate-500 text-center mt-4 leading-relaxed bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+                    <strong className="text-slate-400 font-semibold block mb-1">Ki Binding Affinity (nM)</strong>
+                    Lower numerical value = stronger binding affinity.<br />Values ≥10,000 nM represent no significant binding.
+                    {isAyahuasca && ' Values reflect DMT component only.'}
+                  </p>
+                </div>
               </Card>
             )}
 
@@ -434,15 +533,7 @@ const SubstanceMonograph: React.FC = () => {
               )}
             </Card>
 
-            {/* ── SECTION 8: Clinical Archive placeholder ─── */}
-            <Card>
-              <SectionLabel icon="folder_open" label="Clinical Archive" />
-              <div className="py-8 text-center space-y-2">
-                <span className="material-symbols-outlined text-3xl text-slate-700">inventory_2</span>
-                <p className="text-sm text-slate-600">No clinical archive entries available for {sub.name} yet.</p>
-                <p className="text-xs text-slate-700">Site uploads will appear here when added by authorized practitioners.</p>
-              </div>
-            </Card>
+
           </div>
 
         </Section>
