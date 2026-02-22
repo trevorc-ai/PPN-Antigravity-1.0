@@ -110,35 +110,11 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] text-slate-300 font-sans pb-20">
-      {/* Hero Section with Radial Gradient */}
-      <div className="relative pt-24 pb-20 px-8 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_-20%,rgba(43,116,243,0.15),transparent_70%)] pointer-events-none" />
-
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 className="text-5xl font-bold text-slate-300 mb-6 tracking-tight">How can we help you?</h1>
-          <p className="text-slate-300 text-lg mb-10">Search for articles, clinical codes, or report system errors directly to our engineering team.</p>
-
-          <div className="relative max-w-2xl mx-auto">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search help topics..."
-              className="w-full bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-2xl py-5 px-14 text-slate-300 focus:outline-none focus:ring-1 focus:ring-primary transition-all shadow-2xl"
-            />
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-            <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95">
-              Search
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <PageContainer width="default">
+    <div className="w-full">
+      <div className="flex flex-col gap-12">
         {/* Topic Categories Section */}
-        <Section spacing="default" className="mb-20">
-          <h2 className="text-xl font-semibold text-slate-300 mb-8 ml-1">Topic Categories</h2>
+        <section>
+          <h2 className="text-2xl font-black text-[#A8B5D1] tracking-tight mb-8">Topic Categories</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((cat, idx) => (
               <div
@@ -160,10 +136,10 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               </div>
             ))}
           </div>
-        </Section>
+        </section>
 
         {/* FAQ and Sidebar Grid */}
-        <Section spacing="default" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* FAQ Column (8/12) */}
           <div className="col-span-1 lg:col-span-8">
             <div className="flex items-center justify-between mb-8">
@@ -282,8 +258,8 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               </div>
             </div>
           </div>
-        </Section>
-      </PageContainer>
+        </section>
+      </div>
     </div>
   );
 };
