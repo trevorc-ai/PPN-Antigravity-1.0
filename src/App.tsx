@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import About from './pages/About';
 import Dashboard from './pages/Dashboard';
+import Checkout from './pages/Checkout';
 import Analytics from './pages/Analytics';
 import SubstanceCatalog from './pages/SubstanceCatalog';
 import SubstanceMonograph from './pages/SubstanceMonograph';
@@ -244,7 +245,7 @@ const AppContent: React.FC = () => {
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/academy" replace />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/checkout" element={<Navigate to="/academy" replace />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/academy" element={<Academy />} />
         <Route path="/billing" element={<BillingPortal />} />
         <Route path="/partner-demo" element={<PartnerDemoHub />} />

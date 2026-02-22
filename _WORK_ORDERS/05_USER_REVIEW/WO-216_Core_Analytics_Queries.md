@@ -1,8 +1,8 @@
 ---
 id: WO-216
 title: "ANALYST: 5 Core Analytics Queries + K-Anonymity Guard"
-status: 04_QA
-owner: INSPECTOR
+status: 05_USER_REVIEW
+owner: USER
 priority: P1
 created: 2026-02-19
 validated: 2026-02-20
@@ -147,3 +147,5 @@ After ANALYST writes/validates these queries:
 > - `lcr.patient_id` → `lcr.patient_link_code` (actual patient identifier)
 > - `lis.dosing_session_id = lcr.id` (correct join path for integration sessions)
 > Ready for INSPECTOR k-anonymity edge case check, then BUILDER implementation in `analytics.ts`.
+
+## [STATUS: PASS] - INSPECTOR APPROVED

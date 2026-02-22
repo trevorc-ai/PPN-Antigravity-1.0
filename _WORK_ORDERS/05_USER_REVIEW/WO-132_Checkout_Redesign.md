@@ -248,3 +248,5 @@ No other files need changing. Do not create new component files for this — kee
 - [ ] Error state still renders correctly
 - [ ] Loading state still disables the button
 - [ ] Stripe redirect still fires on submit
+
+## [STATUS: PASS] - INSPECTOR APPROVED

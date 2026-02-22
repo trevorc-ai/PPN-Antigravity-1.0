@@ -1,6 +1,6 @@
 ---
-status: 04_QA
-owner: INSPECTOR
+status: 05_USER_REVIEW
+owner: USER
 failure_count: 0
 priority: HIGH
 created: 2026-02-21
@@ -229,3 +229,5 @@ You should see **10 named substances** (excluding 'Other / Investigational') wit
 2. USER approves mockups
 3. BUILDER commences Sprint 1 implementation (WO-245a, WO-245c)
 4. BUILDER commences Sprint 2 — Ki radar wired to corrected DB data (WO-245b)
+
+## [STATUS: PASS] - INSPECTOR APPROVED

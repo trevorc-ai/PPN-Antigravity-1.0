@@ -132,15 +132,16 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence for Psychedelic Wellness Practitioners
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.5] pb-4 text-slate-300">
-                Clinical <span className="text-gradient-primary inline-block pb-3">intelligence</span><br />
-                for psychedelic wellness practitioners.
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] pb-4 text-slate-300 relative z-10">
+                Elevate <span className="text-slate-300">your practice.</span><br />
+                The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span><br />
+                for psychedelic professionals.
               </h1>
               <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
-                Real-time safety surveillance, outcomes benchmarking, and protocol management. Built for how you actually practice.
+                Log your sessions. Unlock global benchmarks. Elevate the entire field.
               </p>
               <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
-                You contribute de-identified outcomes data. You get back benchmarks, safety signals, and peer intelligence. The field gets the evidence base it needs.
+                A unified platform for safety surveillance, outcomes tracking, and protocol management. Built for how practitioners actually work.
               </p>
             </motion.div>
 
@@ -167,14 +168,14 @@ const Landing: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigate('/checkout')}
-                  className="flex-1 px-8 py-4 bg-primary hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95"
+                  className="flex-1 px-8 py-4 bg-primary hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
                   Start Free Trial
                 </button>
 
                 <button
                   onClick={() => navigate('/partner-demo')}
-                  className="flex-1 px-6 py-4 bg-transparent border-2 border-slate-600 hover:border-slate-500 text-slate-300 text-base font-semibold rounded-xl transition-all hover:bg-slate-900/50 active:scale-95"
+                  className="flex-1 px-6 py-4 bg-transparent border-2 border-slate-600 hover:border-slate-500 text-slate-300 text-base font-semibold rounded-xl transition-all hover:bg-slate-900/50 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] active:scale-95"
                 >
                   Watch Demo (2 min)
                 </button>
@@ -183,7 +184,6 @@ const Landing: React.FC = () => {
               {/* Trust Indicators + Sign In link */}
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-center lg:justify-start gap-6 text-sm text-slate-500">
-
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <span>HIPAA-compliant infrastructure</span>
@@ -201,9 +201,6 @@ const Landing: React.FC = () => {
               </div>
             </motion.div>
 
-
-
-
             {/* Early Access Badge */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -211,39 +208,96 @@ const Landing: React.FC = () => {
               transition={{ duration: 1, delay: 1 }}
               className="flex flex-col gap-3 w-full max-w-md lg:mx-0 mx-auto pt-8 border-t border-slate-800/50"
             >
-
               <div className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
                 <span className="material-symbols-outlined text-emerald-400 text-lg">verified</span>
                 <div>
                   <p className="text-sm font-black text-slate-300">Purpose-Built Infrastructure</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Clinical-grade data architecture. Structured, encrypted, and site-isolated from day one.</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Clinical-grade data architecture. Structured, encrypted, and site-isolated.</p>
                 </div>
               </div>
             </motion.div>
           </div>
 
           {/* Right Column (Visual) */}
-          <div className="flex justify-center lg:justify-end relative">
+          <div className="flex justify-center lg:justify-end relative -mr-6 md:-mr-12 lg:-mr-24 perspective-[1000px]">
+            {/* Abstract Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/20 blur-[100px] rounded-full pointer-events-none -z-10" />
+
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: 1,
-                scale: [1, 1.05, 1],
-              }}
-              transition={{
-                opacity: { duration: 1.5 },
-                scale: {
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }
-              }}
-              className="w-[400px] lg:w-[600px] pointer-events-none z-0"
+              initial={{ opacity: 0, rotateY: 15, rotateX: 5, x: 50 }}
+              animate={{ opacity: 1, rotateY: -5, rotateX: 2, x: 0 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="w-[120%] lg:w-[130%] max-w-[800px] relative z-10 rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-indigo-500/10 bg-slate-900"
+              style={{ transformStyle: 'preserve-3d' }}
             >
-              <img src="/molecules/Psilocybin.webp" alt="Psilocybin Molecule" className="w-full h-auto" />
+              {/* Fake Safari Header */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50 backdrop-blur-md">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400/80" />
+                  <div className="w-3 h-3 rounded-full bg-amber-400/80" />
+                  <div className="w-3 h-3 rounded-full bg-emerald-400/80" />
+                </div>
+                <div className="mx-auto flex-1 max-w-[200px] h-5 bg-slate-900/50 rounded-md border border-slate-700/50" />
+              </div>
+
+              {/* Mock Dashboard Content area */}
+              <div className="p-6 bg-[#0a1628] grid gap-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:1rem_1rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
+
+                {/* Fake header */}
+                <div className="flex justify-between items-end relative z-10 border-b border-slate-800/80 pb-4">
+                  <div>
+                    <div className="h-6 w-32 bg-slate-800 rounded-md mb-2" />
+                    <div className="h-4 w-48 bg-slate-800/50 rounded-md" />
+                  </div>
+                  <div className="h-8 w-24 bg-primary/20 rounded-md" />
+                </div>
+
+                {/* Fake cards */}
+                <div className="grid grid-cols-3 gap-4 relative z-10">
+                  <div className="h-24 bg-slate-800/60 border border-slate-700/50 rounded-xl" />
+                  <div className="h-24 bg-slate-800/60 border border-slate-700/50 rounded-xl" />
+                  <div className="h-24 bg-slate-800/60 border border-slate-700/50 rounded-xl" />
+                </div>
+
+                {/* Fake chart */}
+                <div className="h-48 bg-slate-800/40 border border-slate-700/50 rounded-xl mt-2 relative z-10 overflow-hidden flex items-end px-4 gap-2">
+                  {/* Abstract chart bars */}
+                  <div className="w-full flex justify-between items-end h-32 gap-3 opacity-60">
+                    {[40, 60, 45, 80, 55, 90, 65, 100].map((h, i) => (
+                      <div key={i} className="flex-1 bg-gradient-to-t from-primary/40 to-primary rounded-t-sm" style={{ height: `${h}%` }} />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
+      </div>
+
+      {/* SECTION: Wall of Proof Marquee */}
+      <div className="w-full border-y border-slate-800/80 bg-slate-950/40 py-4 overflow-hidden relative z-20 flex">
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0a1628] to-transparent z-10" />
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0a1628] to-transparent z-10" />
+
+        <motion.div
+          animate={{ x: [0, -1035] }}
+          transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
+          className="flex items-center gap-16 whitespace-nowrap px-8"
+        >
+          {Array(4).fill([
+            { text: "HIPAA COMPLIANT", icon: "verified" },
+            { text: "MedDRA STANDARDIZED", icon: "account_tree" },
+            { text: "RLS ENCRYPTED", icon: "lock" },
+            { text: "ICAN INTEGRATED", icon: "integration_instructions" },
+            { text: "CLINICAL INFRASTRUCTURE", icon: "dns" },
+          ]).flat().map((item, i) => (
+            <div key={i} className="flex items-center gap-2 text-slate-500">
+              <span className="material-symbols-outlined text-sm text-primary/70">{item.icon}</span>
+              <span className="text-xs font-black uppercase tracking-[0.2em]">{item.text}</span>
+            </div>
+          ))}
+        </motion.div>
       </div>
 
       {/* SECTION: Global Alliance */}
@@ -290,7 +344,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Trust Indicators */}
-      <section className="py-24 px-6 relative z-10">
+      <section className="py-24 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto">
           <p className="text-center text-sm text-slate-500 font-bold uppercase tracking-widest mb-12">
             Built on Clinical-Grade Security Standards
@@ -334,7 +388,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Unified Clinical Operations - NEW */}
-      <section className="py-24 px-6 relative z-10">
+      <section className="py-24 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight leading-tight">
@@ -352,24 +406,46 @@ const Landing: React.FC = () => {
               onClick={() => navigate('/deep-dives/workflow-chaos')}
               className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
             >
-              Unify Your Practice
+              Kill the Frankenstein Stack
               <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </button>
           </div>
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-[2rem] blur-3xl opacity-30"></div>
-            <div className="relative bg-slate-950 border border-slate-800 rounded-[2rem] p-8 space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-red-500/10 border border-red-500/20 rounded-xl opacity-60">
-                <span className="material-symbols-outlined text-red-400">warning</span>
-                <span className="text-red-300 font-bold text-sm">Disconnected Tools Risk</span>
+            <div className="relative bg-slate-950 border border-slate-800 rounded-[2rem] p-8 space-y-4 overflow-hidden group">
+
+              {/* Chaotic Knot Visual Background */}
+              <div className="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none group-hover:opacity-60 transition-opacity duration-700">
+                <svg viewBox="0 0 400 300" className="w-full h-full stroke-slate-600/50 fill-none" strokeWidth="1">
+                  <path d="M-50 50 Q 150 250, 200 150 T 450 150" className="stroke-red-500/30" />
+                  <path d="M-50 150 Q 100 -50, 200 150 T 450 150" className="stroke-purple-500/30" />
+                  <path d="M-50 250 Q 100 100, 200 150 T 450 150" className="stroke-amber-500/30" />
+                  {/* Converged Unified Beam */}
+                  <path d="M 200 150 L 450 150" strokeWidth="4" className="stroke-primary filter drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse" />
+                </svg>
               </div>
-              <div className="flex items-center gap-4 p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                <span className="material-symbols-outlined text-slate-500">description</span>
-                <span className="text-slate-300 font-bold text-sm line-through">Unsecure Spreadsheets</span>
-              </div>
-              <div className="flex items-center gap-4 p-4 bg-clinical-green/20 border border-clinical-green/30 rounded-xl">
-                <span className="material-symbols-outlined text-clinical-green">check_circle</span>
-                <span className="text-clinical-green font-bold text-sm">Unified PPN Record</span>
+
+              {/* Elements */}
+              <div className="relative z-10 flex flex-col gap-6 items-center">
+                <div className="w-full grid grid-cols-3 gap-4 items-center opacity-70 group-hover:-translate-x-2 transition-transform duration-700">
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center">
+                    <span className="material-symbols-outlined text-red-500">warning</span>
+                  </div>
+                  <div className="p-3 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center -translate-y-4">
+                    <span className="material-symbols-outlined text-slate-500">description</span>
+                  </div>
+                  <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center translate-y-2">
+                    <span className="material-symbols-outlined text-purple-500">forum</span>
+                  </div>
+                </div>
+
+                <div className="size-16 bg-slate-900 border-2 border-primary/50 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.2)] z-20 group-hover:scale-110 transition-transform duration-700">
+                  <span className="material-symbols-outlined text-3xl text-gradient-primary">neurology</span>
+                </div>
+
+                <div className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center justify-center mt-2 group-hover:translate-x-2 transition-transform duration-700">
+                  <span className="text-primary font-black uppercase tracking-widest text-sm">Unified PPN Record</span>
+                </div>
               </div>
             </div>
           </div>
@@ -377,7 +453,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: How It Works */}
-      <section className="py-32 px-6 relative z-10">
+      <section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">Simple Process</p>
@@ -446,7 +522,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Product Showcase - See What's Inside */}
-      <section className="py-32 px-6 relative z-10">
+      <section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto space-y-36">
           {/* Section Header */}
           <div className="text-center space-y-4">
@@ -471,7 +547,18 @@ const Landing: React.FC = () => {
             <div className="relative group order-2 lg:order-1">
               <div className="absolute -inset-4 bg-red-500/10 rounded-[4rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
               <div className="relative">
-                <SafetyRiskMatrixDemo />
+                <div className="rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-black/50 bg-slate-900 group-hover:scale-[1.02] transition-transform duration-500">
+                  <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50 backdrop-blur-md">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-red-400 transition-colors" />
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-amber-400 transition-colors delay-75" />
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
+                    </div>
+                  </div>
+                  <div className="bg-[#0a1628] pointer-events-none p-4">
+                    <SafetyRiskMatrixDemo />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -482,7 +569,7 @@ const Landing: React.FC = () => {
                 Safety Surveillance
               </div>
               <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                Active guardrails for every session.
+                Never miss a contraindication again.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
                 Catch risks before they enter the treatment room. The system automatically cross-checks your patient's current medications against your selected protocol, flagging dangerous interactions like Serotonin Syndrome instantly.
@@ -512,10 +599,10 @@ const Landing: React.FC = () => {
                 Alliance Benchmarking
               </div>
               <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                See how your practice compares to the alliance.
+                Benchmarking that eliminates the guesswork.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
-                Safety scores, retention rates, and outcomes compared to anonymized alliance percentiles. Identify gaps before they become liabilities.
+                Compare your safety and efficacy scores against an anonymized network of top-tier clinicians. Identify gaps before they become liabilities.
               </p>
               <button
                 onClick={() => navigate('/analytics')}
@@ -530,7 +617,18 @@ const Landing: React.FC = () => {
             <div className="relative group">
               <div className="absolute -inset-4 bg-primary/10 rounded-[4rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
               <div className="relative">
-                <ClinicRadarDemo />
+                <div className="rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-black/50 bg-slate-900 group-hover:scale-[1.02] transition-transform duration-500">
+                  <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50 backdrop-blur-md">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-red-400 transition-colors" />
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-amber-400 transition-colors delay-75" />
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
+                    </div>
+                  </div>
+                  <div className="bg-[#0a1628] pointer-events-none p-4">
+                    <ClinicRadarDemo />
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -547,7 +645,18 @@ const Landing: React.FC = () => {
             <div className="relative group order-2 lg:order-1">
               <div className="absolute -inset-4 bg-emerald-500/10 rounded-[4rem] blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
               <div className="relative">
-                <PatientJourneyDemo />
+                <div className="rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-black/50 bg-slate-900 group-hover:scale-[1.02] transition-transform duration-500">
+                  <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50 backdrop-blur-md">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-red-400 transition-colors" />
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-amber-400 transition-colors delay-75" />
+                      <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
+                    </div>
+                  </div>
+                  <div className="bg-[#0a1628] pointer-events-none p-4">
+                    <PatientJourneyDemo />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -558,7 +667,7 @@ const Landing: React.FC = () => {
                 Patient Outcomes
               </div>
               <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                The story behind the symptom.
+                Translate feelings into data.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
                 Show your patients the direct link between their sessions and their progress. This timeline view connects specific dosing events to mood improvements, turning abstract feelings into visible breakthroughs.
@@ -573,23 +682,23 @@ const Landing: React.FC = () => {
             </div>
           </motion.div>
         </div>
-      </section >
+      </section>
 
 
 
       {/* SECTION: Mission & Stats */}
-      <section className="py-32 px-6 relative z-10">
+      <section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
             {/* Left: Text */}
             <div className="space-y-8">
               <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                Built by practitioners.<br /><span className="text-gradient-primary inline-block pb-1">For practitioners.</span>
+                Engineered for the realities of the<br /><span className="text-gradient-primary inline-block pb-[0.1em]">treatment room.</span>
               </h2>
               <div className="space-y-6 text-slate-300 text-base leading-relaxed font-medium">
                 <p>
-                  PPN was built to solve a specific problem: licensed psychedelic wellness practitioners have no standard infrastructure for tracking outcomes, flagging safety events, or comparing results with peers.
+                  We didn't build a generic EHR and slap a psychedelic label on it. PPN is a purpose-built architecture designed for the unique safety, privacy, and longitudinal tracking requirements of psychedelic therapy.
                 </p>
                 <p>
                   We built structured data capture, de-identified longitudinal tracking, and alliance benchmarking into a single platform. Privacy by design. No free-text clinical notes in shared data. No patient identifiers ever leave your site.
@@ -631,7 +740,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Bento Box Features - BENTO GRID */}
-      <section className="py-32 px-6 relative z-10">
+      <section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-[1.5]">
@@ -744,7 +853,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Committed to Veteran Care */}
-      <section className="py-24 px-6 relative z-10">
+      <section className="py-24 px-6 relative z-10" >
         <div className="max-w-4xl mx-auto">
           <div className="p-8 bg-indigo-600/10 border-2 border-indigo-500/20 rounded-2xl space-y-6">
             <div className="flex items-start gap-4">
@@ -780,7 +889,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: About PPN */}
-      <section className="py-32 px-6 border-b border-slate-900/50 relative z-10">
+      <section className="py-32 px-6 border-b border-slate-900/50 relative z-10" >
         <div className="max-w-4xl mx-auto text-left space-y-8">
           <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight">
             About <span className="text-gradient-primary inline-block pb-1">PPN</span>
@@ -842,7 +951,7 @@ const Landing: React.FC = () => {
           </div>
         </div>
       </footer>
-    </div >
+    </div>
   );
 };
 
