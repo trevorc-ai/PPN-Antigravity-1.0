@@ -18,7 +18,7 @@ interface Protocol {
     patient_sex: string;
 }
 
-type SortField = 'subject_id' | 'substance_name' | 'patient_sex' | 'dosage_mg' | 'status';
+type SortField = 'subject_id' | 'substance_name' | 'session_date' | 'dosage_mg' | 'status';
 type SortDirection = 'asc' | 'desc';
 
 export const MyProtocols = () => {
@@ -35,10 +35,9 @@ export const MyProtocols = () => {
                     .from('log_clinical_records')
                     .select(`
               id,
-              patient_id,
+              patient_link_code,
               session_date,
               substance_id,
-              patient_sex,
               ref_substances (substance_name)
             `)
                     .order('created_at', { ascending: false })
@@ -48,7 +47,7 @@ export const MyProtocols = () => {
 
                 const formattedData = data?.map((record: any) => ({
                     id: record.id,
-                    subject_id: `PT-${String(record.patient_id).padStart(6, '0')}`,
+                    subject_id: record.patient_link_code || 'Unknown Patient',
                     session_number: 1,
                     substance_name: record.ref_substances?.substance_name || 'Unknown',
                     indication_name: 'Research',
@@ -57,7 +56,7 @@ export const MyProtocols = () => {
                     dosage_mg: 25,
                     dosage_unit: 'mg',
                     status: 'Completed',
-                    patient_sex: record.patient_sex || 'Unknown',
+                    patient_sex: 'Unknown',
                 })) || [];
 
                 return { data: formattedData, error: null };
@@ -83,7 +82,7 @@ export const MyProtocols = () => {
         const filtered = protocols.filter(p =>
             p.subject_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
             p.substance_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            p.patient_sex.toLowerCase().includes(searchQuery.toLowerCase())
+            p.session_date.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
         // Sort the filtered results
@@ -181,7 +180,7 @@ export const MyProtocols = () => {
                                     <tr className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] border-b border-slate-800/50">
                                         <SortableHeader field="subject_id" label="Protocol Reference" />
                                         <SortableHeader field="substance_name" label="Substance" />
-                                        <SortableHeader field="patient_sex" label="Gender" />
+                                        <SortableHeader field="session_date" label="Date" />
                                         <SortableHeader field="dosage_mg" label="Dosage" />
                                         <SortableHeader field="status" label="Status" />
                                         <th className="px-8 py-6 text-right">Action</th>
@@ -204,10 +203,7 @@ export const MyProtocols = () => {
                                                 <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.substance_name}</span>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.patient_sex}</span>
-                                            </td>
-                                            <td className="px-8 py-6">
-                                                <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.patient_sex}</span>
+                                                <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.session_date}</span>
                                             </td>
                                             <td className="px-8 py-6 text-sm font-mono" style={{ color: '#8B9DC3' }}>
                                                 {p.dosage_mg} {p.dosage_unit}

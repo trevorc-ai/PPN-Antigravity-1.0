@@ -133,7 +133,7 @@ export const SUBSCRIPTION_TIERS = {
         trialDays: 14,
         badge: 'Research Partner',
         features: [
-            'Everything in Standard Plan',
+            'Full Portal Access (All Premium Features)',
             'Research Partner status in the PPN Research Alliance',
             'Contribution Dashboard (track your data quality score)',
             '75% subscription discount ($49/mo vs $199/mo)',

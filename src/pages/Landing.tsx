@@ -33,6 +33,7 @@ import { GravityButton } from '../components/GravityButton';
 import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
 import StarField from '../components/StarField';
 import AllianceWall from '../components/landing/AllianceWall';
+import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 
 const chartData = [
   { name: 'Site Avg', value: 68, color: '#334155' },
@@ -375,7 +376,7 @@ const Landing: React.FC = () => {
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-300 tracking-tighter leading-tight">
                 The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
               </h2>
-              <p className="text-2xl sm:text-3xl font-medium text-slate-300 tracking-tight">
+              <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                 Where every session makes the field smarter.
               </p>
               <div className="space-y-4 text-base text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
@@ -385,9 +386,18 @@ const Landing: React.FC = () => {
                 <p>
                   By pooling de-identified outcomes data across a growing alliance of practitioners, we're building the evidence base that supports insurance coverage, reduces malpractice risk, and elevates the entire field.
                 </p>
-                <p className="text-2xl sm:text-3xl font-medium text-slate-300 tracking-tight">
+                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight pt-4">
                   You don't have to build this alone.
                 </p>
+                <div className="pt-6">
+                  <button
+                    onClick={() => navigate('/deep-dives/clinical-alliance')}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 text-purple-400 text-sm font-black rounded-xl uppercase tracking-widest transition-all group"
+                  >
+                    Learn More
+                    <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -496,7 +506,7 @@ const Landing: React.FC = () => {
               <div className="pt-8">
                 <button
                   onClick={() => navigate('/deep-dives/workflow-chaos')}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
                 >
                   Kill the Frankenstein Stack
                   <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -546,7 +556,34 @@ const Landing: React.FC = () => {
                 <div className="w-full max-w-sm bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-6 flex items-center justify-between mt-4 group-hover:translate-y-2 group-hover:bg-indigo-900/30 group-hover:border-indigo-500/50 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_0_40px_rgba(99,102,241,0.1)] backdrop-blur-xl">
                   <div className="flex flex-col gap-1">
                     <span className="text-indigo-100 font-black tracking-tighter text-xl">Unified Record</span>
-                    <span className="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Zero-PHI Compliant</span>
+                    <AdvancedTooltip
+                      tier="guide"
+                      type="clinical"
+                      side="bottom"
+                      title="Phantom Shield: Zero-PHI"
+                      width="w-[480px]"
+                      content={
+                        <div className="space-y-4">
+                          <p className="text-slate-300 leading-relaxed font-normal">
+                            PPN's Zero-PHI architecture is a structural constraint enforced at the database level. The system never collects or stores personally identifiable information.
+                          </p>
+                          <div className="space-y-3 border-t border-slate-700/50 pt-4 text-left">
+                            <div>
+                              <h5 className="text-xs font-black text-emerald-400 uppercase tracking-wider mb-1">
+                                Structural Protection
+                              </h5>
+                              <p className="text-xs text-slate-400 leading-relaxed font-normal">
+                                By using hashed Subject IDs, year-only dates (HIPAA Safe Harbor), and structured clinical inputs only—with no free-text narratives—PPN ensures you cannot produce records you do not have.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <span className="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest flex items-center gap-1.5 cursor-help hover:text-indigo-300 transition-colors">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" /> Zero-PHI Compliant
+                      </span>
+                    </AdvancedTooltip>
                   </div>
                   <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center">
                     <span className="material-symbols-outlined text-indigo-400 text-2xl">lock</span>
@@ -678,7 +715,7 @@ const Landing: React.FC = () => {
                 Safety Surveillance
               </div>
               <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                Never miss a contraindication again.
+                Never miss a <span className="bg-gradient-to-r from-red-400 to-rose-400 bg-clip-text text-transparent inline-block pb-[0.1em]">contraindication</span> again.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
                 Catch risks before they enter the treatment room. The system automatically cross-checks your patient's current medications against your selected protocol, flagging dangerous interactions like Serotonin Syndrome instantly.
@@ -708,7 +745,7 @@ const Landing: React.FC = () => {
                 Alliance Benchmarking
               </div>
               <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                Benchmarking that eliminates the guesswork.
+                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent inline-block pb-[0.1em]">Benchmarking</span> that eliminates the guesswork.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
                 Compare your safety and efficacy scores against an anonymized network of top-tier clinicians. Identify gaps before they become liabilities.
@@ -776,7 +813,7 @@ const Landing: React.FC = () => {
                 Patient Outcomes
               </div>
               <h3 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-tight">
-                Translate feelings into data.
+                Translate feelings into <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent inline-block pb-[0.1em]">data</span>.
               </h3>
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
                 Show your patients the direct link between their sessions and their progress. This timeline view connects specific dosing events to mood improvements, turning abstract feelings into visible breakthroughs.

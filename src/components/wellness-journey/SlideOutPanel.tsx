@@ -137,7 +137,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                             {title ? (
                                 <h2
                                     id="panel-title"
-                                    className="text-xl font-bold text-[#A8B5D1] truncate"
+                                    className="text-2xl font-bold text-indigo-400 truncate tracking-tight"
                                 >
                                     {title}
                                 </h2>
@@ -147,6 +147,12 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                             {subtitle && (
                                 <p className="text-sm text-slate-400 mt-0.5 leading-snug">{subtitle}</p>
                             )}
+                            <a
+                                href="mailto:support@phantom.dev?subject=Feature%20Request/Addition"
+                                className="inline-block mt-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-400 transition-colors underline decoration-slate-700/80 hover:decoration-indigo-400/50 underline-offset-4"
+                            >
+                                Request a feature or addition
+                            </a>
                         </div>
                     </div>
                     <button

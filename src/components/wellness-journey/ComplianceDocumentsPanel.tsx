@@ -172,6 +172,7 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                                 tier="micro"
                             >
                                 <button
+                                    type="button"
                                     onClick={doc.onDownload}
                                     disabled={!doc.isReady}
                                     className={`w-full sm:w-auto py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all flex-shrink-0 ${doc.isReady

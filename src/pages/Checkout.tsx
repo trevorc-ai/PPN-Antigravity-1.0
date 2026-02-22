@@ -298,8 +298,7 @@ export const Checkout: FC = () => {
                                     {isRP && (
                                         <div className="mb-5 p-3 rounded-xl text-sm"
                                             style={{ background: 'rgba(240,165,0,0.08)', border: '1px solid rgba(240,165,0,0.25)', color: '#f0a500' }}>
-                                            <span className="font-black">🔬 As a Research Partner, you</span> contribute 5+ de-identified session records/month to the PPN Research Alliance — helping advance the evidence base for the entire field.{' '}
-                                            <span style={{ color: '#9fb0be' }}>Bronze tier quality minimum. 2-month grace period.</span>
+                                            <span className="font-black">🤝 Help us help you.</span> Share 5+ anonymous session outcomes per month to help advance the field's clinical evidence, and get full access to the platform for a fraction of the cost.
                                         </div>
                                     )}
 

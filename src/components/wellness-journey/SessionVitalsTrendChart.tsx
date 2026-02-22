@@ -119,7 +119,8 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({ sess
             }
         });
 
-    }, [sessionId, onThresholdViolation]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sessionId]);
 
     // Format for Recharts
     const chartData = useMemo(() => {
