@@ -101,6 +101,53 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
         }
     }, [responses, onSave]);
 
+    // KEYBOARD SHORTCUTS: Number keys answer the next available question
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Ignore if focus is in an input or textarea
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+            const key = e.key;
+            if (/^[0-9]$/.test(key)) {
+                const num = parseInt(key, 10);
+
+                // Find first unanswered question on current page
+                const unansweredQuestion = currentQuestions.find(q => responses[q.id] === undefined);
+
+                if (unansweredQuestion && unansweredQuestion.type === 'likert') {
+                    // Check if the number corresponds to a valid option value (e.g., 0, 1, 2, 3, 4)
+                    const exactMatch = unansweredQuestion.labels?.find(lbl => lbl.value === num);
+                    if (exactMatch) {
+                        setResponses(prev => ({ ...prev, [unansweredQuestion.id]: exactMatch.value }));
+                        e.preventDefault();
+                    } else if (unansweredQuestion.labels?.length && num >= 1 && num <= unansweredQuestion.labels.length) {
+                        // Fallback: 1-based index (pressing 1 selects first option, 2 selects second, etc.)
+                        setResponses(prev => ({ ...prev, [unansweredQuestion.id]: unansweredQuestion.labels![num - 1].value }));
+                        e.preventDefault();
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [currentQuestions, responses]);
+
+    // AUTO-ADVANCE: Move to next page if all questions on current page are answered
+    useEffect(() => {
+        // Find if all current questions have a response
+        if (currentQuestions.length > 0 && currentQuestions.every(q => responses[q.id] !== undefined)) {
+            // If there's a next page, auto-advance after a brief delay
+            if (currentPage < totalPages - 1) {
+                const timer = setTimeout(() => {
+                    setCurrentPage(prev => prev + 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 400); // 400ms delay to let user see their selection before it jumps
+                return () => clearTimeout(timer);
+            }
+        }
+    }, [responses, currentQuestions, currentPage, totalPages]);
+
     const handleResponse = (questionId: string, value: number) => {
         setResponses(prev => ({ ...prev, [questionId]: value }));
     };

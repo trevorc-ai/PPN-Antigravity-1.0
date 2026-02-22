@@ -62,7 +62,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     onBack
 }) => {
     const [readings, setReadings] = useState<VitalSignReading[]>(
-        initialData.length > 0 ? initialData : [createEmptyReading()]
+        initialData.length > 0 ? initialData : [createEmptyReading(true)]
     );
     const [isSaving, setIsSaving] = useState(false);
 
@@ -98,10 +98,24 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
         }
     };
 
-    function createEmptyReading(): VitalSignReading {
-        return {
+    function createEmptyReading(isBaseline = false): VitalSignReading {
+        const base: VitalSignReading = {
             id: `reading-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         };
+        if (isBaseline) {
+            return {
+                ...base,
+                heart_rate: 72,
+                hrv: 45,
+                bp_systolic: 120,
+                bp_diastolic: 80,
+                spo2: 98,
+                respiratory_rate: 16,
+                temperature: 98.6,
+                data_source: 'Historical Baseline' // Or any logical source signifying it pulled from previous records
+            };
+        }
+        return base;
     }
 
     function hasData(reading: VitalSignReading): boolean {
