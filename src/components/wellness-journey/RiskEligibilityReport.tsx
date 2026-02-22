@@ -25,8 +25,8 @@ const SeverityBadge: React.FC<{ severity: 'ABSOLUTE' | 'RELATIVE'; category: str
     return (
         <div className="flex items-center gap-2 flex-wrap">
             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${isAbsolute
-                    ? 'bg-red-500/15 border-red-500/30 text-red-300'
-                    : 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+                ? 'bg-red-500/15 border-red-500/30 text-red-300'
+                : 'bg-amber-500/15 border-amber-500/30 text-amber-300'
                 }`}>
                 {isAbsolute ? '[ABSOLUTE]' : '[RELATIVE]'}
             </span>
@@ -47,8 +47,8 @@ const FlagCard: React.FC<{ flag: ContraindicationFlag }> = ({ flag }) => {
 
     return (
         <div className={`rounded-xl border p-4 transition-all ${isAbsolute
-                ? 'bg-red-950/20 border-red-500/25'
-                : 'bg-amber-950/15 border-amber-500/20'
+            ? 'bg-red-950/20 border-red-500/25'
+            : 'bg-amber-950/15 border-amber-500/20'
             }`}>
             <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
@@ -146,10 +146,10 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
     // ── Render ────────────────────────────────────────────────────────────────
 
     return (
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl space-y-5 animate-in fade-in duration-500">
+        <div className="h-full flex flex-col bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl space-y-5 animate-in fade-in duration-500">
 
             {/* Header */}
-            <div className="flex items-center gap-3 pb-2 border-b border-slate-700/50">
+            <div className="flex items-center gap-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
                 <FileText className="w-5 h-5 text-slate-400" />
                 <div>
                     <h2 className="text-lg font-bold text-slate-200">Risk Eligibility Report</h2>
@@ -160,7 +160,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
             </div>
 
             {/* Verdict Banner */}
-            <div className={`flex items-start gap-3 p-4 rounded-xl border ${verdictConfig.bannerClass}`}>
+            <div className={`flex items-start gap-3 p-4 rounded-xl border flex-shrink-0 ${verdictConfig.bannerClass}`}>
                 {verdictConfig.icon}
                 <div>
                     <p className={`text-base font-black tracking-wide ${verdictConfig.textClass}`}>
@@ -174,7 +174,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
 
             {/* Absolute Contraindication Flags */}
             {result.absoluteFlags.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-3 flex-shrink-0">
                     <h3 className="text-sm font-bold text-red-400 uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" aria-hidden="true" />
                         Absolute Contraindications ({result.absoluteFlags.length})
@@ -187,7 +187,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
 
             {/* Relative Contraindication Flags */}
             {result.relativeFlags.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-3 flex-shrink-0">
                     <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" aria-hidden="true" />
                         Relative Contraindications ({result.relativeFlags.length})
@@ -200,7 +200,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
 
             {/* CLEAR state — no flags */}
             {isClear && (
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/20 flex-shrink-0">
                     <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                     <p className="text-sm text-emerald-300">
                         All {Object.keys({}).length === 0 ? 'standard' : ''} screening criteria reviewed. No contraindication flags were raised for this patient and substance combination.
@@ -210,7 +210,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
 
             {/* Provider Override Block (PROCEED_WITH_CAUTION only) */}
             {isCaution && (
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-600/50 space-y-3">
+                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-600/50 space-y-3 flex-shrink-0">
                     <p className="text-sm font-semibold text-slate-200 flex items-center gap-2">
                         <ClipboardCheck className="w-4 h-4 text-amber-400" />
                         Provider Documentation Required
@@ -249,7 +249,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
             )}
 
             {/* Actions Footer */}
-            <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-700/50">
+            <div className="flex flex-wrap items-center gap-3 pt-2 mt-auto border-t border-slate-700/50">
 
                 {/* Export PDF */}
                 <button
@@ -268,8 +268,8 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                         onClick={handleOverrideConfirm}
                         disabled={!overrideChecked}
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-semibold transition-all ${overrideChecked
-                                ? 'bg-amber-600/20 border-amber-500/40 text-amber-300 hover:bg-amber-600/30'
-                                : 'bg-slate-800/40 border-slate-700/50 text-slate-500 cursor-not-allowed'
+                            ? 'bg-amber-600/20 border-amber-500/40 text-amber-300 hover:bg-amber-600/30'
+                            : 'bg-slate-800/40 border-slate-700/50 text-slate-500 cursor-not-allowed'
                             }`}
                     >
                         <ClipboardCheck className="w-4 h-4" />
@@ -290,8 +290,8 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                                 : 'Proceed to Phase 2 Dosing Session'
                     }
                     className={`ml-auto flex items-center gap-2 px-5 py-2 rounded-xl border text-sm font-bold transition-all ${canProceed
-                            ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 hover:border-emerald-500/60'
-                            : 'bg-slate-800/40 border-slate-700/50 text-slate-500 cursor-not-allowed'
+                        ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 hover:border-emerald-500/60'
+                        : 'bg-slate-800/40 border-slate-700/50 text-slate-500 cursor-not-allowed'
                         }`}
                     aria-disabled={!canProceed}
                 >

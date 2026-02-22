@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { FileText, Shield, Car, Download, CheckCircle, AlertTriangle } from 'lucide-react';
+import { FileText, Shield, Car, Download, CheckCircle, AlertTriangle, Info } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import {
     generateSafetyPlan,
@@ -123,16 +123,25 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
     ];
 
     return (
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 md:p-8 shadow-xl">
+        <div className="h-full flex flex-col bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 md:p-8 shadow-xl">
             <div className="flex items-center gap-3 mb-6">
                 <FileText className="w-6 h-6 text-slate-400" />
                 <div>
-                    <h2 className="text-xl font-black text-slate-200">Compliance Documents</h2>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-xl font-black text-slate-200">Compliance Documents</h2>
+                        <AdvancedTooltip
+                            content="Automatically generated legal and operational documents required for regulatory compliance."
+                            tier="standard"
+                            side="top"
+                        >
+                            <Info className="w-4 h-4 text-slate-500 hover:text-white transition-colors cursor-help print:hidden" />
+                        </AdvancedTooltip>
+                    </div>
                     <p className="text-sm text-slate-400">Export legally required PDFs with digital signatures.</p>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 mt-auto">
                 {docs.map((doc) => {
                     const Icon = doc.icon;
                     return (
