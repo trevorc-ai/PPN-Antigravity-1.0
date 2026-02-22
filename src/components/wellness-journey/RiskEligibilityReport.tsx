@@ -146,14 +146,14 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
     // ── Render ────────────────────────────────────────────────────────────────
 
     return (
-        <div className="h-full flex flex-col bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl space-y-5 animate-in fade-in duration-500">
+        <div className="h-full flex flex-col bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 md:p-8 shadow-xl space-y-5 animate-in fade-in duration-500">
 
             {/* Header */}
-            <div className="flex items-center gap-3 pb-2 border-b border-slate-700/50 flex-shrink-0">
-                <FileText className="w-5 h-5 text-slate-400" />
+            <div className="flex items-center gap-3 pb-4 border-b border-slate-700/50 flex-shrink-0">
+                <FileText className="w-6 h-6 text-slate-400" />
                 <div>
-                    <h2 className="text-lg font-bold text-slate-200">Risk Eligibility Report</h2>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <h2 className="text-xl font-black text-slate-200">Risk Eligibility Report</h2>
+                    <p className="text-sm text-slate-400 mt-0.5">
                         Generated {new Date(result.generatedAt).toLocaleString('en-US')} · Substance: {result.sessionSubstance}
                     </p>
                 </div>
