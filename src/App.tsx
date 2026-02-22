@@ -48,6 +48,7 @@ import ArcOfCarePhase2Demo from './pages/ArcOfCarePhase2Demo';
 import ArcOfCarePhase3Demo from './pages/ArcOfCarePhase3Demo';
 import ArcOfCareDashboard from './pages/ArcOfCareDashboard';
 import WellnessJourney from './pages/WellnessJourney';
+import PatientCompanionPage from './pages/PatientCompanionPage';
 import MEQ30Page from './pages/MEQ30Page';
 import PatientFormPage from './pages/PatientFormPage';
 import AdaptiveAssessmentPage from './pages/AdaptiveAssessmentPage';
@@ -285,6 +286,7 @@ const AppContent: React.FC = () => {
             {/* WELLNESS JOURNEY / ARC OF CARE */}
             <Route path="/wellness-journey" element={<WellnessJourney />} />
             <Route path="/arc-of-care-god-view" element={<Navigate to="/wellness-journey" replace />} /> {/* Legacy redirect */}
+            <Route path="/companion/:sessionId" element={<PatientCompanionPage />} />
 
             {/* PROTOCOL BUILDER */}
             <Route path="/protocols" element={<MyProtocols />} />

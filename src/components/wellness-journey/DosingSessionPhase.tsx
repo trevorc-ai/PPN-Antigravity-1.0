@@ -233,14 +233,24 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                 <p className={`text-xl font-bold leading-none ${liveVitals.spo2 < 95 ? 'text-amber-500/90' : 'text-emerald-100'}`}>{liveVitals.spo2}%</p>
                             </div>
                         </div>
-                        {/* End Button */}
-                        <button
-                            onClick={() => setMode('post')}
-                            className="px-6 py-3.5 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2.5 group shadow-sm"
-                        >
-                            End Session
-                            <ArrowRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
-                        </button>
+                        <div className="flex flex-wrap items-center gap-3">
+                            {/* Launch Companion App */}
+                            <a
+                                href={`#/companion/${journey.sessionId || 'demo-1'}`}
+                                className="px-5 py-3.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-indigo-200 font-semibold rounded-xl border border-indigo-500/30 transition-colors uppercase tracking-widest text-xs flex items-center gap-2 group shadow-sm backdrop-blur-md"
+                            >
+                                <Sparkles className="w-4 h-4 text-indigo-400 group-hover:animate-pulse" />
+                                Launch Companion
+                            </a>
+                            {/* End Button */}
+                            <button
+                                onClick={() => setMode('post')}
+                                className="px-6 py-3.5 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2.5 group shadow-sm"
+                            >
+                                End Session
+                                <ArrowRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
