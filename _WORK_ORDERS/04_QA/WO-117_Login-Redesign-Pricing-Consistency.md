@@ -1,7 +1,7 @@
 ---
 id: WO-117
-status: 03_BUILD
-owner: BUILDER
+status: 04_QA
+owner: INSPECTOR
 failure_count: 0
 created: 2026-02-19
 priority: HIGH
