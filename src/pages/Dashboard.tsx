@@ -177,7 +177,7 @@ export default function Dashboard() {
   const { protocols, loading: protocolsLoading, refetch, lastFetchedAt } = usePractitionerProtocols();
 
   return (
-    <div className="relative min-h-screen bg-[#0A0F1C] overflow-hidden text-slate-300">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] overflow-hidden text-slate-300">
       {/* Background Texture & Glows */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)] pointer-events-none z-0" />
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none opacity-50 z-0" />
