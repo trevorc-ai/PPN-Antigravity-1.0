@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import InstantConnectModal from './modals/InstantConnectModal';
 import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
@@ -53,6 +54,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const menuRef = useRef<HTMLDivElement>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isInstantConnectOpen, setIsInstantConnectOpen] = useState(false);
 
   const isLanding = location.pathname === '/';
 
@@ -241,6 +243,22 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   </div>
                 </div>
 
+                {/* Instant Connect (Send to Phone) - Hidden on mobile */}
+                <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
+                  <button
+                    onClick={() => setIsInstantConnectOpen(true)}
+                    className="size-11 rounded-xl bg-white/5 border border-[#388bfd]/50 hover:border-[#388bfd]/80 flex items-center justify-center text-[#388bfd] hover:text-[#58a6ff] transition-all hover:bg-[#388bfd]/10 shadow-sm shadow-[#388bfd]/10 group active:scale-90"
+                    aria-label="Send to Phone"
+                  >
+                    <span className="material-symbols-outlined text-[24px] transition-transform group-active:scale-90">devices</span>
+                  </button>
+                  {/* Tooltip */}
+                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
+                    <span className="text-[12px] font-black text-[#58a6ff] tracking-[0.15em] relative z-10">Send to Phone</span>
+                  </div>
+                </div>
+
 
 
                 {/* Vibe - Hidden per user request 2026-02-12 */}
@@ -328,6 +346,11 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           )}
         </div>
       </div>
+
+      <InstantConnectModal
+        isOpen={isInstantConnectOpen}
+        onClose={() => setIsInstantConnectOpen(false)}
+      />
     </header>
   );
 };

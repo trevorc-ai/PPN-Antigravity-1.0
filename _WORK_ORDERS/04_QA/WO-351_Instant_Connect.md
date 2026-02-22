@@ -1,6 +1,6 @@
 ---
-status: 03_BUILD
-owner: BUILDER
+status: 04_QA
+owner: INSPECTOR
 failure_count: 0
 ---
 
@@ -41,3 +41,8 @@ Strategy defined. I have routed this ticket to LEAD to architect the token gener
 3. **PWA Configuration:** Validate our `manifest.json` and ensure the service worker registers properly for the "Add to Home Screen" prompt to work natively. Create an aesthetically pleasing PWA prompt if it needs to be triggered manually.
 4. **State Storage:** When scanning, the receiver must securely set local tokens/auth context into `localStorage` before redirecting to `returnTo`.
 5. **Component Execution:** BUILDER is to build the actual 'Send to Phone' modal (accessed via the main patient or provider navigation bar). It should include a dummy QR code in MVP testing mode.
+
+## BUILDER IMPLEMENTATION NOTES
+- Created `InstantConnectModal.tsx` per PRODDY specifications with a striking UI, a dummy QR code mapping, and instructions for PWA caching & SMS fallback.
+- Added a "Send to Phone" quick-action icon button to the desktop TopHeader component to fire the modal.
+- Built without native `qrcode.react` package installation via npm to bypass localized OS EPERM restrictions block during MVP development. The SVG is meticulously crafted to resemble a working code scan context pending actual QR token generation mapping in subsequent backend passes.
