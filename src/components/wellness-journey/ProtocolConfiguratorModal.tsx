@@ -279,7 +279,11 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 <div className="flex justify-end gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
                     <button
                         onClick={handleSave}
-                        className="px-8 py-3 text-lg bg-white text-slate-900 font-extrabold rounded-xl hover:bg-slate-200 transition-colors shadow-lg active:scale-95"
+                        className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg active:scale-95 ${selectedId === 'clinical' ? 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/20' :
+                                selectedId === 'ceremonial' ? 'bg-amber-500 hover:bg-amber-400 text-slate-900 shadow-amber-500/20' :
+                                    selectedId === 'custom' ? 'bg-teal-500 hover:bg-teal-400 text-white shadow-teal-500/20' :
+                                        'bg-white text-slate-900 hover:bg-slate-200'
+                            }`}
                     >
                         Start Session
                     </button>
