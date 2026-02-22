@@ -179,7 +179,7 @@ const Landing: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigate('/checkout')}
-                  className="flex-1 px-8 py-4 bg-primary hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
+                  className="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
                   Start Free Trial
                 </button>
@@ -490,7 +490,7 @@ const Landing: React.FC = () => {
               <div className="pt-8">
                 <button
                   onClick={() => navigate('/deep-dives/workflow-chaos')}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
                 >
                   Kill the Frankenstein Stack
                   <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>

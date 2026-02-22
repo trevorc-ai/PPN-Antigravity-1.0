@@ -412,7 +412,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
                       aria-current={i === currentStep ? 'step' : undefined}
                       aria-label={`Step ${i + 1}`}
                       className={`h-1.5 rounded-full transition-all duration-300 ${i === currentStep
-                        ? 'w-6 bg-primary shadow-[0_0_8px_rgba(43,116,243,0.6)]'
+                        ? 'w-6 bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_8px_rgba(43,116,243,0.6)]'
                         : i < currentStep
                           ? 'w-3 bg-primary/40'
                           : 'w-1.5 bg-slate-700'
@@ -435,7 +435,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
                   )}
                   <button
                     onClick={handleNext}
-                    className="flex items-center gap-1.5 px-5 py-2.5 bg-primary hover:bg-blue-500 text-white text-xs font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    className="flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-500 text-white text-xs font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary/50"
                     aria-label={currentStep === TOUR_STEPS.length - 1 ? 'Finish tour' : 'Next step'}
                   >
                     {currentStep === TOUR_STEPS.length - 1 ? 'Finish' : 'Next'}

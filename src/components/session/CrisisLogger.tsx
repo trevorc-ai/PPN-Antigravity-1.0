@@ -231,7 +231,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                 >
                     {pressing === 'DOSE_ADMINISTERED' && (
                         <div
-                            className="absolute bottom-0 left-0 h-1 bg-primary opacity-60"
+                            className="absolute bottom-0 left-0 h-1 bg-indigo-600 hover:bg-indigo-500 opacity-60"
                             style={{ width: `${pressProgress}%` }}
                         />
                     )}

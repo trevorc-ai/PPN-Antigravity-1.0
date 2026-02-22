@@ -212,7 +212,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   className="text-[12px] font-black text-slate-300 hover:text-slate-300 tracking-[0.25em] transition-all relative group"
                 >
                   {link.label}
-                  <div className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full opacity-50"></div>
+                  <div className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-indigo-600 hover:bg-indigo-500 transition-all group-hover:w-full opacity-50"></div>
                 </button>
               ))}
             </div>
@@ -321,7 +321,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           ) : (
             <button
               onClick={handleAuthAction}
-              className="px-6 py-2.5 bg-primary hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
+              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
             >
               Login
             </button>

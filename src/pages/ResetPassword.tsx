@@ -115,7 +115,7 @@ const ResetPassword: React.FC = () => {
                     </p>
                     <button
                         onClick={() => navigate('/forgot-password')}
-                        className="px-6 py-3 bg-primary hover:bg-primary/90 text-slate-300 font-black text-sm uppercase tracking-widest rounded-xl transition-all"
+                        className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/90 text-slate-300 font-black text-sm uppercase tracking-widest rounded-xl transition-all"
                     >
                         Request New Link
                     </button>
@@ -253,7 +253,7 @@ const ResetPassword: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={loading || !password || !confirmPassword || password !== confirmPassword}
-                                    className="w-full px-6 py-3 bg-primary hover:bg-primary/90 disabled:bg-primary/50 disabled:cursor-not-allowed text-slate-300 font-black text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                                    className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/90 disabled:bg-primary/50 disabled:cursor-not-allowed text-slate-300 font-black text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
                                 >
                                     {loading ? (
                                         <>

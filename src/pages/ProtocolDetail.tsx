@@ -31,7 +31,7 @@ const ProtocolDetail: React.FC = () => {
           </div>
           <button
             onClick={() => navigate('/dashboard')}
-            className="px-10 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20"
+            className="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20"
           >
             Return to Registry
           </button>

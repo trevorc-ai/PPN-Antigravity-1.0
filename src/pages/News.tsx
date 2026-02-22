@@ -19,7 +19,7 @@ const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
 
       <div className="absolute top-8 left-8 flex gap-2 z-10">
         <span className="px-3 py-1 bg-accent-amber text-black text-xs font-black uppercase tracking-widest rounded shadow-lg shadow-accent-amber/20">Breakthrough</span>
-        <span className="px-3 py-1 bg-primary text-slate-300 text-xs font-black uppercase tracking-widest rounded shadow-lg shadow-primary/20">Phase III</span>
+        <span className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-slate-300 text-xs font-black uppercase tracking-widest rounded shadow-lg shadow-primary/20">Phase III</span>
       </div>
 
       <div className="absolute bottom-10 left-10 right-10 z-10 space-y-4 max-w-3xl">
@@ -179,14 +179,14 @@ const News: React.FC = () => {
               <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
                 <button
                   onClick={() => setSortBy('recent')}
-                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
                 >
                   <span className="material-symbols-outlined text-sm">schedule</span>
                   Most Recent
                 </button>
                 <button
                   onClick={() => setSortBy('cited')}
-                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
                 >
                   <span className="material-symbols-outlined text-sm">star</span>
                   Most Cited
@@ -215,7 +215,7 @@ const News: React.FC = () => {
 
             <div className="space-y-6 pt-6">
               <div className="flex items-center gap-3">
-                <div className="w-1 h-6 bg-primary rounded-full"></div>
+                <div className="w-1 h-6 bg-indigo-600 hover:bg-indigo-500 rounded-full"></div>
                 <h2 className="text-2xl font-black text-slate-300 tracking-tighter">News Feed</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -267,7 +267,7 @@ const News: React.FC = () => {
                   placeholder="professional@clinic.com"
                   className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
                 />
-                <button className="w-full py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
+                <button className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
                   Subscribe Now
                 </button>
                 <p className="text-sm text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>

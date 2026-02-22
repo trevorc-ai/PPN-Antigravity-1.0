@@ -118,7 +118,7 @@ const UpdateCredentialsModal: React.FC<{
             </button>
             <button
               onClick={() => onSave(localCreds)}
-              className="flex-1 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20"
+              className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20"
             >
               Commit Changes
             </button>
@@ -185,7 +185,7 @@ const ClinicianProfile: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/profile/edit')}
-              className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-blue-600 border border-primary/30 rounded-2xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
+              className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 border border-primary/30 rounded-2xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
             >
               <span className="material-symbols-outlined text-lg">edit</span>
               Edit Profile
@@ -355,7 +355,7 @@ const ClinicianProfile: React.FC = () => {
                   <span className="text-primary">85%</span>
                 </div>
                 <div className="w-full h-2 bg-slate-800/60 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary shadow-[0_0_8px_#2b74f3]" style={{ width: '85%' }}></div>
+                  <div className="h-full bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_8px_#2b74f3]" style={{ width: '85%' }}></div>
                 </div>
               </div>
             </div>
@@ -375,7 +375,7 @@ const ClinicianProfile: React.FC = () => {
                   {credentials.map((cred, i) => (
                     <div key={i} className="group flex items-center justify-between p-5 bg-slate-950/60 border border-slate-800 hover:border-slate-700 rounded-2xl transition-all cursor-pointer">
                       <div className="flex items-center gap-5">
-                        <div className="size-12 rounded-xl bg-slate-900 flex items-center justify-center text-primary border border-slate-800 group-hover:bg-primary group-hover:text-slate-300 transition-all">
+                        <div className="size-12 rounded-xl bg-slate-900 flex items-center justify-center text-primary border border-slate-800 group-hover:bg-indigo-600 hover:bg-indigo-500 group-hover:text-slate-300 transition-all">
                           <span className="material-symbols-outlined text-xl">{cred.icon}</span>
                         </div>
                         <div className="flex flex-col">
@@ -400,7 +400,7 @@ const ClinicianProfile: React.FC = () => {
                 <div className="mt-auto pt-10">
                   <button
                     onClick={() => setIsUpdateModalOpen(true)}
-                    className="w-full py-5 bg-primary hover:bg-blue-600 text-slate-300 text-xs font-black rounded-[1.5rem] uppercase tracking-[0.25em] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group active:scale-95"
+                    className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-xs font-black rounded-[1.5rem] uppercase tracking-[0.25em] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group active:scale-95"
                   >
                     <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">edit_note</span>
                     Update credentials

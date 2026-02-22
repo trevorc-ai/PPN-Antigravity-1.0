@@ -106,7 +106,7 @@ const Pricing: React.FC = () => {
             price="Free*"
             priceSub="*With validated data contribution"
             buttonText="Join the Guild"
-            buttonClass="bg-primary hover:bg-blue-600 text-slate-300 shadow-xl shadow-primary/20"
+            buttonClass="bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 shadow-xl shadow-primary/20"
             isPrimary
             tag="GIVE-TO-GET"
             features={[

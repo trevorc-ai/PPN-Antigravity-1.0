@@ -321,7 +321,7 @@ const ClinicianDirectory: React.FC = () => {
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`size-14 flex items-center justify-center rounded-2xl border transition-all ${showFilters ? 'bg-primary border-primary text-slate-300' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
+                className={`size-14 flex items-center justify-center rounded-2xl border transition-all ${showFilters ? 'bg-indigo-600 hover:bg-indigo-500 border-primary text-slate-300' : 'bg-slate-900 border-slate-800 text-slate-300'}`}
               >
                 <span className="material-symbols-outlined">filter_list</span>
               </button>

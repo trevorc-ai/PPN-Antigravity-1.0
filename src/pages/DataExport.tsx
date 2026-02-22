@@ -236,7 +236,7 @@ const DataExport: React.FC = () => {
                                                     key={indication}
                                                     onClick={() => handleIndicationToggle(indication)}
                                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${config.indications.includes(indication)
-                                                        ? 'bg-primary text-slate-300 border border-primary'
+                                                        ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-300 border border-primary'
                                                         : 'bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700'
                                                         }`}
                                                 >
@@ -272,7 +272,7 @@ const DataExport: React.FC = () => {
                                     <button
                                         onClick={handleGenerateExport}
                                         disabled={isGenerating}
-                                        className="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-300 py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                        className="w-full bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-300 py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                                     >
                                         {isGenerating ? (
                                             <>
@@ -296,7 +296,7 @@ const DataExport: React.FC = () => {
                                             </div>
                                             <div className="h-2 bg-slate-900 rounded-full overflow-hidden">
                                                 <div
-                                                    className="h-full bg-primary transition-all duration-300"
+                                                    className="h-full bg-indigo-600 hover:bg-indigo-500 transition-all duration-300"
                                                     style={{ width: `${progress}%` }}
                                                 />
                                             </div>

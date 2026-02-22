@@ -154,7 +154,7 @@ const AuditLogs: React.FC = () => {
               key={filter}
               onClick={() => setActiveFilter(filter)}
               className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${activeFilter === filter
-                ? 'bg-primary text-slate-400 shadow-lg shadow-primary/20'
+                ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-400 shadow-lg shadow-primary/20'
                 : 'text-slate-4000 hover:text-slate-400'
                 }`}
             >
@@ -296,7 +296,7 @@ const AuditLogs: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <div className={`size-3 rounded-full ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' :
                           log.status === 'ALERT_TRIGGERED' ? 'bg-rose-500 shadow-[0_0_10px_#f43f5e]' :
-                            'bg-primary shadow-[0_0_10px_#2b74f3]'
+                            'bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_10px_#2b74f3]'
                           }`}></div>
                         <span className={`text-sm font-black uppercase tracking-widest ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'text-emerald-500' :
                           log.status === 'ALERT_TRIGGERED' ? 'text-rose-500' :

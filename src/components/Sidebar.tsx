@@ -154,7 +154,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                             {({ isActive }) => (
                               <>
                                 {isActive && (
-                                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-600 hover:bg-indigo-500 rounded-r-full" />
                                 )}
                                 <span
                                   className={`material-symbols-outlined text-lg ${isActive ? 'text-primary' : 'text-slate-400'

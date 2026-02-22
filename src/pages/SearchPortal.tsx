@@ -334,7 +334,7 @@ const SearchPortal: React.FC = () => {
               />
               <button
                 onClick={() => generateAiAnalysis(query)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-primary rounded-xl hover:bg-blue-600 transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl hover:bg-blue-600 transition-colors"
                 aria-label="Search"
               >
                 <span className="material-symbols-outlined text-slate-300">search</span>

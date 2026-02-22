@@ -164,7 +164,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           <div className="pt-6 flex flex-col sm:flex-row items-center gap-8">
             <button
               onClick={() => navigate('/login')}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-primary text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95 group"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-4 px-12 py-6 bg-indigo-600 hover:bg-indigo-500 text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95 group"
             >
               Login to Portal
               <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -202,7 +202,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               </p>
               <button
                 onClick={() => navigate('/login')}
-                className="w-full py-5 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-primary/30 active:scale-95 group"
+                className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl tracking-[0.2em] transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-primary/30 active:scale-95 group"
               >
                 Log In to Portal
                 <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -299,7 +299,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <div className="pt-6">
                   <button
                     onClick={scrollToLogin}
-                    className="px-14 py-6 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
+                    className="px-14 py-6 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
                   >
                     Request Access
                   </button>
@@ -429,7 +429,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               price="Free*"
               priceSub="*With validated data contribution"
               buttonText="Join the Guild"
-              buttonClass="bg-primary hover:bg-blue-600 text-slate-300 shadow-xl shadow-primary/20"
+              buttonClass="bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 shadow-xl shadow-primary/20"
               isPrimary
               tag="GIVE-TO-GET"
               onAction={scrollToLogin}

@@ -119,7 +119,7 @@ const WorkflowChaosPage: React.FC = () => {
                                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <div className="text-center space-y-2">
-                                        <div className="w-16 h-16 bg-primary rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-primary/30">
+                                        <div className="w-16 h-16 bg-indigo-600 hover:bg-indigo-500 rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-primary/30">
                                             <Layers className="w-8 h-8 text-slate-300" />
                                         </div>
                                         <p className="text-2xl font-black text-slate-300">Unified Core</p>

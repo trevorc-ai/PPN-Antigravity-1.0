@@ -185,7 +185,7 @@ const Login: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -281,7 +281,7 @@ const Login: React.FC = () => {
                     <button
                       type="submit"
                       disabled={resetLoading}
-                      className="w-full py-4 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-primary/20 flex items-center justify-center gap-2"
                     >
                       {resetLoading ? (
                         <>

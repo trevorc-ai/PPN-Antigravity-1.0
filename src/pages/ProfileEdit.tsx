@@ -237,7 +237,7 @@ const ProfileEdit: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="flex-1 px-6 py-3 bg-primary hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+                                className="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-slate-300 font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
                             >
                                 <Save className="w-5 h-5" />
                                 {saving ? 'Saving...' : 'Save Changes'}

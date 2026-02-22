@@ -416,7 +416,7 @@ const PartnerDemoHub: React.FC = () => {
                         <div className="flex items-center justify-center gap-6 pt-4">
                             <Link
                                 to="/dashboard"
-                                className="px-6 py-3 bg-primary hover:bg-primary/80 text-slate-300 font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95"
+                                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/80 text-slate-300 font-black rounded-xl uppercase tracking-widest transition-all shadow-lg active:scale-95"
                             >
                                 Go to Dashboard
                             </Link>

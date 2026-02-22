@@ -117,7 +117,7 @@ const IngestionHub: React.FC = () => {
               <button className="flex-1 py-4 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-black text-slate-300 uppercase tracking-widest transition-all hover:text-slate-300">
                 Input Settings
               </button>
-              <button className="flex-1 py-4 bg-primary hover:bg-blue-600 text-slate-300 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/10 transition-all active:scale-95">
+              <button className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/10 transition-all active:scale-95">
                 Review Lexicon
               </button>
             </div>
@@ -166,7 +166,7 @@ const IngestionHub: React.FC = () => {
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-2">
-                      <div className={`size-1.5 rounded-full ${job.status === 'Processing' ? 'bg-primary animate-pulse' : job.status === 'Verifying' ? 'bg-accent-amber' : 'bg-slate-700'}`}></div>
+                      <div className={`size-1.5 rounded-full ${job.status === 'Processing' ? 'bg-indigo-600 hover:bg-indigo-500 animate-pulse' : job.status === 'Verifying' ? 'bg-accent-amber' : 'bg-slate-700'}`}></div>
                       <span className={`text-xs font-black uppercase tracking-tighter ${job.status === 'Processing' ? 'text-primary' : 'text-slate-500'}`}>{job.status}</span>
                     </div>
                   </td>

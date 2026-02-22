@@ -58,7 +58,7 @@ const SimpleSearch: React.FC = () => {
             />
             <button
               type="submit"
-              className="absolute right-4 top-1/2 -translate-y-1/2 size-12 sm:size-16 bg-primary hover:bg-blue-600 rounded-full flex items-center justify-center text-slate-300 transition-all shadow-xl active:scale-95 group/btn"
+              className="absolute right-4 top-1/2 -translate-y-1/2 size-12 sm:size-16 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 rounded-full flex items-center justify-center text-slate-300 transition-all shadow-xl active:scale-95 group/btn"
             >
               <span className="material-symbols-outlined text-2xl sm:text-3xl group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
             </button>

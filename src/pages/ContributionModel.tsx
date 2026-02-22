@@ -60,7 +60,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
             <span className="material-symbols-outlined">menu</span>
           </button>
           <div className="flex items-center gap-3 group cursor-pointer" onClick={() => navigate('/')}>
-            <div className="bg-primary rounded-lg p-1.5 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+            <div className="bg-indigo-600 hover:bg-indigo-500 rounded-lg p-1.5 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
               <span className="material-symbols-outlined text-slate-300 text-lg font-black">science</span>
             </div>
             <span className="text-sm font-black text-slate-300 uppercase tracking-[0.2em] hidden sm:block">The Give-to-Get Model</span>
@@ -176,7 +176,7 @@ const ContributionModel: React.FC<ContributionModelProps> = ({ onMenuClick }) =>
           <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
             <button
               onClick={() => navigate('/#secure-access-node')}
-              className="px-12 py-6 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
+              className="px-12 py-6 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-95"
             >
               Sign Up for Free Month
             </button>
