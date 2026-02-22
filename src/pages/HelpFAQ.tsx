@@ -113,10 +113,10 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search help topics..."
-              className="w-full bg-[#0D121C] border border-slate-800 rounded-lg py-4 px-14 text-slate-300 focus:outline-none focus:border-primary transition-all shadow-xl"
+              className="w-full bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-2xl py-5 px-14 text-slate-300 focus:outline-none focus:ring-1 focus:ring-primary transition-all shadow-2xl"
             />
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-blue-600 text-white px-4 py-2 sm:px-6 rounded-md font-medium transition-colors">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+            <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95">
               Search
             </button>
           </div>
@@ -132,17 +132,19 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               <div
                 key={idx}
                 onClick={() => handleCategoryClick(cat.title)}
-                className={`bg-[#0D121C] border p-8 rounded-xl transition-all cursor-pointer group shadow-sm ${selectedCategory === cat.title
-                  ? 'border-primary shadow-[0_0_15px_rgba(43,116,243,0.15)]'
-                  : 'border-slate-800/60 hover:border-slate-700'
+                className={`bg-slate-900/40 backdrop-blur-xl border p-8 rounded-3xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 ${selectedCategory === cat.title
+                  ? 'border-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.15)] bg-slate-800/60'
+                  : 'border-slate-800 hover:border-slate-600 hover:shadow-xl'
                   }`}
               >
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 transition-colors ${selectedCategory === cat.title ? 'bg-primary/20' : 'bg-primary/10 group-hover:bg-primary/20'
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 border ${selectedCategory === cat.title ? 'bg-indigo-500/20 border-indigo-500/30 shadow-inner' : 'bg-slate-800/50 border-slate-700/50 group-hover:bg-indigo-500/10 group-hover:border-indigo-500/20'
                   }`}>
-                  {cat.icon}
+                  <div className={selectedCategory === cat.title ? 'text-indigo-400' : 'text-slate-400 group-hover:text-indigo-400 transition-colors'}>
+                    {cat.icon}
+                  </div>
                 </div>
-                <h3 className="text-slate-300 font-semibold text-lg mb-3">{cat.title}</h3>
-                <p className="text-sm text-slate-300 leading-relaxed font-normal">{cat.desc}</p>
+                <h3 className="text-slate-200 font-black tracking-tight text-lg mb-3">{cat.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed font-medium group-hover:text-slate-300 transition-colors">{cat.desc}</p>
               </div>
             ))}
           </div>
@@ -169,22 +171,26 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
             <div className="space-y-4">
               {filteredFaqs.length > 0 ? (
                 filteredFaqs.map((faq, idx) => (
-                  <div key={idx} className="border border-slate-800/80 rounded-xl bg-[#0D121C] overflow-hidden shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div key={idx} className="border border-slate-800 rounded-3xl bg-slate-900/40 backdrop-blur-xl overflow-hidden hover:border-slate-600 transition-colors animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-lg">
                     <button
                       onClick={() => setActiveFAQ(activeFAQ === idx ? null : idx)}
-                      className="w-full text-left px-8 py-5 flex justify-between items-center hover:bg-slate-800/20 transition-colors"
+                      className="w-full text-left px-8 py-6 flex justify-between items-center hover:bg-slate-800/40 transition-colors group"
                     >
-                      <span className="text-base font-medium text-slate-300">{faq.q}</span>
-                      <ChevronDown className={`text-slate-500 transition-transform duration-300 ${activeFAQ === idx ? 'rotate-180' : ''}`} size={18} />
+                      <span className="text-base font-bold text-slate-300 group-hover:text-slate-200 transition-colors">{faq.q}</span>
+                      <div className={`p-2 rounded-full transition-all duration-300 ${activeFAQ === idx ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-800 text-slate-500 group-hover:text-indigo-400 group-hover:bg-indigo-500/10'}`}>
+                        <ChevronDown className={`transition-transform duration-300 ${activeFAQ === idx ? 'rotate-180' : ''}`} size={18} />
+                      </div>
                     </button>
                     {activeFAQ === idx && (
-                      <div className="px-8 pb-6 text-sm text-slate-300 leading-relaxed border-t border-slate-800/40 pt-4">
-                        <div className="mb-3">
-                          <span className="text-xs font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded border border-primary/20">
+                      <div className="px-8 pb-8 text-sm text-slate-300 leading-relaxed border-t border-slate-800/50 pt-6">
+                        <div className="mb-4">
+                          <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
                             {faq.category}
                           </span>
                         </div>
-                        {faq.a}
+                        <div className="font-medium text-slate-400">
+                          {faq.a}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -208,32 +214,36 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
 
           {/* Support Sidebar (4/12) */}
           <div className="col-span-1 lg:col-span-4 space-y-6">
-            <div className="bg-[#0D121C] border border-slate-800 p-8 rounded-xl shadow-sm">
-              <h3 className="text-slate-300 font-semibold text-lg mb-2">Contact Support</h3>
-              <p className="text-sm text-slate-300 mb-8 leading-relaxed">Our team is available 24/7 for clinical emergencies and node assistance.</p>
+            <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-lg relative overflow-hidden group hover:border-slate-600 transition-colors">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-              <div className="space-y-3">
-                <button className="w-full flex items-center justify-center gap-3 bg-[#1A2233] hover:bg-slate-700 text-slate-300 py-3 rounded-lg text-sm font-medium transition-colors border border-slate-700/50">
-                  <MessageSquare size={18} /> Start Live Chat
+              <h3 className="text-slate-200 font-black tracking-tighter text-2xl mb-2 relative z-10">Contact Support</h3>
+              <p className="text-sm text-slate-400 mb-8 leading-relaxed font-medium relative z-10">Our team is available 24/7 for clinical emergencies and node assistance.</p>
+
+              <div className="space-y-3 relative z-10">
+                <button className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-700/80 text-slate-300 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border border-slate-700 hover:border-slate-500 shadow-md">
+                  <MessageSquare size={16} /> Live Chat
                 </button>
-                <button className="w-full flex items-center justify-center gap-3 bg-[#1A2233] hover:bg-slate-700 text-slate-300 py-3 rounded-lg text-sm font-medium transition-colors border border-slate-700/50">
-                  <Mail size={18} /> Email Support
+                <button className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-700/80 text-slate-300 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border border-slate-700 hover:border-slate-500 shadow-md">
+                  <Mail size={16} /> Email Support
                 </button>
-                <button className="w-full flex items-center justify-center gap-3 bg-primary hover:bg-blue-600 text-white py-3 mt-2 rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-900/20">
-                  <Calendar size={18} /> Schedule Technical Demo
+                <button className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white py-4 mt-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-500/20 border border-indigo-500/50 active:scale-95">
+                  <Calendar size={16} /> Schedule Tech Demo
                 </button>
               </div>
             </div>
 
-            <div className="bg-[#0D121C] border border-slate-800 p-6 rounded-xl flex items-center gap-5 shadow-sm">
+            <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 p-6 rounded-3xl flex items-center gap-5 shadow-lg">
               <div className="relative">
-                <div className="w-3 h-3 bg-clinical-green rounded-full shadow-[0_0_8px_rgba(83,210,45,0.6)]"></div>
-                <div className="absolute inset-0 w-3 h-3 bg-clinical-green rounded-full animate-ping opacity-25"></div>
+                <div className="w-3 h-3 bg-clinical-green rounded-full shadow-[0_0_12px_rgba(83,210,45,0.8)]"></div>
+                <div className="absolute inset-0 w-3 h-3 bg-clinical-green rounded-full animate-ping opacity-30"></div>
               </div>
-              <div>
-                <div className="text-sm font-semibold text-slate-300">All Systems Operational</div>
-                <div className="text-xs text-slate-500 mt-1 uppercase tracking-wider">
-                  Latency: <span className="text-slate-300">24ms</span> • Updated: <span className="text-slate-300">2m ago</span>
+              <div className="flex flex-col">
+                <div className="text-sm font-black text-slate-200 tracking-tight">All Systems Operational</div>
+                <div className="text-[10px] font-black text-slate-500 mt-1 uppercase tracking-widest flex items-center gap-2">
+                  <span>Latency: <span className="text-slate-400">24ms</span></span>
+                  <span className="w-1 h-1 rounded-full bg-slate-700" />
+                  <span>Updated: <span className="text-slate-400">Just now</span></span>
                 </div>
               </div>
             </div>
