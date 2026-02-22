@@ -319,7 +319,7 @@ export default function GlobalBenchmarkIntelligence() {
                                     type="number"
                                     domain={[0, 1.4]}
                                     tickFormatter={v => `${v}`}
-                                    tick={{ fill: '#4b5563', fontSize: 11 }}
+                                    tick={{ fill: '#4b5563', fontSize: 12 }}
                                     axisLine={false}
                                     tickLine={false}
                                 />
@@ -327,7 +327,7 @@ export default function GlobalBenchmarkIntelligence() {
                                     type="category"
                                     dataKey="name"
                                     width={160}
-                                    tick={{ fill: '#6b7280', fontSize: 11 }}
+                                    tick={{ fill: '#6b7280', fontSize: 12 }}
                                     axisLine={false}
                                     tickLine={false}
                                 />

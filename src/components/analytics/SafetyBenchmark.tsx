@@ -111,7 +111,7 @@ export default function SafetyBenchmark({
                                 <XAxis
                                     type="number"
                                     domain={[0, 25]}
-                                    tick={{ fill: '#475569', fontSize: 11 }}
+                                    tick={{ fill: '#475569', fontSize: 12 }}
                                     axisLine={false}
                                     tickLine={false}
                                 />
@@ -151,7 +151,7 @@ export default function SafetyBenchmark({
                                         value: `Alert: ${ALERT_THRESHOLD}`,
                                         position: 'insideTopRight',
                                         fill: '#f43f5e',
-                                        fontSize: 11,
+                                        fontSize: 12,
                                         fontWeight: 700,
                                     }}
                                 />

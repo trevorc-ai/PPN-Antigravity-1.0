@@ -88,14 +88,14 @@ const ConfidenceCone: React.FC = () => {
               dataKey="day" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }} 
+              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} 
               dy={10}
               tickFormatter={(val) => `Day ${val}`}
             />
             <YAxis 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }} 
+              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }} 
               domain={[0, 27]}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />

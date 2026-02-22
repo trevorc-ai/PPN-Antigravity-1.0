@@ -102,13 +102,13 @@ export default function ProtocolEfficiency({ data }: { data?: any[] }) {
                                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
                                     <XAxis
                                         type="number" dataKey="hours" name="Time" unit="hr"
-                                        tick={{ fill: '#94a3b8', fontSize: 11 }}
-                                        label={{ value: 'Staff Hours Required', position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 11 }}
+                                        tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                        label={{ value: 'Staff Hours Required', position: 'insideBottom', offset: -10, fill: '#64748b', fontSize: 12 }}
                                     />
                                     <YAxis
                                         type="number" dataKey="revenue" name="Revenue" unit="$"
-                                        tick={{ fill: '#94a3b8', fontSize: 11 }}
-                                        label={{ value: 'Revenue per Unit', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }}
+                                        tick={{ fill: '#94a3b8', fontSize: 12 }}
+                                        label={{ value: 'Revenue per Unit', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 12 }}
                                     />
                                     <Tooltip
                                         content={({ active, payload }) => {

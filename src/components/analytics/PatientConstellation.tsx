@@ -292,13 +292,13 @@ export default function PatientConstellation({ data }: { data?: PatientNode[] })
                             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" opacity={0.5} />
                             <XAxis
                                 type="number" dataKey="x" name="Resistance" domain={[0, 100]}
-                                tick={{ fill: '#64748b', fontSize: 11 }}
-                                label={{ value: 'Treatment Resistance Score', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 11, fontWeight: 700 }}
+                                tick={{ fill: '#64748b', fontSize: 12 }}
+                                label={{ value: 'Treatment Resistance Score', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 12, fontWeight: 700 }}
                             />
                             <YAxis
                                 type="number" dataKey="y" name="Severity" domain={[0, 30]}
-                                tick={{ fill: '#64748b', fontSize: 11 }}
-                                label={{ value: 'Symptom Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 11, fontWeight: 700 }}
+                                tick={{ fill: '#64748b', fontSize: 12 }}
+                                label={{ value: 'Symptom Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 12, fontWeight: 700 }}
                             />
                             <Tooltip
                                 cursor={{ strokeDasharray: '3 3' }}

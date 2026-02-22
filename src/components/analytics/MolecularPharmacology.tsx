@@ -136,7 +136,7 @@ export default function MolecularPharmacology() {
                                     <YAxis
                                         dataKey="receptor"
                                         type="category"
-                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
                                         width={60}
                                         interval={0}
                                     />

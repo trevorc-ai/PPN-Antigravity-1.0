@@ -163,7 +163,7 @@ const PatientJourneySnapshot: React.FC = () => {
               dataKey="displayDate"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
+              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }}
               dy={10}
             />
 
@@ -171,7 +171,7 @@ const PatientJourneySnapshot: React.FC = () => {
               yAxisId="left"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
+              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 700 }}
               domain={[0, 27]}
               label={{ value: 'Severity (PHQ-9)', angle: -90, position: 'insideLeft', fill: '#475569', fontSize: 9, fontWeight: 900, dy: 40 }}
             />
