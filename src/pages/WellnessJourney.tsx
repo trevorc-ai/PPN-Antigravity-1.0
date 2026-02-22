@@ -686,17 +686,7 @@ const WellnessJourney: React.FC = () => {
                                 className={`rounded-b-2xl border-2 ${phasePalette.border} ${phasePalette.bg} p-4 sm:p-6 space-y-6`}
                                 style={{ boxShadow: phasePalette.shadow }}
                             >
-                                {/* Phase lock notice */}
-                                {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
-                                    <div className="flex items-center gap-3 px-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-xl">
-                                        <Lock className="w-4 h-4 text-slate-500 flex-shrink-0" aria-hidden="true" />
-                                        <p className="text-sm text-slate-400">
-                                            Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
-                                        </p>
-                                    </div>
-                                )}
-
-                                {/* Benchmark + Risk panels — only shown once Phase 1 forms are all done.
+                                {/* Phase 1: Benchmark + Risk panels — only shown once Phase 1 forms are all done.
                      Showing mock data upfront is confusing and competes with the step guide. */}
                                 {activePhase === 1 && completedForms.size >= 4 && !isLoading && result && (
                                     <div className="space-y-6">
@@ -858,23 +848,35 @@ const WellnessJourney: React.FC = () => {
                                     </div>
                                 )}
 
-                                {/* Bottom row: disclaimer label + info tooltip | Export Report button */}
-                                <div className="flex items-center justify-between gap-4 pt-3 pb-1">
-                                    {/* Compact disclaimer with info-icon tooltip */}
-                                    <AdvancedTooltip
-                                        content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
-                                        tier="detailed"
-                                        type="warning"
-                                        title="Legal Disclaimer"
-                                        side="top"
-                                        width="w-96"
-                                    >
-                                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 cursor-help hover:text-slate-400 transition-colors select-none">
-                                            <span style={{ color: '#f59e0b' }}>⚠️</span>
-                                            <strong className="text-slate-400">Clinical Decision Support</strong>
-                                            <Info className="w-3.5 h-3.5 text-slate-600 hover:text-slate-400" aria-label="Legal disclaimer info" />
-                                        </span>
-                                    </AdvancedTooltip>
+                                {/* Bottom row: disclaimer label + info tooltip | Phase lock | Export Report button */}
+                                <div className="flex items-center justify-between gap-4 pt-3 pb-1 border-t border-slate-700/30 mt-6 md:mt-8">
+                                    <div className="flex items-center gap-6 flex-wrap">
+                                        {/* Compact disclaimer with info-icon tooltip */}
+                                        <AdvancedTooltip
+                                            content="This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider."
+                                            tier="detailed"
+                                            type="warning"
+                                            title="Legal Disclaimer"
+                                            side="top"
+                                            width="w-96"
+                                        >
+                                            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 cursor-help hover:text-slate-400 transition-colors select-none">
+                                                <span style={{ color: '#f59e0b' }}>⚠️</span>
+                                                <strong className="text-slate-400">Clinical Decision Support</strong>
+                                                <Info className="w-3.5 h-3.5 text-slate-600 hover:text-slate-400" aria-label="Legal disclaimer info" />
+                                            </span>
+                                        </AdvancedTooltip>
+
+                                        {/* Phase lock notice inline */}
+                                        {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
+                                            <div className="flex items-center gap-2 px-3 py-1 bg-slate-800/40 border border-slate-700/40 rounded-lg shadow-sm">
+                                                <Lock className="w-3.5 h-3.5 text-slate-500" />
+                                                <span className="text-xs text-slate-400 font-medium">
+                                                    Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
 
                                     {/* Export Report */}
                                     <ExportReportButton patientData={exportPatientData} />
