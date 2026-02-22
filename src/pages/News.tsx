@@ -18,12 +18,12 @@ const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#0e1117_100%)] opacity-60"></div>
 
       <div className="absolute top-8 left-8 flex gap-2 z-10">
-        <span className="px-3 py-1 bg-accent-amber text-black text-xs font-black uppercase tracking-widest rounded shadow-lg shadow-accent-amber/20">Breakthrough</span>
-        <span className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-slate-300 text-xs font-black uppercase tracking-widest rounded shadow-lg shadow-primary/20">Phase III</span>
+        <span className="px-3 py-1 bg-accent-amber text-black text-sm font-bold rounded shadow-lg shadow-accent-amber/20">Breakthrough</span>
+        <span className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-slate-200 text-sm font-bold rounded shadow-lg shadow-primary/20">Phase III</span>
       </div>
 
       <div className="absolute bottom-10 left-10 right-10 z-10 space-y-4 max-w-3xl">
-        <p className="text-slate-300 text-sm font-mono uppercase tracking-[0.3em] font-bold">Published May 14, 2024</p>
+        <p className="text-slate-300 text-sm font-mono font-bold">Published May 14, 2024</p>
         <h2 className="text-4xl sm:text-5xl font-black text-slate-300 tracking-tighter leading-[1.1]">
           FDA Approves Landmark Phase III Trial for PPN-04 Compound
         </h2>
@@ -52,13 +52,13 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#111418] via-[#111418]/20 to-transparent"></div>
         <div className="absolute bottom-4 left-6 flex items-center gap-3">
-          <span className={`px-2 py-1 text-xs font-black uppercase tracking-widest rounded border ${article.category === 'Regulation' ? 'bg-primary/20 text-primary border-primary/30' :
-            article.category === 'Clinical Trials' ? 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20' :
-              article.category === 'Network' ? 'text-clinical-green bg-clinical-green/10 border-clinical-green/20' : 'text-slate-300 bg-slate-800/20 border-slate-700'
+          <span className={`px-2 py-1 text-xs font-bold rounded border ${article.category === 'Regulation' ? 'bg-primary/20 text-blue-400 border-blue-400/30' :
+            article.category === 'Clinical Trials' ? 'text-indigo-300 bg-indigo-400/10 border-indigo-400/20' :
+              article.category === 'Network' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-slate-300 bg-slate-800/20 border-slate-700'
             }`}>
             {article.category}
           </span>
-          <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">{article.timestamp}</span>
+          <span className="text-xs font-mono text-slate-400 font-bold">{article.timestamp}</span>
         </div>
       </div>
 
@@ -74,13 +74,13 @@ const NewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
             href={article.externalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-300 uppercase tracking-[0.2em] transition-all group/btn"
+            className="mt-auto flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-slate-300 transition-all group/btn"
           >
             Read Full Article
             <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">open_in_new</span>
           </a>
         ) : (
-          <button className="mt-auto flex items-center gap-2 text-xs font-black text-primary hover:text-slate-300 uppercase tracking-[0.2em] transition-all group/btn">
+          <button className="mt-auto flex items-center gap-2 text-sm font-bold text-blue-400 hover:text-slate-300 transition-all group/btn">
             Read Research
             <span className="material-symbols-outlined text-sm transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
           </button>
@@ -156,7 +156,7 @@ const News: React.FC = () => {
                   {liveCount > 0 && (
                     <span className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">{liveCount} live articles</span>
+                      <span className="text-[13px] font-bold text-emerald-400">{liveCount} Live Articles</span>
                     </span>
                   )}
                   {feedLoading && (
@@ -179,14 +179,14 @@ const News: React.FC = () => {
               <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
                 <button
                   onClick={() => setSortBy('recent')}
-                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-200 shadow-lg' : 'text-slate-400 hover:text-slate-300'}`}
                 >
                   <span className="material-symbols-outlined text-sm">schedule</span>
                   Most Recent
                 </button>
                 <button
                   onClick={() => setSortBy('cited')}
-                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-200 shadow-lg' : 'text-slate-400 hover:text-slate-300'}`}
                 >
                   <span className="material-symbols-outlined text-sm">star</span>
                   Most Cited
@@ -195,7 +195,7 @@ const News: React.FC = () => {
 
               <button
                 onClick={cycleCategory}
-                className={`px-4 py-2.5 border rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-300 hover:text-slate-300'}`}
+                className={`px-4 py-2.5 border rounded-xl text-sm font-bold flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-blue-500/20 border-blue-500 text-blue-300' : 'bg-black/20 border-slate-800 text-slate-300 hover:text-slate-300'}`}
               >
                 {selectedCategory === 'All' ? 'Compound Type' : selectedCategory}
                 <span className="material-symbols-outlined text-base">expand_more</span>
@@ -233,7 +233,7 @@ const News: React.FC = () => {
             <section className="space-y-6">
               <div className="flex items-center gap-2 text-slate-300">
                 <span className="material-symbols-outlined text-lg">trending_up</span>
-                <h3 className="text-xs font-black tracking-[0.2em]">Trending Topics</h3>
+                <h3 className="text-[15px] font-bold text-slate-300">Trending Topics</h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 {['#Psilocybin', '#MDMA-Research', '#Neuroscience', '#PhaseIII', '#ReformBill', '#Ligands'].map(tag => (
@@ -252,12 +252,12 @@ const News: React.FC = () => {
             <section className="bg-[#1c222d]/60 border border-slate-800 rounded-[2.5rem] p-10 space-y-6 relative overflow-hidden group shadow-2xl">
               <div className="space-y-2 relative z-10">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                  <div className="size-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
                     <span className="material-symbols-outlined text-xl">mail</span>
                   </div>
-                  <h3 className="text-sm font-black text-slate-300 tracking-[0.2em]">Weekly Briefing</h3>
+                  <h3 className="text-base font-bold text-slate-200">Weekly Briefing</h3>
                 </div>
-                <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                <p className="text-sm text-slate-400 leading-relaxed font-medium">
                   Get the most critical clinical updates delivered to your inbox every Monday morning.
                 </p>
               </div>
@@ -265,36 +265,36 @@ const News: React.FC = () => {
                 <input
                   type="email"
                   placeholder="professional@clinic.com"
-                  className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
+                  className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-blue-500 placeholder:text-slate-600 transition-all"
                 />
-                <button className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
+                <button className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-indigo-400 text-slate-200 text-base font-bold rounded-xl transition-all shadow-xl shadow-indigo-900/20 active:scale-[0.98]">
                   Subscribe Now
                 </button>
-                <p className="text-sm text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>
+                <p className="text-[13px] text-slate-500 font-medium text-center">Opt-out at any time. Professional use only.</p>
               </div>
             </section>
 
             {/* Portal Metrics */}
             <section className="bg-[#1c222d]/30 border border-slate-800 rounded-[2.5rem] p-10 space-y-8">
               <div className="space-y-1">
-                <h3 className="text-xs font-black text-slate-300 uppercase tracking-[0.2em]">Portal Metrics</h3>
+                <h3 className="text-[15px] font-bold text-slate-300">Portal Metrics</h3>
               </div>
 
               <div className="space-y-6">
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Trials</span>
-                    <span className="text-[12px] font-mono font-black text-slate-300">124</span>
+                    <span className="text-[13px] font-bold text-slate-400">Active Trials</span>
+                    <span className="text-[14px] font-mono font-bold text-slate-300">124</span>
                   </div>
                   <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: '82%' }}></div>
+                    <div className="h-full bg-blue-500" style={{ width: '82%' }}></div>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex justify-between items-end">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Peer Reviews</span>
-                    <span className="text-[12px] font-mono font-black text-slate-300">8,402</span>
+                    <span className="text-[13px] font-bold text-slate-400">Peer Reviews</span>
+                    <span className="text-[14px] font-mono font-bold text-slate-300">8,402</span>
                   </div>
                   <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
                     <div className="h-full bg-accent-orange" style={{ width: '45%', backgroundColor: '#f97316' }}></div>
@@ -309,8 +309,8 @@ const News: React.FC = () => {
                 <span className="material-symbols-outlined text-slate-500">verified</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Source Context</span>
-                <span className="text-xs font-mono font-bold text-clinical-green uppercase">Verified Research Node</span>
+                <span className="text-sm font-bold text-slate-300 mb-1">Source Context</span>
+                <span className="text-[13px] font-mono font-bold text-emerald-400">Verified Research Node</span>
               </div>
             </div>
           </aside>

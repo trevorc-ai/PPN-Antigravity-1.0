@@ -30,7 +30,7 @@ const ConnectFeedButton: React.FC<ConnectFeedButtonProps> = ({ className = '', o
             </div>
 
             {/* Text */}
-            <span className="font-bold text-sm text-slate-300 tracking-wide uppercase">
+            <span className="font-bold text-sm text-slate-200">
                 Connect Your Blog/Feed
             </span>
         </button>
