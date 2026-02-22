@@ -103,7 +103,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                     so the tab sits flush on the panel below
                                 */
                                 className={[
-                                    'relative flex-1 flex items-center justify-center gap-2.5',
+                                    'relative flex-1 flex items-center justify-center gap-2.5 overflow-hidden',
                                     'px-6 py-5 rounded-t-xl transition-all duration-200 select-none',
                                     // Active: no bottom border, sits on top of panel
                                     isActive
