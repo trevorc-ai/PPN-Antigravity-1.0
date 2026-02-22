@@ -924,8 +924,8 @@ const WellnessJourneyInternal: React.FC = () => {
                                         <div className="flex gap-3 items-start max-w-xl bg-slate-900/60 border border-slate-700/50 p-4 rounded-xl shadow-inner">
                                             <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                                             <div>
-                                                <h4 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-1">Clinical Decision Support Disclaimer</h4>
-                                                <p className="text-xs text-slate-400 leading-relaxed">
+                                                <h4 className="text-base font-bold text-slate-300 uppercase tracking-wider mb-1">Clinical Decision Support Disclaimer</h4>
+                                                <p className="text-sm text-slate-400 leading-relaxed">
                                                     This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider.
                                                 </p>
                                             </div>
