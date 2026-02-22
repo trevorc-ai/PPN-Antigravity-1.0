@@ -252,7 +252,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             event_timestamp: e.event_timestamp,
             event_type: e.event_type,
             performed_by: e.performed_by,
-            metadata: e.metadata,
+            metadata: { ...e.metadata, event_description: e.event_description },
         }));
         const results = await Promise.all(promises);
         const failed = results.filter(r => !r.success);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, Tag, Music, AlertTriangle, Plus, Trash2, CheckCircle, Play, Stethoscope, Mic, Pill } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { FormFooter } from '../shared/FormFooter';
+import { getTimelineEvents } from '../../../services/clinicalLog';
 
 /**
  * SessionTimelineForm - Minute-by-Minute Session Tracking
@@ -48,13 +49,41 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
         initialData.length > 0 ? initialData : [createEmptyEvent()]
     );
     const [isSaving, setIsSaving] = useState(false);
+    const [isLoadingData, setIsLoadingData] = useState(false);
+
+    useEffect(() => {
+        let isMounted = true;
+        async function fetchEvents() {
+            if (sessionId) {
+                setIsLoadingData(true);
+                const result = await getTimelineEvents(sessionId);
+                if (result.success && result.data && result.data.length > 0 && isMounted) {
+                    // Make sure not to lose the empty draft row if they were editing it?
+                    // Usually we just replace. Wait, if we replace, we might want an empty event at the top still to add new.
+                    // But `addEvent` handles that. Let's merge them: empty draft at the top, then history.
+                    setEvents([
+                        createEmptyEvent(),
+                        ...(result.data as TimelineEvent[]).map(e => ({
+                            ...e,
+                            event_description: e.metadata?.event_description || e.event_type // Fallback
+                        }))
+                    ]);
+                }
+                if (isMounted) setIsLoadingData(false);
+            }
+        }
+        fetchEvents();
+        return () => { isMounted = false; };
+    }, [sessionId]);
 
     const handleSaveAndExit = () => {
         if (onSave) {
             setIsSaving(true);
-            const validData = events.filter(e => hasData(e));
+            const validData = events.filter(e => hasData(e) && e.id.startsWith('event-'));
             if (validData.length > 0) {
                 onSave(validData);
+                // After saving, convert the IDs of the new ones so they don't resave if the user stays
+                setEvents(prev => prev.map(e => validData.includes(e) ? { ...e, id: `saved-${e.id}` } : e));
             }
             setTimeout(() => {
                 setIsSaving(false);
@@ -68,10 +97,16 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
     const handleSaveAndContinue = () => {
         if (onSave) {
             setIsSaving(true);
-            const validData = events.filter(e => hasData(e));
+            const validData = events.filter(e => hasData(e) && e.id.startsWith('event-'));
             if (validData.length > 0) {
                 onSave(validData);
+                // Convert IDs so they are not saved again
+                setEvents(prev => prev.map(e => validData.includes(e) ? { ...e, id: `saved-${e.id}` } : e));
             }
+
+            // If they are continuing to log ("Save & Continue" means they intend to stay on the page)
+            // wait, but onComplete will close the panel. We only stay if the parent form doesn't close onComplete.
+            // Oh, actual "onComplete" usually closes the panel.
             setTimeout(() => {
                 setIsSaving(false);
                 if (onComplete) onComplete();

@@ -328,6 +328,22 @@ export async function createTimelineEvent(data: TimelineEventData) {
     }
 }
 
+/** Retrieves historical timeline events for a given session. Maps to log_session_timeline_events. */
+export async function getTimelineEvents(sessionId: string) {
+    try {
+        const { data, error } = await supabase
+            .from('log_session_timeline_events')
+            .select('*')
+            .eq('session_id', sessionId)
+            .order('event_timestamp', { ascending: false });
+        if (error) throw error;
+        return { success: true, data };
+    } catch (error) {
+        console.error('[clinicalLog] getTimelineEvents:', error);
+        return { success: false, error };
+    }
+}
+
 // ============================================================================
 // PHASE 3: INTEGRATION TRACKER
 // ============================================================================

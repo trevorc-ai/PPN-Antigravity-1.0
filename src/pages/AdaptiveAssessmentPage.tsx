@@ -147,7 +147,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
         const remissionProbability = finalMEQScore >= 60 ? 87 : finalMEQScore >= 40 ? 72 : 58;
 
         return (
-            <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
+            <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8">
                 <div className="max-w-4xl mx-auto space-y-6">
                     {/* Success Header */}
                     <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-8 text-center">
@@ -248,7 +248,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                     <div className="flex items-center justify-center gap-4">
                         <button
                             onClick={() => onClose ? onClose() : navigate('/wellness-journey')}
-                            className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all"
+                            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold tracking-wide transition-all shadow-md"
                         >
                             {onClose ? 'Close Assessment & Return to Journey' : 'View Your Journey'}
                         </button>
@@ -261,7 +261,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
     // Expansion notice
     if (needsExpansion && phase === 'expanded') {
         return (
-            <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
+            <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="bg-blue-500/10 backdrop-blur-xl border border-blue-500/20 rounded-2xl p-8 mb-6">
                         <div className="flex items-start gap-4">
@@ -294,7 +294,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
 
     // Quick Mode assessments
     return (
-        <div className="min-h-screen bg-[#0a1628] p-4 sm:p-6 lg:p-8">
+        <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8">
             {/* Back Button - Only show when not in modal */}
             {showBackButton && (
                 <div className="max-w-4xl mx-auto mb-6">
