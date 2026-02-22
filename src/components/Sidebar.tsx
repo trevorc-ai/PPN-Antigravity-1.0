@@ -12,7 +12,7 @@ interface NavItem {
   label: string;
   icon: string;
   path: string;
-  external?: boolean;
+  isAction?: boolean;
 }
 
 interface NavSection {
@@ -25,15 +25,15 @@ const navSections: NavSection[] = [
     title: 'Core',
     items: [
       { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
+      { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
+      { label: 'Wellness Journey', icon: 'spa', path: '/wellness-journey' },
     ],
   },
   {
-    title: 'Clinical Tools',
+    title: 'Clinical Safety',
     items: [
-      { label: 'Patient Bridge', icon: 'qr_code_scanner', path: '/PPN_Bridge_Camera.html', external: true },
-      { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
-      { label: 'Wellness Journey', icon: 'spa', path: '/wellness-journey' },
       { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
+      { label: 'Audit Logs', icon: 'history', path: '/audit' },
     ],
   },
   {
@@ -41,13 +41,14 @@ const navSections: NavSection[] = [
     items: [
       { label: 'Substance Library', icon: 'science', path: '/catalog' },
       { label: 'Intelligence Hub', icon: 'newspaper', path: '/news' },
+      { label: 'Clinician Directory', icon: 'people', path: '/clinicians' },
     ],
   },
   {
-    title: 'Network',
+    title: 'Integrations',
     items: [
-      { label: 'Clinician Directory', icon: 'people', path: '/clinicians' },
-      { label: 'Audit Logs', icon: 'history', path: '/audit' },
+      { label: 'Mobile Scanner', icon: 'qr_code_scanner', path: 'action:scanner', isAction: true },
+      { label: 'Device Sync', icon: 'watch', path: 'action:device', isAction: true },
     ],
   },
   {
@@ -115,24 +116,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
                     return (
                       <li key={item.path} className="relative">
-                        {item.external ? (
-                          <a
-                            href={item.path}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        {item.isAction ? (
+                          <button
                             onClick={() => {
                               if (window.innerWidth < 1024) onClose();
+                              if (item.path === 'action:scanner') {
+                                // For desktop scanner action, maybe show an alert or open a specific modal in the future.
+                                alert("To scan documents or connect the Patient Bridge, please open this application on your mobile device or navigate directly to /PPN_Bridge_Camera.html");
+                              } else if (item.path === 'action:device') {
+                                alert("Wearable device synchronization module is currently offline pending FDA clearance.");
+                              }
                             }}
-                            className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-slate-800/50"
+                            className="w-full text-left flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-slate-800/50 group cursor-pointer"
                           >
                             <div className="flex items-center gap-3">
-                              <span className="material-symbols-outlined text-lg text-slate-400">
+                              <span className="material-symbols-outlined text-lg text-slate-400 group-hover:text-indigo-400 transition-colors">
                                 {item.icon}
                               </span>
-                              <span className="text-base font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
+                              <span className="text-base font-semibold tracking-wide text-[#8B9DC3] group-hover:text-slate-200 transition-colors">{item.label}</span>
                             </div>
-                            <span className="material-symbols-outlined text-sm text-slate-600">open_in_new</span>
-                          </a>
+                            <span className="material-symbols-outlined text-sm text-slate-600 group-hover:text-indigo-400 transition-colors">add_circle</span>
+                          </button>
                         ) : (
                           <NavLink
                             to={item.path}

@@ -68,13 +68,31 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             title: 'Core',
             items: [
                 { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
-                { label: 'Patient Bridge', icon: 'qr_code_scanner', path: '/PPN_Bridge_Camera.html', external: true },
+                { label: 'My Protocols', icon: 'article', path: '/protocols' },
                 { label: 'Wellness Journey', icon: 'psychology', path: '/wellness-journey' },
-                { label: 'News', icon: 'newspaper', path: '/news' },
-                { label: 'Practitioners', icon: 'groups', path: '/clinicians' },
-                { label: 'Substances', icon: 'biotech', path: '/catalog' },
-                { label: 'My Protocols', icon: 'article', path: '/builder' },
             ]
+        },
+        {
+            title: 'Clinical Safety',
+            items: [
+                { label: 'Interaction Checker', icon: 'security', path: '/interactions' },
+                { label: 'Audit Logs', icon: 'manage_search', path: '/audit' },
+            ]
+        },
+        {
+            title: 'Knowledge Base',
+            items: [
+                { label: 'Substance Library', icon: 'biotech', path: '/catalog' },
+                { label: 'News & Updates', icon: 'newspaper', path: '/news' },
+                { label: 'Clinician Directory', icon: 'groups', path: '/clinicians' },
+            ]
+        },
+        {
+            title: 'Integrations',
+            items: [
+                { label: 'Patient Bridge Scan', icon: 'qr_code_scanner', path: '/PPN_Bridge_Camera.html', external: true },
+                { label: 'Device Sync', icon: 'watch', path: '#device', external: true },
+            ],
         },
         {
             title: 'Intelligence',
@@ -86,17 +104,8 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             ]
         },
         {
-            title: 'Clinical Safety',
-            items: [
-                { label: 'Safety Surveillance', icon: 'shield_with_heart', path: '/deep-dives/safety-surveillance', badge: alertCount },
-                { label: 'Interaction Checker', icon: 'security', path: '/interactions' },
-                { label: 'Audit Logs', icon: 'manage_search', path: '/audit' },
-            ]
-        },
-        {
             title: 'Preferences',
             items: [
-                { label: 'Settings', icon: 'settings', path: '/settings' },
                 { label: 'Help & FAQ', icon: 'help_center', path: '/help' },
             ]
         }
