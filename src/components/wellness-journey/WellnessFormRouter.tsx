@@ -6,7 +6,6 @@ import {
     // Phase 1: Preparation
     ConsentForm,
     StructuredSafetyCheckForm,
-    BaselineObservationsForm,
     SetAndSettingForm,
     MentalHealthScreeningForm,
     // Phase 2: Dosing Session
@@ -42,7 +41,6 @@ import {
 
 // Form data types
 import type { ConsentData } from '../arc-of-care-forms/phase-1-preparation/ConsentForm';
-import type { BaselineObservationsData } from '../arc-of-care-forms/phase-1-preparation/BaselineObservationsForm';
 import type { SetAndSettingData } from '../arc-of-care-forms/phase-1-preparation/SetAndSettingForm';
 import type { VitalSignReading } from '../arc-of-care-forms/phase-2-dosing/SessionVitalsForm';
 import type { SessionObservationsData } from '../arc-of-care-forms/phase-2-dosing/SessionObservationsForm';
@@ -62,7 +60,7 @@ import type { MEQ30Data } from '../arc-of-care-forms/phase-1-preparation/MEQ30Qu
  * All mock console.log handlers have been replaced with live DB writes.
  *
  * Phase 1 — Preparation:
- *   consent → structured-safety → baseline-observations → set-and-setting → mental-health
+ *   consent → structured-safety → set-and-setting → mental-health
  *
  * Phase 2 — Dosing Session:
  *   dosing-protocol → session-timeline → session-vitals → session-observations
@@ -79,7 +77,6 @@ export type WellnessFormId =
     // Phase 1
     | 'consent'
     | 'structured-safety'
-    | 'baseline-observations'
     | 'set-and-setting'
     | 'mental-health'
     // Phase 2
@@ -181,18 +178,13 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     }, [siteId]);
 
-    const handleBaselineObservationsSave = async (data: BaselineObservationsData) => {
-        // Silent no-op if prerequisites not ready — auto-save fires before session is fully initialized
-        if (!patientId || !siteId) return;
-        onSaved('Baseline Observations');
-    };
-
     const handleSetAndSettingSave = async (data: SetAndSettingData) => {
-        if (!patientId || !siteId) return; // silent — missing IDs = session not started yet
+        if (!patientId || !siteId) return;
         const result = await createBaselineAssessment({
             patient_id: patientId,
             site_id: siteId,
             expectancy_scale: data.treatment_expectancy,
+            // observations[] included in form data; no dedicated DB column yet — same behaviour as before
         });
         result.success ? onSaved('Set & Setting') : onError('Set & Setting', result.error);
     };
@@ -360,12 +352,6 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 onComplete={onComplete}
                 onBack={onComplete}
                 onExit={onComplete}
-            />;
-
-        case 'baseline-observations':
-            return <BaselineObservationsForm
-                onSave={handleBaselineObservationsSave}
-                onComplete={onComplete}
             />;
 
         case 'set-and-setting':

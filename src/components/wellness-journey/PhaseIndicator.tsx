@@ -22,7 +22,7 @@ const PHASE_CONFIG = {
         activeText: 'text-indigo-200',
         activeTopLine: 'bg-indigo-500',
         tooltipTitle: 'Phase 1: Preparation',
-        tooltip: 'Establish the patient baseline before any dosing session. Complete 5 clinical forms: Informed Consent, Safety Screening, Set & Setting, Baseline Observations, and MEQ-30.',
+        tooltip: 'Establish the patient baseline before any dosing session. Complete 4 clinical forms: Informed Consent, Safety Screening, Mental Health Screening, and Set & Setting (includes clinical observations).',
     },
     2: {
         icon: Activity,

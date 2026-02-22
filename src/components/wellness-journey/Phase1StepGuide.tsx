@@ -38,16 +38,9 @@ export const PHASE1_STEPS: Phase1Step[] = [
     {
         id: 'set-and-setting',
         label: 'Set & Setting',
-        description: 'Document environment, expectations, and integration plan.',
+        description: 'Treatment expectancy, clinical observations, and pre-session mindset.',
         required: true,
         icon: 'home_health',
-    },
-    {
-        id: 'baseline-observations',
-        label: 'Baseline Observations',
-        description: 'Pre-treatment clinical observations and vital notes.',
-        required: false,
-        icon: 'visibility',
     },
 ];
 
@@ -164,7 +157,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
             <div className="flex items-center justify-between px-1">
                 {/* Section label using site-standard ppn-label class */}
                 <h2 className="ppn-label" style={{ color: '#818CF8' }}>
-                    Preparation · 5 Steps
+                    Preparation · 4 Steps
                 </h2>
                 <div className="flex items-center gap-3">
                     <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
@@ -183,7 +176,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                 </div>
             </div>
 
-            {/* ── 5-Step card grid ──────────────────────────────────────────────
+            {/* ── 4-Step card grid ──────────────────────────────────────────────
                 Font sizing follows site standard:
                   Step label (H3-equiv): text-sm font-bold uppercase  — 14px
                   Card title:            text-base font-black          — 16px
@@ -194,7 +187,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                 Design: no individual card borders — background fills only.
                 Active = indigo fill · Completed = teal tint · Upcoming = slate/dimmed
             ──────────────────────────────────────────────────────────────────── */}
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                 {PHASE1_STEPS.map((step, index) => {
                     const isComplete = completedFormIds.has(step.id);
                     const isCurrent = index === currentStepIndex;

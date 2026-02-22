@@ -237,7 +237,6 @@ const WellnessJourney: React.FC = () => {
         'meq30': 'MEQ-30 Questionnaire',
         'mental-health': 'Mental Health Screening',
         'set-and-setting': 'Set & Setting',
-        'baseline-observations': 'Clinical Observations',
         'consent': 'Informed Consent',
         'dosing-protocol': 'Dosing Protocol',
         'session-vitals': '',
@@ -255,8 +254,7 @@ const WellnessJourney: React.FC = () => {
     // Per-form subtitle shown in the SlideOut panel header (replaces in-form heading cards)
     const FORM_SUBTITLES: Partial<Record<WellnessFormId, string>> = {
         'mental-health': 'Administer PHQ-9, GAD-7, ACE, and PCL-5 baseline psychological assessments.',
-        'set-and-setting': "Assess patient's mindset and belief in treatment efficacy before the session.",
-        'baseline-observations': "Document clinical observations about the patient's presentation, mindset, and readiness before treatment.",
+        'set-and-setting': "Treatment expectancy, clinical observations, and pre-session mindset assessment.",
         'consent': 'Record informed consent type and confirm documentation with the patient.',
         'structured-safety': 'Monitor patient safety with structured, PHI-safe inputs.',
         'dosing-protocol': 'Record the medication, dose, and administration details for this session.',
@@ -686,7 +684,7 @@ const WellnessJourney: React.FC = () => {
 
                                 {/* Benchmark + Risk panels — only shown once Phase 1 forms are all done.
                      Showing mock data upfront is confusing and competes with the step guide. */}
-                                {activePhase === 1 && completedForms.size >= 5 && !isLoading && result && (
+                                {activePhase === 1 && completedForms.size >= 4 && !isLoading && result && (
                                     <div className="space-y-6">
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                             <div data-tour="baseline-metrics">

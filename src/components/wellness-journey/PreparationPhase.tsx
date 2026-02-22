@@ -38,9 +38,9 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
         observations: {
             isComplete: journey.benchmark?.hasSetAndSetting,
             date: journey.benchmark?.setAndSettingDate,
-            label: "Baseline Observations",
-            action: () => onOpenForm('baseline-observations'),
-            description: "Clinical state and mindset check."
+            label: "Set & Setting",
+            action: () => onOpenForm('set-and-setting'),
+            description: "Treatment expectancy & clinical observations."
         },
         protocol: {
             isComplete: journey.benchmark?.hasDosingProtocol,
