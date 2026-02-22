@@ -860,18 +860,18 @@ const WellnessJourney: React.FC = () => {
                                             side="top"
                                             width="w-96"
                                         >
-                                            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 cursor-help hover:text-slate-400 transition-colors select-none">
-                                                <span style={{ color: '#f59e0b' }}>⚠️</span>
+                                            <span className="inline-flex items-center gap-1.5 text-sm text-slate-500 cursor-help hover:text-slate-400 transition-colors select-none">
+                                                <span style={{ color: '#f59e0b', fontSize: '1.1em' }}>⚠️</span>
                                                 <strong className="text-slate-400">Clinical Decision Support</strong>
-                                                <Info className="w-3.5 h-3.5 text-slate-600 hover:text-slate-400" aria-label="Legal disclaimer info" />
+                                                <Info className="w-4 h-4 text-slate-600 hover:text-slate-400" aria-label="Legal disclaimer info" />
                                             </span>
                                         </AdvancedTooltip>
 
                                         {/* Phase lock notice inline */}
                                         {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-slate-800/40 border border-slate-700/40 rounded-lg shadow-sm">
-                                                <Lock className="w-3.5 h-3.5 text-slate-500" />
-                                                <span className="text-xs text-slate-400 font-medium">
+                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 border border-slate-700/40 rounded-lg shadow-sm">
+                                                <Lock className="w-4 h-4 text-slate-500" />
+                                                <span className="text-sm text-slate-400 font-medium">
                                                     Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
                                                 </span>
                                             </div>
