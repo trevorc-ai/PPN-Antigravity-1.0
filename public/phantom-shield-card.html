@@ -11,7 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
     <style>
         *,
         *::before,
@@ -175,10 +175,12 @@
             margin-bottom: 20px;
         }
 
-        #qrcode canvas,
-        #qrcode img {
+        .qr-placeholder {
+            width: 100px;
+            height: 100px;
             border-radius: 8px;
             display: block;
+            border: 2px solid var(--border);
         }
 
         .qr-label {
@@ -388,7 +390,8 @@
 
         <!-- QR Code -->
         <div class="qr-block">
-            <div id="qrcode"></div>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=e6edf3&bgcolor=0a1628&data=https://ppnportal.net/phantom-shield.html"
+                alt="QR Code" class="qr-placeholder" />
             <div class="qr-label">
                 <p>Scan to see the full Phantom Shield overview. Share with any practitioner who needs this.</p>
                 <div class="qr-url">ppnportal.net/phantom-shield.html</div>
@@ -416,24 +419,7 @@
     <div class="toast" id="toast">Link copied to clipboard</div>
 
     <script>
-        // Generate QR code pointing to the Phantom Shield overview page
-        QRCode.toCanvas(
-            document.createElement('canvas'),
-            'https://ppnportal.net/phantom-shield.html',
-            {
-                width: 100,
-                margin: 1,
-                color: {
-                    dark: '#e6edf3',
-                    light: '#0a1628'
-                }
-            },
-            function (err, canvas) {
-                if (!err) {
-                    document.getElementById('qrcode').appendChild(canvas);
-                }
-            }
-        );
+
 
         // Share / copy
         function shareCard() {
