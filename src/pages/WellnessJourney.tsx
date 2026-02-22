@@ -615,16 +615,8 @@ const WellnessJourney: React.FC = () => {
                     {/* Right: Phase-aware primary action + export */}
                     <div className="flex items-center gap-3 flex-shrink-0">
                         {/* Phase 1: no competing CTA — Phase1StepGuide is the navigator */}
-                        {activePhase === 2 && (
-                            <button
-                                onClick={() => handleOpenForm('session-vitals')}
-                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
-                                aria-label="Record session vitals"
-                            >
-                                <span className="material-symbols-outlined text-base" aria-hidden="true">ecg_heart</span>
-                                Record Vitals
-                            </button>
-                        )}
+                        {/* Phase 1 & 2: no competing CTA — phase navigators handle it */}
+
                         {activePhase === 3 && (
                             <button
                                 onClick={() => handleOpenForm('daily-pulse')}
@@ -863,6 +855,16 @@ const WellnessJourney: React.FC = () => {
                                             </div>
 
                                         </div>
+                                    </div>
+                                )}
+
+                                {/* Temporary Locked Notice for Demo — moved below stats */}
+                                {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
+                                    <div className="mt-8 mb-2 p-4 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center gap-3">
+                                        <Lock className="w-4 h-4 text-slate-500" />
+                                        <span className="text-slate-200 text-sm font-medium">
+                                            Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
+                                        </span>
                                     </div>
                                 )}
 
