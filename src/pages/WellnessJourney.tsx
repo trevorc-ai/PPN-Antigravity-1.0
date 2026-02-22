@@ -686,38 +686,6 @@ const WellnessJourney: React.FC = () => {
                                 className={`rounded-b-2xl border-2 ${phasePalette.border} ${phasePalette.bg} p-4 sm:p-6 space-y-6`}
                                 style={{ boxShadow: phasePalette.shadow }}
                             >
-                                {/* Phase 1: Benchmark + Risk panels — only shown once Phase 1 forms are all done.
-                     Showing mock data upfront is confusing and competes with the step guide. */}
-                                {activePhase === 1 && completedForms.size >= 4 && !isLoading && result && (
-                                    <div className="space-y-6">
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                            <div data-tour="baseline-metrics">
-                                                <ReadinessScore result={result} onViewBenchmarks={() => { }} />
-                                            </div>
-                                            <div data-tour="schedule-integration" className="lg:col-span-2">
-                                                <RequirementsList
-                                                    result={result}
-                                                    onCompleteRequirement={(name) => {
-                                                        addToast({ title: 'Opening Requirement', message: `Navigating to ${name}...`, type: 'info' });
-                                                        if (name.toLowerCase().includes('safety')) setTimeout(() => navigate('/assessment'), 500);
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div data-tour="risk-flags">
-                                            <RiskIndicators
-                                                overallRiskLevel={riskDetection.overallRiskLevel}
-                                                patientId={journey.patientId}
-                                                patientCharacteristics={patientCharacteristics}
-                                                baselineFlags={riskDetection.baselineFlags}
-                                                vitalFlags={riskDetection.vitalFlags}
-                                                progressFlags={riskDetection.progressFlags}
-                                                sessionTime="2h 15min"
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-
                                 {/* Phase Content — WO-113: Each phase has CTA buttons to open forms */}
                                 <div className="animate-in fade-in duration-300 space-y-6">
                                     {activePhase === 1 && (

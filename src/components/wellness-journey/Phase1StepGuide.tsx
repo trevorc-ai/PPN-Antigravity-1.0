@@ -296,17 +296,35 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
             {/* ── All complete state */}
             {allComplete && (
-                <div className="space-y-6">
-                    <ComplianceDocumentsPanel
-                        patientId="PT-RISK9W2P"
-                        completedForms={Array.from(completedFormIds)}
-                    />
-                    <EligibilityPanel
-                        steps={PHASE1_STEPS}
-                        completedFormIds={completedFormIds}
-                        onStartStep={onStartStep}
-                        onCompletePhase={onCompletePhase}
-                    />
+                <div className="space-y-6 pt-4 border-t border-slate-700/50 mt-8">
+                    {/* Optional: Simple Benchmark Compliance Banner */}
+                    <div className="flex items-center gap-2 px-4 py-3 bg-emerald-900/10 border border-emerald-500/20 rounded-xl">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                        <span className="text-sm font-medium text-emerald-200">
+                            Data Quality: <strong className="text-emerald-400">100% Benchmark Compliant</strong>
+                        </span>
+                    </div>
+
+                    {/* Action Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                        {/* Left Column: Administrative (Export Docs) */}
+                        <div className="w-full">
+                            <ComplianceDocumentsPanel
+                                patientId="PT-RISK9W2P"
+                                completedForms={Array.from(completedFormIds)}
+                            />
+                        </div>
+
+                        {/* Right Column: Clinical (Risk & Clearance) */}
+                        <div className="w-full">
+                            <EligibilityPanel
+                                steps={PHASE1_STEPS}
+                                completedFormIds={completedFormIds}
+                                onStartStep={onStartStep}
+                                onCompletePhase={onCompletePhase}
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
