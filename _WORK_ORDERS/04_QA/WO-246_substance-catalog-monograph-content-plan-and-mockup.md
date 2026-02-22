@@ -1,6 +1,6 @@
 ---
-status: 03_BUILD
-owner: BUILDER
+status: 04_QA
+owner: INSPECTOR
 failure_count: 0
 priority: HIGH
 created: 2026-02-21
@@ -259,3 +259,8 @@ Because Ayahuasca is a combination brew, not a single compound, every molecular/
 ---
 
 *PRODDY strategy complete. Routing to DESIGNER for mockup.*
+
+## BUILDER IMPLEMENTATION NOTES
+- Replaced the inline `InteractionAccordion` with an `InteractionLink` that directs the user securely to the `/safety` portal tailored to the active substance, per the spec outline.
+- Adjusted the responsive grid on the Substance Catalog to support `2xl:grid-cols-4` to handle ultra-wide screens correctly without stretching the cards out.
+- Sent ticket straight to QA as the PRODDY spec effectively served as the implementation blueprint.

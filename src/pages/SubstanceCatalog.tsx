@@ -29,51 +29,28 @@ const RISK_CONFIG: Record<RiskTier, { icon: string; classes: string; label: stri
 // ─── Inline accordion interaction list ───────────────────────────────────────
 interface InteractionEntry { agent: string; severity: string; description: string; isHigh: boolean }
 
-const InteractionAccordion: React.FC<{ interactions: InteractionEntry[] }> = ({ interactions }) => {
-  const [open, setOpen] = useState(false);
+const InteractionLink: React.FC<{ interactions: InteractionEntry[], substanceName: string }> = ({ interactions, substanceName }) => {
+  const navigate = useNavigate();
   if (interactions.length === 0) return null;
   const hasHigh = interactions.some(i => i.isHigh);
 
   return (
-    <div className="space-y-2">
-      {/* Toggle badge */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        aria-expanded={open}
-        className={`w-full flex items-center justify-between gap-2 text-sm font-medium px-3 py-2 rounded-lg border transition-all
-          ${hasHigh
-            ? 'bg-red-900/60 text-red-200 border-red-700/50 hover:border-red-600/70'
-            : 'bg-amber-900/50 text-amber-200 border-amber-700/40 hover:border-amber-600/60'}`}
-      >
-        <span className="flex items-center gap-2">
-          <span aria-hidden="true">{hasHigh ? '⚠' : '△'}</span>
-          {interactions.length} interaction{interactions.length > 1 ? 's' : ''}
-        </span>
-        <span aria-hidden="true" className={`text-xs transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>▼</span>
-      </button>
-
-      {/* Inline expanded list — no absolute positioning */}
-      <div
-        className="overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ maxHeight: open ? `${interactions.length * 160}px` : '0px', opacity: open ? 1 : 0 }}
-      >
-        <div className="space-y-2 pt-1">
-          {interactions.map((inter, i) => (
-            <div key={i} className={`p-3 rounded-xl border space-y-1.5
-              ${inter.isHigh ? 'bg-red-900/30 border-red-700/40' : 'bg-amber-900/20 border-amber-700/30'}`}>
-              <div className="flex items-start justify-between gap-2 flex-wrap">
-                <span className="text-sm font-semibold text-[#A8B5D1]">{inter.agent}</span>
-                <span className={`text-xs px-2.5 py-0.5 rounded-md font-semibold shrink-0
-                  ${inter.isHigh ? 'bg-red-700/80 text-red-100' : 'bg-amber-700/80 text-amber-100'}`}>
-                  {inter.isHigh ? '⚠ ' : '△ '}{inter.severity}
-                </span>
-              </div>
-              <p className="text-sm text-slate-400 leading-relaxed">{inter.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        navigate(`/safety?query=${substanceName}`);
+      }}
+      className={`w-full flex items-center justify-between gap-2 text-sm font-medium px-3 py-2 rounded-lg border transition-all
+        ${hasHigh
+          ? 'bg-red-900/60 text-red-200 border-red-700/50 hover:bg-red-900/80 hover:border-red-600/70'
+          : 'bg-amber-900/50 text-amber-200 border-amber-700/40 hover:bg-amber-900/70 hover:border-amber-600/60'}`}
+    >
+      <span className="flex items-center gap-2">
+        <span aria-hidden="true">{hasHigh ? '⚠' : '△'}</span>
+        {interactions.length} Documented Interaction{interactions.length !== 1 ? 's' : ''}
+      </span>
+      <span aria-hidden="true" className="text-xs transition-transform duration-200 hover:translate-x-1">→</span>
+    </button>
   );
 };
 
@@ -165,8 +142,8 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
           </div>
         </div>
 
-        {/* Interaction badge with popover */}
-        <InteractionAccordion interactions={interactions} />
+        {/* Interaction badge link */}
+        <InteractionLink interactions={interactions} substanceName={sub.name} />
       </div>
 
       {/* CTA button — blue */}
@@ -273,8 +250,8 @@ const SubstanceCatalog: React.FC = () => {
             </p>
           )}
 
-          {/* Grid — max 3 columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
+          {/* Grid — max 4 columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 pb-20">
             {filteredSubstances.length > 0
               ? filteredSubstances.map(sub => (
                 <SubstanceCard key={sub.id} sub={sub} />
