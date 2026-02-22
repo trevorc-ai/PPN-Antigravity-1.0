@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Brain, Save, CheckCircle, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import { Brain, Save, CheckCircle, ChevronLeft, ChevronRight, LogOut, Info } from 'lucide-react';
+import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import { generateBaselineNarrative, NarrativeInput } from '../../services/narrativeGenerator';
 import { NarrativeViewer } from '../narrative/NarrativeViewer';
 
@@ -273,7 +274,13 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             {/* ── Section 1: Psychometric Scores ───────────────────────── */}
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-base font-bold text-slate-300">Psychometric Scores <span className="text-slate-500 font-normal text-sm ml-1">at least one required</span></h3>
+                    <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
+                        Psychometric Scores
+                        <AdvancedTooltip content="Total composite scores from standardized assessments. PHQ-9 screens for depression severity (0–27), GAD-7 for anxiety (0–21), ACE for adverse childhood experiences (0–10), PCL-5 for PTSD symptom severity (0–80). At least one score is required to save." tier="standard">
+                            <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About psychometric scores" />
+                        </AdvancedTooltip>
+                        <span className="text-slate-600 font-normal text-sm ml-0.5">at least one required</span>
+                    </h3>
                     {lastSaved && (
                         <span className="text-xs text-slate-500">
                             Saved {lastSaved.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
@@ -290,13 +297,18 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
 
             {/* ── Section 2: Treatment Expectancy ──────────────────────── */}
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
-                <h3 className="text-base font-bold text-slate-300">Treatment Expectancy</h3>
+                <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
+                    Treatment Expectancy
+                    <AdvancedTooltip content="The patient's belief that this treatment will be effective. Higher expectancy is a positive prognostic factor — research shows it independently improves outcomes. Scores ≥70 indicate high confidence. Scores below 40 suggest discussing realistic expectations and addressing ambivalence before proceeding." tier="standard">
+                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About treatment expectancy" />
+                    </AdvancedTooltip>
+                </h3>
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <label htmlFor="expectancy" className="text-xs font-black text-slate-400 uppercase tracking-widest">
                             Belief in Treatment
                         </label>
-                        <span className="text-2xl font-black text-slate-300">{data.setSetting.treatment_expectancy}</span>
+                        <span className="text-2xl font-black text-slate-400">{data.setSetting.treatment_expectancy}</span>
                     </div>
                     <input
                         id="expectancy"
@@ -318,8 +330,12 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
 
             {/* ── Section 3: Baseline Physiology (optional, 3-col) ─────── */}
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
-                <h3 className="text-base font-bold text-slate-300">
-                    Baseline Physiology <span className="text-slate-500 font-normal text-sm ml-1">optional</span>
+                <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
+                    Baseline Physiology
+                    <AdvancedTooltip content="Optional pre-session physiological readings. Heart Rate Variability (HRV in ms) reflects autonomic nervous system state — higher values indicate parasympathetic dominance and readiness. Systolic and diastolic blood pressure document baseline cardiovascular status. These measurements are not required to save." tier="standard">
+                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About baseline physiology" />
+                    </AdvancedTooltip>
+                    <span className="text-slate-600 font-normal text-sm ml-0.5">optional</span>
                 </h3>
                 {/* Number inputs — tablet opens numeric keypad, no scroll, precise entry */}
                 <div className="grid grid-cols-3 gap-3">
@@ -331,8 +347,12 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
 
             {/* ── Section 4: Clinical Observations (optional) ──────────── */}
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-4">
-                <h3 className="text-base font-bold text-slate-300">
-                    Clinical Observations <span className="text-slate-500 font-normal text-sm ml-1">optional</span>
+                <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
+                    Clinical Observations
+                    <AdvancedTooltip content="Clinician-rated impressions of the patient at this session. These observations supplement standardised scale scores and inform session readiness decisions. Motivation, support system strength, and prior experience with psychedelics are key predictors of treatment outcomes." tier="standard">
+                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About clinical observations" />
+                    </AdvancedTooltip>
+                    <span className="text-slate-600 font-normal text-sm ml-0.5">optional</span>
                 </h3>
 
                 {([
