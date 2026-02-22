@@ -46,103 +46,110 @@ export interface PatientBenchmarkData {
  * Each requirement = 20 points (5 × 20 = 100%)
  */
 export const calculateBenchmarkReadiness = (
-    patient: PatientBenchmarkData
+    patient: PatientBenchmarkData,
+    enabledFeatures?: string[] // Optional array of form IDs from ProtocolContext
 ): BenchmarkReadinessResult => {
     let score = 0;
     const requirements: BenchmarkRequirement[] = [];
 
-    // Requirement 1: Baseline outcome measure
-    if (patient.hasBaselineAssessment) {
-        score += 20;
-        requirements.push({
-            name: 'Baseline outcome measure',
-            met: true,
-            form: 'Mental Health Screening',
-            completedAt: patient.baselineAssessmentDate
-        });
-    } else {
-        requirements.push({
-            name: 'Baseline outcome measure',
-            met: false,
-            form: 'Mental Health Screening',
-            action: 'Complete Phase 1 baseline assessment'
-        });
+    // Requirement 1: Baseline outcome measure (Mental Health Screening)
+    if (!enabledFeatures || enabledFeatures.includes('mental-health')) {
+        if (patient.hasBaselineAssessment) {
+            requirements.push({
+                name: 'Baseline outcome measure',
+                met: true,
+                form: 'Mental Health Screening',
+                completedAt: patient.baselineAssessmentDate
+            });
+        } else {
+            requirements.push({
+                name: 'Baseline outcome measure',
+                met: false,
+                form: 'Mental Health Screening',
+                action: 'Complete Phase 1 baseline assessment'
+            });
+        }
     }
 
-    // Requirement 2: Follow-up timepoint
-    if (patient.hasFollowUpAssessment) {
-        score += 20;
-        requirements.push({
-            name: 'Follow-up timepoint',
-            met: true,
-            form: 'Longitudinal Assessment',
-            completedAt: patient.followUpAssessmentDate
-        });
-    } else {
-        requirements.push({
-            name: 'Follow-up timepoint',
-            met: false,
-            form: 'Longitudinal Assessment',
-            action: 'Schedule 6-week follow-up assessment'
-        });
+    // Requirement 2: Follow-up timepoint (Longitudinal Assessment)
+    if (!enabledFeatures || enabledFeatures.includes('longitudinal-assessment')) {
+        if (patient.hasFollowUpAssessment) {
+            requirements.push({
+                name: 'Follow-up timepoint',
+                met: true,
+                form: 'Longitudinal Assessment',
+                completedAt: patient.followUpAssessmentDate
+            });
+        } else {
+            requirements.push({
+                name: 'Follow-up timepoint',
+                met: false,
+                form: 'Longitudinal Assessment',
+                action: 'Schedule 6-week follow-up assessment'
+            });
+        }
     }
 
-    // Requirement 3: Coded exposure record
-    if (patient.hasDosingProtocol) {
-        score += 20;
-        requirements.push({
-            name: 'Coded exposure record',
-            met: true,
-            form: 'Dosing Protocol',
-            completedAt: patient.dosingProtocolDate
-        });
-    } else {
-        requirements.push({
-            name: 'Coded exposure record',
-            met: false,
-            form: 'Dosing Protocol',
-            action: 'Complete dosing session protocol'
-        });
+    // Requirement 3: Coded exposure record (Dosing Protocol)
+    if (!enabledFeatures || enabledFeatures.includes('dosing-protocol')) {
+        if (patient.hasDosingProtocol) {
+            requirements.push({
+                name: 'Coded exposure record',
+                met: true,
+                form: 'Dosing Protocol',
+                completedAt: patient.dosingProtocolDate
+            });
+        } else {
+            requirements.push({
+                name: 'Coded exposure record',
+                met: false,
+                form: 'Dosing Protocol',
+                action: 'Complete dosing session protocol'
+            });
+        }
     }
 
-    // Requirement 4: Coded setting/support
-    if (patient.hasSetAndSetting) {
-        score += 20;
-        requirements.push({
-            name: 'Coded setting/support',
-            met: true,
-            form: 'Set & Setting',
-            completedAt: patient.setAndSettingDate
-        });
-    } else {
-        requirements.push({
-            name: 'Coded setting/support',
-            met: false,
-            form: 'Set & Setting',
-            action: 'Complete set & setting assessment'
-        });
+    // Requirement 4: Coded setting/support (Set & Setting)
+    if (!enabledFeatures || enabledFeatures.includes('set-and-setting')) {
+        if (patient.hasSetAndSetting) {
+            requirements.push({
+                name: 'Coded setting/support',
+                met: true,
+                form: 'Set & Setting',
+                completedAt: patient.setAndSettingDate
+            });
+        } else {
+            requirements.push({
+                name: 'Coded setting/support',
+                met: false,
+                form: 'Set & Setting',
+                action: 'Complete set & setting assessment'
+            });
+        }
     }
 
-    // Requirement 5: Safety event capture
-    if (patient.hasSafetyCheck) {
-        score += 20;
-        requirements.push({
-            name: 'Safety event capture',
-            met: true,
-            form: 'Structured Safety Check',
-            completedAt: patient.safetyCheckDate
-        });
-    } else {
-        requirements.push({
-            name: 'Safety event capture',
-            met: false,
-            form: 'Structured Safety Check',
-            action: 'Complete safety check'
-        });
+    // Requirement 5: Safety event capture (Structured Safety Check)
+    if (!enabledFeatures || enabledFeatures.includes('structured-safety')) {
+        if (patient.hasSafetyCheck) {
+            requirements.push({
+                name: 'Safety event capture',
+                met: true,
+                form: 'Structured Safety Check',
+                completedAt: patient.safetyCheckDate
+            });
+        } else {
+            requirements.push({
+                name: 'Safety event capture',
+                met: false,
+                form: 'Structured Safety Check',
+                action: 'Complete safety check'
+            });
+        }
     }
 
     const metCount = requirements.filter(r => r.met).length;
     const totalCount = requirements.length;
+    score = totalCount === 0 ? 100 : Math.round((metCount / totalCount) * 100);
 
     return {
         score,

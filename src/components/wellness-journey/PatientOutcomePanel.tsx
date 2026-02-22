@@ -4,8 +4,9 @@ import {
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer,
 } from 'recharts';
-import { ArrowRight, CheckCircle2, AlertTriangle, User } from 'lucide-react';
+import { ArrowRight, CheckCircle2, AlertTriangle, User, ShieldOff } from 'lucide-react';
 import { getPatientOutcomeData, type PatientOutcomeData, type PatientTimepoint } from '../../services/patientOutcomes';
+import { useProtocol } from '../../contexts/ProtocolContext';
 
 interface PatientOutcomePanelProps {
     patientId: string;
@@ -58,8 +59,11 @@ const LegendItem: FC<{ color: string; solid?: boolean; dashed?: boolean; label: 
 export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
     patientId, sessionId, onOpenDosingProtocol, onGenerateDischarge
 }) => {
+    const { config } = useProtocol();
     const [data, setData] = useState<PatientOutcomeData | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const isTrackingEnabled = config.enabledFeatures.includes('mental-health') && config.enabledFeatures.includes('longitudinal-assessment');
 
     useEffect(() => {
         setLoading(true);
@@ -102,6 +106,18 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
                     <div className="lg:col-span-2 h-64 bg-slate-800/50 rounded-xl"></div>
                     <div className="h-64 bg-slate-800/50 rounded-xl"></div>
                 </div>
+            </div>
+        );
+    }
+
+    if (!isTrackingEnabled) {
+        return (
+            <div className="w-full bg-slate-900/40 border border-slate-700/50 rounded-2xl p-8 text-center flex flex-col items-center justify-center">
+                <ShieldOff className="w-12 h-12 text-slate-600 mb-4" />
+                <h3 className="text-lg font-bold text-slate-300 mb-2">Clinical Tracking Disabled</h3>
+                <p className="text-sm text-slate-500 max-w-md">
+                    Numerical outcome tracking (PHQ-9/GAD-7) is currently disabled under the {config.protocolType} protocol setting.
+                </p>
             </div>
         );
     }

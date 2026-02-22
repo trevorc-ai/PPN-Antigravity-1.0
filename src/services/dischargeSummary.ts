@@ -10,16 +10,18 @@ export interface DischargeSummaryData {
     substanceName: string;
     substanceDose: string;
     protocolName: string;
-    baseline: {
+    baseline?: {
         phq9: number;
         gad7: number;
         caps5: number;
     };
-    final: {
+    final?: {
         phq9: number;
         gad7: number;
         caps5: number;
     };
+    clinicalMetricsEnabled?: boolean;
+    vitalsEnabled?: boolean;
     meq30Peak: number | null;
     responseAchieved: 'YES (>=50% reduction)' | 'PARTIAL' | 'NO';
     remissionAchieved: 'YES' | 'NO';
@@ -62,10 +64,14 @@ export function generateDischargeSummaryText(data: DischargeSummaryData): string
         `Sessions:    ${data.dosingSessionsCount + data.integrationSessionsCount}`,
         '',
         'OUTCOME METRICS',
-        '                    Baseline    Final       Change',
-        `PHQ-9               ${data.baseline.phq9.toString().padEnd(12)}${data.final.phq9.toString().padEnd(12)}${delta(data.baseline.phq9, data.final.phq9)} pts (${pct(data.baseline.phq9, data.final.phq9)})`,
-        `GAD-7               ${data.baseline.gad7.toString().padEnd(12)}${data.final.gad7.toString().padEnd(12)}${delta(data.baseline.gad7, data.final.gad7)} pts (${pct(data.baseline.gad7, data.final.gad7)})`,
-        `CAPS-5              ${data.baseline.caps5.toString().padEnd(12)}${data.final.caps5.toString().padEnd(12)}${delta(data.baseline.caps5, data.final.caps5)} pts (${pct(data.baseline.caps5, data.final.caps5)})`,
+        data.clinicalMetricsEnabled === false || !data.baseline || !data.final
+            ? '  Clinical outcome tracking (PHQ-9/GAD-7/CAPS-5) not utilized under this session protocol.'
+            : [
+                '                    Baseline    Final       Change',
+                `PHQ-9               ${data.baseline.phq9.toString().padEnd(12)}${data.final.phq9.toString().padEnd(12)}${delta(data.baseline.phq9, data.final.phq9)} pts (${pct(data.baseline.phq9, data.final.phq9)})`,
+                `GAD-7               ${data.baseline.gad7.toString().padEnd(12)}${data.final.gad7.toString().padEnd(12)}${delta(data.baseline.gad7, data.final.gad7)} pts (${pct(data.baseline.gad7, data.final.gad7)})`,
+                `CAPS-5              ${data.baseline.caps5.toString().padEnd(12)}${data.final.caps5.toString().padEnd(12)}${delta(data.baseline.caps5, data.final.caps5)} pts (${pct(data.baseline.caps5, data.final.caps5)})`
+            ].join('\n'),
         `MEQ-30 (Peak)       —           ${data.meq30Peak ? `${data.meq30Peak}/100` : '—'}         —`,
         '',
         `Response achieved:   ${data.responseAchieved}`,
