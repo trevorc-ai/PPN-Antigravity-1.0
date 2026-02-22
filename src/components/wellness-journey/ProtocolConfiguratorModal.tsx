@@ -235,9 +235,9 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                                         if (feat.phase === 3) return { box: 'bg-slate-800 border-slate-500 group-hover:bg-slate-800/80 group-hover:border-teal-400', txt: 'text-slate-400 group-hover:text-teal-200' };
                                                         return { box: '', txt: '' };
                                                     }
-                                                    if (feat.phase === 1) return { box: 'bg-indigo-500 text-white border-indigo-500 shadow-indigo-500/20 shadow-md', txt: 'text-indigo-100 font-medium' };
-                                                    if (feat.phase === 2) return { box: 'bg-amber-500 text-white border-amber-500 shadow-amber-500/20 shadow-md', txt: 'text-amber-100 font-medium' };
-                                                    if (feat.phase === 3) return { box: 'bg-teal-500 text-white border-teal-500 shadow-teal-500/20 shadow-md', txt: 'text-teal-100 font-medium' };
+                                                    if (feat.phase === 1) return { box: 'bg-indigo-700/50 text-indigo-100 border-indigo-500/50 shadow-indigo-500/10 shadow-sm', txt: 'text-indigo-100 font-medium' };
+                                                    if (feat.phase === 2) return { box: 'bg-amber-700/50 text-amber-100 border-amber-500/50 shadow-amber-500/10 shadow-sm', txt: 'text-amber-100 font-medium' };
+                                                    if (feat.phase === 3) return { box: 'bg-teal-700/50 text-teal-100 border-teal-500/50 shadow-teal-500/10 shadow-sm', txt: 'text-teal-100 font-medium' };
                                                     return { box: '', txt: '' };
                                                 };
                                                 const theme = getPhaseTheme();
@@ -279,10 +279,10 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 <div className="flex justify-end gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
                     <button
                         onClick={handleSave}
-                        className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg active:scale-95 ${selectedId === 'clinical' ? 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-indigo-500/20' :
-                                selectedId === 'ceremonial' ? 'bg-amber-500 hover:bg-amber-400 text-slate-900 shadow-amber-500/20' :
-                                    selectedId === 'custom' ? 'bg-teal-500 hover:bg-teal-400 text-white shadow-teal-500/20' :
-                                        'bg-white text-slate-900 hover:bg-slate-200'
+                        className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg border active:scale-95 ${selectedId === 'clinical' ? 'bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-indigo-500/10' :
+                            selectedId === 'ceremonial' ? 'bg-amber-700/50 hover:bg-amber-600/60 border-amber-500/50 text-amber-100 shadow-amber-500/10' :
+                                selectedId === 'custom' ? 'bg-teal-700/50 hover:bg-teal-600/60 border-teal-500/50 text-teal-100 shadow-teal-500/10' :
+                                    'bg-slate-800/60 border-slate-700/50 text-slate-300 hover:bg-slate-700/60'
                             }`}
                     >
                         Start Session
