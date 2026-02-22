@@ -24,6 +24,9 @@ import {
     type BenchmarkCohort,
     type BenchmarkSummary,
 } from '../../lib/benchmarks';
+import { useDataContributionStatus } from '../../hooks/useDataContributionStatus';
+import { Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -121,10 +124,15 @@ export default function GlobalBenchmarkIntelligence() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [expanded, setExpanded] = useState<string | null>(null);
+    const { isContributor, outcomesNeeded, isLoading: statusLoading } = useDataContributionStatus();
 
     useEffect(() => {
         let cancelled = false;
         async function load() {
+            if (!isContributor || statusLoading) {
+                if (!statusLoading) setLoading(false);
+                return;
+            }
             try {
                 setLoading(true);
                 // Fetch in parallel
@@ -166,7 +174,7 @@ export default function GlobalBenchmarkIntelligence() {
         }
         load();
         return () => { cancelled = true; };
-    }, []);
+    }, [isContributor, statusLoading]);
 
     // Build bar chart data from cohorts that have both effect size and n
     const barData: EffectSizeBar[] = cohorts
@@ -181,12 +189,33 @@ export default function GlobalBenchmarkIntelligence() {
         }))
         .slice(0, 8);  // max 8 bars for readability
 
-    if (loading) {
+    if (loading || statusLoading) {
         return (
             <div className="space-y-4">
                 {[1, 2, 3].map(i => (
                     <div key={i} className="animate-pulse bg-slate-800/40 rounded-2xl h-24" />
                 ))}
+            </div>
+        );
+    }
+
+    if (!isContributor) {
+        return (
+            <div className="bg-[#0a0c12]/60 border border-slate-800/50 rounded-2xl p-8 text-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="mx-auto w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
+                    <Lock className="w-8 h-8 text-indigo-400" />
+                </div>
+                <h3 className="text-xl font-black text-white mb-3 tracking-wide">Market Benchmarks Locked</h3>
+                <p className="text-slate-400 text-sm max-w-md mx-auto mb-6 leading-relaxed">
+                    The PPN Research Alliance operates on a "Give-to-Get" model. Submit <span className="text-indigo-400 font-bold">{outcomesNeeded} more</span> valid clinical outcome{outcomesNeeded !== 1 ? 's' : ''} to unlock global benchmark data.
+                </p>
+                <Link
+                    to="/wellness-journey"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-colors shadow-lg shadow-indigo-500/20"
+                >
+                    Record a Session
+                </Link>
             </div>
         );
     }
