@@ -6,6 +6,11 @@ import { Section } from '../components/layouts/Section';
 import { exportAllData } from '../services/exportService';
 import { Download } from 'lucide-react';
 
+const formatTitleCase = (str: string) => {
+  if (!str) return str;
+  return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+};
+
 const AuditLogs: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [siteFilter, setSiteFilter] = useState('All Sites');
@@ -44,7 +49,7 @@ const AuditLogs: React.FC = () => {
   const getActionColor = (action: string) => {
     const act = action.toUpperCase();
     if (act.includes('CRITICAL') || act.includes('DELETE') || act.includes('FAILURE') || act.includes('ALERT') || act.includes('SAFETY') || act.includes('CONTRAINDICATION') || act.includes('ADVERSE')) {
-      return 'text-rose-500 font-bold shadow-rose-500/10';
+      return 'text-rose-400 font-bold shadow-rose-400/10';
     }
     if (act.includes('UPDATE') || act.includes('SUCCESS') || act.includes('SYNC') || act.includes('VERIFIED') || act.includes('COMPLETE') || act.includes('APPROVED')) {
       return 'text-emerald-400 font-bold';
@@ -143,8 +148,8 @@ const AuditLogs: React.FC = () => {
             <span className="material-symbols-outlined text-primary text-5xl font-black">history_edu</span>
             <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-400">Audit Logs</h1>
           </div>
-          <p className="text-slate-400 text-sm font-bold tracking-[0.2em] uppercase">
-            Activity log for all clinical and system events
+          <p className="text-slate-300 text-base font-medium">
+            Activity Log for All Clinical and System Events
           </p>
         </div>
 
@@ -153,9 +158,9 @@ const AuditLogs: React.FC = () => {
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`px-8 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${activeFilter === filter
-                ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-400 shadow-lg shadow-primary/20'
-                : 'text-slate-4000 hover:text-slate-400'
+              className={`px-8 py-3 rounded-xl text-sm font-bold transition-all ${activeFilter === filter
+                ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-200 shadow-lg shadow-primary/20'
+                : 'text-slate-400 hover:text-slate-300'
                 }`}
             >
               {filter}
@@ -168,7 +173,7 @@ const AuditLogs: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-6 sm:px-0">
         {/* Site Filter */}
         <div className="space-y-2">
-          <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Site</label>
+          <label className="text-sm font-bold text-slate-400">Site</label>
           <select
             value={siteFilter}
             onChange={(e) => setSiteFilter(e.target.value)}
@@ -182,7 +187,7 @@ const AuditLogs: React.FC = () => {
 
         {/* Actor Filter */}
         <div className="space-y-2">
-          <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Practitioner</label>
+          <label className="text-sm font-bold text-slate-400">Practitioner</label>
           <select
             value={actorFilter}
             onChange={(e) => setActorFilter(e.target.value)}
@@ -196,7 +201,7 @@ const AuditLogs: React.FC = () => {
 
         {/* Risk Level Filter */}
         <div className="space-y-2">
-          <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Risk Level</label>
+          <label className="text-sm font-bold text-slate-400">Risk Level</label>
           <select
             value={riskFilter}
             onChange={(e) => setRiskFilter(e.target.value)}
@@ -210,7 +215,7 @@ const AuditLogs: React.FC = () => {
 
         {/* Status Filter */}
         <div className="space-y-2">
-          <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Status</label>
+          <label className="text-sm font-bold text-slate-400">Status</label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -228,7 +233,7 @@ const AuditLogs: React.FC = () => {
           <div className="overflow-x-auto custom-scrollbar flex-1">
             <table className="w-full text-left border-collapse min-w-[1400px]">
               <thead className="bg-black/40 sticky top-0 z-10 border-b border-slate-800">
-                <tr className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">
+                <tr className="text-sm font-bold text-slate-300">
                   <th
                     className="px-3 py-2 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                     onClick={() => handleSort('timestamp')}
@@ -278,46 +283,46 @@ const AuditLogs: React.FC = () => {
                   return (
                     <tr key={log.id} className={`${rowBg} transition-all group border-b border-slate-800/30`}>
                       <td className="px-3 py-1.5">
-                        <span className="text-xs font-mono text-slate-400">{log.timestamp.split(' ')[0]}</span>
+                        <span className="text-xs font-mono text-slate-300">{log.timestamp.split(' ')[0]}</span>
                       </td>
                       <td className="px-3 py-1.5">
-                        <span className="text-[11px] font-bold text-slate-400">{log.gender || 'N/A'}</span>
+                        <span className="text-xs font-bold text-slate-300">{log.gender || 'N/A'}</span>
                       </td>
                       <td className="px-3 py-1.5">
-                        <span className="text-[11px] font-bold text-primary">{log.substance || 'N/A'}</span>
+                        <span className="text-xs font-bold text-blue-400">{log.substance || 'N/A'}</span>
                       </td>
                       <td className="px-3 py-1.5">
-                        <span className="text-[11px] font-bold text-slate-400">{log.age || 'N/A'}</span>
+                        <span className="text-xs font-bold text-slate-300">{log.age || 'N/A'}</span>
                       </td>
                       <td className="px-3 py-1.5">
-                        <span className="text-[11px] font-bold text-slate-400">{log.weightRange || 'N/A'}</span>
+                        <span className="text-xs font-bold text-slate-300">{log.weightRange || 'N/A'}</span>
                       </td>
                       <td className="px-3 py-1.5">
                         <div className="flex flex-col gap-0.5">
-                          <span className={`text-[13px] tracking-tight leading-none ${getActionColor(log.action)}`}>
-                            {log.action}
+                          <span className={`text-sm tracking-tight leading-none ${getActionColor(log.action)}`}>
+                            {formatTitleCase(log.action)}
                           </span>
-                          <span className="text-[11px] text-slate-500 font-medium italic tracking-tight line-clamp-1">
+                          <span className="text-xs text-slate-400 font-medium italic tracking-tight line-clamp-1">
                             "{log.details}"
                           </span>
                         </div>
                       </td>
                       <td className="px-3 py-1.5">
                         <div className="flex items-center gap-2">
-                          <div className={`size-1.5 rounded-full ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' :
-                            log.status === 'ALERT_TRIGGERED' ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e]' :
-                              'bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_8px_#2b74f3]'
+                          <div className={`size-2 rounded-full ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' :
+                            log.status === 'ALERT_TRIGGERED' ? 'bg-rose-400 shadow-[0_0_8px_#fb7185]' :
+                              'bg-blue-400 shadow-[0_0_8px_#60a5fa]'
                             }`}></div>
-                          <span className={`text-[10px] font-black uppercase tracking-widest ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'text-emerald-500' :
-                            log.status === 'ALERT_TRIGGERED' ? 'text-rose-500' :
-                              'text-primary'
+                          <span className={`text-xs font-bold ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'text-emerald-400' :
+                            log.status === 'ALERT_TRIGGERED' ? 'text-rose-400' :
+                              'text-blue-400'
                             }`}>
-                            {log.status}
+                            {formatTitleCase(log.status)}
                           </span>
                         </div>
                       </td>
                       <td className="px-3 py-1.5 text-right">
-                        <span className="px-1.5 py-0.5 bg-black/40 rounded border border-slate-800 font-mono text-[9px] text-slate-600 font-bold group-hover:border-primary/50 group-hover:text-primary transition-all">
+                        <span className="px-1.5 py-0.5 bg-black/40 rounded border border-slate-700 font-mono text-xs text-slate-400 font-bold group-hover:border-blue-400/50 group-hover:text-blue-400 transition-all">
                           {log.hash.substring(0, 16)}...
                         </span>
                       </td>
@@ -330,21 +335,21 @@ const AuditLogs: React.FC = () => {
             {filteredLogs.length === 0 && (
               <div className="py-40 text-center space-y-6">
                 <span className="material-symbols-outlined text-7xl text-slate-800">search_off</span>
-                <p className="text-slate-600 font-black uppercase tracking-[0.4em] text-lg">No Matching Ledger Entries Found</p>
+                <p className="text-slate-400 font-bold text-lg">No Matching Ledger Entries Found</p>
               </div>
             )}
           </div>
 
           <div className="px-10 py-8 border-t border-slate-800 bg-black/20 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">
-              {filteredLogs.length} of {AUDIT_LOGS.length} records
+            <span className="text-sm font-bold text-slate-400">
+              {filteredLogs.length} of {AUDIT_LOGS.length} Records
             </span>
 
             <div className="flex gap-4">
               <button
                 onClick={handleExport}
                 disabled={isExporting}
-                className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-2xl text-xs font-black uppercase tracking-widest transition-all hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-3 bg-slate-900 border border-slate-700 text-slate-300 hover:text-slate-200 rounded-2xl text-sm font-bold transition-all hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isExporting ? (
                   <>

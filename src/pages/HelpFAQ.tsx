@@ -112,27 +112,27 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
   return (
     <div className="w-full">
       <div className="flex flex-col gap-12">
-        {/* Topic Categories Section */}
-        <section>
-          <h2 className="text-2xl font-black text-[#A8B5D1] tracking-tight mb-8">Topic Categories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section className="mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {categories.map((cat, idx) => (
               <div
                 key={idx}
                 onClick={() => handleCategoryClick(cat.title)}
-                className={`bg-slate-900/40 backdrop-blur-xl border p-8 rounded-3xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 ${selectedCategory === cat.title
-                  ? 'border-indigo-500 shadow-[0_0_30px_rgba(99,102,241,0.15)] bg-slate-800/60'
-                  : 'border-slate-800 hover:border-slate-600 hover:shadow-xl'
+                className={`flex items-start gap-4 p-5 rounded-2xl border transition-all cursor-pointer group ${selectedCategory === cat.title
+                  ? 'bg-indigo-500/10 border-indigo-500/50 shadow-md'
+                  : 'bg-slate-900/40 border-slate-800 hover:border-slate-600 hover:bg-slate-800/40'
                   }`}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 border ${selectedCategory === cat.title ? 'bg-indigo-500/20 border-indigo-500/30 shadow-inner' : 'bg-slate-800/50 border-slate-700/50 group-hover:bg-indigo-500/10 group-hover:border-indigo-500/20'
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors ${selectedCategory === cat.title ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700 group-hover:text-indigo-400'
                   }`}>
-                  <div className={selectedCategory === cat.title ? 'text-indigo-400' : 'text-slate-400 group-hover:text-indigo-400 transition-colors'}>
-                    {cat.icon}
-                  </div>
+                  {cat.icon}
                 </div>
-                <h3 className="text-[#A8B5D1] font-black tracking-tight text-lg mb-3 break-words hyphens-auto">{cat.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed font-medium group-hover:text-slate-300 transition-colors">{cat.desc}</p>
+                <div>
+                  <h3 className={`font-bold text-base mb-1 transition-colors ${selectedCategory === cat.title ? 'text-indigo-300' : 'text-slate-300 group-hover:text-[#A8B5D1]'}`}>
+                    {cat.title}
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-snug">{cat.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -172,7 +172,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                     {activeFAQ === idx && (
                       <div className="px-8 pb-8 text-sm text-slate-300 leading-relaxed border-t border-slate-800/50 pt-6">
                         <div className="mb-4">
-                          <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
+                          <span className="text-xs font-black text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
                             {faq.category}
                           </span>
                         </div>
@@ -250,7 +250,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               </div>
               <div className="flex flex-col">
                 <div className="text-sm font-black text-[#A8B5D1] tracking-tight">All Systems Operational</div>
-                <div className="text-[10px] font-black text-slate-500 mt-1 uppercase tracking-widest flex items-center gap-2">
+                <div className="text-xs font-black text-slate-500 mt-1 uppercase tracking-widest flex items-center gap-2">
                   <span>Latency: <span className="text-slate-400">24ms</span></span>
                   <span className="w-1 h-1 rounded-full bg-slate-700" />
                   <span>Updated: <span className="text-slate-400">Just now</span></span>

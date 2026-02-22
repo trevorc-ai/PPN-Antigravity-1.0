@@ -147,11 +147,11 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence
               </div>
-              <h1 className="text-5xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-300 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
+              <h1 className="text-4xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-300 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
                 Elevate your practice.
-                <div className="h-8 sm:h-12" />
-                <span className="text-slate-300 text-3xl sm:text-5xl lg:text-6xl block mt-2 leading-snug">
-                  The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span><br className="hidden sm:block" />
+                <div className="h-4 sm:h-12" />
+                <span className="text-slate-300 text-2xl sm:text-5xl lg:text-6xl block mt-2 leading-snug">
+                  The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span> <br className="hidden sm:block" />
                   for psychedelic professionals.
                 </span>
               </h1>
@@ -245,7 +245,7 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0, rotateY: 15, rotateX: 5, x: 50 }}
               animate={{ opacity: 1, rotateY: -5, rotateX: 2, x: 0 }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="w-[120%] lg:w-[130%] max-w-[800px] relative z-10 rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-indigo-500/20 bg-[#0A0F1C]/80 backdrop-blur-3xl"
+              className="w-full md:w-[120%] lg:w-[130%] max-w-[800px] relative z-10 rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-indigo-500/20 bg-[#0A0F1C]/80 backdrop-blur-3xl"
               style={{ transformStyle: 'preserve-3d' }}
             >
               {/* Premium Safari Header */}
@@ -281,7 +281,7 @@ const Landing: React.FC = () => {
                 </div>
 
                 {/* KPI Glass Cards */}
-                <div className="grid grid-cols-3 gap-5 relative z-10">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 relative z-10">
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Network Efficacy</span>
                     <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter group-hover:text-indigo-400 transition-colors">+42<span className="text-xl">%</span></span>
@@ -528,18 +528,18 @@ const Landing: React.FC = () => {
               <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[300px]">
 
                 {/* Incoming Data Nodes */}
-                <div className="w-full grid grid-cols-3 gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
-                  <div className="px-5 py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-xl backdrop-blur-xl">
-                    <span className="material-symbols-outlined text-emerald-400 text-2xl drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">vital_signs</span>
-                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Vitals</span>
+                <div className="w-full grid grid-cols-3 gap-2 sm:gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
+                  <div className="px-2 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-2 sm:gap-3 shadow-xl backdrop-blur-xl">
+                    <span className="material-symbols-outlined text-emerald-400 text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">vital_signs</span>
+                    <span className="text-[9px] sm:text-[10px] font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Vitals</span>
                   </div>
-                  <div className="px-5 py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-xl backdrop-blur-xl -translate-y-6 group-hover:-translate-y-8 transition-transform duration-1000">
-                    <span className="material-symbols-outlined text-indigo-400 text-2xl drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]">clinical_notes</span>
-                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Protocols</span>
+                  <div className="px-2 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-2 sm:gap-3 shadow-xl backdrop-blur-xl -translate-y-4 sm:-translate-y-6 group-hover:-translate-y-6 sm:group-hover:-translate-y-8 transition-transform duration-1000">
+                    <span className="material-symbols-outlined text-indigo-400 text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]">clinical_notes</span>
+                    <span className="text-[9px] sm:text-[10px] font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Protocols</span>
                   </div>
-                  <div className="px-5 py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-xl backdrop-blur-xl">
-                    <span className="material-symbols-outlined text-purple-400 text-2xl drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">psychiatry</span>
-                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Outcomes</span>
+                  <div className="px-2 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-2 sm:gap-3 shadow-xl backdrop-blur-xl">
+                    <span className="material-symbols-outlined text-purple-400 text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">psychiatry</span>
+                    <span className="text-[9px] sm:text-[10px] font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Outcomes</span>
                   </div>
                 </div>
 
@@ -553,15 +553,15 @@ const Landing: React.FC = () => {
                 </div>
 
                 {/* Final Output Node */}
-                <div className="w-full max-w-sm bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-6 flex items-center justify-between mt-4 group-hover:translate-y-2 group-hover:bg-indigo-900/30 group-hover:border-indigo-500/50 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_0_40px_rgba(99,102,241,0.1)] backdrop-blur-xl">
+                <div className="w-full max-w-sm bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-4 sm:p-6 flex items-center justify-between mt-4 group-hover:translate-y-2 group-hover:bg-indigo-900/30 group-hover:border-indigo-500/50 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_0_40px_rgba(99,102,241,0.1)] backdrop-blur-xl">
                   <div className="flex flex-col gap-1">
-                    <span className="text-indigo-100 font-black tracking-tighter text-xl">Unified Record</span>
+                    <span className="text-indigo-100 font-black tracking-tighter text-lg sm:text-xl">Unified Record</span>
                     <AdvancedTooltip
                       tier="guide"
                       type="clinical"
                       side="bottom"
                       title="Phantom Shield: Zero-PHI"
-                      width="w-[480px]"
+                      width="w-[85vw] sm:w-[480px]"
                       content={
                         <div className="space-y-4">
                           <p className="text-slate-300 leading-relaxed font-normal">
@@ -701,8 +701,10 @@ const Landing: React.FC = () => {
                       <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
                     </div>
                   </div>
-                  <div className="bg-[#0a1628] pointer-events-none p-4">
-                    <SafetyRiskMatrixDemo />
+                  <div className="bg-[#0a1628] p-4 overflow-x-auto">
+                    <div className="min-w-[500px] pointer-events-none">
+                      <SafetyRiskMatrixDemo />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -771,8 +773,10 @@ const Landing: React.FC = () => {
                       <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
                     </div>
                   </div>
-                  <div className="bg-[#0a1628] pointer-events-none p-4">
-                    <ClinicRadarDemo />
+                  <div className="bg-[#0a1628] p-4 overflow-x-auto">
+                    <div className="min-w-[500px] pointer-events-none">
+                      <ClinicRadarDemo />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -799,8 +803,10 @@ const Landing: React.FC = () => {
                       <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
                     </div>
                   </div>
-                  <div className="bg-[#0a1628] pointer-events-none p-4">
-                    <PatientJourneyDemo />
+                  <div className="bg-[#0a1628] p-4 overflow-x-auto pb-4">
+                    <div className="min-w-[500px] pointer-events-none">
+                      <PatientJourneyDemo />
+                    </div>
                   </div>
                 </div>
               </div>
