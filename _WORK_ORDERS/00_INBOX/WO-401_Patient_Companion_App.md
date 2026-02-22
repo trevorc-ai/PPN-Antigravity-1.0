@@ -12,7 +12,7 @@ failure_count: 0
 ## CUE Intake Notes
 - **Core Concept**: A secondary, patient-facing application interface explicitly meant for use during Phase 2 (Live Dosing Session).
 - **Primary Function**: Non-verbal, real-time subjective experience logging by the patient on a tablet provided by the practitioner.
-- **Visuals**: Needs passive, calming, ambient visuals ("spherecules") when not actively taking input.
+- **Visuals**: Needs passive, calming, ambient visuals ("spherecules") when not actively taking input. These will utilize perfectly looping media files provided by the user (which can be cropped/segmented as needed) rather than being built from scratch using code/CSS.
 - **Technical Approach**: Handling concurrent state management between practitioner dashboard and patient companion app. Data synchronization does NOT need to be real-time; the companion app can store inputs locally and sync to the main session record after the dose is complete.
 - **Therapeutic Addition**: The "spherecules" visual could tie perfectly into the 4-7-8 (or 4-4-4 box breathing) cadences previously mentioned by PRODDY, actively guiding the patient's breath without needing verbal instruction.
 
