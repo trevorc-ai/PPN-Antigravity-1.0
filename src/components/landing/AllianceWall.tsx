@@ -116,10 +116,10 @@ export default function AllianceWall() {
                         ))}
                     </motion.div>
 
-                    {/* Column 2 - Same Direction but different offset speed */}
+                    {/* Column 2 - Scrolling DOWN */}
                     <motion.div
                         className="hidden md:flex flex-col gap-0"
-                        animate={{ y: [0, -1000] }}
+                        animate={{ y: [-1000, 0] }}
                         transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
                     >
                         {col2.map((quote, idx) => (
