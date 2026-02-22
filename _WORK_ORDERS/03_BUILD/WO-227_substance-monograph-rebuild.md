@@ -1,7 +1,7 @@
 ---
 id: WO-227
-status: 00_INBOX
-owner: PENDING
+status: 03_BUILD
+owner: BUILDER
 priority: P1
 failure_count: 0
 repeat_request: false
