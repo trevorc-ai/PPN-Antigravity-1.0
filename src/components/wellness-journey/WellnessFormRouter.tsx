@@ -373,12 +373,11 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             />;
 
         case 'mental-health':
-            // onComplete = Submit All → advances to next Phase 1 step
-            // onExit = Save & Exit → closes panel only, no advance
             return <MentalHealthScreeningForm
                 patientId={patientId}
                 onComplete={onComplete}
                 onExit={onComplete}
+                onBack={onComplete}
             />;
 
         // ── Phase 2: Dosing Session ───────────────────────────────────────────

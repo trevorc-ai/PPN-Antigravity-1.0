@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Save, CheckCircle, AlertCircle, ChevronRight } from 'lucide-react';
+import { Brain, Save, CheckCircle, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { generateBaselineNarrative, NarrativeInput } from '../../services/narrativeGenerator';
 import { NarrativeViewer } from '../narrative/NarrativeViewer';
 
@@ -7,6 +7,7 @@ interface BaselineAssessmentWizardProps {
     patientId: string;
     onComplete?: (data: WizardData) => void;
     onExit?: () => void;
+    onBack?: () => void;
 }
 
 interface WizardData {
@@ -44,72 +45,59 @@ const MOTIVATION_OPTIONS = ['Low', 'Moderate', 'High', 'Very High'];
 const SUPPORT_OPTIONS = ['None identified', 'Minimal', 'Moderate', 'Strong'];
 const EXPERIENCE_OPTIONS = ['None', 'Minimal (1-2 times)', 'Some (3-5 times)', 'Experienced (6+ times)'];
 
-function validateRange(value: number | null, min: number, max: number, label: string): string | null {
-    if (value === null) return null;
-    if (isNaN(value)) return `${label} must be a number`;
-    if (value < min) return `${label} must be ≥ ${min}`;
-    if (value > max) return `${label} must be ≤ ${max}`;
-    return null;
-}
-
-/** Compact score input for the PHQ-9 / GAD-7 / ACE / PCL-5 row */
-function ScoreInput({
+/** Range dropdown for psychometric scores (PHQ-9 / GAD-7 / ACE / PCL-5) */
+function ScoreSelect({
     id, label, value, onChange, min, max,
 }: {
     id: string; label: string; value: number | null;
     onChange: (v: number | null) => void; min: number; max: number;
 }) {
-    const error = validateRange(value, min, max, label);
+    const options = Array.from({ length: max - min + 1 }, (_, i) => min + i);
     return (
         <div>
             <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
                 {label}
             </label>
-            <input
+            <select
                 id={id}
-                type="text"
-                inputMode="numeric"
-                placeholder={`0–${max}`}
                 value={value ?? ''}
-                onChange={(e) => onChange(e.target.value === '' ? null : parseFloat(e.target.value))}
-                className={`w-full bg-slate-800/60 border rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${error ? 'border-red-500/70' : 'border-slate-700'
-                    }`}
-            />
-            {error
-                ? <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>
-                : <p className="text-xs text-slate-600 mt-1">Range: {min}–{max}</p>
-            }
+                onChange={(e) => onChange(e.target.value === '' ? null : parseInt(e.target.value, 10))}
+                className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+            >
+                <option value="">0–{max}</option>
+                {options.map(v => (
+                    <option key={v} value={v}>{v}</option>
+                ))}
+            </select>
         </div>
     );
 }
 
-/** Compact numeric field for physiology */
-function PhysioInput({
-    id, label, value, onChange, min, max, placeholder,
+/** Range dropdown for physiological measurements */
+function PhysioSelect({
+    id, label, value, onChange, min, max, step, unit,
 }: {
     id: string; label: string; value: number | null;
-    onChange: (v: number | null) => void; min: number; max: number; placeholder: string;
+    onChange: (v: number | null) => void; min: number; max: number; step: number; unit: string;
 }) {
-    const error = validateRange(value, min, max, label);
+    const count = Math.floor((max - min) / step) + 1;
+    const options = Array.from({ length: count }, (_, i) => min + i * step);
     return (
         <div>
             <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
                 {label}
             </label>
-            <input
+            <select
                 id={id}
-                type="text"
-                inputMode="numeric"
-                placeholder={placeholder}
                 value={value ?? ''}
-                onChange={(e) => onChange(e.target.value === '' ? null : parseFloat(e.target.value))}
-                className={`w-full bg-slate-800/60 border rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${error ? 'border-red-500/70' : 'border-slate-700'
-                    }`}
-            />
-            {error
-                ? <p className="text-xs text-red-400 mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{error}</p>
-                : <p className="text-xs text-slate-600 mt-1">Range: {min}–{max}</p>
-            }
+                onChange={(e) => onChange(e.target.value === '' ? null : parseInt(e.target.value, 10))}
+                className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+            >
+                <option value="">—</option>
+                {options.map(v => (
+                    <option key={v} value={v}>{v} {unit}</option>
+                ))}
+            </select>
         </div>
     );
 }
@@ -118,6 +106,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
     patientId,
     onComplete,
     onExit,
+    onBack,
 }) => {
     const [data, setData] = useState<WizardData>(() => {
         try {
@@ -133,7 +122,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
     const [completed, setCompleted] = useState(false);
     const [narrative, setNarrative] = useState<ReturnType<typeof generateBaselineNarrative> | null>(null);
 
-    // Auto-save to localStorage every 30s (not to DB — only explicit Save triggers DB)
+    // Auto-save every 30s
     useEffect(() => {
         const interval = setInterval(() => {
             try {
@@ -183,7 +172,6 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
         setCompleted(true);
         try { localStorage.removeItem(STORAGE_KEY(patientId)); } catch { /* ignore */ }
 
-        // Flash then advance
         setSaveContFlash(true);
         setTimeout(() => {
             setSaveContFlash(false);
@@ -202,21 +190,13 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
         data.mentalHealth.ace !== null &&
         data.mentalHealth.pcl5 !== null;
 
-    const hrvError = validateRange(data.physiology.hrv_ms, 10, 200, 'HRV');
-    const bpSysError = validateRange(data.physiology.bp_systolic, 70, 200, 'BP Systolic');
-    const bpDiaError = validateRange(data.physiology.bp_diastolic, 40, 130, 'BP Diastolic');
-    const hasPhysioError = !!(hrvError || bpSysError || bpDiaError);
-
-    const allObservationsSelected =
-        !!data.observations.motivation_level &&
-        !!data.observations.support_system &&
-        !!data.observations.prior_experience;
-
-    const canSubmit = allScoresEntered && !hasPhysioError;
+    const canSubmit = allScoresEntered;
 
     const expectancyLabel =
-        data.setSetting.treatment_expectancy >= 70 ? { text: 'High expectancy — positive prognostic indicator', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' }
-            : data.setSetting.treatment_expectancy >= 40 ? { text: 'Moderate expectancy — discuss realistic outcomes', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
+        data.setSetting.treatment_expectancy >= 70
+            ? { text: 'High expectancy — positive prognostic indicator', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' }
+            : data.setSetting.treatment_expectancy >= 40
+                ? { text: 'Moderate expectancy — discuss realistic outcomes', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
                 : { text: 'Low expectancy — consider additional preparation', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
 
     // ── Completed state ───────────────────────────────────────────────────────
@@ -229,36 +209,35 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
     }
 
     return (
-        <div className="space-y-6 pb-4">
+        <div className="space-y-3 pb-4">
 
-            {/* ── Section 1: Psychometric Scores ───────────────────────────── */}
-            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-6 space-y-4">
+            {/* ── Section 1: Psychometric Scores ───────────────────────── */}
+            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">Psychometric Scores</h3>
+                    <h3 className="text-base font-bold text-slate-300">Psychometric Scores</h3>
                     {lastSaved && (
                         <span className="text-xs text-slate-500">
                             Saved {lastSaved.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                         </span>
                     )}
                 </div>
-                <p className="text-sm text-slate-500">Enter patient scores. PHQ-9, GAD-7, ACE, and PCL-5 are required to save.</p>
-                <div className="grid grid-cols-2 gap-4">
-                    <ScoreInput id="phq9" label="PHQ-9 Score" value={data.mentalHealth.phq9} onChange={(v) => updateData('mentalHealth', { phq9: v })} min={0} max={27} />
-                    <ScoreInput id="gad7" label="GAD-7 Score" value={data.mentalHealth.gad7} onChange={(v) => updateData('mentalHealth', { gad7: v })} min={0} max={21} />
-                    <ScoreInput id="ace" label="ACE Score" value={data.mentalHealth.ace} onChange={(v) => updateData('mentalHealth', { ace: v })} min={0} max={10} />
-                    <ScoreInput id="pcl5" label="PCL-5 Score" value={data.mentalHealth.pcl5} onChange={(v) => updateData('mentalHealth', { pcl5: v })} min={0} max={80} />
+                <div className="grid grid-cols-2 gap-3">
+                    <ScoreSelect id="phq9" label="PHQ-9 (0–27)" value={data.mentalHealth.phq9} onChange={(v) => updateData('mentalHealth', { phq9: v })} min={0} max={27} />
+                    <ScoreSelect id="gad7" label="GAD-7 (0–21)" value={data.mentalHealth.gad7} onChange={(v) => updateData('mentalHealth', { gad7: v })} min={0} max={21} />
+                    <ScoreSelect id="ace" label="ACE (0–10)" value={data.mentalHealth.ace} onChange={(v) => updateData('mentalHealth', { ace: v })} min={0} max={10} />
+                    <ScoreSelect id="pcl5" label="PCL-5 (0–80)" value={data.mentalHealth.pcl5} onChange={(v) => updateData('mentalHealth', { pcl5: v })} min={0} max={80} />
                 </div>
             </section>
 
-            {/* ── Section 2: Treatment Expectancy ──────────────────────────── */}
-            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">Treatment Expectancy</h3>
-                <div className="space-y-3">
+            {/* ── Section 2: Treatment Expectancy ──────────────────────── */}
+            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+                <h3 className="text-base font-bold text-slate-300">Treatment Expectancy</h3>
+                <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <label htmlFor="expectancy" className="text-xs font-black text-slate-400 uppercase tracking-widest">
                             Belief in Treatment
                         </label>
-                        <span className="text-2xl font-black text-slate-200">{data.setSetting.treatment_expectancy}</span>
+                        <span className="text-2xl font-black text-slate-300">{data.setSetting.treatment_expectancy}</span>
                     </div>
                     <input
                         id="expectancy"
@@ -266,8 +245,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                         min={0} max={100} step={5}
                         value={data.setSetting.treatment_expectancy}
                         onChange={(e) => updateData('setSetting', { treatment_expectancy: parseInt(e.target.value) })}
-                        className="w-full h-3 rounded-lg appearance-none cursor-pointer"
-                        style={{ background: `linear-gradient(to right, #ef4444 0%, #f59e0b 33%, #10b981 66%, #10b981 100%)` }}
+                        className="ppn-range w-full cursor-pointer"
+                        style={{ background: `linear-gradient(to right, #ef4444 0%, #f59e0b 40%, #10b981 70%, #10b981 100%)` }}
                     />
                     <div className="flex justify-between text-xs text-slate-600">
                         <span>Low (0)</span><span>High (100)</span>
@@ -278,23 +257,23 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 </div>
             </section>
 
-            {/* ── Section 3: Baseline Physiology ───────────────────────────── */}
-            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">Baseline Physiology <span className="text-slate-600 font-normal normal-case tracking-normal ml-1">(optional)</span></h3>
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-3">
-                        <PhysioInput id="hrv" label="Resting HRV (ms)" value={data.physiology.hrv_ms} onChange={(v) => updateData('physiology', { hrv_ms: v })} min={10} max={200} placeholder="e.g. 50" />
-                    </div>
-                    <div className="col-span-3 grid grid-cols-2 gap-4">
-                        <PhysioInput id="bp-sys" label="BP Systolic (mmHg)" value={data.physiology.bp_systolic} onChange={(v) => updateData('physiology', { bp_systolic: v })} min={70} max={200} placeholder="e.g. 120" />
-                        <PhysioInput id="bp-dia" label="BP Diastolic (mmHg)" value={data.physiology.bp_diastolic} onChange={(v) => updateData('physiology', { bp_diastolic: v })} min={40} max={130} placeholder="e.g. 80" />
-                    </div>
+            {/* ── Section 3: Baseline Physiology (optional, 3-col) ─────── */}
+            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
+                <h3 className="text-base font-bold text-slate-300">
+                    Baseline Physiology <span className="text-slate-500 font-normal text-sm ml-1">optional</span>
+                </h3>
+                <div className="grid grid-cols-3 gap-3">
+                    <PhysioSelect id="hrv" label="HRV (ms)" value={data.physiology.hrv_ms} onChange={(v) => updateData('physiology', { hrv_ms: v })} min={10} max={200} step={5} unit="ms" />
+                    <PhysioSelect id="bp-sys" label="Systolic (mmHg)" value={data.physiology.bp_systolic} onChange={(v) => updateData('physiology', { bp_systolic: v })} min={70} max={200} step={2} unit="" />
+                    <PhysioSelect id="bp-dia" label="Diastolic (mmHg)" value={data.physiology.bp_diastolic} onChange={(v) => updateData('physiology', { bp_diastolic: v })} min={40} max={130} step={2} unit="" />
                 </div>
             </section>
 
-            {/* ── Section 4: Clinical Observations ─────────────────────────── */}
-            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-6 space-y-5">
-                <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">Clinical Observations <span className="text-slate-600 font-normal normal-case tracking-normal ml-1">(optional)</span></h3>
+            {/* ── Section 4: Clinical Observations (optional) ──────────── */}
+            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-4">
+                <h3 className="text-base font-bold text-slate-300">
+                    Clinical Observations <span className="text-slate-500 font-normal text-sm ml-1">optional</span>
+                </h3>
 
                 {([
                     { key: 'motivation_level' as const, label: 'Motivation Level', options: MOTIVATION_OPTIONS },
@@ -313,11 +292,11 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                         onClick={() => updateData('observations', { [key]: opt } as Partial<WizardData['observations']>)}
                                         aria-pressed={isSelected}
                                         className={`flex items-center gap-2 py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all active:scale-95 ${isSelected
-                                                ? 'bg-blue-600/20 border-blue-500/60 text-blue-300'
-                                                : 'bg-slate-800/40 border-slate-700 text-slate-300 hover:border-slate-500 hover:text-slate-200'
+                                            ? 'bg-indigo-700/30 border-indigo-500/60 text-indigo-300'
+                                            : 'bg-slate-800/40 border-slate-700 text-slate-300 hover:border-slate-500'
                                             }`}
                                     >
-                                        <CheckCircle className={`w-3.5 h-3.5 flex-shrink-0 transition-opacity ${isSelected ? 'opacity-100 text-blue-400' : 'opacity-0'}`} aria-hidden="true" />
+                                        <CheckCircle className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'opacity-100 text-indigo-400' : 'opacity-0'}`} aria-hidden="true" />
                                         {opt}
                                     </button>
                                 );
@@ -327,38 +306,54 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 ))}
             </section>
 
-            {/* ── Footer: Save & Exit | Save & Continue ────────────────────── */}
-            <div className="flex items-center justify-between gap-4 mr-16">
+            {/* ── Footer: Back | Save & Exit | Save & Continue ─────────── */}
+            <div className="flex items-center justify-between gap-3 pt-1">
+                {/* Back */}
                 <button
-                    onClick={handleSaveAndExit}
-                    className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-bold transition-all ${saveExitFlash
-                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                            : 'border-slate-700 text-slate-300 hover:border-slate-500 hover:text-slate-200'
-                        }`}
+                    type="button"
+                    onClick={onBack}
+                    className="flex items-center gap-2 px-4 py-3 rounded-xl border border-slate-700 text-sm font-bold text-slate-400 hover:border-slate-500 hover:text-slate-300 transition-all"
                 >
-                    {saveExitFlash ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-                    {saveExitFlash ? 'Saved!' : 'Save & Exit'}
+                    <ChevronLeft className="w-4 h-4" />
+                    Back
                 </button>
 
-                <button
-                    onClick={handleSubmitAll}
-                    disabled={!canSubmit || saveContFlash}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saveContFlash
+                <div className="flex items-center gap-3">
+                    {/* Save & Exit */}
+                    <button
+                        type="button"
+                        onClick={handleSaveAndExit}
+                        className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-bold transition-all ${saveExitFlash
+                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                            : 'border-slate-700 text-slate-300 hover:border-slate-500 hover:text-slate-200'
+                            }`}
+                    >
+                        {saveExitFlash ? <CheckCircle className="w-4 h-4" /> : <LogOut className="w-4 h-4" />}
+                        {saveExitFlash ? 'Saved!' : 'Save & Exit'}
+                    </button>
+
+                    {/* Save & Continue */}
+                    <button
+                        type="button"
+                        onClick={handleSubmitAll}
+                        disabled={!canSubmit || saveContFlash}
+                        className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${saveContFlash
                             ? 'bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 cursor-not-allowed'
                             : !canSubmit
                                 ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-500 text-slate-200 shadow-lg shadow-blue-900/30'
-                        }`}
-                >
-                    {saveContFlash ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                    {saveContFlash ? 'Saved!' : 'Save & Continue'}
-                </button>
+                                : 'bg-indigo-600 hover:bg-indigo-500 text-slate-200 shadow-lg shadow-indigo-900/30'
+                            }`}
+                    >
+                        {saveContFlash ? <CheckCircle className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                        {saveContFlash ? 'Saved!' : 'Save & Continue'}
+                    </button>
+                </div>
             </div>
 
             {/* Hint if scores missing */}
             {!canSubmit && (
-                <p className="text-xs text-slate-500 text-right mr-16">
-                    {!allScoresEntered ? 'Enter all 4 psychometric scores to continue' : 'Fix physiology errors to continue'}
+                <p className="text-xs text-slate-500 text-right">
+                    Select all 4 psychometric scores to continue
                 </p>
             )}
         </div>

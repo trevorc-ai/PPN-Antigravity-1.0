@@ -666,6 +666,56 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 }
 
 /* =====================================================
+   PPN RANGE SLIDER — treatment expectancy
+   Large thumb (28px), white with indigo ring
+   ===================================================== */
+.ppn-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  border-radius: 9999px;
+  outline: none;
+}
+
+.ppn-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ppn-range::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.35), 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.ppn-range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+  cursor: grab;
+}
+
+/* =====================================================
+   SELECT DARK OPTION STYLING
+   ===================================================== */
+select option {
+  background-color: #1e293b;
+  color: #cbd5e1;
+}
+
+
+/* =====================================================
    AUTOFILL DARK MODE FIX
    Browsers (Chrome/Safari) override input background
    with white when autofilling. Use inset box-shadow
