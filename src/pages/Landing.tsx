@@ -147,7 +147,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence
               </div>
-              <h1 className="text-5xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-100 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
+              <h1 className="text-5xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-300 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
                 Elevate your practice.
                 <div className="h-8 sm:h-12" />
                 <span className="text-slate-300 text-3xl sm:text-5xl lg:text-6xl block mt-2 leading-snug">
@@ -155,7 +155,7 @@ const Landing: React.FC = () => {
                   for psychedelic professionals.
                 </span>
               </h1>
-              <p className="text-xl sm:text-2xl text-slate-200 max-w-2xl leading-relaxed font-bold drop-shadow-sm mt-4 text-left">
+              <p className="text-xl sm:text-2xl text-slate-300 max-w-2xl leading-relaxed font-bold drop-shadow-sm mt-4 text-left">
                 Log your sessions. Unlock global benchmarks. Elevate the entire field.
               </p>
               <p className="text-xl sm:text-2xl text-slate-300 max-w-2xl leading-relaxed font-medium drop-shadow-sm text-left">
@@ -366,27 +366,27 @@ const Landing: React.FC = () => {
       {/* SECTION: Global Alliance */}
       <section className="py-32 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-start text-left space-y-10">
+          <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-center text-center space-y-10">
             {/* Background effects */}
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-purple-500/20 rounded-full blur-[120px] pointer-events-none"></div>
 
             {/* Heading */}
-            <div className="space-y-6 max-w-3xl relative z-10 text-left">
+            <div className="space-y-6 max-w-3xl relative z-10 text-center flex flex-col items-center">
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-300 tracking-tighter leading-tight">
                 The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
               </h2>
-              <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              <p className="text-2xl sm:text-3xl font-bold text-slate-300 tracking-tight">
                 Where every session makes the field smarter.
               </p>
-              <div className="space-y-4 text-xl text-slate-300 leading-relaxed font-medium max-w-2xl">
+              <div className="space-y-4 text-xl text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
                 <p>
                   PPN is not a directory. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
                 </p>
                 <p>
                   By pooling de-identified outcomes data across a growing alliance of practitioners, we're building the evidence base that supports insurance coverage, reduces malpractice risk, and elevates the entire field.
                 </p>
-                <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight pt-4">
+                <p className="text-2xl sm:text-3xl font-bold text-slate-300 tracking-tight pt-4">
                   You don't have to build this alone.
                 </p>
                 <div className="pt-6">
