@@ -2,7 +2,6 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { X, QrCode, Smartphone, ArrowRight, ShieldCheck } from 'lucide-react';
 import { AdvancedTooltip } from './ui/AdvancedTooltip';
-import PPNLogo from './PPNLogo';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -94,7 +93,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-3">
-            <PPNLogo size="xs" animated={true} />
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-slate-700 shadow-[0_0_15px_rgba(43,116,243,0.15)] flex items-center justify-center p-0.5 relative group">
+              <div className="absolute inset-0 bg-blue-500/10 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <img src="/molecules/psilocybin.png" alt="PPN Spherecule" className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-500" />
+            </div>
             <div>
               <h1 className="text-3xl font-black tracking-tight">
                 <span style={{ color: '#8B9DC3' }}>PPN</span>{' '}
