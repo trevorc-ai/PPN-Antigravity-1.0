@@ -196,6 +196,18 @@ const WellnessJourney: React.FC = () => {
         const targetPhase = isNew ? 1 : (PHASE_TAB_MAP[phase] ?? 1);
         setActivePhase(targetPhase);
 
+        // Ensure UI tabs are unlocked for existing patients already in later phases
+        if (!isNew) {
+            let previousPhases: number[] = [];
+            if (targetPhase === 2) previousPhases = [1];
+            if (targetPhase === 3) previousPhases = [1, 2];
+
+            if (previousPhases.length > 0) {
+                setCompletedPhases(previousPhases);
+                localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(previousPhases));
+            }
+        }
+
         if (isNew) {
             addToast({
                 title: 'New Patient Created',

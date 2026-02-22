@@ -267,23 +267,23 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         </div>
                     </button>
 
-                    {/* 2. Observations (Amber -> Deep Ochre) */}
+                    {/* 2. Observations (Deep Purple / Amethyst) */}
                     <button
                         onClick={() => onOpenForm('session-observations')}
-                        className="group relative h-44 p-6 bg-gradient-to-br from-[#291F13] to-[#120D08] border border-[#402D1A]/50 rounded-3xl hover:border-[#5C4024]/80 hover:from-[#332516] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
+                        className="group relative h-44 p-6 bg-gradient-to-br from-[#1B112C] to-[#0D0814] border border-[#301A4A]/50 rounded-3xl hover:border-[#482670]/80 hover:from-[#26163A] transition-all duration-500 active:scale-[0.98] text-left overflow-hidden shadow-lg shadow-black/20"
                     >
-                        <div className="absolute inset-0 bg-[#F59E0B]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
+                        <div className="absolute inset-0 bg-[#8B5CF6]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 mix-blend-overlay" />
                         <div className="absolute top-0 right-0 p-5 mt-1 opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
-                            <div className="w-11 h-11 rounded-xl bg-[#241B10] flex items-center justify-center border border-[#402D1A] group-hover:border-[#F59E0B]/30 shadow-inner">
-                                <Sparkles className="w-5 h-5 text-[#F59E0B]/60 group-hover:text-[#F59E0B] transition-colors" />
+                            <div className="w-11 h-11 rounded-xl bg-[#180F24] flex items-center justify-center border border-[#301A4A] group-hover:border-[#8B5CF6]/30 shadow-inner">
+                                <Sparkles className="w-5 h-5 text-[#8B5CF6]/60 group-hover:text-[#8B5CF6] transition-colors" />
                             </div>
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
                             <div className="flex items-center justify-between mb-2 gap-2">
-                                <p className="text-3xl font-bold text-[#A88B6E] leading-tight tracking-tight group-hover:text-[#E2D5C8] transition-colors">Observe</p>
-                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#402D1A]/30 border border-[#402D1A] text-[10px] font-mono font-bold text-[#7A634E]">O</kbd>
+                                <p className="text-3xl font-bold text-[#A78BFA] leading-tight tracking-tight group-hover:text-[#EDE9FE] transition-colors">Observe</p>
+                                <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-[#301A4A]/30 border border-[#301A4A] text-[10px] font-mono font-bold text-[#A78BFA]">O</kbd>
                             </div>
-                            <p className="text-[11px] text-[#705843] font-bold uppercase tracking-[0.15em] group-hover:text-[#8B7158] transition-colors">Behavior</p>
+                            <p className="text-[11px] text-[#7C3AED] font-bold uppercase tracking-[0.15em] group-hover:text-[#A78BFA] transition-colors">Behavior</p>
                         </div>
                     </button>
 
