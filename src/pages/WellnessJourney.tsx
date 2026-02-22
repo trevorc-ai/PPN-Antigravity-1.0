@@ -282,13 +282,23 @@ const WellnessJourney: React.FC = () => {
     // Marks the form done and auto-advances to the next Phase 1 step.
     const handleFormComplete = useCallback((formId: WellnessFormId | null) => {
         let nextId: WellnessFormId | null = null;
+        let isLastPhase1Form = false;
 
         if (formId && activePhase === 1) {
-            setCompletedForms(prev => new Set([...prev, formId]));
+            const updatedForms = new Set([...completedForms, formId]);
+            setCompletedForms(updatedForms);
 
             const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
             const next = PHASE1_STEPS[currentIndex + 1];
             nextId = next ? next.id : null;
+
+            // If no next step — all Phase 1 forms saved, complete the phase
+            if (!nextId) {
+                isLastPhase1Form = true;
+                const updatedPhases = [...new Set([...completedPhases, 1 as number])];
+                setCompletedPhases(updatedPhases);
+                localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updatedPhases));
+            }
         }
 
         if (nextId) {
@@ -301,9 +311,14 @@ const WellnessJourney: React.FC = () => {
             // No next form: close the panel
             setIsFormOpen(false);
             setTimeout(() => setActiveFormId(null), 320);
+
+            // Auto-advance to Phase 2 after panel animates out
+            if (isLastPhase1Form) {
+                setTimeout(() => setActivePhase(2), 350);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activePhase]);
+    }, [activePhase, completedForms, completedPhases]);
 
 
 
