@@ -231,46 +231,91 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0, rotateY: 15, rotateX: 5, x: 50 }}
               animate={{ opacity: 1, rotateY: -5, rotateX: 2, x: 0 }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="w-[120%] lg:w-[130%] max-w-[800px] relative z-10 rounded-2xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-indigo-500/10 bg-slate-900"
+              className="w-[120%] lg:w-[130%] max-w-[800px] relative z-10 rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl shadow-indigo-500/20 bg-[#0A0F1C]/80 backdrop-blur-3xl"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              {/* Fake Safari Header */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50 backdrop-blur-md">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400/80" />
-                  <div className="w-3 h-3 rounded-full bg-amber-400/80" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-400/80" />
+              {/* Premium Safari Header */}
+              <div className="flex items-center gap-3 px-6 py-4 bg-slate-900/90 border-b border-white/5 backdrop-blur-xl">
+                <div className="flex gap-2">
+                  <div className="w-3.5 h-3.5 rounded-full bg-slate-700 hover:bg-red-400 transition-colors cursor-pointer" />
+                  <div className="w-3.5 h-3.5 rounded-full bg-slate-700 hover:bg-amber-400 transition-colors cursor-pointer" />
+                  <div className="w-3.5 h-3.5 rounded-full bg-slate-700 hover:bg-emerald-400 transition-colors cursor-pointer" />
                 </div>
-                <div className="mx-auto flex-1 max-w-[200px] h-5 bg-slate-900/50 rounded-md border border-slate-700/50" />
+                <div className="mx-auto flex-1 max-w-[300px] h-7 bg-slate-950/50 rounded-lg border border-white/5 flex items-center justify-center shadow-inner">
+                  <span className="flex items-center gap-2 text-[10px] font-black tracking-widest text-slate-500 uppercase">
+                    <span className="material-symbols-outlined text-[12px] text-indigo-400">lock</span>
+                    app.ppnportal.net
+                  </span>
+                </div>
               </div>
 
-              {/* Mock Dashboard Content area */}
-              <div className="p-6 bg-[#0a1628] grid gap-6 relative overflow-hidden">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:1rem_1rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
+              {/* High-Fi Dashboard Content */}
+              <div className="p-8 bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] grid gap-8 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)] pointer-events-none z-0" />
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none z-0" />
 
-                {/* Fake header */}
-                <div className="flex justify-between items-end relative z-10 border-b border-slate-800/80 pb-4">
+                {/* Dashboard Header */}
+                <div className="flex justify-between items-end relative z-10 border-b border-slate-800/80 pb-6">
                   <div>
-                    <div className="h-6 w-32 bg-slate-800 rounded-md mb-2" />
-                    <div className="h-4 w-48 bg-slate-800/50 rounded-md" />
+                    <h2 className="text-3xl font-black text-slate-200 tracking-tight">Clinical Intelligence</h2>
+                    <p className="text-xs text-slate-500 font-black uppercase tracking-widest mt-2">Live Outcomes Radar</p>
                   </div>
-                  <div className="h-8 w-24 bg-primary/20 rounded-md" />
+                  <div className="px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
+                    <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                    <span className="text-[10px] font-black text-indigo-400 tracking-widest uppercase">Sync Active</span>
+                  </div>
                 </div>
 
-                {/* Fake cards */}
-                <div className="grid grid-cols-3 gap-4 relative z-10">
-                  <div className="h-24 bg-slate-800/60 border border-slate-700/50 rounded-xl" />
-                  <div className="h-24 bg-slate-800/60 border border-slate-700/50 rounded-xl" />
-                  <div className="h-24 bg-slate-800/60 border border-slate-700/50 rounded-xl" />
+                {/* KPI Glass Cards */}
+                <div className="grid grid-cols-3 gap-5 relative z-10">
+                  <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Network Efficacy</span>
+                    <span className="text-4xl font-black text-slate-200 tracking-tighter group-hover:text-indigo-400 transition-colors">+42<span className="text-xl">%</span></span>
+                    <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">trending_up</span> 12% vs last quarter</span>
+                  </div>
+                  <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 relative overflow-hidden group hover:border-red-500/50 hover:-translate-y-1 transition-all">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 blur-[20px] rounded-full pointer-events-none group-hover:bg-red-500/20 transition-colors" />
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest relative z-10">Safety Alerts</span>
+                    <span className="text-4xl font-black text-slate-200 tracking-tighter relative z-10 group-hover:text-red-400 transition-colors">03</span>
+                    <span className="text-[10px] text-red-400 font-bold flex items-center gap-1 relative z-10"><span className="material-symbols-outlined text-[12px]">warning</span> Immediate review</span>
+                  </div>
+                  <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Protocols</span>
+                    <span className="text-4xl font-black text-slate-200 tracking-tighter">1,204</span>
+                    <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">share</span> Across 42 nodes</span>
+                  </div>
                 </div>
 
-                {/* Fake chart */}
-                <div className="h-48 bg-slate-800/40 border border-slate-700/50 rounded-xl mt-2 relative z-10 overflow-hidden flex items-end px-4 gap-2">
-                  {/* Abstract chart bars */}
-                  <div className="w-full flex justify-between items-end h-32 gap-3 opacity-60">
-                    {[40, 60, 45, 80, 55, 90, 65, 100].map((h, i) => (
-                      <div key={i} className="flex-1 bg-gradient-to-t from-primary/40 to-primary rounded-t-sm" style={{ height: `${h}%` }} />
+                {/* Detailed Chart Area */}
+                <div className="p-8 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-3xl mt-2 relative z-10 group">
+                  <div className="flex justify-between items-center mb-10">
+                    <span className="text-base font-black text-slate-300">Longitudinal Symptom Reduction</span>
+                    <div className="flex gap-2">
+                      <span className="w-8 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                      <span className="w-8 h-1.5 rounded-full bg-slate-700" />
+                      <span className="w-8 h-1.5 rounded-full bg-slate-700" />
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-between items-end h-36 gap-5 relative">
+                    {/* Background Grid Lines */}
+                    <div className="absolute inset-0 flex flex-col justify-between border-b border-slate-800 pointer-events-none">
+                      <div className="w-full h-px bg-slate-800" />
+                      <div className="w-full h-px bg-slate-800" />
+                      <div className="w-full h-px bg-slate-800" />
+                      <div className="w-full h-px bg-slate-800" />
+                    </div>
+                    {/* Bars */}
+                    {[30, 45, 40, 60, 50, 85, 70, 95].map((h, i) => (
+                      <div key={i} className="flex-1 relative group/bar cursor-pointer h-full flex items-end z-10">
+                        <div className="absolute inset-x-0 bottom-0 bg-indigo-500/20 blur-md rounded-t-lg opacity-0 group-hover/bar:opacity-100 transition-opacity duration-300" style={{ height: `${h + 10}%` }} />
+                        <div className="w-full bg-gradient-to-t from-indigo-900/40 to-indigo-500/80 rounded-t-lg relative z-10 border-t border-indigo-400/50 group-hover/bar:from-indigo-800/60 group-hover/bar:to-indigo-400 transition-all duration-300 shadow-lg" style={{ height: `${h}%` }} />
+                      </div>
                     ))}
+                  </div>
+                  <div className="flex justify-between items-center mt-6 pt-6 border-t border-slate-800/80">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Baseline</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Integration</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Follow-up</span>
                   </div>
                 </div>
               </div>
@@ -447,40 +492,52 @@ const Landing: React.FC = () => {
             </motion.div>
           </div>
           <div className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-[2rem] blur-3xl opacity-30"></div>
-            <div className="relative bg-slate-950 border border-slate-800 rounded-[2rem] p-8 space-y-4 overflow-hidden group">
+            <div className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
+            <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 overflow-hidden group shadow-2xl">
 
-              {/* Chaotic Knot Visual Background */}
-              <div className="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none group-hover:opacity-60 transition-opacity duration-700">
-                <svg viewBox="0 0 400 300" className="w-full h-full stroke-slate-600/50 fill-none" strokeWidth="1">
-                  <path d="M-50 50 Q 150 250, 200 150 T 450 150" className="stroke-red-500/30" />
-                  <path d="M-50 150 Q 100 -50, 200 150 T 450 150" className="stroke-purple-500/30" />
-                  <path d="M-50 250 Q 100 100, 200 150 T 450 150" className="stroke-amber-500/30" />
-                  {/* Converged Unified Beam */}
-                  <path d="M 200 150 L 450 150" strokeWidth="4" className="stroke-primary filter drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse" />
-                </svg>
-              </div>
+              {/* Complex Connectivity Grid */}
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40 mix-blend-screen mask-image:radial-gradient(ellipse_at_center,black,transparent)" />
 
-              {/* Elements */}
-              <div className="relative z-10 flex flex-col gap-6 items-center">
-                <div className="w-full grid grid-cols-3 gap-4 items-center opacity-70 group-hover:-translate-x-2 transition-transform duration-700">
-                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center">
-                    <span className="material-symbols-outlined text-red-500">warning</span>
+              {/* Dynamic Connection Beams */}
+              <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
+              <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
+
+              <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[300px]">
+
+                {/* Incoming Data Nodes */}
+                <div className="w-full grid grid-cols-3 gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
+                  <div className="px-5 py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-xl backdrop-blur-xl">
+                    <span className="material-symbols-outlined text-emerald-400 text-2xl drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">vital_signs</span>
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Vitals</span>
                   </div>
-                  <div className="p-3 bg-slate-800 border border-slate-700 rounded-xl flex items-center justify-center -translate-y-4">
-                    <span className="material-symbols-outlined text-slate-500">description</span>
+                  <div className="px-5 py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-xl backdrop-blur-xl -translate-y-6 group-hover:-translate-y-8 transition-transform duration-1000">
+                    <span className="material-symbols-outlined text-indigo-400 text-2xl drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]">clinical_notes</span>
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Protocols</span>
                   </div>
-                  <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center translate-y-2">
-                    <span className="material-symbols-outlined text-purple-500">forum</span>
+                  <div className="px-5 py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-3 shadow-xl backdrop-blur-xl">
+                    <span className="material-symbols-outlined text-purple-400 text-2xl drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">psychiatry</span>
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Outcomes</span>
                   </div>
                 </div>
 
-                <div className="size-16 bg-slate-900 border-2 border-primary/50 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.2)] z-20 group-hover:scale-110 transition-transform duration-700">
-                  <span className="material-symbols-outlined text-3xl text-gradient-primary">neurology</span>
+                {/* Central Processor Node / Brain */}
+                <div className="relative z-20 group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
+                  <div className="absolute inset-0 bg-indigo-500/30 blur-[40px] rounded-full animate-pulse" />
+                  <div className="w-28 h-28 bg-gradient-to-br from-[#0c1220] to-[#080c14] border border-indigo-500/40 rounded-[2rem] flex items-center justify-center shadow-[0_0_50px_rgba(99,102,241,0.2)] relative overflow-hidden backdrop-blur-xl">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.1),transparent_50%)]" />
+                    <span className="material-symbols-outlined text-5xl text-indigo-300 drop-shadow-[0_0_15px_rgba(99,102,241,0.8)] animate-pulse">neurology</span>
+                  </div>
                 </div>
 
-                <div className="w-full bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center justify-center mt-2 group-hover:translate-x-2 transition-transform duration-700">
-                  <span className="text-primary font-black uppercase tracking-widest text-sm">Unified PPN Record</span>
+                {/* Final Output Node */}
+                <div className="w-full max-w-sm bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-6 flex items-center justify-between mt-4 group-hover:translate-y-2 group-hover:bg-indigo-900/30 group-hover:border-indigo-500/50 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_0_40px_rgba(99,102,241,0.1)] backdrop-blur-xl">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-indigo-100 font-black tracking-tighter text-xl">Unified Record</span>
+                    <span className="text-[10px] font-black text-indigo-400/80 uppercase tracking-widest flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Zero-PHI Compliant</span>
+                  </div>
+                  <div className="h-12 w-12 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-indigo-400 text-2xl">lock</span>
+                  </div>
                 </div>
               </div>
             </div>
