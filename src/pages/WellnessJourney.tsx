@@ -858,16 +858,6 @@ const WellnessJourney: React.FC = () => {
                                     </div>
                                 )}
 
-                                {/* Temporary Locked Notice for Demo — moved below stats */}
-                                {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
-                                    <div className="mt-8 mb-2 p-4 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center gap-3">
-                                        <Lock className="w-4 h-4 text-slate-500" />
-                                        <span className="text-slate-200 text-sm font-medium">
-                                            Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
-                                        </span>
-                                    </div>
-                                )}
-
                                 {/* Bottom row: disclaimer label + info tooltip | Export Report button */}
                                 <div className="flex items-center justify-between gap-4 pt-3 pb-1">
                                     {/* Compact disclaimer with info-icon tooltip */}
