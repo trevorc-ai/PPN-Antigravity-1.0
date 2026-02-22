@@ -32,6 +32,7 @@ import PatientJourneyDemo from '../components/demos/PatientJourneyDemo';
 import { GravityButton } from '../components/GravityButton';
 import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
 import StarField from '../components/StarField';
+import AllianceWall from '../components/landing/AllianceWall';
 
 const chartData = [
   { name: 'Site Avg', value: 68, color: '#334155' },
@@ -486,6 +487,9 @@ const Landing: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* SECTION: Alliance Wall */}
+      <AllianceWall />
 
       {/* SECTION: How It Works */}
       <section className="py-32 px-6 relative z-10" >
