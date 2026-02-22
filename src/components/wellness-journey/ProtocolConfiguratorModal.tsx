@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useProtocol, type ProtocolArchetype } from '../../contexts/ProtocolContext';
-import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal } from 'lucide-react';
+import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal, HelpCircle } from 'lucide-react';
+import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface ProtocolConfiguratorModalProps {
     onClose: () => void;
@@ -46,43 +47,47 @@ const CUSTOM_DOMAINS = [
         id: 'domain-a',
         title: 'Domain A: Medical & Physiological Gates',
         description: 'Vitals tracking, SpO2, and emergency protocols.',
+        tooltipText: 'Crucial for clinical safety. These modules are predominantly active during Phase 2 (Dosing).',
         features: [
-            { id: 'session-vitals', label: 'Vitals Tracking (HR, BP, SpO₂)' },
-            { id: 'rescue-protocol', label: 'Rescue Protocol & Medical Tapering' },
-            { id: 'safety-and-adverse-event', label: 'Adverse Event Logging' },
-            { id: 'session-observations', label: 'Clinical Session Observations' },
+            { id: 'session-vitals', phase: 2, label: 'Vitals Tracking (HR, BP, SpO₂)' },
+            { id: 'rescue-protocol', phase: 2, label: 'Rescue Protocol & Medical Tapering' },
+            { id: 'safety-and-adverse-event', phase: 2, label: 'Adverse Event Logging' },
+            { id: 'session-observations', phase: 2, label: 'Clinical Session Observations' },
         ]
     },
     {
         id: 'domain-b',
         title: 'Domain B: Clinical Symptom Tracking',
         description: 'Diagnoses, risk matrices, and baseline/follow-up scales.',
+        tooltipText: 'Governs baseline clinical readiness in Phase 1 (Prep), and tracks longitudinal symptom reduction in Phase 3 (Integration).',
         features: [
-            { id: 'structured-safety', label: 'Safety Screen & Eligibility (ECG, Medical Hx)' },
-            { id: 'mental-health', label: 'Baseline Scales (PHQ-9, GAD-7)' },
-            { id: 'longitudinal-assessment', label: 'Longitudinal Scales (CAPS-5, Post-Session)' },
+            { id: 'structured-safety', phase: 1, label: 'Safety Screen & Eligibility (ECG, Medical Hx)' },
+            { id: 'mental-health', phase: 1, label: 'Baseline Scales (PHQ-9, GAD-7)' },
+            { id: 'longitudinal-assessment', phase: 3, label: 'Longitudinal Scales (CAPS-5, Post-Session)' },
         ]
     },
     {
         id: 'domain-c',
         title: 'Domain C: Subjective & Spiritual Experience',
         description: 'Phenomenological scales and meaning-making tools.',
+        tooltipText: 'Combines intention setting from Phase 1 with meaning-making and subjective phenomenological evaluations in Phase 3.',
         features: [
-            { id: 'set-and-setting', label: 'Intention Setting Planner' },
-            { id: 'meq30', label: 'Mystical Experience Questionnaire (MEQ-30)' },
-            { id: 'structured-integration', label: 'Narrative Integration Journaling' },
-            { id: 'behavioral-tracker', label: 'Behavioral Breakthrough Tracker' },
-            { id: 'daily-pulse', label: 'Daily Pulse Check' },
+            { id: 'set-and-setting', phase: 1, label: 'Intention Setting Planner' },
+            { id: 'meq30', phase: 3, label: 'Mystical Experience Questionnaire (MEQ-30)' },
+            { id: 'structured-integration', phase: 3, label: 'Narrative Integration Journaling' },
+            { id: 'behavioral-tracker', phase: 3, label: 'Behavioral Breakthrough Tracker' },
+            { id: 'daily-pulse', phase: 3, label: 'Daily Pulse Check' },
         ]
     },
     {
         id: 'domain-d',
         title: 'Domain D: Regulatory & Logistics',
         description: 'Consent, chain of custody, and timeline maps.',
+        tooltipText: 'Handles mandatory regulatory forms in Phase 1 and temporal mapping of the active state in Phase 2.',
         features: [
-            { id: 'consent', label: 'Dynamic Touch & Informed Consent' },
-            { id: 'dosing-protocol', label: 'Chain of Custody / Medicine Log' },
-            { id: 'session-timeline', label: 'Session Timeline / Wave Mapping' },
+            { id: 'consent', phase: 1, label: 'Dynamic Touch & Informed Consent' },
+            { id: 'dosing-protocol', phase: 1, label: 'Chain of Custody / Medicine Log' },
+            { id: 'session-timeline', phase: 2, label: 'Session Timeline / Wave Mapping' },
         ]
     }
 ];
@@ -211,20 +216,39 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {CUSTOM_DOMAINS.map(domain => (
                                     <div key={domain.id} className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-5 space-y-4 shadow-lg transition-colors hover:border-slate-600">
-                                        <div className="border-b border-slate-800/60 pb-3">
-                                            <h4 className="text-lg font-bold text-white mb-1.5 leading-tight">{domain.title}</h4>
-                                            <p className="text-sm text-slate-400 leading-relaxed">{domain.description}</p>
+                                        <div className="border-b border-slate-800/60 pb-3 flex items-start justify-between">
+                                            <div className="pr-4">
+                                                <h4 className="text-lg font-bold text-white mb-1.5 leading-tight">{domain.title}</h4>
+                                                <p className="text-sm text-slate-400 leading-relaxed">{domain.description}</p>
+                                            </div>
+                                            <AdvancedTooltip content={domain.tooltipText} tier="standard" type="info" side="top" width="w-[300px]">
+                                                <HelpCircle className="w-5 h-5 text-slate-500 hover:text-indigo-400 transition-colors cursor-help mt-0.5 flex-shrink-0" />
+                                            </AdvancedTooltip>
                                         </div>
                                         <div className="space-y-3.5">
                                             {domain.features.map(feat => {
                                                 const isEnabled = customFeatures.includes(feat.id);
+                                                const getPhaseTheme = () => {
+                                                    if (!isEnabled) {
+                                                        if (feat.phase === 1) return { box: 'bg-slate-800 border-slate-500 group-hover:bg-slate-800/80 group-hover:border-indigo-400', txt: 'text-slate-400 group-hover:text-indigo-200' };
+                                                        if (feat.phase === 2) return { box: 'bg-slate-800 border-slate-500 group-hover:bg-slate-800/80 group-hover:border-amber-400', txt: 'text-slate-400 group-hover:text-amber-200' };
+                                                        if (feat.phase === 3) return { box: 'bg-slate-800 border-slate-500 group-hover:bg-slate-800/80 group-hover:border-teal-400', txt: 'text-slate-400 group-hover:text-teal-200' };
+                                                        return { box: '', txt: '' };
+                                                    }
+                                                    if (feat.phase === 1) return { box: 'bg-indigo-500 text-white border-indigo-500 shadow-indigo-500/20 shadow-md', txt: 'text-indigo-100 font-medium' };
+                                                    if (feat.phase === 2) return { box: 'bg-amber-500 text-white border-amber-500 shadow-amber-500/20 shadow-md', txt: 'text-amber-100 font-medium' };
+                                                    if (feat.phase === 3) return { box: 'bg-teal-500 text-white border-teal-500 shadow-teal-500/20 shadow-md', txt: 'text-teal-100 font-medium' };
+                                                    return { box: '', txt: '' };
+                                                };
+                                                const theme = getPhaseTheme();
+
                                                 return (
                                                     <label key={feat.id} className="flex items-start gap-3.5 cursor-pointer group">
                                                         <input type="checkbox" className="hidden" checked={isEnabled} onChange={() => toggleFeature(feat.id)} />
-                                                        <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm ${isEnabled ? 'bg-teal-500 text-white border-teal-500 shadow-teal-500/20' : 'bg-slate-800 border border-slate-500 group-hover:border-teal-400 group-hover:bg-slate-800/80'}`}>
+                                                        <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm border ${theme.box}`}>
                                                             {isEnabled && <svg className="w-3.5 h-3.5 fill-current animate-in zoom-in duration-200" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z" /></svg>}
                                                         </div>
-                                                        <span className={`text-base select-none leading-snug pt-[1px] ${isEnabled ? 'text-slate-200 font-medium' : 'text-slate-400 group-hover:text-slate-300'}`}>
+                                                        <span className={`text-base select-none leading-snug pt-[1px] ${theme.txt}`}>
                                                             {feat.label}
                                                         </span>
                                                     </label>
