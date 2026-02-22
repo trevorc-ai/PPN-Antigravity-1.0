@@ -33,10 +33,4 @@ I'm stopping therapists from flying blind and making sure every patient session 
 #### 4. "How do you make money?"
 *The Non-Tech Answer:* "It's a subscription model. Clinics and practitioners pay a monthly fee to use the software to run their business smoothly and protect themselves from making a dangerous medical mistake."
 
----
 
-### The 3 Golden Rules for Talking to Family
-
-1. **Never use acronyms.** (PHI, HIPAA, NNT, SaMD, API). They stop listening instantly.
-2. **Focus on Safety.** Everyone understands "preventing a bad drug interaction." That is a universally understood value proposition. 
-3. **Use the Waze metric.** "Every session makes the next session safer." This perfectly explains the "network effect" without sounding like a Silicon Valley bro.
