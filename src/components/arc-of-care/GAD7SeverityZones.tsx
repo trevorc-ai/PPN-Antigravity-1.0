@@ -48,7 +48,7 @@ const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
             color: 'red',
             icon: ShieldAlert,
             risk: 'High risk of panic or severe anxiety',
-            recommendation: 'Pre-medication with anxiolytic strongly recommended'
+            recommendation: 'Pre-medication with anxiolytic strongly indicated'
         };
     };
 

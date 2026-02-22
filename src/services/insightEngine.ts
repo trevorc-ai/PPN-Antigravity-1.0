@@ -27,7 +27,7 @@ export interface InsightCard {
     severity: InsightSeverity;
     category: string;        // e.g. "Integration Protocol", "Safety", "Documentation"
     headline: string;        // specific number + comparison — the one sentence that matters
-    body: string;            // 2–3 sentences: what it means + suggested action rationale
+    body: string;            // 2–3 sentences: what it means + mitigation rationale
     actionLabel: string;     // CTA button text
     actionRoute: string;     // react-router path to navigate to
     sourceNote: string;      // "Based on N=X patients · Y sessions" + any citation

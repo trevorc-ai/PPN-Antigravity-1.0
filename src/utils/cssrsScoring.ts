@@ -84,9 +84,9 @@ export const requiresAutoFlag = (score: CSSRSScore): boolean => {
 };
 
 /**
- * Get recommended actions based on C-SSRS score
+ * Get risk mitigation actions based on C-SSRS score
  */
-export const getRecommendedActions = (score: CSSRSScore): string[] => {
+export const getRiskMitigationActions = (score: CSSRSScore): string[] => {
     const assessment = getCSSRSAssessment(score);
 
     if (score === 0) {

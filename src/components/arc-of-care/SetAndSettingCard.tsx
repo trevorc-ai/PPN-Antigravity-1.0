@@ -211,7 +211,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                             <FileText className="w-4 h-4 text-purple-400" />
                             <h4 className="text-slate-300 text-sm font-medium">PTSD Severity (PCL-5)</h4>
                             <AdvancedTooltip
-                                content="PTSD Checklist for DSM-5 (0-80). Scores ≥33 suggest probable PTSD diagnosis. Trauma-informed care protocols should be activated for scores ≥33."
+                                content="PTSD Checklist for DSM-5 (0-80). Scores ≥33 correlate with probable PTSD diagnosis. Trauma-informed care protocols should be activated for scores ≥33."
                                 type="warning"
                                 tier="detailed"
                                 title="PCL-5 Clinical Significance"

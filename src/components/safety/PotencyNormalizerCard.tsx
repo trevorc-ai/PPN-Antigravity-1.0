@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { FlaskConical, ChevronDown, ChevronUp, Plus, AlertTriangle, CheckCircle, Upload, X } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import {
-    calculateRecommendedWeight,
+    calculateTargetWeight,
     calculateEffectiveDose,
     getWarningLevel,
     getPotencyLabel,
@@ -12,7 +12,7 @@ import {
 
 interface PotencyNormalizerCardProps {
     /** Called when user saves a batch and wants to use it in the protocol */
-    onBatchSelected?: (batchData: { strainName: string; potencyCoeff: number; recommendedWeightGrams: number; effectiveDoseMg: number }) => void;
+    onBatchSelected?: (batchData: { strainName: string; potencyCoeff: number; targetWeightGrams: number; effectiveDoseMg: number }) => void;
     className?: string;
 }
 
@@ -54,7 +54,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
     const [targetGrams, setTargetGrams] = useState<number | null>(null);
 
     // Derived calculations
-    const recommendedGrams = targetMg !== null ? calculateRecommendedWeight(targetMg, potencyCoeff) : null;
+    const targetCalculatedGrams = targetMg !== null ? calculateTargetWeight(targetMg, potencyCoeff) : null;
     const effectiveMg = targetGrams !== null ? calculateEffectiveDose(targetGrams, potencyCoeff) : null;
     const warningLevel = getWarningLevel(potencyCoeff, targetMg ?? effectiveMg ?? 0);
     const warningStyle = WARNING_STYLES[warningLevel];
@@ -103,12 +103,12 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
     const handleSaveBatch = () => {
         if (!selectedStrain) return;
-        const grams = recommendedGrams ?? targetGrams ?? 0;
+        const grams = targetCalculatedGrams ?? targetGrams ?? 0;
         const mg = targetMg ?? effectiveMg ?? 0;
         onBatchSelected?.({
             strainName: selectedStrain.strain_name,
             potencyCoeff,
-            recommendedWeightGrams: grams,
+            targetWeightGrams: grams,
             effectiveDoseMg: mg,
         });
     };
@@ -294,13 +294,13 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                         </div>
 
                         {/* Results */}
-                        {(recommendedGrams !== null || effectiveMg !== null) && (
+                        {(targetCalculatedGrams !== null || effectiveMg !== null) && (
                             <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl space-y-2 animate-in fade-in duration-200">
-                                {recommendedGrams !== null && (
+                                {targetCalculatedGrams !== null && (
                                     <div>
-                                        <p className="text-sm text-slate-400 uppercase tracking-wide">Recommended Weight</p>
-                                        <p className="text-2xl font-black text-blue-300">{recommendedGrams.toFixed(2)}g</p>
-                                        <p className="text-sm text-slate-400">Equivalent to {(recommendedGrams * potencyCoeff).toFixed(1)}g standard potency</p>
+                                        <p className="text-sm text-slate-400 uppercase tracking-wide">Target Weight</p>
+                                        <p className="text-2xl font-black text-blue-300">{targetCalculatedGrams.toFixed(2)}g</p>
+                                        <p className="text-sm text-slate-400">Equivalent to {(targetCalculatedGrams * potencyCoeff).toFixed(1)}g standard potency</p>
                                     </div>
                                 )}
                                 {effectiveMg !== null && (

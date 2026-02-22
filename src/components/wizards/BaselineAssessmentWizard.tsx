@@ -290,7 +290,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
                 <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
                     Treatment Expectancy
-                    <AdvancedTooltip content="The patient's belief that this treatment will be effective. Higher expectancy is a positive prognostic factor — research shows it independently improves outcomes. Scores ≥70 indicate high confidence. Scores below 40 suggest discussing realistic expectations and addressing ambivalence before proceeding." tier="standard">
+                    <AdvancedTooltip content="The patient's belief that this treatment will be effective. Higher expectancy is a positive prognostic factor — research shows it independently improves outcomes. Scores ≥70 indicate high confidence. Scores below 40 indicate a need for discussing realistic expectations and addressing ambivalence before proceeding." tier="standard">
                         <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About treatment expectancy" />
                     </AdvancedTooltip>
                 </h3>

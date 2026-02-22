@@ -214,7 +214,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
             {showAI && (
                 <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-4 animate-in slide-in-from-top duration-300">
                     <p className="text-slate-400 text-sm leading-relaxed">
-                        <strong className="text-slate-300">Analysis:</strong> Patient profile (High ACE, Severe TRD) matches cluster B2. Historical data suggests slower initial response but durable remission if integration protocol is strictly followed. Strict adherence to 3+ integration sessions historically correlates with sustained outcomes.
+                        <strong className="text-slate-300">Analysis:</strong> Patient profile (High ACE, Severe TRD) matches cluster B2. Historical data indicates slower initial response but durable remission if integration protocol is strictly followed. Strict adherence to 3+ integration sessions historically correlates with sustained outcomes.
                     </p>
                 </div>
             )}

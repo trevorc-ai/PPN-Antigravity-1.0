@@ -81,7 +81,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                 return {
                     icon: AlertCircle,
                     label: 'Sleep Decline',
-                    tooltip: 'Sleep quality decline often precedes depression relapse by 2-3 weeks. Early intervention recommended.',
+                    tooltip: 'Sleep quality decline often precedes depression relapse by 2-3 weeks. Early intervention historically indicated.',
                     color: 'amber'
                 };
             case 'missed_assessments':

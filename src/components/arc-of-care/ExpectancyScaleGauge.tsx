@@ -105,7 +105,7 @@ const ExpectancyScaleGauge: React.FC<ExpectancyScaleGaugeProps> = ({ score }) =>
                     )}
                     {clampedScore < 41 && (
                         <>
-                            <span className="font-semibold text-red-400">Low expectancy detected.</span> Pre-session education and expectancy-building interventions strongly recommended.
+                            <span className="font-semibold text-red-400">Low expectancy detected.</span> Pre-session education and expectancy-building interventions strongly indicated.
                         </>
                     )}
                 </p>

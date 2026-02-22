@@ -54,7 +54,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
         // Check if expansion needed
         if (score < 40) {
             setNeedsExpansion(true);
-            setExpansionReason('Your MEQ score suggests a less intense mystical experience. We\'d like to gather more detail to better support your integration.');
+            setExpansionReason('Your MEQ score correlates with a less intense mystical experience. We\'d like to gather more detail to better support your integration.');
             setPhase('expanded');
         } else {
             // Continue to EDI

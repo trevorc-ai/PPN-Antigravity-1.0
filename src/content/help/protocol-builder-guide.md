@@ -107,7 +107,7 @@ The system checks for conditions that may make treatment unsafe.
 
 1. **Read the full warning message** - Don't just look at the color
 2. **Check the mechanism** - Understand why the interaction occurs
-3. **Review recommendations** - Follow suggested actions
+3. **Review clinical insights** - Consider mitigation strategies
 4. **Use clinical judgment** - Warnings are advisory, not absolute
 
 ### When to Consult Additional Resources

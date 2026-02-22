@@ -85,11 +85,11 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                             </div>
                         </div>
 
-                        {/* Recommendation */}
+                        {/* Mitigation */}
                         <div className="mt-3 pl-9">
                             <div className="flex items-center gap-1.5">
                                 <p className="text-sm text-slate-400">
-                                    <strong className="text-[#A8B5D1]">Recommended Actions:</strong>
+                                    <strong className="text-[#A8B5D1]">Risk Mitigation Strategies:</strong>
                                 </p>
                                 <AdvancedTooltip
                                     tier="guide"
@@ -111,7 +111,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                                 </AdvancedTooltip>
                             </div>
                             <p className="text-sm text-slate-400 mt-1">
-                                {flag.recommendation}
+                                {flag.mitigation}
                             </p>
                         </div>
                     </div>
@@ -121,7 +121,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
             {/* Summary Actions */}
             <div className="mt-6 pt-6 border-t border-slate-700/50">
                 <p className="text-sm text-slate-400 mb-3">
-                    <strong className="text-slate-300">General Recommendations:</strong>
+                    <strong className="text-slate-300">General Risk Mitigation Strategies:</strong>
                 </p>
                 <ul className="text-sm text-slate-400 space-y-1 list-disc list-inside">
                     <li>Trauma-informed approach required</li>

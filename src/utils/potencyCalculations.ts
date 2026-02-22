@@ -8,7 +8,7 @@
 
 export const BASE_MG_PER_GRAM = 10.0;
 
-export function calculateRecommendedWeight(targetMg: number, potencyCoeff: number): number {
+export function calculateTargetWeight(targetMg: number, potencyCoeff: number): number {
     if (potencyCoeff <= 0) return 0;
     return targetMg / (BASE_MG_PER_GRAM * potencyCoeff);
 }

@@ -131,7 +131,7 @@ const ACEScoreBarChart: React.FC<ACEScoreBarChartProps> = ({ score }) => {
                         <> Patients with high ACE scores have lower baseline resilience and benefit significantly from structured integration support.</>
                     )}
                     {clampedScore >= 4 && clampedScore < 7 && (
-                        <> Moderate trauma history suggests need for additional integration to process emerging material.</>
+                        <> Moderate trauma history correlates with a need for additional integration to process emerging material.</>
                     )}
                     {clampedScore >= 1 && clampedScore < 4 && (
                         <> Low trauma history indicates good baseline resilience. Standard protocol is appropriate.</>

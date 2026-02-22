@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AlertTriangle, Save, CheckCircle } from 'lucide-react';
-import { getCSSRSAssessment, getRecommendedActions, getRiskColor, getRiskBgColor, getRiskIcon, type CSSRSScore } from '../../utils/cssrsScoring';
+import { getCSSRSAssessment, getRiskMitigationActions, getRiskColor, getRiskBgColor, getRiskIcon, type CSSRSScore } from '../../utils/cssrsScoring';
 
 export interface SafetyCheckFormData {
     checkInDate: string;
@@ -55,7 +55,7 @@ export const StructuredSafetyCheck: React.FC<StructuredSafetyCheckProps> = ({
     const [submitted, setSubmitted] = useState(false);
 
     const assessment = getCSSRSAssessment(formData.cssrsScore);
-    const recommendedActions = getRecommendedActions(formData.cssrsScore);
+    const riskMitigationActions = getRiskMitigationActions(formData.cssrsScore);
     const isHighRisk = formData.cssrsScore >= 3;
 
     const handleScoreChange = (score: CSSRSScore) => {
@@ -133,8 +133,8 @@ export const StructuredSafetyCheck: React.FC<StructuredSafetyCheckProps> = ({
                             <label
                                 key={score}
                                 className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${isSelected
-                                        ? getRiskBgColor(scoreAssessment.riskLevel) + ' border-2'
-                                        : 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50'
+                                    ? getRiskBgColor(scoreAssessment.riskLevel) + ' border-2'
+                                    : 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/50'
                                     }`}
                             >
                                 <input
@@ -218,14 +218,14 @@ export const StructuredSafetyCheck: React.FC<StructuredSafetyCheckProps> = ({
                 </div>
             </div>
 
-            {/* Recommended Actions */}
+            {/* Risk Mitigation Actions */}
             {formData.cssrsScore > 0 && (
                 <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                     <p className="text-blue-300 font-semibold text-sm mb-2">
-                        Recommended Actions:
+                        Risk Mitigation Strategies:
                     </p>
                     <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
-                        {recommendedActions.map((action, index) => (
+                        {riskMitigationActions.map((action, index) => (
                             <li key={index}>{action}</li>
                         ))}
                     </ul>
@@ -236,8 +236,8 @@ export const StructuredSafetyCheck: React.FC<StructuredSafetyCheckProps> = ({
             <button
                 onClick={handleSubmit}
                 className={`w-full px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${submitted
-                        ? 'bg-emerald-600 text-slate-300'
-                        : 'bg-blue-600 hover:bg-blue-700 text-slate-300'
+                    ? 'bg-emerald-600 text-slate-300'
+                    : 'bg-blue-600 hover:bg-blue-700 text-slate-300'
                     }`}
             >
                 {submitted ? (
