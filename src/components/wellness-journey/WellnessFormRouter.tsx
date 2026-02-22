@@ -178,7 +178,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     }, [siteId]);
 
-    const handleSetAndSettingSave = async (data: SetAndSettingData) => {
+    const handleSetAndSettingSave = useCallback(async (data: SetAndSettingData) => {
         if (!patientId || !siteId) return;
         const result = await createBaselineAssessment({
             patient_id: patientId,
@@ -187,11 +187,11 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             // observations[] included in form data; no dedicated DB column yet — same behaviour as before
         });
         result.success ? onSaved('Set & Setting') : onError('Set & Setting', result.error);
-    };
+    }, [patientId, siteId]);
 
     // ── Phase 2 handlers ─────────────────────────────────────────────────────
 
-    const handleVitalsSave = async (readings: VitalSignReading[]) => {
+    const handleVitalsSave = useCallback(async (readings: VitalSignReading[]) => {
         if (!sessionId) return; // silent — auto-save fires before session is created
         const promises = readings.map(r => createSessionVital({
             session_id: sessionId,
@@ -213,14 +213,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         failed.length === 0
             ? onSaved('Session Vitals')
             : onError('Session Vitals', `${failed.length} readings failed to save`);
-    };
+    }, [sessionId]);
 
-    const handleSessionObservationsSave = async (data: SessionObservationsData) => {
+    const handleSessionObservationsSave = useCallback(async (data: SessionObservationsData) => {
         if (!sessionId) return; // silent
         onSaved('Session Observations');
-    };
+    }, [sessionId]);
 
-    const handleSafetyEventSave = async (data: SafetyAndAdverseEventData) => {
+    const handleSafetyEventSave = useCallback(async (data: SafetyAndAdverseEventData) => {
         if (!sessionId) return; // silent
         const result = await createSessionEvent({
             session_id: sessionId,
@@ -229,9 +229,9 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             is_resolved: data.resolved,
         });
         result.success ? onSaved('Safety & Adverse Event') : onError('Safety & Adverse Event', result.error);
-    };
+    }, [sessionId]);
 
-    const handleRescueProtocolSave = async (data: RescueProtocolData) => {
+    const handleRescueProtocolSave = useCallback(async (data: RescueProtocolData) => {
         if (!sessionId) return; // silent — Rescue form auto-saves immediately, session may not exist yet
         const result = await createSessionEvent({
             session_id: sessionId,
@@ -239,9 +239,9 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             intervention_type_id: data.intervention_type ? undefined : undefined,
         });
         result.success ? onSaved('Rescue Protocol') : onError('Rescue Protocol', result.error);
-    };
+    }, [sessionId]);
 
-    const handleTimelineSave = async (events: TimelineEvent[]) => {
+    const handleTimelineSave = useCallback(async (events: TimelineEvent[]) => {
         if (!sessionId) return; // silent
         const validEvents = events.filter(e => e.event_type && e.event_timestamp);
         if (validEvents.length === 0) return;
@@ -257,11 +257,11 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         failed.length === 0
             ? onSaved('Session Timeline')
             : onError('Session Timeline', `${failed.length} events failed to save`);
-    };
+    }, [sessionId]);
 
     // ── Phase 3 handlers ─────────────────────────────────────────────────────
 
-    const handlePulseCheckSave = async (data: DailyPulseCheckData) => {
+    const handlePulseCheckSave = useCallback(async (data: DailyPulseCheckData) => {
         if (!patientId) return; // silent
         const result = await createPulseCheck({
             patient_id: patientId,
@@ -273,16 +273,16 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             anxiety_level: data.anxiety_level,
         });
         result.success ? onSaved('Daily Pulse Check') : onError('Daily Pulse Check', result.error);
-    };
+    }, [patientId, sessionId]);
 
-    const handleMEQ30Save = async (_data: MEQ30Data) => {
+    const handleMEQ30Save = useCallback(async (_data: MEQ30Data) => {
         // MEQ-30 score is stored on log_clinical_records.meq30_score (the session record)
         // This requires an UPDATE to the existing session record, not a new insert.
         // For now: record that MEQ-30 was completed. Full wiring requires session UPSERT.
         onSaved('MEQ-30 Questionnaire');
-    };
+    }, []);
 
-    const handleIntegrationSessionSave = async (data: StructuredIntegrationSessionData) => {
+    const handleIntegrationSessionSave = useCallback(async (data: StructuredIntegrationSessionData) => {
         if (!patientId) { onError('Integration Session', 'No patient ID'); return; }
         const result = await createIntegrationSession({
             patient_id: patientId,
@@ -300,9 +300,9 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             therapist_observation_ids: data.therapist_observation_ids,
         });
         result.success ? onSaved('Integration Session') : onError('Integration Session', result.error);
-    };
+    }, [patientId, sessionId]);
 
-    const handleBehavioralChangeSave = async (data: BehavioralChangeData) => {
+    const handleBehavioralChangeSave = useCallback(async (data: BehavioralChangeData) => {
         if (!patientId) { onError('Behavioral Change', 'No patient ID'); return; }
         const result = await createBehavioralChange({
             patient_id: patientId,
@@ -315,9 +315,9 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             related_to_dosing: data.related_to_dosing,
         });
         result.success ? onSaved('Behavioral Change') : onError('Behavioral Change', result.error);
-    };
+    }, [patientId, sessionId]);
 
-    const handleLongitudinalAssessmentSave = async (data: LongitudinalAssessmentData) => {
+    const handleLongitudinalAssessmentSave = useCallback(async (data: LongitudinalAssessmentData) => {
         if (!patientId) { onError('Longitudinal Assessment', 'No patient ID'); return; }
         const result = await createLongitudinalAssessment({
             patient_id: patientId,
@@ -331,7 +331,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             cssrs_score: data.cssrs_score,
         });
         result.success ? onSaved('Longitudinal Assessment') : onError('Longitudinal Assessment', result.error);
-    };
+    }, [patientId, sessionId]);
 
     // ── Router ───────────────────────────────────────────────────────────────
 
