@@ -45,6 +45,58 @@ const MOTIVATION_OPTIONS = ['Low', 'Moderate', 'High', 'Very High'];
 const SUPPORT_OPTIONS = ['None identified', 'Minimal', 'Moderate', 'Strong'];
 const EXPERIENCE_OPTIONS = ['None', 'Minimal (1-2 times)', 'Some (3-5 times)', 'Experienced (6+ times)'];
 
+/** Styled number input for physiological readings (HRV, BP) — numeric keypad on tablet */
+function PhysioInput({
+    id, label, value, onChange, placeholder,
+}: {
+    id: string; label: string; value: number | null;
+    onChange: (v: number | null) => void; placeholder: string;
+}) {
+    return (
+        <div>
+            <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                {label}
+            </label>
+            <input
+                id={id}
+                type="number"
+                inputMode="numeric"
+                placeholder={placeholder}
+                value={value ?? ''}
+                onChange={(e) => onChange(e.target.value === '' ? null : parseFloat(e.target.value))}
+                className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+            />
+        </div>
+    );
+}
+
+/** Styled number input for wide-range scores (PCL-5 0–80) */
+function ScoreInputLarge({
+    id, label, value, onChange, max,
+}: {
+    id: string; label: string; value: number | null;
+    onChange: (v: number | null) => void; max: number;
+}) {
+    return (
+        <div>
+            <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                {label}
+            </label>
+            <input
+                id={id}
+                type="number"
+                inputMode="numeric"
+                placeholder={`0–${max}`}
+                min={0}
+                max={max}
+                value={value ?? ''}
+                onChange={(e) => onChange(e.target.value === '' ? null : parseInt(e.target.value, 10))}
+                className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+            />
+        </div>
+    );
+}
+
 /** Range dropdown for psychometric scores (PHQ-9 / GAD-7 / ACE / PCL-5) */
 function ScoreSelect({
     id, label, value, onChange, min, max,
@@ -73,31 +125,37 @@ function ScoreSelect({
     );
 }
 
-/** Range dropdown for physiological measurements */
-function PhysioSelect({
-    id, label, value, onChange, min, max, step, unit,
+/** Slider for wide-range numeric scores (PCL-5 0–80, step=5) */
+function ScoreSlider({
+    id, label, value, onChange, min, max, step,
 }: {
     id: string; label: string; value: number | null;
-    onChange: (v: number | null) => void; min: number; max: number; step: number; unit: string;
+    onChange: (v: number) => void; min: number; max: number; step: number;
 }) {
-    const count = Math.floor((max - min) / step) + 1;
-    const options = Array.from({ length: count }, (_, i) => min + i * step);
+    const sliderVal = value !== null ? value : min;
+    const pct = ((sliderVal - min) / (max - min)) * 100;
     return (
         <div>
-            <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
-                {label}
-            </label>
-            <select
+            <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor={id} className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                    {label}
+                </label>
+                <span className="text-xl font-black text-slate-300">
+                    {value !== null ? value : '—'}
+                </span>
+            </div>
+            <input
                 id={id}
-                value={value ?? ''}
-                onChange={(e) => onChange(e.target.value === '' ? null : parseInt(e.target.value, 10))}
-                className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-            >
-                <option value="">—</option>
-                {options.map(v => (
-                    <option key={v} value={v}>{v} {unit}</option>
-                ))}
-            </select>
+                type="range"
+                min={min} max={max} step={step}
+                value={sliderVal}
+                onChange={(e) => onChange(parseInt(e.target.value))}
+                className="ppn-range w-full cursor-pointer"
+                style={{ background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${pct}%, #334155 ${pct}%, #334155 100%)` }}
+            />
+            <div className="flex justify-between text-xs text-slate-600 mt-0.5">
+                <span>{min}</span><span>{max}</span>
+            </div>
         </div>
     );
 }
@@ -183,14 +241,15 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
         setData((d) => ({ ...d, [section]: { ...d[section], ...updates } }));
     };
 
-    // ── Validation ────────────────────────────────────────────────────────────
-    const allScoresEntered =
-        data.mentalHealth.phq9 !== null &&
-        data.mentalHealth.gad7 !== null &&
-        data.mentalHealth.ace !== null &&
+    // ── Validation ─────────────────────────────────────────────────────────────────────────
+    // At least one psychometric score is required to save
+    const atLeastOneScore =
+        data.mentalHealth.phq9 !== null ||
+        data.mentalHealth.gad7 !== null ||
+        data.mentalHealth.ace !== null ||
         data.mentalHealth.pcl5 !== null;
 
-    const canSubmit = allScoresEntered;
+    const canSubmit = atLeastOneScore;
 
     const expectancyLabel =
         data.setSetting.treatment_expectancy >= 70
@@ -214,7 +273,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             {/* ── Section 1: Psychometric Scores ───────────────────────── */}
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-base font-bold text-slate-300">Psychometric Scores</h3>
+                    <h3 className="text-base font-bold text-slate-300">Psychometric Scores <span className="text-slate-500 font-normal text-sm ml-1">at least one required</span></h3>
                     {lastSaved && (
                         <span className="text-xs text-slate-500">
                             Saved {lastSaved.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
@@ -225,7 +284,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                     <ScoreSelect id="phq9" label="PHQ-9 (0–27)" value={data.mentalHealth.phq9} onChange={(v) => updateData('mentalHealth', { phq9: v })} min={0} max={27} />
                     <ScoreSelect id="gad7" label="GAD-7 (0–21)" value={data.mentalHealth.gad7} onChange={(v) => updateData('mentalHealth', { gad7: v })} min={0} max={21} />
                     <ScoreSelect id="ace" label="ACE (0–10)" value={data.mentalHealth.ace} onChange={(v) => updateData('mentalHealth', { ace: v })} min={0} max={10} />
-                    <ScoreSelect id="pcl5" label="PCL-5 (0–80)" value={data.mentalHealth.pcl5} onChange={(v) => updateData('mentalHealth', { pcl5: v })} min={0} max={80} />
+                    <ScoreInputLarge id="pcl5" label="PCL-5 (0–80)" value={data.mentalHealth.pcl5} onChange={(v) => updateData('mentalHealth', { pcl5: v })} max={80} />
                 </div>
             </section>
 
@@ -262,10 +321,11 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 <h3 className="text-base font-bold text-slate-300">
                     Baseline Physiology <span className="text-slate-500 font-normal text-sm ml-1">optional</span>
                 </h3>
+                {/* Number inputs — tablet opens numeric keypad, no scroll, precise entry */}
                 <div className="grid grid-cols-3 gap-3">
-                    <PhysioSelect id="hrv" label="HRV (ms)" value={data.physiology.hrv_ms} onChange={(v) => updateData('physiology', { hrv_ms: v })} min={10} max={200} step={5} unit="ms" />
-                    <PhysioSelect id="bp-sys" label="Systolic (mmHg)" value={data.physiology.bp_systolic} onChange={(v) => updateData('physiology', { bp_systolic: v })} min={70} max={200} step={2} unit="" />
-                    <PhysioSelect id="bp-dia" label="Diastolic (mmHg)" value={data.physiology.bp_diastolic} onChange={(v) => updateData('physiology', { bp_diastolic: v })} min={40} max={130} step={2} unit="" />
+                    <PhysioInput id="hrv" label="HRV (ms)" value={data.physiology.hrv_ms} onChange={(v) => updateData('physiology', { hrv_ms: v })} placeholder="e.g. 55" />
+                    <PhysioInput id="bp-sys" label="Systolic" value={data.physiology.bp_systolic} onChange={(v) => updateData('physiology', { bp_systolic: v })} placeholder="e.g. 120" />
+                    <PhysioInput id="bp-dia" label="Diastolic" value={data.physiology.bp_diastolic} onChange={(v) => updateData('physiology', { bp_diastolic: v })} placeholder="e.g. 80" />
                 </div>
             </section>
 
@@ -353,7 +413,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             {/* Hint if scores missing */}
             {!canSubmit && (
                 <p className="text-xs text-slate-500 text-right">
-                    Select all 4 psychometric scores to continue
+                    Enter at least one psychometric score to continue
                 </p>
             )}
         </div>
