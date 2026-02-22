@@ -312,9 +312,16 @@ const WellnessJourney: React.FC = () => {
             setIsFormOpen(false);
             setTimeout(() => setActiveFormId(null), 320);
 
-            // Auto-advance to Phase 2 after panel animates out
+            // Phase 1 complete — show toast prompt; practitioner navigates to Phase 2 manually.
+            // Auto-advance to Phase 2 will be wired once the Phase 1 report data-viz is in place.
             if (isLastPhase1Form) {
-                setTimeout(() => setActivePhase(2), 350);
+                setTimeout(() => {
+                    addToast({
+                        title: '✅ Phase 1 Complete',
+                        message: 'All preparation steps done. Review your Phase 1 report, then advance to Dosing Session when ready.',
+                        type: 'success',
+                    });
+                }, 400);
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
