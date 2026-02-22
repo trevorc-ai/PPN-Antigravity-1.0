@@ -68,6 +68,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             title: 'Core',
             items: [
                 { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
+                { label: 'Patient Bridge', icon: 'qr_code_scanner', path: '/PPN_Bridge_Camera.html', external: true },
                 { label: 'Wellness Journey', icon: 'psychology', path: '/wellness-journey' },
                 { label: 'News', icon: 'newspaper', path: '/news' },
                 { label: 'Practitioners', icon: 'groups', path: '/clinicians' },
@@ -163,50 +164,72 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                             <ul className="space-y-1">
                                 {section.items.map((item) => (
                                     <li key={item.path}>
-                                        <NavLink
-                                            to={item.path}
-                                            onClick={onClose}
-                                            className={({ isActive }) =>
-                                                `group relative flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${isActive
-                                                    ? 'bg-indigo-500/20 text-slate-300 ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-500/10'
-                                                    : 'text-slate-300 hover:text-slate-300 hover:bg-slate-800/50 active:scale-95'
-                                                }`
-                                            }
-                                        >
-                                            {({ isActive }) => (
-                                                <>
-                                                    {/* Active Indicator */}
-                                                    {isActive && (
-                                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-500 rounded-r-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
-                                                    )}
-
-                                                    {/* Icon */}
-                                                    <span
-                                                        className={`material-symbols-outlined text-xl transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-indigo-400' : 'group-hover:text-indigo-400'
-                                                            }`}
-                                                    >
+                                        {item.external ? (
+                                            <a
+                                                href={item.path}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={onClose}
+                                                className="group relative flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 text-slate-300 hover:text-slate-300 hover:bg-slate-800/50 active:scale-95"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <span className="material-symbols-outlined text-xl transition-transform duration-200 group-hover:scale-110 group-hover:text-indigo-400">
                                                         {item.icon}
                                                     </span>
-
-                                                    {/* Label */}
                                                     <span className="text-sm font-bold uppercase tracking-wide flex-1">
                                                         {item.label}
                                                     </span>
+                                                </div>
+                                                <span className="material-symbols-outlined text-sm text-slate-600 group-hover:text-slate-300 transition-colors">
+                                                    open_in_new
+                                                </span>
+                                            </a>
+                                        ) : (
+                                            <NavLink
+                                                to={item.path}
+                                                onClick={onClose}
+                                                className={({ isActive }) =>
+                                                    `group relative flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${isActive
+                                                        ? 'bg-indigo-500/20 text-slate-300 ring-1 ring-indigo-500/40 shadow-lg shadow-indigo-500/10'
+                                                        : 'text-slate-300 hover:text-slate-300 hover:bg-slate-800/50 active:scale-95'
+                                                    }`
+                                                }
+                                            >
+                                                {({ isActive }) => (
+                                                    <>
+                                                        {/* Active Indicator */}
+                                                        {isActive && (
+                                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-indigo-500 rounded-r-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
+                                                        )}
 
-                                                    {/* Badge */}
-                                                    {item.badge !== undefined && item.badge > 0 && (
-                                                        <span className="px-2 py-0.5 rounded-full bg-red-500 text-slate-300 text-xs font-black min-w-[20px] text-center">
-                                                            {item.badge}
+                                                        {/* Icon */}
+                                                        <span
+                                                            className={`material-symbols-outlined text-xl transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-indigo-400' : 'group-hover:text-indigo-400'
+                                                                }`}
+                                                        >
+                                                            {item.icon}
                                                         </span>
-                                                    )}
 
-                                                    {/* Chevron */}
-                                                    <span className="material-symbols-outlined text-sm text-slate-600 group-hover:text-slate-300 transition-colors">
-                                                        chevron_right
-                                                    </span>
-                                                </>
-                                            )}
-                                        </NavLink>
+                                                        {/* Label */}
+                                                        <span className="text-sm font-bold uppercase tracking-wide flex-1">
+                                                            {item.label}
+                                                        </span>
+
+                                                        {/* Badge */}
+                                                        {item.badge !== undefined && item.badge > 0 && (
+                                                            <span className="px-2 py-0.5 rounded-full bg-red-500 text-slate-300 text-xs font-black min-w-[20px] text-center">
+                                                                {item.badge}
+                                                            </span>
+                                                        )}
+
+                                                        {/* Chevron */}
+                                                        <span className="material-symbols-outlined text-sm text-slate-600 group-hover:text-slate-300 transition-colors">
+                                                            chevron_right
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </NavLink>
+                                        )}
                                     </li>
                                 ))}
                             </ul>

@@ -12,6 +12,7 @@ interface NavItem {
   label: string;
   icon: string;
   path: string;
+  external?: boolean;
 }
 
 interface NavSection {
@@ -29,6 +30,7 @@ const navSections: NavSection[] = [
   {
     title: 'Clinical Tools',
     items: [
+      { label: 'Patient Bridge', icon: 'qr_code_scanner', path: '/PPN_Bridge_Camera.html', external: true },
       { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
       { label: 'Wellness Journey', icon: 'spa', path: '/wellness-journey' },
       { label: 'Interaction Checker', icon: 'warning', path: '/interactions' },
@@ -113,34 +115,54 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
                     return (
                       <li key={item.path} className="relative">
-                        <NavLink
-                          to={item.path}
-                          data-tour={tourDataMap[item.path]}
-                          onClick={() => {
-                            if (window.innerWidth < 1024) onClose();
-                          }}
-                          className={({ isActive }) =>
-                            `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
-                              ? 'bg-primary/30 ring-2 ring-primary shadow-lg shadow-primary/20'
-                              : 'hover:bg-slate-800/50'
-                            }`
-                          }
-                        >
-                          {({ isActive }) => (
-                            <>
-                              {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
-                              )}
-                              <span
-                                className={`material-symbols-outlined text-lg ${isActive ? 'text-primary' : 'text-slate-400'
-                                  }`}
-                              >
+                        {item.external ? (
+                          <a
+                            href={item.path}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => {
+                              if (window.innerWidth < 1024) onClose();
+                            }}
+                            className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-slate-800/50"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="material-symbols-outlined text-lg text-slate-400">
                                 {item.icon}
                               </span>
                               <span className="text-base font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
-                            </>
-                          )}
-                        </NavLink>
+                            </div>
+                            <span className="material-symbols-outlined text-sm text-slate-600">open_in_new</span>
+                          </a>
+                        ) : (
+                          <NavLink
+                            to={item.path}
+                            data-tour={tourDataMap[item.path]}
+                            onClick={() => {
+                              if (window.innerWidth < 1024) onClose();
+                            }}
+                            className={({ isActive }) =>
+                              `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
+                                ? 'bg-primary/30 ring-2 ring-primary shadow-lg shadow-primary/20'
+                                : 'hover:bg-slate-800/50'
+                              }`
+                            }
+                          >
+                            {({ isActive }) => (
+                              <>
+                                {isActive && (
+                                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                                )}
+                                <span
+                                  className={`material-symbols-outlined text-lg ${isActive ? 'text-primary' : 'text-slate-400'
+                                    }`}
+                                >
+                                  {item.icon}
+                                </span>
+                                <span className="text-base font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
+                              </>
+                            )}
+                          </NavLink>
+                        )}
                       </li>
                     );
                   })}
