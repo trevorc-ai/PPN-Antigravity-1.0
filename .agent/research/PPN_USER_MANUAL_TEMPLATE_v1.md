@@ -994,43 +994,59 @@ A complete reference of all Arc of Care forms, organized by phase. *(Source of t
 10. **Quick Actions floating button expanded**
 11. **Slide-Out Panel open** — showing a sample form (e.g., Session Vitals)
 12. **Visual Timeline component** — with placeholder/sample data
+13. **MEQ-30 standalone page** — full view
 
 ### Priority 3 — Interaction Checker
 
-13. **Interaction Checker — empty state** (no substances selected)
-14. **Interaction Checker — substances selected, pre-check**
-15. **Interaction Checker — results view** (multiple severity levels showing)
-16. **Interaction Checker — tooltip visible on severity score label**
+14. **Interaction Checker — empty state** (no substances selected)
+15. **Interaction Checker — substances selected, pre-check**
+16. **Interaction Checker — results view** (multiple severity levels showing)
+17. **Interaction Checker — tooltip visible on severity score label**
 
 ### Priority 4 — Knowledge Base
 
-17. **Substance Catalog — grid view** (all substances)
-18. **Substance Catalog — search in use** (search bar with a query)
-19. **Single substance page** — e.g., Psilocybin — annotated
-20. **Intelligence Hub — main feed view**
+18. **Substance Catalog — grid view** (all substances)
+19. **Substance Catalog — search in use** (search bar with a query)
+20. **Single substance page** — e.g., Psilocybin — annotated
+21. **Substance Monograph page** — e.g., Psilocybin — full view
+22. **Clicking through from Catalog tile to Monograph page**
+23. **Intelligence Hub — main feed view**
 
-### Priority 5 — Analytics & Export
+### Priority 5 — Analytics, Export & Assessment
 
-21. **Analytics page — overview**
-22. **Clinic Performance Radar** (component)
-23. **Safety Benchmark** (component)
-24. **Patient Constellation** (component)
-25. **Patient Flow Sankey** (component)
-26. **Export Center — main view**
-27. **Export Center — report generated, download ready**
-28. **Clinical Report PDF — first page preview**
+24. **Analytics page — overview**
+25. **Each major visualization** — one screenshot per component
+26. **Deep Dive navigation grid**
+27. **Sample Deep Dive** — e.g., Patient Flow Sankey
+28. **Assessment page** — question view
+29. **Export Center — main view**
+30. **Export Center — report generated, download ready**
+31. **Clinical Report PDF — first page preview**
 
-### Priority 6 — Settings & Misc
+### Priority 6 — Security Suite & AI Tools (Phantom Shield)
 
-29. **My Protocols — list view**
-30. **Protocol detail page**
-31. **Clinician Directory — main view**
-32. **Settings page — full view**
-33. **Help & FAQ page**
+32. **Dosage Calculator component** — active calculation
+33. **Crisis Logger component** — active, during a session
+34. **Blind Vetting Scanner** — terminal interface
+35. **NeuralCopilot component** — active conversation
+
+### Priority 7 — Ingestion Hub
+
+36. **Registry Upload page** — full view with both modules
+37. **Legacy Chart OCR module** — drag-and-drop zone
+38. **Neural Dictation module** — recording active state
+
+### Priority 8 — Settings & Misc
+
+39. **My Protocols — list view**
+40. **Protocol detail page**
+41. **Clinician Directory — main view**
+42. **Settings page — full view**
+43. **Help & FAQ page**
 
 ---
 
-*End of PPN Research Portal User Manual — Version 1.0 Draft*  
+*End of PPN Research Portal User Manual — Version 1.1 Draft*  
 *Prepared by PRODDY | PPN DreamTeam | February 2026*
 
 ==== PRODDY ====
