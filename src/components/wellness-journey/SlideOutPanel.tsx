@@ -37,8 +37,16 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
     footer
 }) => {
     const panelRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
     const touchStartY = useRef<number>(0);
     const touchEndY = useRef<number>(0);
+
+    // Scroll content to top whenever the panel opens or switches to a different form
+    useEffect(() => {
+        if (isOpen && contentRef.current) {
+            contentRef.current.scrollTop = 0;
+        }
+    }, [isOpen, title]);
 
     // Handle Escape key
     useEffect(() => {
@@ -147,7 +155,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar px-6 py-6">
+                <div ref={contentRef} className="flex-1 overflow-y-auto custom-scrollbar px-6 py-6">
                     {children}
                 </div>
 

@@ -102,8 +102,9 @@ interface WellnessFormRouterProps {
     patientId?: string;
     sessionId?: string;  // UUID — log_clinical_records.id
     siteId?: string;     // Resolved by parent (WellnessJourney) at page load
-    onComplete?: () => void;  // Closes the panel (Back from first form, or explicit close)
-    onNavigate?: (formId: WellnessFormId) => void; // Advance to a sibling form
+    onComplete?: () => void;  // Advance to next form / mark complete
+    onNavigate?: (formId: WellnessFormId) => void; // Open a sibling form
+    onClose?: () => void;     // Close panel without marking complete (used by Back buttons)
 }
 
 export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
@@ -113,6 +114,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     siteId: siteIdProp,
     onComplete,
     onNavigate,
+    onClose,
 }) => {
     const { addToast } = useToast();
     const [siteId, setSiteId] = useState<string | null>(siteIdProp ?? null);
@@ -376,8 +378,8 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <MentalHealthScreeningForm
                 patientId={patientId}
                 onComplete={onComplete}
-                onExit={onComplete}
-                onBack={onComplete}
+                onExit={onClose ?? onComplete}
+                onBack={onClose ?? onComplete}
             />;
 
         // ── Phase 2: Dosing Session ───────────────────────────────────────────

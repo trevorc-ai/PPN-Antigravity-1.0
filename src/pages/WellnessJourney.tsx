@@ -519,6 +519,7 @@ const WellnessJourney: React.FC = () => {
                         sessionId={journey.sessionId}
                         siteId={clinicianSiteId}
                         onComplete={() => handleFormComplete(activeFormId)}
+                        onClose={() => handleFormComplete(null)}
                         onNavigate={handleOpenForm}
                     />
                 )}
