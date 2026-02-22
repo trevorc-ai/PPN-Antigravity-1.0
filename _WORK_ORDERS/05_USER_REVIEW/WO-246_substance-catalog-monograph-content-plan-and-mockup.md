@@ -1,6 +1,6 @@
 ---
-status: 02_DESIGN
-owner: DESIGNER
+status: 05_USER_REVIEW
+owner: USER
 failure_count: 0
 priority: HIGH
 created: 2026-02-21
