@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
-import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info } from 'lucide-react';
+import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
 import { TreatmentPhase } from '../components/wellness-journey/DosingSessionPhase';
 import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhase';
 import { SlideOutPanel } from '../components/wellness-journey/SlideOutPanel';
+import { WorkflowActionCard } from '../components/wellness-journey/WorkflowCards';
 import { QuickActionsMenu } from '../components/wellness-journey/QuickActionsMenu';
 import { WellnessFormRouter, type WellnessFormId } from '../components/wellness-journey/WellnessFormRouter';
 import { Phase1StepGuide, PHASE1_STEPS } from '../components/wellness-journey/Phase1StepGuide';
@@ -727,30 +728,55 @@ const WellnessJourney: React.FC = () => {
                                         <>
                                             <IntegrationPhase journey={journey} />
                                             {/* Phase 3 — Early Follow-up (0–72 hrs) */}
-                                            <div>
-                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Early Follow-up · 0–72 hrs</p>
-                                                <div className="flex flex-wrap gap-3">
-                                                    <button onClick={() => handleOpenForm('structured-safety')} className="flex items-center gap-2 px-5 py-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                                        <span className="material-symbols-outlined text-base">shield</span>Structured Safety Check
-                                                    </button>
-                                                    <button onClick={() => handleOpenForm('daily-pulse')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                                        <span className="material-symbols-outlined text-base">favorite</span>Daily Pulse Check
-                                                    </button>
+                                            <div className="mt-8">
+                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Early Follow-up · 0–72 hrs</p>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <WorkflowActionCard
+                                                        phase={3}
+                                                        status="active"
+                                                        title="Structured Safety Check"
+                                                        description="Assess post-session risk and physical stability."
+                                                        icon={<Shield className="w-5 h-5 text-emerald-400" />}
+                                                        onClick={() => handleOpenForm('structured-safety')}
+                                                    />
+                                                    <WorkflowActionCard
+                                                        phase={3}
+                                                        status="active"
+                                                        title="Daily Pulse Check"
+                                                        description="Log basic mood and sleep metrics."
+                                                        icon={<Heart className="w-5 h-5 text-emerald-400" />}
+                                                        onClick={() => handleOpenForm('daily-pulse')}
+                                                    />
                                                 </div>
                                             </div>
                                             {/* Phase 3 — Integration Work (days to weeks) */}
-                                            <div>
-                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Integration Work · Days to Weeks</p>
-                                                <div className="flex flex-wrap gap-3">
-                                                    <button onClick={() => handleOpenForm('structured-integration')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                                        <span className="material-symbols-outlined text-base">edit_note</span>Integration Session
-                                                    </button>
-                                                    <button onClick={() => handleOpenForm('behavioral-tracker')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                                        <span className="material-symbols-outlined text-base">trending_up</span>Behavioral Change Tracker
-                                                    </button>
-                                                    <button onClick={() => handleOpenForm('longitudinal-assessment')} className="flex items-center gap-2 px-5 py-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                                        <span className="material-symbols-outlined text-base">timeline</span>Longitudinal Assessment
-                                                    </button>
+                                            <div className="mt-8">
+                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Integration Work · Days to Weeks</p>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                    <WorkflowActionCard
+                                                        phase={3}
+                                                        status="active"
+                                                        title="Integration Session"
+                                                        description="Log clinical narrative and thematic insights."
+                                                        icon={<span className="material-symbols-outlined text-emerald-400">edit_note</span>}
+                                                        onClick={() => handleOpenForm('structured-integration')}
+                                                    />
+                                                    <WorkflowActionCard
+                                                        phase={3}
+                                                        status="active"
+                                                        title="Behavioral Change Tracker"
+                                                        description="Monitor behavioral modifications over time."
+                                                        icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
+                                                        onClick={() => handleOpenForm('behavioral-tracker')}
+                                                    />
+                                                    <WorkflowActionCard
+                                                        phase={3}
+                                                        status="active"
+                                                        title="Longitudinal Assessment"
+                                                        description="Detailed milestone check (PHQ-9/GAD-7)."
+                                                        icon={<span className="material-symbols-outlined text-emerald-400">timeline</span>}
+                                                        onClick={() => handleOpenForm('longitudinal-assessment')}
+                                                    />
                                                 </div>
                                             </div>
                                         </>

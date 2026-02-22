@@ -152,8 +152,8 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
                     </p>
                 </div>
                 {data.responseAchieved && (
-                    <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm font-bold">
-                        <CheckCircle2 className="w-5 h-5" />
+                    <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                        <CheckCircle2 className="w-4 h-4" />
                         Response Achieved
                     </div>
                 )}
