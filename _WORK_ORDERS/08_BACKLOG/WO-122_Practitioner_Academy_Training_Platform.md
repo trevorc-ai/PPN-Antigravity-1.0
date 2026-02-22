@@ -15,7 +15,7 @@ tags: [training, LMS, courses, CEU, cohorts, phase-2, revenue-expansion]
 > **Do not activate until Phase 1 (core portal) is stable and first paying cohort partners are identified.**
 
 ## USER CONTEXT
-Confirmed by Trevor (2026-02-20): Training courses are a Phase 2 strategic initiative. Referenced in the roadmap as the "Adobe Strategy" — sell to training cohorts at $5–10K per cohort, onboard 30 new practitioners who are trained on PPN from day one.
+Confirmed by Admin (2026-02-20): Training courses are a Phase 2 strategic initiative. Referenced in the roadmap as the "Adobe Strategy" — sell to training cohorts at $5–10K per cohort, onboard 30 new practitioners who are trained on PPN from day one.
 
 ---
 
@@ -68,7 +68,7 @@ Target integration points identified in strategy docs:
 Activate when:
 - [ ] Phase 1 portal is stable (post-beta)
 - [ ] At least one training program cohort partner is identified
-- [ ] Trevor confirms Phase 2 timeline
+- [ ] Admin confirms Phase 2 timeline
 
 ---
 

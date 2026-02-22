@@ -6,7 +6,7 @@ category: Design
 priority: LOW
 status: 05_USER_REVIEW
 created: 2026-02-14T22:01:16-08:00
-requested_by: Trevor Calton
+requested_by: PPN Admin
 assigned_to: INSPECTOR
 owner: USER
 estimated_complexity: 3/10

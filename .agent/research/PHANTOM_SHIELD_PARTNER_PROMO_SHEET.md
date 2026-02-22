@@ -164,8 +164,8 @@ The practitioners who will survive regulatory scrutiny — and thrive when legal
 Phantom Shield features are available across all PPN Research Portal tiers.
 
 **To request partner access:**  
-Trevor Calton  
-trevor@ppnportal.com  
+PPN Admin  
+info@ppnportal.com  
 
 **Live demo available at:**  
 http://localhost:3000 *(beta)*  

@@ -378,13 +378,13 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
 
               {/* Header row */}
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-primary uppercase tracking-[0.2em]">
+                <span className="text-xs md:text-sm font-black text-primary uppercase tracking-[0.2em]">
                   Step {currentStep + 1} / {TOUR_STEPS.length}
                 </span>
                 <button
                   ref={skipBtnRef}
                   onClick={handleSkip}
-                  className="text-xs font-bold text-slate-500 hover:text-slate-300 uppercase tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
+                  className="text-xs md:text-sm font-bold text-slate-500 hover:text-slate-300 uppercase tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
                   aria-label="Skip tour"
                 >
                   Skip Tour
@@ -393,10 +393,10 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
 
               {/* Content */}
               <div className="space-y-2">
-                <h3 className="text-lg font-black text-[#A8B5D1] tracking-tight leading-tight">
+                <h3 className="text-lg md:text-xl font-black text-[#A8B5D1] tracking-tight leading-tight">
                   {step.title}
                 </h3>
-                <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                <p className="text-sm md:text-base text-slate-400 font-medium leading-relaxed">
                   {step.description}
                 </p>
               </div>

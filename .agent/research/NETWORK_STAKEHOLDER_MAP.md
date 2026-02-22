@@ -1,7 +1,7 @@
 # PPN Portal: Network Stakeholder Map
 Updated: February 20, 2026
 Owner: PRODDY
-Status: Living document. Source: 4 Trevor/Jason meeting transcripts (Jan 29, Feb 2, Feb 9, Feb 10, 2026).
+Status: Living document. Source: 4 Admin/Jason meeting transcripts (Jan 29, Feb 2, Feb 9, Feb 10, 2026).
 
 ---
 
@@ -44,7 +44,7 @@ Status: Living document. Source: 4 Trevor/Jason meeting transcripts (Jan 29, Feb
 **His primary question:** "Is this rigorous enough to stake my reputation on?"
 **Key hook:** "We're building the real-world evidence dataset that clinical trials can't ethically generate."
 
-**Next step:** Jason schedules a multi-hour Zoom deep-dive with Trevor. Trevor records and transcribes.
+**Next step:** Jason schedules a multi-hour Zoom deep-dive with Admin. Admin records and transcribes.
 
 ---
 
@@ -58,7 +58,7 @@ Status: Living document. Source: 4 Trevor/Jason meeting transcripts (Jan 29, Feb
 **His primary question:** "Is this defensible? What's the moat? What's the exit?"
 **Key hook:** "First mover in an infrastructure play for a $10B+ market. Zero-PHI is a structural moat competitors can't replicate."
 
-**Next step:** Send partner-preview.html. Request 30-minute call. Trevor prepares a one-page investor brief.
+**Next step:** Send partner-preview.html. Request 30-minute call. Admin prepares a one-page investor brief.
 
 ---
 
@@ -79,14 +79,14 @@ Jason's connection: Shared interest in motorcycles. Jason offered track riding c
 
 **Legal note:** His legal context is RFRA religious exemption, not grey market. His members are not hiding — they're publicly fighting. Documentation strengthens his legal position.
 
-**Next step:** Jason or Trevor contacts Bridger this week with Phantom Shield overview. Ask: "Are you ready for beta? When?" Do NOT wait.
+**Next step:** Jason or Admin contacts Bridger this week with Phantom Shield overview. Ask: "Are you ready for beta? When?" Do NOT wait.
 
 ---
 
 ### 5. Dr. Sheena Vander-Ploeg
 **Role:** Naturopathic practitioner and international operator
 **Segment:** Naturopathic / Integrative / International
-**Background:** Naturopathic doctor. Business owner. High energy. International travel. Connected to Trevor and Jason's network.
+**Background:** Naturopathic doctor. Business owner. High energy. International travel. Connected to Admin and Jason's network.
 
 **Status:** Awaiting formal demo.
 
@@ -155,7 +155,7 @@ Jason's connection: Shared interest in motorcycles. Jason offered track riding c
 ## Additional Contacts from Meeting Notes
 
 - **Dr. Vega:** Ibogaine researcher. Scientist tier contact. Mentioned alongside Dr. Allen as the type of expert whose protocols need to be in the system for credibility with states.
-- **Brian:** Running for House Representative, District 29. Political contact. Trevor may be involved in strategy and consulting for the campaign.
+- **Brian:** Running for House Representative, District 29. Political contact. Admin may be involved in strategy and consulting for the campaign.
 - **Brandy:** Bridger's partner. Was also excited about PPN during the psilocybin church demo.
 
 ---

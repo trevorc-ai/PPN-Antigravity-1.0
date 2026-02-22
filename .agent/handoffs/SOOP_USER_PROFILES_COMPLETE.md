@@ -67,7 +67,7 @@ I've created a test data script to populate profiles for you, your partner, and 
 **File:** `migrations/999_load_user_profile_test_data.sql`
 
 This will create profiles for:
-- **You** (Trevor Calton) - super_admin, lifetime_free
+- **You** (PPN Admin) - super_admin, lifetime_free
 - **Your Partner** - partner, lifetime_free
 - **3 Pilot Testers** - pilot_free, with expiration dates
 
@@ -75,7 +75,7 @@ This will create profiles for:
 
 Once profiles are loaded:
 
-1. **Sign in as yourself** - You should see "Trevor Calton" in TopHeader (not "Dr. Sarah Jenkins")
+1. **Sign in as yourself** - You should see "PPN Admin" in TopHeader (not "Dr. Sarah Jenkins")
 2. **Sign in as your partner** - They should see their name
 3. **Sign in as a pilot tester** - They should see their name
 

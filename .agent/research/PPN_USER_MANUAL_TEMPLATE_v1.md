@@ -918,8 +918,8 @@ support@ppnportal.com
 *(Response time: within 1 business day)*
 
 **Founder/Partner Inquiries:**  
-Trevor Calton  
-trevor@ppnportal.com
+PPN Admin  
+info@ppnportal.com
 
 **Partner Office Hours:**  
 Fridays at 2:00 PM PT  
@@ -973,7 +973,7 @@ A complete reference of all Arc of Care forms, organized by phase. *(Source of t
 
 ## Appendix B: Screenshot Collection Guide
 
-> **Note to Trevor:**  
+> **Note to Admin:**  
 > Below is the complete list of screenshots needed to finish this manual. Each item corresponds to a `[SCREENSHOT: ...]` placeholder in the document above. Capture at `localhost:3000` while running `npm run dev`. Recommended resolution: 1440px wide browser window. Use Chrome or Safari.  
 > Recommended tool: macOS `Cmd+Shift+4` for region capture, or a screen recording tool for annotated captures.
 

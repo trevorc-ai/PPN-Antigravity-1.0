@@ -684,7 +684,7 @@ Hospice/end-of-life care
 Integration with other treatments (HRT, peptides, wellness protocols)  
 Assessment Tool Development:  
 Building proprietary tools for cannabinoid therapy  
-Parallel work to Trevor's project  
+Parallel work to Admin's project  
 Understanding of need for standardized measurement in emerging therapies  
 B. Advocacy & Policy Work  
 Psilocybin End-of-Life Advocacy:  
@@ -728,7 +728,7 @@ Created foundational evidence base for microdosing research
 Demonstrated "clinically statistically significant impact"  
 Justified further exploration by researchers and clinicians  
 Proved value of systematic data collection even without formal trials  
-Relevance to Trevor's Project:  
+Relevance to Admin's Project:  
 Demonstrates power of aggregated anonymous data  
 Shows how informal research can drive field forward  
 Provides model for decentralized data collection  
@@ -744,7 +744,7 @@ Shena's Insight:
 "Hit the nail on the head" when identifying need for common denominator  
 Recognition that standardization is prerequisite for field advancement  
 Understanding that without shared infrastructure, evidence base remains fragmented  
-Trevor:  
+Admin:  
 Creating the "hub" that serves as common denominator  
 Allowing diverse practitioners to contribute to shared knowledge base  
 Maintaining flexibility while ensuring data comparability  
@@ -807,7 +807,7 @@ Hospice/end-of-life care
 Integration with other treatments (HRT, peptides, wellness protocols)  
 Assessment Tool Development:  
 Building proprietary tools for cannabinoid therapy  
-Parallel work to Trevor's project  
+Parallel work to Admin's project  
 Understanding of need for standardized measurement in emerging therapies  
 B. Advocacy & Policy Work  
 Psilocybin End-of-Life Advocacy:  
@@ -851,7 +851,7 @@ Created foundational evidence base for microdosing research
 Demonstrated "clinically statistically significant impact"  
 Justified further exploration by researchers and clinicians  
 Proved value of systematic data collection even without formal trials  
-Relevance to Trevor's Project:  
+Relevance to Admin's Project:  
 Demonstrates power of aggregated anonymous data  
 Shows how informal research can drive field forward  
 Provides model for decentralized data collection  
@@ -867,7 +867,7 @@ Shena's Insight:
 "Hit the nail on the head" when identifying need for common denominator  
 Recognition that standardization is prerequisite for field advancement  
 Understanding that without shared infrastructure, evidence base remains fragmented  
-Trevor:  
+Admin:  
 Creating the "hub" that serves as common denominator  
 Allowing diverse practitioners to contribute to shared knowledge base  
 Maintaining flexibility while ensuring data comparability  
@@ -897,7 +897,7 @@ After Shena's Pilates class (ends at 11:00 AM)
 12-13 minute commute home factored in  
 Format:  
 Google Meet screen share  
-Trevor will send calendar invite to Shena's Gmail  
+Admin will send calendar invite to Shena's Gmail  
 Working demo walkthrough (not yet live on internet)  
 Interactive feedback session  
 Scheduling Considerations:  
@@ -906,7 +906,7 @@ Weekend timing allows unhurried discussion
 Shena prioritizing despite busy schedule and weight training regimen  
 Valentine's Day conflict noted (Shena forgot to get partner Rich a card)  
 B. Demo Objectives  
-Trevor's Goals:  
+Admin's Goals:  
 Show complete walkthrough of tool functionality  
 Demonstrate visualization capabilities  
 Get clinical feedback from first doctor user  
@@ -922,7 +922,7 @@ Critical validation moment for clinical applicability
 Opportunity to identify gaps or needed features  
 Potential partnership or collaboration discussion  
 C. Anticipated Outcomes  
-Trevor's Confidence:  
+Admin's Confidence:  
 "I think you're gonna love this"  
 "I think you're gonna be delighted"  
 Excitement about showing visualization work  
@@ -955,7 +955,7 @@ Credibility through association with established organizations
 Potential partnerships or institutional support  
 Media attention and field visibility  
 B. Impact Vision & Scope  
-Trevor's Ambition:  
+Admin's Ambition:  
 "This is going to change... elevate psychedelic therapy around the world"  
 Not just a tool, but a field-transforming infrastructure  
 Global scope rather than regional focus  

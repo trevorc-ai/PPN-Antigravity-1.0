@@ -68,7 +68,7 @@ const Footer: React.FC = () => {
               ))}
             </div>
             <ul className="space-y-3 pt-2">
-              <li><button className="text-sm text-slate-500 hover:text-slate-300 transition-colors font-medium">Privacy Policy</button></li>
+              <li><button onClick={() => navigate('/privacy')} className="text-sm text-slate-500 hover:text-slate-300 transition-colors font-medium">Privacy & Anonymity Policy</button></li>
               <li><button className="text-sm text-slate-500 hover:text-slate-300 transition-colors font-medium">Terms of Service</button></li>
             </ul>
           </div>

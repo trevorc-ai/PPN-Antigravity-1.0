@@ -6,7 +6,7 @@ category: Database / Critical Bug
 owner: PENDING_LEAD_ASSIGNMENT
 failure_count: 0
 created: 2026-02-15T17:15:00-08:00
-requested_by: Trevor Calton
+requested_by: PPN Admin
 severity: CRITICAL - USER CANNOT USE APPLICATION FOR 24+ HOURS
 ---
 

@@ -1,5 +1,5 @@
 # 🚀 PPN PORTAL — MVP SPRINT BRIEF
-## Circulation Document: All Agents + Trevor + Jason Preview Prep
+## Circulation Document: All Agents + Admin + Jason Preview Prep
 **Classification:** All-Agent Reference | Partner-Safe Summary
 **Author:** LEAD
 **Date:** 2026-02-20
@@ -212,7 +212,7 @@ USER → MVP sign-off
 
 ## PARTNER BRIEF ADDENDUM
 
-*For Trevor's use when presenting to Jason:*
+*For Admin's use when presenting to Jason:*
 
 **What's live now:**
 - Full clinical data capture pipeline (20-form Wellness Journey)

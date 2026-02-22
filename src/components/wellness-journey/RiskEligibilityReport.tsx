@@ -15,6 +15,8 @@ interface RiskEligibilityReportProps {
     onOverrideConfirmed?: (justification: string) => void; // called when provider checks override
     onExportPDF?: () => void;
     onProceedToPhase2?: () => void;
+    onValidityChange?: (canProceed: boolean) => void;
+    hideProceedButton?: boolean;
 }
 
 // ============================================================================
@@ -91,6 +93,8 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
     onOverrideConfirmed,
     onExportPDF,
     onProceedToPhase2,
+    onValidityChange,
+    hideProceedButton = false,
 }) => {
     const [overrideChecked, setOverrideChecked] = useState(false);
     const [justification, setJustification] = useState('');
@@ -143,6 +147,10 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
     };
 
     const canProceed = isClear || (isCaution && overrideChecked && justification.trim().length >= 20);
+
+    React.useEffect(() => {
+        onValidityChange?.(canProceed);
+    }, [canProceed, onValidityChange]);
 
     // ── Render ────────────────────────────────────────────────────────────────
 
@@ -288,26 +296,28 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                 )}
 
                 {/* Phase 2 Unlock */}
-                <button
-                    id="rer-proceed-phase2"
-                    onClick={canProceed ? onProceedToPhase2 : undefined}
-                    disabled={!canProceed}
-                    title={
-                        isBlocked
-                            ? 'Phase 2 is locked — absolute contraindications must be resolved'
-                            : isCaution && !canProceed
-                                ? 'Complete and save the provider override documentation to unlock Phase 2'
-                                : 'Proceed to Phase 2 Dosing Session'
-                    }
-                    className={`ml-auto flex items-center gap-2 px-5 py-2 rounded-xl border text-sm font-bold transition-all ${canProceed
-                        ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 hover:border-emerald-500/60'
-                        : 'bg-slate-800/40 border-slate-700/50 text-slate-500 cursor-not-allowed'
-                        }`}
-                    aria-disabled={!canProceed}
-                >
-                    {canProceed ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                    {isBlocked ? '[LOCKED] Phase 2' : canProceed ? 'Proceed to Phase 2' : '[LOCKED] Phase 2'}
-                </button>
+                {!hideProceedButton && (
+                    <button
+                        id="rer-proceed-phase2"
+                        onClick={canProceed ? onProceedToPhase2 : undefined}
+                        disabled={!canProceed}
+                        title={
+                            isBlocked
+                                ? 'Phase 2 is locked — absolute contraindications must be resolved'
+                                : isCaution && !canProceed
+                                    ? 'Complete and save the provider override documentation to unlock Phase 2'
+                                    : 'Proceed to Phase 2 Dosing Session'
+                        }
+                        className={`ml-auto flex items-center gap-2 px-5 py-2 rounded-xl border text-sm font-bold transition-all ${canProceed
+                            ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-600/30 hover:border-emerald-500/60'
+                            : 'bg-slate-800/40 border-slate-700/50 text-slate-500 cursor-not-allowed'
+                            }`}
+                        aria-disabled={!canProceed}
+                    >
+                        {canProceed ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                        {isBlocked ? '[LOCKED] Phase 2' : canProceed ? 'Proceed to Phase 2' : '[LOCKED] Phase 2'}
+                    </button>
+                )}
             </div>
 
             {/* Blocked hard stop notice */}

@@ -309,7 +309,7 @@
 **Date:** 2026-02-12  
 **Decision:** Sequential execution - Polish Phase 1 → Ship → Build Phase 2  
 **Rationale:** Reduces risk, gets user feedback before major investment in Phase 2  
-**Owner:** Trevor (Product Owner)  
+**Owner:** Admin (Product Owner)  
 
 **Key Principles:**
 - ✅ Ship fast, iterate faster

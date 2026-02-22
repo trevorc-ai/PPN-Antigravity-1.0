@@ -51,7 +51,7 @@ Fix TopHeader.tsx to display real user profile data from Supabase instead of har
 - ✅ TopHeader displays real user role
 - ✅ Profile picture shows (avatar or generated)
 - ✅ No console errors
-- ✅ Works for all users (not just Trevor)
+- ✅ Works for all users (not just Admin)
 
 ---
 

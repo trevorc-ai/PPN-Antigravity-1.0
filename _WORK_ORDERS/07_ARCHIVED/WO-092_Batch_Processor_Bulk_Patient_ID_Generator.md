@@ -13,7 +13,7 @@ source: gemini_recommendation
 proddy_validation_required: true
 strategic_alignment: Clinic Onboarding / Scale / GTM
 deliverable_type: Google Sheets Template + User Guide (NOT React code)
-requested_by: Trevor Calton
+requested_by: PPN Admin
 related_tickets:
   - WO_023 (07_ARCHIVED — Legacy Note Parser, different problem: NLP parsing of session notes)
 ---

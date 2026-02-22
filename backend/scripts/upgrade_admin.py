@@ -16,7 +16,7 @@ if not url or not key:
 
 supabase: Client = create_client(url, key)
 
-email = "trevor@ppnresearch.com"
+email = "info@ppnresearch.com"
 
 print(f"Looking for user with email: {email}...")
 

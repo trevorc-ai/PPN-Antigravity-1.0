@@ -21,13 +21,19 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
     onClose,
     onGetStarted
 }) => {
-    const handleDontShowAgain = () => {
-        localStorage.setItem('arcOfCareOnboardingSeen', 'true');
+    const [dontShowAgain, setDontShowAgain] = React.useState(false);
+
+    const handleClose = () => {
+        if (dontShowAgain) {
+            localStorage.setItem('arcOfCareOnboardingSeen', 'true');
+        }
         onClose();
     };
 
     const handleGetStarted = () => {
-        localStorage.setItem('arcOfCareOnboardingSeen', 'true');
+        if (dontShowAgain) {
+            localStorage.setItem('arcOfCareOnboardingSeen', 'true');
+        }
         onGetStarted();
     };
 
@@ -42,7 +48,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
             >
                 {/* Close Button */}
                 <button
-                    onClick={handleDontShowAgain}
+                    onClick={handleClose}
                     className="absolute top-4 right-4 flex items-center justify-center w-11 h-11 text-slate-400 hover:text-slate-300 hover:bg-slate-800 rounded-xl transition-colors z-10"
                     aria-label="Close onboarding"
                 >
@@ -113,21 +119,40 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                 </div>
 
                 {/* CTAs — pinned to bottom, always visible */}
-                <div className="flex-shrink-0 px-6 py-4 border-t border-slate-700/60 bg-slate-900 rounded-b-2xl flex flex-col sm:flex-row gap-3">
-                    <button
-                        onClick={handleGetStarted}
-                        className="flex-1 px-6 py-4 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold text-base rounded-xl transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
-                        tabIndex={1}
-                    >
-                        Get Started with Phase 1
-                    </button>
-                    <button
-                        onClick={handleDontShowAgain}
-                        className="px-6 py-4 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-300 font-medium text-base rounded-xl border border-slate-700/60 transition-colors focus:outline-none focus:ring-4 focus:ring-slate-500/50"
-                        tabIndex={2}
-                    >
-                        Skip
-                    </button>
+                <div className="flex-shrink-0 px-6 py-4 border-t border-slate-700/60 bg-slate-900 rounded-b-2xl flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                        <div className="relative flex items-center justify-center">
+                            <input
+                                type="checkbox"
+                                checked={dontShowAgain}
+                                onChange={(e) => setDontShowAgain(e.target.checked)}
+                                className="peer appearance-none w-5 h-5 border-2 border-slate-600 rounded bg-slate-800 checked:bg-indigo-500 checked:border-indigo-500 transition-colors focus:ring-2 focus:ring-indigo-500/50 outline-none"
+                            />
+                            <svg className="absolute w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span className="text-sm font-medium text-slate-400 group-hover:text-slate-300 transition-colors select-none">
+                            Don't show me this again
+                        </span>
+                    </label>
+
+                    <div className="flex gap-3 w-full sm:w-auto">
+                        <button
+                            onClick={handleClose}
+                            className="flex-1 sm:flex-none px-6 py-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-300 font-medium text-sm rounded-xl border border-slate-700/60 transition-colors focus:outline-none focus:ring-4 focus:ring-slate-500/50"
+                            tabIndex={2}
+                        >
+                            Skip
+                        </button>
+                        <button
+                            onClick={handleGetStarted}
+                            className="flex-1 sm:flex-none px-8 py-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
+                            tabIndex={1}
+                        >
+                            Get Started
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

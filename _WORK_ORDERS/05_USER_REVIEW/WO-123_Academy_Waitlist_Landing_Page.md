@@ -23,7 +23,7 @@ This is a **demand validation play**. Build the landing page now during Phase 1.
 **Why smart:**
 - Zero wasted build time if demand isn't there
 - Creates urgency and exclusivity ("be the first")
-- Gives Trevor an email list of pre-qualified practitioners to market to at launch
+- Gives Admin an email list of pre-qualified practitioners to market to at launch
 - Validates price sensitivity before committal to LMS infrastructure
 
 ---
@@ -104,7 +104,7 @@ Headline: `"Built by PPN Research Portal"`
 
 Short paragraph on the platform's credibility — grounded in VoC research, Zero-PHI architecture, real practitioner feedback. Keep it modest and evidence-based, not self-promotional.
 
-Optional: Trevor Calton byline with a brief 2-sentence bio.
+Optional: PPN Admin byline with a brief 2-sentence bio.
 
 ---
 
@@ -191,7 +191,7 @@ CREATE POLICY "allow_authenticated_read" ON public.academy_waitlist
 - On submit: INSERT to `academy_waitlist` table
 - On success: swap form for success message (no page reload)
 - On duplicate email: show friendly message — "You're already on the list! We'll be in touch."
-- On error: show generic error + "Please try again or email us at trevor@ppnportal.com"
+- On error: show generic error + "Please try again or email us at info@ppnportal.com"
 
 ### SEO Meta Tags
 ```html
@@ -223,7 +223,7 @@ CREATE POLICY "allow_authenticated_read" ON public.academy_waitlist
 
 ## LAUNCH THRESHOLD
 
-Trevor to define: how many waitlist signups = green light to build the full academy (WO-122)?
+Admin to define: how many waitlist signups = green light to build the full academy (WO-122)?
 
 Suggested threshold: **50 signups** from practitioners (not curious observers).
 

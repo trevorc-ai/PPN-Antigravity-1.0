@@ -379,7 +379,7 @@ It's a fine line to walk
 
 **Speaker 4:** Yes. This really says a lot about the company's culture. 
 
-**Speaker 3:** The founder, a guy named Trevor Calton, apparently he hates making PowerPoint slides, 
+**Speaker 3:** The founder, a guy named PPN Admin, apparently he hates making PowerPoint slides, 
 
 **Speaker 4:** hates it.
 

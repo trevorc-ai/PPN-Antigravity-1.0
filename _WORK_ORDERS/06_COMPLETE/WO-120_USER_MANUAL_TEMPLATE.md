@@ -36,7 +36,7 @@ agent: PRODDY
 
 ## FOR USER REVIEW
 
-### What I Need From You, Trevor
+### What I Need From You, Admin
 
 1. **Screenshots** — Work through Appendix B (the Screenshot Collection Guide) in priority order. The manual is complete and ready to receive them wherever you see `[SCREENSHOT: ...]`.
 

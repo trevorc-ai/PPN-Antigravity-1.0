@@ -34,7 +34,7 @@ BEGIN
     END IF;
 END $$;
 
--- Allow authenticated users (admins / Trevor) to read the list
+-- Allow authenticated users (admins / Admin) to read the list
 DO $$
 BEGIN
     IF NOT EXISTS (

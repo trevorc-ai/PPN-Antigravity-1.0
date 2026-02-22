@@ -15,7 +15,7 @@ BEGIN;
 -- OWNER PROFILES (You and Your Partner)
 -- ============================================
 
--- Profile 1: Trevor Calton (You - Super Admin)
+-- Profile 1: PPN Admin (You - Super Admin)
 -- NOTE: Replace 'YOUR-AUTH-USER-ID-HERE' with your actual auth.users.id
 INSERT INTO public.user_profiles (
   user_id,
@@ -34,10 +34,10 @@ INSERT INTO public.user_profiles (
 )
 VALUES (
   'YOUR-AUTH-USER-ID-HERE',  -- Replace with your auth.users.id
-  'Trevor',
+  'Admin',
   'Calton',
-  'trevor@ppnresearch.com',  -- Replace with your email
-  'Trevor Calton',
+  'info@ppnresearch.com',  -- Replace with your email
+  'PPN Admin',
   NULL,
   'PPN Research Portal',
   'super_admin',
@@ -278,7 +278,7 @@ Replace these placeholders in the SQL above:
 STEP 3: Update Email Addresses
 -------------------------------
 Replace example emails with real emails:
-- trevor@ppnresearch.com → Your real email
+- info@ppnresearch.com → Your real email
 - partner@ppnresearch.com → Partner's real email
 - sarah.jenkins@example.com → Pilot tester 1's real email
 - etc.
@@ -291,7 +291,7 @@ STEP 4: Execute Migration
 
 STEP 5: Test Interface
 -----------------------
-1. Sign in as yourself → Should see "Trevor Calton" in TopHeader
+1. Sign in as yourself → Should see "PPN Admin" in TopHeader
 2. Sign in as partner → Should see their name
 3. Sign in as pilot tester → Should see their name
 

@@ -569,8 +569,8 @@ const WellnessJourney: React.FC = () => {
                         <div>
                             {/* Patient ID — large + mono for quick visual verification */}
                             <div className="flex items-center gap-3 flex-wrap">
-                                <span className="text-sm font-black text-slate-400 uppercase tracking-widest">Patient</span>
-                                <span className="text-xl font-black text-white font-mono tracking-wide">{journey.patientId}</span>
+                                <span className="text-sm md:text-base font-black text-slate-400 uppercase tracking-widest">Patient</span>
+                                <span className="text-xl md:text-2xl font-black text-white font-mono tracking-wide">{journey.patientId}</span>
                                 {/* Verification Pills — Age / Gender / Weight */}
                                 {[{
                                     label: journey.demographics?.age ? `${journey.demographics.age} yrs` : '— yrs',
@@ -585,7 +585,7 @@ const WellnessJourney: React.FC = () => {
                                     <span
                                         key={title}
                                         title={title}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600/50 text-[13px] font-semibold shadow-sm"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600/50 text-[13px] md:text-sm font-semibold shadow-sm"
                                     >
                                         <span className="text-slate-400 font-normal">{title}</span>
                                         <span className="text-white font-bold">{label}</span>
@@ -598,13 +598,13 @@ const WellnessJourney: React.FC = () => {
                                         setPatientModalView(activePhase === 1 ? 'choose' : 'existing');
                                         setShowPatientModal(true);
                                     }}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800/50 rounded-lg border border-slate-600/50 text-[13px] font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800/50 rounded-lg border border-slate-600/50 text-[13px] md:text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm"
                                     aria-label={activePhase === 1 ? 'Enter new or lookup patient' : 'Lookup existing patient'}
                                 >
                                     {activePhase === 1 ? 'Change' : 'Lookup'}
                                 </button>
                             </div>
-                            <p className="text-sm mt-0.5" style={{ color: '#8B9DC3' }}>
+                            <p className="text-sm md:text-base mt-0.5" style={{ color: '#8B9DC3' }}>
                                 {activePhase === 1 && 'Pre-treatment preparation — complete baseline assessments before session'}
                                 {activePhase === 2 && `Dosing session in progress · ${journey.sessionDate} · Session #${journey.session.sessionNumber}`}
                                 {activePhase === 3 && `Integration phase · ${journey.daysPostSession} days post-session · Monitoring recovery`}

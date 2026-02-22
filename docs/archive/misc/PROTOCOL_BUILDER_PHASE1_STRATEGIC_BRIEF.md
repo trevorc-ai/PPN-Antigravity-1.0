@@ -773,7 +773,7 @@ Transform Protocol Builder from a "data entry form" into a "clinical intelligenc
 **This strategic brief represents our complete understanding of Phase 1 scope, technical requirements, risks, and timeline.**
 
 **Approval Required From:**
-- [ ] Trevor (Product Owner)
+- [ ] Admin (Product Owner)
 - [ ] Lead Architect (Technical Feasibility)
 - [ ] Partners (Strategic Alignment)
 

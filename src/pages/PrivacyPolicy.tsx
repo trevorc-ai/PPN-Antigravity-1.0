@@ -18,15 +18,13 @@ const PrivacyPolicy: React.FC = () => {
             <main className="max-w-3xl mx-auto px-6 pt-32 pb-24 space-y-12">
                 <div className="space-y-3">
                     <p className="text-xs font-black uppercase tracking-[0.4em] text-primary">Legal</p>
-                    <h1 className="text-4xl font-black tracking-tight text-[#A8B5D1]">Privacy Policy</h1>
+                    <h1 className="text-4xl font-black tracking-tight text-[#A8B5D1]">Privacy and Anonymity Policy</h1>
                     <p className="text-slate-500 font-medium">Effective Date: February 19, 2026 · Last Updated: February 19, 2026</p>
                 </div>
 
                 <div className="p-5 bg-slate-900/60 border border-primary/20 rounded-2xl">
                     <p className="text-sm font-bold text-slate-300 leading-relaxed">
-                        <strong className="text-primary">Important:</strong> PPN Portal is a measurement and benchmarking tool for licensed practitioners.
-                        It does not process, store, or transmit Protected Health Information (PHI) as defined under HIPAA.
-                        All outcome data is de-identified prior to entry and storage.
+                        <strong className="text-primary">Important (Zero Architecture):</strong> It is more than just a policy that we never collect names: we <em>can't</em>. It is technically not possible for us to collect names, emails, or personal identifiers. We guarantee privacy upfront by structural design—we literally do not have the database fields to store them. PPN Portal relies on our "Phantom Shield" architecture to guarantee absolute anonymity for the gray market and clinical networks alike.
                     </p>
                 </div>
 
@@ -38,7 +36,7 @@ const PrivacyPolicy: React.FC = () => {
                         practice against de-identified peer data.
                     </p>
                     <p>
-                        This Privacy Policy describes how we collect, use, and protect information in connection
+                        This Privacy and Anonymity Policy describes how we collect, use, and protect information in connection
                         with your use of our platform at ppnportal.net.
                     </p>
                 </Section>

@@ -50,7 +50,7 @@ In priority order based on known fragility:
 
 ## PENDING
 
-Trevor to review the demo recording and identify:
+Admin to review the demo recording and identify:
 - [ ] Which form/section was open when errors started
 - [ ] Whether errors were toasts or inline form errors
 - [ ] Whether messages were repeating (same message = loop) or sequential (different messages = validation chain)

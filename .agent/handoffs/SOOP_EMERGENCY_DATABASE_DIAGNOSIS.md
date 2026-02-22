@@ -3,7 +3,7 @@
 **Date:** 2026-02-15T17:16:00-08:00  
 **Severity:** P0 - CRITICAL - APPLICATION COMPLETELY NON-FUNCTIONAL  
 **Duration:** 24+ hours  
-**Reported By:** Trevor Calton  
+**Reported By:** PPN Admin  
 **Diagnosed By:** SOOP (Database Architect)
 
 ---

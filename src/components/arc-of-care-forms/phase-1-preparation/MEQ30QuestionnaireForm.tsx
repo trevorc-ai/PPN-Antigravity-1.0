@@ -101,58 +101,33 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
-            {/* ── Sticky Header ─────────────────────────────────────────────── */}
-            <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
-                <div className="flex items-start justify-between mb-4">
-                    <div>
-                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
-                            <Brain className="w-7 h-7 text-purple-400" />
-                            MEQ-30 Questionnaire
-                        </h2>
-                        <p className="text-slate-300 text-sm mt-2">
-                            30-item Mystical Experience Questionnaire
-                        </p>
-                    </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-300">Progress: {answeredCount}/30</span>
+            {/* ── Compact Sticky Progress Header ────────────────────────────── }
+            <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mt-0">
+                <div className="flex-1 space-y-1.5 w-full">
+                    <div className="flex items-center justify-between text-xs sm:text-sm">
+                        <span className="text-slate-300 font-medium tracking-wide">Progress: {answeredCount}/30</span>
                         <span className="text-emerald-400 font-bold">{progressPercentage}%</span>
                     </div>
-                    <div className="h-2 bg-slate-900/60 rounded-full overflow-hidden">
+                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-300"
                             style={{ width: `${progressPercentage}%` }}
                         />
                     </div>
                 </div>
 
-                {/* Live scores */}
                 {answeredCount > 0 && (
-                    <div className="mt-4 grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                            <p className="text-sm text-purple-300">Total Score</p>
-                            <p className="text-2xl font-black text-purple-400">{normalizedScore}/100</p>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <div className="px-3 py-2 bg-purple-500/10 border border-purple-500/20 rounded-lg flex items-baseline gap-1.5">
+                            <span className="text-xs font-semibold text-purple-300 uppercase tracking-widest">Score:</span>
+                            <span className="text-sm font-black text-purple-400">{normalizedScore}</span>
                         </div>
                         {isMysticalExperience && (
-                            <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-2">
-                                <Award className="w-6 h-6 text-emerald-400 flex-shrink-0" />
-                                <div>
-                                    <p className="text-sm text-emerald-300">Threshold met</p>
-                                    <p className="text-sm font-bold text-emerald-400">Mystical Experience</p>
-                                </div>
+                            <div className="px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg flex items-center gap-1.5" title="Mystical Experience Threshold Met">
+                                <Award className="w-4 h-4 text-emerald-400" />
+                                <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest hidden sm:inline">Mystical</span>
                             </div>
                         )}
-                    </div>
-                )}
-
-                {/* Scroll hint — only when there are unanswered questions below fold */}
-                {answeredCount < 30 && (
-                    <div className="mt-3 flex items-center justify-center gap-1.5 text-slate-600 text-xs">
-                        <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
-                        <span>Scroll to answer all 30 questions</span>
                     </div>
                 )}
             </div>

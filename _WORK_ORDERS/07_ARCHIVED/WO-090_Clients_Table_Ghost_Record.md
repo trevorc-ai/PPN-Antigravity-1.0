@@ -12,7 +12,7 @@ estimated_complexity: 8/10
 source: gemini_recommendation
 proddy_validation_required: true
 strategic_alignment: Grey Market "Phantom Shield" — Zero-Knowledge Architecture
-requested_by: Trevor Calton
+requested_by: PPN Admin
 related_tickets:
   - WO_002 (06_COMPLETE — Shadow Market Schema, has client_blind_hash on sessions table)
   - migration 022_shadow_market_schema.sql (DEPLOYED — client_blind_hash on log_sm_sessions)

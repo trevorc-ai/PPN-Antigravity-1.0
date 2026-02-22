@@ -18,6 +18,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
     const [showAI, setShowAI] = useState(false);
     const [showBenchmarks, setShowBenchmarks] = useState(false);
     const [overrideJustification, setOverrideJustification] = useState('');
+    const [canProceedToPhase2, setCanProceedToPhase2] = useState(false);
 
     // Gate Status Logic (Derived from journey data) — must be before useMemo
     const gates = {
@@ -220,19 +221,47 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
 
             {/* RISK ELIGIBILITY REPORT — renders only after all 4 gates complete */}
             {allGatesPassed && contraindicationResult && (
-                <RiskEligibilityReport
-                    result={contraindicationResult}
-                    onOverrideConfirmed={(justification) => {
-                        setOverrideJustification(justification);
-                    }}
-                    onExportPDF={() => {
-                        downloadReport(
-                            { patientId: journey.patientId },
-                            'audit'
-                        );
-                    }}
-                    onProceedToPhase2={onProceedToPhase2}
-                />
+                <div className="space-y-6">
+                    <RiskEligibilityReport
+                        result={contraindicationResult}
+                        onOverrideConfirmed={(justification) => {
+                            setOverrideJustification(justification);
+                        }}
+                        onExportPDF={() => {
+                            downloadReport(
+                                { patientId: journey.patientId },
+                                'audit'
+                            );
+                        }}
+                        onValidityChange={setCanProceedToPhase2}
+                        hideProceedButton
+                    />
+
+                    {/* Proceed to Phase 2 Bottom Container */}
+                    <div className="mt-8 pt-6 border-t border-slate-700/50">
+                        <button
+                            id="preparation-proceed-phase2"
+                            onClick={canProceedToPhase2 ? onProceedToPhase2 : undefined}
+                            disabled={!canProceedToPhase2}
+                            className={`w-full py-4 rounded-2xl text-base sm:text-lg font-black uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 ${canProceedToPhase2
+                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:-translate-y-1'
+                                    : 'bg-slate-800/60 text-slate-500 cursor-not-allowed border border-slate-700/50'
+                                }`}
+                        >
+                            {canProceedToPhase2 ? (
+                                <>
+                                    <CheckCircle className="w-6 h-6" />
+                                    Proceed to Phase 2 Dosing
+                                </>
+                            ) : (
+                                <>
+                                    <AlertTriangle className="w-6 h-6" />
+                                    [LOCKED] Complete Eligibility Requirements to Proceed
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );

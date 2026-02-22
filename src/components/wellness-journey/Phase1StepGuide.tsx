@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ChevronDown, ChevronUp, Edit3, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronUp, Edit3, CheckCircle2, AlertTriangle } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
 import { RiskEligibilityReport } from './RiskEligibilityReport';
 import { ComplianceDocumentsPanel } from './ComplianceDocumentsPanel';
@@ -55,9 +55,10 @@ interface EligibilityPanelProps {
     completedFormIds: Set<string>;
     onStartStep: (formId: WellnessFormId) => void;
     onCompletePhase?: () => void;
+    onValidityChange?: (valid: boolean) => void;
 }
 
-export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, completedFormIds, onStartStep, onCompletePhase }) => {
+export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, completedFormIds, onStartStep, onCompletePhase, onValidityChange }) => {
     const { addToast } = useToast();
 
     // Generate risk report based on mock patient data.
@@ -94,7 +95,8 @@ export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, compl
             result={result}
             onOverrideConfirmed={(justification) => console.log('Override saved:', justification)}
             onExportPDF={handleExport}
-            onProceedToPhase2={onCompletePhase}
+            onValidityChange={onValidityChange}
+            hideProceedButton
         />
     );
 };
@@ -112,6 +114,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
     onCompletePhase,
 }) => {
     const heroRef = useRef<HTMLDivElement>(null);
+    const [canProceedToPhase2, setCanProceedToPhase2] = useState(false);
 
     const currentStepIndex = PHASE1_STEPS.findIndex(
         (step) => !completedFormIds.has(step.id)
@@ -190,7 +193,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
                                 {/* Step number label (H3-equiv) + status badge */}
                                 <div className="flex items-center justify-between gap-1">
-                                    <span className={`text-xs font-bold uppercase tracking-widest ${isComplete ? 'text-teal-500' : isCurrent ? 'text-indigo-400' : 'text-slate-500'
+                                    <span className={`text-xs md:text-sm font-bold uppercase tracking-widest ${isComplete ? 'text-teal-500' : isCurrent ? 'text-indigo-400' : 'text-slate-500'
                                         }`}>
                                         Step {index + 1}
                                     </span>
@@ -215,7 +218,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                         </span>
                                     </div>
                                     {/* H3: card title — minimum text-sm */}
-                                    <h4 className={`text-sm font-black leading-snug pt-1 ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
+                                    <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
                                         }`}>
                                         {step.label}
                                     </h4>
@@ -223,7 +226,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
                                 {/* Description — only on the active step for space; text-sm */}
                                 {isCurrent && (
-                                    <p className="text-sm leading-relaxed text-indigo-300/70">
+                                    <p className="text-sm md:text-base leading-relaxed text-indigo-300/70">
                                         {step.description}
                                     </p>
                                 )}
@@ -235,7 +238,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                             <span className="text-[11px] font-black uppercase tracking-widest text-teal-400/80">Completed</span>
                                             <button
                                                 onClick={() => onStartStep(step.id)}
-                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-500 hover:text-teal-400 transition-all"
+                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm md:text-base font-semibold text-slate-500 hover:text-teal-400 transition-all"
                                                 aria-label={`Amend ${step.label}`}
                                             >
                                                 <Edit3 className="w-3.5 h-3.5" aria-hidden="true" />
@@ -247,7 +250,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                             id={`phase1-step-${index + 1}-start`}
                                             onClick={() => onStartStep(step.id)}
                                             aria-label={`Continue to ${step.label}`}
-                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600/40 hover:bg-indigo-600/60 text-indigo-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-indigo-950/50 group"
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600/40 hover:bg-indigo-600/60 text-indigo-100 font-black text-sm md:text-base rounded-xl transition-all active:scale-95 shadow-md shadow-indigo-950/50 group"
                                         >
                                             Continue
                                             <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
@@ -256,7 +259,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                         <button
                                             onClick={() => onStartStep(step.id)}
                                             aria-label={`Open ${step.label}`}
-                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
+                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm md:text-base font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
                                         >
                                             Open
                                         </button>
@@ -296,8 +299,34 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                 completedFormIds={completedFormIds}
                                 onStartStep={onStartStep}
                                 onCompletePhase={onCompletePhase}
+                                onValidityChange={setCanProceedToPhase2}
                             />
                         </div>
+                    </div>
+
+                    {/* Proceed to Phase 2 Bottom Container */}
+                    <div className="mt-8 pt-6 border-t border-slate-700/50">
+                        <button
+                            id="phase1-proceed-phase2"
+                            onClick={canProceedToPhase2 ? onCompletePhase : undefined}
+                            disabled={!canProceedToPhase2}
+                            className={`w-full py-4 rounded-2xl text-base sm:text-lg font-black uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 ${canProceedToPhase2
+                                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:-translate-y-1'
+                                : 'bg-slate-800/60 text-slate-500 cursor-not-allowed border border-slate-700/50'
+                                }`}
+                        >
+                            {canProceedToPhase2 ? (
+                                <>
+                                    <CheckCircle2 className="w-6 h-6" />
+                                    Proceed to Phase 2 Dosing
+                                </>
+                            ) : (
+                                <>
+                                    <AlertTriangle className="w-6 h-6" />
+                                    [LOCKED] Complete Eligibility Requirements to Proceed
+                                </>
+                            )}
+                        </button>
                     </div>
                 </div>
             )}

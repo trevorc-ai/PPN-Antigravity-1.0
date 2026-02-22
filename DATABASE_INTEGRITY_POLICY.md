@@ -8,21 +8,21 @@
 **Purpose:** These tables contain controlled vocabularies and reference data.
 
 **Seeding:** ✅ **ALLOWED** - But ONLY when:
-1. **Admin (Trevor) explicitly authorizes** the addition
+1. **Admin (Admin) explicitly authorizes** the addition
 2. **SOOP (Database Architect) executes** the migration
 3. **User requests** are submitted via UI request form, then reviewed and approved by admin
 
 **Authorization Flow:**
 1. User submits request via UI: "Add new substance to dropdown"
 2. Request logged in system for admin review
-3. Admin (Trevor) reviews and approves/rejects
+3. Admin (Admin) reviews and approves/rejects
 4. If approved, SOOP creates migration with approved data
 5. Migration executed by admin or SOOP
 
 **Example:**
 ```sql
 -- ✅ CORRECT: Admin-authorized reference data
--- Authorization: Trevor approved request #123 on 2026-02-15
+-- Authorization: Admin approved request #123 on 2026-02-15
 INSERT INTO ref_substances (substance_name, substance_class)
 VALUES ('Psilocybin', 'Tryptamine');
 ```
@@ -110,7 +110,7 @@ VALUES (1001, 1, 85); -- This is FAKE DATA - NEVER DO THIS
 5. Escalate to LEAD if unsure
 
 **Admin Authorization Required:**
-- **ALL writes to ANY table** (including `ref_*`) require admin (Trevor) approval
+- **ALL writes to ANY table** (including `ref_*`) require admin (Admin) approval
 - User requests for dropdown additions must go through request → review → approval flow
 - SOOP executes migrations only after admin authorization
 
@@ -126,7 +126,7 @@ VALUES (1001, 1, 85); -- This is FAKE DATA - NEVER DO THIS
 **Golden Rule:**
 > **ONLY `ref_*` tables = Seed with admin-authorized controlled vocabulary data ✅**
 > **ALL other tables = ZERO seeding, EVER ❌**
-> **ALL writes require admin (Trevor) authorization ✅**
+> **ALL writes require admin (Admin) authorization ✅**
 
 **When in doubt:**
 > If it doesn't start with `ref_`, don't INSERT ANY data in migrations. Period.

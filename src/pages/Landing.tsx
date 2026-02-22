@@ -131,8 +131,11 @@ const Landing: React.FC = () => {
       <div className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 px-6 overflow-hidden z-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto px-6 relative z-10">
+          {/* Background overlay for mobile legibility against stars */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/90 via-[#0a1628]/60 to-transparent lg:hidden pointer-events-none -z-10" />
+
           {/* Left Column (Text) */}
-          <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-10">
+          <div className="flex flex-col items-start text-left space-y-10 relative z-20">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -141,18 +144,21 @@ const Landing: React.FC = () => {
             >
               <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-[12px] sm:text-[13px] font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
                 <span className="material-symbols-outlined text-lg">grid_view</span>
-                Augmented Intelligence for Psychedelic Wellness Practitioners
+                Augmented Intelligence
               </div>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] pb-4 text-slate-300 relative z-10">
-                Elevate <span className="text-slate-300">your practice.</span><br />
-                The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span><br />
-                for psychedelic professionals.
+              <h1 className="text-[3.5rem] leading-[1.0] sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-100 relative z-10 mt-4 mb-2 drop-shadow-md">
+                Elevate your practice.
+                <div className="h-6 sm:h-8" />
+                <span className="text-slate-300 text-4xl sm:text-5xl lg:text-6xl block mt-2">
+                  The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span><br />
+                  for psychedelic professionals.
+                </span>
               </h1>
-              <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
+              <p className="text-xl sm:text-2xl text-slate-200 max-w-2xl leading-relaxed font-bold drop-shadow-sm mt-4">
                 Log your sessions. Unlock global benchmarks. Elevate the entire field.
               </p>
-              <p className="text-lg sm:text-xl text-slate-300 max-w-2xl lg:mx-0 mx-auto leading-relaxed font-medium">
-                A unified platform for safety surveillance, outcomes tracking, and protocol management. Built for how practitioners actually work.
+              <p className="text-lg sm:text-xl text-slate-300 max-w-2xl leading-relaxed font-medium drop-shadow-sm">
+                A unified platform for safety surveillance, outcomes tracking, and protocol management.
               </p>
             </motion.div>
 
@@ -161,10 +167,10 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="max-w-2xl lg:mx-0 mx-auto p-4 bg-slate-900/40 border border-slate-800 rounded-2xl"
+              className="max-w-2xl p-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl shadow-lg backdrop-blur-md w-full"
             >
-              <p className="text-sm font-normal text-slate-500 leading-relaxed">
-                <span className="text-blue-400 font-semibold mr-1">Notice:</span>
+              <p className="text-base font-medium text-slate-300 leading-relaxed">
+                <span className="text-blue-400 font-bold mr-1 block mb-1 uppercase tracking-widest text-xs">Notice:</span>
                 PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
               </p>
             </motion.div>
@@ -174,7 +180,7 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="space-y-4 w-full max-w-md lg:mx-0 mx-auto"
+              className="space-y-6 w-full max-w-md w-full"
             >
               <div className="flex flex-col sm:flex-row gap-4">
                 <button

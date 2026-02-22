@@ -6,7 +6,7 @@ category: Feature
 priority: LOW
 status: INBOX
 created: 2026-02-14T23:40:23-08:00
-requested_by: Trevor Calton
+requested_by: PPN Admin
 assigned_to: BUILDER
 estimated_complexity: 5/10
 failure_count: 0

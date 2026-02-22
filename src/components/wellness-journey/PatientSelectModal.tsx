@@ -28,6 +28,7 @@ interface LivePatient {
     phase: Phase;
     sessionCount: number;
     sessionType: string;
+    substance?: string;
 }
 
 const PHASE_COLORS: Record<Phase, string> = {
@@ -97,7 +98,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
 
             let query = supabase
                 .from('log_clinical_records')
-                .select('patient_link_code, session_date, session_type, session_number')
+                .select('patient_link_code, session_date, session_type, session_number, ref_substances(substance_name)')
                 .order('session_date', { ascending: false });
 
             if (siteId) {
@@ -121,12 +122,17 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                     (b.session_date ?? '').localeCompare(a.session_date ?? '')
                 );
                 const latest = sorted[0];
+                const latestAny = latest as any;
+                const substanceData = latestAny?.ref_substances;
+                const substanceName = Array.isArray(substanceData) ? substanceData[0]?.substance_name : substanceData?.substance_name;
+
                 return {
                     id: pid,
                     lastSession: latest?.session_date ?? 'Unknown',
                     phase: derivePhase(latest?.session_type ?? null),
                     sessionCount: sessions.length,
                     sessionType: latest?.session_type ?? '',
+                    substance: substanceName ?? undefined,
                 };
             });
 
@@ -272,8 +278,11 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             </div>
                         </div>
 
-                        <div className="px-6 pb-5 text-center">
-                            <p className="text-sm text-slate-400 font-medium tracking-wide">All patient data is anonymised. No <span className="text-white font-bold">PHI</span> is stored in free-text fields.</p>
+                        <div className="px-6 pb-5 text-center leading-relaxed">
+                            <p className="text-sm text-slate-400 font-medium tracking-wide">
+                                All patient data is strictly anonymized via <a href="/privacy" className="text-indigo-400 hover:text-indigo-300 hover:underline font-bold transition-colors">Phantom Shield</a>.<br />
+                                No <span className="text-white font-bold">PHI</span> is ever stored or accessible.
+                            </p>
                         </div>
                     </div>
                 )}
@@ -374,28 +383,45 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 <button
                                     key={patient.id}
                                     onClick={() => onSelect(patient.id, false, patient.phase)}
-                                    className="w-full flex items-center justify-between px-4 py-3.5 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all active:scale-[0.99] text-left group"
+                                    className="w-full flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3.5 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all active:scale-[0.99] text-left group gap-3 sm:gap-4"
                                 >
-                                    <div>
-                                        <p className="text-base font-bold text-white font-mono tracking-wide">{patient.id}</p>
-                                        <div className="flex items-center gap-2 mt-1.5 text-sm text-slate-400">
-                                            <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                                            <span>{patient.lastSession}</span>
-                                            <span className="text-slate-600">·</span>
-                                            <Activity className="w-3.5 h-3.5 flex-shrink-0" />
-                                            <span>{patient.sessionCount} session{patient.sessionCount !== 1 ? 's' : ''}</span>
+                                    <div className="min-w-0 w-full sm:w-auto">
+                                        <div className="flex justify-between items-start w-full">
+                                            <p className="text-base font-bold text-white font-mono tracking-wide truncate">{patient.id}</p>
+                                            <span className={`sm:hidden text-xs font-semibold px-2 py-0.5 rounded border whitespace-nowrap ml-2 shrink-0 ${PHASE_COLORS[patient.phase]}`}>
+                                                {patient.phase}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-xs sm:text-sm text-slate-400">
+                                            <span className="flex items-center gap-1.5 whitespace-nowrap">
+                                                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                                {patient.lastSession}
+                                            </span>
+                                            <span className="text-slate-600 hidden sm:inline">·</span>
+                                            <span className="flex items-center gap-1.5 whitespace-nowrap">
+                                                <Activity className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+                                                {patient.sessionCount} session{patient.sessionCount !== 1 ? 's' : ''}
+                                            </span>
                                             {patient.sessionType && (
                                                 <>
-                                                    <span className="text-slate-600">·</span>
-                                                    <span className="px-2 py-0.5 rounded-md bg-slate-700/60 border border-slate-600/40 text-xs">
+                                                    <span className="text-slate-600 hidden sm:inline">·</span>
+                                                    <span className="px-1.5 py-0.5 rounded-md bg-slate-700/60 border border-slate-600/40 text-[10px] sm:text-xs truncate max-w-[120px] inline-block align-middle">
                                                         {patient.sessionType}
+                                                    </span>
+                                                </>
+                                            )}
+                                            {patient.substance && (
+                                                <>
+                                                    <span className="text-slate-600 hidden sm:inline">·</span>
+                                                    <span className="text-[10px] sm:text-xs text-indigo-300 font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 truncate max-w-[120px] inline-block align-middle">
+                                                        {patient.substance}
                                                     </span>
                                                 </>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className={`text-sm font-semibold px-2.5 py-1 rounded-lg border ${PHASE_COLORS[patient.phase]}`}>
+                                    <div className="hidden sm:flex items-center gap-3 shrink-0">
+                                        <span className={`text-sm font-semibold px-2.5 py-1 rounded-lg border whitespace-nowrap ${PHASE_COLORS[patient.phase]}`}>
                                             {patient.phase}
                                         </span>
                                         <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
@@ -404,9 +430,12 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             ))}
                         </div>
 
-                        <div className="px-6 pb-4 pt-1 text-center">
-                            <p className="text-xs text-slate-600">
+                        <div className="px-6 pb-5 pt-3 text-center border-t border-slate-800/50">
+                            <p className="text-xs text-slate-500 mb-2">
                                 {loading ? 'Fetching from database…' : `${patients.length} patient${patients.length !== 1 ? 's' : ''} on record · Live data`}
+                            </p>
+                            <p className="text-xs text-slate-500 flex items-center justify-center gap-1.5 font-medium">
+                                <Lock className="w-3 h-3 text-indigo-400/70" /> Secured and anonymized by <a href="/privacy" className="text-indigo-400 hover:text-indigo-300 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">Phantom Shield</a>
                             </p>
                         </div>
                     </div>

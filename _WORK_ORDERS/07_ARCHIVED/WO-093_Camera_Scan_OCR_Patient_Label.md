@@ -14,7 +14,7 @@ proddy_validation_required: true
 fast_track_candidate: true
 strategic_alignment: Clinic Onboarding / Mobile UX / GTM
 deliverable_type: Standalone HTML file (single file, no framework, no backend)
-requested_by: Trevor Calton
+requested_by: PPN Admin
 related_tickets:
   - WO-092 (01_TRIAGE — Batch Processor / Google Sheets Airlock, same onboarding context)
 ---

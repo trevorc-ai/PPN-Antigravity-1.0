@@ -155,7 +155,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                     {cat.icon}
                   </div>
                 </div>
-                <h3 className="text-[#A8B5D1] font-black tracking-tight text-lg mb-3">{cat.title}</h3>
+                <h3 className="text-[#A8B5D1] font-black tracking-tight text-lg mb-3 break-words hyphens-auto">{cat.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed font-medium group-hover:text-slate-300 transition-colors">{cat.desc}</p>
               </div>
             ))}

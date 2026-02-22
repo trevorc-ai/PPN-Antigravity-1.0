@@ -12,7 +12,7 @@ estimated_complexity: 4/10
 source: gemini_recommendation
 proddy_validation_required: true
 strategic_alignment: Grey Market "Phantom Shield" — Audit Defense
-requested_by: Trevor Calton
+requested_by: PPN Admin
 related_tickets:
   - WO_002 (06_COMPLETE — Shadow Market Schema, log_sm_sessions DEPLOYED)
   - WO-090 (01_TRIAGE — Clients Table Ghost Record, EVALUATION)

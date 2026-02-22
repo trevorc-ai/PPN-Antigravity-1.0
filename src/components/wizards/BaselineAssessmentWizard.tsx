@@ -246,7 +246,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
         data.mentalHealth.ace !== null ||
         data.mentalHealth.pcl5 !== null;
 
-    const canSubmit = atLeastOneScore;
+    // TEMPORARY FOR TESTING: Allow submitting without psychometric scores
+    const canSubmit = true; // was: atLeastOneScore;
 
     const expectancyLabel =
         data.setSetting.treatment_expectancy >= 70
@@ -269,7 +270,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                         <AdvancedTooltip content="Total composite scores from standardized assessments. PHQ-9 screens for depression severity (0–27), GAD-7 for anxiety (0–21), ACE for adverse childhood experiences (0–10), PCL-5 for PTSD symptom severity (0–80). At least one score is required to save." tier="standard" side="bottom">
                             <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About psychometric scores" />
                         </AdvancedTooltip>
-                        <span className="text-slate-600 font-normal text-sm ml-0.5">at least one required</span>
+                        <span className="text-slate-600 font-normal text-sm ml-0.5">optional (for testing)</span>
                     </h3>
                     {lastSaved && (
                         <span className="text-xs text-slate-500">
@@ -277,7 +278,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                         </span>
                     )}
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <ScoreSelect id="phq9" label="PHQ-9 (0–27)" value={data.mentalHealth.phq9} onChange={(v) => updateData('mentalHealth', { phq9: v })} min={0} max={27} />
                     <ScoreSelect id="gad7" label="GAD-7 (0–21)" value={data.mentalHealth.gad7} onChange={(v) => updateData('mentalHealth', { gad7: v })} min={0} max={21} />
                     <ScoreSelect id="ace" label="ACE (0–10)" value={data.mentalHealth.ace} onChange={(v) => updateData('mentalHealth', { ace: v })} min={0} max={10} />
@@ -352,7 +353,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 ]).map(({ key, label, options }) => (
                     <div key={key}>
                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                             {options.map((opt) => {
                                 const isSelected = data.observations[key] === opt;
                                 return (
@@ -385,12 +386,14 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 hasChanges={canSubmit}
             />
 
-            {/* Hint if scores missing */}
+            {/* Hint if scores missing (Disabled for testing) */}
+            {/*
             {!canSubmit && (
                 <p className="text-xs text-slate-500 text-right">
                     Enter at least one psychometric score to continue
                 </p>
             )}
+            */}
         </div>
     );
 };

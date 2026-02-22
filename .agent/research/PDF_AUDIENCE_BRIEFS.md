@@ -77,7 +77,7 @@
 **7. Partner Preview Access** *(1 page)*
 - How to request access
 - What partners can expect during the preview
-- Contact: Trevor Calton, trevor@ppnportal.com
+- Contact: PPN Admin, info@ppnportal.com
 
 **8. Appendix: Data & Sources** *(optional)*
 - Key research citations
@@ -299,7 +299,7 @@
 ### Shared Design Elements (All 4 PDFs)
 - PPN logo on every page (top right header)
 - Version date + "Beta Preview" watermark on cover
-- Footer: `ppnportal.com | trevor@ppnportal.com`
+- Footer: `ppnportal.com | info@ppnportal.com`
 - Page numbers
 - Consistent typography (Inter or Outfit — matches app)
 - Same color palette, differentiated by cover and accent emphasis per audience

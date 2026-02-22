@@ -6,7 +6,7 @@ category: Session Experience
 priority: MEDIUM
 status: ASSIGNED
 created: 2026-02-15T04:13:00-08:00
-requested_by: Trevor Calton
+requested_by: PPN Admin
 assigned_to: BUILDER
 assigned_date: 2026-02-15T04:22:09-08:00
 estimated_complexity: 6/10

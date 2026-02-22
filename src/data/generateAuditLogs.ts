@@ -176,7 +176,7 @@ export function generateAuditLogs(): AuditLog[] {
     const logs: AuditLog[] = [];
     const genders = ['Male', 'Female', 'Non-Binary'];
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 800; i++) {
         const daysAgo = Math.floor(Math.random() * 30);
         const actionType = ACTION_TYPES[Math.floor(Math.random() * ACTION_TYPES.length)];
         const actor = actionType.action.includes('LEDGER') || actionType.action.includes('BACKUP')

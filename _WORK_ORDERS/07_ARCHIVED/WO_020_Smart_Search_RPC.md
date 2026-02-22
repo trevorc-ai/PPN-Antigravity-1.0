@@ -9,7 +9,7 @@ created: 2026-02-14T22:48:26-08:00
 reviewed_by: LEAD
 reviewed_at: 2026-02-14T22:53:17-08:00
 lead_decision: GO (SECURITY CRITICAL)
-requested_by: Trevor Calton
+requested_by: PPN Admin
 assigned_to: INSPECTOR
 estimated_complexity: 7/10
 failure_count: 0

@@ -156,7 +156,7 @@ Launch with the most defensible content first. Build credibility before publishi
 Each article should follow this template:
 ```
 # [Title]
-**Reading time:** X min | **Published:** [Date] | **Author:** Trevor Calton, PPN Research Portal
+**Reading time:** X min | **Published:** [Date] | **Author:** PPN Admin, PPN Research Portal
 
 ## Key Takeaways
 - [3-5 bullet points — written for AI summarization]
@@ -183,7 +183,7 @@ The 8 Descript files are **podcast transcripts** written as two-speaker dialogue
 1. **Read the whole transcript** first — understand the argument arc
 2. **Identify the 3–5 strongest arguments/insights** — these become H2 sections
 3. **Pull the most quotable lines** — package them as pull quotes or callout boxes
-4. **Write the article in first person** (Trevor's voice) or third person editorial — do NOT preserve the two-speaker dialogue format
+4. **Write the article in first person** (Admin's voice) or third person editorial — do NOT preserve the two-speaker dialogue format
 5. **Add a Key Takeaways block** at the top (5 bullets max)
 6. **Add SEO meta description** (155 characters max, include primary keyword)
 7. **Add Open Graph title** (60 characters max for LinkedIn previews)
@@ -196,7 +196,7 @@ The 8 Descript files are **podcast transcripts** written as two-speaker dialogue
 
 Each blog article should also be distributed as:
 
-**Podcast audio** (if Trevor records):
+**Podcast audio** (if Admin records):
 - Scripts already exist (the Descript transcripts)
 - Can be recorded as-is with a co-host, OR condensed into a solo narration
 - Suggested podcast name: *"Clinical Intelligence" — The PPN Research Portal Podcast*
@@ -232,7 +232,7 @@ After PRODDY strategy complete:
 
 ## NOTES
 
-- Trevor has keyword research available if MARKETER needs it — request via USER
+- Admin has keyword research available if MARKETER needs it — request via USER
 - The Descript transcripts are the best raw material in the project for content marketing. Treat them as first drafts, not outlines.
 - "Boring is scalable" and "Power flows to the platform" are genuine thought leadership hooks with viral potential in the practitioner community
 - The "five companies in a trench coat" metaphor from the Trojan Horse piece is the most quotable line in any of the transcripts — use it prominently

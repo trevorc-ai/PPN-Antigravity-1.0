@@ -6,7 +6,7 @@ category: UX / Onboarding / Accessibility
 owner: INSPECTOR
 failure_count: 0
 created_date: 2026-02-16T19:32:00-08:00
-requested_by: Trevor Calton
+requested_by: PPN Admin
 estimated_hours: 10-12 hours
 phase: BUILD
 ---
@@ -14,7 +14,7 @@ phase: BUILD
 # Wellness Journey Mini Guided Tours
 
 **Date:** 2026-02-16  
-**Requested by:** Trevor Calton  
+**Requested by:** PPN Admin  
 **Priority:** P1 - High (Critical for user onboarding)
 
 ---

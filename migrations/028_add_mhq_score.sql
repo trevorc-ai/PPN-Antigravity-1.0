@@ -4,7 +4,7 @@
 -- Purpose: Add MHQ score tracking to clinical records
 -- Author: SOOP
 -- Date: 2026-02-15
--- Authorization: Trevor (admin) requested this addition
+-- Authorization: Admin (admin) requested this addition
 -- ============================================================================
 
 -- 1. Create MHQ Score Reference Table

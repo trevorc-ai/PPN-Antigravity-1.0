@@ -251,16 +251,16 @@ Best,
 
 | # | Partner Type | Target | Value Prop | Outreach Lead |
 |---|-------------|--------|-----------|---------------|
-| 1 | Training Program | Fluence | "Certify your graduates with PPN pre-loaded" | Trevor |
-| 2 | Training Program | IPI (Integrative Psychiatry Institute) | "Outcomes tracking for your ketamine training cohort" | Trevor |
-| 3 | EHR System | Osmind | "PPN as a data layer / outcomes module" | Trevor |
-| 4 | EHR System | Jane App | "Integration for Canadian psychedelic clinics" | Trevor |
-| 5 | Ketamine Chain | Ketamine Wellness Centers | "Network benchmarking for multi-site operators" | Trevor |
-| 6 | Research Institution | CIIS (California Institute of Integral Studies) | "Research data partnership" | Trevor |
-| 7 | Malpractice Carrier | HPSO or CM&F Group | "PPN documentation = lower premiums" | Trevor |
-| 8 | Psilocybin Facilitator | Oregon Psilocybin Services licensees | "Compliance documentation for OR regulations" | Trevor |
-| 9 | Peer Supervision Network | MAPS-trained therapists | "Peer supervision + outcomes benchmarking" | Trevor |
-| 10 | Pharmacy | Compounding pharmacies serving ketamine clinics | "Dosing protocol integration" | Trevor |
+| 1 | Training Program | Fluence | "Certify your graduates with PPN pre-loaded" | Admin |
+| 2 | Training Program | IPI (Integrative Psychiatry Institute) | "Outcomes tracking for your ketamine training cohort" | Admin |
+| 3 | EHR System | Osmind | "PPN as a data layer / outcomes module" | Admin |
+| 4 | EHR System | Jane App | "Integration for Canadian psychedelic clinics" | Admin |
+| 5 | Ketamine Chain | Ketamine Wellness Centers | "Network benchmarking for multi-site operators" | Admin |
+| 6 | Research Institution | CIIS (California Institute of Integral Studies) | "Research data partnership" | Admin |
+| 7 | Malpractice Carrier | HPSO or CM&F Group | "PPN documentation = lower premiums" | Admin |
+| 8 | Psilocybin Facilitator | Oregon Psilocybin Services licensees | "Compliance documentation for OR regulations" | Admin |
+| 9 | Peer Supervision Network | MAPS-trained therapists | "Peer supervision + outcomes benchmarking" | Admin |
+| 10 | Pharmacy | Compounding pharmacies serving ketamine clinics | "Dosing protocol integration" | Admin |
 
 **Outreach Sequence (all partners):**
 - Email 1: Personal intro + one-line value prop (Day 1)
@@ -319,7 +319,7 @@ Best,
 - Criteria: Licensed practitioners with 10+ sessions, willing to provide weekly feedback
 - Target: 20 pilot testers (10 grey market, 10 licensed clinic)
 - Incentive: Lifetime 50% discount + "Founding Practitioner" badge
-- Outreach: Personal email from Trevor + Fluence/IPI network
+- Outreach: Personal email from Admin + Fluence/IPI network
 
 **Paid Pilot Testers:**
 - Criteria: Clinic operators (2+ practitioners) willing to run a 30-day structured pilot

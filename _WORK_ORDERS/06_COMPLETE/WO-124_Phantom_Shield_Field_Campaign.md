@@ -62,7 +62,7 @@ Create 3 copy variants for the hook line (the "Your data never exists" line) for
 Also write:
 - A 3-sentence Signal DM message that practitioners can copy/paste when forwarding
 - An Instagram Story caption (under 150 chars)
-- A LinkedIn post for Trevor to post targeting Oregon/Colorado practitioners
+- A LinkedIn post for Admin to post targeting Oregon/Colorado practitioners
 
 ### DESIGNER
 Review `phantom-shield-card.html` for:
@@ -94,7 +94,7 @@ Define success metrics for this campaign:
 
 ---
 
-## Distribution Channels (Trevor to activate)
+## Distribution Channels (Admin to activate)
 
 1. **Personal Signal groups** — paste the share card screenshot + link
 2. **Oregon Psilocybin facilitator communities** — post in relevant Signal/Telegram groups

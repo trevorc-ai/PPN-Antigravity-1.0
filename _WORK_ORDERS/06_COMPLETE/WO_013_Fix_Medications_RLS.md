@@ -10,7 +10,7 @@ reviewed_by: LEAD
 reviewed_at: 2026-02-14T22:41:56-08:00
 completed_by: SOOP
 completed_at: 2026-02-14T22:44:00-08:00
-requested_by: Trevor Calton
+requested_by: PPN Admin
 assigned_to: SOOP
 estimated_complexity: 3/10
 failure_count: 0

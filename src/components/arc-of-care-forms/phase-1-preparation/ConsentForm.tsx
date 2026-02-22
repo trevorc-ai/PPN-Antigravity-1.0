@@ -173,25 +173,20 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                     {/* Subtle glow accent */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/60 via-emerald-400/80 to-emerald-500/60 rounded-t-2xl" />
 
-                    <div className="flex items-start gap-4">
-                        {/* Shield icon */}
-                        <div className="shrink-0 w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                            <ShieldCheck className="w-6 h-6 text-emerald-400" />
-                        </div>
-
+                    <div className="flex items-center gap-4">
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-1">
+                            <p className="text-xs md:text-sm font-black text-emerald-400 uppercase tracking-widest mb-1">
                                 Anonymous Patient ID — System Generated
                             </p>
-                            <p className="text-sm text-slate-300 leading-relaxed mb-3">
+                            <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-3">
                                 A unique random hash has been created for this patient. <strong className="text-[#A8B5D1]">No name, date of birth, or identifying information is stored.</strong> All clinical records are linked to this ID only.
                             </p>
 
                             {/* ID display with copy button */}
                             <div className="flex items-center gap-3">
                                 <div className="flex-1 flex items-center gap-3 px-4 py-3 bg-slate-950/80 border border-emerald-500/30 rounded-xl">
-                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest shrink-0">Patient ID</span>
-                                    <span className="font-mono text-lg font-black text-emerald-300 tracking-widest">
+                                    <span className="text-xs md:text-sm font-bold text-slate-500 uppercase tracking-widest shrink-0">Patient ID</span>
+                                    <span className="font-mono text-lg md:text-xl font-black text-emerald-300 tracking-widest">
                                         {patientId}
                                     </span>
                                 </div>
@@ -208,9 +203,14 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                 </button>
                             </div>
 
-                            <p className="text-xs text-slate-500 mt-2 font-medium">
+                            <p className="text-xs md:text-sm text-slate-500 mt-2 font-medium">
                                 Record this ID in your secure paper trail if required by your site's protocol.
                             </p>
+                        </div>
+
+                        {/* Shield icon - moved to right */}
+                        <div className="hidden sm:flex shrink-0 w-16 h-16 rounded-xl bg-emerald-500/10 border border-emerald-500/20 items-center justify-center">
+                            <ShieldCheck className="w-8 h-8 text-emerald-400/50" />
                         </div>
                     </div>
                 </div>
@@ -233,7 +233,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             className="mt-1 w-6 h-6 rounded border-slate-600 bg-slate-800/50 text-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer"
                         />
                         <div className="flex-1">
-                            <p className="text-lg font-bold text-slate-300 group-hover:text-[#A8B5D1] transition-colors">
+                            <p className="text-lg md:text-xl font-bold text-slate-300 group-hover:text-[#A8B5D1] transition-colors">
                                 I confirm that informed consent has been obtained from the patient
                             </p>
                             <p className="text-sm text-slate-400 mt-2">

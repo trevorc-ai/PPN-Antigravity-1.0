@@ -6,7 +6,7 @@ category: Design
 priority: HIGH
 status: COMPLETE
 created: 2026-02-15T00:11:35-08:00
-requested_by: Trevor Calton
+requested_by: PPN Admin
 assigned_to: DESIGNER
 estimated_complexity: 8/10
 failure_count: 0

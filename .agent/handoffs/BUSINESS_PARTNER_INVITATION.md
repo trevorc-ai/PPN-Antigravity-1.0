@@ -7,7 +7,7 @@
 ## Email Version
 
 **To:** [Business Partner Name]  
-**From:** Trevor Calton  
+**From:** PPN Admin  
 **Date:** February 16, 2026  
 **Subject:** You're Invited: Preview the PPN Research Portal
 
@@ -164,7 +164,7 @@ You're not just a user—you're a **co-creator**. Your insights will directly sh
 
 I'm here to help. Reach out anytime:
 
-**Email:** trevor@ppnportal.com  
+**Email:** info@ppnportal.com  
 **Phone:** [Your phone number]  
 **Calendly:** [Schedule a call]
 
@@ -176,7 +176,7 @@ Thank you for being an early partner in this journey. Your support and feedback 
 
 Let's build the future of psychedelic therapy together.
 
-**Trevor Calton**  
+**PPN Admin**  
 Founder, PPN Research Portal
 
 ---
@@ -213,7 +213,7 @@ The PPN Portal is finally ready for you to preview. **Full access, no charge.**
 
 Thanks for being an early partner. Let's build the future of psychedelic therapy together.
 
-Trevor
+Admin
 
 ---
 
@@ -293,7 +293,7 @@ Just wanted to check in—have you had a chance to explore the PPN Portal yet?
 
 Thanks again for being an early partner. Looking forward to hearing your thoughts.
 
-Trevor
+Admin
 
 ---
 
@@ -323,7 +323,7 @@ If you know other practitioners who might benefit from early access, feel free t
 
 Thanks again for being a co-creator in this journey.
 
-Trevor
+Admin
 
 ---
 

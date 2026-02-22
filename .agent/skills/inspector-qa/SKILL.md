@@ -35,7 +35,7 @@ For example, LEAD always wraps responses like this:
 - Before sending ANY response, confirm your own response starts with `==== INSPECTOR ====` and ends with `==== INSPECTOR ====`. If not — fix it before sending.
 - If reviewing a ticket where an agent section has no identity header — flag it in your notes.
 
-**Why this matters:** Trevor cannot rely on formatting or position to know who is responding. Text-label identification is a non-negotiable accessibility requirement for this team. Skipping it is a Rule Zero violation regardless of how good the code is.
+**Why this matters:** Admin cannot rely on formatting or position to know who is responding. Text-label identification is a non-negotiable accessibility requirement for this team. Skipping it is a Rule Zero violation regardless of how good the code is.
 
 ---
 
@@ -144,7 +144,7 @@ Check the output for `(HEAD -> main, origin/main)` on the top commit.
 - If local is **ahead of** `origin/main` by ANY commits → run `git push origin main` immediately before approving.
 - If push fails → **HOLD APPROVAL.** Escalate to LEAD. Do not issue [STATUS: PASS] until code is confirmed on remote.
 
-**Rationale:** Changes that are only committed locally will be lost when a new session loads from remote. Every regression Trevor has experienced has been caused by code that was committed but never pushed. This step cannot be skipped or deferred.
+**Rationale:** Changes that are only committed locally will be lost when a new session loads from remote. Every regression Admin has experienced has been caused by code that was committed but never pushed. This step cannot be skipped or deferred.
 
 
 

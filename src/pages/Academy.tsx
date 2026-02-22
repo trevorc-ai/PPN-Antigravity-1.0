@@ -245,7 +245,7 @@ export const Academy: FC = () => {
                                         background: 'rgba(248,81,73,0.08)', border: '1px solid rgba(248,81,73,0.3)',
                                         borderRadius: 10, padding: '12px 16px', fontSize: 13, color: '#f85149',
                                     }}>
-                                        Something went wrong. Please try again or email us at trevor@ppnportal.com
+                                        Something went wrong. Please try again or email us at info@ppnportal.com
                                     </div>
                                 )}
 
