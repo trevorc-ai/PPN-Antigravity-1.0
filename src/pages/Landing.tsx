@@ -98,6 +98,9 @@ const Landing: React.FC = () => {
   return (
     <div className="min-h-screen bg-transparent text-slate-300 selection:bg-primary/30 selection:text-slate-300 font-sans overflow-clip relative">
 
+      {/* Texture Grid - Data as Texture */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_100%_at_50%_0%,#000_70%,transparent_110%)] opacity-[0.03]" />
+
       {/* ── Sticky Nav Bar ─────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a1628]/80 backdrop-blur-md border-b border-slate-800/60">
         <div>
@@ -389,28 +392,60 @@ const Landing: React.FC = () => {
 
       {/* SECTION: Unified Clinical Operations - NEW */}
       <section className="py-24 px-6 relative z-10" >
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight leading-tight">
-              The <span className="text-gradient-primary inline-block pb-1">Frankenstein Stack</span> is real.
-            </h2>
-            <div className="space-y-4 text-slate-300 text-lg leading-relaxed font-medium">
-              <p>
-                IntakeQ for intake. Spruce for messaging. Spotify for music. Excel for outcomes. A generic EHR for billing. Five apps, zero integration.
-              </p>
-              <p>
-                That context switching costs practitioners 5 to 10 hours a week. PPN consolidates your clinical core into one place so you can focus on care, not admin.
-              </p>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <div className="space-y-32 pb-16 lg:pb-[30vh]">
+            <div className="space-y-8">
+              <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight leading-tight">
+                The <span className="text-gradient-primary inline-block pb-[0.1em]">Frankenstein Stack</span> is real.
+              </h2>
+              <div className="space-y-4 text-slate-300 text-lg leading-relaxed font-medium">
+                <p>
+                  IntakeQ for intake. Spruce for messaging. Spotify for music. Excel for outcomes. A generic EHR for billing. Five apps, zero integration.
+                </p>
+                <p>
+                  That context switching costs practitioners 5 to 10 hours a week. PPN consolidates your clinical core into one place so you can focus on care, not admin.
+                </p>
+              </div>
             </div>
-            <button
-              onClick={() => navigate('/deep-dives/workflow-chaos')}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="space-y-6"
             >
-              Kill the Frankenstein Stack
-              <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
-            </button>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-xs font-black text-slate-400 uppercase tracking-widest">
+                <span className="material-symbols-outlined text-sm">inventory_2</span>
+                Structured Workflows
+              </div>
+              <h3 className="text-2xl font-black text-slate-300 tracking-tight">Structured workflow.</h3>
+              <p className="text-slate-300 text-lg leading-relaxed font-medium mt-1">Standardized templates replace chaotic free-text notes. Data enters structured and stays structured—powering insights while dramatically reducing charting time.</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className="space-y-6"
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-clinical-green/10 border border-clinical-green/20 rounded-full text-xs font-black text-clinical-green uppercase tracking-widest">
+                <span className="material-symbols-outlined text-sm">handshake</span>
+                Radical Interoperability
+              </div>
+              <h3 className="text-2xl font-black text-slate-300 tracking-tight">Radical interoperability.</h3>
+              <p className="text-slate-300 text-lg leading-relaxed font-medium mt-1">PPN brings everything into a single field of view, eliminating data silos and compliance friction.</p>
+              <div className="pt-8">
+                <button
+                  onClick={() => navigate('/deep-dives/workflow-chaos')}
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-primary/10 group"
+                >
+                  Kill the Frankenstein Stack
+                  <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+              </div>
+            </motion.div>
           </div>
-          <div className="relative">
+          <div className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-[2rem] blur-3xl opacity-30"></div>
             <div className="relative bg-slate-950 border border-slate-800 rounded-[2rem] p-8 space-y-4 overflow-hidden group">
 
