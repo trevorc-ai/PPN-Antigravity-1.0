@@ -104,7 +104,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                 */
                                 className={[
                                     'relative flex-1 flex items-center justify-center gap-2.5',
-                                    'px-5 py-3.5 rounded-t-xl transition-all duration-200 select-none',
+                                    'px-6 py-5 rounded-t-xl transition-all duration-200 select-none',
                                     // Active: no bottom border, sits on top of panel
                                     isActive
                                         ? `${cfg.activeBg} border-l border-r border-t ${cfg.activeBorder} ${cfg.activeText} font-bold`
@@ -128,13 +128,13 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
 
                                 {/* Leading icon: Lock if locked, CheckCircle if complete, phase icon if active/upcoming */}
                                 {isLocked
-                                    ? <Lock className="w-4 h-4 text-slate-600 flex-shrink-0" aria-hidden="true" />
+                                    ? <Lock className="w-5 h-5 text-slate-600 flex-shrink-0" aria-hidden="true" />
                                     : isCompleted && !isActive
-                                        ? <CheckCircle className="w-4 h-4 text-teal-400 flex-shrink-0" aria-hidden="true" />
-                                        : <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                                        ? <CheckCircle className="w-5 h-5 text-teal-400 flex-shrink-0" aria-hidden="true" />
+                                        : <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                                 }
 
-                                <span className="text-sm">
+                                <span className="text-base">
                                     <span className={`font-black mr-1 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
                                         {phaseId}
                                     </span>
