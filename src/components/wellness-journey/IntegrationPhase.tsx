@@ -68,7 +68,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
             grade3EventsCount: 0,
             chemicalRescueUsed: 'NO',
             ongoingVulnerabilities: "Mild residual anxiety around social situations. No suicidality.",
-            referralName: "Dr. Sarah Jenkins (CBT)",
+            referralName: "Unassigned (Pending Referral)",
             followUpWeeks: 4,
             emergencyPlanSummary: "Contact crisis line 988 if symptoms return. Safety plan PDF on file.",
             selfCareSummary: "Continue daily meditation, maintain sleep hygiene, and exercise 3x/week.",

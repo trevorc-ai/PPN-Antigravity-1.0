@@ -1,9 +1,10 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useCallback } from 'react';
 import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock } from 'lucide-react';
+import { getTimelineEvents } from '../../services/clinicalLog';
 
 export interface TimelineEvent {
     id: string;
-    type: 'DOSE' | 'OBSERVATION' | 'PEAK' | 'INTERVENTION' | 'SAFETY' | 'CLOSE';
+    type: string;
     timestamp: Date;
     description: string;
     notes?: string;
@@ -17,6 +18,14 @@ interface LiveSessionTimelineProps {
 
 const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string, symbol: string, label: string }> = {
     DOSE: { icon: <Pill className="w-4 h-4" />, color: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30', symbol: '●', label: '[DOSE]' },
+    dose_admin: { icon: <Pill className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '●', label: '[DOSE]' },
+    vital_check: { icon: <Activity className="w-4 h-4" />, color: 'text-blue-400 bg-blue-500/20 border-blue-500/30', symbol: '○', label: '[VITALS]' },
+    patient_observation: { icon: <Activity className="w-4 h-4" />, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30', symbol: '○', label: '[OBSERVATION]' },
+    music_change: { icon: <Diamond className="w-4 h-4 text-violet-400 fill-violet-400" />, color: 'text-violet-400 bg-violet-500/20 border-violet-500/30', symbol: '◆', label: '[MUSIC]' },
+    clinical_decision: { icon: <Mountain className="w-4 h-4" />, color: 'text-orange-400 bg-orange-500/20 border-orange-500/30', symbol: '△', label: '[DECISION]' },
+    safety_event: { icon: <Shield className="w-4 h-4" />, color: 'text-red-400 bg-red-500/20 border-red-500/30', symbol: '⚠', label: '[SAFETY]' },
+    touch_consent: { icon: <CheckCircle className="w-4 h-4" />, color: 'text-pink-400 bg-pink-500/20 border-pink-500/30', symbol: '✓', label: '[CONSENT]' },
+    general_note: { icon: <Activity className="w-4 h-4" />, color: 'text-slate-400 bg-slate-500/20 border-slate-500/30', symbol: '-', label: '[NOTE]' },
     OBSERVATION: { icon: <Activity className="w-4 h-4" />, color: 'text-sky-400 bg-sky-500/20 border-sky-500/30', symbol: '○', label: '[OBSERVATION]' },
     PEAK: { icon: <Diamond className="w-4 h-4 text-fuchsia-400 fill-fuchsia-400" />, color: 'text-fuchsia-400 bg-fuchsia-500/20 border-fuchsia-500/30', symbol: '◆', label: '[PEAK]' },
     INTERVENTION: { icon: <Mountain className="w-4 h-4" />, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30', symbol: '△', label: '[INTERVENTION]' },
@@ -31,29 +40,45 @@ function formatTimeAMPM(date: Date): string {
 export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, active }) => {
     const [events, setEvents] = useState<TimelineEvent[]>([]);
 
-    useEffect(() => {
-        // Mock data loading
-        const mockEvents: TimelineEvent[] = [
-            { id: '1', type: 'DOSE', timestamp: new Date('2025-10-18T09:14:00'), description: 'Psilocybin 25mg oral administered', notes: 'Patient calm, set and setting confirmed', author: 'Dr. Jane Smith' },
-            { id: '2', type: 'OBSERVATION', timestamp: new Date('2025-10-18T10:02:00'), description: 'First onset effects reported', notes: 'Patient reported warmth, mild visuals', author: 'Dr. Jane Smith' },
-            { id: '3', type: 'SAFETY', timestamp: new Date('2025-10-18T10:45:00'), description: 'Patient experiencing slight nausea', notes: 'Provided ginger tea, nausea resolved after 15 minutes', author: 'Dr. Jane Smith' },
-            { id: '4', type: 'PEAK', timestamp: new Date('2025-10-18T11:45:00'), description: 'Peak experience onset', notes: 'Eyes closed, music shifted to peak playlist', author: 'Dr. Jane Smith' },
-            { id: '5', type: 'INTERVENTION', timestamp: new Date('2025-10-18T13:30:00'), description: 'Grounding support provided', notes: 'Patient requested hand on shoulder, approved', author: 'Dr. Jane Smith' },
-            { id: '6', type: 'OBSERVATION', timestamp: new Date('2025-10-18T15:22:00'), description: 'Descent phase — patient verbal', notes: 'Discussing key themes: childhood, forgiveness', author: 'Dr. Jane Smith' },
-        ];
+    const fetchLocalEvents = useCallback(async () => {
+        const result = await getTimelineEvents(sessionId);
+        if (result.success && result.data) {
+            const mappedEvents: TimelineEvent[] = result.data.map((row: any) => ({
+                id: row.id,
+                type: row.event_type || 'general_note',
+                timestamp: new Date(row.event_timestamp),
+                description: row.metadata?.event_description || 'No description provided',
+                notes: row.metadata?.notes,
+                author: row.performed_by || 'Unknown Clinician'
+            }));
 
-        setEvents(mockEvents);
+            // Overwrite with real data if it exists, else keep mock
+            if (mappedEvents.length > 0) {
+                // Reverse it so chronological matches the timeline approach
+                setEvents(mappedEvents.reverse());
+            } else {
+                // Keep the mock events for visual demonstration
+                setEvents([
+                    { id: '1', type: 'DOSE', timestamp: new Date('2025-10-18T09:14:00'), description: 'Psilocybin 25mg oral administered', notes: 'Patient calm, set and setting confirmed', author: 'Dr. Jane Smith' },
+                    { id: '2', type: 'OBSERVATION', timestamp: new Date('2025-10-18T10:02:00'), description: 'First onset effects reported', notes: 'Patient reported warmth, mild visuals', author: 'Dr. Jane Smith' },
+                    { id: '3', type: 'SAFETY', timestamp: new Date('2025-10-18T10:45:00'), description: 'Patient experiencing slight nausea', notes: 'Provided ginger tea, nausea resolved after 15 minutes', author: 'Dr. Jane Smith' },
+                ]);
+            }
+        }
+    }, [sessionId]);
+
+    useEffect(() => {
+        fetchLocalEvents();
 
         if (!active) return;
 
-        // Simulating refetching every 30s
+        // Fetch periodically or subscribe
         const interval = setInterval(() => {
-            console.log(`[refetch] Timeline for session ${sessionId}`);
-            // In a real app we'd fetch again here.
+            fetchLocalEvents();
         }, 30000);
 
         return () => clearInterval(interval);
-    }, [sessionId, active]);
+    }, [fetchLocalEvents, active]);
 
     const handleExportLog = () => {
         const lines = [
@@ -117,7 +142,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
                     </div>
                 ) : (
                     events.map((event, index) => {
-                        const conf = EVENT_CONFIG[event.type];
+                        const conf = EVENT_CONFIG[event.type] || EVENT_CONFIG['general_note'];
                         const isLast = index === events.length - 1;
 
                         return (

@@ -131,6 +131,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                                 onChange={(val) => updateField('phq9_score', val)}
                                 min={0}
                                 max={27}
+                                hideControls={true}
                             />
                             {phq9Change && (
                                 <div className={`flex items-center gap-2 text-sm ${phq9Change.color}`}>
@@ -148,6 +149,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                                 onChange={(val) => updateField('gad7_score', val)}
                                 min={0}
                                 max={21}
+                                hideControls={true}
                             />
                             {gad7Change && (
                                 <div className={`flex items-center gap-2 text-sm ${gad7Change.color}`}>
@@ -164,6 +166,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                             onChange={(val) => updateField('whoqol_score', val)}
                             min={0}
                             max={100}
+                            hideControls={true}
                         />
                     </FormField>
 
@@ -173,6 +176,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                             onChange={(val) => updateField('psqi_score', val)}
                             min={0}
                             max={21}
+                            hideControls={true}
                         />
                     </FormField>
 
@@ -183,6 +187,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                             min={0}
                             max={5}
                             status={data.cssrs_score && data.cssrs_score >= 3 ? 'critical' : 'normal'}
+                            hideControls={true}
                         />
                     </FormField>
                 </div>

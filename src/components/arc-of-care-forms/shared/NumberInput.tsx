@@ -23,6 +23,7 @@ interface NumberInputProps {
     placeholder?: string;
     status?: 'normal' | 'elevated' | 'critical';
     disabled?: boolean;
+    hideControls?: boolean;
 }
 
 /** Returns the number of decimal places in a number. */
@@ -47,7 +48,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
     unit,
     placeholder,
     status = 'normal',
-    disabled = false
+    disabled = false,
+    hideControls = false
 }) => {
     const handleIncrement = () => {
         const next = safeAdd(value ?? 0, step);
@@ -76,15 +78,17 @@ export const NumberInput: React.FC<NumberInputProps> = ({
 
     return (
         <div className="flex items-center gap-2">
-            <button
-                type="button"
-                onClick={handleDecrement}
-                disabled={disabled || (min !== undefined && (value ?? 0) <= min)}
-                className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                aria-label="Decrease value"
-            >
-                <Minus className="w-4 h-4" />
-            </button>
+            {!hideControls && (
+                <button
+                    type="button"
+                    onClick={handleDecrement}
+                    disabled={disabled || (min !== undefined && (value ?? 0) <= min)}
+                    className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    aria-label="Decrease value"
+                >
+                    <Minus className="w-4 h-4" />
+                </button>
+            )}
 
             <div className="relative flex-1">
                 {/* type="text" + inputMode="numeric": no spinner arrows, numeric keyboard on mobile */}
@@ -105,15 +109,17 @@ export const NumberInput: React.FC<NumberInputProps> = ({
                 )}
             </div>
 
-            <button
-                type="button"
-                onClick={handleIncrement}
-                disabled={disabled || (max !== undefined && (value ?? 0) >= max)}
-                className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                aria-label="Increase value"
-            >
-                <Plus className="w-4 h-4" />
-            </button>
+            {!hideControls && (
+                <button
+                    type="button"
+                    onClick={handleIncrement}
+                    disabled={disabled || (max !== undefined && (value ?? 0) >= max)}
+                    className="w-10 h-10 flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-slate-300 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                    aria-label="Increase value"
+                >
+                    <Plus className="w-4 h-4" />
+                </button>
+            )}
         </div>
     );
 };
