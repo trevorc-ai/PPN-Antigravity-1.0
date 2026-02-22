@@ -230,38 +230,38 @@ const AuditLogs: React.FC = () => {
               <thead className="bg-black/40 sticky top-0 z-10 border-b border-slate-800">
                 <tr className="text-sm font-black uppercase tracking-[0.3em] text-slate-500">
                   <th
-                    className="px-4 py-4 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
+                    className="px-3 py-2 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                     onClick={() => handleSort('timestamp')}
                   >
                     Timestamp {sortField === 'timestamp' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-4 py-4 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
+                    className="px-3 py-2 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                     onClick={() => handleSort('gender')}
                   >
                     Gender {sortField === 'gender' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-4 py-4 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
+                    className="px-3 py-2 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                     onClick={() => handleSort('substance')}
                   >
                     Substance {sortField === 'substance' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-4 py-4 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
+                    className="px-3 py-2 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                     onClick={() => handleSort('age')}
                   >
                     Age {sortField === 'age' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
                   <th
-                    className="px-4 py-4 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
+                    className="px-3 py-2 cursor-pointer hover:text-primary transition-colors whitespace-nowrap"
                     onClick={() => handleSort('weightRange')}
                   >
                     Weight {sortField === 'weightRange' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="px-4 py-4 w-2/5">Activity Event Log</th>
-                  <th className="px-4 py-4">Status</th>
-                  <th className="px-4 py-4 text-right">Hash</th>
+                  <th className="px-3 py-2 w-2/5">Activity Event Log</th>
+                  <th className="px-3 py-2">Status</th>
+                  <th className="px-3 py-2 text-right">Hash</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/40">
@@ -277,38 +277,38 @@ const AuditLogs: React.FC = () => {
 
                   return (
                     <tr key={log.id} className={`${rowBg} transition-all group border-b border-slate-800/30`}>
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-1.5">
                         <span className="text-xs font-mono text-slate-400">{log.timestamp.split(' ')[0]}</span>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="text-xs font-bold text-slate-400">{log.gender || 'N/A'}</span>
+                      <td className="px-3 py-1.5">
+                        <span className="text-[11px] font-bold text-slate-400">{log.gender || 'N/A'}</span>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="text-xs font-bold text-primary">{log.substance || 'N/A'}</span>
+                      <td className="px-3 py-1.5">
+                        <span className="text-[11px] font-bold text-primary">{log.substance || 'N/A'}</span>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="text-xs font-bold text-slate-400">{log.age || 'N/A'}</span>
+                      <td className="px-3 py-1.5">
+                        <span className="text-[11px] font-bold text-slate-400">{log.age || 'N/A'}</span>
                       </td>
-                      <td className="px-4 py-3">
-                        <span className="text-xs font-bold text-slate-400">{log.weightRange || 'N/A'}</span>
+                      <td className="px-3 py-1.5">
+                        <span className="text-[11px] font-bold text-slate-400">{log.weightRange || 'N/A'}</span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-1.5">
                         <div className="flex flex-col gap-0.5">
-                          <span className={`text-sm tracking-tight leading-none ${getActionColor(log.action)}`}>
+                          <span className={`text-[13px] tracking-tight leading-none ${getActionColor(log.action)}`}>
                             {log.action}
                           </span>
-                          <span className="text-xs text-slate-500 font-medium italic tracking-tight">
+                          <span className="text-[11px] text-slate-500 font-medium italic tracking-tight line-clamp-1">
                             "{log.details}"
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-1.5">
                         <div className="flex items-center gap-2">
-                          <div className={`size-2 rounded-full ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' :
+                          <div className={`size-1.5 rounded-full ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' :
                             log.status === 'ALERT_TRIGGERED' ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e]' :
                               'bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_8px_#2b74f3]'
                             }`}></div>
-                          <span className={`text-xs font-black uppercase tracking-widest ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'text-emerald-500' :
+                          <span className={`text-[10px] font-black uppercase tracking-widest ${(log.status === 'AUTHORIZED' || log.status === 'VERIFIED') ? 'text-emerald-500' :
                             log.status === 'ALERT_TRIGGERED' ? 'text-rose-500' :
                               'text-primary'
                             }`}>
@@ -316,9 +316,9 @@ const AuditLogs: React.FC = () => {
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right">
-                        <span className="px-2 py-1 bg-black/40 rounded border border-slate-800 font-mono text-[10px] text-slate-600 font-bold group-hover:border-primary/50 group-hover:text-primary transition-all">
-                          {log.hash}
+                      <td className="px-3 py-1.5 text-right">
+                        <span className="px-1.5 py-0.5 bg-black/40 rounded border border-slate-800 font-mono text-[9px] text-slate-600 font-bold group-hover:border-primary/50 group-hover:text-primary transition-all">
+                          {log.hash.substring(0, 16)}...
                         </span>
                       </td>
                     </tr>

@@ -21,7 +21,7 @@ export const Checkout: FC = () => {
     const navigate = useNavigate();
 
     // ── ALL ORIGINAL LOGIC UNCHANGED ──────────────────────────────────────────
-    const handleCheckout = async () => {
+    const handleCheckout = async (targetTier: SubscriptionTier = selectedTier) => {
         setLoading(true);
         setError(null);
 
@@ -40,7 +40,7 @@ export const Checkout: FC = () => {
                 return;
             }
 
-            const priceId = getPriceId(selectedTier, billingInterval);
+            const priceId = getPriceId(targetTier, billingInterval);
 
             if (!priceId) {
                 throw new Error('Price ID not configured for this tier');
@@ -54,7 +54,19 @@ export const Checkout: FC = () => {
                 },
             });
 
-            if (functionError) throw functionError;
+            if (functionError) {
+                // Try to extract the body of the Edge Function error
+                let errorMessage = functionError.message;
+                if (functionError.context && typeof functionError.context.json === 'function') {
+                    try {
+                        const errData = await functionError.context.json();
+                        if (errData?.error) errorMessage = errData.error;
+                    } catch (e) {
+                        // Ignore parse error
+                    }
+                }
+                throw new Error(errorMessage);
+            }
 
             if (!data?.sessionId) {
                 throw new Error('No session ID returned from checkout');
@@ -326,7 +338,7 @@ export const Checkout: FC = () => {
                                     {/* Card CTA */}
                                     <button
                                         id={`cta-${tier}`}
-                                        onClick={(e) => { e.stopPropagation(); setSelectedTier(tier); handleCheckout(); }}
+                                        onClick={(e) => { e.stopPropagation(); setSelectedTier(tier); handleCheckout(tier); }}
                                         disabled={loading}
                                         className="w-full py-3 rounded-xl text-sm font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#388bfd] focus:ring-offset-2 focus:ring-offset-[#0a1628] disabled:opacity-50 disabled:cursor-not-allowed"
                                         style={isRP
@@ -346,7 +358,7 @@ export const Checkout: FC = () => {
                 <div className="text-center mb-12">
                     <button
                         id="main-checkout-btn"
-                        onClick={handleCheckout}
+                        onClick={() => handleCheckout(selectedTier)}
                         disabled={loading}
                         className="px-12 py-4 rounded-xl text-base font-bold transition-all focus:outline-none focus:ring-2 focus:ring-[#388bfd] focus:ring-offset-2 focus:ring-offset-[#0a1628] disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{

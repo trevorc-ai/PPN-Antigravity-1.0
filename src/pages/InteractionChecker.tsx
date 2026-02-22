@@ -107,8 +107,9 @@ const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange,
               {/* Category header — full contrast, visually distinct */}
               <li
                 role="presentation"
-                className="px-4 pt-3 pb-1 text-xs font-black uppercase tracking-widest text-white border-t border-slate-700/60 mt-1 select-none pointer-events-none"
+                className="px-4 py-2.5 text-xs font-black uppercase tracking-[0.2em] text-slate-200 bg-slate-800 border-y border-slate-700 mt-2 mb-1 select-none pointer-events-none shadow-sm flex items-center"
               >
+                <span className="w-1.5 h-4 bg-primary mr-3 rounded-full opacity-80" />
                 {category}
               </li>
               {meds.map(med => (

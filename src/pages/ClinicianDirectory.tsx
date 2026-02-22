@@ -219,7 +219,7 @@ const ClinicianDirectory: React.FC = () => {
   const [activeMessagePractitioner, setActiveMessagePractitioner] = useState<any | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [showListingModal, setShowListingModal] = useState(false);
-  const [listingForm, setListingForm] = useState({ displayName: '', role: '', city: '', country: 'United States', licenseType: '', website: '', email: '' });
+  const [listingForm, setListingForm] = useState({ displayName: '', role: '', city: '', country: 'United States', licenseType: '', website: '', email: '', isAnonymous: false });
   const [listingSubmitted, setListingSubmitted] = useState(false);
 
   const handleListingSubmit = async (e: React.FormEvent) => {
@@ -406,7 +406,14 @@ const ClinicianDirectory: React.FC = () => {
                       </button>
                     </div>
                     <form onSubmit={handleListingSubmit} className="space-y-4">
-                      <input required placeholder="Display Name" value={listingForm.displayName} onChange={e => setListingForm(f => ({ ...f, displayName: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
+                      <div className="flex items-start gap-3 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                        <input type="checkbox" id="anonToggle" checked={listingForm.isAnonymous} onChange={e => setListingForm(f => ({ ...f, isAnonymous: e.target.checked }))} className="mt-1 size-4 rounded accent-cyan-500 bg-slate-800 border-slate-600" />
+                        <label htmlFor="anonToggle" className="text-sm font-medium text-slate-300 select-none cursor-pointer">
+                          List Anonymously
+                          <span className="block text-xs text-slate-500 mt-1">Your identity will remain hidden. Only your role and region will be displayed.</span>
+                        </label>
+                      </div>
+                      <input required={!listingForm.isAnonymous} placeholder={listingForm.isAnonymous ? "Clinic/Practice Name (Optional)" : "Full Name / Display Name"} value={listingForm.displayName} onChange={e => setListingForm(f => ({ ...f, displayName: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none" />
                       <select required value={listingForm.role} onChange={e => setListingForm(f => ({ ...f, role: e.target.value }))} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 focus:ring-1 focus:ring-cyan-500 outline-none">
                         <option value="">Select Role</option>
                         <option>Psychiatrist</option><option>Facilitator</option><option>LCSW</option><option>LPC</option><option>PhD Researcher</option><option>Nurse Practitioner</option><option>Other</option>

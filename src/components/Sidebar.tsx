@@ -142,7 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                                   title: item.label
                                 });
                               }}
-                              className="w-full text-left flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-slate-800/50 group cursor-pointer"
+                              className="w-full text-left flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl transition-all hover:bg-slate-800/50 group cursor-pointer select-none"
                             >
                               <div className="flex items-center gap-3">
                                 <span className="material-symbols-outlined text-lg text-slate-400 group-hover:text-indigo-400 transition-colors">
@@ -162,7 +162,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                                 if (window.innerWidth < 1024) onClose();
                               }}
                               className={({ isActive }) =>
-                                `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive
+                                `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all select-none ${isActive
                                   ? 'bg-primary/30 ring-2 ring-primary shadow-lg shadow-primary/20'
                                   : 'hover:bg-slate-800/50'
                                 }`
@@ -191,7 +191,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                                       <li key={child.path}>
                                         <NavLink
                                           to={child.path}
-                                          className={({ isActive }) => `block text-[13px] font-semibold tracking-wide py-1.5 transition-colors ${isActive ? 'text-indigo-400' : 'text-slate-500 hover:text-indigo-200'}`}
+                                          className={({ isActive }) => `block text-[13px] font-semibold tracking-wide py-1.5 transition-colors select-none ${isActive ? 'text-indigo-400' : 'text-slate-500 hover:text-indigo-200'}`}
                                           onClick={() => { if (window.innerWidth < 1024) onClose(); }}
                                         >
                                           {child.label}

@@ -57,7 +57,7 @@ export const HelpCenterLayout: React.FC = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search manuals..."
-                            className="w-full bg-[#0a0e1a] border border-slate-700/50 rounded-xl py-3 pl-12 pr-4 text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all text-sm shadow-inner"
+                            className="w-full bg-[#0a1628] border border-slate-700/50 rounded-xl py-3 pl-12 pr-4 text-[#8B9DC3] font-medium tracking-wide focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all text-sm shadow-inner"
                         />
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                     </div>
@@ -86,16 +86,16 @@ export const HelpCenterLayout: React.FC = () => {
                                         {segment.links.map((link, lIdx) => {
                                             const isActive = location.pathname.includes(link.path);
                                             return (
-                                                <li key={lIdx}>
+                                                <li key={lIdx} className="relative">
                                                     <Link
                                                         to={link.path}
                                                         onClick={() => setMobileMenuOpen(false)}
-                                                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${isActive
-                                                            ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
-                                                            : 'text-slate-400 hover:text-[#A8B5D1] hover:bg-slate-800/50 border border-transparent'}`}
+                                                        className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-semibold tracking-wide transition-all select-none ${isActive
+                                                            ? 'bg-primary/30 ring-2 ring-primary shadow-lg shadow-primary/20 text-[#8B9DC3]'
+                                                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'}`}
                                                     >
-                                                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
-                                                        {link.label}
+                                                        {isActive && <div className="absolute left-0 w-1 h-5 bg-indigo-600 rounded-r-full" />}
+                                                        <span className="flex-1">{link.label}</span>
                                                     </Link>
                                                 </li>
                                             )

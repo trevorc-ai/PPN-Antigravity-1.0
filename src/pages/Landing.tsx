@@ -133,7 +133,7 @@ const Landing: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto px-6 relative z-10">
           {/* Background overlay for mobile legibility against stars */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1628]/90 via-[#0a1628]/60 to-transparent lg:hidden pointer-events-none -z-10" />
+          <div className="absolute inset-0 bg-[#0a1628]/80 lg:hidden pointer-events-none -z-10 backdrop-blur-[2px]" />
 
           {/* Left Column (Text) */}
           <div className="flex flex-col items-start text-left space-y-10 relative z-20">
@@ -143,22 +143,22 @@ const Landing: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6 w-full"
             >
-              <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-[12px] sm:text-[13px] font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
+              <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-xs sm:text-sm font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence
               </div>
-              <h1 className="text-[3.5rem] leading-[1.0] sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-100 relative z-10 mt-4 mb-2 drop-shadow-md">
+              <h1 className="text-5xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-100 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
                 Elevate your practice.
-                <div className="h-6 sm:h-8" />
-                <span className="text-slate-300 text-4xl sm:text-5xl lg:text-6xl block mt-2">
-                  The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span><br />
+                <div className="h-8 sm:h-12" />
+                <span className="text-slate-300 text-3xl sm:text-5xl lg:text-6xl block mt-2 leading-snug">
+                  The clinical intelligence <span className="text-gradient-primary inline-block pb-[0.1em]">alliance</span><br className="hidden sm:block" />
                   for psychedelic professionals.
                 </span>
               </h1>
-              <p className="text-xl sm:text-2xl text-slate-200 max-w-2xl leading-relaxed font-bold drop-shadow-sm mt-4">
+              <p className="text-xl sm:text-2xl text-slate-200 max-w-2xl leading-relaxed font-bold drop-shadow-sm mt-4 text-left">
                 Log your sessions. Unlock global benchmarks. Elevate the entire field.
               </p>
-              <p className="text-lg sm:text-xl text-slate-300 max-w-2xl leading-relaxed font-medium drop-shadow-sm">
+              <p className="text-xl sm:text-2xl text-slate-300 max-w-2xl leading-relaxed font-medium drop-shadow-sm text-left">
                 A unified platform for safety surveillance, outcomes tracking, and protocol management.
               </p>
             </motion.div>
@@ -168,10 +168,10 @@ const Landing: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="max-w-2xl p-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl shadow-lg backdrop-blur-md w-full"
+              className="max-w-2xl p-6 bg-slate-900/90 border border-slate-700/80 rounded-2xl shadow-lg backdrop-blur-md w-full"
             >
-              <p className="text-base font-medium text-slate-300 leading-relaxed">
-                <span className="text-blue-400 font-bold mr-1 block mb-1 uppercase tracking-widest text-xs">Notice:</span>
+              <p className="text-lg font-medium text-slate-300 leading-relaxed text-left">
+                <span className="text-blue-400 font-bold mr-1 block mb-2 uppercase tracking-widest text-sm">Notice:</span>
                 PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
               </p>
             </motion.div>
@@ -366,20 +366,20 @@ const Landing: React.FC = () => {
       {/* SECTION: Global Alliance */}
       <section className="py-32 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-center text-center space-y-10">
+          <div className="bg-slate-900/20 border border-slate-800 rounded-[4rem] p-10 sm:p-20 relative overflow-hidden flex flex-col items-start text-left space-y-10">
             {/* Background effects */}
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-purple-500/20 rounded-full blur-[120px] pointer-events-none"></div>
 
             {/* Heading */}
-            <div className="space-y-6 max-w-3xl relative z-10">
+            <div className="space-y-6 max-w-3xl relative z-10 text-left">
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-300 tracking-tighter leading-tight">
                 The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
               </h2>
               <p className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                 Where every session makes the field smarter.
               </p>
-              <div className="space-y-4 text-base text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
+              <div className="space-y-4 text-xl text-slate-300 leading-relaxed font-medium max-w-2xl">
                 <p>
                   PPN is not a directory. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
                 </p>
@@ -601,10 +601,10 @@ const Landing: React.FC = () => {
       {/* SECTION: How It Works */}
       <section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
+          <div className="mb-16 space-y-4 text-left">
             <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">Simple Process</p>
             <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-300">How It Works</h2>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">Four steps to collaborative clinical intelligence</p>
+            <p className="text-lg text-slate-300 max-w-2xl">Four steps to collaborative clinical intelligence</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
@@ -671,12 +671,12 @@ const Landing: React.FC = () => {
       <section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto space-y-36">
           {/* Section Header */}
-          <div className="text-center space-y-4">
+          <div className="space-y-4 text-left">
             <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">What's Inside</p>
             <h2 className="text-4xl sm:text-6xl font-black tracking-tight leading-tight pb-2 text-slate-300">
               Three tools.<br /><span className="text-gradient-primary inline-block pb-1">One tab.</span>
             </h2>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
+            <p className="text-lg text-slate-300 max-w-2xl font-medium leading-relaxed">
               See what practitioners use every session.
             </p>
           </div>
@@ -888,7 +888,7 @@ const Landing: React.FC = () => {
       {/* SECTION: Bento Box Features - BENTO GRID */}
       <section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto space-y-20">
-          <div className="text-center space-y-4">
+          <div className="space-y-4 text-left">
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-[1.5]">
               Clinical <span className="text-gradient-primary inline-block pb-3">Intelligence</span> Infrastructure
             </h2>
@@ -1004,8 +1004,8 @@ const Landing: React.FC = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
 
         <div className="max-w-5xl mx-auto relative z-10">
-          <div className="text-center space-y-8">
-            <div className="inline-flex items-center justify-center p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl mb-4">
+          <div className="space-y-8 text-left">
+            <div className="inline-flex items-start justify-start p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl mb-4">
               <span className="material-symbols-outlined text-4xl text-indigo-400">military_tech</span>
             </div>
 
@@ -1014,7 +1014,7 @@ const Landing: React.FC = () => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-400">Veteran Care.</span>
             </h2>
 
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium">
+            <p className="text-xl text-slate-300 max-w-3xl leading-relaxed font-medium">
               MDMA-assisted therapy is showing unprecedented PTSD remission rates in Phase 3 trials. Our veterans have sacrificed everything; they deserve an infrastructure built on precision and evidence, not guesswork and scattered spreadsheets.
             </p>
 

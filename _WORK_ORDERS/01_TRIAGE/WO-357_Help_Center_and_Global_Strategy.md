@@ -1,6 +1,6 @@
 ---
-status: 00_INBOX
-owner: PENDING
+status: 01_TRIAGE
+owner: PRODDY
 failure_count: 0
 ---
 
