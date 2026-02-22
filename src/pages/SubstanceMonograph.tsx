@@ -347,7 +347,7 @@ const SubstanceMonograph: React.FC = () => {
                         ? 'bg-red-950/15 border-red-700/25 hover:border-red-600/40'
                         : 'bg-slate-900/40 border-white/5 hover:border-white/10'}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-base font-semibold text-slate-200">{inter.agent}</h4>
+                        <h4 className="text-base font-semibold text-[#A8B5D1]">{inter.agent}</h4>
                         <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border
                           ${inter.isHigh
                             ? 'bg-red-500/10 text-red-400 border-red-500/20'

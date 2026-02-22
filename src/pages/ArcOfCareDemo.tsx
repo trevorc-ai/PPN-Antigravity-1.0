@@ -23,7 +23,7 @@ const AccordionSection: React.FC<{
                 aria-expanded={open}
             >
                 <div className="text-left">
-                    <h2 className="text-base font-bold text-slate-200">{title}</h2>
+                    <h2 className="text-base font-bold text-[#A8B5D1]">{title}</h2>
                     {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
                 </div>
                 {open
@@ -92,7 +92,7 @@ const ArcOfCareDemo: React.FC = () => {
 
                 {/* Header */}
                 <div className="text-center space-y-2 pb-2">
-                    <h1 className="text-4xl font-black text-slate-200 tracking-tight">
+                    <h1 className="text-4xl font-black text-[#A8B5D1] tracking-tight">
                         Wellness Journey — Phase 1
                     </h1>
                     <p className="text-sm text-slate-500">
@@ -282,7 +282,7 @@ const ArcOfCareDemo: React.FC = () => {
                                 </div>
                                 <div className="bg-slate-800/50 rounded-xl p-4">
                                     <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Risk Score</p>
-                                    <p className="text-2xl font-black text-slate-200">{prediction.riskScore}/100</p>
+                                    <p className="text-2xl font-black text-[#A8B5D1]">{prediction.riskScore}/100</p>
                                 </div>
                             </div>
                             <div className="bg-slate-800/50 rounded-xl p-4">

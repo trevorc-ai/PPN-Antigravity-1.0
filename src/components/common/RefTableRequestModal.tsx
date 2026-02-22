@@ -67,7 +67,7 @@ const RefTableRequestModal: React.FC<RefTableRequestModalProps> = ({
                 </button>
 
                 <div className="p-8">
-                    <h2 className="text-2xl font-black text-slate-200 mb-2">Request New Option</h2>
+                    <h2 className="text-2xl font-black text-[#A8B5D1] mb-2">Request New Option</h2>
                     <p className="text-sm font-medium text-slate-500 mb-8">
                         Suggest an addition to the <span className="text-indigo-400 font-bold capitalize">{refTable}</span> vocabulary.
                     </p>
@@ -101,7 +101,7 @@ const RefTableRequestModal: React.FC<RefTableRequestModalProps> = ({
                                     onChange={(e) => setSuggestedLabel(e.target.value)}
                                     maxLength={80}
                                     placeholder="e.g. Patient reports heightened sensory awareness"
-                                    className="w-full bg-[#182132] border border-slate-700/50 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20"
+                                    className="w-full bg-[#182132] border border-slate-700/50 rounded-xl px-4 py-3 text-[#A8B5D1] placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20"
                                     required
                                 />
                                 <div className="text-right mt-1">
@@ -117,7 +117,7 @@ const RefTableRequestModal: React.FC<RefTableRequestModalProps> = ({
                                     <select
                                         value={rationale}
                                         onChange={(e) => setRationale(e.target.value)}
-                                        className="w-full bg-[#182132] border border-slate-700/50 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
+                                        className="w-full bg-[#182132] border border-slate-700/50 rounded-xl px-4 py-3 text-[#A8B5D1] focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
                                     >
                                         <option value="Missing from current vocabulary">Missing from current vocabulary</option>
                                         <option value="Commonly observed in my practice">Commonly observed in my practice</option>

@@ -21,7 +21,7 @@ export const CustomTooltip: React.FC<CustomTooltipProps> = ({
 
     return (
         <div className="bg-slate-900 border border-slate-700/80 shadow-2xl rounded-lg p-4 min-w-[200px]" role="tooltip">
-            {label && <p className="text-slate-100 font-bold mb-3 border-b border-slate-700/50 pb-2 text-sm">{label}</p>}
+            {label && <p className="text-[#A8B5D1] font-bold mb-3 border-b border-slate-700/50 pb-2 text-sm">{label}</p>}
 
             <div className="space-y-2">
                 {payload.map((entry, index) => (
@@ -35,7 +35,7 @@ export const CustomTooltip: React.FC<CustomTooltipProps> = ({
                                 {entry.name || entry.dataKey}
                             </span>
                         </div>
-                        <strong className="text-slate-100 font-bold">
+                        <strong className="text-[#A8B5D1] font-bold">
                             {valuePrefix}{entry.value}{valueSuffix}
                         </strong>
                     </div>

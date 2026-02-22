@@ -209,7 +209,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                                                 type="button"
                                                 onClick={() => toggleObservation(obs.id)}
                                                 className={`w-full px-3 py-2 rounded-xl text-sm font-semibold text-left transition-all active:scale-95 ${isSelected
-                                                    ? 'bg-indigo-600/80 text-slate-200 border border-indigo-500'
+                                                    ? 'bg-indigo-600/80 text-[#A8B5D1] border border-indigo-500'
                                                     : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:border-slate-500 hover:text-slate-300'
                                                     }`}
                                             >

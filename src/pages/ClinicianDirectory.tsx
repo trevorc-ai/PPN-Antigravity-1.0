@@ -266,7 +266,7 @@ const ClinicianDirectory: React.FC = () => {
         <Section spacing="default" className="flex-1">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
             <div className="space-y-1">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-200 mt-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-[#A8B5D1] mt-4">
                 Clinical <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-400">Network</span>
               </h1>
               <p className="text-slate-500 text-sm font-black uppercase tracking-widest mt-2">Global Practitioner Registry</p>
@@ -393,14 +393,14 @@ const ClinicianDirectory: React.FC = () => {
                 {listingSubmitted ? (
                   <div className="text-center space-y-4 py-6">
                     <span className="material-symbols-outlined text-5xl text-cyan-400">check_circle</span>
-                    <h2 className="text-xl font-black text-slate-200">Request Submitted</h2>
+                    <h2 className="text-xl font-black text-[#A8B5D1]">Request Submitted</h2>
                     <p className="text-sm text-slate-400">Your listing request has been submitted. Our team will review and activate within 2–3 business days.</p>
                     <button onClick={() => { setShowListingModal(false); setListingSubmitted(false); }} className="mt-4 px-6 py-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-sm font-bold">Close</button>
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-lg font-black text-slate-200">List Your Practice</h2>
+                      <h2 className="text-lg font-black text-[#A8B5D1]">List Your Practice</h2>
                       <button onClick={() => setShowListingModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg text-slate-500 hover:text-slate-300 transition-all">
                         <span className="material-symbols-outlined text-lg">close</span>
                       </button>

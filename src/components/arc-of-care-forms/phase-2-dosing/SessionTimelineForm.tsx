@@ -200,7 +200,7 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
                                         onClick={() => applyQuickAction(index, action)}
                                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-bold uppercase tracking-wider hover:scale-105 transition-all ${event.event_type === action.type
                                             ? 'bg-slate-100 text-slate-900 border-white'
-                                            : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-200'
+                                            : 'bg-slate-800/50 text-slate-400 border-slate-700 hover:border-slate-500 hover:text-[#A8B5D1]'
                                             }`}
                                     >
                                         <action.icon className="w-4 h-4" />

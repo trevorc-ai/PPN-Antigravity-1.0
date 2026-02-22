@@ -121,7 +121,7 @@ const FormsShowcase: React.FC = () => {
                                                     onClick={() => setSelectedFormId(form.id)}
                                                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all ${isSelected
                                                         ? 'bg-blue-600 text-white font-semibold shadow-lg shadow-blue-600/30 border-l-4 border-white/60'
-                                                        : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                                                        : 'text-slate-400 hover:bg-slate-800/50 hover:text-[#A8B5D1]'
                                                         }`}
                                                 >
                                                     <span className="text-sm font-medium">{form.name}</span>

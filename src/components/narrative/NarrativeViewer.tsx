@@ -50,7 +50,7 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
                         <FileText className="w-4 h-4 text-indigo-400" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-slate-200 uppercase tracking-widest">Clinical Narrative</h3>
+                        <h3 className="text-sm font-black text-[#A8B5D1] uppercase tracking-widest">Clinical Narrative</h3>
                         <p className="text-sm text-slate-400">Generated {generatedTime}</p>
                     </div>
                 </div>
@@ -81,7 +81,7 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
                     {Object.entries(narrative.sections).map(([title, content]) => (
                         <div key={title} className="space-y-1">
                             <h4 className="text-sm font-black text-slate-300 uppercase tracking-widest">{title}</h4>
-                            <p className="text-sm text-slate-200 leading-relaxed bg-slate-800/30 rounded-xl px-4 py-3">
+                            <p className="text-sm text-[#A8B5D1] leading-relaxed bg-slate-800/30 rounded-xl px-4 py-3">
                                 {content}
                             </p>
                         </div>

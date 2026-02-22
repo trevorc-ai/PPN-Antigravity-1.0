@@ -60,7 +60,7 @@ const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void
                 onClick={onClick}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95 ${active
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
-                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-[#A8B5D1]'
                     }`}
             >
                 {label}
@@ -175,7 +175,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     type="button"
                                     onClick={onClose}
                                     aria-label="Close patient selection"
-                                    className="absolute top-0 right-0 p-2 m-3 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-all"
+                                    className="absolute top-0 right-0 p-2 m-3 rounded-lg text-slate-500 hover:text-[#A8B5D1] hover:bg-slate-800 transition-all"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -263,7 +263,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                                 />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-bold text-slate-200">Or use your phone</p>
+                                                <p className="text-sm font-bold text-[#A8B5D1]">Or use your phone</p>
                                                 <p className="text-xs text-slate-400 mt-1">Scan this QR code with a mobile device to use the Bridge scanner remotely.</p>
                                             </div>
                                         </div>
@@ -288,7 +288,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     type="button"
                                     onClick={onClose}
                                     aria-label="Close patient selection"
-                                    className="absolute top-0 right-0 p-2 m-3 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-800 transition-all"
+                                    className="absolute top-0 right-0 p-2 m-3 rounded-lg text-slate-500 hover:text-[#A8B5D1] hover:bg-slate-800 transition-all"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -322,7 +322,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     value={search}
                                     onChange={e => setSearch(e.target.value)}
                                     autoFocus
-                                    className="w-full pl-10 pr-4 py-3 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-slate-200 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                    className="w-full pl-10 pr-4 py-3 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-[#A8B5D1] placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
                                 />
                             </div>
 
@@ -334,7 +334,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 <button
                                     type="button"
                                     onClick={toggleSort}
-                                    className="ml-auto flex items-center gap-1.5 px-3 py-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all"
+                                    className="ml-auto flex items-center gap-1.5 px-3 py-2 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-lg text-xs font-semibold text-slate-400 hover:text-[#A8B5D1] transition-all"
                                     title={sortDir === 'desc' ? 'Newest first' : 'Oldest first'}
                                 >
                                     {sortDir === 'desc' ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}

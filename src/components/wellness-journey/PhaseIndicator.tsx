@@ -91,7 +91,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                 isActive
                                     ? `${cfg.activeBg} border-l border-r border-t ${cfg.activeBorder} ${cfg.activeText} font-bold`
                                     : isCompleted
-                                        ? 'bg-slate-800/50 border border-slate-700/60 text-slate-300 hover:bg-slate-800/70 hover:text-slate-200 font-semibold cursor-pointer'
+                                        ? 'bg-slate-800/50 border border-slate-700/60 text-slate-300 hover:bg-slate-800/70 hover:text-[#A8B5D1] font-semibold cursor-pointer'
                                         : 'bg-slate-900/40 border border-slate-800/50 text-slate-500 font-semibold cursor-pointer hover:text-slate-400',
                             ].join(' ')}
                             style={isActive ? {

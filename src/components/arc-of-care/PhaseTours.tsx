@@ -395,7 +395,7 @@ const PhaseTour: React.FC<PhaseTourProps> = ({
                     className={`px-5 py-4 space-y-3 transition-opacity duration-150 ${isTransitioning ? 'opacity-0' : 'opacity-100'
                         }`}
                 >
-                    <h3 className="text-base font-black text-slate-200 leading-snug">
+                    <h3 className="text-base font-black text-[#A8B5D1] leading-snug">
                         {step.title}
                     </h3>
                     <p className="text-sm text-slate-400 leading-relaxed">

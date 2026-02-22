@@ -87,7 +87,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
                         <div>
-                            <h2 className="text-2xl font-black text-slate-200">Session Preparation</h2>
+                            <h2 className="text-2xl font-black text-[#A8B5D1]">Session Preparation</h2>
                             <p className="text-slate-400 mt-1">Verify all safety gates before initiating dosing.</p>
                         </div>
                         {/* Emergency Protocol Button (Top Right) */}
@@ -106,7 +106,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         {/* COLUMN 1: Session Plan & Protocol */}
                         <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-amber-500/40 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-bold text-slate-200">Step 1:</span>
+                                <span className="text-3xl font-bold text-[#A8B5D1]">Step 1:</span>
                                 <button
                                     onClick={() => onOpenForm('dosing-protocol')}
                                     className="w-fit flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
@@ -119,15 +119,15 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                             <div className="flex-1 px-5 py-5 bg-slate-800/40 border border-slate-700/50 rounded-xl transition-colors min-h-[148px] flex flex-col justify-between mt-auto">
                                 <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
                                     <span className="text-slate-400 text-base">Substance</span>
-                                    <span className="text-slate-200 font-bold bg-slate-700/50 px-3 py-1 rounded text-[17px]">{journey.session.substance}</span>
+                                    <span className="text-[#A8B5D1] font-bold bg-slate-700/50 px-3 py-1 rounded text-[17px]">{journey.session.substance}</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
                                     <span className="text-slate-400 text-base">Dosage</span>
-                                    <span className="text-slate-200 font-bold text-[17px]">{journey.session.dosage}</span>
+                                    <span className="text-[#A8B5D1] font-bold text-[17px]">{journey.session.dosage}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <span className="text-slate-400 text-base">Guide</span>
-                                    <span className="text-slate-200 font-bold text-[17px]">Dr. Calton</span>
+                                    <span className="text-[#A8B5D1] font-bold text-[17px]">Dr. Calton</span>
                                 </div>
                             </div>
                         </div>
@@ -135,7 +135,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         {/* COLUMN 2: Required Gates & Vitals */}
                         <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-amber-500/40 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
                             <div className="flex items-center justify-between">
-                                <span className="text-3xl font-bold text-slate-200">Step 2:</span>
+                                <span className="text-3xl font-bold text-[#A8B5D1]">Step 2:</span>
                                 <button
                                     onClick={() => onOpenForm('session-vitals')}
                                     className="w-fit flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
@@ -153,7 +153,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                         <CheckCircle className="w-5 h-5" />
                                     </div>
                                     <div className="z-10">
-                                        <p className="text-slate-200 font-bold text-[15px]">Informed Consent</p>
+                                        <p className="text-[#A8B5D1] font-bold text-[15px]">Informed Consent</p>
                                         <p className="text-sm text-slate-400 mt-0.5">Verified signed • Oct 14, 2025</p>
                                     </div>
                                 </div>
@@ -165,7 +165,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                         <CheckCircle className="w-5 h-5" />
                                     </div>
                                     <div className="z-10">
-                                        <p className="text-slate-200 font-bold text-[15px]">Baseline Vitals</p>
+                                        <p className="text-[#A8B5D1] font-bold text-[15px]">Baseline Vitals</p>
                                         <p className="text-sm text-slate-400 mt-0.5">Within range • HR 72, BP 118/76</p>
                                     </div>
                                 </div>
@@ -218,18 +218,18 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">HR</p>
                                 <div className="flex items-center gap-1.5 justify-end">
                                     <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse" />
-                                    <p className="text-xl font-black text-slate-200 leading-none">{liveVitals.hr}</p>
+                                    <p className="text-xl font-black text-[#A8B5D1] leading-none">{liveVitals.hr}</p>
                                 </div>
                             </div>
                             <div className="w-px h-8 bg-slate-800" />
                             <div className="text-right">
                                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">BP</p>
-                                <p className="text-xl font-black text-slate-200 leading-none">{liveVitals.bp}</p>
+                                <p className="text-xl font-black text-[#A8B5D1] leading-none">{liveVitals.bp}</p>
                             </div>
                             <div className="w-px h-8 bg-slate-800" />
                             <div className="text-right">
                                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-0.5">SpO2</p>
-                                <p className={`text-xl font-black leading-none ${liveVitals.spo2 < 95 ? 'text-amber-400' : 'text-slate-200'}`}>{liveVitals.spo2}%</p>
+                                <p className={`text-xl font-black leading-none ${liveVitals.spo2 < 95 ? 'text-amber-400' : 'text-[#A8B5D1]'}`}>{liveVitals.spo2}%</p>
                             </div>
                         </div>
                         {/* End Button */}
@@ -259,7 +259,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
                             <div className="flex items-center justify-between mb-2">
-                                <p className="text-3xl font-black text-slate-100 leading-tight tracking-tight group-hover:text-white transition-colors">Vitals</p>
+                                <p className="text-3xl font-black text-[#A8B5D1] leading-tight tracking-tight group-hover:text-white transition-colors">Vitals</p>
                                 <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-blue-500/20 border border-blue-500/30 text-xs font-mono font-bold text-blue-300">V</kbd>
                             </div>
                             <p className="text-xs text-blue-200/60 font-bold uppercase tracking-widest group-hover:text-blue-200 transition-colors">Check & Log</p>
@@ -279,7 +279,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
                             <div className="flex items-center justify-between mb-2">
-                                <p className="text-3xl font-black text-slate-100 leading-tight tracking-tight group-hover:text-white transition-colors">Observe</p>
+                                <p className="text-3xl font-black text-[#A8B5D1] leading-tight tracking-tight group-hover:text-white transition-colors">Observe</p>
                                 <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 border border-amber-500/30 text-xs font-mono font-bold text-amber-300">O</kbd>
                             </div>
                             <p className="text-xs text-amber-200/60 font-bold uppercase tracking-widest group-hover:text-amber-200 transition-colors">Behavior & Mood</p>
@@ -299,7 +299,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         </div>
                         <div className="absolute bottom-6 left-6 right-6">
                             <div className="flex items-center justify-between mb-2">
-                                <p className="text-3xl font-black text-slate-100 leading-tight tracking-tight group-hover:text-white transition-colors">Note</p>
+                                <p className="text-3xl font-black text-[#A8B5D1] leading-tight tracking-tight group-hover:text-white transition-colors">Note</p>
                                 <kbd className="hidden lg:inline-flex items-center justify-center w-6 h-6 rounded bg-emerald-500/20 border border-emerald-500/30 text-xs font-mono font-bold text-emerald-300">N</kbd>
                             </div>
                             <p className="text-xs text-emerald-200/60 font-bold uppercase tracking-widest group-hover:text-emerald-200 transition-colors">Add to Timeline</p>
@@ -375,7 +375,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
                     <div className="flex items-start justify-between mb-8">
                         <div>
-                            <h2 className="text-2xl font-black text-slate-200">Session Closeout</h2>
+                            <h2 className="text-2xl font-black text-[#A8B5D1]">Session Closeout</h2>
                             <p className="text-slate-400 mt-1">Complete mandatory post-session documentation.</p>
                         </div>
                         <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full text-xs font-bold uppercase tracking-wider">
@@ -390,7 +390,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                 <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500">
                                     <CheckSquare className="w-5 h-5" />
                                 </div>
-                                <span className="text-slate-200 font-bold line-through decoration-emerald-500/50 decoration-2">Session End Time Recorded</span>
+                                <span className="text-[#A8B5D1] font-bold line-through decoration-emerald-500/50 decoration-2">Session End Time Recorded</span>
                             </div>
                             <span className="text-xs font-mono text-emerald-600 font-bold px-2 py-1 bg-emerald-500/10 rounded">AUTO</span>
                         </div>
@@ -410,7 +410,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                     </div>
                                 )}
                                 <div className="flex flex-col items-start">
-                                    <span className={assessmentCompleted ? 'text-slate-200 font-bold line-through opacity-50' : 'text-slate-200 font-bold'}>
+                                    <span className={assessmentCompleted ? 'text-[#A8B5D1] font-bold line-through opacity-50' : 'text-[#A8B5D1] font-bold'}>
                                         Post-Session Assessments
                                     </span>
                                     <span className="text-xs text-slate-400">MEQ-30, EDI, CEQ (Standard Battery)</span>

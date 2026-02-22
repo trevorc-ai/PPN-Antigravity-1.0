@@ -131,7 +131,7 @@ export const SafetyTimeline: React.FC<SafetyTimelineProps> = ({
                             {event.actionsTaken.length > 0 && (
                                 <div className="pl-11">
                                     <p className="text-base text-slate-300 mb-2">
-                                        <strong className="text-slate-100">Actions:</strong>
+                                        <strong className="text-[#A8B5D1]">Actions:</strong>
                                     </p>
                                     <ul className="text-sm text-slate-300 space-y-1 list-disc list-outside pl-4">
                                         {event.actionsTaken.map((action, actionIndex) => (

@@ -73,11 +73,11 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                             )}
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-slate-100">Risk Analysis</h3>
+                            <h3 className="text-xl font-bold text-[#A8B5D1]">Risk Analysis</h3>
                             {patientId && (
                                 <div className="mt-1">
                                     <span className="text-sm text-slate-400">Patient: </span>
-                                    <span className="text-sm text-slate-200 font-medium">{patientId}</span>
+                                    <span className="text-sm text-[#A8B5D1] font-medium">{patientId}</span>
                                 </div>
                             )}
                         </div>
@@ -116,7 +116,7 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                 {/* Patient Characteristics — Left justified, below header */}
                 {patientCharacteristics && (
                     <div className="mb-5 pl-1 space-y-1 border-b border-slate-700/50 pb-4">
-                        <div className="text-sm font-medium text-slate-200">
+                        <div className="text-sm font-medium text-[#A8B5D1]">
                             {patientCharacteristics.age}yo {patientCharacteristics.gender} • {patientCharacteristics.weight} • {patientCharacteristics.ethnicity}
                         </div>
                         <div className="text-sm text-slate-300">
@@ -173,7 +173,7 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                 {/* View Full Report Button */}
                 {totalFlags > 0 && (
                     <button
-                        className="w-full mt-6 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg font-medium transition-colors"
+                        className="w-full mt-6 px-4 py-3 bg-slate-800 hover:bg-slate-700 text-[#A8B5D1] rounded-lg font-medium transition-colors"
                         onClick={() => downloadReport({
                             patientId: patientId ?? 'UNKNOWN',
                             baseline: {

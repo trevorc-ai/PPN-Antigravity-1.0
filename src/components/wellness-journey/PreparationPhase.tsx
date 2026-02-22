@@ -104,7 +104,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                 <div className="relative z-10">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className="text-2xl font-black text-slate-200">Session Readiness</h2>
+                            <h2 className="text-2xl font-black text-[#A8B5D1]">Session Readiness</h2>
                             <p className="text-slate-400 mt-1">Complete all safety gates to unlock the dosing session.</p>
                         </div>
                         <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${allGatesPassed
@@ -134,7 +134,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                                     {gate.isComplete && <span className="text-xs font-mono text-emerald-500/70">{gate.date}</span>}
                                 </div>
                                 <div>
-                                    <h3 className={`font-bold text-sm ${gate.isComplete ? 'text-emerald-100' : 'text-slate-200'}`}>{gate.label}</h3>
+                                    <h3 className={`font-bold text-sm ${gate.isComplete ? 'text-emerald-100' : 'text-[#A8B5D1]'}`}>{gate.label}</h3>
                                     <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{gate.description}</p>
                                 </div>
                                 {!gate.isComplete && (
@@ -153,7 +153,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                 <div className="md:col-span-2 bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                     <div className="flex items-center gap-3 mb-4">
                         <Brain className="w-6 h-6 text-slate-400" />
-                        <h3 className="text-xl font-bold text-slate-200">Baseline Clinical Profile</h3>
+                        <h3 className="text-xl font-bold text-[#A8B5D1]">Baseline Clinical Profile</h3>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -188,7 +188,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col">
                     <div className="flex items-center gap-3 mb-4">
                         <TrendingUp className="w-6 h-6 text-emerald-400" />
-                        <h3 className="text-xl font-bold text-slate-200">Forecast</h3>
+                        <h3 className="text-xl font-bold text-[#A8B5D1]">Forecast</h3>
                     </div>
                     <div className="space-y-3 flex-1">
                         <div className="flex justify-between items-center p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">

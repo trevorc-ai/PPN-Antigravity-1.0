@@ -240,7 +240,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                                             onClick={() => handleResponse(question.id, option.value)}
                                             className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all border ${responses[question.id] === option.value
                                                 ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/20 transform scale-[1.02]'
-                                                : 'bg-slate-800/60 border-slate-700/50 text-slate-200 hover:bg-slate-700/60 hover:border-slate-600'
+                                                : 'bg-slate-800/60 border-slate-700/50 text-[#A8B5D1] hover:bg-slate-700/60 hover:border-slate-600'
                                                 }`}
                                         >
                                             <span className="text-base font-black mb-0.5">{option.value}</span>

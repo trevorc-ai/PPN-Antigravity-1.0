@@ -125,7 +125,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                             <div className="flex items-center gap-3">
                                 <Heart className="w-8 h-8 text-pink-400" />
                                 <div>
-                                    <h3 className="text-2xl font-bold text-slate-200">Daily Pulse</h3>
+                                    <h3 className="text-2xl font-bold text-[#A8B5D1]">Daily Pulse</h3>
                                     <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Mood & Sleep Tracking</p>
                                 </div>
                             </div>
@@ -225,7 +225,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col">
                     <div className="flex items-center gap-3 mb-6">
                         <Activity className="w-6 h-6 text-indigo-400" />
-                        <h3 className="text-xl font-bold text-slate-200">Compliance</h3>
+                        <h3 className="text-xl font-bold text-[#A8B5D1]">Compliance</h3>
                     </div>
 
                     <div className="space-y-6 flex-1">
@@ -275,7 +275,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                     <div className="flex items-center gap-3 mb-6">
                         <Award className="w-6 h-6 text-amber-400" />
-                        <h3 className="text-xl font-bold text-slate-200">Key Outcomes</h3>
+                        <h3 className="text-xl font-bold text-[#A8B5D1]">Key Outcomes</h3>
                     </div>
 
                     <div className="space-y-4">
@@ -318,7 +318,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                     <div className="relative z-10 flex flex-col h-full">
                         <div className="flex items-center gap-3 mb-6">
                             <span className="text-2xl">💡</span>
-                            <h3 className="text-xl font-bold text-slate-200">Smart Insight</h3>
+                            <h3 className="text-xl font-bold text-[#A8B5D1]">Smart Insight</h3>
                         </div>
 
                         <div className="text-sm font-medium text-slate-300 leading-relaxed flex-1">

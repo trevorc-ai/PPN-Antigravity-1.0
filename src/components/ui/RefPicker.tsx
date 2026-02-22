@@ -338,7 +338,7 @@ const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                                 ${isSelected
                                     ? 'bg-violet-500/20 border-violet-500/60 text-violet-200'
                                     : isFocused
-                                        ? 'bg-slate-700/60 border-slate-600/60 text-slate-200'
+                                        ? 'bg-slate-700/60 border-slate-600/60 text-[#A8B5D1]'
                                         : isDisabled
                                             ? 'bg-slate-800/20 border-slate-700/20 text-slate-600 cursor-not-allowed'
                                             : 'bg-slate-800/40 border-slate-700/40 text-slate-300 hover:border-slate-600'

@@ -71,7 +71,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                                 <span className="text-2xl font-black text-blue-400">1</span>
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-200 mb-1">
+                                <h3 className="text-lg font-black text-[#A8B5D1] mb-1">
                                     Preparation
                                 </h3>
                                 <p className="text-sm text-slate-400 leading-relaxed">
@@ -86,7 +86,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                                 <span className="text-2xl font-black text-emerald-400">2</span>
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-200 mb-1">
+                                <h3 className="text-lg font-black text-[#A8B5D1] mb-1">
                                     Dosing Session
                                 </h3>
                                 <p className="text-sm text-slate-400 leading-relaxed">
@@ -101,7 +101,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                                 <span className="text-2xl font-black text-purple-400">3</span>
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-200 mb-1">
+                                <h3 className="text-lg font-black text-[#A8B5D1] mb-1">
                                     Integration
                                 </h3>
                                 <p className="text-sm text-slate-400 leading-relaxed">

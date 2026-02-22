@@ -64,7 +64,7 @@ const FlagCard: React.FC<{ flag: ContraindicationFlag }> = ({ flag }) => {
                     onClick={() => setExpanded(e => !e)}
                     aria-expanded={expanded}
                     aria-label={expanded ? 'Collapse flag detail' : 'Expand flag detail'}
-                    className="flex-shrink-0 p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors"
+                    className="flex-shrink-0 p-1.5 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-[#A8B5D1] transition-colors"
                 >
                     {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
@@ -154,7 +154,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                 <FileText className="w-6 h-6 text-slate-400" />
                 <div>
                     <div className="flex items-center gap-2">
-                        <h2 className="text-xl font-black text-slate-200">Risk Eligibility Report</h2>
+                        <h2 className="text-xl font-black text-[#A8B5D1]">Risk Eligibility Report</h2>
                         <AdvancedTooltip
                             content="Review of absolute and relative contraindications algorithmically determined from patient history and intended substance."
                             tier="standard"
@@ -221,7 +221,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
             {/* Provider Override Block (PROCEED_WITH_CAUTION only) */}
             {isCaution && (
                 <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-600/50 space-y-3 flex-shrink-0">
-                    <p className="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                    <p className="text-sm font-semibold text-[#A8B5D1] flex items-center gap-2">
                         <ClipboardCheck className="w-4 h-4 text-amber-400" />
                         Provider Documentation Required
                     </p>
@@ -235,7 +235,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                         onChange={e => { setJustification(e.target.value); setJustificationError(''); }}
                         placeholder="Document your clinical rationale for proceeding despite the flagged relative contraindications. Include any mitigating factors, additional assessments, or specialist consultations conducted..."
                         rows={4}
-                        className="w-full bg-slate-900/60 border border-slate-600 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 resize-none"
+                        className="w-full bg-slate-900/60 border border-slate-600 rounded-xl px-4 py-3 text-sm text-[#A8B5D1] placeholder-slate-500 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 resize-none"
                         aria-label="Clinical justification for proceeding"
                         aria-describedby={justificationError ? 'justification-error' : undefined}
                     />
@@ -251,7 +251,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                             onChange={e => setOverrideChecked(e.target.checked)}
                             className="mt-0.5 w-4 h-4 rounded border-slate-500 bg-slate-800 text-amber-500 focus:ring-amber-500/30 flex-shrink-0"
                         />
-                        <span className="text-sm text-slate-300 group-hover:text-slate-200 transition-colors leading-relaxed">
+                        <span className="text-sm text-slate-300 group-hover:text-[#A8B5D1] transition-colors leading-relaxed">
                             I acknowledge the flagged relative contraindications and confirm I have documented my clinical justification to proceed. This decision will be logged to the patient record.
                         </span>
                     </label>
@@ -265,7 +265,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                 <button
                     id="rer-export-pdf"
                     onClick={onExportPDF}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700/50 border border-slate-600/50 text-sm font-semibold text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-700/50 border border-slate-600/50 text-sm font-semibold text-slate-300 hover:bg-slate-700 hover:text-[#A8B5D1] transition-all"
                 >
                     <FileText className="w-4 h-4" />
                     Export PDF

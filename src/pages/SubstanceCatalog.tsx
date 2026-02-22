@@ -8,13 +8,13 @@ import { ResearchPhase, RiskTier, Substance } from '../types';
 
 // ─── Filter configuration with per-class colors ───────────────────────────────
 const FILTERS = [
-  { label: 'All', value: 'all', activeClasses: 'bg-slate-600   border-slate-500  text-slate-100', countClasses: 'bg-slate-500  text-slate-100' },
-  { label: 'Tryptamines', value: 'tryptamine', activeClasses: 'bg-indigo-700  border-indigo-600 text-slate-100', countClasses: 'bg-indigo-600 text-slate-100' },
+  { label: 'All', value: 'all', activeClasses: 'bg-slate-600   border-slate-500  text-[#A8B5D1]', countClasses: 'bg-slate-500  text-[#A8B5D1]' },
+  { label: 'Tryptamines', value: 'tryptamine', activeClasses: 'bg-indigo-700  border-indigo-600 text-[#A8B5D1]', countClasses: 'bg-indigo-600 text-[#A8B5D1]' },
 
-  { label: 'Phenethylamines', value: 'phenethylamine', activeClasses: 'bg-purple-700  border-purple-600 text-slate-100', countClasses: 'bg-purple-600 text-slate-100' },
-  { label: 'Dissociatives', value: 'arylcyclohexylamine', activeClasses: 'bg-blue-700  border-blue-600   text-slate-100', countClasses: 'bg-blue-600   text-slate-100' },
+  { label: 'Phenethylamines', value: 'phenethylamine', activeClasses: 'bg-purple-700  border-purple-600 text-[#A8B5D1]', countClasses: 'bg-purple-600 text-[#A8B5D1]' },
+  { label: 'Dissociatives', value: 'arylcyclohexylamine', activeClasses: 'bg-blue-700  border-blue-600   text-[#A8B5D1]', countClasses: 'bg-blue-600   text-[#A8B5D1]' },
 
-  { label: 'Botanical', value: 'botanical', activeClasses: 'bg-amber-700   border-amber-600  text-slate-100', countClasses: 'bg-amber-600  text-slate-100' },
+  { label: 'Botanical', value: 'botanical', activeClasses: 'bg-amber-700   border-amber-600  text-[#A8B5D1]', countClasses: 'bg-amber-600  text-[#A8B5D1]' },
 ];
 
 // ─── Risk tier chip config — WCAG AA contrast: text-color-200 on bg-color-900 ──
@@ -62,7 +62,7 @@ const InteractionAccordion: React.FC<{ interactions: InteractionEntry[] }> = ({ 
             <div key={i} className={`p-3 rounded-xl border space-y-1.5
               ${inter.isHigh ? 'bg-red-900/30 border-red-700/40' : 'bg-amber-900/20 border-amber-700/30'}`}>
               <div className="flex items-start justify-between gap-2 flex-wrap">
-                <span className="text-sm font-semibold text-slate-200">{inter.agent}</span>
+                <span className="text-sm font-semibold text-[#A8B5D1]">{inter.agent}</span>
                 <span className={`text-xs px-2.5 py-0.5 rounded-md font-semibold shrink-0
                   ${inter.isHigh ? 'bg-red-700/80 text-red-100' : 'bg-amber-700/80 text-amber-100'}`}>
                   {inter.isHigh ? '⚠ ' : '△ '}{inter.severity}
@@ -125,7 +125,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
 
         {/* Name + chemical name (revealed on hover) */}
         <div className="min-h-[3.5rem] space-y-1.5">
-          <h3 className="text-xl font-bold text-slate-200 group-hover:text-slate-100 transition-colors leading-tight">
+          <h3 className="text-xl font-bold text-[#A8B5D1] group-hover:text-[#A8B5D1] transition-colors leading-tight">
             {sub.name}
           </h3>
           <p className="text-base text-slate-500 leading-snug line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-h-[1.5rem]">
@@ -173,7 +173,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
       <div className="px-6 pb-6 mt-auto">
         <button
           onClick={() => navigate(`/monograph/${sub.id}`)}
-          className="w-full py-3 bg-blue-700 hover:bg-blue-600 text-slate-100 text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md shadow-blue-900/30"
+          className="w-full py-3 bg-blue-700 hover:bg-blue-600 text-[#A8B5D1] text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md shadow-blue-900/30"
         >
           View Full Monograph →
         </button>
@@ -256,7 +256,7 @@ const SubstanceCatalog: React.FC = () => {
                   >
                     {filter.label}
                     <span className={`inline-flex items-center justify-center min-w-[1.4rem] h-5 rounded-full px-1.5 text-sm font-bold
-                      ${isActive ? filter.countClasses : 'bg-slate-700 text-slate-200'}`}>
+                      ${isActive ? filter.countClasses : 'bg-slate-700 text-[#A8B5D1]'}`}>
                       {count}
                     </span>
                   </button>

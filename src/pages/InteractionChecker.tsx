@@ -119,7 +119,7 @@ const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange,
                   onClick={() => { onChange(med.medication_name); setOpen(false); }}
                   className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
                     ? 'bg-blue-600 text-white font-semibold'
-                    : 'text-slate-200 hover:bg-slate-800'
+                    : 'text-[#A8B5D1] hover:bg-slate-800'
                     }`}
                 >
                   {med.medication_name}

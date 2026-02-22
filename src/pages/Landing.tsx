@@ -119,7 +119,7 @@ const Landing: React.FC = () => {
         </div>
         <button
           onClick={() => navigate('/login')}
-          className="px-5 py-2 bg-slate-800 border border-slate-600 hover:border-indigo-500/60 hover:bg-slate-700 text-slate-200 text-sm font-bold rounded-xl transition-all"
+          className="px-5 py-2 bg-slate-800 border border-slate-600 hover:border-indigo-500/60 hover:bg-slate-700 text-[#A8B5D1] text-sm font-bold rounded-xl transition-all"
         >
           Sign In
         </button>
@@ -264,7 +264,7 @@ const Landing: React.FC = () => {
                 {/* Dashboard Header */}
                 <div className="flex justify-between items-end relative z-10 border-b border-slate-800/80 pb-6">
                   <div>
-                    <h2 className="text-3xl font-black text-slate-200 tracking-tight">Clinical Intelligence</h2>
+                    <h2 className="text-3xl font-black text-[#A8B5D1] tracking-tight">Clinical Intelligence</h2>
                     <p className="text-xs text-slate-500 font-black uppercase tracking-widest mt-2">Live Outcomes Radar</p>
                   </div>
                   <div className="px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
@@ -277,18 +277,18 @@ const Landing: React.FC = () => {
                 <div className="grid grid-cols-3 gap-5 relative z-10">
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Network Efficacy</span>
-                    <span className="text-4xl font-black text-slate-200 tracking-tighter group-hover:text-indigo-400 transition-colors">+42<span className="text-xl">%</span></span>
+                    <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter group-hover:text-indigo-400 transition-colors">+42<span className="text-xl">%</span></span>
                     <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">trending_up</span> 12% vs last quarter</span>
                   </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 relative overflow-hidden group hover:border-red-500/50 hover:-translate-y-1 transition-all">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 blur-[20px] rounded-full pointer-events-none group-hover:bg-red-500/20 transition-colors" />
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest relative z-10">Safety Alerts</span>
-                    <span className="text-4xl font-black text-slate-200 tracking-tighter relative z-10 group-hover:text-red-400 transition-colors">03</span>
+                    <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter relative z-10 group-hover:text-red-400 transition-colors">03</span>
                     <span className="text-[10px] text-red-400 font-bold flex items-center gap-1 relative z-10"><span className="material-symbols-outlined text-[12px]">warning</span> Immediate review</span>
                   </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Protocols</span>
-                    <span className="text-4xl font-black text-slate-200 tracking-tighter">1,204</span>
+                    <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter">1,204</span>
                     <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">share</span> Across 42 nodes</span>
                   </div>
                 </div>
@@ -966,7 +966,7 @@ const Landing: React.FC = () => {
               <span className="material-symbols-outlined text-4xl text-indigo-400">military_tech</span>
             </div>
 
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-200">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-[#A8B5D1]">
               A profound commitment to <br className="hidden sm:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-400">Veteran Care.</span>
             </h2>

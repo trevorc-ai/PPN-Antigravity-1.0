@@ -169,12 +169,12 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     onClick={() => updateField('cssrs_score', score as any)}
                                     className={`flex-1 px-4 py-3 rounded-lg font-bold text-lg transition-all ${data.cssrs_score === score
                                         ? score === 0
-                                            ? 'bg-slate-600 text-slate-100'
+                                            ? 'bg-slate-600 text-[#A8B5D1]'
                                             : score <= 2
-                                                ? 'bg-yellow-600 text-slate-100'
+                                                ? 'bg-yellow-600 text-[#A8B5D1]'
                                                 : score <= 4
-                                                    ? 'bg-orange-600 text-slate-100'
-                                                    : 'bg-red-700 text-slate-100'
+                                                    ? 'bg-orange-600 text-[#A8B5D1]'
+                                                    : 'bg-red-700 text-[#A8B5D1]'
                                         : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                         }`}
                                 >

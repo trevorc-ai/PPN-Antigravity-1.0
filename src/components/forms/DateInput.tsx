@@ -65,7 +65,7 @@ export const DateInput: React.FC<DateInputProps> = ({
                 onChange={handleChange}
                 placeholder={placeholder}
                 maxLength={10}
-                className={`w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-slate-200 transition-colors placeholder:text-slate-500 ${className}`}
+                className={`w-full bg-[#0a0c10] border border-slate-800 rounded-xl px-4 py-3 text-sm font-medium text-[#A8B5D1] transition-colors placeholder:text-slate-500 ${className}`}
             />
         </div>
     );

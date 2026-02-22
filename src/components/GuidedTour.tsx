@@ -271,7 +271,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
           style={{ boxShadow: '0 0 0 9999px rgba(0,0,0,0.65), 0 0 40px rgba(16,185,129,0.3)' }}
         >
           <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-4" />
-          <h3 className="text-lg font-black text-slate-200 mb-2">You're all set!</h3>
+          <h3 className="text-lg font-black text-[#A8B5D1] mb-2">You're all set!</h3>
           <p className="text-sm text-slate-400 mb-6 leading-relaxed">
             You've completed the PPN portal tour. You can restart it anytime from the Help Center.
           </p>
@@ -393,7 +393,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
 
               {/* Content */}
               <div className="space-y-2">
-                <h3 className="text-lg font-black text-slate-200 tracking-tight leading-tight">
+                <h3 className="text-lg font-black text-[#A8B5D1] tracking-tight leading-tight">
                   {step.title}
                 </h3>
                 <p className="text-sm text-slate-400 font-medium leading-relaxed">

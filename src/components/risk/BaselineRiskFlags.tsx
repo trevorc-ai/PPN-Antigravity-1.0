@@ -78,7 +78,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                                         {flag.metric}
                                     </span>
                                 </div>
-                                <p className="text-sm font-bold text-slate-200 mt-1">
+                                <p className="text-sm font-bold text-[#A8B5D1] mt-1">
                                     Score: {flag.value}
                                     {flag.threshold && ` (Threshold: ≥${flag.threshold})`}
                                 </p>
@@ -89,7 +89,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                         <div className="mt-3 pl-9">
                             <div className="flex items-center gap-1.5">
                                 <p className="text-sm text-slate-400">
-                                    <strong className="text-slate-200">Recommended Actions:</strong>
+                                    <strong className="text-[#A8B5D1]">Recommended Actions:</strong>
                                 </p>
                                 <AdvancedTooltip
                                     tier="guide"
@@ -99,10 +99,10 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                                     width="w-80"
                                     content={
                                         <div className="space-y-2 text-sm">
-                                            <div><span className="font-bold text-slate-200">PHQ-9:</span> Kroenke &amp; Spitzer (2002). J Gen Intern Med.</div>
-                                            <div><span className="font-bold text-slate-200">GAD-7:</span> Spitzer et al. (2006). Arch Intern Med.</div>
-                                            <div><span className="font-bold text-slate-200">PCL-5:</span> Weathers et al. (2013). VA PTSD Research.</div>
-                                            <div><span className="font-bold text-slate-200">ACE:</span> Felitti et al. (1998). Am J Prev Med.</div>
+                                            <div><span className="font-bold text-[#A8B5D1]">PHQ-9:</span> Kroenke &amp; Spitzer (2002). J Gen Intern Med.</div>
+                                            <div><span className="font-bold text-[#A8B5D1]">GAD-7:</span> Spitzer et al. (2006). Arch Intern Med.</div>
+                                            <div><span className="font-bold text-[#A8B5D1]">PCL-5:</span> Weathers et al. (2013). VA PTSD Research.</div>
+                                            <div><span className="font-bold text-[#A8B5D1]">ACE:</span> Felitti et al. (1998). Am J Prev Med.</div>
                                             <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
                                         </div>
                                     }

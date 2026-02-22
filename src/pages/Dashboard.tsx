@@ -98,7 +98,7 @@ const NextStepItem: React.FC<NextStepProps> = ({ number, text, link, urgent }) =
         }`}>
         {number}
       </div>
-      <span className="flex-1 text-sm font-bold text-slate-400 group-hover:text-slate-200 transition-colors">
+      <span className="flex-1 text-sm font-bold text-slate-400 group-hover:text-[#A8B5D1] transition-colors">
         {text}
       </span>
       <div className="p-1.5 rounded-full bg-slate-800/50 group-hover:bg-indigo-500/20 transition-colors">

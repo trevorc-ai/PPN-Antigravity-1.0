@@ -137,7 +137,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                             {title ? (
                                 <h2
                                     id="panel-title"
-                                    className="text-xl font-bold text-slate-200 truncate"
+                                    className="text-xl font-bold text-[#A8B5D1] truncate"
                                 >
                                     {title}
                                 </h2>

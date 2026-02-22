@@ -295,7 +295,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                 {/* Toggle panel */}
                 <div className="p-6 space-y-4 border-b border-slate-800/60">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-base font-bold text-slate-200 flex items-center gap-2">
+                        <h3 className="text-base font-bold text-[#A8B5D1] flex items-center gap-2">
                             <Clock className="w-4 h-4 text-blue-400" />
                             Current Observations
                         </h3>
@@ -324,7 +324,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                         onClick={() => toggleObs(obs.id)}
                                         className={`w-full px-3 py-2 rounded-lg text-sm font-medium text-left transition-all active:scale-95 border ${activeObs.includes(obs.id)
                                             ? 'bg-blue-600/20 border-blue-500/40 text-blue-300'
-                                            : 'bg-slate-800/40 border-slate-700/40 text-slate-400 hover:border-slate-500 hover:text-slate-200'
+                                            : 'bg-slate-800/40 border-slate-700/40 text-slate-400 hover:border-slate-500 hover:text-[#A8B5D1]'
                                             }`}
                                     >
                                         {obs.label}
@@ -592,7 +592,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                     type="button"
                                     onClick={handleGenerateReport}
                                     disabled={isGenerating || !data.event_type || !data.severity_grade}
-                                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 disabled:opacity-50 text-slate-200 font-bold text-sm rounded-xl transition-all shadow-lg active:scale-95"
+                                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 disabled:opacity-50 text-[#A8B5D1] font-bold text-sm rounded-xl transition-all shadow-lg active:scale-95"
                                 >
                                     <FileText className="w-5 h-5 text-blue-400" />
                                     {isGenerating ? 'Generating...' : 'Finalize & Export CTCAE Incident Report'}

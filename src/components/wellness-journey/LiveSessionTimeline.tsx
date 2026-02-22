@@ -88,7 +88,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
                 <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-indigo-400" />
                     <div>
-                        <h3 className="text-base font-bold text-slate-200 uppercase tracking-widest">Live Session Timeline</h3>
+                        <h3 className="text-base font-bold text-[#A8B5D1] uppercase tracking-widest">Live Session Timeline</h3>
                         {active && (
                             <span className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
                                 <span className="relative flex h-2 w-2">

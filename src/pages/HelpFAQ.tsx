@@ -155,7 +155,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                     {cat.icon}
                   </div>
                 </div>
-                <h3 className="text-slate-200 font-black tracking-tight text-lg mb-3">{cat.title}</h3>
+                <h3 className="text-[#A8B5D1] font-black tracking-tight text-lg mb-3">{cat.title}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed font-medium group-hover:text-slate-300 transition-colors">{cat.desc}</p>
               </div>
             ))}
@@ -188,7 +188,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                       onClick={() => setActiveFAQ(activeFAQ === idx ? null : idx)}
                       className="w-full text-left px-8 py-6 flex justify-between items-center hover:bg-slate-800/40 transition-colors group"
                     >
-                      <span className="text-base font-bold text-slate-300 group-hover:text-slate-200 transition-colors">{faq.q}</span>
+                      <span className="text-base font-bold text-slate-300 group-hover:text-[#A8B5D1] transition-colors">{faq.q}</span>
                       <div className={`p-2 rounded-full transition-all duration-300 ${activeFAQ === idx ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-800 text-slate-500 group-hover:text-indigo-400 group-hover:bg-indigo-500/10'}`}>
                         <ChevronDown className={`transition-transform duration-300 ${activeFAQ === idx ? 'rotate-180' : ''}`} size={18} />
                       </div>
@@ -229,7 +229,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-lg relative overflow-hidden group hover:border-slate-600 transition-colors">
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-              <h3 className="text-slate-200 font-black tracking-tighter text-2xl mb-2 relative z-10">Contact Support</h3>
+              <h3 className="text-[#A8B5D1] font-black tracking-tighter text-2xl mb-2 relative z-10">Contact Support</h3>
               <p className="text-sm text-slate-400 mb-8 leading-relaxed font-medium relative z-10">Our team is available 24/7 for clinical emergencies and node assistance.</p>
 
               <div className="space-y-3 relative z-10">
@@ -251,7 +251,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
                   <span className="material-symbols-outlined text-[20px]">library_add</span>
                 </div>
-                <h3 className="text-slate-200 font-black tracking-tight text-lg">Curate the Network</h3>
+                <h3 className="text-[#A8B5D1] font-black tracking-tight text-lg">Curate the Network</h3>
               </div>
 
               <p className="text-sm text-slate-400 mb-6 leading-relaxed font-medium relative z-10">
@@ -273,7 +273,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                 <div className="absolute inset-0 w-3 h-3 bg-clinical-green rounded-full animate-ping opacity-30"></div>
               </div>
               <div className="flex flex-col">
-                <div className="text-sm font-black text-slate-200 tracking-tight">All Systems Operational</div>
+                <div className="text-sm font-black text-[#A8B5D1] tracking-tight">All Systems Operational</div>
                 <div className="text-[10px] font-black text-slate-500 mt-1 uppercase tracking-widest flex items-center gap-2">
                   <span>Latency: <span className="text-slate-400">24ms</span></span>
                   <span className="w-1 h-1 rounded-full bg-slate-700" />

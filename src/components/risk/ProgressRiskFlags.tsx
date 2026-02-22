@@ -35,9 +35,9 @@ export const ProgressRiskFlags: React.FC<ProgressRiskFlagsProps> = ({
                     width="w-80"
                     content={
                         <div className="space-y-2 text-sm">
-                            <div><span className="font-bold text-slate-200">PHQ-9 Trend:</span> Kroenke & Spitzer (2002). J Gen Intern Med.</div>
-                            <div><span className="font-bold text-slate-200">GAD-7 Trend:</span> Spitzer et al. (2006). Arch Intern Med.</div>
-                            <div><span className="font-bold text-slate-200">PCL-5 Trend:</span> Weathers et al. (2013). VA PTSD Research.</div>
+                            <div><span className="font-bold text-[#A8B5D1]">PHQ-9 Trend:</span> Kroenke & Spitzer (2002). J Gen Intern Med.</div>
+                            <div><span className="font-bold text-[#A8B5D1]">GAD-7 Trend:</span> Spitzer et al. (2006). Arch Intern Med.</div>
+                            <div><span className="font-bold text-[#A8B5D1]">PCL-5 Trend:</span> Weathers et al. (2013). VA PTSD Research.</div>
                             <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Declining trends defined as ≥5% regression toward baseline over 2+ consecutive check-ins. Clinical decision support only — not a substitute for practitioner judgment.</div>
                         </div>
                     }
@@ -88,7 +88,7 @@ export const ProgressRiskFlags: React.FC<ProgressRiskFlagsProps> = ({
                         {/* Recommendation */}
                         <div className="pl-9">
                             <p className="text-sm text-slate-400">
-                                <strong className="text-slate-200">Recommended Actions:</strong>
+                                <strong className="text-[#A8B5D1]">Recommended Actions:</strong>
                             </p>
                             <p className="text-sm text-slate-400 mt-1">
                                 {flag.recommendation}

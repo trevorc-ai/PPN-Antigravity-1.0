@@ -8,17 +8,17 @@ const PrivacyPolicy: React.FC = () => {
         <div className="min-h-screen bg-[#07101e] text-slate-300">
             {/* Nav */}
             <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#07101e]/90 backdrop-blur-md border-b border-slate-800/60">
-                <button onClick={() => navigate('/landing')} className="flex items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors text-sm font-bold">
+                <button onClick={() => navigate('/landing')} className="flex items-center gap-2 text-slate-400 hover:text-[#A8B5D1] transition-colors text-sm font-bold">
                     <span className="material-symbols-outlined text-base">arrow_back</span>
                     Back to Portal
                 </button>
-                <p className="text-sm font-black text-slate-200 tracking-[0.15em] uppercase">PPN Portal</p>
+                <p className="text-sm font-black text-[#A8B5D1] tracking-[0.15em] uppercase">PPN Portal</p>
             </header>
 
             <main className="max-w-3xl mx-auto px-6 pt-32 pb-24 space-y-12">
                 <div className="space-y-3">
                     <p className="text-xs font-black uppercase tracking-[0.4em] text-primary">Legal</p>
-                    <h1 className="text-4xl font-black tracking-tight text-slate-200">Privacy Policy</h1>
+                    <h1 className="text-4xl font-black tracking-tight text-[#A8B5D1]">Privacy Policy</h1>
                     <p className="text-slate-500 font-medium">Effective Date: February 19, 2026 · Last Updated: February 19, 2026</p>
                 </div>
 
@@ -156,7 +156,7 @@ const PrivacyPolicy: React.FC = () => {
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <section className="space-y-4">
-        <h2 className="text-xl font-black text-slate-200 tracking-tight border-b border-slate-800 pb-3">{title}</h2>
+        <h2 className="text-xl font-black text-[#A8B5D1] tracking-tight border-b border-slate-800 pb-3">{title}</h2>
         <div className="space-y-3 text-slate-400 leading-relaxed">{children}</div>
     </section>
 );

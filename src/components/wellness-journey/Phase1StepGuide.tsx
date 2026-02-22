@@ -215,7 +215,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                         </span>
                                     </div>
                                     {/* H3: card title — minimum text-sm */}
-                                    <h4 className={`text-sm font-black leading-snug pt-1 ${isComplete ? 'text-teal-200' : isCurrent ? 'text-slate-100' : 'text-slate-400'
+                                    <h4 className={`text-sm font-black leading-snug pt-1 ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
                                         }`}>
                                         {step.label}
                                     </h4>

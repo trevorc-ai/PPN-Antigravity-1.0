@@ -221,7 +221,7 @@ const SessionExportCenter: React.FC = () => {
                             </div>
                             <span className="text-xs font-black uppercase tracking-widest text-blue-400/70">Session Export Center</span>
                         </div>
-                        <h1 className="text-4xl font-black tracking-tight text-slate-100">Export Clinical Record</h1>
+                        <h1 className="text-4xl font-black tracking-tight text-[#A8B5D1]">Export Clinical Record</h1>
                         <p className="text-lg text-slate-400 mt-2 max-w-xl">
                             Download a complete, structured record of this patient's treatment series — formatted for legal defense, insurance billing, or research contribution.
                         </p>
@@ -249,13 +249,13 @@ const SessionExportCenter: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-0.5">Patient ID</p>
-                                <p className="text-xl font-black text-slate-100 font-mono">{MOCK_PATIENT.patientId}</p>
+                                <p className="text-xl font-black text-[#A8B5D1] font-mono">{MOCK_PATIENT.patientId}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-slate-500" />
                             <span className="text-sm text-slate-400">
-                                Treatment Period: <span className="text-slate-200 font-bold">Jul 14, 2025 — Jan 18, 2026</span>
+                                Treatment Period: <span className="text-[#A8B5D1] font-bold">Jul 14, 2025 — Jan 18, 2026</span>
                             </span>
                         </div>
                     </div>
@@ -288,7 +288,7 @@ const SessionExportCenter: React.FC = () => {
                                 <Brain className="w-4 h-4 text-indigo-400" />
                                 <span className="text-xs font-black uppercase tracking-widest text-slate-500">Integration</span>
                             </div>
-                            <p className="text-3xl font-black text-slate-100">{integrationCompliance}%</p>
+                            <p className="text-3xl font-black text-[#A8B5D1]">{integrationCompliance}%</p>
                             <p className="text-xs text-slate-500 mt-0.5">{MOCK_PATIENT.integration?.sessionsAttended}/{MOCK_PATIENT.integration?.sessionsScheduled} sessions</p>
                         </div>
 
@@ -298,7 +298,7 @@ const SessionExportCenter: React.FC = () => {
                                 <Heart className="w-4 h-4 text-pink-400" />
                                 <span className="text-xs font-black uppercase tracking-widest text-slate-500">Pulse Checks</span>
                             </div>
-                            <p className="text-3xl font-black text-slate-100">{pulseCompliance}%</p>
+                            <p className="text-3xl font-black text-[#A8B5D1]">{pulseCompliance}%</p>
                             <p className="text-xs text-slate-500 mt-0.5">{MOCK_PATIENT.integration?.pulseCheckDays}/{MOCK_PATIENT.integration?.pulseCheckTotal} days</p>
                         </div>
                     </div>
@@ -308,7 +308,7 @@ const SessionExportCenter: React.FC = () => {
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-5">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                         <div>
-                            <p className="text-sm font-black text-slate-200 mb-0.5">Export Scope</p>
+                            <p className="text-sm font-black text-[#A8B5D1] mb-0.5">Export Scope</p>
                             <p className="text-xs text-slate-500">Select a single dosing session or export the full series.</p>
                         </div>
                         <div className="flex flex-wrap gap-2 sm:ml-auto">
@@ -351,7 +351,7 @@ const SessionExportCenter: React.FC = () => {
                                         <item.icon className="w-4 h-4 text-slate-400 shrink-0" />
                                         <div>
                                             <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{item.label}</p>
-                                            <p className="text-sm font-black text-slate-200">{item.value}</p>
+                                            <p className="text-sm font-black text-[#A8B5D1]">{item.value}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -391,7 +391,7 @@ const SessionExportCenter: React.FC = () => {
                                             <Icon className={`w-6 h-6 ${pkg.accentColor}`} />
                                         </div>
                                         <div className="flex-1 pr-20">
-                                            <h3 className="text-lg font-black text-slate-100">{pkg.title}</h3>
+                                            <h3 className="text-lg font-black text-[#A8B5D1]">{pkg.title}</h3>
                                             <p className={`text-xs font-bold uppercase tracking-widest ${pkg.textColor} mt-0.5`}>{pkg.subtitle}</p>
                                         </div>
                                     </div>
@@ -461,7 +461,7 @@ const SessionExportCenter: React.FC = () => {
                     <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-3">
                             <BarChart3 className="w-5 h-5 text-slate-400" />
-                            <h2 className="text-lg font-black text-slate-200">Dosing Session Log</h2>
+                            <h2 className="text-lg font-black text-[#A8B5D1]">Dosing Session Log</h2>
                         </div>
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{MOCK_SESSIONS.length} sessions</span>
                     </div>
@@ -478,7 +478,7 @@ const SessionExportCenter: React.FC = () => {
                                         <span className="text-sm font-black text-blue-400">{index + 1}</span>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-black text-slate-200">{session.date}</p>
+                                        <p className="text-sm font-black text-[#A8B5D1]">{session.date}</p>
                                         <p className="text-xs text-slate-500 font-mono">{session.id}</p>
                                     </div>
                                 </div>
@@ -512,7 +512,7 @@ const SessionExportCenter: React.FC = () => {
                                 <AdvancedTooltip content="Export audit report for this session only" tier="micro">
                                     <button
                                         onClick={() => handleExport(EXPORT_PACKAGES[0])}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-400 hover:text-slate-200 text-xs font-bold rounded-xl transition-all uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-400 hover:text-[#A8B5D1] text-xs font-bold rounded-xl transition-all uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0"
                                         aria-label={`Export audit report for session ${session.id}`}
                                     >
                                         <Download className="w-3.5 h-3.5" />

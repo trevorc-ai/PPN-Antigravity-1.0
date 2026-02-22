@@ -37,9 +37,9 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
                     width="w-80"
                     content={
                         <div className="space-y-2 text-sm">
-                            <div><span className="font-bold text-slate-200">Heart Rate:</span> AHA Guidelines for PAT monitoring (2020).</div>
-                            <div><span className="font-bold text-slate-200">Blood Pressure:</span> JNC 8 Hypertension Guidelines.</div>
-                            <div><span className="font-bold text-slate-200">SpO2:</span> WHO Pulse Oximetry Training Manual.</div>
+                            <div><span className="font-bold text-[#A8B5D1]">Heart Rate:</span> AHA Guidelines for PAT monitoring (2020).</div>
+                            <div><span className="font-bold text-[#A8B5D1]">Blood Pressure:</span> JNC 8 Hypertension Guidelines.</div>
+                            <div><span className="font-bold text-[#A8B5D1]">SpO2:</span> WHO Pulse Oximetry Training Manual.</div>
                             <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
                         </div>
                     }

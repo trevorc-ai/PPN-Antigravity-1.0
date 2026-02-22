@@ -37,22 +37,22 @@ const CONSENT_TYPES = [
     {
         value: 'informed_consent',
         label: 'Informed Consent',
-        selectedClasses: 'bg-emerald-700 text-slate-200 shadow-lg shadow-emerald-700/30 border-emerald-500',
+        selectedClasses: 'bg-emerald-700 text-[#A8B5D1] shadow-lg shadow-emerald-700/30 border-emerald-500',
     },
     {
         value: 'hipaa_authorization',
         label: 'HIPAA Authorization',
-        selectedClasses: 'bg-amber-600 text-slate-200 shadow-lg shadow-amber-600/30 border-amber-500',
+        selectedClasses: 'bg-amber-600 text-[#A8B5D1] shadow-lg shadow-amber-600/30 border-amber-500',
     },
     {
         value: 'research_participation',
         label: 'Research Participation',
-        selectedClasses: 'bg-violet-700 text-slate-200 shadow-lg shadow-violet-700/30 border-violet-500',
+        selectedClasses: 'bg-violet-700 text-[#A8B5D1] shadow-lg shadow-violet-700/30 border-violet-500',
     },
     {
         value: 'photography_recording',
         label: 'Photography / Recording',
-        selectedClasses: 'bg-cyan-700 text-slate-200 shadow-lg shadow-cyan-700/30 border-cyan-500',
+        selectedClasses: 'bg-cyan-700 text-[#A8B5D1] shadow-lg shadow-cyan-700/30 border-cyan-500',
     },
 ];
 
@@ -184,7 +184,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                 Anonymous Patient ID — System Generated
                             </p>
                             <p className="text-sm text-slate-300 leading-relaxed mb-3">
-                                A unique random hash has been created for this patient. <strong className="text-slate-200">No name, date of birth, or identifying information is stored.</strong> All clinical records are linked to this ID only.
+                                A unique random hash has been created for this patient. <strong className="text-[#A8B5D1]">No name, date of birth, or identifying information is stored.</strong> All clinical records are linked to this ID only.
                             </p>
 
                             {/* ID display with copy button */}
@@ -233,7 +233,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             className="mt-1 w-6 h-6 rounded border-slate-600 bg-slate-800/50 text-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-0 cursor-pointer"
                         />
                         <div className="flex-1">
-                            <p className="text-lg font-bold text-slate-300 group-hover:text-slate-200 transition-colors">
+                            <p className="text-lg font-bold text-slate-300 group-hover:text-[#A8B5D1] transition-colors">
                                 I confirm that informed consent has been obtained from the patient
                             </p>
                             <p className="text-sm text-slate-400 mt-2">
@@ -307,7 +307,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                             }
                                             className={`flex items-center gap-3 px-5 py-4 rounded-xl text-base font-semibold text-left transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 border ${isSelected
                                                 ? type.selectedClasses
-                                                : 'bg-slate-800/60 text-slate-300 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                : 'bg-slate-800/60 text-slate-300 border-slate-700/50 hover:border-slate-500 hover:text-[#A8B5D1]'
                                                 }`}
                                             aria-pressed={isSelected}
                                             aria-label={`${isSelected ? 'Deselect' : 'Select'} ${type.label}`}

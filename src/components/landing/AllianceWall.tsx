@@ -75,7 +75,7 @@ const QuoteCard: React.FC<{ quote: typeof quotes[0] }> = ({ quote }) => (
         <Quote className="text-primary/40 size-8 shrink-0" />
         <p className="text-slate-300 font-medium leading-relaxed">"{quote.text}"</p>
         <div className="mt-2 pt-4 border-t border-slate-800/80">
-            <p className="text-slate-200 font-bold text-sm tracking-wide">{quote.role}</p>
+            <p className="text-[#A8B5D1] font-bold text-sm tracking-wide">{quote.role}</p>
             <p className="text-slate-500 text-xs uppercase tracking-widest mt-0.5">{quote.org}</p>
         </div>
     </div>
@@ -91,7 +91,7 @@ export default function AllianceWall() {
 
             <div className="max-w-7xl mx-auto px-6 relative z-10 mb-20 text-center">
                 <p className="text-sm font-black text-primary uppercase tracking-[0.4em] mb-4">The Voice of the Alliance</p>
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-200">
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-[#A8B5D1]">
                     Make the miraculous <br />
                     <span className="text-gradient-primary">boring enough to scale.</span>
                 </h2>
