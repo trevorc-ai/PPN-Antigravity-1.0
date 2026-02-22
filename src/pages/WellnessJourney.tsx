@@ -671,7 +671,7 @@ const WellnessJourney: React.FC = () => {
                             />
                             {/* Phase content — border on left/right/bottom only, active tab connects at top */}
                             <div
-                                className={`rounded-b-2xl border-l-2 border-r-2 border-b-2 ${phasePalette.border} ${phasePalette.bg} backdrop-blur-xl p-4 sm:p-6 space-y-6`}
+                                className={`rounded-b-2xl border-l-2 border-r-2 border-b-2 ${phasePalette.border} ${phasePalette.bg} p-4 sm:p-6 space-y-6`}
                                 style={{ boxShadow: phasePalette.shadow }}
                             >
                                 {/* Phase lock notice */}
