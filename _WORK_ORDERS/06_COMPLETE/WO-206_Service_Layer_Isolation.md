@@ -1,7 +1,7 @@
 ---
 id: WO-206
 title: "Service Layer Isolation — Split arcOfCareApi.ts into Domain Services"
-status: 05_USER_REVIEW
+status: 06_COMPLETE
 owner: USER
 priority: HIGH
 created: 2026-02-19

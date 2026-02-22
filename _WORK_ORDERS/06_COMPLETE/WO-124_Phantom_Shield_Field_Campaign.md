@@ -1,7 +1,7 @@
 ---
 id: WO-124
 title: "Phantom Shield Field Campaign: Mobile QR Share Card"
-status: 05_USER_REVIEW
+status: 06_COMPLETE
 owner: USER
 failure_count: 0
 created: 2026-02-20

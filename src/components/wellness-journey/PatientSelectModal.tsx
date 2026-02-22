@@ -74,6 +74,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
     const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
     const [phaseFilter, setPhaseFilter] = useState<Phase | null>(null);
     const [newId] = useState(generatePatientId);
+    const [scannerOpen, setScannerOpen] = useState(false);
 
     // Live data state
     const [patients, setPatients] = useState<LivePatient[]>([]);
@@ -184,46 +185,6 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                         </div>
 
                         <div className="p-6 space-y-4">
-                            {/* Patient Bridge Camera Scan */}
-                            <div className="bg-gradient-to-br from-teal-900/40 to-emerald-900/20 border border-teal-500/30 rounded-xl p-5 mb-2 hover:border-teal-400/50 transition-all">
-                                <a
-                                    href="/PPN_Bridge_Camera.html"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full flex items-start gap-5 active:scale-[0.99] text-left group"
-                                    aria-label="Open camera scanner to generate patient ID (opens in new tab)"
-                                >
-                                    <div className="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center flex-shrink-0 mt-1">
-                                        <Camera className="w-6 h-6 text-teal-400 group-hover:scale-110 transition-transform" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-lg font-black text-white flex items-center gap-2">
-                                            Scan Patient Label
-                                        </p>
-                                        <p className="text-sm text-slate-300 mt-0.5">Point camera at wristband or chart to generate ID</p>
-                                        <div className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/40 border border-teal-500/30 text-[11px] text-teal-400 font-medium tracking-wide">
-                                            <Lock className="w-3 h-3" /> No data leaves your device
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-5 h-5 text-teal-500 group-hover:translate-x-1 transition-transform self-center" />
-                                </a>
-
-                                {/* QR Code Entry Point */}
-                                <div className="mt-5 pt-4 border-t border-teal-500/20 flex flex-col md:flex-row items-center gap-4">
-                                    <div className="bg-white p-1.5 rounded-lg flex-shrink-0">
-                                        <img
-                                            src={`https://chart.googleapis.com/chart?cht=qr&chs=120x120&chl=${encodeURIComponent(window.location.origin + '/PPN_Bridge_Camera.html')}`}
-                                            alt="QR code to open Patient Bridge on mobile"
-                                            className="w-20 h-20"
-                                        />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-slate-200">Or use your phone</p>
-                                        <p className="text-xs text-slate-400 mt-1">Scan this QR code with a mobile device to use the Bridge scanner remotely.</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* New Patient */}
                             <button
                                 onClick={() => onSelect(newId, true, 'Preparation')}
@@ -254,10 +215,65 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-slate-500 group-hover:translate-x-1 transition-transform" />
                             </button>
+
+                            {/* Patient Bridge Camera Scan - Collapsible */}
+                            <div className="border border-teal-500/30 rounded-xl overflow-hidden mt-4 transition-all">
+                                <button
+                                    onClick={() => setScannerOpen(!scannerOpen)}
+                                    className="w-full flex items-center justify-between p-4 bg-teal-900/20 hover:bg-teal-900/40 transition-colors"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Camera className="w-5 h-5 text-teal-400" />
+                                        <span className="text-base font-bold text-white">Scan Patient Label</span>
+                                    </div>
+                                    <ChevronRight className={`w-5 h-5 text-teal-500 transition-transform ${scannerOpen ? 'rotate-90' : ''}`} />
+                                </button>
+
+                                {scannerOpen && (
+                                    <div className="bg-gradient-to-br from-teal-900/40 to-emerald-900/20 border-t border-teal-500/30 p-5">
+                                        <a
+                                            href="/PPN_Bridge_Camera.html"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-full flex items-start gap-5 active:scale-[0.99] text-left group"
+                                            aria-label="Open camera scanner to generate patient ID (opens in new tab)"
+                                        >
+                                            <div className="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center flex-shrink-0 mt-1">
+                                                <Camera className="w-6 h-6 text-teal-400 group-hover:scale-110 transition-transform" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-lg font-black text-white flex items-center gap-2">
+                                                    Open Scanner
+                                                </p>
+                                                <p className="text-sm text-slate-300 mt-0.5">Point camera at wristband or chart to generate ID</p>
+                                                <div className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/40 border border-teal-500/30 text-[11px] text-teal-400 font-medium tracking-wide">
+                                                    <Lock className="w-3 h-3" /> No data leaves your device
+                                                </div>
+                                            </div>
+                                            <ChevronRight className="w-5 h-5 text-teal-500 group-hover:translate-x-1 transition-transform self-center" />
+                                        </a>
+
+                                        {/* QR Code Entry Point */}
+                                        <div className="mt-5 pt-4 border-t border-teal-500/20 flex flex-col md:flex-row items-center gap-4">
+                                            <div className="bg-white p-1.5 rounded-lg flex-shrink-0">
+                                                <img
+                                                    src={`https://chart.googleapis.com/chart?cht=qr&chs=120x120&chl=${encodeURIComponent(window.location.origin + '/PPN_Bridge_Camera.html')}`}
+                                                    alt="QR code to open Patient Bridge on mobile"
+                                                    className="w-20 h-20"
+                                                />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-200">Or use your phone</p>
+                                                <p className="text-xs text-slate-400 mt-1">Scan this QR code with a mobile device to use the Bridge scanner remotely.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="px-6 pb-5 text-center">
-                            <p className="text-xs text-slate-600">All patient data is anonymised. No PHI is stored in free-text fields.</p>
+                            <p className="text-sm text-slate-400 font-medium tracking-wide">All patient data is anonymised. No <span className="text-white font-bold">PHI</span> is stored in free-text fields.</p>
                         </div>
                     </div>
                 )}

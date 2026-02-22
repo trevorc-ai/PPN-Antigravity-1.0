@@ -1,7 +1,7 @@
 ---
 id: WO-SCH-062
 title: "Schema Migration 062 — Wellness Output Engine (WO-309 + WO-313)"
-status: 05_USER_REVIEW
+status: 06_COMPLETE
 owner: USER
 created: 2026-02-21
 created_by: LEAD
@@ -93,7 +93,7 @@ blocks: [WO-309, WO-313]
 ## INSPECTOR Decision
 
 ### If PASS:
-- Update frontmatter: `status: 05_USER_REVIEW`, `owner: USER`
+- Update frontmatter: `status: 06_COMPLETE`, `owner: USER`
 - Move ticket to `_WORK_ORDERS/05_USER_REVIEW/`
 - Note: USER must execute `migrations/062_wellness_output_engine_schema.sql` in Supabase SQL editor
 - After USER confirms execution, BUILDER can proceed with WO-309 and WO-313

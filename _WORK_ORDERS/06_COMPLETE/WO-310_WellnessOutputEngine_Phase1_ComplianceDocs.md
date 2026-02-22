@@ -1,7 +1,7 @@
 ---
 id: WO-310
 title: "Wellness Journey Output Engine — Phase 1 & 3: Clinical Compliance Documents"
-status: 05_USER_REVIEW
+status: 06_COMPLETE
 owner: USER
 created: 2026-02-21
 created_by: CUE
