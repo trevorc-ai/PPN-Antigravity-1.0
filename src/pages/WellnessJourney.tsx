@@ -585,10 +585,10 @@ const WellnessJourney: React.FC = () => {
                                     <span
                                         key={title}
                                         title={title}
-                                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-700/60 border border-slate-600/40 text-xs font-semibold text-slate-400"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600/50 text-[13px] font-semibold shadow-sm"
                                     >
-                                        <span className="text-slate-500 font-normal">{title}</span>
-                                        <span className="text-slate-200">{label}</span>
+                                        <span className="text-slate-400 font-normal">{title}</span>
+                                        <span className="text-white font-bold">{label}</span>
                                     </span>
                                 ))}
                                 {/* Change Patient — context-aware: Phase 1 → choose, Phase 2/3 → lookup */}
@@ -598,7 +598,7 @@ const WellnessJourney: React.FC = () => {
                                         setPatientModalView(activePhase === 1 ? 'choose' : 'existing');
                                         setShowPatientModal(true);
                                     }}
-                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border border-slate-600/50 text-xs font-semibold text-slate-500 hover:text-slate-300 hover:border-slate-500 transition-all"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800/50 rounded-lg border border-slate-600/50 text-[13px] font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm"
                                     aria-label={activePhase === 1 ? 'Enter new or lookup patient' : 'Lookup existing patient'}
                                 >
                                     {activePhase === 1 ? 'Change' : 'Lookup'}
