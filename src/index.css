@@ -683,9 +683,11 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 3px solid #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25), 0 2px 8px rgba(0, 0, 0, 0.4);
+  background: #818cf8;
+  /* indigo-400 — matches browser default blue, not too bright */
+  border: 2px solid rgba(15, 23, 42, 0.6);
+  /* dark ring for contrast on light tracks */
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3), 0 2px 8px rgba(0, 0, 0, 0.4);
   cursor: grab;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -700,9 +702,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 3px solid #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+  background: #818cf8;
+  border: 2px solid rgba(15, 23, 42, 0.6);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3);
   cursor: grab;
 }
 

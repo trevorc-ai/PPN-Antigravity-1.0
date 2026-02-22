@@ -86,7 +86,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                                 max="100"
                                 value={data.treatment_expectancy ?? 50}
                                 onChange={(e) => setData({ treatment_expectancy: parseInt(e.target.value) })}
-                                className="w-full h-4 rounded-lg appearance-none cursor-pointer"
+                                className="ppn-range w-full cursor-pointer"
                                 style={{
                                     background: `linear-gradient(to right,
                                         #ef4444 0%,
