@@ -121,8 +121,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <Settings2 className="w-6 h-6 text-violet-400" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-white leading-tight mt-0.5">Customize Your Workspace</h2>
-                            <p className="text-sm text-slate-400 mt-1">Select the tools you actually use to keep your interface clean and fast.</p>
+                            <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">Customize Your Workspace</h2>
+                            <p className="text-base text-slate-400 mt-1">Select the tools you actually use to keep your interface clean and fast.</p>
                         </div>
                     </div>
                 </div>
@@ -133,8 +133,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     <div className="flex items-start gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                         <Info className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-sm text-indigo-200 font-medium tracking-wide">Why are we asking this?</p>
-                            <p className="text-sm text-indigo-300/80 mt-1 leading-relaxed">
+                            <p className="text-base text-indigo-200 font-medium tracking-wide">Why are we asking this?</p>
+                            <p className="text-base text-indigo-300/80 mt-1.5 leading-relaxed">
                                 We want to protect your focus. By setting your typical workflow now, we will hide any tools or forms you don't need, preventing "button fatigue" during sessions.
                                 <strong className="text-indigo-200 font-medium"> Please don't over-select "just in case"</strong> — you can change these settings at any time!
                             </p>
@@ -163,32 +163,32 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         }`}>
                                         <Icon className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-lg font-bold text-white mb-2">{arch.title}</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed flex-1">
+                                    <h3 className="text-xl font-bold text-white mb-2">{arch.title}</h3>
+                                    <p className="text-slate-400 text-base leading-relaxed flex-1">
                                         {arch.description}
                                     </p>
-                                    <div className="mt-6 space-y-1.5 border-t border-slate-800 pt-4 w-full">
-                                        <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Included Modules:</div>
+                                    <div className="mt-6 space-y-2 border-t border-slate-800 pt-4 w-full">
+                                        <div className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">Included Modules:</div>
                                         {arch.id === 'clinical' && (
-                                            <>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500" /> Clinical Baselines (PHQ-9)</div>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500" /> Vital Sign Tracking</div>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500" /> Automated Risk Engine</div>
-                                            </>
+                                            <div className="space-y-1.5">
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Clinical Baselines (PHQ-9)</div>
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Vital Sign Tracking</div>
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Automated Risk Engine</div>
+                                            </div>
                                         )}
                                         {arch.id === 'ceremonial' && (
-                                            <>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500" /> Narrative Timeline Logging</div>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500" /> MEQ-30 Assessment</div>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500" /> Integration Worksheets</div>
-                                            </>
+                                            <div className="space-y-1.5">
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Narrative Timeline Logging</div>
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500" /> MEQ-30 Assessment</div>
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500" /> Integration Worksheets</div>
+                                            </div>
                                         )}
                                         {arch.id === 'custom' && (
-                                            <>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500 flex-shrink-0" /> Hand-picked modules</div>
-                                                <div className="text-xs text-slate-300 flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-slate-500 flex-shrink-0" /> Cross-domain flexibility</div>
-                                                <div className="text-xs text-sky-400 flex items-center gap-2 mt-1 font-semibold">{customFeatures.length} features selected</div>
-                                            </>
+                                            <div className="space-y-1.5">
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500 flex-shrink-0" /> Hand-picked modules</div>
+                                                <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500 flex-shrink-0" /> Cross-domain flexibility</div>
+                                                <div className="text-sm text-sky-400 flex items-center gap-2 mt-2 font-bold">{customFeatures.length} features selected</div>
+                                            </div>
                                         )}
                                     </div>
                                 </button>
@@ -204,27 +204,27 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                     <SlidersHorizontal className="w-5 h-5 text-sky-400" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-bold text-white leading-tight">Custom Configuration</h3>
-                                    <p className="text-sm text-slate-400">Select specific modules to include in your personalized workflow.</p>
+                                    <h3 className="text-xl font-bold text-white leading-tight">Custom Configuration</h3>
+                                    <p className="text-base text-slate-400 mt-1">Select specific modules to include in your personalized workflow.</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {CUSTOM_DOMAINS.map(domain => (
                                     <div key={domain.id} className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-5 space-y-4 shadow-lg transition-colors hover:border-slate-600">
                                         <div className="border-b border-slate-800/60 pb-3">
-                                            <h4 className="text-[15px] font-bold text-white mb-1 leading-tight">{domain.title}</h4>
-                                            <p className="text-xs text-slate-400 leading-relaxed">{domain.description}</p>
+                                            <h4 className="text-lg font-bold text-white mb-1.5 leading-tight">{domain.title}</h4>
+                                            <p className="text-sm text-slate-400 leading-relaxed">{domain.description}</p>
                                         </div>
-                                        <div className="space-y-3">
+                                        <div className="space-y-3.5">
                                             {domain.features.map(feat => {
                                                 const isEnabled = customFeatures.includes(feat.id);
                                                 return (
-                                                    <label key={feat.id} className="flex items-start gap-3 cursor-pointer group">
+                                                    <label key={feat.id} className="flex items-start gap-3.5 cursor-pointer group">
                                                         <input type="checkbox" className="hidden" checked={isEnabled} onChange={() => toggleFeature(feat.id)} />
-                                                        <div className={`mt-0.5 w-[18px] h-[18px] rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm ${isEnabled ? 'bg-sky-500 text-white border-sky-500 shadow-sky-500/20' : 'bg-slate-800 border border-slate-600 group-hover:border-sky-400 group-hover:bg-slate-800/80'}`}>
+                                                        <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm ${isEnabled ? 'bg-sky-500 text-white border-sky-500 shadow-sky-500/20' : 'bg-slate-800 border border-slate-500 group-hover:border-sky-400 group-hover:bg-slate-800/80'}`}>
                                                             {isEnabled && <svg className="w-3.5 h-3.5 fill-current animate-in zoom-in duration-200" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z" /></svg>}
                                                         </div>
-                                                        <span className={`text-sm select-none leading-snug pt-[1px] ${isEnabled ? 'text-slate-200 font-medium' : 'text-slate-400 group-hover:text-slate-300'}`}>
+                                                        <span className={`text-base select-none leading-snug pt-[1px] ${isEnabled ? 'text-slate-200 font-medium' : 'text-slate-400 group-hover:text-slate-300'}`}>
                                                             {feat.label}
                                                         </span>
                                                     </label>
@@ -243,9 +243,9 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             id="saveDefault"
                             checked={saveAsDefault}
                             onChange={(e) => setSaveAsDefault(e.target.checked)}
-                            className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-slate-900"
+                            className="w-5 h-5 rounded border-slate-500 bg-slate-700 text-indigo-500 focus:ring-indigo-500 focus:ring-offset-slate-900"
                         />
-                        <label htmlFor="saveDefault" className="ml-3 text-sm text-slate-300 cursor-pointer">
+                        <label htmlFor="saveDefault" className="ml-3.5 text-base text-slate-300 cursor-pointer">
                             Save this as my global default for all future sessions.
                         </label>
                     </div>
@@ -255,7 +255,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 <div className="flex justify-end gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
                     <button
                         onClick={handleSave}
-                        className="px-6 py-2.5 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                        className="px-8 py-3 text-lg bg-white text-slate-900 font-extrabold rounded-xl hover:bg-slate-200 transition-colors shadow-lg active:scale-95"
                     >
                         Start Session
                     </button>
