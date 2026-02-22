@@ -113,8 +113,8 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                             : 'bg-slate-900/40 border border-slate-800/50 text-slate-500 font-semibold cursor-pointer hover:text-slate-400',
                                 ].join(' ')}
                                 style={isActive ? {
-                                    // Overlap the panel's top border so they fuse visually
-                                    marginBottom: '-1px',
+                                    // Overlap the panel top border (2px) so they fuse visually
+                                    marginBottom: '-2px',
                                     zIndex: 10,
                                 } : { zIndex: 1 }}
                             >
