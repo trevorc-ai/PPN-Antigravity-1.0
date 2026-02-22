@@ -247,15 +247,34 @@ const SessionTimelineForm: React.FC<SessionTimelineFormProps> = ({
 
                             {/* Description Column */}
                             <div className="md:col-span-7">
-                                <textarea
+                                <select
                                     value={event.event_description}
                                     onChange={(e) => updateEvent(index, 'event_description', e.target.value)}
-                                    placeholder="Describe the event..."
-                                    className="w-full h-full min-h-[80px] px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none"
-                                />
-                                <div className="flex justify-between items-center mt-1">
-                                    <span className={`text-xs ${event.event_description.length > 450 ? 'text-red-400' : 'text-slate-500'}`}>
-                                        {event.event_description.length}/500
+                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+                                >
+                                    <option value="">Select predefined clinical observation...</option>
+                                    <optgroup label="Clinical Status">
+                                        <option value="Patient resting comfortably">Patient resting comfortably</option>
+                                        <option value="Patient reported mild anxiety">Patient reported mild anxiety</option>
+                                        <option value="Patient reported nausea">Patient reported nausea</option>
+                                        <option value="Patient processing difficult emotion">Patient processing difficult emotion</option>
+                                    </optgroup>
+                                    <optgroup label="Interventions">
+                                        <option value="Dose administered per protocol">Dose administered per protocol</option>
+                                        <option value="Administered anti-emetic">Administered anti-emetic</option>
+                                        <option value="Guided breathing exercise initiated">Guided breathing exercise initiated</option>
+                                        <option value="Therapist offered supportive touch">Therapist offered supportive touch</option>
+                                        <option value="Music volume/track adjusted">Music volume/track adjusted</option>
+                                    </optgroup>
+                                    <optgroup label="Events">
+                                        <option value="Patient requested bathroom break">Patient requested bathroom break</option>
+                                        <option value="Patient requested water">Patient requested water</option>
+                                        <option value="Vitals checked; within normal limits">Vitals checked; within normal limits</option>
+                                    </optgroup>
+                                </select>
+                                <div className="flex justify-between items-center mt-2">
+                                    <span className="text-xs text-indigo-400 font-bold tracking-wide uppercase">
+                                        PHI-Safe Selection. Free-text logging disabled.
                                     </span>
                                 </div>
                             </div>

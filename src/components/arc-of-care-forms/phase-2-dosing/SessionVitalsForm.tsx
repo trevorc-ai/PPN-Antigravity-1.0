@@ -552,27 +552,36 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 <label className="text-sm font-semibold text-slate-300">
                                     Data Source
                                 </label>
-                                <input
-                                    type="text"
+                                <select
                                     value={reading.data_source ?? ''}
                                     onChange={(e) => updateReading(index, 'data_source', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
-                                    placeholder="e.g., Apple Watch, Manual"
-                                />
+                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+                                >
+                                    <option value="">Select Data Source...</option>
+                                    <option value="Manual Entry">Manual Entry</option>
+                                    <option value="Apple Watch">Apple Watch</option>
+                                    <option value="Oura Ring">Oura Ring</option>
+                                    <option value="Garmin">Garmin</option>
+                                    <option value="Medical Grade Monitor">Medical Grade Monitor</option>
+                                </select>
                             </div>
 
-                            {/* Device ID */}
+                            {/* Device ID / Protocol Token */}
                             <div className="space-y-2 md:col-span-2">
                                 <label className="text-sm font-semibold text-slate-300">
-                                    Device ID <span className="text-slate-400 font-normal">(Optional)</span>
+                                    Device ID / Protocol Token <span className="text-slate-400 font-normal">(Optional)</span>
                                 </label>
-                                <input
-                                    type="text"
+                                <select
                                     value={reading.device_id ?? ''}
                                     onChange={(e) => updateReading(index, 'device_id', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
-                                    placeholder="Device serial number or identifier"
-                                />
+                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+                                >
+                                    <option value="">Select Protocol Token...</option>
+                                    <option value="TK-8832-A">TK-8832-A</option>
+                                    <option value="TK-8832-B">TK-8832-B</option>
+                                    <option value="TK-8832-C">TK-8832-C</option>
+                                    <option value="EXT-MONITOR-01">EXT-MONITOR-01</option>
+                                </select>
                             </div>
                         </div>
                     </div>
