@@ -3,50 +3,21 @@ import { Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import { WellnessFormId } from './WellnessFormRouter';
+import { LiveSessionTimeline } from './LiveSessionTimeline';
+import { SessionVitalsTrendChart } from './SessionVitalsTrendChart';
+import { useToast } from '../../contexts/ToastContext';
 
 interface TreatmentPhaseProps {
     journey: any;
     onOpenForm: (formId: WellnessFormId) => void;
 }
 
-// WO-061: Mock session timeline events
-const MOCK_TIMELINE_EVENTS = [
-    {
-        id: 1,
-        timestamp: new Date(new Date().setHours(9, 0, 0)),
-        eventType: 'milestone' as const,
-        description: 'Session started. Patient calm, oriented. Pre-session vitals within normal range.',
-    },
-    {
-        id: 2,
-        timestamp: new Date(new Date().setHours(9, 45, 0)),
-        eventType: 'milestone' as const,
-        description: 'Onset confirmed. Patient reports visual distortions and emotional opening.',
-    },
-    {
-        id: 3,
-        timestamp: new Date(new Date().setHours(10, 30, 0)),
-        eventType: 'safety_event' as const,
-        description: 'Patient reported transient anxiety. Verbal reassurance provided.',
-        severity: 'mild' as const,
-    },
-    {
-        id: 4,
-        timestamp: new Date(new Date().setHours(11, 15, 0)),
-        eventType: 'intervention' as const,
-        description: 'Grounding music changed per patient request. Blanket provided for comfort.',
-    },
-    {
-        id: 5,
-        timestamp: new Date(new Date().setHours(12, 0, 0)),
-        eventType: 'milestone' as const,
-        description: 'Peak intensity. Patient deeply engaged, non-verbal. Monitoring continued.',
-    },
-];
+
 
 type SessionMode = 'pre' | 'live' | 'post';
 
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenForm }) => {
+    const { addToast } = useToast();
     // Session State Management (Simulating the DB status)
     const [mode, setMode] = useState<SessionMode>('pre');
 
@@ -359,50 +330,25 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     ))}
                 </div>
 
-                {/* LIVE STREAM (Bottom) */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 relative min-h-[400px] shadow-xl">
-                    <div className="flex items-center gap-4 mb-8 pb-4 border-b border-slate-800/50">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
-                            <Clock className="w-5 h-5 text-indigo-400" />
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-bold text-slate-200">Session Stream</h3>
-                            <p className="text-xs text-slate-400 font-medium">Real-time event log</p>
-                        </div>
-                    </div>
-                    {/* Mock Stream */}
-                    <div className="space-y-0 relative pl-4">
-                        <div className="absolute top-2 bottom-4 left-[29px] w-0.5 bg-slate-800" />
-                        {MOCK_TIMELINE_EVENTS.map((event, i) => (
-                            <div key={event.id} className="relative pl-12 py-3 group">
-                                <div className={`absolute left-0 top-6 w-4 h-4 rounded-full border-[3px] border-slate-900 z-10 transition-transform duration-300 group-hover:scale-125
-                                    ${event.eventType === 'safety_event' ? 'bg-red-500 ring-4 ring-red-900/20' :
-                                        event.eventType === 'intervention' ? 'bg-amber-500 ring-4 ring-amber-900/20' :
-                                            'bg-blue-500 ring-4 ring-blue-900/20'}`}
-                                />
-                                <div className={`p-5 rounded-2xl border transition-all duration-300
-                                    ${event.eventType === 'safety_event'
-                                        ? 'bg-red-950/10 border-red-500/20 hover:border-red-500/40 hover:bg-red-950/20'
-                                        : 'bg-slate-800/40 border-slate-800 hover:border-slate-600 hover:bg-slate-800/60'}`}>
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <span className="text-sm font-mono font-bold text-slate-400">{event.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                        <span className={`text-xs uppercase font-extrabold tracking-widest px-2.5 py-1 rounded-md border
-                                            ${event.eventType === 'safety_event' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
-                                                event.eventType === 'intervention' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                                                    'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>
-                                            {event.eventType}
-                                        </span>
-                                    </div>
-                                    <p className="text-slate-300 text-sm">{event.description}</p>
-                                </div>
-                            </div>
-                        ))}
-                        {/* "End of Stream" Indicator */}
-                        <div className="relative pl-12 py-6 opacity-30">
-                            <div className="absolute left-[13px] top-8 w-2 h-2 rounded-full bg-slate-700" />
-                            <p className="text-xs text-slate-400 italic">Session initialized at 09:00 AM</p>
-                        </div>
-                    </div>
+                {/* Live Session Outputs (WO-311) */}
+                <div className="space-y-6">
+                    <SessionVitalsTrendChart
+                        sessionId={journey.session?.sessionNumber?.toString() || "1"}
+                        substance={journey.session?.substance}
+                        onThresholdViolation={(vital, value) => {
+                            addToast({
+                                title: `[ALERT] ${vital} threshold exceeded`,
+                                message: `${vital}: ${value} — review immediately`,
+                                type: 'error',
+                                persistent: true
+                            });
+                        }}
+                    />
+
+                    <LiveSessionTimeline
+                        sessionId={journey.session?.sessionNumber?.toString() || "1"}
+                        active={mode === 'live'}
+                    />
                 </div>
             </div>
         );

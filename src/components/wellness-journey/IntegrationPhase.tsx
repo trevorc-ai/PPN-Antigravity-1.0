@@ -3,6 +3,7 @@ import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activ
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import SymptomDecayCurve from '../arc-of-care/SymptomDecayCurve';
 import PulseCheckWidget from '../arc-of-care/PulseCheckWidget';
+import { PatientOutcomePanel } from './PatientOutcomePanel';
 
 interface IntegrationPhaseProps {
     journey: any;
@@ -43,6 +44,12 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
+
+            {/* NEW: Longitudinal Outcome Visualizations (WO-312) */}
+            <PatientOutcomePanel
+                patientId="PT-RISK9W2P"
+                sessionId={journey.session?.sessionNumber?.toString() || "1"}
+            />
 
             {/* 1. TOP ROW: Symptom Decay & Pulse Check Widget (Full Width Stack) */}
             <div className="space-y-6">

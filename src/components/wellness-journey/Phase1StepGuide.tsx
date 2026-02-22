@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, ChevronDown, ChevronUp, Edit3, CheckCircle2 } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
+import { RiskEligibilityReport } from './RiskEligibilityReport';
+import { runContraindicationEngine, type IntakeScreeningData } from '../../services/contraindicationEngine';
 
 // ── PHASE 1 COLOR: INDIGO ─────────────────────────────────────────────────────
 // Red = warnings/adverse events ONLY.
@@ -44,47 +46,48 @@ export const PHASE1_STEPS: Phase1Step[] = [
     },
 ];
 
-// ── AllCompletePanel ──────────────────────────────────────────────────────────
-interface AllCompletePanelProps {
+// ── EligibilityPanel ──────────────────────────────────────────────────────────
+interface EligibilityPanelProps {
     steps: Phase1Step[];
     completedFormIds: Set<string>;
     onStartStep: (formId: WellnessFormId) => void;
     onCompletePhase?: () => void;
 }
 
-const AllCompletePanel: React.FC<AllCompletePanelProps> = ({
+const EligibilityPanel: React.FC<EligibilityPanelProps> = ({
     steps,
-    completedFormIds,
     onStartStep,
     onCompletePhase,
 }) => {
     const [reviewOpen, setReviewOpen] = useState(false);
 
+    // Mock data for the engine — in production this comes from the saved DB records
+    const mockIntakeData: IntakeScreeningData = {
+        patientId: 'PT-RISK9W2P',
+        sessionSubstance: 'Psilocybin',
+        medications: ['Sertraline (tapering)', 'Lisinopril'], // Relative: SSRI
+        psychiatricHistory: ['Anxiety', 'Depression'],
+        familyHistory: [],
+        cssrsScore: 0,
+        lastSystolicBP: 125,
+        isPregnant: false,
+        ageYears: 34,
+        phq9Score: 22,
+        gad7Score: 18,
+        pcl5Score: 35,
+        bmi: 24.5
+    };
+
+    const result = runContraindicationEngine(mockIntakeData);
+
     return (
-        <div className="space-y-3">
-            <div className="rounded-2xl bg-teal-900/20 p-6">
-                <div className="flex flex-col sm:flex-row items-center gap-5">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-teal-500/15 flex items-center justify-center">
-                        <CheckCircle2 className="w-7 h-7 text-teal-400" aria-hidden="true" />
-                    </div>
-                    <div className="flex-1 text-center sm:text-left">
-                        <h2 className="text-xl font-black text-teal-200 leading-tight">All Preparation Steps Complete</h2>
-                        <p className="text-sm text-slate-400 mt-1">Patient is cleared for Phase 2: Dosing Session.</p>
-                    </div>
-                    {onCompletePhase && (
-                        <button
-                            id="phase1-complete-unlock-phase2"
-                            data-tour="complete-phase-1"
-                            onClick={onCompletePhase}
-                            className="flex-shrink-0 flex items-center gap-3 px-7 py-3.5 bg-teal-800/40 hover:bg-teal-700/50 border border-teal-600/40 text-teal-200 font-black text-base rounded-2xl transition-all active:scale-95 shadow-lg group whitespace-nowrap"
-                            aria-label="Mark Phase 1 complete and unlock Phase 2"
-                        >
-                            Unlock Phase 2
-                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-                        </button>
-                    )}
-                </div>
-            </div>
+        <div className="space-y-4">
+            <RiskEligibilityReport
+                result={result}
+                onOverrideConfirmed={(justification) => console.log('Override saved:', justification)}
+                onExportPDF={() => console.log('Exporting PDF...')}
+                onProceedToPhase2={onCompletePhase}
+            />
 
             <div className="rounded-2xl bg-slate-800/30 overflow-hidden">
                 <button
@@ -292,7 +295,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
             {/* ── All complete state */}
             {allComplete && (
-                <AllCompletePanel
+                <EligibilityPanel
                     steps={PHASE1_STEPS}
                     completedFormIds={completedFormIds}
                     onStartStep={onStartStep}

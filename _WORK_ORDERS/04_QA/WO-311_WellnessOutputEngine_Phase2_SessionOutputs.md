@@ -1,8 +1,8 @@
 ---
 id: WO-311
 title: "Wellness Journey Output Engine — Phase 2: Session Outputs"
-status: 01_TRIAGE
-owner: LEAD
+status: 04_QA
+owner: INSPECTOR
 created: 2026-02-21
 created_by: CUE
 failure_count: 0
