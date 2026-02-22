@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     ShieldCheck,
     Printer,
@@ -31,6 +31,13 @@ const Analytics = () => {
     const [selectedDateRange, setSelectedDateRange] = useState<string>('30');
     const analytics = useAnalyticsData(siteId);
     const { benchmark, loading: benchmarkLoading } = useSafetyBenchmark();
+
+    // Filter data based on selections (Placeholder for when real array data is added)
+    const filteredData = useMemo(() => {
+        // Since analytics endpoint returns KPI scalars right now, this is a no-op that passes undefined
+        // to tell child components to use their internal mock data.
+        return undefined;
+    }, [analytics, selectedSubstance, selectedDateRange]);
 
     useEffect(() => {
         const fetchUserSite = async () => {
@@ -295,7 +302,7 @@ const Analytics = () => {
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
                         </div>
-                        <ClinicPerformanceRadar />
+                        <ClinicPerformanceRadar data={filteredData} />
                     </GlassmorphicCard>
                 </div>
 
@@ -306,7 +313,7 @@ const Analytics = () => {
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</h3>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
                         </div>
-                        <PatientConstellation />
+                        <PatientConstellation data={filteredData} />
                     </GlassmorphicCard>
                 </div>
 
