@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState, useEffect, useCallback } from 'react';
+import React, { FC, useMemo, useState, useEffect, useRef } from 'react';
 import {
     ComposedChart, Line, ReferenceLine, ReferenceDot,
     XAxis, YAxis, CartesianGrid, Tooltip,
@@ -93,8 +93,12 @@ const LegendItem: FC<{ color: string; solid?: boolean; dashed?: boolean; label: 
 export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({ sessionId, substance, onThresholdViolation }) => {
     const [data, setData] = useState<VitalsSnapshot[]>([]);
 
+    const hasFiredRef = useRef(false);
+
     // Simulate real-time data loading
     useEffect(() => {
+        if (hasFiredRef.current) return;
+
         // Base starting time
         const baseTime = new Date();
         baseTime.setHours(9, 0, 0, 0);
@@ -118,6 +122,8 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({ sess
                 onThresholdViolation('Heart Rate', v.heartRate);
             }
         });
+
+        hasFiredRef.current = true;
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionId]);
