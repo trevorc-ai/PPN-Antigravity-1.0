@@ -61,7 +61,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
 
       <div className="relative z-10">
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{title}</h3>
-        <div className="text-4xl font-black tracking-tighter text-slate-200 mb-2">{value}</div>
+        <div className={`text-4xl font-black tracking-tighter mb-2 ${styles.text}`}>{value}</div>
 
         <div className="flex items-center gap-2 text-sm mb-1">
           <span className={`font-bold px-2 py-0.5 rounded-md ${change.startsWith('+') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-300'}`}>
@@ -93,8 +93,8 @@ const NextStepItem: React.FC<NextStepProps> = ({ number, text, link, urgent }) =
       className="flex items-center gap-4 p-4 rounded-3xl bg-slate-900/40 backdrop-blur-sm hover:bg-slate-800/60 border border-slate-800 hover:border-slate-600 transition-all group text-left w-full shadow-lg"
     >
       <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-sm transition-colors ${urgent
-          ? 'bg-red-500/10 text-red-500 border border-red-500/30 group-hover:bg-red-500/20'
-          : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500/20'
+        ? 'bg-red-500/10 text-red-500 border border-red-500/30 group-hover:bg-red-500/20'
+        : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500/20'
         }`}>
         {number}
       </div>
@@ -213,8 +213,8 @@ export default function Dashboard() {
                 {protocolsLoading ? '...' : '↻ Refresh'}
               </button>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-200 mt-4">
-              Clinical <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-400">Intelligence</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter mt-4" style={{ color: '#A8B5D1' }}>
+              Dashboard
             </h1>
           </div>
 
@@ -304,7 +304,9 @@ export default function Dashboard() {
 
         {/* QUICK ACTIONS */}
         <Section spacing="tight">
-          <h2 className="text-xl font-black tracking-tight mb-4 text-slate-200">Quick Actions</h2>
+          <div className="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
+            <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <button
               data-tour="wellness-journey"
