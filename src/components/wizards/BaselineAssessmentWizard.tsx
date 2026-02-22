@@ -276,7 +276,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 <div className="flex items-center justify-between">
                     <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
                         Psychometric Scores
-                        <AdvancedTooltip content="Total composite scores from standardized assessments. PHQ-9 screens for depression severity (0–27), GAD-7 for anxiety (0–21), ACE for adverse childhood experiences (0–10), PCL-5 for PTSD symptom severity (0–80). At least one score is required to save." tier="standard">
+                        <AdvancedTooltip content="Total composite scores from standardized assessments. PHQ-9 screens for depression severity (0–27), GAD-7 for anxiety (0–21), ACE for adverse childhood experiences (0–10), PCL-5 for PTSD symptom severity (0–80). At least one score is required to save." tier="standard" side="bottom">
                             <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About psychometric scores" />
                         </AdvancedTooltip>
                         <span className="text-slate-600 font-normal text-sm ml-0.5">at least one required</span>
