@@ -5,8 +5,6 @@ import { useLiveNews } from '../hooks/useLiveNews';
 
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
-import RegulatoryMosaic from '../components/analytics/RegulatoryMosaic';
-
 
 const FeatureArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
   return (
@@ -98,7 +96,6 @@ const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [goodNewsOnly, setGoodNewsOnly] = useState(true);
   const [sortBy, setSortBy] = useState<'recent' | 'cited'>('recent');
-  const [selectedStateFilter, setSelectedStateFilter] = useState<string | null>(null);
 
   const categories = ['All', 'Regulation', 'Clinical Trials', 'Industry'];
 
@@ -106,18 +103,6 @@ const News: React.FC = () => {
     const currentIndex = categories.indexOf(selectedCategory);
     const nextIndex = (currentIndex + 1) % categories.length;
     setSelectedCategory(categories[nextIndex]);
-  };
-
-  // Handler for state selection from regulatory grid
-  const handleStateSelect = (stateCode: string) => {
-    // Map state codes to state names for search
-    const stateNames: Record<string, string> = {
-      'OR': 'Oregon', 'CO': 'Colorado', 'CA': 'California', 'WA': 'Washington',
-      'TX': 'Texas', 'NY': 'New York', 'FL': 'Florida', 'MA': 'Massachusetts',
-      'MI': 'Michigan', 'AZ': 'Arizona', 'NV': 'Nevada', 'CT': 'Connecticut'
-    };
-    setSelectedStateFilter(stateCode);
-    setSearchQuery(stateNames[stateCode] || stateCode);
   };
 
   // Filter logic
@@ -152,228 +137,186 @@ const News: React.FC = () => {
   }, [articles, searchQuery, selectedCategory, goodNewsOnly, sortBy]);
 
   return (
-    <PageContainer className="animate-in fade-in duration-1000">
-      <Section spacing="default" className="flex flex-col lg:flex-row gap-10">
+    <div className="relative min-h-screen bg-[#0A0F1C] overflow-hidden text-slate-300">
+      {/* Background Texture & Glows */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)] pointer-events-none z-0" />
+      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none opacity-50 z-0" />
 
-        {/* Main Feed Section */}
-        <div className="flex-1 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
-            <div>
-              <h1 className="text-5xl font-black tracking-tighter text-slate-300">
-                Intelligence Hub
-              </h1>
-              <div className="flex items-center gap-3 mt-2">
-                {liveCount > 0 && (
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">{liveCount} live articles</span>
-                  </span>
-                )}
-                {feedLoading && (
-                  <span className="text-xs text-slate-500 font-medium">Fetching feeds…</span>
-                )}
-                {lastFetched && !feedLoading && (
-                  <button onClick={refresh} className="text-xs text-slate-600 hover:text-slate-400 transition-colors font-medium">
-                    Updated {lastFetched.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · Refresh
-                  </button>
-                )}
+      <PageContainer className="relative z-10 animate-in fade-in duration-1000 mt-4">
+        <Section spacing="default" className="flex flex-col lg:flex-row gap-10 border-none">
+
+          {/* Main Feed Section */}
+          <div className="flex-1 space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
+              <div>
+                <h1 className="text-5xl font-black tracking-tighter text-slate-300">
+                  Intelligence Hub
+                </h1>
+                <div className="flex items-center gap-3 mt-2">
+                  {liveCount > 0 && (
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">{liveCount} live articles</span>
+                    </span>
+                  )}
+                  {feedLoading && (
+                    <span className="text-xs text-slate-500 font-medium">Fetching feeds…</span>
+                  )}
+                  {lastFetched && !feedLoading && (
+                    <button onClick={refresh} className="text-xs text-slate-600 hover:text-slate-400 transition-colors font-medium">
+                      Updated {lastFetched.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · Refresh
+                    </button>
+                  )}
+                </div>
+              </div>
+              <ConnectFeedButton />
+            </div>
+
+            {articles.length > 0 && <FeatureArticle article={articles[0]} />}
+
+            {/* Filter Bar */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 bg-[#1c222d]/40 border border-slate-800 p-2 rounded-2xl backdrop-blur-md mt-8">
+              <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
+                <button
+                  onClick={() => setSortBy('recent')}
+                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                >
+                  <span className="material-symbols-outlined text-sm">schedule</span>
+                  Most Recent
+                </button>
+                <button
+                  onClick={() => setSortBy('cited')}
+                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                >
+                  <span className="material-symbols-outlined text-sm">star</span>
+                  Most Cited
+                </button>
+              </div>
+
+              <button
+                onClick={cycleCategory}
+                className={`px-4 py-2.5 border rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-300 hover:text-slate-300'}`}
+              >
+                {selectedCategory === 'All' ? 'Compound Type' : selectedCategory}
+                <span className="material-symbols-outlined text-base">expand_more</span>
+              </button>
+
+              <div className="relative flex-1 group">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-lg group-focus-within:text-primary transition-colors">search</span>
+                <input
+                  type="text"
+                  placeholder="Search research..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full h-11 bg-black/40 border border-slate-800 rounded-xl pl-12 pr-4 text-sm font-bold text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all"
+                />
               </div>
             </div>
-            <ConnectFeedButton />
+
+            <div className="space-y-6 pt-6">
+              <div className="flex items-center gap-3">
+                <div className="w-1 h-6 bg-primary rounded-full"></div>
+                <h2 className="text-2xl font-black text-slate-300 tracking-tighter">News Feed</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {filteredNews.map(article => (
+                  <NewsCard key={article.id} article={article} />
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Regulatory Mosaic — Section header + map */}
-          <div className="mb-14">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-xs font-black text-emerald-400 uppercase tracking-widest">Live</span>
-                  </span>
+          {/* Sidebar */}
+          <aside className="lg:w-[340px] shrink-0 space-y-10">
+
+            {/* Trending Topics */}
+            <section className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-300">
+                <span className="material-symbols-outlined text-lg">trending_up</span>
+                <h3 className="text-xs font-black tracking-[0.2em]">Trending Topics</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {['#Psilocybin', '#MDMA-Research', '#Neuroscience', '#PhaseIII', '#ReformBill', '#Ligands'].map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setSearchQuery(tag.replace('#', ''))}
+                    className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-xs font-bold text-slate-300 hover:text-slate-300 hover:border-primary/50 transition-all tracking-wide"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* Weekly Briefing */}
+            <section className="bg-[#1c222d]/60 border border-slate-800 rounded-[2.5rem] p-10 space-y-6 relative overflow-hidden group shadow-2xl">
+              <div className="space-y-2 relative z-10">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                    <span className="material-symbols-outlined text-xl">mail</span>
+                  </div>
+                  <h3 className="text-sm font-black text-slate-300 tracking-[0.2em]">Weekly Briefing</h3>
                 </div>
-                <h2 className="text-2xl font-black tracking-tighter text-slate-300">
-                  Regulatory Intelligence Map
-                </h2>
-                <p className="text-sm text-slate-500 font-medium mt-1">
-                  US state-level psychedelic therapy regulatory status — updated as legislation changes.
+                <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                  Get the most critical clinical updates delivered to your inbox every Monday morning.
                 </p>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl shrink-0">
-                <span className="material-symbols-outlined text-primary text-sm">touch_app</span>
-                <span className="text-xs font-black text-primary uppercase tracking-widest">Click a state to filter news</span>
-              </div>
-            </div>
-            <RegulatoryMosaic
-              onStateSelect={handleStateSelect}
-              externalSelectedState={selectedStateFilter}
-              showDetailPanel={false}
-            />
-          </div>
-
-          {/* State Filter Indicator */}
-          {selectedStateFilter && (
-            <div className="flex items-center gap-3 p-4 bg-primary/10 border border-primary/30 rounded-2xl">
-              <span className="material-symbols-outlined text-primary">filter_alt</span>
-              <span className="text-sm font-bold text-slate-300">
-                Showing news for: {searchQuery}
-              </span>
-              <button
-                onClick={() => {
-                  setSelectedStateFilter(null);
-                  setSearchQuery('');
-                }}
-                className="ml-auto text-xs font-black text-slate-300 hover:text-slate-300 uppercase tracking-widest transition-colors"
-              >
-                Clear Filter
-              </button>
-            </div>
-          )}
-
-          {articles.length > 0 && <FeatureArticle article={articles[0]} />}
-
-          {/* Filter Bar */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 bg-[#1c222d]/40 border border-slate-800 p-2 rounded-2xl backdrop-blur-md mt-8">
-            <div className="flex gap-1 p-1 bg-black/20 rounded-xl">
-              <button
-                onClick={() => setSortBy('recent')}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'recent' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
-              >
-                <span className="material-symbols-outlined text-sm">schedule</span>
-                Most Recent
-              </button>
-              <button
-                onClick={() => setSortBy('cited')}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest flex items-center gap-2 transition-all ${sortBy === 'cited' ? 'bg-primary text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
-              >
-                <span className="material-symbols-outlined text-sm">star</span>
-                Most Cited
-              </button>
-            </div>
-
-            <button
-              onClick={cycleCategory}
-              className={`px-4 py-2.5 border rounded-xl text-xs font-black uppercase tracking-widest flex items-center gap-4 transition-all group ${selectedCategory !== 'All' ? 'bg-primary/20 border-primary text-primary' : 'bg-black/20 border-slate-800 text-slate-300 hover:text-slate-300'}`}
-            >
-              {selectedCategory === 'All' ? 'Compound Type' : selectedCategory}
-              <span className="material-symbols-outlined text-base">expand_more</span>
-            </button>
-
-            <div className="relative flex-1 group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 text-lg group-focus-within:text-primary transition-colors">search</span>
-              <input
-                type="text"
-                placeholder="Search research..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-11 bg-black/40 border border-slate-800 rounded-xl pl-12 pr-4 text-sm font-bold text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-6 pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-1 h-6 bg-primary rounded-full"></div>
-              <h2 className="text-2xl font-black text-slate-300 tracking-tighter">News Feed</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {filteredNews.map(article => (
-                <NewsCard key={article.id} article={article} />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <aside className="lg:w-[340px] shrink-0 space-y-10">
-
-          {/* Trending Topics */}
-          <section className="space-y-6">
-            <div className="flex items-center gap-2 text-slate-300">
-              <span className="material-symbols-outlined text-lg">trending_up</span>
-              <h3 className="text-xs font-black tracking-[0.2em]">Trending Topics</h3>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {['#Psilocybin', '#MDMA-Research', '#Neuroscience', '#PhaseIII', '#ReformBill', '#Ligands'].map(tag => (
-                <button
-                  key={tag}
-                  onClick={() => setSearchQuery(tag.replace('#', ''))}
-                  className="px-4 py-2 bg-[#1c222d] border border-slate-800 rounded-full text-xs font-bold text-slate-300 hover:text-slate-300 hover:border-primary/50 transition-all tracking-wide"
-                >
-                  {tag}
+              <div className="space-y-4 relative z-10">
+                <input
+                  type="email"
+                  placeholder="professional@clinic.com"
+                  className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
+                />
+                <button className="w-full py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
+                  Subscribe Now
                 </button>
-              ))}
-            </div>
-          </section>
-
-          {/* Weekly Briefing */}
-          <section className="bg-[#1c222d]/60 border border-slate-800 rounded-[2.5rem] p-10 space-y-6 relative overflow-hidden group shadow-2xl">
-            <div className="space-y-2 relative z-10">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined text-xl">mail</span>
-                </div>
-                <h3 className="text-sm font-black text-slate-300 tracking-[0.2em]">Weekly Briefing</h3>
+                <p className="text-sm text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>
               </div>
-              <p className="text-sm text-slate-500 leading-relaxed font-medium">
-                Get the most critical clinical updates delivered to your inbox every Monday morning.
-              </p>
-            </div>
-            <div className="space-y-4 relative z-10">
-              <input
-                type="email"
-                placeholder="professional@clinic.com"
-                className="w-full bg-black/40 border border-slate-800 rounded-xl h-12 px-5 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-primary placeholder:text-slate-800 transition-all"
-              />
-              <button className="w-full py-4 bg-primary hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-[0.3em] transition-all shadow-xl shadow-primary/20 active:scale-[0.98]">
-                Subscribe Now
-              </button>
-              <p className="text-sm text-slate-600 font-bold uppercase text-center tracking-[0.2em]">Opt-out at any time. Professional use only.</p>
-            </div>
-          </section>
+            </section>
 
-          {/* Portal Metrics */}
-          <section className="bg-[#1c222d]/30 border border-slate-800 rounded-[2.5rem] p-10 space-y-8">
-            <div className="space-y-1">
-              <h3 className="text-xs font-black text-slate-300 uppercase tracking-[0.2em]">Portal Metrics</h3>
-            </div>
-
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <div className="flex justify-between items-end">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Trials</span>
-                  <span className="text-[12px] font-mono font-black text-slate-300">124</span>
-                </div>
-                <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
-                  <div className="h-full bg-primary" style={{ width: '82%' }}></div>
-                </div>
+            {/* Portal Metrics */}
+            <section className="bg-[#1c222d]/30 border border-slate-800 rounded-[2.5rem] p-10 space-y-8">
+              <div className="space-y-1">
+                <h3 className="text-xs font-black text-slate-300 uppercase tracking-[0.2em]">Portal Metrics</h3>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex justify-between items-end">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Peer Reviews</span>
-                  <span className="text-[12px] font-mono font-black text-slate-300">8,402</span>
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-end">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Trials</span>
+                    <span className="text-[12px] font-mono font-black text-slate-300">124</span>
+                  </div>
+                  <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: '82%' }}></div>
+                  </div>
                 </div>
-                <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
-                  <div className="h-full bg-accent-orange" style={{ width: '45%', backgroundColor: '#f97316' }}></div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-end">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Peer Reviews</span>
+                    <span className="text-[12px] font-mono font-black text-slate-300">8,402</span>
+                  </div>
+                  <div className="h-1.5 bg-black/40 rounded-full overflow-hidden">
+                    <div className="h-full bg-accent-orange" style={{ width: '45%', backgroundColor: '#f97316' }}></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Professional Context Node */}
-          <div className="p-6 bg-slate-900/40 border border-slate-800/60 rounded-3xl flex items-center gap-5">
-            <div className="size-12 rounded-2xl bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700">
-              <span className="material-symbols-outlined text-slate-500">verified</span>
+            {/* Professional Context Node */}
+            <div className="p-6 bg-slate-900/40 border border-slate-800/60 rounded-3xl flex items-center gap-5">
+              <div className="size-12 rounded-2xl bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700">
+                <span className="material-symbols-outlined text-slate-500">verified</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Source Context</span>
+                <span className="text-xs font-mono font-bold text-clinical-green uppercase">Verified Research Node</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-black text-slate-300 uppercase tracking-widest leading-none mb-1">Source Context</span>
-              <span className="text-xs font-mono font-bold text-clinical-green uppercase">Verified Research Node</span>
-            </div>
-          </div>
-        </aside>
-      </Section>
-    </PageContainer>
+          </aside>
+        </Section>
+      </PageContainer>
+    </div>
   );
 };
 
