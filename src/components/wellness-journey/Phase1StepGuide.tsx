@@ -4,6 +4,8 @@ import type { WellnessFormId } from './WellnessFormRouter';
 import { RiskEligibilityReport } from './RiskEligibilityReport';
 import { ComplianceDocumentsPanel } from './ComplianceDocumentsPanel';
 import { runContraindicationEngine, type IntakeScreeningData } from '../../services/contraindicationEngine';
+import { useToast } from '../../contexts/ToastContext';
+import { exportRiskReportToPDF } from '../../services/pdfGenerator';
 
 // ── PHASE 1 COLOR: INDIGO ─────────────────────────────────────────────────────
 // Red = warnings/adverse events ONLY.
@@ -56,6 +58,8 @@ interface EligibilityPanelProps {
 }
 
 export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, completedFormIds, onStartStep, onCompletePhase }) => {
+    const { addToast } = useToast();
+
     // Generate risk report based on mock patient data.
     // In production, this would use live clinical records.
     const mockIntakeData: IntakeScreeningData = {
@@ -76,11 +80,20 @@ export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, compl
 
     const result = runContraindicationEngine(mockIntakeData);
 
+    const handleExport = () => {
+        exportRiskReportToPDF(result);
+        addToast({
+            title: 'Report Downloaded',
+            message: 'Risk Eligibility Report has been generated and saved as PDF.',
+            type: 'success'
+        });
+    };
+
     return (
         <RiskEligibilityReport
             result={result}
             onOverrideConfirmed={(justification) => console.log('Override saved:', justification)}
-            onExportPDF={() => console.log('Exporting PDF...')}
+            onExportPDF={handleExport}
             onProceedToPhase2={onCompletePhase}
         />
     );

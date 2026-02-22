@@ -96,7 +96,7 @@ const Landing: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-300 selection:bg-primary/30 selection:text-slate-300 font-sans overflow-x-hidden relative">
+    <div className="min-h-screen bg-transparent text-slate-300 selection:bg-primary/30 selection:text-slate-300 font-sans overflow-clip relative">
 
       {/* ── Sticky Nav Bar ─────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0a1628]/80 backdrop-blur-md border-b border-slate-800/60">

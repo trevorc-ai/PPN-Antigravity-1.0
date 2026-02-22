@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
     ShieldOff, AlertTriangle, ShieldCheck, ChevronDown, ChevronUp,
-    FileText, ClipboardCheck, Lock, Unlock
+    FileText, ClipboardCheck, Lock, Unlock, Info
 } from 'lucide-react';
 import type { ContraindicationResult, ContraindicationFlag } from '../../services/contraindicationEngine';
+import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 // ============================================================================
 // PROPS
@@ -152,7 +153,16 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
             <div className="flex items-center gap-3 pb-4 border-b border-slate-700/50 flex-shrink-0">
                 <FileText className="w-6 h-6 text-slate-400" />
                 <div>
-                    <h2 className="text-xl font-black text-slate-200">Risk Eligibility Report</h2>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-xl font-black text-slate-200">Risk Eligibility Report</h2>
+                        <AdvancedTooltip
+                            content="Review of absolute and relative contraindications algorithmically determined from patient history and intended substance."
+                            tier="standard"
+                            side="top"
+                        >
+                            <Info className="w-4 h-4 text-slate-500 hover:text-white transition-colors cursor-help print:hidden" />
+                        </AdvancedTooltip>
+                    </div>
                     <p className="text-sm text-slate-400 mt-0.5">
                         Generated {new Date(result.generatedAt).toLocaleString('en-US')} · Substance: {result.sessionSubstance}
                     </p>

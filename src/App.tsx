@@ -131,7 +131,7 @@ const ProtectedLayout: React.FC<{
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 selection:bg-primary/30 selection:text-slate-300">
+    <div className="flex h-screen overflow-clip bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 selection:bg-primary/30 selection:text-slate-300">
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
