@@ -113,6 +113,19 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
     if (mode === 'pre') {
         return (
             <div className="space-y-6 animate-in fade-in duration-500">
+                {/* ── PREREQUISITE BUTTONS ── */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onClick={() => onOpenForm('dosing-protocol')} className="flex justify-center items-center gap-2 px-5 py-4 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-400 font-bold rounded-2xl transition-all active:scale-95 text-base shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+                        <span className="material-symbols-outlined text-[20px]">medication</span>Dosing Protocol
+                    </button>
+                    <button onClick={() => onOpenForm('session-vitals')} className="flex justify-center items-center gap-2 px-5 py-4 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-400 font-bold rounded-2xl transition-all active:scale-95 text-base shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+                        <span className="material-symbols-outlined text-[20px]">monitor_heart</span>Record Vitals
+                    </button>
+                    <button onClick={() => onOpenForm('rescue-protocol')} className="flex justify-center items-center gap-2 px-5 py-4 bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 font-bold rounded-2xl transition-all active:scale-95 text-base shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+                        <span className="material-symbols-outlined text-[20px]">emergency</span>Log Rescue Protocol
+                    </button>
+                </div>
+
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
                     <div className="flex items-start justify-between mb-8">
                         <div>
@@ -127,6 +140,27 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     {/* Pre-Flight Checklist */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div className="space-y-4">
+                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-1">Session Plan</h3>
+                            {/* Protocol Card */}
+                            <div className="px-5 py-6 bg-slate-800/40 border border-slate-700/50 rounded-xl transition-colors min-h-[148px]">
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
+                                        <span className="text-slate-400 text-sm">Substance</span>
+                                        <span className="text-slate-200 font-bold bg-slate-700/50 px-3 py-1 rounded text-[15px]">{journey.session.substance}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
+                                        <span className="text-slate-400 text-sm">Dosage</span>
+                                        <span className="text-slate-200 font-bold text-[15px]">{journey.session.dosage}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-slate-400 text-sm">Guide</span>
+                                        <span className="text-slate-200 font-bold text-[15px]">Dr. Calton</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
                             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-1">Required Gates</h3>
 
                             {/* Gate 1: Consent */}
@@ -135,8 +169,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                     <CheckCircle className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-slate-200 font-bold">Informed Consent</p>
-                                    <p className="text-xs text-slate-400">Verified signed • Oct 14, 2025</p>
+                                    <p className="text-slate-200 font-bold text-[15px]">Informed Consent</p>
+                                    <p className="text-sm text-slate-400">Verified signed • Oct 14, 2025</p>
                                 </div>
                             </div>
 
@@ -146,32 +180,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                                     <CheckCircle className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-slate-200 font-bold">Baseline Vitals</p>
-                                    <p className="text-xs text-slate-400">Within range • HR 72, BP 118/76</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest pl-1">Session Plan</h3>
-                            {/* Protocol Card */}
-                            <div className="p-5 bg-slate-800/40 border border-slate-700/50 rounded-xl relative overflow-hidden group hover:bg-slate-800/60 transition-colors">
-                                <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <FileText className="w-24 h-24 text-slate-400" />
-                                </div>
-                                <div className="relative z-10 space-y-3">
-                                    <div className="flex justify-between text-sm border-b border-slate-700/50 pb-2">
-                                        <span className="text-slate-400">Substance</span>
-                                        <span className="text-slate-200 font-bold bg-slate-700/50 px-2 py-0.5 rounded">{journey.session.substance}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm border-b border-slate-700/50 pb-2">
-                                        <span className="text-slate-400">Dosage</span>
-                                        <span className="text-slate-200 font-bold">{journey.session.dosage}</span>
-                                    </div>
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-slate-400">Guide</span>
-                                        <span className="text-slate-200 font-bold">Dr. Calton</span>
-                                    </div>
+                                    <p className="text-slate-200 font-bold text-[15px]">Baseline Vitals</p>
+                                    <p className="text-sm text-slate-400">Within range • HR 72, BP 118/76</p>
                                 </div>
                             </div>
                         </div>

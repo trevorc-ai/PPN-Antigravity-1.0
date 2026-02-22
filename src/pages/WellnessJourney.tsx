@@ -748,19 +748,9 @@ const WellnessJourney: React.FC = () => {
                                         />
                                     )}
                                     {activePhase === 2 && (
-                                        <>
-                                            <TreatmentPhase journey={journey} onOpenForm={handleOpenForm} />
-                                            {/* Phase 2 form sequence — Setup & Emergency Only (Live actions are in Cockpit) */}
-                                            <div className="flex flex-wrap gap-3 pt-2">
-                                                <button onClick={() => handleOpenForm('dosing-protocol')} className="flex items-center gap-2 px-5 py-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                                    <span className="material-symbols-outlined text-base">medication</span>Dosing Protocol
-                                                </button>
-                                                <button onClick={() => handleOpenForm('rescue-protocol')} className="flex items-center gap-2 px-5 py-3 bg-red-900/30 hover:bg-red-900/50 border border-red-700/40 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-sm">
-                                                    <span className="material-symbols-outlined text-base">emergency</span>Rescue Protocol Log
-                                                </button>
-                                            </div>
-                                        </>
+                                        <TreatmentPhase journey={journey} onOpenForm={handleOpenForm} />
                                     )}
+
                                     {activePhase === 3 && (
                                         <>
                                             <IntegrationPhase journey={journey} />
