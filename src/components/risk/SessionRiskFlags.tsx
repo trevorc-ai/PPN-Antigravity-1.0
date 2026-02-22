@@ -91,14 +91,14 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
                 ))}
             </div>
 
-            {/* Recommended Actions */}
+            {/* Risk Mitigation Strategies */}
             <div className="mt-4 pt-4 border-t border-yellow-500/20">
                 <p className="text-sm text-yellow-300 font-semibold mb-2">
-                    Recommended Actions:
+                    Risk Mitigation Strategies:
                 </p>
                 <ul className="text-sm text-slate-300 space-y-1 list-disc list-outside pl-4">
                     {flags.map((flag, index) => (
-                        <li key={index}>{flag.recommendation}</li>
+                        <li key={index}>{flag.mitigation}</li>
                     ))}
                 </ul>
             </div>

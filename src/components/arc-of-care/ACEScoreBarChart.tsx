@@ -24,8 +24,8 @@ const ACEScoreBarChart: React.FC<ACEScoreBarChartProps> = ({ score }) => {
     const getSeverity = (value: number) => {
         if (value === 0) return { label: 'None', color: 'emerald', icon: Shield, risk: 'No additional support needed' };
         if (value <= 3) return { label: 'Low', color: 'blue', icon: Shield, risk: 'Standard integration protocol' };
-        if (value <= 6) return { label: 'Moderate', color: 'amber', icon: AlertCircle, risk: '4-6 integration sessions recommended' };
-        return { label: 'High', color: 'red', icon: AlertTriangle, risk: '6-8 integration sessions strongly recommended' };
+        if (value <= 6) return { label: 'Moderate', color: 'amber', icon: AlertCircle, risk: '4-6 integration sessions historically indicated' };
+        return { label: 'High', color: 'red', icon: AlertTriangle, risk: '6-8 integration sessions strongly indicated' };
     };
 
     const severity = getSeverity(clampedScore);

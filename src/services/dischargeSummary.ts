@@ -79,7 +79,7 @@ export function generateDischargeSummaryText(data: DischargeSummaryData): string
         'ONGOING VULNERABILITIES',
         data.ongoingVulnerabilities,
         '',
-        'DISCHARGE RECOMMENDATIONS',
+        'POST-SESSION RISK FACTORS',
         `[x] Continue integration therapy with: ${data.referralName}`,
         `[x] Follow-up psychiatric assessment in ${data.followUpWeeks} weeks`,
         `[x] Emergency plan: ${data.emergencyPlanSummary}`,

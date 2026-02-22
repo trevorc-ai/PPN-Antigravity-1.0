@@ -214,7 +214,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
             {showAI && (
                 <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-4 animate-in slide-in-from-top duration-300">
                     <p className="text-slate-400 text-sm leading-relaxed">
-                        <strong className="text-slate-300">Analysis:</strong> Patient profile (High ACE, Severe TRD) matches cluster B2. Historical data suggests slower initial response but durable remission if integration protocol is strictly followed. Recommended strict adherence to 3+ integration sessions.
+                        <strong className="text-slate-300">Analysis:</strong> Patient profile (High ACE, Severe TRD) matches cluster B2. Historical data suggests slower initial response but durable remission if integration protocol is strictly followed. Strict adherence to 3+ integration sessions historically correlates with sustained outcomes.
                     </p>
                 </div>
             )}
@@ -244,8 +244,8 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                             onClick={canProceedToPhase2 ? onProceedToPhase2 : undefined}
                             disabled={!canProceedToPhase2}
                             className={`w-full py-4 rounded-2xl text-base sm:text-lg font-black uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 ${canProceedToPhase2
-                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:-translate-y-1'
-                                    : 'bg-slate-800/60 text-slate-500 cursor-not-allowed border border-slate-700/50'
+                                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:-translate-y-1'
+                                : 'bg-slate-800/60 text-slate-500 cursor-not-allowed border border-slate-700/50'
                                 }`}
                         >
                             {canProceedToPhase2 ? (

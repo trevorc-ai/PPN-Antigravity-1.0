@@ -35,7 +35,7 @@ export interface RiskFlag {
     value: number | string;
     threshold?: number;
     message: string;
-    recommendation: string;
+    mitigation: string;
 }
 
 /**
@@ -54,7 +54,7 @@ export const calculateBaselineRisks = (baseline: BaselineRisk): RiskFlag[] => {
                 value: baseline.phq9,
                 threshold: 20,
                 message: 'Severe Depression',
-                recommendation: 'Trauma-informed approach required. Close monitoring during session.'
+                mitigation: 'Trauma-informed approach required. Close monitoring during session.'
             });
         } else if (baseline.phq9 >= 15) {
             flags.push({
@@ -64,7 +64,7 @@ export const calculateBaselineRisks = (baseline: BaselineRisk): RiskFlag[] => {
                 value: baseline.phq9,
                 threshold: 15,
                 message: 'Moderately Severe Depression',
-                recommendation: 'Monitor closely during session.'
+                mitigation: 'Monitor closely during session.'
             });
         }
     }
@@ -79,7 +79,7 @@ export const calculateBaselineRisks = (baseline: BaselineRisk): RiskFlag[] => {
                 value: baseline.gad7,
                 threshold: 15,
                 message: 'Severe Anxiety',
-                recommendation: 'Have rescue medication available. Ensure experienced practitioner present.'
+                mitigation: 'Have rescue medication available. Ensure experienced practitioner present.'
             });
         } else if (baseline.gad7 >= 10) {
             flags.push({
@@ -89,7 +89,7 @@ export const calculateBaselineRisks = (baseline: BaselineRisk): RiskFlag[] => {
                 value: baseline.gad7,
                 threshold: 10,
                 message: 'Moderate Anxiety',
-                recommendation: 'Monitor for anxiety escalation during session.'
+                mitigation: 'Monitor for anxiety escalation during session.'
             });
         }
     }
@@ -104,7 +104,7 @@ export const calculateBaselineRisks = (baseline: BaselineRisk): RiskFlag[] => {
                 value: baseline.pcl5,
                 threshold: 33,
                 message: 'Significant PTSD Symptoms',
-                recommendation: 'Trauma-informed approach required. Have rescue medication available.'
+                mitigation: 'Trauma-informed approach required. Have rescue medication available.'
             });
         }
     }
@@ -119,7 +119,7 @@ export const calculateBaselineRisks = (baseline: BaselineRisk): RiskFlag[] => {
                 value: baseline.ace,
                 threshold: 6,
                 message: 'High Childhood Adversity',
-                recommendation: 'Trauma-informed approach required. Close monitoring during session.'
+                mitigation: 'Trauma-informed approach required. Close monitoring during session.'
             });
         } else if (baseline.ace >= 4) {
             flags.push({
@@ -129,7 +129,7 @@ export const calculateBaselineRisks = (baseline: BaselineRisk): RiskFlag[] => {
                 value: baseline.ace,
                 threshold: 4,
                 message: 'Moderate Childhood Adversity',
-                recommendation: 'Be aware of potential trauma responses during session.'
+                mitigation: 'Be aware of potential trauma responses during session.'
             });
         }
     }
@@ -154,7 +154,7 @@ export const calculateVitalAnomalies = (vitals: VitalSigns): RiskFlag[] => {
                 value: `${vitals.heartRate} bpm (${percentChange > 0 ? '+' : ''}${percentChange.toFixed(0)}% from baseline)`,
                 threshold: 30,
                 message: 'Heart Rate Anomaly Detected',
-                recommendation: 'Monitor closely. Consider reducing stimulation. Have rescue medication ready.'
+                mitigation: 'Monitor closely. Consider reducing stimulation. Have rescue medication ready.'
             });
         }
     }
@@ -167,7 +167,7 @@ export const calculateVitalAnomalies = (vitals: VitalSigns): RiskFlag[] => {
             metric: 'Blood Pressure',
             value: `${vitals.bloodPressureSystolic}/${vitals.bloodPressureDiastolic} mmHg`,
             message: 'Elevated Blood Pressure',
-            recommendation: 'Monitor closely. Consider reducing stimulation.'
+            mitigation: 'Monitor closely. Consider reducing stimulation.'
         });
     }
 
@@ -180,7 +180,7 @@ export const calculateVitalAnomalies = (vitals: VitalSigns): RiskFlag[] => {
             value: `${vitals.spo2}%`,
             threshold: 95,
             message: 'Low Oxygen Saturation',
-            recommendation: 'Check breathing. Consider supplemental oxygen if <90%.'
+            mitigation: 'Check breathing. Consider supplemental oxygen if <90%.'
         });
     }
 
@@ -193,7 +193,7 @@ export const calculateVitalAnomalies = (vitals: VitalSigns): RiskFlag[] => {
                 metric: 'Temperature',
                 value: `${vitals.temperature}°F`,
                 message: vitals.temperature > 99.5 ? 'Elevated Temperature' : 'Low Temperature',
-                recommendation: 'Monitor closely. Document in session notes.'
+                mitigation: 'Monitor closely. Document in session notes.'
             });
         }
     }
@@ -232,7 +232,7 @@ export const calculateProgressRisks = (trend: ProgressTrend): RiskFlag[] => {
             metric: trend.metric,
             value: `${latestValue} (↑${increase} from previous)`,
             message: 'Declining Progress Detected',
-            recommendation: 'Schedule additional integration session. Assess for external stressors. Consider booster session.'
+            mitigation: 'Schedule additional integration session. Assess for external stressors. Consider booster session.'
         });
     }
 
@@ -246,7 +246,7 @@ export const calculateProgressRisks = (trend: ProgressTrend): RiskFlag[] => {
             metric: trend.metric,
             value: `${latestValue} (${percentFromBaseline.toFixed(0)}% from baseline)`,
             message: 'Returning to Baseline',
-            recommendation: 'Review treatment plan. Consider booster session.'
+            mitigation: 'Review treatment plan. Consider booster session.'
         });
     }
 

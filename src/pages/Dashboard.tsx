@@ -232,7 +232,7 @@ export default function Dashboard() {
         <Section spacing="tight">
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Recommended Next Steps</h2>
+            <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Protocol Insights</h2>
             <span className="ml-auto text-xs text-slate-500 font-medium">Updated today</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

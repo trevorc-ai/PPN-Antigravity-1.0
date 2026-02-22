@@ -266,7 +266,7 @@ const ArcOfCareDemo: React.FC = () => {
                 {prediction && (
                     <AccordionSection
                         title="🧠 Augmented Intelligence Prediction"
-                        subtitle="Algorithm-generated integration recommendations"
+                        subtitle="Algorithm-generated integration forecasting"
                         defaultOpen={true}
                     >
                         <div className="space-y-4 pt-2">
@@ -286,7 +286,7 @@ const ArcOfCareDemo: React.FC = () => {
                                 </div>
                             </div>
                             <div className="bg-slate-800/50 rounded-xl p-4">
-                                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Recommended Sessions</p>
+                                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Forecasted Sessions</p>
                                 <p className="text-3xl font-black text-emerald-400">{prediction.sessionCount}</p>
                                 <p className="text-slate-400 text-sm mt-1">{prediction.schedule}</p>
                             </div>

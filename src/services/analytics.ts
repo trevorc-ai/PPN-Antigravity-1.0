@@ -67,15 +67,15 @@ function calculateIntegrationNeeds(baseline: Record<string, number>) {
     if (totalRisk < 25) {
         sessionCount = 4; riskLevel = 'low';
         schedule = 'Weekly for 1 month';
-        rationale = 'Low baseline risk. Standard integration protocol recommended.';
+        rationale = 'Low baseline risk. Standard integration protocol aligns with historical norms.';
     } else if (totalRisk < 50) {
         sessionCount = 8; riskLevel = 'moderate';
         schedule = 'Twice weekly for 1 month, then weekly for 1 month';
-        rationale = 'Moderate baseline risk. Enhanced integration support recommended.';
+        rationale = 'Moderate baseline risk. Enhanced integration support indicated by historical data.';
     } else if (totalRisk < 75) {
         sessionCount = 12; riskLevel = 'high';
         schedule = 'Twice weekly for 2 months, then weekly for 2 months';
-        rationale = 'High baseline risk. Intensive integration protocol recommended.';
+        rationale = 'High baseline risk. Intensive integration protocol indicated by historical data.';
     } else {
         sessionCount = 16; riskLevel = 'critical';
         schedule = 'Three times weekly for 1 month, then twice weekly for 2 months';

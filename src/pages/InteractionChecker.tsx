@@ -242,7 +242,7 @@ const InteractionChecker: React.FC = () => {
             severity: severityLabel,
             description: data.clinical_description,
             mechanism: data.mechanism,
-            clinical_recommendation: null, // not in ref_clinical_interactions schema
+            clinical_insight: null, // not in ref_clinical_interactions schema
             source: data.evidence_source ?? 'National Library of Medicine / PubMed',
             sourceUrl: data.source_url,
             isKnown: true
@@ -294,7 +294,7 @@ const InteractionChecker: React.FC = () => {
       interactor: selectedMedication,
       riskLevel: 1,
       severity: 'Low',
-      description: 'No significant clinical interactions identified in the verified reference library. Standard institutional monitoring recommended.',
+      description: 'No significant clinical interactions identified in the verified reference library. Standard institutional monitoring indicated.',
       mechanism: 'Physiological pathways appear independent or non-synergistic.',
       isKnown: false,
       source: "National Library of Medicine / PubMed (2024)",

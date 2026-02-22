@@ -415,7 +415,27 @@ const SubstanceMonograph: React.FC = () => {
                           isAnimationActive={false}
                         />
 
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }} />
+                        <PolarAngleAxis
+                          dataKey="subject"
+                          tick={(props: any) => {
+                            const { x, y, payload } = props;
+                            const dataItem = radarData.find((d: any) => d.subject === payload.value);
+                            const ki = dataItem?.ki || 0;
+                            const displayValue = ki >= 10000 ? 'No sig.' : `${ki} nM`;
+
+                            // Adjust positioning slightly to give room
+                            return (
+                              <g transform={`translate(${x},${y})`}>
+                                <text x={0} y={-4} textAnchor="middle" fill="#64748b" fontSize={10} fontWeight={800} className="uppercase tracking-wider">
+                                  {payload.value}
+                                </text>
+                                <text x={0} y={10} textAnchor="middle" fill={subColor} fontSize={11} fontWeight={700}>
+                                  {displayValue}
+                                </text>
+                              </g>
+                            );
+                          }}
+                        />
                         <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
 
                         <Radar

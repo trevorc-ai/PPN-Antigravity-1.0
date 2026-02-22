@@ -181,7 +181,7 @@ export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | nu
                     severity: 'SAFETY',
                     category: 'Patient Follow-Up',
                     headline: `Patient ${session.patient_link_code} has no documented follow-up in ${daysSince} days since their session.`,
-                    body: `Protocol recommendation: 30-day reassessment for all dosing sessions. Extended time without follow-up assessment creates a gap in safety monitoring and prevents accurate outcome tracking. Schedule a check-in to maintain continuity of care.`,
+                    body: `Clinical Insight: 30-day reassessment for all dosing sessions. Extended time without follow-up assessment creates a gap in safety monitoring and prevents accurate outcome tracking. Schedule a check-in to maintain continuity of care.`,
                     actionLabel: 'Open Patient Journey',
                     actionRoute: `/wellness-journey?patient=${session.patient_link_code}`,
                     sourceNote: `Session date: ${session.session_date} · Single-patient flag — privacy exempt per k-anon policy`,

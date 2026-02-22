@@ -144,7 +144,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
                         }.
                     </h2>
                     <p className="text-sm text-slate-400 mt-1">
-                        Patient MEQ-30 score of {meq30} suggests {
+                        Patient MEQ-30 score of {meq30} correlates with {
                             isHigherMeq ? 'sustained benefit is highly expected based on clinical literature.' :
                                 isMediumMeq ? 'moderate experiential depth; monitor integration closely.' :
                                     'limited psychedelic experience may explain slower response.'

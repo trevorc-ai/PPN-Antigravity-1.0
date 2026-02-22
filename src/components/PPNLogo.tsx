@@ -17,13 +17,14 @@ import React, { useEffect, useRef } from 'react';
  */
 
 interface PPNLogoProps {
-    size?: 'sm' | 'md' | 'lg' | 'xl';
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     animated?: boolean;
     className?: string;
     showLabel?: boolean;
 }
 
 const sizeMap = {
+    xs: { width: 44, height: 44 },
     sm: { width: 120, height: 120 },
     md: { width: 180, height: 180 },
     lg: { width: 240, height: 240 },

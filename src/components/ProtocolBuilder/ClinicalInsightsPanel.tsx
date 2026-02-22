@@ -160,7 +160,30 @@ export const ClinicalInsightsPanel: React.FC<ClinicalInsightsPanelProps> = ({
                             <ResponsiveContainer width="100%" height={200}>
                                 <RadarChart data={receptorData}>
                                     <PolarGrid stroke="#1e293b" />
-                                    <PolarAngleAxis dataKey="receptor" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                                    <PolarAngleAxis
+                                        dataKey="receptor"
+                                        tick={(props: any) => {
+                                            const { x, y, payload } = props;
+                                            const dataItem = receptorData.find((d: any) => d.receptor === payload.value);
+                                            // The affinity score stored is inverted (1/ki * 1000), let's approx back
+                                            const affinityNum = dataItem?.affinity || 0;
+                                            let displayValue = 'No sig.';
+                                            if (affinityNum > 0) {
+                                                const ki = Math.round(1000 / affinityNum);
+                                                displayValue = ki >= 10000 ? 'No sig.' : `${ki} nM`;
+                                            }
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={0} y={-4} textAnchor="middle" fill="#94a3b8" fontSize={11} fontWeight={600}>
+                                                        {payload.value}
+                                                    </text>
+                                                    <text x={0} y={10} textAnchor="middle" fill="#14b8a6" fontSize={10} fontWeight={700}>
+                                                        {displayValue}
+                                                    </text>
+                                                </g>
+                                            );
+                                        }}
+                                    />
                                     <Radar name="Affinity" dataKey="affinity" stroke="#14b8a6" fill="#14b8a6" fillOpacity={0.3} />
                                 </RadarChart>
                             </ResponsiveContainer>

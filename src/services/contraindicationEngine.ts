@@ -216,7 +216,7 @@ function checkRelativeContraindications(data: IntakeScreeningData): Contraindica
             severity: 'RELATIVE',
             category: 'PSYCHIATRIC',
             headline: 'Borderline personality disorder identified',
-            detail: 'BPD may increase risk of intense affective responses and emotional dysregulation during sessions. Heightened preparation and integration support recommended. Document clinical justification.',
+            detail: 'BPD may increase risk of intense affective responses and emotional dysregulation during sessions. Heightened preparation and integration support historically indicated. Document clinical justification.',
             source: 'Baseline Observations — Psychiatric History',
             regulatoryBasis: 'MAPS Protocol S2 §8.4',
         });
@@ -247,7 +247,7 @@ function checkRelativeContraindications(data: IntakeScreeningData): Contraindica
             severity: 'RELATIVE',
             category: 'MEDICATION',
             headline: 'SSRI detected with MDMA session — reduced efficacy + serotonin risk',
-            detail: 'SSRIs may blunt MDMA therapeutic effect and increase serotonin syndrome risk. Recommend gradual taper under physician supervision 2 weeks prior. Do not discontinue abruptly. Document clinical decision.',
+            detail: 'SSRIs may blunt MDMA therapeutic effect and increase serotonin syndrome risk. Tapering protocols often considered under physician supervision 2 weeks prior. Do not discontinue abruptly. Document clinical decision.',
             source: 'Baseline Observations — Medication List',
             regulatoryBasis: 'MAPS Protocol S2 §7.2; FDA Drug Interaction Guidance',
         });
@@ -299,7 +299,7 @@ function checkRelativeContraindications(data: IntakeScreeningData): Contraindica
             severity: 'RELATIVE',
             category: 'DEMOGRAPHIC',
             headline: `Low BMI detected (${data.bmi.toFixed(1)}) — anorexia risk`,
-            detail: 'BMI < 17.5 may indicate restrictive eating disorder. Low body weight affects substance pharmacokinetics and increases cardiovascular stress risk. Nutritional and cardiological clearance recommended.',
+            detail: 'BMI < 17.5 may indicate restrictive eating disorder. Low body weight affects substance pharmacokinetics and increases cardiovascular stress risk. Nutritional and cardiological clearance historically indicated.',
             source: 'Baseline Observations — Demographics (Weight/Height)',
             regulatoryBasis: 'DSM-5 AN Diagnostic Criteria; MAPS Protocol S2 §7.3',
         });
@@ -316,7 +316,7 @@ function checkRelativeContraindications(data: IntakeScreeningData): Contraindica
                 severity: 'RELATIVE',
                 category: 'CARDIOVASCULAR',
                 headline: `Elevated blood pressure (SBP ${data.lastSystolicBP} mmHg)`,
-                detail: 'Systolic BP > 150 mmHg indicates Stage 2 hypertension. All psychedelics produce transient cardiovascular stimulation. Physician clearance recommended. Monitor vitals at 15-minute intervals during session.',
+                detail: 'Systolic BP > 150 mmHg indicates Stage 2 hypertension. All psychedelics produce transient cardiovascular stimulation. Physician clearance historically indicated. Monitor vitals at 15-minute intervals during session.',
                 source: 'Session Vitals — Blood Pressure',
                 regulatoryBasis: 'AHA Hypertension Guidelines 2023; MAPS Protocol S2 §7.4',
             });

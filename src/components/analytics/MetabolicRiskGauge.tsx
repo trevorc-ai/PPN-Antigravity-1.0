@@ -16,24 +16,24 @@ interface MetabolicRule {
     riskLevel: 'High' | 'Moderate' | 'Low';
     score: number; // 0-100 for gauge position (0=Safe, 100=Toxic)
     color: string;
-    recommendation: string;
+    clinical_insight: string;
     mechanism: string;
 }
 
 const METABOLIC_RULES: MetabolicRule[] = [
     // MDMA (CYP2D6 Substrate)
-    { substance: 'MDMA', status: 'Poor', riskLevel: 'High', score: 90, color: '#f43f5e', recommendation: 'CONTRAINDICATED: Risk of Serotonin Syndrome. Reduce dose by 75% or avoid.', mechanism: 'CYP2D6 deficiency prevents clearance.' },
-    { substance: 'MDMA', status: 'Intermediate', riskLevel: 'Moderate', score: 65, color: '#f59e0b', recommendation: 'CAUTION: Extend observation period. Reduce dose by 25%.', mechanism: 'Reduced clearance rate.' },
-    { substance: 'MDMA', status: 'Normal', riskLevel: 'Low', score: 10, color: '#10b981', recommendation: 'Standard Protocol.', mechanism: 'Normal metabolism.' },
-    { substance: 'MDMA', status: 'Ultra-Rapid', riskLevel: 'Moderate', score: 40, color: '#f59e0b', recommendation: 'Low Efficacy risk. Consider split-dosing strategy.', mechanism: 'Rapid clearance reduces peak effect.' },
+    { substance: 'MDMA', status: 'Poor', riskLevel: 'High', score: 90, color: '#f43f5e', clinical_insight: 'CONTRAINDICATED: Risk of Serotonin Syndrome. Reduce dose by 75% or avoid.', mechanism: 'CYP2D6 deficiency prevents clearance.' },
+    { substance: 'MDMA', status: 'Intermediate', riskLevel: 'Moderate', score: 65, color: '#f59e0b', clinical_insight: 'CAUTION: Extend observation period. Reduce dose by 25%.', mechanism: 'Reduced clearance rate.' },
+    { substance: 'MDMA', status: 'Normal', riskLevel: 'Low', score: 10, color: '#10b981', clinical_insight: 'Standard Protocol.', mechanism: 'Normal metabolism.' },
+    { substance: 'MDMA', status: 'Ultra-Rapid', riskLevel: 'Moderate', score: 40, color: '#f59e0b', clinical_insight: 'Low Efficacy risk. Consider split-dosing strategy.', mechanism: 'Rapid clearance reduces peak effect.' },
 
     // Psilocybin (Glucuronidation - Less CYP dependent)
-    { substance: 'Psilocybin', status: 'Poor', riskLevel: 'Low', score: 15, color: '#10b981', recommendation: 'Standard Protocol. Minor duration increase possible.', mechanism: 'Primary clearance via Glucuronidation (UGT).' },
-    { substance: 'Psilocybin', status: 'Normal', riskLevel: 'Low', score: 5, color: '#10b981', recommendation: 'Standard Protocol.', mechanism: 'Normal metabolism.' },
+    { substance: 'Psilocybin', status: 'Poor', riskLevel: 'Low', score: 15, color: '#10b981', clinical_insight: 'Standard Protocol. Minor duration increase possible.', mechanism: 'Primary clearance via Glucuronidation (UGT).' },
+    { substance: 'Psilocybin', status: 'Normal', riskLevel: 'Low', score: 5, color: '#10b981', clinical_insight: 'Standard Protocol.', mechanism: 'Normal metabolism.' },
 
     // Ketamine (CYP3A4/2B6)
-    { substance: 'Ketamine', status: 'Poor', riskLevel: 'Moderate', score: 60, color: '#f59e0b', recommendation: 'Monitor sedation depth. Expect prolonged dissociation.', mechanism: 'CYP3A4/2B6 competition.' },
-    { substance: 'Ketamine', status: 'Normal', riskLevel: 'Low', score: 10, color: '#10b981', recommendation: 'Standard Protocol.', mechanism: 'Normal metabolism.' },
+    { substance: 'Ketamine', status: 'Poor', riskLevel: 'Moderate', score: 60, color: '#f59e0b', clinical_insight: 'Monitor sedation depth. Expect prolonged dissociation.', mechanism: 'CYP3A4/2B6 competition.' },
+    { substance: 'Ketamine', status: 'Normal', riskLevel: 'Low', score: 10, color: '#10b981', clinical_insight: 'Standard Protocol.', mechanism: 'Normal metabolism.' },
 ];
 
 export default function MetabolicRiskGauge() {
@@ -49,7 +49,7 @@ export default function MetabolicRiskGauge() {
     // Find matching rule
     const activeRule = useMemo(() => {
         return METABOLIC_RULES.find(r => r.substance === selectedSubstance && r.status === selectedStatus) ||
-            { substance: selectedSubstance, status: selectedStatus, riskLevel: 'Unknown', score: 0, color: '#64748b', recommendation: 'No data available.', mechanism: 'Unknown pathway.' };
+            { substance: selectedSubstance, status: selectedStatus, riskLevel: 'Unknown', score: 0, color: '#64748b', clinical_insight: 'No data available.', mechanism: 'Unknown pathway.' };
     }, [selectedSubstance, selectedStatus]);
 
     // Data for Radial Chart
@@ -163,7 +163,7 @@ export default function MetabolicRiskGauge() {
                             Clinical Guidance
                         </h4>
                         <p className="text-sm text-slate-300 font-medium leading-relaxed">
-                            {activeRule.recommendation}
+                            {activeRule.clinical_insight}
                         </p>
                         <p className="text-sm text-slate-500 mt-2 font-mono">
                             Mechanism: {activeRule.mechanism}

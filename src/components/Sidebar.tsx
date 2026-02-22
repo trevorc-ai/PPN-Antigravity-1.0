@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { X, QrCode, Smartphone, ArrowRight, ShieldCheck } from 'lucide-react';
 import { AdvancedTooltip } from './ui/AdvancedTooltip';
+import PPNLogo from './PPNLogo';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -93,9 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
-              <span className="material-symbols-outlined text-slate-300 text-lg">neurology</span>
-            </div>
+            <PPNLogo size="xs" animated={true} />
             <div>
               <h1 className="text-3xl font-black tracking-tight">
                 <span style={{ color: '#8B9DC3' }}>PPN</span>{' '}
@@ -148,7 +147,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                                 <span className="material-symbols-outlined text-lg text-slate-400 group-hover:text-indigo-400 transition-colors">
                                   {item.icon}
                                 </span>
-                                <span className="text-base font-semibold tracking-wide text-[#8B9DC3] group-hover:text-slate-200 transition-colors">{item.label}</span>
+                                <span className="text-lg font-semibold tracking-wide text-[#8B9DC3] group-hover:text-slate-200 transition-colors">{item.label}</span>
                               </div>
                               <span className="material-symbols-outlined text-sm text-slate-600 group-hover:text-indigo-400 transition-colors">add_circle</span>
                             </button>
@@ -179,7 +178,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                                   >
                                     {item.icon}
                                   </span>
-                                  <span className="text-base font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
+                                  <span className="text-lg font-semibold tracking-wide" style={{ color: '#8B9DC3' }}>{item.label}</span>
                                 </>
                               )}
                             </NavLink>
@@ -191,7 +190,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                                       <li key={child.path}>
                                         <NavLink
                                           to={child.path}
-                                          className={({ isActive }) => `block text-[13px] font-semibold tracking-wide py-1.5 transition-colors select-none ${isActive ? 'text-indigo-400' : 'text-slate-500 hover:text-indigo-200'}`}
+                                          className={({ isActive }) => `block text-[15px] font-bold tracking-wide py-2 transition-colors select-none ${isActive ? 'text-indigo-400' : 'text-slate-400 hover:text-indigo-200'}`}
                                           onClick={() => { if (window.innerWidth < 1024) onClose(); }}
                                         >
                                           {child.label}
@@ -218,7 +217,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* Mobile Connect Lightbox */}
       {mobileModalState.isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+          {/* Click overlay to close */}
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setMobileModalState({ isOpen: false, feature: '', title: '' })} />
+
           <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-700/50 rounded-3xl shadow-2xl shadow-indigo-900/20 overflow-hidden flex flex-col md:flex-row">
 
             {/* Close Button */}

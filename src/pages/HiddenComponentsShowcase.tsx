@@ -236,7 +236,7 @@ const HiddenComponentsShowcase: React.FC = () => {
                                 <li>• GAD-7 anxiety severity zones</li>
                                 <li>• Algorithm-based integration session predictions</li>
                                 <li>• Risk stratification (low/moderate/high)</li>
-                                <li>• Evidence-based clinical recommendations</li>
+                                <li>• Evidence-based clinical insights</li>
                                 <li>• AdvancedTooltip integration for education</li>
                             </ul>
                             <p className="text-sm text-emerald-400 font-bold mt-3">

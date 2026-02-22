@@ -161,7 +161,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <Calendar className="w-4 h-4 text-emerald-400" />
                         <h4 className="text-slate-300 text-sm font-medium">Predicted Integration Needs</h4>
                         <AdvancedTooltip
-                            content="Based on baseline risk factors (ACE, GAD-7, Expectancy), this algorithm predicts the optimal number and frequency of integration sessions for sustained benefit."
+                            content="Based on baseline risk factors (ACE, GAD-7, Expectancy), this algorithm forecasts the optimal number and frequency of integration sessions for sustained benefit."
                             type="info"
                             tier="detailed"
                             title="Integration Prediction Algorithm"

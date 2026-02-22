@@ -3,7 +3,7 @@
  * WO-076: Auto-Generated Clinical Narratives
  * 
  * Generates professional clinical narratives from structured Phase 1 baseline data.
- * All output uses objective language — no clinical recommendations or medical advice.
+ * All output uses objective language — no clinical insights or medical advice.
  * Patient ID only (no PHI).
  */
 

@@ -13,7 +13,7 @@ export interface ProgressRiskFlagsProps {
  * Shows:
  * - Metrics increasing for 2+ consecutive weeks
  * - Metrics returning to baseline
- * - Recommended interventions
+ * - Risk Mitigation Strategies
  */
 export const ProgressRiskFlags: React.FC<ProgressRiskFlagsProps> = ({
     flags
@@ -85,13 +85,13 @@ export const ProgressRiskFlags: React.FC<ProgressRiskFlagsProps> = ({
                             </div>
                         </div>
 
-                        {/* Recommendation */}
+                        {/* Mitigation */}
                         <div className="pl-9">
                             <p className="text-sm text-slate-400">
-                                <strong className="text-[#A8B5D1]">Recommended Actions:</strong>
+                                <strong className="text-[#A8B5D1]">Risk Mitigation Strategies:</strong>
                             </p>
                             <p className="text-sm text-slate-400 mt-1">
-                                {flag.recommendation}
+                                {flag.mitigation}
                             </p>
                         </div>
                     </div>

@@ -14,7 +14,7 @@ interface PCL5SeverityZonesProps {
  * - 46-60: Moderate (Amber)
  * - 61-80: Severe (Red)
  * 
- * PCL-5 score ≥33 suggests probable PTSD diagnosis.
+ * PCL-5 score ≥33 correlates with probable PTSD diagnosis.
  */
 const PCL5SeverityZones: React.FC<PCL5SeverityZonesProps> = ({ score }) => {
     // Clamp score to valid range
@@ -27,14 +27,14 @@ const PCL5SeverityZones: React.FC<PCL5SeverityZonesProps> = ({ score }) => {
             color: 'emerald',
             icon: Brain,
             risk: 'No clinically significant PTSD symptoms',
-            recommendation: 'Standard protocol appropriate'
+            recommendation: 'Standard protocol historically indicated'
         };
         if (value <= 45) return {
             label: 'Mild',
             color: 'blue',
             icon: Activity,
-            risk: 'Mild PTSD symptoms present (score ≥33 suggests probable PTSD)',
-            recommendation: 'Trauma-informed care and grounding techniques recommended'
+            risk: 'Mild PTSD symptoms present (score ≥33 correlates with probable PTSD)',
+            recommendation: 'Trauma-informed care and grounding techniques historically indicated'
         };
         if (value <= 60) return {
             label: 'Moderate',
@@ -48,7 +48,7 @@ const PCL5SeverityZones: React.FC<PCL5SeverityZonesProps> = ({ score }) => {
             color: 'red',
             icon: ShieldAlert,
             risk: 'Severe PTSD symptoms',
-            recommendation: 'Psychiatric consultation and trauma specialist involvement strongly recommended'
+            recommendation: 'Psychiatric consultation and trauma specialist involvement strongly indicated'
         };
     };
 
@@ -173,7 +173,7 @@ const PCL5SeverityZones: React.FC<PCL5SeverityZonesProps> = ({ score }) => {
                     {clampedScore >= 33 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
                             <p className="text-slate-300 text-sm">
-                                <span className="font-semibold">Clinical Note:</span> PCL-5 score ≥33 suggests probable PTSD diagnosis. Trauma-informed care protocols and specialized integration support are strongly recommended.
+                                <span className="font-semibold">Clinical Note:</span> PCL-5 score ≥33 correlates with probable PTSD diagnosis. Trauma-informed care protocols and specialized integration support are strongly indicated.
                             </p>
                         </div>
                     )}
