@@ -214,14 +214,14 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {CUSTOM_DOMAINS.map(domain => (
-                                    <div key={domain.id} className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-5 space-y-4 shadow-lg transition-colors hover:border-slate-600">
+                                {CUSTOM_DOMAINS.map((domain, index) => (
+                                    <div key={domain.id} className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-5 space-y-4 shadow-lg transition-colors hover:border-slate-600 relative">
                                         <div className="border-b border-slate-800/60 pb-3 flex items-start justify-between">
                                             <div className="pr-4">
                                                 <h4 className="text-lg font-bold text-white mb-1.5 leading-tight">{domain.title}</h4>
                                                 <p className="text-sm text-slate-400 leading-relaxed">{domain.description}</p>
                                             </div>
-                                            <AdvancedTooltip content={domain.tooltipText} tier="standard" type="info" side="bottom" width="w-[280px]">
+                                            <AdvancedTooltip content={domain.tooltipText} tier="standard" type="info" side={index % 2 === 1 ? 'bottom-left' : 'bottom'} width="w-[280px]">
                                                 <HelpCircle className="w-5 h-5 text-slate-500 hover:text-indigo-400 transition-colors cursor-help mt-0.5 flex-shrink-0" />
                                             </AdvancedTooltip>
                                         </div>
