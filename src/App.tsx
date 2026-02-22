@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import About from './pages/About';
 import Dashboard from './pages/Dashboard';
-import Checkout from './pages/Checkout';
 import Analytics from './pages/Analytics';
 import SubstanceCatalog from './pages/SubstanceCatalog';
 import SubstanceMonograph from './pages/SubstanceMonograph';
