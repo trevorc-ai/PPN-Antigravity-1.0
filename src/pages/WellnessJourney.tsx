@@ -495,7 +495,7 @@ const WellnessJourney: React.FC = () => {
             {showPatientModal && (
                 <PatientSelectModal
                     onSelect={handlePatientSelect}
-                    onClose={() => navigate(-1)}
+                    onClose={() => setShowPatientModal(false)}
                     initialView={patientModalView}
                 />
             )}
