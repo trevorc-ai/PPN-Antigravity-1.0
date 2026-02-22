@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
 
@@ -40,6 +40,17 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
     const contentRef = useRef<HTMLDivElement>(null);
     const touchStartY = useRef<number>(0);
     const touchEndY = useRef<number>(0);
+
+    const [shouldRender, setShouldRender] = useState(isOpen);
+
+    useEffect(() => {
+        if (isOpen) {
+            setShouldRender(true);
+        } else {
+            const timer = setTimeout(() => setShouldRender(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
 
     // Scroll content to top whenever the panel opens or switches to a different form
     useEffect(() => {
@@ -89,13 +100,12 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
         }
     };
 
-    if (!isOpen) return null;
+    if (!shouldRender) return null;
 
     return ReactDOM.createPortal(
         <>
-            {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] transition-opacity duration-300"
+                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={onClose}
                 aria-hidden="true"
             />

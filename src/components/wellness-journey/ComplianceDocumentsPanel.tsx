@@ -21,7 +21,7 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
     const { addToast } = useToast();
 
     const isConsentComplete = completedForms.includes('consent');
-    const isBaselineComplete = completedForms.includes('baseline-observations');
+    const isBaselineComplete = completedForms.includes('set-and-setting');
 
     const handleDownloadSafety = () => {
         if (!isBaselineComplete) return;
@@ -106,7 +106,7 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
             color: 'text-amber-400',
             bg: 'bg-amber-500/10',
             border: 'border-amber-500/20',
-            requiredLabel: 'Requires Baseline Ops',
+            requiredLabel: 'Requires Set & Setting',
             onDownload: handleDownloadSafety
         },
         {
@@ -163,8 +163,8 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                                     onClick={doc.onDownload}
                                     disabled={!doc.isReady}
                                     className={`w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${doc.isReady
-                                            ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-900/40'
-                                            : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                                        ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-900/40'
+                                        : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                                         }`}
                                 >
                                     <Download className="w-3.5 h-3.5" />
