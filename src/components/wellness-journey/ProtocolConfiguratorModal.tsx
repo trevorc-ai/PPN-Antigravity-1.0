@@ -24,7 +24,7 @@ const ARCHETYPES = [
         id: 'ceremonial' as ProtocolArchetype,
         title: 'Ceremonial / Wellness',
         icon: Sparkles,
-        color: 'emerald',
+        color: 'amber',
         description: 'Lightweight flow. Focuses on setting, narrative timeline, and integration.',
         features: [
             'consent', 'set-and-setting', 'dosing-protocol', 'session-timeline',
@@ -35,7 +35,7 @@ const ARCHETYPES = [
         id: 'custom' as ProtocolArchetype,
         title: 'Custom Framework',
         icon: SlidersHorizontal,
-        color: 'sky',
+        color: 'teal',
         description: 'Build your own workflow. Hand-pick features across clinical and subjective domains.',
         features: [] // Dynamically managed via customFeatures
     }
@@ -187,7 +187,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                             <div className="space-y-1.5">
                                                 <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500 flex-shrink-0" /> Hand-picked modules</div>
                                                 <div className="text-sm text-slate-300 flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-500 flex-shrink-0" /> Cross-domain flexibility</div>
-                                                <div className="text-sm text-sky-400 flex items-center gap-2 mt-2 font-bold">{customFeatures.length} features selected</div>
+                                                <div className="text-sm text-teal-400 flex items-center gap-2 mt-2 font-bold">{customFeatures.length} features selected</div>
                                             </div>
                                         )}
                                     </div>
@@ -200,8 +200,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     {selectedId === 'custom' && (
                         <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-top-4 duration-300 border-t border-slate-800/60 pt-6">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-sky-500/10 rounded-lg border border-sky-500/20">
-                                    <SlidersHorizontal className="w-5 h-5 text-sky-400" />
+                                <div className="p-2 bg-teal-500/10 rounded-lg border border-teal-500/20">
+                                    <SlidersHorizontal className="w-5 h-5 text-teal-400" />
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-bold text-white leading-tight">Custom Configuration</h3>
@@ -221,7 +221,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                                 return (
                                                     <label key={feat.id} className="flex items-start gap-3.5 cursor-pointer group">
                                                         <input type="checkbox" className="hidden" checked={isEnabled} onChange={() => toggleFeature(feat.id)} />
-                                                        <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm ${isEnabled ? 'bg-sky-500 text-white border-sky-500 shadow-sky-500/20' : 'bg-slate-800 border border-slate-500 group-hover:border-sky-400 group-hover:bg-slate-800/80'}`}>
+                                                        <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm ${isEnabled ? 'bg-teal-500 text-white border-teal-500 shadow-teal-500/20' : 'bg-slate-800 border border-slate-500 group-hover:border-teal-400 group-hover:bg-slate-800/80'}`}>
                                                             {isEnabled && <svg className="w-3.5 h-3.5 fill-current animate-in zoom-in duration-200" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z" /></svg>}
                                                         </div>
                                                         <span className={`text-base select-none leading-snug pt-[1px] ${isEnabled ? 'text-slate-200 font-medium' : 'text-slate-400 group-hover:text-slate-300'}`}>
