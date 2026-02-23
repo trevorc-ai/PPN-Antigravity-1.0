@@ -220,6 +220,58 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // Live Vitals (mock)
     const [liveVitals] = useState({ hr: 82, bp: '125/82', spo2: 98, hrv: 45 });
 
+    // ── Contraindication checker — MUST stay above early returns (Rules of Hooks) ──
+    const contraindicationResults = useMemo(() => {
+        try {
+            let substanceName = '';
+            try {
+                const cachedProtocol = localStorage.getItem('ppn_dosing_protocol');
+                if (cachedProtocol) {
+                    const parsed = JSON.parse(cachedProtocol);
+                    substanceName = parsed.substance_name || parsed.substance || '';
+                }
+            } catch (_) { }
+            if (!substanceName && journey.session?.substance) {
+                substanceName = journey.session.substance;
+            }
+            const DEMO_MEDS = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
+            let medications: string[] = [];
+            try {
+                const cachedMeds = localStorage.getItem('mock_patient_medications_names');
+                if (cachedMeds) {
+                    const parsed = JSON.parse(cachedMeds);
+                    medications = Array.isArray(parsed) && parsed.length ? parsed : DEMO_MEDS;
+                } else {
+                    medications = DEMO_MEDS;
+                }
+            } catch (_) {
+                medications = DEMO_MEDS;
+            }
+            if (!substanceName || !medications.length) return null;
+            const engineInput: import('../../services/contraindicationEngine').IntakeScreeningData = {
+                patientId: 'demo',
+                sessionSubstance: substanceName.toLowerCase(),
+                medications: medications.map(m => m.toLowerCase()),
+                psychiatricHistory: [],
+                familyHistory: [],
+            };
+            return runContraindicationEngine(engineInput);
+        } catch (_) { return null; }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isDosingProtocolComplete, contraindicationKey, journey]);
+
+    // Current meds list for display — MUST stay above early returns (Rules of Hooks)
+    const patientMeds = useMemo(() => {
+        try {
+            const cached = localStorage.getItem('mock_patient_medications_names');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
+            }
+        } catch (_) { }
+        return ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
+    }, []);
+
     // ── POST-SESSION VIEW ──────────────────────────────────────────────────────────
     if (mode === 'post') {
         return (
@@ -352,67 +404,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
 
     const currentStepIdx = isLive ? -1 : PHASE2_STEPS.findIndex(s => !s.isComplete);
-
-    // ── Contraindication checker (local engine, no DB) ────────────────────────
-    const contraindicationResults = useMemo(() => {
-        try {
-            // Priority 1: localStorage (written by DosingProtocolForm on substance selection)
-            // Priority 2: journey.session.substance (always populated from WellnessJourney state)
-            let substanceName = '';
-            try {
-                const cachedProtocol = localStorage.getItem('ppn_dosing_protocol');
-                if (cachedProtocol) {
-                    const parsed = JSON.parse(cachedProtocol);
-                    substanceName = parsed.substance_name || parsed.substance || '';
-                }
-            } catch (_) { }
-
-            // Fallback to journey prop — reliable when Supabase substance fetch is slow/failed
-            if (!substanceName && journey.session?.substance) {
-                substanceName = journey.session.substance;
-            }
-
-            // Try to get patient meds from structured safety check cache
-            // DEMO FALLBACK includes Lithium — triggers absolute contraindication with Psilocybin/MDMA
-            // so the warning panel is always populated even without the Safety Check form.
-            const DEMO_MEDS = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
-            let medications: string[] = [];
-            try {
-                const cachedMeds = localStorage.getItem('mock_patient_medications_names');
-                if (cachedMeds) {
-                    const parsed = JSON.parse(cachedMeds);
-                    medications = Array.isArray(parsed) && parsed.length ? parsed : DEMO_MEDS;
-                } else {
-                    medications = DEMO_MEDS;
-                }
-            } catch (_) {
-                medications = DEMO_MEDS;
-            }
-
-            if (!substanceName || !medications.length) return null;
-            const engineInput: import('../../services/contraindicationEngine').IntakeScreeningData = {
-                patientId: 'demo',
-                sessionSubstance: substanceName.toLowerCase(),
-                medications: medications.map(m => m.toLowerCase()),
-                psychiatricHistory: [],
-                familyHistory: [],
-            };
-            return runContraindicationEngine(engineInput);
-        } catch (_) { return null; }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDosingProtocolComplete, contraindicationKey, journey]); // re-run on any of these changes
-
-    // Current meds list for display
-    const patientMeds = useMemo(() => {
-        try {
-            const cached = localStorage.getItem('mock_patient_medications_names');
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
-            }
-        } catch (_) { }
-        return ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
-    }, []);
 
     return (
         <div className="space-y-4 animate-in fade-in duration-500">

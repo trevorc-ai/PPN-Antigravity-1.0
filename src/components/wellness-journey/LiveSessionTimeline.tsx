@@ -72,7 +72,13 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         fetchLocalEvents();
     };
 
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
     const fetchLocalEvents = useCallback(async () => {
+        // Guard: only query if sessionId is a real UUID — prevents session_id=eq.undefined
+        // or session_id=eq.1 errors when the component mounts before session creation resolves.
+        if (!sessionId || !UUID_RE.test(sessionId)) return;
+
         const result = await getTimelineEvents(sessionId);
         if (result.success && result.data) {
             const mappedEvents: TimelineEvent[] = result.data.map((row: any) => ({

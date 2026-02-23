@@ -131,11 +131,19 @@ export async function createClinicalSession(
     siteId: string,
 ): Promise<{ success: boolean; sessionId?: string; error?: unknown }> {
     try {
+        // Resolve the authenticated practitioner's UUID — required (NOT NULL) on log_clinical_records
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (!user) {
+            console.error('[clinicalLog] createClinicalSession: no authenticated user', authError);
+            return { success: false, error: authError ?? 'Not authenticated — cannot create session without practitioner UUID' };
+        }
+
         const { data, error } = await supabase
             .from('log_clinical_records')
             .insert([{
                 patient_link_code: patientId,
                 site_id: siteId,
+                practitioner_id: user.id,          // UUID FK — authenticated user ✅
                 session_date: new Date().toISOString().split('T')[0],
                 // session_type removed — requires ref_session_types FK (ID only, no free text)
             }])
