@@ -26,31 +26,57 @@ type SessionMode = 'pre' | 'live' | 'post';
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, completedForms, onOpenForm, onCompletePhase }) => {
     const { addToast } = useToast();
     const { config } = useProtocol();
-    const [mode, setMode] = useState<SessionMode>('pre');
+    const SESSION_KEY = `ppn_session_mode_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
+    const SESSION_START_KEY = `ppn_session_start_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
 
-    const isDosingProtocolComplete = completedForms.has('dosing-protocol');
-    const isVitalsComplete = !config.enabledFeatures.includes('session-vitals') || completedForms.has('session-vitals');
-    const canStartSession = isDosingProtocolComplete && isVitalsComplete;
-    const isLive = mode === 'live';
+    // Restore mode from localStorage on mount (survives companion-page navigation)
+    const [mode, setMode] = useState<SessionMode>(() => {
+        try { return (localStorage.getItem(SESSION_KEY) as SessionMode) ?? 'pre'; } catch { return 'pre'; }
+    });
 
-    // Timer
+    const setAndPersistMode = (nextMode: SessionMode) => {
+        setMode(nextMode);
+        try {
+            localStorage.setItem(SESSION_KEY, nextMode);
+            if (nextMode === 'live') {
+                // Only write start time once — don't overwrite if already set
+                if (!localStorage.getItem(SESSION_START_KEY)) {
+                    localStorage.setItem(SESSION_START_KEY, String(Date.now()));
+                }
+            } else if (nextMode === 'pre') {
+                localStorage.removeItem(SESSION_START_KEY);
+            }
+        } catch { /* quota exceeded */ }
+    };
+
+    // Timer — calculated from wall-clock start time so it survives rerenders
     const [elapsedTime, setElapsedTime] = useState('00:00:00');
     useEffect(() => {
-        let interval: NodeJS.Timeout;
-        if (mode === 'live') {
-            const startTime = Date.now();
-            interval = setInterval(() => {
-                const diff = Date.now() - startTime;
+        if (mode !== 'live') {
+            if (mode === 'pre') setElapsedTime('00:00:00');
+            return;
+        }
+        const tick = () => {
+            try {
+                const raw = localStorage.getItem(SESSION_START_KEY);
+                const startMs = raw ? Number(raw) : Date.now();
+                const diff = Date.now() - startMs;
                 const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
                 const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
                 const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
                 setElapsedTime(`${h}:${m}:${s}`);
-            }, 1000);
-        } else if (mode === 'pre') {
-            setElapsedTime('00:00:00');
-        }
+            } catch { setElapsedTime('00:00:00'); }
+        };
+        tick(); // immediate first tick
+        const interval = setInterval(tick, 1000);
         return () => clearInterval(interval);
     }, [mode]);
+
+    // Derived from completedForms prop
+    const isDosingProtocolComplete = completedForms.has('dosing-protocol');
+    const isVitalsComplete = !config.enabledFeatures.includes('session-vitals') || completedForms.has('session-vitals');
+    const canStartSession = isDosingProtocolComplete && isVitalsComplete;
+    const isLive = mode === 'live';
 
     // Keyboard Shortcuts (live mode only)
     useEffect(() => {
@@ -183,9 +209,9 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     }
 
     // ── BUILD STEP CARDS (pre + live) ──────────────────────────────────────────────
-    const PHASE2_STEPS = [
+    const PHASE2_STEPS: Array<{ id: WellnessFormId | '__start__'; label: string; icon: string; isComplete: boolean }> = [
         {
-            id: 'dosing-protocol' as WellnessFormId,
+            id: 'dosing-protocol',
             label: 'Dosing Protocol',
             icon: 'medication',
             isComplete: isDosingProtocolComplete,
@@ -197,12 +223,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             isComplete: isVitalsComplete,
         }] : []),
         {
-            id: '__start__' as unknown as WellnessFormId,
+            id: '__start__',
             label: 'Start Session',
             icon: 'play_arrow',
             isComplete: isLive,
         },
     ];
+
 
     const currentStepIdx = isLive ? -1 : PHASE2_STEPS.findIndex(s => !s.isComplete);
 
@@ -352,7 +379,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     ) : isStart ? (
                                         /* Start Session CTA */
                                         <button
-                                            onClick={canStartSession ? () => setMode('live') : undefined}
+                                            onClick={canStartSession ? () => setAndPersistMode('live') : undefined}
                                             disabled={!canStartSession}
                                             className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
                                                 ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-950/50'
@@ -479,7 +506,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 Companion
                             </a>
                             <button
-                                onClick={() => setMode('post')}
+                                onClick={() => setAndPersistMode('post')}
                                 className="px-5 py-2.5 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2 group"
                             >
                                 End Session
