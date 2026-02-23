@@ -5,7 +5,7 @@ import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info,
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
-import { TreatmentPhase } from '../components/wellness-journey/DosingSessionPhase';
+import { TreatmentPhase, Phase2ErrorBoundary } from '../components/wellness-journey/DosingSessionPhase';
 import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhase';
 import { SlideOutPanel } from '../components/wellness-journey/SlideOutPanel';
 import { WorkflowActionCard } from '../components/wellness-journey/WorkflowCards';
@@ -777,75 +777,79 @@ const WellnessJourneyInternal: React.FC = () => {
                                         />
                                     )}
                                     {activePhase === 2 && (
-                                        <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                        <Phase2ErrorBoundary onReset={() => setActivePhase(2)}>
+                                            <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                        </Phase2ErrorBoundary>
                                     )}
 
                                     {activePhase === 3 && (
-                                        <>
-                                            <IntegrationPhase journey={journey} />
-                                            {/* Phase 3 — Early Follow-up (0–72 hrs) */}
-                                            <div className="mt-8">
-                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Early Follow-up · 0–72 hrs</p>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {config.enabledFeatures.includes('structured-safety') && (
-                                                        <WorkflowActionCard
-                                                            phase={3}
-                                                            status="active"
-                                                            title="Structured Safety Check"
-                                                            description="Assess post-session risk and physical stability."
-                                                            icon={<Shield className="w-5 h-5 text-emerald-400" />}
-                                                            onClick={() => handleOpenForm('structured-safety')}
-                                                        />
-                                                    )}
-                                                    {config.enabledFeatures.includes('daily-pulse') && (
-                                                        <WorkflowActionCard
-                                                            phase={3}
-                                                            status="active"
-                                                            title="Daily Pulse Check"
-                                                            description="Log basic mood and sleep metrics."
-                                                            icon={<Heart className="w-5 h-5 text-emerald-400" />}
-                                                            onClick={() => handleOpenForm('daily-pulse')}
-                                                        />
-                                                    )}
+                                        <Phase2ErrorBoundary onReset={() => setActivePhase(3)}>
+                                            <>
+                                                <IntegrationPhase journey={journey} />
+                                                {/* Phase 3 — Early Follow-up (0–72 hrs) */}
+                                                <div className="mt-8">
+                                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Early Follow-up · 0–72 hrs</p>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {config.enabledFeatures.includes('structured-safety') && (
+                                                            <WorkflowActionCard
+                                                                phase={3}
+                                                                status="active"
+                                                                title="Structured Safety Check"
+                                                                description="Assess post-session risk and physical stability."
+                                                                icon={<Shield className="w-5 h-5 text-emerald-400" />}
+                                                                onClick={() => handleOpenForm('structured-safety')}
+                                                            />
+                                                        )}
+                                                        {config.enabledFeatures.includes('daily-pulse') && (
+                                                            <WorkflowActionCard
+                                                                phase={3}
+                                                                status="active"
+                                                                title="Daily Pulse Check"
+                                                                description="Log basic mood and sleep metrics."
+                                                                icon={<Heart className="w-5 h-5 text-emerald-400" />}
+                                                                onClick={() => handleOpenForm('daily-pulse')}
+                                                            />
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            {/* Phase 3 — Integration Work (days to weeks) */}
-                                            <div className="mt-8">
-                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Integration Work · Days to Weeks</p>
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    {config.enabledFeatures.includes('structured-integration') && (
-                                                        <WorkflowActionCard
-                                                            phase={3}
-                                                            status="active"
-                                                            title="Integration Session"
-                                                            description="Log clinical narrative and thematic insights."
-                                                            icon={<span className="material-symbols-outlined text-emerald-400">edit_note</span>}
-                                                            onClick={() => handleOpenForm('structured-integration')}
-                                                        />
-                                                    )}
-                                                    {config.enabledFeatures.includes('behavioral-tracker') && (
-                                                        <WorkflowActionCard
-                                                            phase={3}
-                                                            status="active"
-                                                            title="Behavioral Change Tracker"
-                                                            description="Monitor behavioral modifications over time."
-                                                            icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
-                                                            onClick={() => handleOpenForm('behavioral-tracker')}
-                                                        />
-                                                    )}
-                                                    {config.enabledFeatures.includes('longitudinal-assessment') && (
-                                                        <WorkflowActionCard
-                                                            phase={3}
-                                                            status="active"
-                                                            title="Longitudinal Assessment"
-                                                            description="Detailed milestone check (PHQ-9/GAD-7)."
-                                                            icon={<span className="material-symbols-outlined text-emerald-400">timeline</span>}
-                                                            onClick={() => handleOpenForm('longitudinal-assessment')}
-                                                        />
-                                                    )}
+                                                {/* Phase 3 — Integration Work (days to weeks) */}
+                                                <div className="mt-8">
+                                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Integration Work · Days to Weeks</p>
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                        {config.enabledFeatures.includes('structured-integration') && (
+                                                            <WorkflowActionCard
+                                                                phase={3}
+                                                                status="active"
+                                                                title="Integration Session"
+                                                                description="Log clinical narrative and thematic insights."
+                                                                icon={<span className="material-symbols-outlined text-emerald-400">edit_note</span>}
+                                                                onClick={() => handleOpenForm('structured-integration')}
+                                                            />
+                                                        )}
+                                                        {config.enabledFeatures.includes('behavioral-tracker') && (
+                                                            <WorkflowActionCard
+                                                                phase={3}
+                                                                status="active"
+                                                                title="Behavioral Change Tracker"
+                                                                description="Monitor behavioral modifications over time."
+                                                                icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
+                                                                onClick={() => handleOpenForm('behavioral-tracker')}
+                                                            />
+                                                        )}
+                                                        {config.enabledFeatures.includes('longitudinal-assessment') && (
+                                                            <WorkflowActionCard
+                                                                phase={3}
+                                                                status="active"
+                                                                title="Longitudinal Assessment"
+                                                                description="Detailed milestone check (PHQ-9/GAD-7)."
+                                                                icon={<span className="material-symbols-outlined text-emerald-400">timeline</span>}
+                                                                onClick={() => handleOpenForm('longitudinal-assessment')}
+                                                            />
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </>
+                                            </>
+                                        </Phase2ErrorBoundary>
                                     )}
                                 </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { Component, useState, useEffect, useMemo } from 'react';
 import {
     Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download,
     Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
@@ -13,6 +13,39 @@ import { LiveSessionTimeline } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
+
+// ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
+// Prevents the entire WellnessJourney page from going blank on a sub-component error.
+interface EBProps { onReset: () => void; children: React.ReactNode; }
+interface EBState { hasError: boolean; error: string; }
+export class Phase2ErrorBoundary extends Component<EBProps, EBState> {
+    public state: EBState = { hasError: false, error: '' };
+
+    public static getDerivedStateFromError(err: Error): EBState {
+        return { hasError: true, error: err?.message ?? 'Unknown error' };
+    }
+    public componentDidCatch(err: Error, info: React.ErrorInfo) {
+        console.error('[Phase2ErrorBoundary]', err, info);
+    }
+    public render() {
+        if (this.state.hasError) {
+            return (
+                <div className="rounded-2xl border border-red-800/50 bg-red-950/20 p-8 text-center space-y-4">
+                    <p className="text-lg font-black text-red-300">Session view error — the session data was preserved.</p>
+                    <p className="text-sm text-slate-400 font-mono">{this.state.error}</p>
+                    <button
+                        onClick={() => { this.setState({ hasError: false, error: '' }); this.props.onReset(); }}
+                        className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors"
+                    >
+                        Reload Phase 2 View
+                    </button>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
+
 
 interface TreatmentPhaseProps {
     journey: any;
@@ -266,13 +299,20 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             } catch (_) { }
 
             // Try to get patient meds from structured safety check cache
+            // DEMO FALLBACK includes Lithium — triggers absolute contraindication with Psilocybin/MDMA
+            // so the warning panel is always populated even without the Safety Check form.
+            const DEMO_MEDS = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
             let medications: string[] = [];
             try {
                 const cachedMeds = localStorage.getItem('mock_patient_medications_names');
-                if (cachedMeds) medications = JSON.parse(cachedMeds);
-                if (!medications.length) medications = ['Sertraline (tapering)', 'Lisinopril']; // demo fallback
+                if (cachedMeds) {
+                    const parsed = JSON.parse(cachedMeds);
+                    medications = Array.isArray(parsed) && parsed.length ? parsed : DEMO_MEDS;
+                } else {
+                    medications = DEMO_MEDS;
+                }
             } catch (_) {
-                medications = ['Sertraline (tapering)', 'Lisinopril'];
+                medications = DEMO_MEDS;
             }
 
             if (!substanceName || !medications.length) return null;
@@ -297,7 +337,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 if (Array.isArray(parsed) && parsed.length) return parsed as string[];
             }
         } catch (_) { }
-        return ['Sertraline (tapering)', 'Lisinopril'];
+        return ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
     }, []);
 
     return (
@@ -526,7 +566,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 Companion
                             </a>
                             <button
-                                onClick={() => setAndPersistMode('post')}
+                                onClick={() => {
+                                    try {
+                                        setAndPersistMode('post');
+                                    } catch (e) {
+                                        console.error('[TreatmentPhase] mode transition failed, falling back to phase complete', e);
+                                        onCompletePhase();
+                                    }
+                                }}
                                 className="px-5 py-2.5 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2 group"
                             >
                                 End Session
