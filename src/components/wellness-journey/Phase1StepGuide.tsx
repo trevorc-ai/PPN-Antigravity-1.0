@@ -29,7 +29,7 @@ export const PHASE1_STEPS: Phase1Step[] = [
     },
     {
         id: 'structured-safety',
-        label: 'Safety Screen & Eligibility',
+        label: 'Safety Check - Conditions Prior to Treatment',
         description: 'Screen for contraindications and treatment eligibility.',
         required: true,
         icon: 'shield',

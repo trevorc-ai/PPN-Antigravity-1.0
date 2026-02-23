@@ -270,7 +270,7 @@ const WellnessJourneyInternal: React.FC = () => {
         'longitudinal-assessment': 'Longitudinal Assessment',
         'structured-integration': 'Integration Session',
         'behavioral-tracker': 'Behavioral Change Tracker',
-        'structured-safety': 'Safety Check',
+        'structured-safety': 'Safety Check - Conditions Prior to Treatment',
     };
 
     // Per-form subtitle shown in the SlideOut panel header (replaces in-form heading cards)
