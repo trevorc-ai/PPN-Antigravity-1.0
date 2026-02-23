@@ -47,8 +47,8 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                     .from('ref_drug_interactions')
                     .select(`
             *,
-            substance:ref_substances!substance_id(substance_name),
-            medication:ref_medications!medication_id(medication_name)
+            ref_substances(substance_name),
+            ref_medications(medication_name)
           `)
                     .eq('substance_id', substanceId)
                     .in('medication_id', medicationIds);
@@ -57,8 +57,8 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
 
                 const enrichedData = (data || []).map(interaction => ({
                     ...interaction,
-                    substance_name: interaction.substance?.substance_name,
-                    medication_name: interaction.medication?.medication_name
+                    substance_name: (interaction as any).ref_substances?.substance_name,
+                    medication_name: (interaction as any).ref_medications?.medication_name
                 }));
 
                 setInteractions(enrichedData);
