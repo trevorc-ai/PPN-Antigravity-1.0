@@ -11,6 +11,7 @@ import { useProtocol } from '../../contexts/ProtocolContext';
 
 interface TreatmentPhaseProps {
     journey: any;
+    completedForms: Set<string>;
     onOpenForm: (formId: WellnessFormId) => void;
     onCompletePhase: () => void;
 }
@@ -19,11 +20,15 @@ interface TreatmentPhaseProps {
 
 type SessionMode = 'pre' | 'live' | 'post';
 
-export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenForm, onCompletePhase }) => {
+export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, completedForms, onOpenForm, onCompletePhase }) => {
     const { addToast } = useToast();
     const { config } = useProtocol();
     // Session State Management (Simulating the DB status)
     const [mode, setMode] = useState<SessionMode>('pre');
+
+    const isDosingProtocolComplete = completedForms.has('dosing-protocol');
+    const isVitalsComplete = !config.enabledFeatures.includes('session-vitals') || completedForms.has('session-vitals');
+    const canStartSession = isDosingProtocolComplete && isVitalsComplete;
 
     // Timer State
     const [elapsedTime, setElapsedTime] = useState("00:00:00");
@@ -104,15 +109,27 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-stretch">
 
                         {/* COLUMN 1: Session Plan & Protocol */}
-                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-amber-500/40 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
+                        <div className={`flex flex-col p-6 bg-slate-900/40 border-2 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl ${isDosingProtocolComplete ? 'border-emerald-500/40' : 'border-amber-500/40'
+                            }`}>
                             <div className="flex flex-wrap items-center justify-between gap-4">
-                                <span className="text-2xl sm:text-3xl font-bold text-[#A8B5D1]">Step 1:</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-2xl sm:text-3xl font-bold text-[#A8B5D1]">Step 1:</span>
+                                    {isDosingProtocolComplete && (
+                                        <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                                            <CheckCircle className="w-3.5 h-3.5" />
+                                            Confirmed
+                                        </span>
+                                    )}
+                                </div>
                                 <button
                                     onClick={() => onOpenForm('dosing-protocol')}
-                                    className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
+                                    className={`w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] ${isDosingProtocolComplete
+                                            ? 'bg-slate-800/40 hover:bg-slate-700/50 border border-slate-600/50 text-slate-300'
+                                            : 'bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 shadow-[0_0_20px_rgba(217,119,6,0.15)]'
+                                        }`}
                                 >
-                                    <span className="material-symbols-outlined text-[18px]">medication</span>
-                                    Dosing Protocol
+                                    <span className={`material-symbols-outlined text-[18px] ${!isDosingProtocolComplete ? 'text-amber-400' : ''}`}>medication</span>
+                                    {isDosingProtocolComplete ? 'View Settings' : 'Confirm Protocol'}
                                 </button>
                             </div>
 
@@ -133,16 +150,31 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                         </div>
 
                         {/* COLUMN 2: Required Gates & Vitals */}
-                        <div className="flex flex-col p-6 bg-slate-900/40 border-2 border-amber-500/40 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl">
+                        <div className={`flex flex-col p-6 bg-slate-900/40 border-2 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl ${isVitalsComplete ? 'border-emerald-500/40' : 'border-amber-500/40'
+                            }`}>
                             <div className="flex flex-wrap items-center justify-between gap-4">
-                                <span className="text-2xl sm:text-3xl font-bold text-[#A8B5D1]">Step 2:</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-2xl sm:text-3xl font-bold text-[#A8B5D1]">Step 2:</span>
+                                    {isVitalsComplete && (
+                                        <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                                            <CheckCircle className="w-3.5 h-3.5" />
+                                            Completed
+                                        </span>
+                                    )}
+                                </div>
                                 {config.enabledFeatures.includes('session-vitals') && (
                                     <button
-                                        onClick={() => onOpenForm('session-vitals')}
-                                        className="w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] shadow-[0_0_20px_rgba(217,119,6,0.15)]"
+                                        onClick={isDosingProtocolComplete ? () => onOpenForm('session-vitals') : undefined}
+                                        disabled={!isDosingProtocolComplete}
+                                        className={`w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] ${isVitalsComplete
+                                                ? 'bg-slate-800/40 hover:bg-slate-700/50 border border-slate-600/50 text-slate-300'
+                                                : isDosingProtocolComplete
+                                                    ? 'bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 shadow-[0_0_20px_rgba(217,119,6,0.15)]'
+                                                    : 'bg-slate-800/40 border border-slate-700/50 text-slate-500 cursor-not-allowed'
+                                            }`}
                                     >
-                                        <span className="material-symbols-outlined text-[18px]">monitor_heart</span>
-                                        Record Vitals
+                                        <span className={`material-symbols-outlined text-[18px] ${(!isVitalsComplete && isDosingProtocolComplete) ? 'text-amber-400' : ''}`}>monitor_heart</span>
+                                        {isVitalsComplete ? 'Review Vitals' : 'Record Vitals'}
                                     </button>
                                 )}
                             </div>
@@ -162,14 +194,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
 
                                 {/* Gate 2: Vitals */}
                                 {config.enabledFeatures.includes('session-vitals') && (
-                                    <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full relative overflow-hidden group">
-                                        <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0 z-10">
-                                            <CheckCircle className="w-5 h-5" />
+                                    <div className={`flex items-center gap-4 p-4 rounded-xl h-full relative overflow-hidden group transition-colors ${isVitalsComplete ? 'bg-slate-800/40 border border-emerald-500/30' : 'bg-slate-800/20 border border-slate-700/50'
+                                        }`}>
+                                        {isVitalsComplete && <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 z-10 ${isVitalsComplete ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-500'
+                                            }`}>
+                                            {isVitalsComplete ? <CheckCircle className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
                                         </div>
                                         <div className="z-10">
-                                            <p className="text-[#A8B5D1] font-bold text-[15px]">Baseline Vitals</p>
-                                            <p className="text-sm text-slate-400 mt-0.5">Within range • HR 72, BP 118/76</p>
+                                            <p className={`font-bold text-[15px] ${isVitalsComplete ? 'text-[#A8B5D1]' : 'text-slate-500'}`}>Baseline Vitals</p>
+                                            <p className="text-sm text-slate-400 mt-0.5">{isVitalsComplete ? 'Within range • HR 72, BP 118/76' : 'Pending entry'}</p>
                                         </div>
                                     </div>
                                 )}
@@ -180,15 +214,28 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, onOpenF
                     {/* Start Button */}
                     <div className="flex flex-col items-center pt-8 border-t border-slate-800">
                         <button
-                            onClick={() => setMode('live')}
-                            className="group relative w-full py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-[#1A3631] to-[#122A26] hover:from-[#21433D] hover:to-[#173631] text-emerald-100 font-black text-lg sm:text-xl tracking-wide shadow-lg shadow-black/40 transition-all hover:scale-[1.01] active:scale-[0.99] flex flex-wrap items-center justify-center gap-2 sm:gap-4 border border-emerald-800/40 px-4"
+                            onClick={canStartSession ? () => setMode('live') : undefined}
+                            disabled={!canStartSession}
+                            className={`group relative w-full py-4 sm:py-5 rounded-2xl font-black text-lg sm:text-xl tracking-wide shadow-lg shadow-black/40 transition-all flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-4 border ${canStartSession
+                                    ? 'bg-gradient-to-r from-[#1A3631] to-[#122A26] hover:from-[#21433D] hover:to-[#173631] text-emerald-100 hover:scale-[1.01] active:scale-[0.99] border-emerald-800/40'
+                                    : 'bg-slate-800/60 text-slate-500 border-slate-700/50 cursor-not-allowed'
+                                }`}
                         >
-                            <span className="text-2xl sm:text-3xl font-bold text-emerald-300/80 mr-0 sm:mr-2">Step 3:</span>
-                            <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-950/50 flex items-center justify-center group-hover:bg-emerald-900/50 border border-emerald-800/50 transition-colors">
-                                <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-emerald-400 text-emerald-400 ml-0.5" />
-                            </span>
-                            <span className="text-center text-emerald-50">START DOSING SESSION</span>
-                            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 opacity-60 group-hover:translate-x-1 transition-transform text-emerald-400" />
+                            <span className={`text-2xl sm:text-3xl font-bold mr-0 sm:mr-2 ${canStartSession ? 'text-emerald-300/80' : 'text-slate-600'}`}>Step 3:</span>
+                            {canStartSession ? (
+                                <>
+                                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-950/50 flex items-center justify-center group-hover:bg-emerald-900/50 border border-emerald-800/50 transition-colors">
+                                        <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-emerald-400 text-emerald-400 ml-0.5" />
+                                    </span>
+                                    <span className="text-center text-emerald-50">START DOSING SESSION</span>
+                                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 opacity-60 group-hover:translate-x-1 transition-transform text-emerald-400" />
+                                </>
+                            ) : (
+                                <>
+                                    <AlertTriangle className="w-5 h-5" />
+                                    <span className="text-center uppercase text-sm sm:text-lg">Complete Requirements to Start</span>
+                                </>
+                            )}
                         </button>
                         <p className="text-[13px] text-slate-500 mt-4 flex items-center gap-2 font-medium">
                             <Info className="w-4 h-4 text-emerald-600/70" />
