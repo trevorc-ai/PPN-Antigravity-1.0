@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { CheckCircle, AlertTriangle, ChevronLeft, LogOut, ChevronRight, ArrowUp, Minus, Zap, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../../supabaseClient';
+import { CheckCircle, AlertTriangle, ChevronRight, ArrowUp, Minus, Zap, Clock, Plus } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
+import { InteractionChecker } from '../../clinical/InteractionChecker';
 
 /**
  * StructuredSafetyCheckForm - Structured Safety Check
@@ -21,7 +23,15 @@ export interface StructuredSafetyCheckData {
     action_taken_ids: number[];
     follow_up_required: boolean;
     follow_up_timeframe?: '24_hours' | '3_days' | '1_week';
-    current_medications?: string;
+    current_medication_ids: number[];
+    ae_severity_grade?: number;
+    ae_clinical_observation?: string;
+}
+
+interface RefPickerItem {
+    id: number;
+    label: string;
+    category?: string;
 }
 
 interface StructuredSafetyCheckFormProps {
@@ -77,10 +87,24 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         action_taken_ids: initialData.action_taken_ids || [],
         follow_up_required: initialData.follow_up_required || false,
         follow_up_timeframe: initialData.follow_up_timeframe,
-        current_medications: initialData.current_medications || '',
+        current_medication_ids: initialData.current_medication_ids || [],
+        ae_severity_grade: initialData.ae_severity_grade,
+        ae_clinical_observation: initialData.ae_clinical_observation,
     });
 
     const [isSaving, setIsSaving] = useState(false);
+    const [medicationsOptions, setMedicationsOptions] = useState<RefPickerItem[]>([]);
+    const [medDraftId, setMedDraftId] = useState<string>('');
+
+    useEffect(() => {
+        const loadMeds = async () => {
+            const { data } = await supabase.from('ref_medications').select('medication_id, medication_name, category').order('medication_name');
+            if (data) {
+                setMedicationsOptions(data.map((m: any) => ({ id: m.medication_id, label: m.medication_name, category: m.category })));
+            }
+        };
+        loadMeds();
+    }, []);
 
     const updateField = <K extends keyof StructuredSafetyCheckData>(
         field: K,
@@ -161,7 +185,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
 
             {/* C-SSRS Score */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <FormField label="C-SSRS Score (0–5)">
+                <FormField label="C-SSRS Score (0–5)" tooltip="Columbia-Suicide Severity Rating Scale. A standardized assessment to identify and stratify suicide risk. Scores ≥3 require immediate intervention.">
                     <div className="space-y-4">
                         <div className="flex gap-2">
                             {[0, 1, 2, 3, 4, 5].map((score) => (
@@ -199,7 +223,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
 
             {/* Safety Concerns — ordered critical → high → moderate (ref sort_order) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <FormField label="Safety Concerns" tooltip="Select all that apply — ordered by clinical priority">
+                <FormField label="Safety Concerns" tooltip="Pulls from the 'ref_clinical_observations' table (category: 'clinical_flag'). These align with standard DSM-5 risk parameters for psychiatric decompensation. Orders by clinical priority.">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {SAFETY_CONCERNS.map((concern) => {
                             const selected = data.safety_concern_ids.includes(concern.id);
@@ -239,85 +263,142 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
             </div>
 
             {/* New Events & Medication Changes */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField label="New Adverse Events Since Last Check?">
-                        <div className="flex gap-2">
-                            <button
-                                type="button"
-                                onClick={() => updateField('new_adverse_events', false)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${!data.new_adverse_events
-                                    ? 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                    }`}
-                            >
-                                No
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => updateField('new_adverse_events', true)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${data.new_adverse_events
-                                    ? 'bg-red-800/60 border border-red-600/60 text-red-100'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                    }`}
-                            >
-                                Yes
-                            </button>
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-8">
+                {/* Adverse Events */}
+                <div>
+                    <div className="flex items-center justify-between p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
+                        <div className="flex items-center gap-2 group relative">
+                            <AlertTriangle className="w-4 h-4 text-orange-400" />
+                            <span className="font-bold text-sm text-slate-300 tracking-wider cursor-help" title="Records adverse events that occurred prior to treatment or between sessions. Used for baseline safety clearance before dosing.">PRIOR ADVERSE EVENTS ⓘ</span>
                         </div>
-                        {data.new_adverse_events && (
-                            <p className="text-sm text-amber-400 mt-2 font-medium">
-                                → Complete Adverse Event Report on the next screen
-                            </p>
-                        )}
-                    </FormField>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="sr-only peer"
+                                checked={data.new_adverse_events}
+                                onChange={(e) => updateField('new_adverse_events', e.target.checked)}
+                            />
+                            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                        </label>
+                    </div>
 
-                    <FormField label="Medication Changes Since Last Check?">
-                        <div className="flex gap-2">
-                            <button
-                                type="button"
-                                onClick={() => updateField('medication_changes', false)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${!data.medication_changes
-                                    ? 'bg-indigo-700/50 border border-indigo-500/50 text-indigo-100'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                    }`}
-                            >
-                                No
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => updateField('medication_changes', true)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-medium transition-all text-sm ${data.medication_changes
-                                    ? 'bg-amber-800/50 border border-amber-600/50 text-amber-100'
-                                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
-                                    }`}
-                            >
-                                Yes
-                            </button>
+                    {data.new_adverse_events && (
+                        <div className="space-y-4 mt-4 animate-in slide-in-from-top-2 pt-4 px-2">
+                            <FormField label="SEVERITY (CTCAE GRADE)">
+                                <select
+                                    value={data.ae_severity_grade || ''}
+                                    onChange={(e) => updateField('ae_severity_grade', e.target.value ? parseInt(e.target.value) : undefined)}
+                                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm appearance-none"
+                                >
+                                    <option value="">Select Grade...</option>
+                                    <option value="1">Grade 1 - Mild (No Intervention)</option>
+                                    <option value="2">Grade 2 - Moderate (Minimal Intervention)</option>
+                                    <option value="3">Grade 3 - Severe (Significant Intervention)</option>
+                                    <option value="4">Grade 4 - Life-Threatening</option>
+                                    <option value="5">Grade 5 - Fatal</option>
+                                </select>
+                            </FormField>
+                            <FormField label="PRIMARY CLINICAL OBSERVATION">
+                                <select
+                                    value={data.ae_clinical_observation || ''}
+                                    onChange={(e) => updateField('ae_clinical_observation', e.target.value)}
+                                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm appearance-none"
+                                >
+                                    <option value="">Select Observation...</option>
+                                    <option value="Nausea / Vomiting">Nausea / Vomiting</option>
+                                    <option value="Hypertension">Hypertension</option>
+                                    <option value="Tachycardia">Tachycardia</option>
+                                    <option value="Severe Anxiety">Severe Anxiety</option>
+                                    <option value="Panic Attack">Panic Attack</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </FormField>
                         </div>
-                        {data.medication_changes && (
-                            <div className="mt-4 animate-in slide-in-from-top-2">
-                                <label className="block text-sm font-semibold text-slate-300 mb-2">
-                                    Current Medications & Supplements <span className="text-red-400">*</span>
-                                </label>
-                                <textarea
-                                    value={data.current_medications}
-                                    onChange={(e) => updateField('current_medications', e.target.value)}
-                                    placeholder="List all current prescriptions, OTC medications, and supplements (e.g., Lexapro 10mg daily)..."
-                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 min-h-[100px] resize-y placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    required={data.medication_changes}
-                                />
-                                <p className="text-sm text-slate-400 font-medium mt-2">
-                                    This list will be cross-referenced against the Interaction Engine during the dosing phase.
-                                </p>
+                    )}
+                </div>
+
+                <div className="border-t border-slate-700/50"></div>
+
+                {/* Concomitant Medications */}
+                <div>
+                    <div className="flex items-center justify-between p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
+                        <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-slate-400 tracking-wider cursor-help" title="Pulls directly from the 'ref_medications' SQL table. Data saved here populates the patient's baseline for automatic drug interaction checks in Phase 2.">CONCOMITANT MEDICATIONS ⓘ</span>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="sr-only peer"
+                                checked={data.medication_changes}
+                                onChange={(e) => updateField('medication_changes', e.target.checked)}
+                            />
+                            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                        </label>
+                    </div>
+
+                    {data.medication_changes && (
+                        <div className="mt-4 animate-in slide-in-from-top-2 pt-4 space-y-6 px-2">
+                            <div className="flex gap-2">
+                                <div className="flex-1">
+                                    <select
+                                        value={medDraftId}
+                                        onChange={e => setMedDraftId(e.target.value)}
+                                        className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none cursor-pointer"
+                                    >
+                                        <option value="">Select Medication...</option>
+                                        {medicationsOptions.map(m => (
+                                            <option key={m.id} value={m.id}>{m.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <button
+                                    type="button"
+                                    disabled={!medDraftId}
+                                    onClick={() => {
+                                        const idNum = parseInt(medDraftId);
+                                        if (!data.current_medication_ids.includes(idNum)) {
+                                            updateField('current_medication_ids', [...data.current_medication_ids, idNum]);
+                                        }
+                                        setMedDraftId('');
+                                    }}
+                                    className="px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-blue-400 hover:text-white hover:bg-slate-700 hover:border-blue-500/50 disabled:opacity-50 disabled:hover:bg-slate-800 disabled:hover:border-slate-700 disabled:hover:text-blue-400 transition-colors"
+                                    title="Add Medication"
+                                >
+                                    <Plus className="w-5 h-5" />
+                                </button>
                             </div>
-                        )}
-                    </FormField>
+
+                            <div className="min-h-[60px] p-4 bg-slate-900/50 border border-slate-800 rounded-lg">
+                                {data.current_medication_ids.length === 0 ? (
+                                    <p className="text-sm text-slate-600 italic">No medications added.</p>
+                                ) : (
+                                    <div className="flex flex-col gap-2">
+                                        {data.current_medication_ids.map(id => {
+                                            const med = medicationsOptions.find(m => m.id === id);
+                                            return (
+                                                <div key={id} className="flex items-center justify-between px-3 py-2 bg-slate-800/50 border border-slate-700/50 rounded-md text-sm text-slate-300">
+                                                    <span className="font-medium">{med?.label ?? `Medication ID ${id}`}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => updateField('current_medication_ids', data.current_medication_ids.filter(m => m !== id))}
+                                                        className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                                                    >
+                                                        <Minus className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Actions Taken — ordered immediate → urgent (ref sort_order) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
-                <FormField label="Actions Taken" tooltip="Select all that apply — ordered by urgency">
+                <FormField label="Actions Taken" tooltip="Pulls from 'ref_clinical_observations' table. Aligned with standard psychiatric risk mitigation and APA guidelines. Orders by urgency.">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {SAFETY_ACTIONS.map((action) => {
                             const selected = data.action_taken_ids.includes(action.id);
@@ -407,6 +488,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                     </FormField>
                 )}
             </div>
+
             <FormFooter
                 onBack={onBack ?? onComplete}
                 onSaveAndExit={handleSaveAndExit}
