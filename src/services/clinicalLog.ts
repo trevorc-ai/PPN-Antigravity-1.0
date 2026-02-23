@@ -145,7 +145,7 @@ export async function createClinicalSession(
                 site_id: siteId,
                 practitioner_id: user.id,          // UUID FK — authenticated user ✅
                 session_date: new Date().toISOString().split('T')[0],
-                // session_type removed — requires ref_session_types FK (ID only, no free text)
+                session_type: 'preparation',        // NOT NULL — set at creation; updated as session progresses
             }])
             .select('id')
             .single();

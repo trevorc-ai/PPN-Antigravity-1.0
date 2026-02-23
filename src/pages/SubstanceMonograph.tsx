@@ -55,6 +55,16 @@ const buildRadarData = (kiProfile: SubstanceKiProfile) => [
   { subject: 'NMDA', value: normalizeKi(kiProfile.nmda), ki: kiProfile.nmda, fullMark: 150 },
 ];
 
+// Clinical meaning for each receptor axis — shown in tooltip
+const RECEPTOR_DESCRIPTIONS: Record<string, { role: string; clinicalNote: string }> = {
+  '5-HT2A': { role: 'Serotonin 2A Receptor', clinicalNote: 'Primary driver of psychedelic effects. Agonism promotes neuroplasticity and altered perception.' },
+  '5-HT1A': { role: 'Serotonin 1A Receptor', clinicalNote: 'Modulates anxiety and mood. Partial agonism associated with anxiolytic effects during sessions.' },
+  '5-HT2C': { role: 'Serotonin 2C Receptor', clinicalNote: 'Influences appetite and impulsivity. Agonism linked to serotonin syndrome risk in SSRI combinations.' },
+  'D2': { role: 'Dopamine D2 Receptor', clinicalNote: 'Modulates reward and psychosis risk. Relevance varies significantly by compound class.' },
+  'SERT': { role: 'Serotonin Transporter', clinicalNote: 'Blocks serotonin reuptake. High affinity raises serotonin syndrome risk with concurrent SSRIs/SNRIs.' },
+  'NMDA': { role: 'NMDA Glutamate Receptor', clinicalNote: 'Antagonism produces dissociative states. Relevant for ketamine and PCP-class compounds.' },
+};
+
 // ─── Section wrapper card ─────────────────────────────────────────────────────
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
   <section className={`bg-slate-900/40 border border-white/5 rounded-2xl p-6 backdrop-blur-xl shadow-xl ${className}`}>
@@ -79,7 +89,6 @@ const SubstanceMonograph: React.FC = () => {
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [groundingChunks, setGroundingChunks] = useState<any[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const [activeRadarIndex, setActiveRadarIndex] = useState(0);
 
   const sub = useMemo(() => SUBSTANCES.find(s => s.id === id), [id]);
 
@@ -382,7 +391,6 @@ const SubstanceMonograph: React.FC = () => {
           {/* ── RIGHT COLUMN (4 cols) ────────────────────────────────────────── */}
           <div className="lg:col-span-4 space-y-6">
 
-            {/* ── SECTION 6: Receptor Affinity Radar ─── */}
             {radarData.length > 0 && (
               <Card className="relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-b from-[#0a1220] to-[#060a12] opacity-50 z-0 pointer-events-none rounded-2xl" />
@@ -392,20 +400,21 @@ const SubstanceMonograph: React.FC = () => {
 
                   <div className="h-64 -mx-2 relative cursor-crosshair">
                     <ResponsiveContainer width="100%" height="100%">
+                      {/*
+                        key={sub.id} forces Recharts to remount and re-animate the
+                        Radar shape whenever the substance changes. Without this,
+                        switching substances does not trigger the draw animation.
+                      */}
                       <RadarChart
+                        key={sub.id}
                         cx="50%"
                         cy="50%"
                         outerRadius="72%"
                         data={radarData}
-                        onMouseMove={(e: any) => {
-                          if (e && e.activeTooltipIndex !== undefined) {
-                            setActiveRadarIndex(e.activeTooltipIndex);
-                          }
-                        }}
-                        onMouseLeave={() => setActiveRadarIndex(0)}
                       >
                         <PolarGrid stroke="#1e293b" />
 
+                        {/* Background fill layer — always at max to show full spider shape */}
                         <Radar
                           name="Depth"
                           dataKey={() => 150}
@@ -422,8 +431,6 @@ const SubstanceMonograph: React.FC = () => {
                             const dataItem = radarData.find((d: any) => d.subject === payload.value);
                             const ki = dataItem?.ki || 0;
                             const displayValue = ki >= 10000 ? 'No sig.' : `${ki} nM`;
-
-                            // Adjust positioning slightly to give room
                             return (
                               <g transform={`translate(${x},${y})`}>
                                 <text x={0} y={-4} textAnchor="middle" fill="#64748b" fontSize={10} fontWeight={800} className="uppercase tracking-wider">
@@ -438,6 +445,7 @@ const SubstanceMonograph: React.FC = () => {
                         />
                         <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
 
+                        {/* Data radar — animated on mount (and on remount when substance changes) */}
                         <Radar
                           name={sub.name}
                           dataKey="value"
@@ -445,6 +453,9 @@ const SubstanceMonograph: React.FC = () => {
                           fill={subColor}
                           fillOpacity={0.3}
                           strokeWidth={2}
+                          isAnimationActive={true}
+                          animationDuration={600}
+                          animationEasing="ease-out"
                         />
 
                         <Tooltip
@@ -452,16 +463,23 @@ const SubstanceMonograph: React.FC = () => {
                             if (active && payload && payload.length) {
                               const ki = payload[0].payload.ki;
                               const subject = payload[0].payload.subject;
+                              const desc = RECEPTOR_DESCRIPTIONS[subject];
+                              const affinityLabel = ki >= 10000 ? 'No significant binding' : ki <= 50 ? 'High affinity' : ki <= 500 ? 'Moderate affinity' : 'Low affinity';
+                              const affinityColor = ki >= 10000 ? '#64748b' : ki <= 50 ? '#34d399' : ki <= 500 ? '#fbbf24' : '#f87171';
                               return (
-                                <div className="bg-[#0f1218]/95 backdrop-blur-md border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-xl p-3 min-w-[120px] flex flex-col items-center">
-                                  <span className="text-[10px] font-black uppercase tracking-widest text-[#A8B5D1] mb-1">{subject} Receptor</span>
+                                <div className="bg-[#0f1218]/98 backdrop-blur-md border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-xl p-4 max-w-[240px]">
+                                  <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-2">{desc?.role ?? subject}</p>
                                   {ki >= 10000 ? (
-                                    <span className="text-xs font-bold text-slate-500 text-center">No sig. binding<br />(≥10k nM)</span>
+                                    <p className="text-sm font-bold text-slate-500">No sig. binding (≥10,000 nM)</p>
                                   ) : (
-                                    <div className="flex items-baseline gap-1">
-                                      <span className="text-xl font-black" style={{ color: subColor }}>{ki}</span>
-                                      <span className="text-[10px] font-bold text-slate-500 uppercase">nM</span>
+                                    <div className="flex items-baseline gap-1.5 mb-2">
+                                      <span className="text-2xl font-black" style={{ color: subColor }}>{ki}</span>
+                                      <span className="text-xs font-bold text-slate-500 uppercase">nM Ki</span>
+                                      <span className="text-xs font-semibold ml-1 px-1.5 py-0.5 rounded" style={{ color: affinityColor, backgroundColor: `${affinityColor}15` }}>{affinityLabel}</span>
                                     </div>
+                                  )}
+                                  {desc && (
+                                    <p className="text-xs text-slate-400 leading-relaxed border-t border-slate-700/50 pt-2 mt-1">{desc.clinicalNote}</p>
                                   )}
                                 </div>
                               );
@@ -471,44 +489,12 @@ const SubstanceMonograph: React.FC = () => {
                         />
                       </RadarChart>
                     </ResponsiveContainer>
-
-                    {/* Dynamic Spoke Calculation */}
-                    {(() => {
-                      const maxRadius = 90; // Approx 72% of 128px (half of 256px h-64 height)
-                      const activeData = radarData[activeRadarIndex] || radarData[0];
-                      const spokeLength = (activeData.value / 150) * maxRadius;
-                      const spokeAngle = -90 + (activeRadarIndex * (360 / radarData.length));
-
-                      return (
-                        <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
-                          <div className="relative w-0 h-0">
-                            {/* Center dot */}
-                            <div className="absolute left-0 top-0 w-1.5 h-1.5 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_8px_rgba(255,255,255,0.8)] z-20" />
-                            {/* Dynamic Line */}
-                            <div
-                              className="absolute left-0 top-0 h-[1.5px] bg-white origin-left shadow-[0_0_8px_rgba(255,255,255,0.8)] z-10 transition-all duration-300 ease-out"
-                              style={{
-                                width: `${spokeLength}px`,
-                                transform: `rotate(${spokeAngle}deg)`
-                              }}
-                            />
-                            {/* End dot */}
-                            <div
-                              className="absolute w-2 h-2 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_rgba(255,255,255,1)] z-20 transition-all duration-300 ease-out"
-                              style={{
-                                left: `${spokeLength * Math.cos(spokeAngle * Math.PI / 180)}px`,
-                                top: `${spokeLength * Math.sin(spokeAngle * Math.PI / 180)}px`
-                              }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })()}
                   </div>
 
                   <p className="text-xs text-slate-500 text-center mt-4 leading-relaxed bg-slate-900/50 p-3 rounded-xl border border-slate-800">
                     <strong className="text-slate-400 font-semibold block mb-1">Ki Binding Affinity (nM)</strong>
-                    Lower numerical value = stronger binding affinity.<br />Values ≥10,000 nM represent no significant binding.
+                    Lower Ki = stronger receptor binding. Hover each axis for clinical context.<br />
+                    Values ≥10,000 nM = no significant binding.
                     {isAyahuasca && ' Values reflect DMT component only.'}
                   </p>
                 </div>

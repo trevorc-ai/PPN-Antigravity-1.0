@@ -96,6 +96,15 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
         try {
             const siteId = await getCurrentSiteId();
 
+            // WO-411: If no site_id found, fall back to practitioner_id filter so the
+            // practitioner's own records are always visible even without a log_user_sites row.
+            const { data: { session: authSession } } = await supabase.auth.getSession();
+            const practitionerId = authSession?.user?.id ?? null;
+
+            // Diagnostic logging to pinpoint the failure (visible in browser DevTools)
+            console.log('[PatientSelectModal] siteId resolved:', siteId);
+            console.log('[PatientSelectModal] practitionerId:', practitionerId);
+
             let query = supabase
                 .from('log_clinical_records')
                 .select('patient_link_code, session_date, session_type, session_number, ref_substances(substance_name)')
@@ -103,9 +112,18 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
 
             if (siteId) {
                 query = query.eq('site_id', siteId);
+            } else if (practitionerId) {
+                // Fallback: filter by the logged-in practitioner directly
+                query = query.eq('practitioner_id', practitionerId);
+                console.warn('[PatientSelectModal] No site_id — using practitioner_id fallback filter. Check log_user_sites for this user.');
             }
 
             const { data, error: qErr } = await query;
+
+            console.log('[PatientSelectModal] raw rows returned:', data?.length ?? 0);
+            if ((data?.length ?? 0) === 0) {
+                console.warn('[PatientSelectModal] 0 rows returned. Likely causes: (1) no sessions committed yet, (2) log_user_sites missing for this user, (3) RLS policy blocking reads on log_clinical_records.');
+            }
             if (qErr) throw qErr;
 
             // Group by patient_link_code client-side
@@ -136,6 +154,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                 };
             });
 
+            console.log('[PatientSelectModal] unique patients:', result.length);
             setPatients(result);
         } catch (err: unknown) {
             const msg = err instanceof Error ? err.message : 'Failed to load patients';

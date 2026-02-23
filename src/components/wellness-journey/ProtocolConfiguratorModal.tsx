@@ -1,11 +1,32 @@
 import React, { useState } from 'react';
 import { useProtocol, type ProtocolArchetype } from '../../contexts/ProtocolContext';
-import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal, HelpCircle } from 'lucide-react';
+import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal, HelpCircle, User } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface ProtocolConfiguratorModalProps {
     onClose: () => void;
+    /** Called with intake data when the practitioner clicks Save */
+    onIntakeComplete?: (intake: PatientIntakeData) => void;
 }
+
+export interface PatientIntakeData {
+    condition: string;
+    age: string;
+    gender: string;
+}
+
+const CONDITIONS = [
+    'PTSD',
+    'Depression',
+    'Anxiety / GAD',
+    'Addiction / SUD',
+    'End-of-Life Distress',
+    'Spiritual / Ceremonial',
+    'Chronic Pain',
+    'Other',
+];
+
+const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
 
 const ARCHETYPES = [
     {
@@ -92,13 +113,18 @@ const CUSTOM_DOMAINS = [
     }
 ];
 
-export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps> = ({ onClose }) => {
+export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps> = ({ onClose, onIntakeComplete }) => {
     const { config, setConfig } = useProtocol();
     const [selectedId, setSelectedId] = useState<ProtocolArchetype>(config.protocolType);
     const [saveAsDefault, setSaveAsDefault] = useState(true);
     const [customFeatures, setCustomFeatures] = useState<string[]>(
         config.protocolType === 'custom' ? config.enabledFeatures : ARCHETYPES[0].features
     );
+
+    // ── Step 0: Patient Intake ──────────────────────────────────────────────
+    const [condition, setCondition] = useState('');
+    const [age, setAge] = useState('');
+    const [gender, setGender] = useState('');
 
     const toggleFeature = (id: string) => {
         setCustomFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
@@ -111,7 +137,10 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 protocolType: selectedId,
                 enabledFeatures: selectedId === 'custom' ? customFeatures : archetype.features
             });
-            // If we had API wired up, we would save to user_profiles here if saveAsDefault is true
+        }
+        // Surface intake data to parent (WellnessJourney will store in journey.demographics)
+        if (onIntakeComplete) {
+            onIntakeComplete({ condition, age, gender });
         }
         onClose();
     };
@@ -126,21 +155,101 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <Settings2 className="w-6 h-6 text-violet-400" />
                         </div>
                         <div>
-                            <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">Customize Your Workspace</h2>
-                            <p className="text-base text-slate-400 mt-1">Select the tools you actually use to keep your interface clean and fast.</p>
+                            <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">New Patient Setup</h2>
+                            <p className="text-base text-slate-400 mt-1">Tell us about this patient, then choose your workflow.</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Body */}
-                <div className="p-6 md:p-8 space-y-6 overflow-y-auto max-h-[85vh] custom-scrollbar">
+                <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[85vh] custom-scrollbar">
+
+                    {/* ── Step 0: Patient Intake ─────────────────────────────── */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center flex-shrink-0">
+                                <User className="w-4 h-4 text-indigo-400" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Step 1 — Patient Context</h3>
+                                <p className="text-sm text-slate-400">Non-identifying clinical context only. No names or PHI.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
+                            {/* Condition */}
+                            <div className="sm:col-span-3">
+                                <label htmlFor="intake-condition" className="block text-sm font-semibold text-slate-300 mb-2">
+                                    What are we treating? <span className="text-indigo-400">*</span>
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {CONDITIONS.map(c => (
+                                        <button
+                                            key={c}
+                                            type="button"
+                                            onClick={() => setCondition(c)}
+                                            className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${condition === c
+                                                ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                                                : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                }`}
+                                        >
+                                            {c}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Age */}
+                            <div>
+                                <label htmlFor="intake-age" className="block text-sm font-semibold text-slate-300 mb-2">Age</label>
+                                <input
+                                    id="intake-age"
+                                    type="number"
+                                    min="18"
+                                    max="99"
+                                    placeholder="e.g. 42"
+                                    value={age}
+                                    onChange={e => setAge(e.target.value)}
+                                    className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                />
+                            </div>
+
+                            {/* Gender */}
+                            <div className="sm:col-span-2">
+                                <label className="block text-sm font-semibold text-slate-300 mb-2">Gender</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {GENDERS.map(g => (
+                                        <button
+                                            key={g}
+                                            type="button"
+                                            onClick={() => setGender(g)}
+                                            className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
+                                                ? 'bg-indigo-600 text-white border-indigo-500'
+                                                : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                }`}
+                                        >
+                                            {g}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-4">
+                        <div className="flex-1 h-px bg-slate-800" />
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Step 2 — Workflow</span>
+                        <div className="flex-1 h-px bg-slate-800" />
+                    </div>
+
                     {/* Educational Callout */}
                     <div className="flex items-start gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                         <Info className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-base text-indigo-200 font-medium tracking-wide">Why are we asking this?</p>
+                            <p className="text-base text-indigo-200 font-medium tracking-wide">Customize Your Workspace</p>
                             <p className="text-base text-indigo-300/80 mt-1.5 leading-relaxed">
-                                We want to protect your focus. By setting your typical workflow now, we will hide any tools or forms you don't need, preventing "button fatigue" during sessions.
+                                Select the tools you actually use to keep your interface clean and fast.
                                 <strong className="text-indigo-200 font-medium"> Please don't over-select "just in case"</strong> — you can change these settings at any time!
                             </p>
                         </div>
@@ -276,7 +385,17 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-end gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                <div className="flex justify-between items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                    {/* Condition indicator in footer */}
+                    {condition && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/25 rounded-lg">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Treating:</span>
+                            <span className="text-sm font-bold text-indigo-300">{condition}</span>
+                            {age && <span className="text-sm font-semibold text-slate-400">· {age} yrs</span>}
+                            {gender && <span className="text-sm font-semibold text-slate-400">· {gender}</span>}
+                        </div>
+                    )}
+                    {!condition && <div />}
                     <button
                         onClick={handleSave}
                         className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg border active:scale-95 ${selectedId === 'clinical' ? 'bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-indigo-500/10' :
@@ -285,7 +404,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                     'bg-slate-800/60 border-slate-700/50 text-slate-300 hover:bg-slate-700/60'
                             }`}
                     >
-                        Start Session
+                        Start Session →
                     </button>
                 </div>
             </div>

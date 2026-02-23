@@ -376,10 +376,10 @@ const Landing: React.FC = () => {
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-300 tracking-tighter leading-tight">
                 The Global <span className="text-gradient-purple inline-block pb-1">Psychedelic Practitioner</span> Alliance.
               </h2>
-              <p className="text-2xl sm:text-3xl font-bold text-slate-300 tracking-tight">
-                Where every session makes the field smarter.
-              </p>
-              <div className="space-y-4 text-xl text-slate-300 leading-relaxed font-medium max-w-2xl mx-auto">
+              <div className="space-y-4 text-xl text-slate-300 leading-relaxed font-medium max-w-2xl w-full text-left">
+                <p className="text-2xl sm:text-3xl font-bold text-slate-300 tracking-tight">
+                  Where every session makes the field smarter.
+                </p>
                 <p>
                   PPN is not a directory. It's a professional alliance of licensed clinicians who share one goal: prove that psychedelic therapy works safely, consistently, and at scale.
                 </p>
@@ -389,7 +389,6 @@ const Landing: React.FC = () => {
                 <p className="text-2xl sm:text-3xl font-bold text-slate-300 tracking-tight pt-4">
                   You don't have to build this alone.
                 </p>
-
               </div>
             </div>
 

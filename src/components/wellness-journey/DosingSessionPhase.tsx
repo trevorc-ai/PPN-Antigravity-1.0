@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect, useMemo } from 'react';
 import {
     Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download,
     Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
-    CheckCircle2, Edit3, AlertCircle, Pill, ShieldAlert
+    CheckCircle2, Edit3, AlertCircle, Pill, ShieldAlert, ClipboardList, Save
 } from 'lucide-react';
 import { runContraindicationEngine } from '../../services/contraindicationEngine';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
@@ -204,6 +204,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (mode !== 'live') return;
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
             switch (e.key.toLowerCase()) {
+                case 'u': setShowUpdatePanel(p => !p); break;
                 case 'v': onOpenForm('session-vitals'); break;
                 case 'a': onOpenForm('safety-and-adverse-event'); break;
             }
@@ -219,6 +220,45 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
     // Live Vitals (mock)
     const [liveVitals] = useState({ hr: 82, bp: '125/82', spo2: 98, hrv: 45 });
+
+    // ── Session Update Panel state ────────────────────────────────────────
+    const [showUpdatePanel, setShowUpdatePanel] = useState(false);
+    const [updateAffect, setUpdateAffect] = useState('');
+    const [updateResponsiveness, setUpdateResponsiveness] = useState('');
+    const [updateComfort, setUpdateComfort] = useState('');
+    const [updateNote, setUpdateNote] = useState('');
+    const [updateHR, setUpdateHR] = useState('');
+    const [updateBP, setUpdateBP] = useState('');
+    interface SessionUpdateEntry {
+        timestamp: string;
+        elapsed: string;
+        affect: string;
+        responsiveness: string;
+        comfort: string;
+        note: string;
+        hr: string;
+        bp: string;
+    }
+    const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
+
+    const handleSaveUpdate = () => {
+        const entry: SessionUpdateEntry = {
+            timestamp: new Date().toLocaleTimeString(),
+            elapsed: elapsedTime,
+            affect: updateAffect,
+            responsiveness: updateResponsiveness,
+            comfort: updateComfort,
+            note: updateNote.trim(),
+            hr: updateHR,
+            bp: updateBP,
+        };
+        setUpdateLog(prev => [entry, ...prev]);
+        // Reset fields
+        setUpdateAffect(''); setUpdateResponsiveness(''); setUpdateComfort('');
+        setUpdateNote(''); setUpdateHR(''); setUpdateBP('');
+        setShowUpdatePanel(false);
+        addToast({ title: 'Session Update Saved', message: `Logged at T+${elapsedTime}`, type: 'success' });
+    };
 
     // ── Contraindication checker — MUST stay above early returns (Rules of Hooks) ──
     const contraindicationResults = useMemo(() => {
@@ -756,44 +796,126 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 </div>
             </div>
 
-            {/* ── Two Large Action Buttons (session events) ────────────────────── */}
-            <div className="grid grid-cols-2 gap-3">
-                {/* Log Rescue Protocol — purple/pink (caring intervention) */}
-                <button
-                    onClick={isLive ? () => onOpenForm('rescue-protocol') : undefined}
-                    disabled={!isLive}
-                    className={`flex items-center justify-center gap-3 px-6 py-5 rounded-2xl font-black text-base tracking-wide transition-all active:scale-95 border ${isLive
-                        ? 'bg-gradient-to-br from-purple-900/60 to-fuchsia-900/40 hover:from-purple-800/70 hover:to-fuchsia-800/50 border-purple-500/40 hover:border-purple-400/60 text-purple-100 shadow-lg shadow-purple-950/40'
-                        : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'
-                        }`}
-                    aria-label="Log rescue protocol"
-                >
-                    <span className={`material-symbols-outlined text-[22px] ${isLive ? 'text-purple-300' : 'text-slate-600'}`}>
-                        emergency
-                    </span>
-                    <span>Log Rescue Protocol</span>
+            {/* ── Three Action Buttons ────────────────────────────────────────── */}
+            <div className="grid grid-cols-3 gap-3">
+                <button onClick={isLive ? () => setShowUpdatePanel(p => !p) : undefined} disabled={!isLive}
+                    className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? (showUpdatePanel ? 'bg-emerald-600/30 border-emerald-400/60 text-emerald-100' : 'bg-gradient-to-br from-emerald-900/60 to-teal-900/40 hover:from-emerald-800/70 border-emerald-500/40 hover:border-emerald-400/60 text-emerald-100') : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'} shadow-lg`}
+                    aria-label="Log session update">
+                    <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
+                    <span>Session Update</span>
                 </button>
-
-                {/* Log Adverse Reaction — red (crisis) */}
-                <button
-                    onClick={isLive ? () => onOpenForm('safety-and-adverse-event') : undefined}
-                    disabled={!isLive}
-                    className={`flex items-center justify-center gap-3 px-6 py-5 rounded-2xl font-black text-base tracking-wide transition-all active:scale-95 border ${isLive
-                        ? 'bg-gradient-to-br from-red-900/60 to-rose-900/40 hover:from-red-800/70 hover:to-rose-800/50 border-red-500/40 hover:border-red-400/60 text-red-100 shadow-lg shadow-red-950/40'
-                        : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'
-                        }`}
-                    aria-label="Log adverse reaction"
-                >
+                <button onClick={isLive ? () => onOpenForm('rescue-protocol') : undefined} disabled={!isLive}
+                    className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-purple-900/60 to-fuchsia-900/40 hover:from-purple-800/70 border-purple-500/40 hover:border-purple-400/60 text-purple-100 shadow-lg shadow-purple-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
+                    aria-label="Log rescue protocol">
+                    <span className={`material-symbols-outlined text-[20px] ${isLive ? 'text-purple-300' : 'text-slate-600'}`}>emergency</span>
+                    <span>Rescue Protocol</span>
+                </button>
+                <button onClick={isLive ? () => onOpenForm('safety-and-adverse-event') : undefined} disabled={!isLive}
+                    className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-red-900/60 to-rose-900/40 hover:from-red-800/70 border-red-500/40 hover:border-red-400/60 text-red-100 shadow-lg shadow-red-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
+                    aria-label="Log adverse reaction">
                     <AlertTriangle className={`w-5 h-5 ${isLive ? 'text-red-300' : 'text-slate-600'}`} />
-                    <span>Log Adverse Reaction</span>
+                    <span>Adverse Event</span>
                 </button>
             </div>
+
+            {/* ── Session Update Panel ───────────────────────────────────────────── */}
+            {showUpdatePanel && isLive && (
+                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-black text-emerald-300 uppercase tracking-widest">Session Update</p>
+                            <p className="text-xs text-slate-500 mt-0.5">T+{elapsedTime} · {new Date().toLocaleTimeString()}</p>
+                        </div>
+                        <button onClick={() => setShowUpdatePanel(false)} className="text-slate-500 hover:text-slate-300 transition-colors p-1"><X className="w-4 h-4" /></button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Patient Affect</label>
+                            <select value={updateAffect} onChange={e => setUpdateAffect(e.target.value)}
+                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
+                                <option value="">— Select —</option>
+                                <option>Calm</option><option>Anxious</option><option>Euphoric</option>
+                                <option>Dissociative</option><option>Tearful</option><option>Processing (internal)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Responsiveness</label>
+                            <select value={updateResponsiveness} onChange={e => setUpdateResponsiveness(e.target.value)}
+                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
+                                <option value="">— Select —</option>
+                                <option>Fully responsive</option><option>Partially responsive</option>
+                                <option>Eyes closed, calm</option><option>Eyes closed, distressed</option>
+                                <option>Unresponsive (monitor)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Physical Comfort</label>
+                            <select value={updateComfort} onChange={e => setUpdateComfort(e.target.value)}
+                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
+                                <option value="">— Select —</option>
+                                <option>Normal, no complaints</option><option>Restless</option>
+                                <option>Nausea reported</option><option>Requesting blanket</option>
+                                <option>Position adjusted</option><option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm) — optional</label>
+                            <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
+                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">BP — optional</label>
+                            <input type="text" placeholder="e.g. 128/84" value={updateBP} onChange={e => setUpdateBP(e.target.value)}
+                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note — optional</label>
+                        <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
+                            className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
+                    </div>
+                    <button onClick={handleSaveUpdate}
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
+                        <Save className="w-4 h-4" /> Save Update
+                    </button>
+                </div>
+            )}
+
+            {/* ── Update Log ──────────────────────────────────────────────────── */}
+            {updateLog.length > 0 && (
+                <div className="space-y-2">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 px-1">Session Updates ({updateLog.length})</p>
+                    {updateLog.map((entry, i) => (
+                        <div key={i} className="flex gap-3 p-3 bg-slate-800/40 border border-slate-700/40 rounded-xl text-sm">
+                            <div className="flex-shrink-0 text-right min-w-[56px]">
+                                <p className="font-mono text-xs font-bold text-emerald-400">T+{entry.elapsed}</p>
+                                <p className="text-[10px] text-slate-600">{entry.timestamp}</p>
+                            </div>
+                            <div className="flex-1 min-w-0 space-y-1">
+                                <div className="flex flex-wrap gap-1.5">
+                                    {entry.affect && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.affect}</span>}
+                                    {entry.responsiveness && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.responsiveness}</span>}
+                                    {entry.comfort && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.comfort}</span>}
+                                    {(entry.hr || entry.bp) && (
+                                        <span className="px-2 py-0.5 rounded-md bg-emerald-900/40 border border-emerald-700/30 text-emerald-300 text-xs font-semibold">
+                                            {entry.hr && `HR ${entry.hr}`}{entry.hr && entry.bp && ' · '}{entry.bp && `BP ${entry.bp}`}
+                                        </span>
+                                    )}
+                                </div>
+                                {entry.note && <p className="text-slate-400 text-xs italic">{entry.note}</p>}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Keyboard shortcuts hint — live only */}
             {isLive && (
                 <div className="flex items-center justify-center gap-4 px-4 py-2.5 bg-slate-900/40 border border-slate-800/50 rounded-xl">
                     <p className="text-xs font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
-                    {[{ key: 'V', label: 'Vitals' }, { key: 'A', label: 'Adverse' }].map(({ key, label }) => (
+                    {[{ key: 'U', label: 'Update' }, { key: 'V', label: 'Vitals' }, { key: 'A', label: 'Adverse' }].map(({ key, label }) => (
                         <div key={key} className="flex items-center gap-1.5">
                             <kbd className="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 border border-slate-700 text-xs font-mono font-bold text-slate-400">{key}</kbd>
                             <span className="text-xs text-slate-600">{label}</span>

@@ -25,7 +25,7 @@ import { PatientSelectModal } from '../components/wellness-journey/PatientSelect
 import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
 import { createClinicalSession } from '../services/clinicalLog';
 import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
-import { ProtocolConfiguratorModal } from '../components/wellness-journey/ProtocolConfiguratorModal';
+import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components/wellness-journey/ProtocolConfiguratorModal';
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -52,6 +52,8 @@ interface PatientJourney {
         gender?: string;     // 'M' | 'F' | 'NB' | 'X' — set by provider
         weightKg?: number;   // for dosage calculation
     };
+    /** Condition being treated — drives assessment form pre-selection */
+    condition?: string;
     sessionDate: string;
     daysPostSession: number;
 
@@ -180,13 +182,13 @@ const WellnessJourneyInternal: React.FC = () => {
             if (result.success && result.sessionId) {
                 sessionId = result.sessionId;
             } else {
-                // Non-fatal: fall back to client UUID. Phase 1 forms don't need the FK.
-                // Phase 2 saves will fail until site is resolved — user will see error toasts.
-                console.warn('[WellnessJourney] DB session creation failed; using local UUID fallback', result.error);
+                // Log loudly — this means the patient WON'T appear in Existing Patient lookup
+                // because no row was written to log_clinical_records.
+                console.error('[WellnessJourney] ❌ createClinicalSession FAILED — patient will NOT persist to DB.', result.error);
                 sessionId = crypto.randomUUID();
             }
         } else {
-            // siteId not yet resolved — use local UUID. Phase 2 forms will error gracefully.
+            console.error('[WellnessJourney] ❌ No siteId resolved — session will NOT persist to DB. Check log_user_sites.');
             sessionId = crypto.randomUUID();
         }
 
@@ -194,9 +196,10 @@ const WellnessJourneyInternal: React.FC = () => {
             ...prev,
             patientId,
             sessionId,
-            // Use stored demographics if known; otherwise keep whatever the previous patient had.
-            // In production these come from the patient record lookup.
-            demographics: prev.demographics ?? { age: 34, gender: 'M', weightKg: 78 },
+            // New patients always start with empty demographics — no stale carry-over.
+            // Existing patients will have demographics populated when the patient record
+            // lookup is wired in (WO-406). For now, clear on new, preserve on existing.
+            demographics: isNew ? undefined : prev.demographics,
         }));
         setShowPatientModal(false);
         // Next time the modal opens, start in the right view for the patient's phase
@@ -422,8 +425,9 @@ const WellnessJourneyInternal: React.FC = () => {
         patientId: 'PT-RISK9W2P',
         sessionDate: '2025-10-15',
         daysPostSession: 0,
-        // Demo demographics — shown in the patient context bar
-        demographics: { age: 34, gender: 'M', weightKg: 78 },
+        // Demographics start empty — populated after patient selection or intake form.
+        // Hardcoded values caused stale data to appear for every new patient (WO-406 fix).
+        demographics: undefined,
 
         baseline: {
             phq9: 22, // Severe Depression
@@ -548,6 +552,16 @@ const WellnessJourneyInternal: React.FC = () => {
             {showProtocolConfigurator && (
                 <ProtocolConfiguratorModal
                     onClose={() => setShowProtocolConfigurator(false)}
+                    onIntakeComplete={(intake: PatientIntakeData) => {
+                        setJourney(prev => ({
+                            ...prev,
+                            condition: intake.condition || undefined,
+                            demographics: {
+                                age: intake.age ? parseInt(intake.age, 10) : undefined,
+                                gender: intake.gender || undefined,
+                            },
+                        }));
+                    }}
                 />
             )}
 
@@ -643,6 +657,13 @@ const WellnessJourneyInternal: React.FC = () => {
                                         <span className="text-white font-bold">{label}</span>
                                     </span>
                                 ))}
+                                {/* Condition pill — shows what's being treated */}
+                                {journey.condition && (
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-[13px] md:text-sm font-semibold shadow-sm">
+                                        <span className="text-indigo-400 font-normal">Treating</span>
+                                        <span className="text-indigo-200 font-bold">{journey.condition}</span>
+                                    </span>
+                                )}
                                 {/* Change Patient — context-aware: Phase 1 → choose, Phase 2/3 → lookup */}
                                 <button
                                     type="button"
