@@ -180,7 +180,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             {/* Condition */}
                             <div className="sm:col-span-3">
                                 <label htmlFor="intake-condition" className="block text-sm font-semibold text-slate-300 mb-2">
-                                    What are we treating? <span className="text-indigo-400">*</span>
+                                    What are you treating? <span className="text-indigo-400">*</span>
                                 </label>
                                 <div className="flex flex-wrap gap-2">
                                     {CONDITIONS.map(c => (
