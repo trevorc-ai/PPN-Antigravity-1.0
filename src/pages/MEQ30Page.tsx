@@ -145,15 +145,7 @@ const MEQ30Page: React.FC = () => {
                             <ArrowLeft className="w-4 h-4" />
                             Back to Dashboard
                         </button>
-                        <button
-                            onClick={() => {
-                                // TODO: Navigate to next assessment (EDI)
-                                alert('EDI assessment coming soon!');
-                            }}
-                            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all"
-                        >
-                            Continue to EDI Assessment
-                        </button>
+
                     </div>
                 </div>
             </div>

@@ -389,15 +389,7 @@ const Landing: React.FC = () => {
                 <p className="text-2xl sm:text-3xl font-bold text-slate-300 tracking-tight pt-4">
                   You don't have to build this alone.
                 </p>
-                <div className="pt-6">
-                  <button
-                    onClick={() => navigate('/deep-dives/clinical-alliance')}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 text-purple-400 text-sm font-black rounded-xl uppercase tracking-widest transition-all group"
-                  >
-                    Learn More
-                    <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                  </button>
-                </div>
+
               </div>
             </div>
 
@@ -824,13 +816,7 @@ const Landing: React.FC = () => {
               <p className="text-lg text-slate-300 leading-relaxed font-medium">
                 Show your patients the direct link between their sessions and their progress. This timeline view connects specific dosing events to mood improvements, turning abstract feelings into visible breakthroughs.
               </p>
-              <button
-                onClick={() => navigate('/deep-dives/patient-journey')}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400 text-sm font-black rounded-xl uppercase tracking-widest transition-all group"
-              >
-                View Live Demo
-                <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </button>
+
             </div>
           </motion.div>
         </div>
