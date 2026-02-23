@@ -4,6 +4,7 @@ import { FormField } from '../shared/FormField';
 
 import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationModal';
 import { FormFooter } from '../shared/FormFooter';
+import { InteractionChecker } from '../../clinical/InteractionChecker';
 import { useReferenceData } from '../../../hooks/useReferenceData';
 
 /**
@@ -65,6 +66,19 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const [data, setData] = useState<DosingProtocolData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+    const [mockPatientMeds, setMockPatientMeds] = useState<number[]>([]);
+
+    useEffect(() => {
+        // Read patient medications from local storage (mock for Phase 1 -> Phase 2 connection)
+        try {
+            const saved = localStorage.getItem('mock_patient_medications');
+            if (saved) {
+                setMockPatientMeds(JSON.parse(saved));
+            }
+        } catch (e) {
+            console.error('Failed to parse patient medications', e);
+        }
+    }, []);
 
     // Reference Data
     const { substances } = useReferenceData();
@@ -125,6 +139,14 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     return (
         <div className="max-w-4xl mx-auto space-y-6">
 
+            {data.substance_id && mockPatientMeds.length > 0 && (
+                <div className="animate-in fade-in slide-in-from-top-2">
+                    <InteractionChecker
+                        substanceId={parseInt(data.substance_id)}
+                        medicationIds={mockPatientMeds}
+                    />
+                </div>
+            )}
 
             {/* Form Grid */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">

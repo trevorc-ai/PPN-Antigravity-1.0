@@ -109,6 +109,12 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         loadMeds();
     }, []);
 
+    // TEMPORARY: Persist medications to localStorage so DosingProtocolForm can read them.
+    // In production, this would be fetched from log_patient_medications or similar.
+    useEffect(() => {
+        localStorage.setItem('mock_patient_medications', JSON.stringify(data.current_medication_ids));
+    }, [data.current_medication_ids]);
+
     const updateField = <K extends keyof StructuredSafetyCheckData>(
         field: K,
         value: StructuredSafetyCheckData[K]
