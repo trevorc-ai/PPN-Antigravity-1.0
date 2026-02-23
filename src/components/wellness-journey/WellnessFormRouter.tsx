@@ -353,7 +353,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <StructuredSafetyCheckForm
                 onSave={() => onSaved('Safety Screen')}
                 onComplete={onComplete}
-                onBack={onClose ?? onComplete}
+                onBack={() => onNavigate?.('consent') ?? onClose?.()}
                 onExit={onExit ?? onClose ?? onComplete}
             />;
 
@@ -361,7 +361,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <SetAndSettingForm
                 onSave={handleSetAndSettingSave}
                 onComplete={onComplete}
-                onBack={onClose ?? onComplete}
+                onBack={() => onNavigate?.('mental-health') ?? onClose?.()}
                 onExit={onExit ?? onClose ?? onComplete}
             />;
 
@@ -370,7 +370,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 patientId={patientId}
                 onComplete={onComplete}
                 onExit={onExit ?? onClose ?? onComplete}
-                onBack={onClose ?? onComplete}
+                onBack={() => onNavigate?.('structured-safety') ?? onClose?.()}
             />;
 
         // ── Phase 2: Dosing Session ───────────────────────────────────────────

@@ -225,7 +225,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             consent: { consent_type: undefined, consent_obtained: false },
         };
         const gen = generateBaselineNarrative(input);
-        try { localStorage.removeItem(STORAGE_KEY(patientId)); } catch { /* ignore */ }
+        // Persist data during Phase 1 routing navigation
+        try { localStorage.setItem(STORAGE_KEY(patientId), JSON.stringify(data)); } catch { /* ignore */ }
 
         setSaveContFlash(true);
         setTimeout(() => {
@@ -334,47 +335,6 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                     <PhysioInput id="bp-sys" label="Systolic" value={data.physiology.bp_systolic} onChange={(v) => updateData('physiology', { bp_systolic: v })} placeholder="e.g. 120" />
                     <PhysioInput id="bp-dia" label="Diastolic" value={data.physiology.bp_diastolic} onChange={(v) => updateData('physiology', { bp_diastolic: v })} placeholder="e.g. 80" />
                 </div>
-            </section>
-
-            {/* ── Section 4: Clinical Observations (optional) ──────────── */}
-            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-4">
-                <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
-                    Clinical Observations
-                    <AdvancedTooltip content="Clinician-rated impressions of the patient at this session. These observations supplement standardised scale scores and inform session readiness decisions. Motivation, support system strength, and prior experience with psychedelics are key predictors of treatment outcomes." tier="standard">
-                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About clinical observations" />
-                    </AdvancedTooltip>
-                    <span className="text-slate-600 font-normal text-sm ml-0.5">optional</span>
-                </h3>
-
-                {([
-                    { key: 'motivation_level' as const, label: 'Motivation Level', options: MOTIVATION_OPTIONS },
-                    { key: 'support_system' as const, label: 'Support System', options: SUPPORT_OPTIONS },
-                    { key: 'prior_experience' as const, label: 'Prior Psychedelic Experience', options: EXPERIENCE_OPTIONS },
-                ]).map(({ key, label, options }) => (
-                    <div key={key}>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">{label}</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                            {options.map((opt) => {
-                                const isSelected = data.observations[key] === opt;
-                                return (
-                                    <button
-                                        key={opt}
-                                        type="button"
-                                        onClick={() => updateData('observations', { [key]: opt } as Partial<WizardData['observations']>)}
-                                        aria-pressed={isSelected}
-                                        className={`flex items-center gap-2 py-2.5 px-3 rounded-xl border text-sm font-semibold transition-all active:scale-95 ${isSelected
-                                            ? 'bg-indigo-700/30 border-indigo-500/60 text-indigo-300'
-                                            : 'bg-slate-800/40 border-slate-700 text-slate-300 hover:border-slate-500'
-                                            }`}
-                                    >
-                                        <CheckCircle className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'opacity-100 text-indigo-400' : 'opacity-0'}`} aria-hidden="true" />
-                                        {opt}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-                ))}
             </section>
 
             {/* ── Footer ──────────────────────────────────────────────────────── */}
