@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download,
     Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
-    CheckCircle2, Edit3, AlertCircle, Pill
+    CheckCircle2, Edit3, AlertCircle, Pill, ShieldAlert
 } from 'lucide-react';
+import { runContraindicationEngine } from '../../services/contraindicationEngine';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import { WorkflowActionCard } from './WorkflowCards';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
@@ -196,7 +197,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             isComplete: isVitalsComplete,
         }] : []),
         {
-            id: '__start__' as WellnessFormId, // handled separately
+            id: '__start__' as unknown as WellnessFormId,
             label: 'Start Session',
             icon: 'play_arrow',
             isComplete: isLive,
@@ -204,6 +205,53 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     ];
 
     const currentStepIdx = isLive ? -1 : PHASE2_STEPS.findIndex(s => !s.isComplete);
+
+    // ── Contraindication checker (local engine, no DB) ────────────────────────
+    const contraindicationResults = useMemo(() => {
+        try {
+            // Try to get selected substance from dosing protocol cached data
+            let substanceName = '';
+            try {
+                const cachedProtocol = localStorage.getItem('ppn_dosing_protocol');
+                if (cachedProtocol) {
+                    const parsed = JSON.parse(cachedProtocol);
+                    substanceName = parsed.substance_name || parsed.substance || '';
+                }
+            } catch (_) { }
+
+            // Try to get patient meds from structured safety check cache
+            let medications: string[] = [];
+            try {
+                const cachedMeds = localStorage.getItem('mock_patient_medications_names');
+                if (cachedMeds) medications = JSON.parse(cachedMeds);
+                if (!medications.length) medications = ['Sertraline (tapering)', 'Lisinopril']; // demo fallback
+            } catch (_) {
+                medications = ['Sertraline (tapering)', 'Lisinopril'];
+            }
+
+            if (!substanceName || !medications.length) return null;
+            const engineInput: import('../../services/contraindicationEngine').IntakeScreeningData = {
+                patientId: 'demo',
+                sessionSubstance: substanceName.toLowerCase(),
+                medications: medications.map(m => m.toLowerCase()),
+                psychiatricHistory: [],
+                familyHistory: [],
+            };
+            return runContraindicationEngine(engineInput);
+        } catch (_) { return null; }
+    }, [isDosingProtocolComplete]); // re-run when dosing protocol changes
+
+    // Current meds list for display
+    const patientMeds = useMemo(() => {
+        try {
+            const cached = localStorage.getItem('mock_patient_medications_names');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
+            }
+        } catch (_) { }
+        return ['Sertraline (tapering)', 'Lisinopril'];
+    }, []);
 
     return (
         <div className="space-y-4 animate-in fade-in duration-500">
@@ -340,9 +388,51 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 })}
             </div>
 
-            {/* ── Timer Bar ────────────────────────────────────────────────────── */}
-            <div className={`rounded-2xl border transition-all duration-500 ${isLive
-                ? 'bg-[#061115]/95 border-emerald-900/40 shadow-lg shadow-emerald-950/30'
+            {/* ── Medications & Contraindication Panel ─────────────────────── */}
+            <div className="flex items-stretch gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
+                {/* Left: patient meds as chips */}
+                <div className="flex-1 min-w-0">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
+                    <div className="flex flex-wrap gap-1.5">
+                        {patientMeds.map((med, i) => (
+                            <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
+                                <Pill className="w-3 h-3 text-slate-500" />
+                                {med}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px bg-slate-700/40 self-stretch" />
+
+                {/* Right: contraindication indicator */}
+                <div className="flex-shrink-0 flex items-center justify-center">
+                    {!contraindicationResults ? (
+                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                            <ShieldAlert className="w-4 h-4" /> No substance selected
+                        </span>
+                    ) : contraindicationResults.absoluteContraindications?.length > 0 ? (
+                        <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-black uppercase tracking-wider">
+                            <AlertTriangle className="w-4 h-4 text-red-400" />
+                            ABSOLUTE CONTRAINDICATION
+                        </span>
+                    ) : contraindicationResults.relativeContraindications?.length > 0 ? (
+                        <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-xs font-black uppercase tracking-wider">
+                            <AlertCircle className="w-4 h-4 text-amber-400" />
+                            RELATIVE CONTRAINDICATION
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-950/30 border border-emerald-700/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
+                            <CheckCircle2 className="w-4 h-4" />
+                            ALL CLEAR
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            {/* ── Timer Bar (sticky when live) ──────────────────────────────────── */}
+            <div className={`rounded-2xl border transition-all duration-500 ${isLive ? 'sticky top-2 z-30 bg-[#061115]/95 border-emerald-900/40 shadow-lg shadow-emerald-950/30 backdrop-blur-xl'
                 : 'bg-slate-900/30 border-slate-800/40 opacity-50 select-none'
                 }`}>
                 <div className="flex items-center justify-between px-5 py-4 gap-4">

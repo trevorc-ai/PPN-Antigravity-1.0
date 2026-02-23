@@ -167,47 +167,8 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
                 </button>
             </div>
 
-            {active && (
-                <div className="p-4 border-b border-slate-700/50 bg-slate-800/40">
-                    <form onSubmit={handleAddNote} className="relative flex items-center">
-                        <input
-                            type="text"
-                            value={draftNote}
-                            onChange={(e) => setDraftNote(e.target.value)}
-                            placeholder="Type a clinical note to timestamp..."
-                            disabled={isSubmitting}
-                            className="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl py-3 pl-4 pr-12 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all font-medium"
-                        />
-                        <button
-                            type="submit"
-                            disabled={isSubmitting || !draftNote.trim()}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                            <Send className="w-4 h-4" />
-                        </button>
-                    </form>
 
-                    <div className="flex flex-wrap gap-2 mt-4">
-                        {QUICK_ACTIONS.map(action => (
-                            <button
-                                key={action.type}
-                                onClick={() => {
-                                    if (action.desc.endsWith(': ')) {
-                                        setDraftNote(action.desc);
-                                    } else {
-                                        handleAddNote(undefined, action.type, action.desc);
-                                    }
-                                }}
-                                disabled={isSubmitting}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-bold uppercase tracking-wider transition-colors ${action.color}`}
-                            >
-                                <action.icon className="w-3.5 h-3.5" />
-                                {action.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
+
 
             <div className="p-6 max-h-[400px] overflow-y-auto space-y-6">
                 {events.length === 0 ? (
