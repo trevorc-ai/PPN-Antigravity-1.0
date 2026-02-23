@@ -131,20 +131,37 @@ export const exportPatientData = async (patientId: string): Promise<void> => {
 
 /**
  * Log export action to audit log
+ * Architecture: action_type_id is an INTEGER FK to ref_system_action_types.
+ * No string literals for action type. No patient_id in payload (PHI).
  */
 const logExportAction = async (
     exportType: string,
     tableCount: number,
-    patientId?: string
+    _patientId?: string   // deliberately ignored — no PHI in log payloads
 ): Promise<void> => {
     try {
+        // Map exportType to ref_system_action_types.action_code
+        const actionCodeMap: Record<string, string> = {
+            full_export: 'data_export',
+            patient_export: 'patient_export',
+            session_export: 'session_export',
+        };
+        const actionCode = actionCodeMap[exportType] ?? 'data_export';
+
+        // Resolve INTEGER FK from controlled vocabulary
+        const { data: refRow } = await supabase
+            .from('ref_system_action_types')
+            .select('id')
+            .eq('action_code', actionCode)
+            .single();
+
         await supabase.from('log_system_events').insert({
-            action: 'data_export',
+            action_type_id: refRow?.id ?? null,     // INTEGER FK ✅
             details: {
-                export_type: exportType,
+                export_type: actionCode,             // action code only — no free text
                 table_count: tableCount,
-                patient_id: patientId,
-                timestamp: new Date().toISOString()
+                // patient_id intentionally omitted — PHI must not enter log payloads
+                timestamp: new Date().toISOString(),
             }
         });
     } catch (error) {

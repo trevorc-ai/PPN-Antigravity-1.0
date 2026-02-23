@@ -75,12 +75,12 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
             const { error } = await supabase.from('log_adverse_events').insert({
                 patient_id: patientId,
                 session_id: sessionId ?? null,
-                alert_type: String(form.event_type_id),
+                alert_type_id: form.event_type_id,                            // INTEGER FK ✅ (no String() wrapper)
                 alert_severity: form.severity,
                 alert_triggered_at: new Date().toISOString(),
                 trigger_value: { onset_time: form.onset_time, duration_minutes: form.duration_minutes },
-                alert_message: form.alert_message_id ? String(form.alert_message_id) : null,
-                response_notes: form.response_notes_id ? String(form.response_notes_id) : null,
+                alert_message_id: form.alert_message_id ?? null,               // INTEGER FK ✅ (no String() wrapper)
+                response_notes_id: form.response_notes_id ?? null,             // INTEGER FK ✅ (no String() wrapper)
                 is_acknowledged: false,
                 is_resolved: false,
             });
@@ -141,12 +141,12 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                             onClick={() => setForm((f) => ({ ...f, severity: key }))}
                             aria-pressed={form.severity === key}
                             className={`py-3 px-2 rounded-xl border text-xs font-black uppercase tracking-widest transition-all ${form.severity === key
-                                    ? key === 'mild'
-                                        ? 'bg-amber-500/20 border-amber-500 text-amber-400'
-                                        : key === 'moderate'
-                                            ? 'bg-orange-500/20 border-orange-500 text-orange-400'
-                                            : 'bg-red-500/20 border-red-500 text-red-400'
-                                    : 'bg-slate-800/40 border-slate-700 text-slate-500 hover:border-slate-600'
+                                ? key === 'mild'
+                                    ? 'bg-amber-500/20 border-amber-500 text-amber-400'
+                                    : key === 'moderate'
+                                        ? 'bg-orange-500/20 border-orange-500 text-orange-400'
+                                        : 'bg-red-500/20 border-red-500 text-red-400'
+                                : 'bg-slate-800/40 border-slate-700 text-slate-500 hover:border-slate-600'
                                 }`}
                         >
                             {cfg.label}
@@ -228,12 +228,12 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                 onClick={handleSave}
                 disabled={!isValid || saveStatus === 'saving'}
                 className={`w-full py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all ${!isValid
-                        ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
-                        : saveStatus === 'saved'
-                            ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
-                            : saveStatus === 'error'
-                                ? 'bg-red-500/20 border border-red-500/40 text-red-400'
-                                : 'bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 active:scale-[0.98]'
+                    ? 'bg-slate-800/40 border border-slate-700 text-slate-600 cursor-not-allowed'
+                    : saveStatus === 'saved'
+                        ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
+                        : saveStatus === 'error'
+                            ? 'bg-red-500/20 border border-red-500/40 text-red-400'
+                            : 'bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 active:scale-[0.98]'
                     }`}
             >
                 {saveStatus === 'saving' ? 'Logging...' : saveStatus === 'saved' ? '✓ Event Logged' : saveStatus === 'error' ? '✗ Log Failed' : 'Log Adverse Event'}

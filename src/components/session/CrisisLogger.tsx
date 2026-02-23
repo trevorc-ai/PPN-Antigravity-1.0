@@ -114,14 +114,24 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
             onEventLogged?.(eventType);
 
             // Write to DB — never block the practitioner if it fails
+            // Architecture: look up integer FK from ref_crisis_event_types before insert.
+            // No free-text strings, no patient_id (PHI). Session ID only.
             try {
-                await supabase.from('log_adverse_events').insert({
-                    patient_id: practitionerId ?? null,
+                // Resolve crisis_event_type_id FK from controlled vocabulary
+                const { data: refRow } = await supabase
+                    .from('ref_crisis_event_types')
+                    .select('id, severity_tier')
+                    .eq('event_code', eventType)
+                    .single();
+
+                const severityLabel =
+                    refRow?.severity_tier === 3 ? 'severe' :
+                        refRow?.severity_tier === 2 ? 'moderate' : 'mild';
+
+                await supabase.from('log_red_alerts').insert({
                     session_id: sessionId,
-                    alert_type: eventType,
-                    alert_severity: ['EMERGENCY_SERVICES_CALLED', 'SESSION_TERMINATED_EARLY', 'TRIP_KILLER_BENZO', 'TRIP_KILLER_ANTIPSYCHOTIC'].includes(eventType)
-                        ? 'severe'
-                        : 'mild',
+                    crisis_event_type_id: refRow?.id ?? null,   // INTEGER FK ✅
+                    alert_severity: severityLabel,               // legacy NOT NULL column — FK migration in Wave 2
                     alert_triggered_at: loggedAt.toISOString(),
                     trigger_value: { seconds_since_ingestion: seconds },
                     is_acknowledged: false,
