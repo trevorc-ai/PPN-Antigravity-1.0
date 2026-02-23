@@ -325,6 +325,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                         <div className="px-6 pt-4 space-y-3">
                             <div className="relative">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                {/* UI-ONLY: client-side patient ID filter — search term is never persisted to Supabase */}
                                 <input
                                     type="text"
                                     placeholder="Search patient ID…"

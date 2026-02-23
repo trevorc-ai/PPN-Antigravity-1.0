@@ -10,9 +10,7 @@ import InteractionChecker from './pages/InteractionChecker';
 import AuditLogs from './pages/AuditLogs';
 import { MyProtocols } from './pages/MyProtocols';
 import ProtocolDetail from './pages/ProtocolDetail';
-import ClinicianDirectory from './pages/ClinicianDirectory';
 import ClinicianProfile from './pages/ClinicianProfile';
-import SearchPortal from './pages/SearchPortal';
 import SimpleSearch from './pages/SimpleSearch';
 import News from './pages/News';
 import HelpFAQ from './pages/HelpFAQ';
@@ -54,9 +52,7 @@ import PatientFormPage from './pages/PatientFormPage';
 import AdaptiveAssessmentPage from './pages/AdaptiveAssessmentPage';
 import Checkout from './pages/Checkout';
 import Academy from './pages/Academy';
-import BillingPortal from './pages/BillingPortal';
 import PartnerDemoHub from './pages/PartnerDemoHub';
-import FormsShowcase from './pages/FormsShowcase';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { HelpCenterLayout } from './components/help/HelpCenterLayout';
 import {
@@ -258,7 +254,6 @@ const AppContent: React.FC = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/academy" element={<Academy />} />
-        <Route path="/billing" element={<BillingPortal />} />
         <Route path="/partner-demo" element={<PartnerDemoHub />} />
 
         {/* Deep Dives (Public Marketing Pages) */}
@@ -282,10 +277,8 @@ const AppContent: React.FC = () => {
               setShowTour={setShowTour}
             />
           }>
-            <Route path="/search" element={<SimpleSearch />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/analytics" element={<Analytics />} />
-            <Route path="/advanced-search" element={<SearchPortal />} />
             <Route path="/news" element={<News />} />
             <Route path="/catalog" element={<SubstanceCatalog />} />
             <Route path="/monograph/:id" element={<SubstanceMonograph />} />
@@ -300,7 +293,6 @@ const AppContent: React.FC = () => {
             {/* PROTOCOL BUILDER */}
             <Route path="/protocols" element={<MyProtocols />} />
             <Route path="/protocol/:id" element={<ProtocolDetail />} />
-            <Route path="/clinicians" element={<ClinicianDirectory />} />
             <Route path="/clinician/:id" element={<ClinicianProfile />} />
             <Route path="/help" element={<HelpCenterLayout />}>
               <Route index element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
@@ -323,8 +315,6 @@ const AppContent: React.FC = () => {
             <Route path="/session-export" element={<SessionExportCenter />} />
             <Route path="/clinical-report-pdf" element={<ClinicalReportPDF />} />
 
-            {/* Forms Showcase - Testing Page for Arc of Care Forms */}
-            <Route path="/forms-showcase" element={<FormsShowcase />} />
 
             <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Sign Out</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out</button></div>} />
 

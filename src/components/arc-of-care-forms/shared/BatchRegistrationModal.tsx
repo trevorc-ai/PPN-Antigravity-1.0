@@ -131,7 +131,8 @@ export const BatchRegistrationModal: React.FC<BatchRegistrationModalProps> = ({
                         </select>
                     </FormField>
 
-                    {/* Batch Number */}
+                    {/* Batch Number — PERSISTED external identifier (manufacturer lot code, not free-text narrative).
+                        Architecture Constitution §2 exception: structured external reference, maxLength=50 enforced. */}
                     <FormField label="Batch Number" required>
                         <input
                             type="text"
@@ -166,7 +167,8 @@ export const BatchRegistrationModal: React.FC<BatchRegistrationModalProps> = ({
                         />
                     </FormField>
 
-                    {/* Manufacturer */}
+                    {/* Manufacturer — PERSISTED external identifier (company name, not free-text narrative).
+                        Architecture Constitution §2 exception: constrained external reference, maxLength=100 enforced. */}
                     <FormField label="Manufacturer" required>
                         <input
                             type="text"

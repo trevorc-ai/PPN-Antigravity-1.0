@@ -237,6 +237,8 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                         Relative contraindications have been identified. To proceed to Phase 2, you must document your clinical justification below and acknowledge the flagged risks.
                     </p>
 
+                    {/* UI-ONLY: not persisted — value stays in local state to gate the proceed button.
+                        Parent receives justification string via onOverrideConfirmed prop — never directly written to Supabase from here. */}
                     <textarea
                         id="contraindication-justification"
                         value={justification}

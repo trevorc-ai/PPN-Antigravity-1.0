@@ -82,6 +82,7 @@ export const UserPicker: React.FC<UserPickerProps> = ({
                     <div className="p-3 border-b border-slate-700/50">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            {/* UI-ONLY: client-side search filter — never persisted to Supabase */}
                             <input
                                 type="text"
                                 value={searchQuery}

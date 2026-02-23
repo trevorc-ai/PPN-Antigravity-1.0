@@ -91,7 +91,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
             )}
 
             <div className="relative flex-1">
-                {/* type="text" + inputMode="numeric": no spinner arrows, numeric keyboard on mobile */}
+                {/* UI-ONLY: type="text" + inputMode="numeric" is intentional — prevents browser spinner arrows
+                    and opens numeric keyboard on iOS/Android. Accepts numeric values only. Not persisted here. */}
                 <input
                     type="text"
                     inputMode="numeric"

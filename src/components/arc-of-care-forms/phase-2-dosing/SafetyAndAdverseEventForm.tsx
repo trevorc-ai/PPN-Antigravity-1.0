@@ -486,6 +486,8 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                             </FormField>
 
                             <FormField label="MedDRA Code" tooltip="Optional — enter if known">
+                                {/* PERSISTED external identifier (MedDRA numeric taxonomy code, e.g. 10047700).
+                                    Architecture Constitution §2 exception: standardized medical coding system, not free-text narrative. */}
                                 <input
                                     type="text"
                                     value={data.meddra_code ?? ''}
