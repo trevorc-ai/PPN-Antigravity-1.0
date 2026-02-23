@@ -117,6 +117,69 @@ If either grep returns ANY results, list them and **FAIL**.
 - [ ] No `console.log` statements exposing patient data
 - [ ] RLS policies enforced on any new DB tables (check migration file)
 
+## Step 5b: 🚨 DATABASE SCHEMA GOVERNANCE (NEW — MANDATORY — Root cause of 2026-02-22 violations)
+
+> These checks were MISSING from the prior checklist. The forensic audit of migrations 059-062 revealed three INSPECTOR blind spots — all now mandatory.
+
+### TEXT Column Constraint Check (Architecture Constitution §2 — "No TEXT column without a CHECK constraint")
+
+For every migration file under review, run:
+```bash
+# Find TEXT columns without CHECK constraints in the migration
+grep -n "TEXT" migrations/NNN_*.sql | grep -v "CHECK\|CONSTRAINT\|--\|DEFAULT ''\|NOT NULL.*label\|NOT NULL.*code\|IF NOT EXISTS\|EXCEPTION\|RAISE\|RETURNS TEXT\|::TEXT"
+```
+
+For every result returned:
+- Is the value drawn from a finite set of options? → **MUST have a `CHECK (col IN (...)`)` constraint**
+- Is it an external identifier (batch_number, DOI, URL)? → Acceptable without CHECK — document the reason in your notes
+- Is it a free-text human narrative? → **AUTOMATIC FAIL — see rule below**
+
+**❌ AUTOMATICALLY FAILING TEXT PATTERNS:**
+- Any column described as "free-text justification", "notes", "comments", "reason" from a practitioner
+- Architecture Constitution §2: *"If a practitioner types a sentence, it does not enter this database. Ever."*
+- Proposed fix: redesign as `_id INTEGER` FK to a `ref_` controlled vocabulary table
+
+### Staff PII Check (New — Missed in prior audits)
+
+```bash
+# Look for staff or witness name fields stored as TEXT
+grep -in "witness_name\|staff_name\|clinician_name\|provider_name\|nurse_name\|physician_name" migrations/NNN_*.sql
+```
+
+- Any staff person's name stored as TEXT = PII violation
+- Correct pattern: `_id UUID REFERENCES auth.users(id)` or FK to a staff reference table
+- Patient names are already prohibited; staff names are EQUALLY prohibited
+
+### Pipeline Bypass Check (Ensures migration went through proper review)
+
+Before approving ANY migration, verify:
+```bash
+# Confirm there is a schema work order ticket for this migration
+find _WORK_ORDERS -name "*WO-SCH*" -o -name "*schema*" | grep -i "$(basename $MIGRATION_FILE .sql | sed 's/[0-9]*_//')"
+```
+
+- [ ] A dedicated schema work order ticket (WO-SCH-NNN) exists for this migration
+- [ ] The ticket was routed through SOOP → 04_QA → INSPECTOR (not bundled with feature commits)
+- [ ] The migration was NOT committed as part of a feature bundle (check git log for co-committed .tsx files)
+
+If the migration was committed in the same commit as `.tsx` or `.ts` feature files with no schema WO ticket → **AUTOMATIC FAIL. The migration bypassed the pipeline.**
+
+### Architecture Constitution §2 Full Compliance Check
+
+```bash
+# Confirm no sequential patient IDs (PT-0001 pattern)
+grep -n "PT-0\|patient_num\|LPAD\|sequential" migrations/NNN_*.sql | grep -v "--"
+
+# Confirm no TEXT[] without documented constraint rationale  
+grep -n "TEXT\[\]" migrations/NNN_*.sql
+```
+
+- [ ] No `TEXT[]` column without documented rationale for why `INTEGER[] FK` wasn't used instead
+- [ ] No free-text clinical narrative columns (any column a practitioner fills with prose)
+- [ ] No staff names as TEXT
+- [ ] All enumerable TEXT columns have CHECK constraints
+- [ ] USER explicitly authorized this migration (cited in work order — not just LEAD routing)
+
 ---
 
 ## Step 6: No Regressions

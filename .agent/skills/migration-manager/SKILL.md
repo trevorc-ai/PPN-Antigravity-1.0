@@ -5,8 +5,21 @@ description: Manages Supabase database migrations with proper workflow. Includes
 
 # Migration Manager
 
+## 🔒 GOVERNANCE AUTHORITY (Read Before Anything Else)
+
+> **MANDATORY:** Read `DATABASE_GOVERNANCE_CHARTER.md` before starting any migration work.
+
+**Database Write/Create Authority:**
+- ✅ AUTHORIZED: USER (Admin) — executes in Supabase SQL Editor only
+- ✅ AUTHORIZED: INSPECTOR — on USER's explicit delegation only
+- ❌ FORBIDDEN: SOOP, BUILDER, LEAD, or any other agent — may WRITE sql files as text, NEVER EXECUTE them
+
+**SOOP's job is to produce a `.sql` file as a work product, hand it to INSPECTOR for review, and then USER runs it manually. SOOP never runs the SQL.**
+
+---
+
 ## Purpose
-Execute database migrations safely. The #1 rule: **always verify the live schema before writing SQL**, not after.
+Produce database migration files safely. The #1 rule: **always verify the live schema before writing SQL**, not after.
 
 ---
 
