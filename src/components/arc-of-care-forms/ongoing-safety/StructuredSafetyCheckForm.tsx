@@ -21,6 +21,7 @@ export interface StructuredSafetyCheckData {
     action_taken_ids: number[];
     follow_up_required: boolean;
     follow_up_timeframe?: '24_hours' | '3_days' | '1_week';
+    current_medications?: string;
 }
 
 interface StructuredSafetyCheckFormProps {
@@ -76,6 +77,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         action_taken_ids: initialData.action_taken_ids || [],
         follow_up_required: initialData.follow_up_required || false,
         follow_up_timeframe: initialData.follow_up_timeframe,
+        current_medications: initialData.current_medications || '',
     });
 
     const [isSaving, setIsSaving] = useState(false);
@@ -293,9 +295,21 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             </button>
                         </div>
                         {data.medication_changes && (
-                            <p className="text-sm text-amber-400 mt-2 font-medium">
-                                → Update Medications list on the next screen
-                            </p>
+                            <div className="mt-4 animate-in slide-in-from-top-2">
+                                <label className="block text-sm font-semibold text-slate-300 mb-2">
+                                    Current Medications & Supplements <span className="text-red-400">*</span>
+                                </label>
+                                <textarea
+                                    value={data.current_medications}
+                                    onChange={(e) => updateField('current_medications', e.target.value)}
+                                    placeholder="List all current prescriptions, OTC medications, and supplements (e.g., Lexapro 10mg daily)..."
+                                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 min-h-[100px] resize-y placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    required={data.medication_changes}
+                                />
+                                <p className="text-sm text-slate-400 font-medium mt-2">
+                                    This list will be cross-referenced against the Interaction Engine during the dosing phase.
+                                </p>
+                            </div>
                         )}
                     </FormField>
                 </div>

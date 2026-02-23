@@ -6,6 +6,7 @@ import { UserPicker, UserOption } from '../shared/UserPicker';
 import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationModal';
 import { DeviceRegistrationModal, DeviceData } from '../shared/DeviceRegistrationModal';
 import { FormFooter } from '../shared/FormFooter';
+import { useReferenceData } from '../../../hooks/useReferenceData';
 
 /**
  * DosingProtocolForm - Substance Administration Details
@@ -34,14 +35,7 @@ interface DosingProtocolFormProps {
     onBack?: () => void;
 }
 
-// Mock data - in production, fetch from ref_substances
-const SUBSTANCES = [
-    { id: 'psilocybin', name: 'Psilocybin', typical_range: '20-30 mg' },
-    { id: 'mdma', name: 'MDMA', typical_range: '80-120 mg' },
-    { id: 'lsd', name: 'LSD', typical_range: '100-200 μg' },
-    { id: 'ketamine', name: 'Ketamine', typical_range: '0.5-1.0 mg/kg' },
-    { id: 'ayahuasca', name: 'Ayahuasca', typical_range: '50-150 ml' }
-];
+// Real substances will be loaded from reference data hook
 
 const ROUTES = [
     'Oral',
@@ -71,7 +65,9 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const [data, setData] = useState<DosingProtocolData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
-    const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
+
+    // Reference Data
+    const { substances } = useReferenceData();
 
     // Mock batch data - in production, fetch from ref_substance_batches
     const [batches, setBatches] = useState([
@@ -80,12 +76,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         { id: 3, batch_number: 'LSD-2024-003', substance: 'LSD', expiration: '2025-09-15' }
     ]);
 
-    // Mock device data - in production, fetch from ref_wearable_devices
-    const [devices, setDevices] = useState([
-        { id: 1, device_type: 'Apple Watch', model: 'Series 9', serial: 'AW-001' },
-        { id: 2, device_type: 'Fitbit', model: 'Charge 6', serial: 'FB-002' },
-        { id: 3, device_type: 'Oura Ring', model: 'Gen 3', serial: 'OR-003' }
-    ]);
+
 
     const handleSaveAndExit = () => {
         if (onSave) {
@@ -129,36 +120,11 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         setData(prev => ({ ...prev, batch_id: newBatch.id }));
     };
 
-    const handleDeviceSave = async (deviceData: DeviceData) => {
-        // In production, save to database and get ID
-        const newDevice = {
-            id: devices.length + 1,
-            device_type: deviceData.device_type,
-            model: deviceData.device_model,
-            serial: deviceData.serial_number
-        };
-        setDevices(prev => [...prev, newDevice]);
-        setData(prev => ({ ...prev, device_id: newDevice.id }));
-    };
-
-    const selectedSubstance = SUBSTANCES.find(s => s.id === data.substance_id);
+    const selectedSubstance = substances.find(s => s.substance_id === data.substance_id);
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
-            {/* Header */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h2 className="text-2xl font-black text-slate-300 flex items-center gap-3">
-                            <Pill className="w-7 h-7 text-pink-400" />
-                            Dosing Protocol
-                        </h2>
-                        <p className="text-slate-300 text-sm mt-2">
-                            Document substance administration details for regulatory compliance and safety tracking.
-                        </p>
-                    </div>
-                </div>
-            </div>
+
 
             {/* Form Grid */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
@@ -175,17 +141,12 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                             className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         >
                             <option value="">Select substance...</option>
-                            {SUBSTANCES.map(substance => (
-                                <option key={substance.id} value={substance.id}>
-                                    {substance.name}
+                            {substances.map(substance => (
+                                <option key={substance.substance_id} value={substance.substance_id}>
+                                    {substance.substance_name}
                                 </option>
                             ))}
                         </select>
-                        {selectedSubstance && (
-                            <p className="text-sm text-slate-400 mt-2">
-                                Typical range: {selectedSubstance.typical_range}
-                            </p>
-                        )}
                     </FormField>
 
                     {/* Dosage */}
@@ -229,61 +190,27 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                     <FormField
                         label="Substance Batch"
                         tooltip="Select registered batch for traceability"
-                        required
                     >
-                        <div className="flex gap-2">
-                            <select
-                                value={data.batch_id ?? ''}
-                                onChange={(e) => updateField('batch_id', e.target.value ? parseInt(e.target.value) : undefined)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            >
-                                <option value="">Select batch...</option>
-                                {batches.map(batch => (
-                                    <option key={batch.id} value={batch.id}>
-                                        {batch.batch_number} ({batch.substance}) - Exp: {batch.expiration}
-                                    </option>
-                                ))}
-                            </select>
-                            <button
-                                type="button"
-                                onClick={() => setIsBatchModalOpen(true)}
-                                className="px-4 py-3 bg-pink-600 hover:bg-pink-700 text-slate-300 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
-                                title="Register new batch"
-                            >
-                                <Plus className="w-4 h-4" />
-                                New
-                            </button>
-                        </div>
+                        <select
+                            value={data.batch_id ?? ''}
+                            disabled={true}
+                            className="w-full px-4 py-3 bg-slate-800/20 border border-slate-700/30 rounded-lg text-slate-500 cursor-not-allowed transition-all"
+                        >
+                            <option value="">Inventory tracking disabled...</option>
+                        </select>
                     </FormField>
 
                     {/* Device Selection */}
                     <FormField
                         label="Wearable Device"
-                        tooltip="Select device for vital signs tracking (optional)"
+                        tooltip="Apple Watch / Oura Integration coming soon."
                     >
-                        <div className="flex gap-2">
-                            <select
-                                value={data.device_id ?? ''}
-                                onChange={(e) => updateField('device_id', e.target.value ? parseInt(e.target.value) : undefined)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            >
-                                <option value="">Select device...</option>
-                                {devices.map(device => (
-                                    <option key={device.id} value={device.id}>
-                                        {device.device_type} {device.model} ({device.serial})
-                                    </option>
-                                ))}
-                            </select>
-                            <button
-                                type="button"
-                                onClick={() => setIsDeviceModalOpen(true)}
-                                className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-slate-300 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
-                                title="Register new device"
-                            >
-                                <Plus className="w-4 h-4" />
-                                New
-                            </button>
-                        </div>
+                        <select
+                            disabled={true}
+                            className="w-full px-4 py-3 bg-slate-800/20 border border-slate-700/30 rounded-lg text-slate-500 cursor-not-allowed transition-all"
+                        >
+                            <option value="">Integration Coming Soon</option>
+                        </select>
                     </FormField>
 
                     {/* Session Guide */}
@@ -318,11 +245,6 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                 isOpen={isBatchModalOpen}
                 onClose={() => setIsBatchModalOpen(false)}
                 onSave={handleBatchSave}
-            />
-            <DeviceRegistrationModal
-                isOpen={isDeviceModalOpen}
-                onClose={() => setIsDeviceModalOpen(false)}
-                onSave={handleDeviceSave}
             />
         </div >
     );
