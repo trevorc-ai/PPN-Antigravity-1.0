@@ -31,7 +31,6 @@ const navSegments = [
         title: "Account & Billing",
         links: [
             { label: "Settings", path: "/help/settings" },
-            { label: "Invoices", path: "/help/billing" },
         ]
     }
 ];

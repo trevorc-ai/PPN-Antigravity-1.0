@@ -59,7 +59,16 @@ import PartnerDemoHub from './pages/PartnerDemoHub';
 import FormsShowcase from './pages/FormsShowcase';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { HelpCenterLayout } from './components/help/HelpCenterLayout';
-import { HelpInteractionChecker, HelpWellnessJourney, HelpScanner } from './components/help/HelpPages';
+import {
+  HelpInteractionChecker,
+  HelpWellnessJourney,
+  HelpScanner,
+  HelpQuickstart,
+  HelpOverview,
+  HelpSessionReporting,
+  HelpDevices,
+  HelpSettings,
+} from './components/help/HelpPages';
 
 // Verified Deep Dives
 import ClinicPerformancePage from './pages/deep-dives/ClinicPerformancePage';
@@ -296,10 +305,15 @@ const AppContent: React.FC = () => {
             <Route path="/help" element={<HelpCenterLayout />}>
               <Route index element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
               <Route path="faq" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
+              <Route path="quickstart" element={<HelpQuickstart />} />
+              <Route path="overview" element={<HelpOverview />} />
               <Route path="interaction-checker" element={<HelpInteractionChecker />} />
               <Route path="wellness-journey" element={<HelpWellnessJourney />} />
+              <Route path="reports" element={<HelpSessionReporting />} />
               <Route path="scanner" element={<HelpScanner />} />
-              {/* Fallback mock route for empty links */}
+              <Route path="devices" element={<HelpDevices />} />
+              <Route path="settings" element={<HelpSettings />} />
+              {/* Fallback */}
               <Route path="*" element={<div className="text-slate-500 font-medium py-10">Documentation content currently being drafted.</div>} />
             </Route>
             <Route path="/notifications" element={<Notifications />} />

@@ -95,7 +95,8 @@ const Breadcrumbs: React.FC = () => {
           const label = getLabel(value, index);
 
           // Skip internal routing keys that are part of a compound path but not meaningful labels on their own
-          if ((value === 'monograph' || value === 'clinician' || value === 'detail') && !last) return null;
+          if ((value === 'monograph' || value === 'clinician' || value === 'detail' || value === 'billing') && !last) return null;
+          if (value === 'billing') return null;
 
           return (
             <React.Fragment key={to}>
