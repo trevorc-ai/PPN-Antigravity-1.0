@@ -89,7 +89,7 @@ export const HelpQuickstart = () => (
             ))}
         </div>
 
-        <ScreenshotBlock src="/screenshots/help-quickstart.png" alt="PPN Portal Quickstart Onboarding Flow" />
+        <ScreenshotBlock src="/screenshots/wellness_welcome.png" alt="PPN Portal Quickstart Onboarding Flow" />
     </div>
 );
 
@@ -125,7 +125,8 @@ export const HelpOverview = () => (
             ))}
         </div>
 
-        <ScreenshotBlock src="/screenshots/help-overview.png" alt="PPN Portal Platform Overview" />
+        <ScreenshotBlock src="/screenshots/dashboard.png" alt="PPN Portal Platform Overview Dashboard" />
+        <ScreenshotBlock src="/screenshots/neural_search.png" alt="PPN Neural Search Interface" />
     </div>
 );
 
@@ -168,7 +169,8 @@ export const HelpInteractionChecker = () => (
             </div>
         </div>
 
-        <ScreenshotBlock src="/screenshots/help-interaction-checker.png" alt="Interaction Checker Results Screen" />
+        <ScreenshotBlock src="/screenshots/interation_checker.png" alt="Interaction Checker Results Screen" />
+        <ScreenshotBlock src="/screenshots/safety_check.png" alt="Safety Check Detail View" />
     </div>
 );
 
@@ -213,7 +215,8 @@ export const HelpWellnessJourney = () => (
             />
         </div>
 
-        <ScreenshotBlock src="/screenshots/help-wellness-journey.png" alt="Wellness Journey Phase Overview" />
+        <ScreenshotBlock src="/screenshots/wellness_phase_1.png" alt="Wellness Journey Phase 1 - Preparation" />
+        <ScreenshotBlock src="/screenshots/Wellness_start.png" alt="Wellness Journey Start Screen" />
     </div>
 );
 
@@ -247,7 +250,7 @@ export const HelpSessionReporting = () => (
             />
         </div>
 
-        <ScreenshotBlock src="/screenshots/help-session-reporting.png" alt="Session Export and Report View" />
+        <ScreenshotBlock src="/screenshots/compliance_documents.png" alt="Session Export and Compliance Documents" />
     </div>
 );
 
@@ -290,7 +293,7 @@ export const HelpScanner = () => (
             </div>
         </div>
 
-        <ScreenshotBlock src="/screenshots/help-scanner.png" alt="Patient Bridge Scanner Interface" />
+        <ScreenshotBlock src="/screenshots/informed_consent_0.png" alt="Patient Bridge Scanner and Consent Form" />
     </div>
 );
 
