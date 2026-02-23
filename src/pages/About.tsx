@@ -46,7 +46,7 @@ const About: React.FC = () => {
             </div>
             <div className="pt-4">
               <button
-                onClick={() => navigate('/advanced-search')}
+                onClick={() => navigate('/dashboard')} // /advanced-search removed — replaced by command palette (WO-403)
                 className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95"
               >
                 Access PPN Portal

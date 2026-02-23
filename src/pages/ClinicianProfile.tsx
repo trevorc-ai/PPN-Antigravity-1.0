@@ -156,7 +156,7 @@ const ClinicianProfile: React.FC = () => {
       <div className="h-full flex flex-col items-center justify-center p-8 bg-[#0a1628] text-slate-500">
         <span className="material-symbols-outlined text-6xl mb-4 opacity-20">person_off</span>
         <h2 className="text-xl font-black tracking-tight uppercase">Practitioner Not Found</h2>
-        <button onClick={() => navigate('/clinicians')} className="mt-6 text-primary font-bold hover:underline">Return to Directory</button>
+        <button onClick={() => navigate('/dashboard')} className="mt-6 text-primary font-bold hover:underline">Return to Dashboard</button>
       </div>
     );
   }
@@ -184,7 +184,7 @@ const ClinicianProfile: React.FC = () => {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate('/profile/edit')}
+              onClick={() => navigate('/settings')} // /profile/edit not implemented — routes to account settings
               className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 border border-primary/30 rounded-2xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
             >
               <span className="material-symbols-outlined text-lg">edit</span>
