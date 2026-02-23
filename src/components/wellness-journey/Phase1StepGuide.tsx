@@ -107,12 +107,14 @@ interface Phase1StepGuideProps {
     completedFormIds: Set<string>;
     onStartStep: (formId: WellnessFormId) => void;
     onCompletePhase?: () => void;
+    bottomStatusBar?: React.ReactNode;
 }
 
 export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
     completedFormIds,
     onStartStep,
     onCompletePhase,
+    bottomStatusBar,
 }) => {
     const heroRef = useRef<HTMLDivElement>(null);
     const [canProceedToPhase2, setCanProceedToPhase2] = useState(false);
@@ -238,11 +240,14 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                 {/* CTA buttons — text-sm minimum */}
                                 <div className="mt-auto pt-2">
                                     {isComplete ? (
-                                        <div className="flex flex-col items-center gap-1">
-                                            <span className="text-[11px] font-black uppercase tracking-widest text-teal-400/80">Completed</span>
+                                        <div className="flex flex-col items-center gap-1 mt-2">
+                                            <span className="flex items-center gap-1.5 text-sm md:text-base font-black uppercase tracking-widest text-teal-400">
+                                                <CheckCircle2 className="w-4 h-4" />
+                                                COMPLETED
+                                            </span>
                                             <button
                                                 onClick={() => onStartStep(step.id)}
-                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm md:text-base font-semibold text-slate-500 hover:text-teal-400 transition-all"
+                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm md:text-base font-medium text-slate-400 hover:text-teal-300 transition-all"
                                                 aria-label={`Amend ${step.label}`}
                                             >
                                                 <Edit3 className="w-3.5 h-3.5" aria-hidden="true" />
@@ -307,6 +312,12 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                             />
                         </div>
                     </div>
+
+                    {bottomStatusBar && (
+                        <div className="mt-8">
+                            {bottomStatusBar}
+                        </div>
+                    )}
 
                     {/* Proceed to Phase 2 Bottom Container */}
                     <div className="mt-8 pt-6 border-t border-slate-700/50">
