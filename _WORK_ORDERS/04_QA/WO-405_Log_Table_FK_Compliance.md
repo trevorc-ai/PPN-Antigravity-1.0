@@ -4,9 +4,9 @@ title: "Log Table FK Compliance — Full Schema Audit & Remediation Plan"
 status: 04_QA
 owner: INSPECTOR
 created: 2026-02-23
-updated: 2026-02-23T11:09 PST
+updated: 2026-02-23T11:58 PST
 created_by: LEAD
-failure_count: 1
+failure_count: 2
 priority: P0
 tags: [database, data-governance, fk-compliance, log-tables, architecture-constitution, schema-audit]
 user_prompt: |
@@ -358,6 +358,7 @@ CREATE TABLE IF NOT EXISTS ref_session_types (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ALTER TABLE ref_session_types ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "authenticated_read_ref_session_types" ON ref_session_types;
 CREATE POLICY "authenticated_read_ref_session_types"
   ON ref_session_types FOR SELECT TO authenticated USING (true);
 INSERT INTO ref_session_types (session_code, session_label) VALUES
@@ -379,6 +380,7 @@ CREATE TABLE IF NOT EXISTS ref_crisis_event_types (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ALTER TABLE ref_crisis_event_types ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "authenticated_read_ref_crisis_event_types" ON ref_crisis_event_types;
 CREATE POLICY "authenticated_read_ref_crisis_event_types"
   ON ref_crisis_event_types FOR SELECT TO authenticated USING (true);
 INSERT INTO ref_crisis_event_types (event_code, label, severity_tier) VALUES
@@ -405,6 +407,7 @@ CREATE TABLE IF NOT EXISTS ref_system_action_types (
     is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 ALTER TABLE ref_system_action_types ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "authenticated_read_ref_system_action_types" ON ref_system_action_types;
 CREATE POLICY "authenticated_read_ref_system_action_types"
   ON ref_system_action_types FOR SELECT TO authenticated USING (true);
 INSERT INTO ref_system_action_types (action_code, label) VALUES
@@ -425,6 +428,7 @@ CREATE TABLE IF NOT EXISTS ref_consent_types (
     is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 ALTER TABLE ref_consent_types ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "authenticated_read_ref_consent_types" ON ref_consent_types;
 CREATE POLICY "authenticated_read_ref_consent_types"
   ON ref_consent_types FOR SELECT TO authenticated USING (true);
 INSERT INTO ref_consent_types (consent_code, label) VALUES
