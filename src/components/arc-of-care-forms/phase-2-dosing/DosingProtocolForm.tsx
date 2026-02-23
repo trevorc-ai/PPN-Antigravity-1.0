@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pill, Save, CheckCircle, Plus } from 'lucide-react';
 import { FormField } from '../shared/FormField';
-import { NumberInput } from '../shared/NumberInput';
+
 import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationModal';
 import { FormFooter } from '../shared/FormFooter';
 import { useReferenceData } from '../../../hooks/useReferenceData';
@@ -16,7 +16,8 @@ import { useReferenceData } from '../../../hooks/useReferenceData';
 
 export interface DosingProtocolData {
     substance_id?: string;
-    dosage_mg?: number;
+    dosage_amount?: number;
+    dosage_unit?: string;
     route_of_administration?: string;
     batch_id?: number; // Foreign key to ref_substance_batches
 }
@@ -40,6 +41,14 @@ const ROUTES = [
     'Intravenous (IV)',
     'Insufflated',
     'Vaporized'
+];
+
+const DOSAGE_UNITS = [
+    'mg',
+    'g',
+    'mcg',
+    'mL',
+    'drops'
 ];
 
 
@@ -143,18 +152,30 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                     {/* Dosage */}
                     <FormField
                         label="Dosage"
-                        tooltip="Enter dosage in milligrams (mg)"
+                        tooltip="Enter numeric dosage and select the appropriate measurement unit"
                         required
                     >
-                        <NumberInput
-                            value={data.dosage_mg}
-                            onChange={(val) => updateField('dosage_mg', val)}
-                            min={0}
-                            max={1000}
-                            step={0.1}
-                            unit="mg"
-                            placeholder="25.0"
-                        />
+                        <div className="flex rounded-lg overflow-hidden border border-slate-700/50 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all">
+                            <input
+                                type="number"
+                                value={data.dosage_amount ?? ''}
+                                onChange={(e) => updateField('dosage_amount', e.target.value ? parseFloat(e.target.value) : undefined)}
+                                min={0}
+                                step="any"
+                                placeholder="e.g. 25"
+                                className="flex-1 px-4 py-3 bg-slate-800/50 text-slate-300 focus:outline-none placeholder:text-slate-600 appearance-none m-0"
+                            />
+                            <div className="w-px bg-slate-700/50" />
+                            <select
+                                value={data.dosage_unit ?? 'mg'}
+                                onChange={(e) => updateField('dosage_unit', e.target.value)}
+                                className="w-24 px-3 py-3 bg-slate-800/80 text-slate-300 focus:outline-none cursor-pointer appearance-none text-center"
+                            >
+                                {DOSAGE_UNITS.map(unit => (
+                                    <option key={unit} value={unit}>{unit}</option>
+                                ))}
+                            </select>
+                        </div>
                     </FormField>
 
                     {/* Route of Administration */}
