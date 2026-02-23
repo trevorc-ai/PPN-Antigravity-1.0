@@ -1,10 +1,10 @@
 ---
 id: WO-405
 title: "Log Table FK Compliance — Full Schema Audit & Remediation Plan"
-status: 04_QA
-owner: INSPECTOR
+status: 05_USER_REVIEW
+owner: USER
 created: 2026-02-23
-updated: 2026-02-23T11:58 PST
+updated: 2026-02-23T12:00 PST
 created_by: LEAD
 failure_count: 2
 priority: P0
