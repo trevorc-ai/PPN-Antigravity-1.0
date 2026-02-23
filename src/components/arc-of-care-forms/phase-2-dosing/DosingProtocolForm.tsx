@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Pill, Save, CheckCircle, Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Pill, Save, CheckCircle, Plus, AlertTriangle, AlertCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
-
 import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationModal';
 import { FormFooter } from '../shared/FormFooter';
-import { InteractionChecker } from '../../clinical/InteractionChecker';
 import { useReferenceData } from '../../../hooks/useReferenceData';
+import { runContraindicationEngine } from '../../../services/contraindicationEngine';
 
 /**
  * DosingProtocolForm - Substance Administration Details
@@ -66,19 +65,19 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const [data, setData] = useState<DosingProtocolData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
-    const [mockPatientMeds, setMockPatientMeds] = useState<number[]>([]);
 
-    useEffect(() => {
-        // Read patient medications from local storage (mock for Phase 1 -> Phase 2 connection)
+    // Read patient medications (names) from localStorage for contraindication check.
+    // The StructuredSafetyCheckForm writes medication IDs; we also try names from the
+    // 'mock_patient_medications_names' key for the engine (which works on string names).
+    // As a safe fallback, we use the mock medications from the Risk Eligibility panel.
+    const storedMedNames: string[] = (() => {
         try {
-            const saved = localStorage.getItem('mock_patient_medications');
-            if (saved) {
-                setMockPatientMeds(JSON.parse(saved));
-            }
-        } catch (e) {
-            console.error('Failed to parse patient medications', e);
-        }
-    }, []);
+            const raw = localStorage.getItem('mock_patient_medications_names');
+            if (raw) return JSON.parse(raw);
+        } catch { /* ignore */ }
+        // Default mock medications matching the demo patient (Sertraline tapering → SSRI flag)
+        return ['Sertraline (tapering)', 'Lisinopril'];
+    })();
 
     // Reference Data
     const { substances } = useReferenceData();
@@ -135,6 +134,21 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     };
 
     const selectedSubstance = substances.find(s => s.substance_id === data.substance_id);
+    const substanceName = selectedSubstance?.substance_name ?? '';
+
+    // Run local contraindication engine — instant, no DB required
+    const contraindicationResult = substanceName
+        ? runContraindicationEngine({
+            patientId: patientId ?? 'UNKNOWN',
+            sessionSubstance: substanceName,
+            medications: storedMedNames,
+            psychiatricHistory: [],
+            familyHistory: [],
+        })
+        : null;
+
+    const hasContraindications = contraindicationResult &&
+        (contraindicationResult.absoluteFlags.length > 0 || contraindicationResult.relativeFlags.length > 0);
 
     const isValid = Boolean(
         data.substance_id &&
@@ -146,12 +160,31 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     return (
         <div className="max-w-4xl mx-auto space-y-6">
 
-            {data.substance_id && mockPatientMeds.length > 0 && (
-                <div className="animate-in fade-in slide-in-from-top-2">
-                    <InteractionChecker
-                        substanceId={parseInt(data.substance_id)}
-                        medicationIds={mockPatientMeds}
-                    />
+            {/* ── Contraindication Alert (local engine, always reliable) ── */}
+            {substanceName && hasContraindications && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    {contraindicationResult!.absoluteFlags.map(flag => (
+                        <div key={flag.id} className="flex gap-3 p-4 bg-red-950/60 border border-red-500/60 rounded-xl">
+                            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-bold text-red-300 uppercase tracking-wide">ABSOLUTE CONTRAINDICATION</p>
+                                <p className="text-sm font-semibold text-red-200">{flag.headline}</p>
+                                <p className="text-xs text-red-300/80">{flag.detail}</p>
+                                <p className="text-xs text-red-400/60 mt-1">{flag.regulatoryBasis}</p>
+                            </div>
+                        </div>
+                    ))}
+                    {contraindicationResult!.relativeFlags.map(flag => (
+                        <div key={flag.id} className="flex gap-3 p-4 bg-amber-950/60 border border-amber-500/50 rounded-xl">
+                            <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-bold text-amber-300 uppercase tracking-wide">CAUTION — Relative Contraindication</p>
+                                <p className="text-sm font-semibold text-amber-200">{flag.headline}</p>
+                                <p className="text-xs text-amber-300/80">{flag.detail}</p>
+                                <p className="text-xs text-amber-400/60 mt-1">{flag.regulatoryBasis}</p>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
 
