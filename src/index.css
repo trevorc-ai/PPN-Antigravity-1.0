@@ -747,3 +747,27 @@ textarea,
 select {
   color-scheme: dark;
 }
+/* =====================================================
+   PATIENT PROGRESS SUMMARY — PRINT STYLES (WO-304)
+   Produces a clean white single-page document when
+   window.print() is invoked from the preview modal.
+   ===================================================== */
+@media print {
+  /* Flatten fixed/modal positioning */
+  .fixed { position: static !important; }
+  .overflow-y-auto { overflow: visible !important; }
+  .max-h-\[90vh\] { max-height: none !important; }
+  .backdrop-blur-sm { backdrop-filter: none !important; }
+  .sticky { position: static !important; }
+
+  /* Preserve key colours with print-color-adjust */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    margin: 1.2cm 1.5cm;
+    size: letter portrait;
+  }
+}

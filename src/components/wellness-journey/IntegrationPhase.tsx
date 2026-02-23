@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activity, Calendar, Award } from 'lucide-react';
+import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activity, Calendar, Award, FileText } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import SymptomDecayCurve from '../arc-of-care/SymptomDecayCurve';
 import PulseCheckWidget from '../arc-of-care/PulseCheckWidget';
 import { PatientOutcomePanel } from './PatientOutcomePanel';
+import { NeuroplasticityWindowBadge } from './NeuroplasticityWindowBadge';
+import { PatientProgressSummary, type ProgressSummaryData } from './PatientProgressSummary';
 import { downloadDischargeSummary, type DischargeSummaryData } from '../../services/dischargeSummary';
 import { useToast } from '../../contexts/ToastContext';
 
@@ -24,7 +26,13 @@ const MOCK_PULSE_TREND = [
 
 export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) => {
     const [showPulseCheck, setShowPulseCheck] = useState(true);
+    const [showProgressSummary, setShowProgressSummary] = useState(false);
     const { addToast } = useToast();
+
+    // Derive session date — use journey session date or fall back to ~7 days ago (demo)
+    const sessionDateForBadge = journey.sessionDate
+        ? new Date(journey.sessionDate)
+        : (() => { const d = new Date(); d.setDate(d.getDate() - 7); return d; })();
 
     // Export 7-day trend as CSV
     const handleExportTrend = () => {
@@ -79,8 +87,33 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
         addToast({ title: 'Discharge Summary Generated', message: 'Final clinical outcome report exported securely.', type: 'success' });
     };
 
+    // Build ProgressSummaryData from current journey
+    const progressSummaryData: ProgressSummaryData = {
+        subjectId: journey.patientId ?? 'PT-DEMO',
+        clinicianName: 'Attending Practitioner',
+        clinicName: 'PPN Partner Clinic',
+        primaryInstrument: 'PHQ-9',
+        baselineScore: journey.baseline?.phq9 ?? 22,
+        endpointScore: journey.integration?.currentPhq9 ?? 9,
+        followupWeeks: Math.round((journey.daysPostSession ?? 42) / 7),
+        completedStages: ['intake', 'preparation', 'dosing', 'integration'],
+        nextSteps: [
+            '30-day reassessment (PHQ-9) recommended',
+            'Continue weekly integration sessions',
+            'Maintain daily pulse check logging',
+        ],
+        sessionDate: journey.sessionDate
+            ? new Date(journey.sessionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+            : undefined,
+        substance: journey.session?.substance,
+    };
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
+
+            {/* ── Neuroplasticity Window Badge (WO-241 P1.5) ──────────────── */}
+            <NeuroplasticityWindowBadge sessionDate={sessionDateForBadge} windowDays={21} />
+
 
             {/* NEW: Longitudinal Outcome Visualizations (WO-312) */}
             <PatientOutcomePanel
@@ -336,16 +369,34 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 </div>
             </div>
 
-            {/* Complete Journey (WO-310) */}
-            <div className="pt-8 border-t border-slate-700/50 flex justify-center">
+            {/* Action row: Progress Summary + Discharge Summary */}
+            <div className="pt-8 border-t border-slate-700/50 flex flex-col sm:flex-row items-center gap-4 justify-center">
+                {/* Patient Progress Summary (word-of-mouth growth engine) */}
+                <button
+                    onClick={() => setShowProgressSummary(true)}
+                    className="flex items-center justify-center gap-3 w-full sm:w-1/2 py-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-black text-base tracking-wide rounded-2xl shadow border border-slate-600/50 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                >
+                    <FileText className="w-5 h-5 text-indigo-400" />
+                    Generate Patient Progress Summary
+                </button>
+
+                {/* Discharge Summary (existing) */}
                 <button
                     onClick={handleDischargeSummary}
-                    className="flex items-center justify-center gap-3 w-full md:w-2/3 py-5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-xl tracking-wide rounded-2xl shadow-lg shadow-emerald-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] border border-emerald-500/30"
+                    className="flex items-center justify-center gap-3 w-full sm:w-1/2 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-black text-base tracking-wide rounded-2xl shadow-lg shadow-emerald-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] border border-emerald-500/30"
                 >
-                    <CheckCircle className="w-6 h-6" />
-                    Complete Patient Journey & Generate Discharge Summary
+                    <CheckCircle className="w-5 h-5" />
+                    Complete Journey &amp; Discharge Summary
                 </button>
             </div>
+
+            {/* Patient Progress Summary Modal */}
+            {showProgressSummary && (
+                <PatientProgressSummary
+                    data={progressSummaryData}
+                    onClose={() => setShowProgressSummary(false)}
+                />
+            )}
         </div>
     );
 };
