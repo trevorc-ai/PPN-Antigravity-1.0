@@ -56,7 +56,75 @@ interface TreatmentPhaseProps {
 
 type SessionMode = 'pre' | 'live' | 'post';
 
+// ── Source URL mapping for regulatory citations ───────────────────────────────
+const SOURCE_LINKS: Array<{ pattern: RegExp; label: string; url: string }> = [
+    {
+        pattern: /OHA OAR 333-333/i,
+        label: 'OHA OAR 333-333 (Oregon Psilocybin Rules)',
+        url: 'https://www.oregon.gov/oha/ph/preventionwellness/substanceuse/psilocybinservices/pages/rules.aspx',
+    },
+    {
+        pattern: /MAPS Protocol S2/i,
+        label: 'MAPS Phase 3 Protocol Manual (§8)',
+        url: 'https://maps.org/wp-content/uploads/2023/01/MAPP2_Protocol_v15_FINAL.pdf',
+    },
+    {
+        pattern: /AHA Hypertension/i,
+        label: 'AHA Hypertension Guidelines 2023',
+        url: 'https://www.ahajournals.org/doi/10.1161/HYP.0000000000000065',
+    },
+    {
+        pattern: /FDA Drug Interaction/i,
+        label: 'FDA Drug Interaction Guidance',
+        url: 'https://www.fda.gov/drugs/drug-interactions-labeling/drug-development-and-drug-interactions-table-substrates-inhibitors-and-inducers',
+    },
+    {
+        pattern: /Joint Commission/i,
+        label: 'Joint Commission NPSG 15.01.01 (Suicide Risk)',
+        url: 'https://www.jointcommission.org/standards/national-patient-safety-goals/',
+    },
+    {
+        pattern: /Oregon Ballot Measure 109/i,
+        label: 'Oregon Ballot Measure 109 (Psilocybin Services Act)',
+        url: 'https://www.oregon.gov/oha/ph/preventionwellness/substanceuse/psilocybinservices/pages/index.aspx',
+    },
+    {
+        pattern: /DSM-5/i,
+        label: 'DSM-5 Diagnostic Criteria (APA)',
+        url: 'https://www.psychiatry.org/psychiatrists/practice/dsm',
+    },
+    {
+        pattern: /Kroenke.*2001/i,
+        label: 'Kroenke & Spitzer (2001) — PHQ-9',
+        url: 'https://pubmed.ncbi.nlm.nih.gov/11556941/',
+    },
+    {
+        pattern: /Spitzer.*2006/i,
+        label: 'Spitzer et al. (2006) — GAD-7',
+        url: 'https://pubmed.ncbi.nlm.nih.gov/16717171/',
+    },
+    {
+        pattern: /Weathers.*2013/i,
+        label: 'Weathers et al. (2013) — PCL-5 / CAPS-5',
+        url: 'https://www.ptsd.va.gov/professional/assessment/adult-sr/ptsd-checklist.asp',
+    },
+];
+
+/** Parse a regulatoryBasis string into clickable {label, url} pairs */
+function getRegulatoryLinks(basis: string): Array<{ label: string; url: string }> {
+    const links: Array<{ label: string; url: string }> = [];
+    const seen = new Set<string>();
+    for (const entry of SOURCE_LINKS) {
+        if (entry.pattern.test(basis) && !seen.has(entry.url)) {
+            links.push({ label: entry.label, url: entry.url });
+            seen.add(entry.url);
+        }
+    }
+    return links;
+}
+
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, completedForms, onOpenForm, onCompletePhase }) => {
+
     const { addToast } = useToast();
     const { config } = useProtocol();
     const SESSION_KEY = `ppn_session_mode_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
@@ -507,16 +575,40 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                         {/* Flag details — uses ContraindicationFlag.headline + .detail */}
                         <div className="space-y-2">
-                            {contraindicationResults.absoluteFlags.map((flag: any, i: number) => (
-                                <div key={i} className="flex items-start gap-3 p-3 bg-red-950/50 rounded-xl border border-red-800/50">
-                                    <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <p className="text-red-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Contraindicated Combination'}</p>
-                                        <p className="text-red-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'This combination carries serious risk of adverse events. Session must not proceed.'}</p>
-                                        {flag.regulatoryBasis && <p className="text-red-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>}
+                            {contraindicationResults.absoluteFlags.map((flag: any, i: number) => {
+                                const sourceLinks = flag.regulatoryBasis ? getRegulatoryLinks(flag.regulatoryBasis) : [];
+                                return (
+                                    <div key={i} className="flex items-start gap-3 p-3 bg-red-950/50 rounded-xl border border-red-800/50">
+                                        <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-red-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Contraindicated Combination'}</p>
+                                            <p className="text-red-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'This combination carries serious risk of adverse events. Session must not proceed.'}</p>
+                                            {/* Clickable source links */}
+                                            {sourceLinks.length > 0 && (
+                                                <div className="flex flex-wrap gap-2 mt-2">
+                                                    {sourceLinks.map((link, li) => (
+                                                        <a
+                                                            key={li}
+                                                            href={link.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-900/50 border border-red-600/40 text-red-300 hover:text-white hover:bg-red-800/60 hover:border-red-500/60 transition-colors text-xs font-semibold"
+                                                            aria-label={`Read source: ${link.label}`}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                                                            {link.label}
+                                                        </a>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {/* Fallback: raw citation if no URL matched */}
+                                            {sourceLinks.length === 0 && flag.regulatoryBasis && (
+                                                <p className="text-red-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                         {/* Current meds footer */}
                         <div className="pt-3 border-t border-red-800/40 flex items-center gap-2 flex-wrap">
@@ -537,16 +629,38 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         <span className="text-white font-black text-base uppercase tracking-[0.15em]">⚠ RELATIVE CONTRAINDICATION — Proceed with Caution</span>
                     </div>
                     <div className="p-5 space-y-3">
-                        {contraindicationResults.relativeFlags.map((flag: any, i: number) => (
-                            <div key={i} className="flex items-start gap-3 p-3 bg-amber-950/40 rounded-xl border border-amber-700/40">
-                                <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                                <div>
-                                    <p className="text-amber-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Caution Required'}</p>
-                                    <p className="text-amber-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'Proceed only with senior clinical oversight and documented risk acknowledgement.'}</p>
-                                    {flag.regulatoryBasis && <p className="text-amber-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>}
+                        {contraindicationResults.relativeFlags.map((flag: any, i: number) => {
+                            const sourceLinks = flag.regulatoryBasis ? getRegulatoryLinks(flag.regulatoryBasis) : [];
+                            return (
+                                <div key={i} className="flex items-start gap-3 p-3 bg-amber-950/40 rounded-xl border border-amber-700/40">
+                                    <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-amber-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Caution Required'}</p>
+                                        <p className="text-amber-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'Proceed only with senior clinical oversight and documented risk acknowledgement.'}</p>
+                                        {sourceLinks.length > 0 && (
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                {sourceLinks.map((link, li) => (
+                                                    <a
+                                                        key={li}
+                                                        href={link.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-900/50 border border-amber-600/40 text-amber-300 hover:text-white hover:bg-amber-800/60 hover:border-amber-500/60 transition-colors text-xs font-semibold"
+                                                        aria-label={`Read source: ${link.label}`}
+                                                    >
+                                                        <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                                                        {link.label}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {sourceLinks.length === 0 && flag.regulatoryBasis && (
+                                            <p className="text-amber-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                         <div className="pt-2 border-t border-amber-800/40 flex items-center gap-2 flex-wrap">
                             <span className="text-[10px] uppercase tracking-widest font-bold text-amber-500">Current Medications:</span>
                             {patientMeds.map((med, i) => (
