@@ -481,48 +481,109 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 })}
             </div>
 
-            {/* ── Medications & Contraindication Panel ─────────────────────── */}
-            <div className="flex items-stretch gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
-                {/* Left: patient meds as chips */}
-                <div className="flex-1 min-w-0">
-                    <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
-                    <div className="flex flex-wrap gap-1.5">
-                        {patientMeds.map((med, i) => (
-                            <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
-                                <Pill className="w-3 h-3 text-slate-500" />
-                                {med}
+            {/* ── Contraindication Alert ─────────────────────────────────────── */}
+            {contraindicationResults && contraindicationResults.absoluteFlags.length > 0 ? (
+                /* ══ ABSOLUTE CONTRAINDICATION — Full-width emergency alert ══ */
+                <div className="relative rounded-2xl overflow-hidden border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.35)] animate-pulse-border">
+                    {/* Pulsing background glow */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-950/80 via-red-900/60 to-red-950/80 pointer-events-none" />
+                    {/* Animated top stripe */}
+                    <div className="relative bg-red-600 px-5 py-3 flex items-center gap-3">
+                        <AlertTriangle className="w-6 h-6 text-white flex-shrink-0 animate-bounce" />
+                        <span className="text-white font-black text-lg uppercase tracking-[0.2em]">⚠ ABSOLUTE CONTRAINDICATION — DO NOT ADMINISTER</span>
+                    </div>
+                    <div className="relative p-5 space-y-4">
+                        {/* Drug pair callout: show all meds that are in the MEDICATION category flags */}
+                        <div className="flex items-center justify-center gap-4 flex-wrap">
+                            {patientMeds.map((med, i) => (
+                                <span key={i} className="px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl text-red-200 font-black text-base">
+                                    {med}
+                                </span>
+                            ))}
+                            <span className="text-red-400 font-black text-2xl">✕</span>
+                            <span className="px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl text-red-200 font-black text-base">
+                                {journey.session?.substance || 'Selected Substance'}
                             </span>
-                        ))}
+                        </div>
+                        {/* Flag details — uses ContraindicationFlag.headline + .detail */}
+                        <div className="space-y-2">
+                            {contraindicationResults.absoluteFlags.map((flag: any, i: number) => (
+                                <div key={i} className="flex items-start gap-3 p-3 bg-red-950/50 rounded-xl border border-red-800/50">
+                                    <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-red-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Contraindicated Combination'}</p>
+                                        <p className="text-red-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'This combination carries serious risk of adverse events. Session must not proceed.'}</p>
+                                        {flag.regulatoryBasis && <p className="text-red-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        {/* Current meds footer */}
+                        <div className="pt-3 border-t border-red-800/40 flex items-center gap-2 flex-wrap">
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-red-500">Patient Medications:</span>
+                            {patientMeds.map((med, i) => (
+                                <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-900/40 border border-red-700/40 text-red-300 text-xs font-semibold">
+                                    <Pill className="w-3 h-3" />{med}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
-
-                {/* Divider */}
-                <div className="w-px bg-slate-700/40 self-stretch" />
-
-                {/* Right: contraindication indicator */}
-                <div className="flex-shrink-0 flex items-center justify-center">
-                    {!contraindicationResults ? (
-                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                            <ShieldAlert className="w-4 h-4" /> No substance selected
-                        </span>
-                    ) : contraindicationResults.absoluteFlags.length > 0 ? (
-                        <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-black uppercase tracking-wider">
-                            <AlertTriangle className="w-4 h-4 text-red-400" />
-                            ABSOLUTE CONTRAINDICATION
-                        </span>
-                    ) : contraindicationResults.relativeFlags.length > 0 ? (
-                        <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-xs font-black uppercase tracking-wider">
-                            <AlertCircle className="w-4 h-4 text-amber-400" />
-                            RELATIVE CONTRAINDICATION
-                        </span>
-                    ) : (
-                        <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-950/30 border border-emerald-700/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
-                            <CheckCircle2 className="w-4 h-4" />
-                            ALL CLEAR
-                        </span>
-                    )}
+            ) : contraindicationResults && contraindicationResults.relativeFlags.length > 0 ? (
+                /* ══ RELATIVE CONTRAINDICATION — Amber warning ══ */
+                <div className="rounded-2xl border-2 border-amber-500/70 bg-gradient-to-br from-amber-950/60 to-amber-900/40 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                    <div className="bg-amber-600/90 px-5 py-3 flex items-center gap-3 rounded-t-xl">
+                        <AlertCircle className="w-5 h-5 text-white flex-shrink-0" />
+                        <span className="text-white font-black text-base uppercase tracking-[0.15em]">⚠ RELATIVE CONTRAINDICATION — Proceed with Caution</span>
+                    </div>
+                    <div className="p-5 space-y-3">
+                        {contraindicationResults.relativeFlags.map((flag: any, i: number) => (
+                            <div key={i} className="flex items-start gap-3 p-3 bg-amber-950/40 rounded-xl border border-amber-700/40">
+                                <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <p className="text-amber-200 font-black text-sm uppercase tracking-wide">{flag.headline || 'Caution Required'}</p>
+                                    <p className="text-amber-300/80 text-sm mt-0.5 leading-relaxed">{flag.detail || 'Proceed only with senior clinical oversight and documented risk acknowledgement.'}</p>
+                                    {flag.regulatoryBasis && <p className="text-amber-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>}
+                                </div>
+                            </div>
+                        ))}
+                        <div className="pt-2 border-t border-amber-800/40 flex items-center gap-2 flex-wrap">
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-amber-500">Current Medications:</span>
+                            {patientMeds.map((med, i) => (
+                                <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-900/40 border border-amber-700/40 text-amber-300 text-xs font-semibold">
+                                    <Pill className="w-3 h-3" />{med}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                /* ══ ALL CLEAR or no substance yet — compact strip ══ */
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
+                        <div className="flex flex-wrap gap-1.5">
+                            {patientMeds.map((med, i) => (
+                                <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
+                                    <Pill className="w-3 h-3 text-slate-500" />{med}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex-shrink-0">
+                        {!contraindicationResults ? (
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                                <ShieldAlert className="w-4 h-4" /> No substance selected
+                            </span>
+                        ) : (
+                            <span className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/40 border border-emerald-600/40 text-emerald-300 text-sm font-black uppercase tracking-wider">
+                                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                                ALL CLEAR — No Contraindications
+                            </span>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* ── Timer Bar (sticky when live) ──────────────────────────────────── */}
             <div className={`rounded-2xl border transition-all duration-500 ${isLive ? 'sticky top-2 z-30 bg-[#061115]/95 border-emerald-900/40 shadow-lg shadow-emerald-950/30 backdrop-blur-xl'
