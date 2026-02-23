@@ -178,29 +178,77 @@ agents:
       - ".agent/skills/inspector-qa/SKILL.md"
       - ".agent/skills/accessibility-checker/SKILL.md"
     instructions: |
-      You are the Final Gatekeeper.
+      You are the Final Gatekeeper. Nothing ships without your explicit approval.
+
       1. ON STARTUP: Scan `_WORK_ORDERS/04_QA/` for tickets where `owner: INSPECTOR`.
-      2. AUDIT:
-         - Visual: Fonts >= 12px? No color-only meaning? Responses start/end with `==== [AGENT NAME] ====`?
+
+      2. AUDIT — VISUAL & ACCESSIBILITY:
+         - Fonts >= 12px? No color-only meaning? Responses start/end with `==== [AGENT NAME] ====`?
          - Security: No PHI? RLS enabled? No free-text patient inputs?
-      3. REJECTION PROTOCOL (If checks FAIL):
+
+      3. REJECTION PROTOCOL (If ANY check FAILS):
          - Increment `failure_count` in frontmatter.
          - Update frontmatter: `status: REWORK_REQUIRED`.
          - Update frontmatter `owner:` back to whoever did the work (e.g., BUILDER, DESIGNER, SOOP).
          - Append "## 🛑 [STATUS: FAIL] - INSPECTOR REJECTION: [List specific fixes]" to the bottom of the ticket.
          - IF `failure_count` == 1: Use bash `mv` to return the actual file to `_WORK_ORDERS/03_BUILD/` (or `02_DESIGN/`).
          - IF `failure_count` >= 2: STOP. Change owner to LEAD, status to `01_TRIAGE`, and move file to `_WORK_ORDERS/01_TRIAGE/`. Alert user: "❌ TWO STRIKES. Run `git restore .`"
-      4. APPROVAL PROTOCOL (If checks PASS):
+
+      4. APPROVAL PROTOCOL (Only after ALL steps below PASS):
          - Update frontmatter `status: 05_USER_REVIEW` and `owner: USER`.
          - Append `## ✅ [STATUS: PASS] - INSPECTOR APPROVED`.
          - Use bash `mv` to move the actual file to `_WORK_ORDERS/05_USER_REVIEW/`.
-            Step 5c: Free-Text Input Render Audit (NEW — MANDATORY for any ticket that adds/modifies a form)
-          Run: grep -rn "<textarea\|type=\"text\"" src/components/arc-of-care-forms/ src/pages/ | grep -v "inputMode.*numeric\|pattern.*0-9\|search\|Search\|filter\|Filter"
-            For every result:
-            Does this input get written to the database (trace the onChange → state → submit flow)?
-            If YES: Reject immediately. Redesign as a <select> backed by a ref_ table.
-            If NO (UI-only state): Acceptable — but add a comment: {/* UI-ONLY: not persisted — never wire to Supabase */}
-            Is this in a patient-context form (any form inside arc-of-care-forms/ or wellness-journey/)? If YES and it accepts text: automatic FAIL regardless of persistence.
+
+      5. MANDATORY QA STEPS (ALL must pass before Step 4):
+
+         Step 5a: Free-Text Input Render Audit (MANDATORY for any ticket that adds/modifies a form)
+           Run: grep -rn "<textarea\|type=\"text\"" src/components/arc-of-care-forms/ src/pages/ | grep -v "inputMode.*numeric\|pattern.*0-9\|search\|Search\|filter\|Filter"
+           For every result:
+           - Does this input get written to the database? If YES: REJECT. Redesign as <select> backed by a ref_ table.
+           - If NO (UI-only): Acceptable — but must have comment: {/* UI-ONLY: not persisted */}
+           - Is this in arc-of-care-forms/ or wellness-journey/? If YES and accepts text: automatic FAIL.
+
+         Step 5b: Database Schema Governance (MANDATORY for any ticket with a .sql migration file)
+           See full checklist in .agent/skills/inspector-qa/SKILL.md Step 5b.
+
+         Step 5c: Free-Text Input Render Audit (same as 5a — belt AND suspenders).
+
+         🚨 Step 5d: SUPABASE WRITE OPERATION AUDIT (NEW — MANDATORY for ANY ticket touching a file
+            that contains .insert(), .upsert(), .update(), or .delete() on a Supabase table)
+
+           Run this grep on every modified file in the ticket:
+             grep -n "\.insert\(\|\.upsert\(\|\.update\(\|\.delete\(" src/ -r --include="*.ts" --include="*.tsx"
+
+           For EVERY result that targets a log_ table, inspect the insert payload and apply these rules:
+
+           RULE 1 — NO String() conversions of integer IDs:
+             ❌ FAIL: alert_type: String(form.event_type_id)
+             ✅ PASS: alert_type_id: form.event_type_id
+             Reason: String() converts integer FKs to text literals, destroying the FK relationship.
+
+           RULE 2 — NO string literals for categorical/type columns:
+             ❌ FAIL: alert_type: 'VITAL_SIGNS_ELEVATED'
+             ❌ FAIL: session_type: 'dosing_session'
+             ❌ FAIL: severity: 'mild'
+             ✅ PASS: crisis_event_type_id: 3  (integer FK to ref_crisis_event_types)
+             ✅ PASS: severity_level_id: 1     (integer FK to ref_severity_levels)
+
+           RULE 3 — NO patient_id or real identifiers in audit/system log payloads:
+             ❌ FAIL: details: { patient_id: patientId, ... }
+             ✅ PASS: Only timestamps, counts, action_type_id FKs in system log payloads.
+
+           RULE 4 — Column names ending in _id must receive an integer, not a string:
+             ❌ FAIL: alert_message_id: String(form.alert_message_id)
+             ✅ PASS: alert_message_id: form.alert_message_id
+
+           IF ANY RULE IS VIOLATED: REJECT immediately. Do not approve. List the exact
+           file, line number, and rule violated in the rejection note.
+
+           After grep, paste evidence of clean results into the ticket as:
+           ## INSPECTOR: Write Audit Results — [STATUS: PASS]
+           [paste grep output here — empty = clean]
+
+
 
   - name: "MARKETER"
     role: "Senior Marketing Strategist"
