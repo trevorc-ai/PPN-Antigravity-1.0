@@ -44,7 +44,7 @@ const DEFAULT_DATA: WizardData = {
 
 const MOTIVATION_OPTIONS = ['Low', 'Moderate', 'High', 'Very High'];
 const SUPPORT_OPTIONS = ['None identified', 'Minimal', 'Moderate', 'Strong'];
-const EXPERIENCE_OPTIONS = ['None', 'Minimal (1-2 times)', 'Some (3-5 times)', 'Experienced (6+ times)'];
+const EXPERIENCE_OPTIONS = ['None', 'Minimal (1-2 times)', 'Some (3-5 times)', 'Experienced (6+)'];
 
 /** Styled number input for physiological readings (HRV, BP) — numeric keypad on tablet */
 function PhysioInput({
