@@ -61,10 +61,10 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                         id="onboarding-title"
                         className="text-2xl font-black text-slate-300 mb-2 pr-8"
                     >
-                        Welcome to the Wellness Journey
+                        Welcome to the Wellness Journey - Here's what to expect:
                     </h2>
                     <p className="text-base text-slate-400">
-                        Track complete patient progress across 3 phases of psychedelic-assisted therapy
+                        You'll track complete patient progress across 3 phases of psychedelic-assisted therapy.
                     </p>
                 </div>
 
@@ -138,13 +138,6 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                     </label>
 
                     <div className="flex gap-3 w-full sm:w-auto">
-                        <button
-                            onClick={handleClose}
-                            className="flex-1 sm:flex-none px-6 py-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-300 font-medium text-sm rounded-xl border border-slate-700/60 transition-colors focus:outline-none focus:ring-4 focus:ring-slate-500/50"
-                            tabIndex={2}
-                        >
-                            Skip
-                        </button>
                         <button
                             onClick={handleGetStarted}
                             className="flex-1 sm:flex-none px-8 py-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
