@@ -22,11 +22,71 @@ governance_answers_received: false
 
 # WO-405: Log Table FK Compliance — Full Schema Audit & Remediation Plan
 
+---
+
+## SECTION 0: HANDOFF CONTEXT (Read First — New Agent Orientation)
+
+### Project Identity
+- **Product:** PPN Portal — Psychedelic Practitioners Network
+- **Stack:** React + TypeScript + Vite (frontend) | Supabase (PostgreSQL backend) | Row Level Security enabled
+- **Codebase root:** `/Users/trevorcalton/Desktop/PPN-Antigravity-1.0/`
+- **Dev server:** `npm run dev` (running, hot-reload active)
+- **Git:** All work committed to `main` branch, pushed to remote
+
+### Your Role in This Chat
+You are **SOOP — Senior SQL Database Architect**. Your only job in this chat is:
+1. Collect USER answers to the three governance questions (Section 4)
+2. Finalize the Wave 1 SQL based on those answers
+3. Hand the final SQL to USER to execute in Supabase
+4. You do NOT execute SQL yourself. USER runs it.
+5. After USER confirms Wave 1 success, draft Wave 2 SQL and repeat.
+
+### Immutable Rules (Architecture Constitution — violations = immediate STOP)
+1. **Additive migrations only.** Never use `DROP TABLE`, `DROP COLUMN`, `ALTER COLUMN TYPE`. Only `CREATE TABLE IF NOT EXISTS` and `ALTER TABLE ADD COLUMN IF NOT EXISTS`.
+2. **RLS required.** Every new table must have `ALTER TABLE ... ENABLE ROW LEVEL SECURITY;` immediately after creation.
+3. **snake_case only.** All table names and column names in lowercase snake_case.
+4. **No PHI in log payloads.** Never write `patient_id` or any real identifier into JSONB blobs or audit log fields. Patient reference = `patient_link_code` (anonymized token).
+5. **You write. USER executes.** Post SQL as a code block. USER pastes it into Supabase SQL Editor and reports the result back to you.
+
+### Critical FK Reference Map (verified from live schema 2026-02-23)
+These are the EXACT primary key column names from the live ref_ tables. Use these — not guesses:
+
+| Ref Table | PK Column Name | PK Type |
+|-----------|---------------|---------|
+| `ref_severity_grade` | `severity_grade_id` | BIGINT |
+| `ref_resolution_status` | `resolution_status_id` | BIGINT |
+| `ref_substances` | `substance_id` | BIGINT |
+| `ref_routes` | `route_id` | BIGINT |
+| `ref_indications` | `indication_id` | BIGINT |
+| `ref_safety_events` | `safety_event_id` | BIGINT |
+| `ref_user_roles` | `id` | INTEGER |
+| `ref_intervention_types` | `intervention_type_id` | INTEGER |
+| `ref_meddra_codes` | `meddra_code_id` | INTEGER |
+| `ref_behavioral_change_types` | `change_type_id` | INTEGER |
+| `ref_cancellation_reasons` | `cancellation_reason_id` | INTEGER |
+| `ref_flow_event_types` | `id` | BIGINT |
+
+### Current Status at Time of Handoff (2026-02-23 10:48 PST)
+- [x] Full schema audit complete (all log_ and ref_ tables — see sections below)
+- [x] Violations categorized by severity (Sections 1, 2, 3)
+- [x] Wave 1 SQL drafted (Section 8) — **DRAFT ONLY, not finalized**
+- [ ] **BLOCKED:** Three governance questions (Section 4) not yet answered by USER
+- [ ] Wave 1 SQL not yet finalized or executed
+- [ ] Data reset not yet run
+- [ ] BUILDER code fixes not yet written
+
+### What to Do First in This Chat
+Open by saying: "I have the full WO-405 schema audit in context. Before I finalize the Wave 1 SQL,
+I need your answers to 3 governance questions about free-text columns. Ready when you are."
+Then present Q1, Q2, Q3 from Section 4 clearly, one at a time.
+
+---
+
 ## CONTEXT
 
-This WO captures the complete forensic output of SOOP's pre-flight schema analysis.
-SOOP reviewed **every column in every log_ and ref_ table** before proposing any SQL.
-No SQL will be written until governance questions in Section 4 are answered by USER.
+This WO captures the complete forensic output of SOOP's pre-flight schema analysis conducted
+2026-02-23. SOOP reviewed **every column in every log_ and ref_ table** before proposing any SQL.
+**No SQL will be finalized until governance questions in Section 4 are answered by USER.**
 
 **Live Schema Snapshot Date:** 2026-02-23
 
