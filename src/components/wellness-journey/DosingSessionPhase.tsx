@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download, Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight } from 'lucide-react';
+import { Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download, Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight, CheckCircle2, Edit3, AlertCircle, Pill } from 'lucide-react';
+import { runContraindicationEngine } from '../../services/contraindicationEngine';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import { WorkflowActionCard } from './WorkflowCards';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
@@ -85,164 +86,273 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
     // ─── 1. PRE-SESSION VIEW ─────────────────────────────────────────────────────
     if (mode === 'pre') {
+
+        // Session prep steps
+        const PHASE2_STEPS = [
+            {
+                id: 'dosing-protocol' as WellnessFormId,
+                label: 'Dosing Protocol',
+                icon: 'medication',
+                required: true,
+                isComplete: isDosingProtocolComplete,
+            },
+            ...(config.enabledFeatures.includes('session-vitals') ? [{
+                id: 'session-vitals' as WellnessFormId,
+                label: 'Baseline Vitals',
+                icon: 'monitor_heart',
+                required: true,
+                isComplete: isVitalsComplete,
+            }] : []),
+        ];
+
+        const currentStepIdx = PHASE2_STEPS.findIndex(s => !s.isComplete);
+
+        // Medications + contraindication check (local engine, zero network calls)
+        const storedSubstance: string = (() => {
+            try { return localStorage.getItem('ppn_session_substance') || journey.session.substance || ''; } catch { return journey.session.substance || ''; }
+        })();
+        const storedMedNames: string[] = (() => {
+            try {
+                const raw = localStorage.getItem('mock_patient_medications_names');
+                if (raw) return JSON.parse(raw);
+            } catch { /* ignore */ }
+            return ['Sertraline (tapering)', 'Lisinopril']; // demo patient default
+        })();
+
+        const contraindicationResult = storedSubstance
+            ? runContraindicationEngine({
+                patientId: journey.patientId || 'UNKNOWN',
+                sessionSubstance: storedSubstance,
+                medications: storedMedNames,
+                psychiatricHistory: [],
+                familyHistory: [],
+            })
+            : null;
+
+        const hasAbsolute = (contraindicationResult?.absoluteFlags?.length ?? 0) > 0;
+        const hasRelative = (contraindicationResult?.relativeFlags?.length ?? 0) > 0;
+
         return (
-            <div className="space-y-6 animate-in fade-in duration-500">
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
-                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
-                        <div>
-                            <h2 className="text-2xl font-black text-[#A8B5D1]">Session Preparation</h2>
-                            <p className="text-slate-400 mt-1">Verify all safety gates before initiating dosing.</p>
+            <div className="space-y-4 animate-in fade-in duration-500">
+
+                {/* ── Header ─────────────────────────────────────────── */}
+                <div className="flex items-center justify-between px-1">
+                    <h2 className="ppn-label" style={{ color: '#34D399' }}>Session Preparation · {PHASE2_STEPS.length + 1} Steps</h2>
+                    <div className="flex items-center gap-3">
+                        <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-emerald-700 to-emerald-400 rounded-full transition-all duration-700"
+                                style={{ width: `${(PHASE2_STEPS.filter(s => s.isComplete).length / (PHASE2_STEPS.length + 1)) * 100}%` }}
+                                role="progressbar"
+                                aria-valuenow={PHASE2_STEPS.filter(s => s.isComplete).length}
+                                aria-valuemax={PHASE2_STEPS.length + 1}
+                                aria-label="Session preparation progress"
+                            />
                         </div>
-                        {/* Emergency Protocol Button (Top Right) */}
-                        {config.enabledFeatures.includes('rescue-protocol') && (
-                            <button
-                                onClick={() => onOpenForm('rescue-protocol')}
-                                className="w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2.5 px-6 py-3 bg-slate-950 hover:bg-slate-900 border-2 border-red-500/80 hover:border-red-400 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-base shadow-[0_0_20px_rgba(239,68,68,0.15)] group"
-                            >
-                                <span className="material-symbols-outlined text-red-400 group-hover:animate-pulse">emergency</span>
-                                Log Rescue Protocol
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Pre-Flight Checklist Columns */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-stretch">
-
-                        {/* COLUMN 1: Session Plan & Protocol */}
-                        <div className={`flex flex-col p-6 bg-slate-900/40 border-2 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl ${isDosingProtocolComplete ? 'border-emerald-500/40' : 'border-amber-500/40'
-                            }`}>
-                            <div className="flex flex-wrap items-center justify-between gap-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl sm:text-3xl font-bold text-[#A8B5D1]">Step 1:</span>
-                                    {isDosingProtocolComplete && (
-                                        <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                                            <CheckCircle className="w-3.5 h-3.5" />
-                                            Confirmed
-                                        </span>
-                                    )}
-                                </div>
-                                <button
-                                    onClick={() => onOpenForm('dosing-protocol')}
-                                    className={`w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] ${isDosingProtocolComplete
-                                            ? 'bg-slate-800/40 hover:bg-slate-700/50 border border-slate-600/50 text-slate-300'
-                                            : 'bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 shadow-[0_0_20px_rgba(217,119,6,0.15)]'
-                                        }`}
-                                >
-                                    <span className={`material-symbols-outlined text-[18px] ${!isDosingProtocolComplete ? 'text-amber-400' : ''}`}>medication</span>
-                                    {isDosingProtocolComplete ? 'View Settings' : 'Confirm Protocol'}
-                                </button>
-                            </div>
-
-                            <div className="flex-1 px-5 py-5 bg-slate-800/40 border border-slate-700/50 rounded-xl transition-colors min-h-[148px] flex flex-col justify-between mt-auto">
-                                <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
-                                    <span className="text-slate-400 text-base">Substance</span>
-                                    <span className="text-[#A8B5D1] font-bold bg-slate-700/50 px-3 py-1 rounded text-[17px]">{journey.session.substance}</span>
-                                </div>
-                                <div className="flex justify-between items-center border-b border-slate-700/50 pb-3">
-                                    <span className="text-slate-400 text-base">Dosage</span>
-                                    <span className="text-[#A8B5D1] font-bold text-[17px]">{journey.session.dosage}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-slate-400 text-base">Guide</span>
-                                    <span className="text-[#A8B5D1] font-bold text-[17px]">Dr. Calton</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* COLUMN 2: Required Gates & Vitals */}
-                        <div className={`flex flex-col p-6 bg-slate-900/40 border-2 rounded-none md:rounded-xl h-full space-y-5 shadow-2xl ${isVitalsComplete ? 'border-emerald-500/40' : 'border-amber-500/40'
-                            }`}>
-                            <div className="flex flex-wrap items-center justify-between gap-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-2xl sm:text-3xl font-bold text-[#A8B5D1]">Step 2:</span>
-                                    {isVitalsComplete && (
-                                        <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                                            <CheckCircle className="w-3.5 h-3.5" />
-                                            Completed
-                                        </span>
-                                    )}
-                                </div>
-                                {config.enabledFeatures.includes('session-vitals') && (
-                                    <button
-                                        onClick={isDosingProtocolComplete ? () => onOpenForm('session-vitals') : undefined}
-                                        disabled={!isDosingProtocolComplete}
-                                        className={`w-full sm:w-auto flex-shrink-0 flex items-center justify-center gap-2 px-6 py-3.5 font-extrabold rounded-2xl transition-all active:scale-95 text-[15px] ${isVitalsComplete
-                                                ? 'bg-slate-800/40 hover:bg-slate-700/50 border border-slate-600/50 text-slate-300'
-                                                : isDosingProtocolComplete
-                                                    ? 'bg-amber-900/30 hover:bg-amber-800/40 border-2 border-amber-600/60 hover:border-amber-500 text-amber-400 shadow-[0_0_20px_rgba(217,119,6,0.15)]'
-                                                    : 'bg-slate-800/40 border border-slate-700/50 text-slate-500 cursor-not-allowed'
-                                            }`}
-                                    >
-                                        <span className={`material-symbols-outlined text-[18px] ${(!isVitalsComplete && isDosingProtocolComplete) ? 'text-amber-400' : ''}`}>monitor_heart</span>
-                                        {isVitalsComplete ? 'Review Vitals' : 'Record Vitals'}
-                                    </button>
-                                )}
-                            </div>
-
-                            <div className="flex-1 flex flex-col justify-between gap-3 min-h-[148px] mt-auto">
-                                {/* Gate 1: Consent */}
-                                <div className="flex items-center gap-4 p-4 bg-slate-800/40 border border-emerald-500/30 rounded-xl h-full relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0 z-10">
-                                        <CheckCircle className="w-5 h-5" />
-                                    </div>
-                                    <div className="z-10">
-                                        <p className="text-[#A8B5D1] font-bold text-[15px]">Informed Consent</p>
-                                        <p className="text-sm text-slate-400 mt-0.5">Verified signed • Oct 14, 2025</p>
-                                    </div>
-                                </div>
-
-                                {/* Gate 2: Vitals */}
-                                {config.enabledFeatures.includes('session-vitals') && (
-                                    <div className={`flex items-center gap-4 p-4 rounded-xl h-full relative overflow-hidden group transition-colors ${isVitalsComplete ? 'bg-slate-800/40 border border-emerald-500/30' : 'bg-slate-800/20 border border-slate-700/50'
-                                        }`}>
-                                        {isVitalsComplete && <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />}
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 z-10 ${isVitalsComplete ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-500'
-                                            }`}>
-                                            {isVitalsComplete ? <CheckCircle className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
-                                        </div>
-                                        <div className="z-10">
-                                            <p className={`font-bold text-[15px] ${isVitalsComplete ? 'text-[#A8B5D1]' : 'text-slate-500'}`}>Baseline Vitals</p>
-                                            <p className="text-sm text-slate-400 mt-0.5">{isVitalsComplete ? 'Within range • HR 72, BP 118/76' : 'Pending entry'}</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Start Button */}
-                    <div className="flex flex-col items-center pt-8 border-t border-slate-800">
-                        <button
-                            onClick={canStartSession ? () => setMode('live') : undefined}
-                            disabled={!canStartSession}
-                            className={`group relative w-full py-4 sm:py-5 rounded-2xl font-black text-lg sm:text-xl tracking-wide shadow-lg shadow-black/40 transition-all flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-4 border ${canStartSession
-                                    ? 'bg-gradient-to-r from-[#1A3631] to-[#122A26] hover:from-[#21433D] hover:to-[#173631] text-emerald-100 hover:scale-[1.01] active:scale-[0.99] border-emerald-800/40'
-                                    : 'bg-slate-800/60 text-slate-500 border-slate-700/50 cursor-not-allowed'
-                                }`}
-                        >
-                            <span className={`text-2xl sm:text-3xl font-bold mr-0 sm:mr-2 ${canStartSession ? 'text-emerald-300/80' : 'text-slate-600'}`}>Step 3:</span>
-                            {canStartSession ? (
-                                <>
-                                    <span className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-950/50 flex items-center justify-center group-hover:bg-emerald-900/50 border border-emerald-800/50 transition-colors">
-                                        <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-emerald-400 text-emerald-400 ml-0.5" />
-                                    </span>
-                                    <span className="text-center text-emerald-50">START DOSING SESSION</span>
-                                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 opacity-60 group-hover:translate-x-1 transition-transform text-emerald-400" />
-                                </>
-                            ) : (
-                                <>
-                                    <AlertTriangle className="w-5 h-5" />
-                                    <span className="text-center uppercase text-sm sm:text-lg">Complete Requirements to Start</span>
-                                </>
-                            )}
-                        </button>
-                        <p className="text-[13px] text-slate-500 mt-4 flex items-center gap-2 font-medium">
-                            <Info className="w-4 h-4 text-emerald-600/70" />
-                            Timer will start and all activity will be timestamped until the session ends.
-                        </p>
+                        <span className="text-sm font-semibold text-slate-400">
+                            {PHASE2_STEPS.filter(s => s.isComplete).length}/{PHASE2_STEPS.length + 1}
+                        </span>
                     </div>
                 </div>
+
+                {/* ── Step Cards ─────────────────────────────────────── */}
+                <div className={`grid grid-cols-1 sm:grid-cols-${Math.min(PHASE2_STEPS.length + 1, 4)} gap-2`}>
+
+                    {PHASE2_STEPS.map((step, index) => {
+                        const isCurrent = index === currentStepIdx;
+                        return (
+                            <div
+                                key={step.id}
+                                className={[
+                                    'relative flex flex-col rounded-xl transition-all duration-300 overflow-hidden',
+                                    step.isComplete
+                                        ? 'bg-teal-900/20'
+                                        : isCurrent
+                                            ? 'bg-emerald-900/40 shadow-lg shadow-emerald-950/60'
+                                            : 'bg-slate-800/20 hover:bg-slate-800/35',
+                                ].join(' ')}
+                            >
+                                {/* Top accent stripe */}
+                                <div className={[
+                                    'h-0.5 w-full',
+                                    step.isComplete ? 'bg-teal-600/60' : isCurrent ? 'bg-emerald-400' : 'bg-slate-700/40',
+                                ].join(' ')} aria-hidden="true" />
+
+                                <div className="flex flex-col flex-1 p-4 gap-3">
+                                    <div className="flex items-center justify-between gap-1">
+                                        <span className={`text-xs md:text-sm font-bold uppercase tracking-widest ${step.isComplete ? 'text-teal-500' : isCurrent ? 'text-emerald-400' : 'text-slate-500'
+                                            }`}>
+                                            Step {index + 1}
+                                        </span>
+                                        {step.isComplete ? (
+                                            <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0" aria-label="Complete" />
+                                        ) : (
+                                            <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-400">Req</span>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-start gap-2.5">
+                                        <div className={[
+                                            'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
+                                            step.isComplete ? 'bg-teal-500/15' : isCurrent ? 'bg-emerald-500/25' : 'bg-slate-700/30',
+                                        ].join(' ')}>
+                                            <span className={`material-symbols-outlined text-[18px] ${step.isComplete ? 'text-teal-400' : isCurrent ? 'text-emerald-300' : 'text-slate-500'
+                                                }`}>
+                                                {step.icon}
+                                            </span>
+                                        </div>
+                                        <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${step.isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
+                                            }`}>
+                                            {step.label}
+                                        </h4>
+                                    </div>
+
+                                    <div className="mt-auto pt-2">
+                                        {step.isComplete ? (
+                                            <div className="flex flex-col items-center gap-1 mt-2">
+                                                <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-teal-400">
+                                                    <CheckCircle2 className="w-4 h-4" /> CONFIRMED
+                                                </span>
+                                                <button
+                                                    onClick={() => onOpenForm(step.id)}
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-teal-300 transition-all"
+                                                    aria-label={`Amend ${step.label}`}
+                                                >
+                                                    <Edit3 className="w-3.5 h-3.5" aria-hidden="true" /> Amend
+                                                </button>
+                                            </div>
+                                        ) : isCurrent ? (
+                                            <button
+                                                onClick={() => onOpenForm(step.id)}
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600/40 hover:bg-emerald-600/60 text-emerald-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-emerald-950/50"
+                                            >
+                                                Open
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => onOpenForm(step.id)}
+                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
+                                            >
+                                                Open
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+
+                    {/* Step 3: Start Session card */}
+                    <div className={[
+                        'relative flex flex-col rounded-xl overflow-hidden transition-all duration-300',
+                        canStartSession
+                            ? 'bg-emerald-900/30 shadow-lg shadow-emerald-950/40'
+                            : 'bg-slate-800/10 opacity-60',
+                    ].join(' ')}>
+                        <div className={`h-0.5 w-full ${canStartSession ? 'bg-emerald-500/60' : 'bg-slate-700/40'}`} aria-hidden="true" />
+                        <div className="flex flex-col flex-1 p-4 gap-3">
+                            <div className="flex items-center justify-between gap-1">
+                                <span className={`text-xs md:text-sm font-bold uppercase tracking-widest ${canStartSession ? 'text-emerald-400' : 'text-slate-500'}`}>
+                                    Step {PHASE2_STEPS.length + 1}
+                                </span>
+                                {canStartSession ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                                ) : (
+                                    <Lock className="w-4 h-4 text-slate-600" aria-hidden="true" />
+                                )}
+                            </div>
+                            <div className="flex items-start gap-2.5">
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${canStartSession ? 'bg-emerald-500/25' : 'bg-slate-700/30'}`}>
+                                    <Play className={`w-4 h-4 ${canStartSession ? 'text-emerald-300 fill-emerald-300' : 'text-slate-500'}`} />
+                                </div>
+                                <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${canStartSession ? 'text-[#A8B5D1]' : 'text-slate-500'}`}>
+                                    Start Dosing Session
+                                </h4>
+                            </div>
+                            <div className="mt-auto pt-2">
+                                <button
+                                    onClick={canStartSession ? () => setMode('live') : undefined}
+                                    disabled={!canStartSession}
+                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
+                                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-950/50'
+                                            : 'bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/50'
+                                        }`}
+                                    aria-label="Start dosing session"
+                                >
+                                    {canStartSession ? (
+                                        <><Play className="w-4 h-4 fill-white" aria-hidden="true" /> Start</>
+                                    ) : (
+                                        <><Lock className="w-4 h-4" aria-hidden="true" /> Locked</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ── Medications & Contraindications Panel ──────────── */}
+                <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                        <Pill className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">Current Medications</h3>
+                    </div>
+
+                    {storedMedNames.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                            {storedMedNames.map((med, i) => (
+                                <span key={i} className="inline-flex items-center px-3 py-1 rounded-full bg-slate-800/70 border border-slate-600/50 text-slate-300 text-sm font-medium">
+                                    {med}
+                                </span>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-slate-500 italic">No medications recorded in Phase 1 Safety Check.</p>
+                    )}
+
+                    {/* Absolute contraindications */}
+                    {hasAbsolute && contraindicationResult!.absoluteFlags.map(flag => (
+                        <div key={flag.id} className="flex gap-3 p-4 bg-red-950/70 border border-red-500/60 rounded-xl">
+                            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-bold text-red-300 uppercase tracking-wide">ABSOLUTE CONTRAINDICATION</p>
+                                <p className="text-sm font-semibold text-red-200">{flag.headline}</p>
+                                <p className="text-xs text-red-300/80 leading-relaxed">{flag.detail}</p>
+                                <p className="text-xs text-red-400/50 mt-1">{flag.regulatoryBasis}</p>
+                            </div>
+                        </div>
+                    ))}
+
+                    {/* Relative contraindications */}
+                    {hasRelative && contraindicationResult!.relativeFlags.map(flag => (
+                        <div key={flag.id} className="flex gap-3 p-4 bg-amber-950/60 border border-amber-500/50 rounded-xl">
+                            <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-bold text-amber-300 uppercase tracking-wide">CAUTION — Relative Contraindication</p>
+                                <p className="text-sm font-semibold text-amber-200">{flag.headline}</p>
+                                <p className="text-xs text-amber-300/80 leading-relaxed">{flag.detail}</p>
+                                <p className="text-xs text-amber-400/50 mt-1">{flag.regulatoryBasis}</p>
+                            </div>
+                        </div>
+                    ))}
+
+                    {!hasAbsolute && !hasRelative && storedSubstance && (
+                        <div className="flex items-center gap-2 px-3 py-2 bg-emerald-950/30 border border-emerald-700/30 rounded-xl">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                            <span className="text-sm text-emerald-300 font-medium">No contraindications flagged for {storedSubstance} with current medications.</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Emergency Protocol shortcut */}
+                {config.enabledFeatures.includes('rescue-protocol') && (
+                    <button
+                        onClick={() => onOpenForm('rescue-protocol')}
+                        className="w-full flex items-center justify-center gap-2.5 px-6 py-3 bg-slate-950 hover:bg-slate-900 border border-red-500/60 hover:border-red-400 text-red-400 font-bold rounded-xl transition-all active:scale-95 text-sm"
+                    >
+                        <span className="material-symbols-outlined text-[18px] text-red-400">emergency</span>
+                        Log Rescue Protocol
+                    </button>
+                )}
             </div>
         );
     }
