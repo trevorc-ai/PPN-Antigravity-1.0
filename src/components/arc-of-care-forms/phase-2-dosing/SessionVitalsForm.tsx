@@ -61,42 +61,51 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     onExit,
     onBack
 }) => {
-    const [readings, setReadings] = useState<VitalSignReading[]>(
-        initialData.length > 0 ? initialData : [createEmptyReading(true)]
-    );
+    // Auto-stamp recorded_at on first render
+    function nowStamp(): string {
+        const d = new Date();
+        const pad = (n: number) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    const [readings, setReadings] = useState<VitalSignReading[]>(() => {
+        const base = initialData.length > 0 ? initialData : [createEmptyReading(true)];
+        // Stamp the first reading's recorded_at if not already set
+        if (!base[0].recorded_at) {
+            base[0] = { ...base[0], recorded_at: nowStamp() };
+        }
+        return base;
+    });
     const [isSaving, setIsSaving] = useState(false);
 
-    const handleSaveAndExit = () => {
-        if (onSave) {
-            setIsSaving(true);
-            const validReadings = readings.filter(r => hasData(r));
-            if (validReadings.length > 0) {
-                onSave(validReadings);
+    const handleSaveAndContinue = () => {
+        setIsSaving(true);
+        try {
+            if (onSave) {
+                const validReadings = readings.filter(r => hasData(r));
+                if (validReadings.length > 0) onSave(validReadings);
             }
-            setTimeout(() => {
-                setIsSaving(false);
-                if (onExit) onExit();
-            }, 300);
-        } else if (onExit) {
-            onExit();
+        } catch (e) {
+            console.error('Vitals save error (non-blocking):', e);
         }
+        setTimeout(() => {
+            setIsSaving(false);
+            if (onComplete) onComplete();
+        }, 300);
     };
 
-    const handleSaveAndContinue = () => {
-        if (onSave) {
-            setIsSaving(true);
-            const validReadings = readings.filter(r => hasData(r));
-            if (validReadings.length > 0) {
-                onSave(validReadings);
+    const handleSaveAndExit = () => {
+        try {
+            if (onSave) {
+                const validReadings = readings.filter(r => hasData(r));
+                if (validReadings.length > 0) onSave(validReadings);
             }
-            setTimeout(() => {
-                setIsSaving(false);
-                if (onComplete) onComplete();
-            }, 300);
-        } else if (onComplete) {
-            onComplete();
+        } catch (e) {
+            console.error('Vitals save error (non-blocking):', e);
         }
+        if (onExit) onExit();
     };
+
 
     function createEmptyReading(isBaseline = false): VitalSignReading {
         const base: VitalSignReading = {
@@ -195,7 +204,14 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     }
 
     function addReading() {
-        setReadings(prev => [...prev, createEmptyReading()]);
+        // Auto-save existing readings before adding a new one
+        try {
+            if (onSave) {
+                const validReadings = readings.filter(r => hasData(r));
+                if (validReadings.length > 0) onSave(validReadings);
+            }
+        } catch (e) { /* non-blocking */ }
+        setReadings(prev => [...prev, { ...createEmptyReading(), recorded_at: nowStamp() }]);
     }
 
     function removeReading(index: number) {
@@ -205,8 +221,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     }
 
     function recordNow(index: number) {
-        const now = new Date().toISOString().slice(0, 16);
-        updateReading(index, 'recorded_at', now);
+        updateReading(index, 'recorded_at', nowStamp());
     }
 
     function handlePresetSelect(index: number, preset: VitalPreset) {
@@ -537,86 +552,55 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             </div>
                         </div>
 
-                        {/* Metadata Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-700/50">
-                            {/* Recorded At */}
-                            <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
-                                    <Clock className="w-4 h-4 text-slate-300" />
+                        {/* Recorded At + Add Another Reading (inline) */}
+                        <div className="flex items-end gap-3 pt-4 border-t border-slate-700/50">
+                            <div className="flex-1 space-y-2">
+                                <label className="flex items-center gap-2 text-sm font-semibold text-slate-300" htmlFor={`recorded-at-${index}`}>
+                                    <Clock className="w-4 h-4 text-slate-400" />
                                     Recorded At
                                 </label>
                                 <div className="flex gap-2">
                                     <input
+                                        id={`recorded-at-${index}`}
                                         type="datetime-local"
                                         value={reading.recorded_at ?? ''}
                                         onChange={(e) => updateReading(index, 'recorded_at', e.target.value)}
-                                        className="flex-1 px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
+                                        tabIndex={10 + index * 10 + 6}
+                                        className="flex-1 px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                                        aria-label="Date and time of reading"
                                     />
                                     <button
                                         onClick={() => recordNow(index)}
-                                        className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-slate-300 rounded-lg font-medium transition-all whitespace-nowrap"
+                                        tabIndex={10 + index * 10 + 7}
+                                        className="px-4 py-3 bg-slate-600 hover:bg-slate-500 text-white border border-slate-500 hover:border-slate-400 rounded-lg font-semibold transition-all whitespace-nowrap text-sm"
+                                        aria-label="Set recorded time to now"
                                     >
                                         Now
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Data Source */}
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-slate-300">
-                                    Data Source
-                                </label>
-                                <select
-                                    value={reading.data_source ?? ''}
-                                    onChange={(e) => updateReading(index, 'data_source', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
-                                >
-                                    <option value="">Select Data Source...</option>
-                                    <option value="Manual Entry">Manual Entry</option>
-                                    <option value="Apple Watch">Apple Watch</option>
-                                    <option value="Oura Ring">Oura Ring</option>
-                                    <option value="Garmin">Garmin</option>
-                                    <option value="Medical Grade Monitor">Medical Grade Monitor</option>
-                                </select>
-                            </div>
-
-                            {/* Device ID / Protocol Token */}
-                            <div className="space-y-2 md:col-span-2">
-                                <label className="text-sm font-semibold text-slate-300">
-                                    Device ID / Protocol Token <span className="text-slate-400 font-normal">(Optional)</span>
-                                </label>
-                                <select
-                                    value={reading.device_id ?? ''}
-                                    onChange={(e) => updateReading(index, 'device_id', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
-                                >
-                                    <option value="">Select Protocol Token...</option>
-                                    <option value="TK-8832-A">TK-8832-A</option>
-                                    <option value="TK-8832-B">TK-8832-B</option>
-                                    <option value="TK-8832-C">TK-8832-C</option>
-                                    <option value="EXT-MONITOR-01">EXT-MONITOR-01</option>
-                                </select>
-                            </div>
+                            {/* Add Another Reading — inline, auto-saves current */}
+                            <button
+                                onClick={addReading}
+                                tabIndex={10 + index * 10 + 8}
+                                className="flex items-center justify-center gap-2 px-5 py-3 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-600/50 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-300 rounded-lg font-semibold text-sm transition-all whitespace-nowrap"
+                                aria-label="Save current reading and add another"
+                            >
+                                <Plus className="w-4 h-4" />
+                                Add Another Reading
+                            </button>
                         </div>
                     </div>
                 );
             })}
-
-            {/* Add Reading Button */}
-            <button
-                onClick={addReading}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 rounded-2xl font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-                <Plus className="w-5 h-5" />
-                Add Another Reading
-            </button>
 
             <FormFooter
                 onBack={onBack}
                 onSaveAndExit={handleSaveAndExit}
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
-                hasChanges={readings.some(r => hasData(r))}
+                hasChanges={true}
             />
         </div>
     );
