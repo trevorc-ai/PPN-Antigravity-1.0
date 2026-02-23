@@ -282,10 +282,14 @@ const Landing: React.FC = () => {
 
                 {/* KPI Glass Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 relative z-10">
+                  {/* Demo data label */}
+                  <div className="sm:col-span-3 flex items-center gap-1.5 mb-1">
+                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Illustrative demo data</span>
+                  </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Network Efficacy</span>
                     <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter group-hover:text-indigo-400 transition-colors">+42<span className="text-xl">%</span></span>
-                    <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">trending_up</span> 12% vs last quarter</span>
+                    <span className="text-[10px] text-slate-600 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">trending_up</span> Illustrative only</span>
                   </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 relative overflow-hidden group hover:border-red-500/50 hover:-translate-y-1 transition-all">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 blur-[20px] rounded-full pointer-events-none group-hover:bg-red-500/20 transition-colors" />
@@ -295,8 +299,8 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Protocols</span>
-                    <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter">1,204</span>
-                    <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">share</span> Across 42 nodes</span>
+                    <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter">—</span>
+                    <span className="text-[10px] text-slate-600 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">share</span> Growing network</span>
                   </div>
                 </div>
 
@@ -1013,6 +1017,7 @@ const Landing: React.FC = () => {
               <div className="flex flex-col items-center">
                 <p className="text-4xl font-black text-indigo-400 mb-2">67%</p>
                 <p className="text-sm font-bold text-slate-500 uppercase tracking-widest text-center">Phase 3 Trial<br />Remission Rate</p>
+                <p className="text-[10px] text-slate-600 mt-1 text-center max-w-[120px]">Mitchell et al., NEJM 2021<br />(MAPS Phase 3)</p>
               </div>
               <div className="w-px h-16 bg-slate-800 hidden sm:block"></div>
               <div className="flex flex-col items-center">
