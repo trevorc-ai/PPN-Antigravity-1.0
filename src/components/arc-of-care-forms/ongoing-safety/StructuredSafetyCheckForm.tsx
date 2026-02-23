@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../supabaseClient';
-import { CheckCircle, AlertTriangle, ChevronRight, ArrowUp, Minus, Zap, Clock, Plus } from 'lucide-react';
+import { CheckCircle, AlertTriangle, ChevronRight, ArrowUp, Minus, Zap, Clock, Plus, X, ChevronDown } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
 import { InteractionChecker } from '../../clinical/InteractionChecker';
@@ -342,51 +342,47 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                     {data.medication_changes && (
                         <div className="mt-4 animate-in slide-in-from-top-2 pt-4 space-y-6 px-2">
                             <div className="flex gap-2">
-                                <div className="flex-1">
+                                <div className="flex-1 relative">
                                     <select
-                                        value={medDraftId}
-                                        onChange={e => setMedDraftId(e.target.value)}
+                                        value="" /* Always empty so selecting the same item again triggers onChange */
+                                        onChange={e => {
+                                            const val = e.target.value;
+                                            if (!val) return;
+                                            const idNum = parseInt(val);
+                                            if (!data.current_medication_ids.includes(idNum)) {
+                                                updateField('current_medication_ids', [...data.current_medication_ids, idNum]);
+                                            }
+                                        }}
                                         className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none cursor-pointer"
                                     >
-                                        <option value="">Select Medication...</option>
+                                        <option value="">Select Medication to Add...</option>
                                         {medicationsOptions.map(m => (
                                             <option key={m.id} value={m.id}>{m.label}</option>
                                         ))}
                                     </select>
+                                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <ChevronDown className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                                    </div>
                                 </div>
-                                <button
-                                    type="button"
-                                    disabled={!medDraftId}
-                                    onClick={() => {
-                                        const idNum = parseInt(medDraftId);
-                                        if (!data.current_medication_ids.includes(idNum)) {
-                                            updateField('current_medication_ids', [...data.current_medication_ids, idNum]);
-                                        }
-                                        setMedDraftId('');
-                                    }}
-                                    className="px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-blue-400 hover:text-white hover:bg-slate-700 hover:border-blue-500/50 disabled:opacity-50 disabled:hover:bg-slate-800 disabled:hover:border-slate-700 disabled:hover:text-blue-400 transition-colors"
-                                    title="Add Medication"
-                                >
-                                    <Plus className="w-5 h-5" />
-                                </button>
                             </div>
 
-                            <div className="min-h-[60px] p-4 bg-slate-900/50 border border-slate-800 rounded-lg">
+                            <div className="min-h-[60px] p-4 bg-slate-900/50 border border-slate-800/80 rounded-lg">
                                 {data.current_medication_ids.length === 0 ? (
-                                    <p className="text-sm text-slate-600 italic">No medications added.</p>
+                                    <p className="text-sm text-slate-500 italic">No medications added.</p>
                                 ) : (
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-wrap gap-2">
                                         {data.current_medication_ids.map(id => {
                                             const med = medicationsOptions.find(m => m.id === id);
                                             return (
-                                                <div key={id} className="flex items-center justify-between px-3 py-2 bg-slate-800/50 border border-slate-700/50 rounded-md text-sm text-slate-300">
-                                                    <span className="font-medium">{med?.label ?? `Medication ID ${id}`}</span>
+                                                <div key={id} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-900/40 border border-blue-500/40 rounded-full text-sm text-blue-200 shadow-sm transition-all hover:bg-blue-900/60 hover:border-blue-400/50">
+                                                    <span className="font-semibold leading-none">{med?.label ?? `Medication ID ${id}`}</span>
                                                     <button
                                                         type="button"
                                                         onClick={() => updateField('current_medication_ids', data.current_medication_ids.filter(m => m !== id))}
-                                                        className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                                                        className="text-blue-400 hover:text-white hover:bg-blue-500/50 rounded-full p-0.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ml-1"
+                                                        aria-label={`Remove ${med?.label ?? 'medication'}`}
                                                     >
-                                                        <Minus className="w-4 h-4" />
+                                                        <X className="w-3.5 h-3.5" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             );
