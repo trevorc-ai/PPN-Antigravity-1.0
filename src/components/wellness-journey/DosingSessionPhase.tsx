@@ -288,7 +288,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // ── Contraindication checker (local engine, no DB) ────────────────────────
     const contraindicationResults = useMemo(() => {
         try {
-            // Try to get selected substance from dosing protocol cached data
+            // Priority 1: localStorage (written by DosingProtocolForm on substance selection)
+            // Priority 2: journey.session.substance (always populated from WellnessJourney state)
             let substanceName = '';
             try {
                 const cachedProtocol = localStorage.getItem('ppn_dosing_protocol');
@@ -297,6 +298,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     substanceName = parsed.substance_name || parsed.substance || '';
                 }
             } catch (_) { }
+
+            // Fallback to journey prop — reliable when Supabase substance fetch is slow/failed
+            if (!substanceName && journey.session?.substance) {
+                substanceName = journey.session.substance;
+            }
 
             // Try to get patient meds from structured safety check cache
             // DEMO FALLBACK includes Lithium — triggers absolute contraindication with Psilocybin/MDMA
@@ -326,7 +332,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             return runContraindicationEngine(engineInput);
         } catch (_) { return null; }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDosingProtocolComplete, contraindicationKey]); // re-run when dosing protocol changes or key bumped
+    }, [isDosingProtocolComplete, contraindicationKey, journey]); // re-run on any of these changes
 
     // Current meds list for display
     const patientMeds = useMemo(() => {
