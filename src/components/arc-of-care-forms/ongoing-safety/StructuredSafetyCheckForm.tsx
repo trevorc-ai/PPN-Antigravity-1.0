@@ -98,9 +98,12 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
 
     useEffect(() => {
         const loadMeds = async () => {
-            const { data } = await supabase.from('ref_medications').select('medication_id, medication_name, category').order('medication_name');
+            const { data, error } = await supabase.from('ref_medications').select('medication_id, medication_name, medication_category').order('medication_name');
+            if (error) {
+                console.error('[loadMeds] Error fetching medications:', error);
+            }
             if (data) {
-                setMedicationsOptions(data.map((m: any) => ({ id: m.medication_id, label: m.medication_name, category: m.category })));
+                setMedicationsOptions(data.map((m: any) => ({ id: m.medication_id, label: m.medication_name, category: m.medication_category })));
             }
         };
         loadMeds();
