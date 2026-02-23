@@ -332,6 +332,13 @@ const WellnessJourneyInternal: React.FC = () => {
             }
         }
 
+        // ── Phase 2: track form completions so step cards illuminate correctly ──
+        // dosing-protocol and session-vitals must both be in completedForms before
+        // the Start Session gate unlocks. Phase 1 sequencing doesn't apply here.
+        if (formId && activePhase === 2) {
+            setCompletedForms(prev => new Set([...prev, formId]));
+        }
+
         if (nextId) {
             // Same panel, swap content — no close/reopen flash
             setActiveFormId(nextId);

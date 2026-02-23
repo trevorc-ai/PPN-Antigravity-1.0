@@ -69,13 +69,34 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     }
 
     const [readings, setReadings] = useState<VitalSignReading[]>(() => {
-        const base = initialData.length > 0 ? initialData : [createEmptyReading(true)];
-        // Stamp the first reading's recorded_at if not already set
-        if (!base[0].recorded_at) {
-            base[0] = { ...base[0], recorded_at: nowStamp() };
+        if (initialData.length > 0) {
+            const base = [...initialData];
+            if (!base[0].recorded_at) base[0] = { ...base[0], recorded_at: nowStamp() };
+            return base;
         }
-        return base;
+        // Load patient's most recent vitals from localStorage for pre-population
+        let baseline = createEmptyReading(true);
+        try {
+            const cached = localStorage.getItem('ppn_latest_vitals');
+            if (cached) {
+                const parsed = JSON.parse(cached) as VitalSignReading;
+                // Merge cached values over defaults — keep the ID fresh
+                baseline = {
+                    ...baseline,
+                    heart_rate: parsed.heart_rate ?? baseline.heart_rate,
+                    hrv: parsed.hrv ?? baseline.hrv,
+                    bp_systolic: parsed.bp_systolic ?? baseline.bp_systolic,
+                    bp_diastolic: parsed.bp_diastolic ?? baseline.bp_diastolic,
+                    spo2: parsed.spo2 ?? baseline.spo2,
+                    respiratory_rate: parsed.respiratory_rate ?? baseline.respiratory_rate,
+                    temperature: parsed.temperature ?? baseline.temperature,
+                };
+            }
+        } catch (_) { /* malformed cache — use defaults */ }
+
+        return [{ ...baseline, recorded_at: baseline.recorded_at || nowStamp() }];
     });
+
     const [isSaving, setIsSaving] = useState(false);
 
     const handleSaveAndContinue = () => {
