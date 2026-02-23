@@ -38,24 +38,21 @@ const navSections: NavSection[] = [
           { label: 'Phase 1: Preparation', path: '/wellness-journey?phase=Preparation' },
           { label: 'Phase 2: Treatment', path: '/wellness-journey?phase=Treatment' },
           { label: 'Phase 3: Integration', path: '/wellness-journey?phase=Integration' },
-          { label: 'Phase 4: Complete', path: '/wellness-journey?phase=Complete' },
         ]
       },
     ],
   },
   {
-    title: 'Clinical Safety',
+    title: '',
     items: [
       { label: 'Interactions', icon: 'warning', path: '/interactions' },
       { label: 'Audit Logs', icon: 'history', path: '/audit' },
     ],
   },
   {
-    title: 'Knowledge Base',
+    title: '',
     items: [
       { label: 'Substance Library', icon: 'science', path: '/catalog' },
-      { label: 'Intelligence Hub', icon: 'newspaper', path: '/news' },
-      { label: 'Clinician Directory', icon: 'people', path: '/clinicians' },
     ],
   },
   {
@@ -117,10 +114,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <nav className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 pb-12">
           <div className="space-y-6">
             {navSections.map((section) => (
-              <div key={section.title}>
-                <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 px-3">
-                  {section.title}
-                </h3>
+              <div key={section.title || JSON.stringify(section.items.map(i => i.path))}>
+                {section.title && (
+                  <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2 px-3">
+                    {section.title}
+                  </h3>
+                )}
                 <ul className="space-y-1">
                   {section.items.map((item) => {
                     // Map tour data attributes to specific navigation items

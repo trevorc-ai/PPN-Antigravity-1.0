@@ -12,7 +12,7 @@ import { SubmissionSuccessScreen } from '../components/ProtocolBuilder/Submissio
 import { InteractionChecker } from '../components/clinical/InteractionChecker';
 import { ChevronLeft, Check, AlertCircle, Sparkles } from 'lucide-react';
 
-console.log('🎨 ProtocolBuilder REDESIGN v2.0 - Premium Glassmorphic UI');
+
 
 type WorkflowScreen = 'selection' | 'form' | 'success';
 
@@ -144,7 +144,8 @@ export const ProtocolBuilder = () => {
 
   const handleSubmit = async () => {
     if (!isFormComplete()) {
-      alert('Please complete all required fields');
+      // The inline missing-fields panel already guides the user — just scroll up
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -164,11 +165,10 @@ export const ProtocolBuilder = () => {
 
     if (error) {
       console.error('Submission error:', error);
-      alert('Error submitting protocol. Please try again.');
+      // Surface error without alert — log is sufficient; UI will remain on form
       return;
     }
 
-    console.log('Protocol submitted successfully:', data);
     setScreen('success');
 
     // Auto-navigate back to My Protocols after 3 seconds

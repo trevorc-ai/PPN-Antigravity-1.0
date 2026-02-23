@@ -226,12 +226,12 @@ const ClinicianDirectory: React.FC = () => {
     e.preventDefault();
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      // COMPLIANCE: Only user_id is stored. Free-text fields (name, email, role) removed per
+      // data governance policy — log tables store reference IDs only, no direct text.
+      // TODO: Create ref_feature_request_types table and store request_type_id FK instead.
       await supabase.from('log_feature_requests').insert({
         user_id: user?.id ?? null,
-        request_type: 'practitioner_listing',
-        requested_text: JSON.stringify(listingForm),
-        category: 'directory',
-        status: 'pending',
+        // request_type, category, status, requested_text removed — all free text, no ref FK exists
       });
       setListingSubmitted(true);
     } catch (err) {

@@ -74,18 +74,17 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             ]
         },
         {
-            title: 'Clinical Safety',
+            title: '',
             items: [
                 { label: 'Interactions', icon: 'security', path: '/interactions' },
                 { label: 'Audit Logs', icon: 'manage_search', path: '/audit' },
             ]
         },
         {
-            title: 'Knowledge Base',
+            title: '',
             items: [
                 { label: 'Substance Library', icon: 'biotech', path: '/catalog' },
                 { label: 'News & Updates', icon: 'newspaper', path: '/news' },
-                { label: 'Clinician Directory', icon: 'groups', path: '/clinicians' },
             ]
         },
         {
@@ -167,10 +166,12 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
                 {/* Navigation Sections */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-6">
                     {sections.map((section) => (
-                        <nav key={section.title} className="space-y-2">
-                            <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest px-2">
-                                {section.title}
-                            </h3>
+                        <nav key={section.title || JSON.stringify(section.items.map((i: { path: string }) => i.path))} className="space-y-2">
+                            {section.title && (
+                                <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest px-2">
+                                    {section.title}
+                                </h3>
+                            )}
                             <ul className="space-y-1">
                                 {section.items.map((item) => (
                                     <li key={item.path}>

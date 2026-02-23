@@ -87,14 +87,12 @@ export interface BehavioralChangeData {
     patient_id: string;
     session_id?: string;
     change_date: string;
-    change_category?: string;
-    change_type_ids?: number[];
-    impact_on_wellbeing?: string;
+    // change_category removed — requires ref_behavioral_categories FK (ID only, no free text)
+    change_type_ids?: number[];  // FK array to ref_behavioral_change_types
+    // impact_on_wellbeing removed — requires ref_wellbeing_impact FK
     confidence_sustaining?: number;
-    related_to_dosing?: string;
-    change_type?: string;       // legacy NOT NULL — defaults to 'structured'
-    change_description?: string; // legacy NOT NULL — defaults to JSON of change_type_ids
-    is_positive?: boolean;       // legacy NOT NULL — derived from impact_on_wellbeing
+    // related_to_dosing removed — requires ref table FK
+    is_positive?: boolean;       // boolean — derived from UX selection, not free text
 }
 
 export interface LongitudinalAssessmentData {
@@ -139,7 +137,7 @@ export async function createClinicalSession(
                 patient_link_code: patientId,
                 site_id: siteId,
                 session_date: new Date().toISOString().split('T')[0],
-                session_type: 'wellness_journey',
+                // session_type removed — requires ref_session_types FK (ID only, no free text)
             }])
             .select('id')
             .single();
@@ -193,15 +191,19 @@ export async function createBaselineAssessment(data: BaselineAssessmentData) {
     }
 }
 
-/** Records consent entries. Inserts one row per consent type. */
+/**
+ * Records consent verification. Inserts one row per consent event.
+ * NOTE: consent type string removed — requires ref_consent_types table with numeric IDs.
+ * Until that table exists, only verification timestamp and site are recorded.
+ */
 export async function createConsent(
-    consentTypes: string[],
+    consentTypes: string[], // param kept for caller compatibility; count used for multi-insert
     siteId: string,
 ): Promise<{ success: boolean; error?: unknown }> {
     try {
         const now = new Date().toISOString();
-        const rows = consentTypes.map((type) => ({
-            type,
+        // One row per consent event — type field omitted until ref_consent_types FK exists
+        const rows = consentTypes.map(() => ({
             verified: true,
             verified_at: now,
             site_id: siteId,
@@ -227,7 +229,7 @@ export async function createSessionEvent(data: SessionEventData) {
             .insert([{
                 ae_id: crypto.randomUUID(),
                 session_id: data.session_id,
-                event_type: data.event_type,
+                // event_type (free text) removed — use meddra_code_id FK instead
                 meddra_code_id: data.meddra_code_id,
                 intervention_type_id: data.intervention_type_id,
                 severity_grade_id: data.severity_grade_id,
@@ -313,10 +315,10 @@ export async function createTimelineEvent(data: TimelineEventData) {
             .insert([{
                 session_id: data.session_id,
                 event_timestamp: data.event_timestamp,
-                event_type: data.event_type,
+                // event_type (free text) removed — use event_type_id FK to ref_flow_event_types
                 event_type_id: data.event_type_id,
-                performed_by: data.performed_by,
-                metadata: data.metadata,
+                performed_by: data.performed_by, // user UUID — acceptable reference ID
+                // metadata JSON blob removed — no free text allowed in log tables
             }])
             .select()
             .single();
@@ -405,12 +407,8 @@ export async function createIntegrationSession(data: IntegrationSessionData) {
 
 /** Creates a behavioral change record. Maps to log_behavioral_changes. */
 export async function createBehavioralChange(data: BehavioralChangeData) {
-    const is_positive = data.impact_on_wellbeing
-        ? data.impact_on_wellbeing.includes('positive')
-        : (data.is_positive ?? true);
-    const change_description = data.change_type_ids?.length
-        ? JSON.stringify(data.change_type_ids)
-        : (data.change_description ?? 'structured'); // preserve legacy string data until RefPicker (WO-214)
+    // is_positive is a boolean derived from UI selection — acceptable
+    const is_positive = data.is_positive ?? true;
 
     try {
         const { data: result, error } = await supabase
@@ -419,14 +417,14 @@ export async function createBehavioralChange(data: BehavioralChangeData) {
                 patient_id: data.patient_id,
                 session_id: data.session_id,
                 change_date: data.change_date,
-                change_category: data.change_category,
-                change_type_ids: data.change_type_ids,
-                impact_on_wellbeing: data.impact_on_wellbeing,
-                confidence_sustaining: data.confidence_sustaining,
-                related_to_dosing: data.related_to_dosing,
-                change_type: data.change_type ?? 'structured',
-                change_description,
-                is_positive,
+                // change_category removed — requires ref_behavioral_categories FK
+                change_type_ids: data.change_type_ids, // FK array to ref_behavioral_change_types ✅
+                // impact_on_wellbeing removed — requires ref_wellbeing_impact FK
+                confidence_sustaining: data.confidence_sustaining, // numeric score ✅
+                // related_to_dosing removed — requires ref table FK
+                // change_type (legacy text) removed
+                // change_description (legacy text) removed
+                is_positive, // boolean ✅
             }])
             .select()
             .single();

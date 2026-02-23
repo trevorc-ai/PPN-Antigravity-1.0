@@ -13,9 +13,7 @@ import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import ClinicPerformanceRadar from '../components/analytics/ClinicPerformanceRadar';
 import PatientConstellation from '../components/analytics/PatientConstellation';
-import ProtocolEfficiency from '../components/analytics/ProtocolEfficiency';
-import MolecularPharmacology from '../components/analytics/MolecularPharmacology';
-import MetabolicRiskGauge from '../components/analytics/MetabolicRiskGauge';
+
 import { GlassmorphicCard } from '../components/ui/GlassmorphicCard';
 import { supabase } from '../supabaseClient';
 import { useAnalyticsData } from '../hooks/useAnalyticsData';
@@ -337,30 +335,7 @@ const Analytics = () => {
                     </GlassmorphicCard>
                 </div>
 
-                {/* ROW 3: Molecular Bridge (full width) + Genomic Safety Gauge (right column) */}
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 print:block print:space-y-8">
 
-                    {/* Molecular Bridge — needs xl:col-span-2 because of internal 3-col grid */}
-                    <div className="xl:col-span-2 print:break-inside-avoid">
-                        <GlassmorphicCard className="min-h-[540px] h-auto lg:h-[540px] relative overflow-hidden print:h-[440px] print:shadow-none print:border-gray-200 print:bg-white">
-                            <MolecularPharmacology />
-                        </GlassmorphicCard>
-                    </div>
-
-                    {/* Genomic Safety / Metabolic Risk Gauge — single column, self-contained */}
-                    <div className="xl:col-span-1 print:break-inside-avoid">
-                        <GlassmorphicCard className="min-h-[540px] h-auto lg:h-[540px] relative overflow-hidden print:h-[440px] print:shadow-none print:border-gray-200 print:bg-white">
-                            <MetabolicRiskGauge />
-                        </GlassmorphicCard>
-                    </div>
-                </div>
-
-                {/* ROW 4: Protocol ROI — full width, 3-col internal (scatter + ranking list) */}
-                <div className="print:break-inside-avoid">
-                    <GlassmorphicCard className="min-h-[560px] h-auto lg:h-[560px] relative overflow-hidden print:h-[460px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <ProtocolEfficiency />
-                    </GlassmorphicCard>
-                </div>
 
             </Section>
 
