@@ -7,6 +7,7 @@ import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from '../contexts/AuthContext';
+import { ThemeToggle } from './ui/ThemeToggle';
 
 interface TopHeaderProps {
   onMenuClick: () => void;
@@ -270,6 +271,11 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     onClick={() => navigate('/vibe-check')}
                   />
                 </div> */}
+              </div>
+
+              {/* Cockpit Mode Toggle — hidden on mobile */}
+              <div className="hidden lg:block">
+                <ThemeToggle />
               </div>
 
               <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block"></div>

@@ -118,7 +118,23 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     };
 
     const updateField = (field: keyof DosingProtocolData, value: any) => {
-        setData(prev => ({ ...prev, [field]: value }));
+        setData(prev => {
+            const next = { ...prev, [field]: value };
+            // Persist to localStorage so DosingSessionPhase can read substance name
+            // for its real-time contraindication indicator.
+            try {
+                const substance = substances.find(s => s.substance_id === next.substance_id);
+                localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
+                    substance_id: next.substance_id,
+                    substance_name: substance?.substance_name ?? '',
+                    dosage_amount: next.dosage_amount,
+                    route_of_administration: next.route_of_administration,
+                }));
+                // Notify same-tab listeners (storage event is cross-tab only)
+                window.dispatchEvent(new CustomEvent('ppn:dosing-updated'));
+            } catch (_) { /* quota */ }
+            return next;
+        });
     };
 
     const handleBatchSave = async (batchData: BatchData) => {

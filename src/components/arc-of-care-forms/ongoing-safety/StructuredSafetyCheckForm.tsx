@@ -112,8 +112,16 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     // TEMPORARY: Persist medications to localStorage so DosingProtocolForm can read them.
     // In production, this would be fetched from log_patient_medications or similar.
     useEffect(() => {
+        // Persist IDs (legacy key)
         localStorage.setItem('mock_patient_medications', JSON.stringify(data.current_medication_ids));
-    }, [data.current_medication_ids]);
+        // Persist NAMES — required by contraindicationEngine (matchesAny uses string comparisons)
+        if (medicationsOptions.length > 0) {
+            const names = data.current_medication_ids
+                .map(id => medicationsOptions.find(m => m.id === id)?.label ?? '')
+                .filter(Boolean);
+            localStorage.setItem('mock_patient_medications_names', JSON.stringify(names));
+        }
+    }, [data.current_medication_ids, medicationsOptions]);
 
     const updateField = <K extends keyof StructuredSafetyCheckData>(
         field: K,

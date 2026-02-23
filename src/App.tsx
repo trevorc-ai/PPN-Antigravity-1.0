@@ -325,13 +325,16 @@ const AppContent: React.FC = () => {
 
 import { ToastProvider } from './contexts/ToastContext';
 import { ToastContainer } from './components/ui/Toast';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const App = () => {
   return (
     <AuthProvider>
       <ToastProvider>
-        <AppContent />
-        <ToastContainer />
+        <ThemeProvider>
+          <AppContent />
+          <ToastContainer />
+        </ThemeProvider>
       </ToastProvider>
     </AuthProvider>
   );

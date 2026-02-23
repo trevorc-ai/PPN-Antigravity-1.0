@@ -29,6 +29,25 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     const SESSION_KEY = `ppn_session_mode_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
     const SESSION_START_KEY = `ppn_session_start_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
 
+    // Bump this counter whenever we want to force a contraindication re-evaluation
+    const [contraindicationKey, setContraindicationKey] = useState(0);
+
+    // Re-evaluate contraindications when dosing protocol or medications are updated
+    // in localStorage (DosingProtocolForm and StructuredSafetyCheckForm write these keys)
+    useEffect(() => {
+        const bump = () => setContraindicationKey(k => k + 1);
+        // storage event = cross-tab writes; ppn:dosing-updated = same-tab writes
+        const handleStorage = (e: StorageEvent) => {
+            if (e.key === 'ppn_dosing_protocol' || e.key === 'mock_patient_medications_names') bump();
+        };
+        window.addEventListener('storage', handleStorage);
+        window.addEventListener('ppn:dosing-updated', bump);
+        return () => {
+            window.removeEventListener('storage', handleStorage);
+            window.removeEventListener('ppn:dosing-updated', bump);
+        };
+    }, []);
+
     // Restore mode from localStorage on mount (survives companion-page navigation)
     const [mode, setMode] = useState<SessionMode>(() => {
         try { return (localStorage.getItem(SESSION_KEY) as SessionMode) ?? 'pre'; } catch { return 'pre'; }
@@ -266,7 +285,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             };
             return runContraindicationEngine(engineInput);
         } catch (_) { return null; }
-    }, [isDosingProtocolComplete]); // re-run when dosing protocol changes
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isDosingProtocolComplete, contraindicationKey]); // re-run when dosing protocol changes or key bumped
 
     // Current meds list for display
     const patientMeds = useMemo(() => {
@@ -439,12 +459,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                             <ShieldAlert className="w-4 h-4" /> No substance selected
                         </span>
-                    ) : contraindicationResults.absoluteContraindications?.length > 0 ? (
+                    ) : contraindicationResults.absoluteFlags.length > 0 ? (
                         <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-black uppercase tracking-wider">
                             <AlertTriangle className="w-4 h-4 text-red-400" />
                             ABSOLUTE CONTRAINDICATION
                         </span>
-                    ) : contraindicationResults.relativeContraindications?.length > 0 ? (
+                    ) : contraindicationResults.relativeFlags.length > 0 ? (
                         <span className="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-xs font-black uppercase tracking-wider">
                             <AlertCircle className="w-4 h-4 text-amber-400" />
                             RELATIVE CONTRAINDICATION
