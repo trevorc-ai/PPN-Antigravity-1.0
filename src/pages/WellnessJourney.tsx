@@ -381,7 +381,10 @@ const WellnessJourneyInternal: React.FC = () => {
     }, [completedPhases]);
 
     const handlePhaseChange = useCallback((phase: 1 | 2 | 3) => {
-        if (isPhaseUnlocked(phase)) setActivePhase(phase);
+        if (isPhaseUnlocked(phase)) {
+            setActivePhase(phase);
+            setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+        }
     }, [isPhaseUnlocked]);
 
     // Mark current phase complete and advance
@@ -389,7 +392,10 @@ const WellnessJourneyInternal: React.FC = () => {
         const updated = [...new Set([...completedPhases, activePhase])];
         setCompletedPhases(updated);
         localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updated));
-        if (activePhase < 3) setActivePhase((activePhase + 1) as 1 | 2 | 3);
+        if (activePhase < 3) {
+            setActivePhase((activePhase + 1) as 1 | 2 | 3);
+            setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
+        }
     }, [completedPhases, activePhase]);
 
     // Keyboard shortcuts
