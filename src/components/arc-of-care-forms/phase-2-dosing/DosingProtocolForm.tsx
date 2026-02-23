@@ -136,6 +136,13 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
 
     const selectedSubstance = substances.find(s => s.substance_id === data.substance_id);
 
+    const isValid = Boolean(
+        data.substance_id &&
+        data.dosage_amount !== undefined &&
+        data.dosage_amount > 0 &&
+        data.route_of_administration
+    );
+
     return (
         <div className="max-w-4xl mx-auto space-y-6">
 
@@ -244,6 +251,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={Object.keys(data).length > 0}
+                isValid={isValid}
             />
 
             {/* Modals */}

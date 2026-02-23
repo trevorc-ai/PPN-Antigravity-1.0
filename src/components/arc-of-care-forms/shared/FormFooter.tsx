@@ -10,6 +10,7 @@ export interface FormFooterProps {
     saveAndContinueLabel?: string;
     saveAndExitLabel?: string;
     isDone?: boolean; // For when it's the absolute last step
+    isValid?: boolean; // Whether the form passes validation
 }
 
 export const FormFooter: React.FC<FormFooterProps> = ({
@@ -21,6 +22,7 @@ export const FormFooter: React.FC<FormFooterProps> = ({
     saveAndContinueLabel = 'Save & Continue',
     saveAndExitLabel = 'Save & Exit',
     isDone = false,
+    isValid = true,
 }) => {
     return (
         <div className="flex items-center gap-3 pt-2 pb-4 w-full">
@@ -46,8 +48,8 @@ export const FormFooter: React.FC<FormFooterProps> = ({
                 <button
                     type="button"
                     onClick={onSaveAndExit}
-                    disabled={isSaving || !hasChanges}
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl border text-sm font-semibold transition-all bg-slate-800/60 hover:bg-slate-700/60 border-slate-600/50 text-slate-300 disabled:opacity-50"
+                    disabled={isSaving || !hasChanges || !isValid}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl border text-sm font-semibold transition-all bg-slate-800/60 hover:bg-slate-700/60 border-slate-600/50 text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Save and exit panel"
                 >
                     <LogOut className="w-4 h-4" aria-hidden="true" />
@@ -60,8 +62,8 @@ export const FormFooter: React.FC<FormFooterProps> = ({
                 <button
                     type="button"
                     onClick={onSaveAndContinue}
-                    disabled={isSaving || !hasChanges}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 shadow-indigo-950/50 disabled:opacity-50"
+                    disabled={isSaving || !hasChanges || !isValid}
+                    className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg bg-indigo-700/50 hover:bg-indigo-600/60 border border-indigo-500/50 text-indigo-100 shadow-indigo-950/50 disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Save and continue"
                 >
                     {isSaving ? <Save className="w-4 h-4 animate-pulse" aria-hidden="true" /> : <CheckCircle className="w-4 h-4" aria-hidden="true" />}
