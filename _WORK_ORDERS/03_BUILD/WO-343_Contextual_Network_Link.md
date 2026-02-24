@@ -6,6 +6,7 @@ created: 2026-02-23
 priority: P0 — DEMO BLOCKER (Wednesday Dr. Allen demo)
 ref_tables_affected: none (display only, no DB writes)
 deadline: 2026-02-26 (Wednesday)
+network_domain: ppnportal.com ← CONFIRMED 2026-02-23
 ---
 
 # WO-343: Contextual Network Link — Safety Check Trigger
@@ -66,8 +67,12 @@ The component must show:
     'default': 2
   };
   ```
-- The button opens a new tab to the network domain (use `https://ppn.community` as
-  placeholder — confirm with Trevor before pushing to production)
+- The button opens a new tab to: `https://ppnportal.com/practitioners?contraindication=[slug]`
+- **Domain confirmed:** Trevor owns ppnportal.com — this is the practitioner network layer
+  of the PPN Portal brand. No new brand needed. Architecture: ppnportal.net = clinical tool,
+  ppnportal.com = practitioner network, ppnportal.org = research/public layer.
+- For the demo, ppnportal.com does not need to be a full application. A static landing page
+  reading "PPN Practitioner Network — Coming Soon" is sufficient for Wednesday.
 
 ### AC-3: Visual Design
 - Use the existing card/panel component pattern from the codebase

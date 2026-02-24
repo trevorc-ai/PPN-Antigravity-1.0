@@ -275,7 +275,15 @@ The practitioner networking features (contextual trigger links, supervision circ
 | `/case-consultation` | peer consultation psychedelic therapy | Q2 2026 |
 | `/verified-practitioners` | verified psychedelic therapist directory | Q2 2026 |
 
-**Domain decision pending:** The practitioner network layer must live on a domain separate from `ppnportal.net` to maintain the no-HIPAA-entanglement architecture. Domain recommendation: `ppn.community` — awaiting Trevor confirmation. All SEO work for the network layer is blocked until domain is chosen.
+**Domain architecture confirmed (2026-02-23):** Trevor owns all three TLDs. One brand, three layers:
+
+| Domain | Purpose | Primary SEO Focus |
+|---|---|---|
+| `ppnportal.net` | Clinical tool (the app) | Practice management, safety, benchmarking keywords |
+| `ppnportal.com` | Practitioner network | Community, supervision, peer consultation keywords |
+| `ppnportal.org` | Research & public layer | Real-world evidence, open data, policy keywords |
+
+**SEO advantage:** Three domains under one brand creates a **link cluster** — each domain can link to the others, building mutual domain authority. ppnportal.org links from academic or policy sources (highest-authority backlinks) flow equity toward ppnportal.net and ppnportal.com.
 
 **The networking feature IS a marketing asset.** When the contextual link fires during a safety check and says *"4 practitioners in the network have managed this contraindication"* — that moment, for a practitioner who has been working alone, is worth more than any landing page copy. Word-of-mouth from that moment is the growth engine.
 
