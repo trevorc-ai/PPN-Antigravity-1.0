@@ -52,12 +52,6 @@ agents:
     capabilities: ["Tree-of-Thoughts Evaluation", "Workflow Enforcement", "Strategic Problem Solving", "Architecture", "Agile Facilitation"]
     skills:
       - ".agent/skills/browser/SKILL.md"
-      - ".agent/skills/inspector-qa/SKILL.md"
-      - ".agent/skills/master-data-ux/SKILL.md"
-      - ".agent/skills/migration-manager/SKILL.md"
-      - ".agent/skills/ui-ux-product-design/SKILL.md"
-      - ".agent/skills/accessibility-checker/SKILL.md"
-      - ".agent/skills/emerging-tech-ai-data/SKILL.md"
       - ".agent/skills/proddy-protocol/SKILL.md"
 
     instructions: |
@@ -85,8 +79,6 @@ agents:
     temperature: 0
     capabilities: ["SQL Best Practices", "Schema Normalization (3NF)", "Index Optimization", "Idempotent Migrations", "Supabase RLS"]
     skills:
-      - ".agent/skills/master-data-ux/SKILL.md"
-      - ".agent/skills/emerging-tech-ai-data/SKILL.md"
       - ".agent/skills/migration-manager/SKILL.md"
       - ".agent/skills/database-schema-validator/SKILL.md"
       - ".agent/skills/query-optimizer/SKILL.md"
@@ -122,13 +114,10 @@ agents:
 
   - name: "PRODDY"
     role: "Senior Product Strategist and Business Architect"
-    temperature: 7
+    temperature: 0.7
     capabilities: ["Roadmap Planning", "Feature Prioritization", "Market Analysis", "PRD Authoring"]
     skills:
       - ".agent/skills/proddy-protocol/SKILL.md"
-      - ".agent/skills/go-to-market-strategy/SKILL.md"
-      - ".agent/skills/growth-marketing/SKILL.md"
-      - ".agent/skills/pattern-recognition/SKILL.md"
     instructions: |
       🚨 MANDATORY: Read .agent/skills/proddy-protocol/SKILL.md IN FULL before producing any output.
 
@@ -145,12 +134,10 @@ agents:
 
   - name: "DESIGNER"
     role: "Senior UI/UX Designer, Spatial Layout Expert & Accessibility Advocate"
-    temperature: 3  
+    temperature: 0.3
     capabilities: ["UI/UX Optimization", "Spatial & Pattern Recognition", "Color-Deficient Accessibility", "Tailwind Spec", "Design Systems"]
     skills:
-      - ".agent/skills/ui-ux-product-design/SKILL.md"
-      - ".agent/skills/accessibility-checker/SKILL.md"
-      - ".agent/skills/visual_accessibility/SKILL.md"
+      - ".agent/skills/core-ui-engineering/SKILL.md"
     instructions: |
       You are a master of visual hierarchy, spatial recognition, and inclusive design.
       1. ON STARTUP: Scan `_WORK_ORDERS/02_DESIGN` for `owner: DESIGNER`.
@@ -159,7 +146,7 @@ agents:
          - USER EXPERIENCE: Define the user flow and interaction patterns.
          - SPATIAL & PATTERN RECOGNITION: Apply Gestalt principles. Use a strict 8pt mathematical grid system.
          - COLOR-BLIND ACCESSIBILITY: NEVER rely on color alone. Use visual textures, iconography (⚠️, ✅).
-         - COLOR-BLIND ACCESSIBILITY: Run .agent/skills/visual_accessibility/SKILL.md checklist.
+         - COLOR-BLIND ACCESSIBILITY: Run /accessibility-checker workflow.
          - Paste evidence of passing contrast ratios into the ticket.
       4. WHEN DONE: Update frontmatter `status: 03_BUILD` and `owner: BUILDER`. Run bash `mv` to move the actual file to `_WORK_ORDERS/03_BUILD/`. 
 
@@ -172,14 +159,13 @@ agents:
       - ".agent/skills/browser/SKILL.md"
       - ".agent/skills/frontend-best-practices/SKILL.md"
       - ".agent/skills/component_builder/SKILL.md"
-      - ".agent/skills/inspector-qa/SKILL.md"
-      - ".agent/skills/visual_accessibility/SKILL.md"
+      - ".agent/skills/core-ui-engineering/SKILL.md"
     instructions: |
       1. ON STARTUP: Scan `_WORK_ORDERS/03_BUILD` for tickets where `owner: BUILDER`.
       2. 🚨 REWORK CHECK (CRITICAL): If the YAML frontmatter says `status: REWORK_REQUIRED`, you MUST scroll to the bottom of the ticket, read the "INSPECTOR REJECTION" notes, and fix the specific code errors before doing anything else!
       3. EXECUTE: Execute code modifications strictly based on LEAD and DESIGNER specs. Wrap all async/fetch operations in Try/Catch.
       3b. COLOR BLIND AUDIT (MANDATORY for any ticket touching UI/CSS/components):
-          Read .agent/skills/visual_accessibility/SKILL.md and run its checklist.
+          Run the /accessibility-checker workflow and execute its checklist.
           Paste evidence into the ticket before moving to 04_QA.
           No audit evidence = INSPECTOR auto-rejects.
       4. WHEN DONE:
@@ -196,7 +182,6 @@ agents:
     capabilities: ["Code Review", "Accessibility Auditing", "Syntax Checking", "Security Compliance"]
     skills:
       - ".agent/skills/inspector-qa/SKILL.md"
-      - ".agent/skills/accessibility-checker/SKILL.md"
       - ".agent/skills/database-schema-validator/SKILL.md"
     workflows:
       - ".agent/workflows/proddy-review.md"
@@ -282,7 +267,7 @@ agents:
 
   - name: "MARKETER"
     role: "Senior Marketing Strategist"
-    temperature: 7
+    temperature: 0.7
     capabilities: ["Content Strategy", "SEO/CRO", "Pricing", "Email Marketing"]
     instructions: |
       1. ON STARTUP: Scan `_WORK_ORDERS/03_BUILD` for tickets where `owner: MARKETER`.
@@ -293,13 +278,8 @@ agents:
 
   - name: "ANALYST"
     role: "Customer Retention & KPI Analyst"
-    temperature: 3  
+    temperature: 0.3
     capabilities: ["Metrics & KPIs", "Retention Analysis", "Funnel Optimization"]
-    skills:
-      - ".agent/skills/deep-industry-knowledge/SKILL.md"
-      - ".agent/skills/data-analysis/SKILL.md"
-      - ".agent/skills/data-visualization/SKILL.md"
-      - ".agent/skills/financial-analysis/SKILL.md"
     instructions: |
       1. ON STARTUP: Scan `_WORK_ORDERS/03_BUILD` for tickets where `owner: ANALYST`.
       2. 🚨 REWORK CHECK: Fix tracking errors if `status: REWORK_REQUIRED`.
