@@ -55,7 +55,7 @@ function PhysioInput({
 }) {
     return (
         <div>
-            <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
+            <label htmlFor={id} className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1.5">
                 {label}
             </label>
             <input
@@ -80,7 +80,7 @@ function ScoreInputLarge({
 }) {
     return (
         <div>
-            <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
+            <label htmlFor={id} className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1.5">
                 {label}
             </label>
             <input
@@ -108,7 +108,7 @@ function ScoreSelect({
     const options = Array.from({ length: max - min + 1 }, (_, i) => min + i);
     return (
         <div>
-            <label htmlFor={id} className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5">
+            <label htmlFor={id} className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1.5">
                 {label}
             </label>
             <select
@@ -138,7 +138,7 @@ function ScoreSlider({
     return (
         <div>
             <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor={id} className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                <label htmlFor={id} className="text-sm font-black text-slate-400 uppercase tracking-widest">
                     {label}
                 </label>
                 <span className="text-xl font-black text-slate-300">
