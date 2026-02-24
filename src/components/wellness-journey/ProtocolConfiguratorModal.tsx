@@ -126,11 +126,13 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('');
 
+    const [step, setStep] = useState<1 | 2>(1);
+
     const toggleFeature = (id: string) => {
         setCustomFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
     };
 
-    const handleSave = () => {
+    const handleNextStep = () => {
         const archetype = ARCHETYPES.find(a => a.id === selectedId);
         if (archetype) {
             setConfig({
@@ -138,6 +140,10 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 enabledFeatures: selectedId === 'custom' ? customFeatures : archetype.features
             });
         }
+        setStep(2);
+    };
+
+    const handleSave = () => {
         // Surface intake data to parent (WellnessJourney will store in journey.demographics)
         if (onIntakeComplete) {
             onIntakeComplete({ condition, age, gender });
@@ -145,35 +151,123 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
         onClose();
     };
 
+    if (step === 2) {
+        return (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
+                <div className="w-full max-w-2xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
+                                <Settings2 className="w-6 h-6 text-violet-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">New Patient Setup</h2>
+                                <p className="text-base text-slate-400 mt-1">Tell us about this patient, then choose your workflow.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="p-6 md:p-8 space-y-6 overflow-y-auto max-h-[85vh] custom-scrollbar">
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center flex-shrink-0">
+                                    <User className="w-4 h-4 text-indigo-400" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-white">Patient Context</h3>
+                                    <p className="text-sm text-slate-400">Non-identifying clinical context only. No names or PHI.</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
+                                <div className="sm:col-span-3">
+                                    <label htmlFor="intake-condition" className="block text-sm font-semibold text-slate-300 mb-2">
+                                        What are you treating? <span className="text-indigo-400">*</span>
+                                    </label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {CONDITIONS.map(c => (
+                                            <button
+                                                key={c}
+                                                type="button"
+                                                onClick={() => setCondition(c)}
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${condition === c
+                                                    ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                                                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                    }`}
+                                            >
+                                                {c}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="intake-age" className="block text-sm font-semibold text-slate-300 mb-2">Age</label>
+                                    <input
+                                        id="intake-age"
+                                        type="number"
+                                        min="18"
+                                        max="99"
+                                        placeholder="e.g. 42"
+                                        value={age}
+                                        onChange={e => setAge(e.target.value)}
+                                        className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                    />
+                                </div>
+
+                                <div className="sm:col-span-2">
+                                    <label className="block text-sm font-semibold text-slate-300 mb-2">Gender</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {GENDERS.map(g => (
+                                            <button
+                                                key={g}
+                                                type="button"
+                                                onClick={() => setGender(g)}
+                                                className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
+                                                    ? 'bg-indigo-600 text-white border-indigo-500'
+                                                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                    }`}
+                                            >
+                                                {g}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex justify-end items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                        <button
+                            onClick={handleSave}
+                            className="px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg border active:scale-95 bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-indigo-500/10"
+                        >
+                            Start Session →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
             <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
-                            <Settings2 className="w-6 h-6 text-violet-400" />
+                        <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                            <Settings2 className="w-6 h-6 text-indigo-400" />
                         </div>
                         <div>
-                            <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">New Patient Setup</h2>
-                            <p className="text-base text-slate-400 mt-1">Tell us about this patient, then choose your workflow.</p>
+                            <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">Workspace Configuration</h2>
+                            <p className="text-base text-slate-400 mt-1">Configure your clinical interface layout.</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Body */}
                 <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[85vh] custom-scrollbar">
-
-                    {/* ── Step 1: Workflow ─────────────────────────────── */}
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center flex-shrink-0">
-                            <Settings2 className="w-4 h-4 text-indigo-400" />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-white">Step 1 — Workspace Configuration</h3>
-                            <p className="text-sm text-slate-400">Select your active modules.</p>
-                        </div>
-                    </div>
 
                     {/* Educational Callout */}
                     <div className="flex items-start gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
@@ -316,91 +410,10 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     </div>
                 </div>
 
-                {/* Divider */}
-                <div className="flex items-center gap-4 py-4">
-                    <div className="flex-1 h-px bg-slate-800" />
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Step 2 — Patient Context</span>
-                    <div className="flex-1 h-px bg-slate-800" />
-                </div>
-
-                {/* ── Step 2: Patient Intake ─────────────────────────────── */}
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center flex-shrink-0">
-                            <User className="w-4 h-4 text-indigo-400" />
-                        </div>
-                        <div>
-                            <h3 className="text-lg font-bold text-white">Step 2 — Patient Context</h3>
-                            <p className="text-sm text-slate-400">Non-identifying clinical context only. No names or PHI.</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
-                        {/* Condition */}
-                        <div className="sm:col-span-3">
-                            <label htmlFor="intake-condition" className="block text-sm font-semibold text-slate-300 mb-2">
-                                What are you treating? <span className="text-indigo-400">*</span>
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                                {CONDITIONS.map(c => (
-                                    <button
-                                        key={c}
-                                        type="button"
-                                        onClick={() => setCondition(c)}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${condition === c
-                                            ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
-                                            : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
-                                            }`}
-                                    >
-                                        {c}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Age */}
-                        <div>
-                            <label htmlFor="intake-age" className="block text-sm font-semibold text-slate-300 mb-2">Age</label>
-                            <input
-                                id="intake-age"
-                                type="number"
-                                min="18"
-                                max="99"
-                                placeholder="e.g. 42"
-                                value={age}
-                                onChange={e => setAge(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
-                            />
-                        </div>
-
-                        {/* Gender */}
-                        <div className="sm:col-span-2">
-                            <label className="block text-sm font-semibold text-slate-300 mb-2">Gender</label>
-                            <div className="flex flex-wrap gap-2">
-                                {GENDERS.map(g => (
-                                    <button
-                                        key={g}
-                                        type="button"
-                                        onClick={() => setGender(g)}
-                                        className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
-                                            ? 'bg-indigo-600 text-white border-indigo-500'
-                                            : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
-                                            }`}
-                                    >
-                                        {g}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
                 {/* Footer */}
                 <div className="flex justify-end items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
-                    {/* Removed condition indicator */}
                     <button
-                        onClick={handleSave}
+                        onClick={handleNextStep}
                         className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg border active:scale-95 ${selectedId === 'clinical' ? 'bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-indigo-500/10' :
                             selectedId === 'ceremonial' ? 'bg-amber-700/50 hover:bg-amber-600/60 border-amber-500/50 text-amber-100 shadow-amber-500/10' :
                                 selectedId === 'custom' ? 'bg-teal-700/50 hover:bg-teal-600/60 border-teal-500/50 text-teal-100 shadow-teal-500/10' :
