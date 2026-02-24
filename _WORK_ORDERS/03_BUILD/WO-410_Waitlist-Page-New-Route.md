@@ -1,9 +1,9 @@
 ---
 id: WO-410
-status: 02_DESIGN
-owner: DESIGNER
+status: 03_BUILD
+owner: BUILDER
 cue_verified: true
-cue_note: "Ticket complete. Route to DESIGNER first (design brief), then BUILDER. No blockers."
+cue_note: "Ticket complete. OVERRIDING PRD: Route directly to BUILDER for 'Clone and Strip' method."
 priority: P1
 failure_count: 0
 created: 2026-02-24
@@ -13,8 +13,8 @@ tags: [waitlist, new-page, designer, builder, supabase]
 ---
 
 ## LEAD ARCHITECTURE
-- **Routing:** Route to 02_DESIGN for `owner: DESIGNER`.
-- **Strategy:** DESIGNER to create a design brief matching the dark navy aesthetics of the current app. Once the design outline is complete, HANDOFF to BUILDER in 03_BUILD to implement the new `/waitlist` page. Reuse `academy_waitlist` table.
+- **Routing:** Route to 03_BUILD for `owner: BUILDER`.
+- **Strategy:** OVERRIDE — Skip DESIGNER. Use **Option 1 (Clone and Strip)**. Duplicate the form and layout from `src/pages/Academy.tsx` into a new file `src/pages/Waitlist.tsx`. Strip out all "course/curriculum" messaging. Keep the dark navy aesthetic. Reuse the `academy_waitlist` Supabase table but change the source field to `'ppn_portal_main'`.
 
 # WO-410: New `/waitlist` Page — PPN Portal Waitlist (Option A)
 
