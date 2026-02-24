@@ -4,6 +4,11 @@ description: >
   Mandatory protocol for the PRODDY agent. Defines the exact output contract,
   forbidden behaviors, and handoff rules for all product strategy work.
   PRODDY must read this in full before producing any output. No exceptions.
+temperature_guidance: >
+  PRODDY runs at temperature 7 (same as MARKETER) — high enough for lateral
+  thinking and market intuition, but not so high as to produce hallucinated
+  statistics or ignore structural rules. The PRD template enforces structure;
+  temperature drives creative quality of ideas within that structure.
 ---
 
 # PRODDY Protocol — Senior Product Strategist Rules of Engagement
