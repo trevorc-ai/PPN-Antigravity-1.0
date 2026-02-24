@@ -301,20 +301,6 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
 
                     {data.new_adverse_events && (
                         <div className="space-y-4 mt-4 animate-in slide-in-from-top-2 pt-4 px-2">
-                            <FormField label="SEVERITY (CTCAE GRADE)">
-                                <select
-                                    value={data.ae_severity_grade || ''}
-                                    onChange={(e) => updateField('ae_severity_grade', e.target.value ? parseInt(e.target.value) : undefined)}
-                                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm appearance-none"
-                                >
-                                    <option value="">Select Grade...</option>
-                                    <option value="1">Grade 1 - Mild (No Intervention)</option>
-                                    <option value="2">Grade 2 - Moderate (Minimal Intervention)</option>
-                                    <option value="3">Grade 3 - Severe (Significant Intervention)</option>
-                                    <option value="4">Grade 4 - Life-Threatening</option>
-                                    <option value="5">Grade 5 - Fatal</option>
-                                </select>
-                            </FormField>
                             <FormField label="PRIMARY CLINICAL OBSERVATION">
                                 <select
                                     value={data.ae_clinical_observation || ''}
@@ -328,6 +314,20 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                     <option value="Severe Anxiety">Severe Anxiety</option>
                                     <option value="Panic Attack">Panic Attack</option>
                                     <option value="Other">Other</option>
+                                </select>
+                            </FormField>
+                            <FormField label="SEVERITY (CTCAE GRADE)">
+                                <select
+                                    value={data.ae_severity_grade || ''}
+                                    onChange={(e) => updateField('ae_severity_grade', e.target.value ? parseInt(e.target.value) : undefined)}
+                                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm appearance-none"
+                                >
+                                    <option value="">Select Grade...</option>
+                                    <option value="1">Grade 1 - Mild (No Intervention)</option>
+                                    <option value="2">Grade 2 - Moderate (Minimal Intervention)</option>
+                                    <option value="3">Grade 3 - Severe (Significant Intervention)</option>
+                                    <option value="4">Grade 4 - Life-Threatening</option>
+                                    <option value="5">Grade 5 - Fatal</option>
                                 </select>
                             </FormField>
                         </div>
