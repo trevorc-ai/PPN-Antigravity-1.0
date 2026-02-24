@@ -557,8 +557,10 @@ const WellnessJourneyInternal: React.FC = () => {
                             ...prev,
                             condition: intake.condition || undefined,
                             demographics: {
+                                ...prev.demographics,
                                 age: intake.age ? parseInt(intake.age, 10) : undefined,
                                 gender: intake.gender || undefined,
+                                weightKg: intake.weight ? parseFloat(intake.weight) : undefined,
                             },
                         }));
                     }}

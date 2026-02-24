@@ -12,6 +12,7 @@ interface ProtocolConfiguratorModalProps {
 export interface PatientIntakeData {
     condition: string;
     age: string;
+    weight: string;
     gender: string;
 }
 
@@ -124,6 +125,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     // ── Step 0: Patient Intake ──────────────────────────────────────────────
     const [condition, setCondition] = useState('');
     const [age, setAge] = useState('');
+    const [weight, setWeight] = useState('');
     const [gender, setGender] = useState('');
 
     const [step, setStep] = useState<1 | 2>(1);
@@ -146,7 +148,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const handleSave = () => {
         // Surface intake data to parent (WellnessJourney will store in journey.demographics)
         if (onIntakeComplete) {
-            onIntakeComplete({ condition, age, gender });
+            onIntakeComplete({ condition, age, weight, gender });
         }
         onClose();
     };
@@ -179,8 +181,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
-                                <div className="sm:col-span-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-5 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
+                                <div className="sm:col-span-4">
                                     <label htmlFor="intake-condition" className="block text-sm font-semibold text-slate-300 mb-2">
                                         What are you treating? <span className="text-indigo-400">*</span>
                                     </label>
@@ -211,6 +213,18 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         placeholder="e.g. 42"
                                         value={age}
                                         onChange={e => setAge(e.target.value)}
+                                        className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label htmlFor="intake-weight" className="block text-sm font-semibold text-slate-300 mb-2">Weight (kg)</label>
+                                    <input
+                                        id="intake-weight"
+                                        type="number"
+                                        placeholder="e.g. 68"
+                                        value={weight}
+                                        onChange={e => setWeight(e.target.value)}
                                         className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
                                     />
                                 </div>
