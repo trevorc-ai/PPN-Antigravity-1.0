@@ -49,16 +49,7 @@ const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange,
     return () => document.removeEventListener('keydown', handler);
   }, []);
 
-  // Group medications by category
-  const grouped = useMemo(() => {
-    const g: Record<string, RefMedication[]> = {};
-    for (const med of medications) {
-      const cat = med.medication_category ?? 'Uncategorized';
-      if (!g[cat]) g[cat] = [];
-      g[cat].push(med);
-    }
-    return Object.entries(g);
-  }, [medications]);
+
 
   const displayValue = value || placeholder || 'Select Interactor...';
 
@@ -97,36 +88,24 @@ const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange,
             role="option"
             aria-selected={value === ''}
             onClick={() => { onChange(''); setOpen(false); }}
-            className="px-4 py-2.5 text-sm text-slate-400 hover:bg-slate-800 cursor-pointer transition-colors"
+            className="px-4 py-2.5 text-sm text-slate-400 hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-700/50"
           >
             {placeholder || 'Select Interactor...'}
           </li>
 
-          {grouped.map(([category, meds]) => (
-            <React.Fragment key={category}>
-              {/* Category header — full contrast, visually distinct */}
-              <li
-                role="presentation"
-                className="px-4 py-2.5 text-xs font-black uppercase tracking-[0.2em] text-slate-200 bg-slate-800 border-y border-slate-700 mt-2 mb-1 select-none pointer-events-none shadow-sm flex items-center"
-              >
-                <span className="w-1.5 h-4 bg-primary mr-3 rounded-full opacity-80" />
-                {category}
-              </li>
-              {meds.map(med => (
-                <li
-                  key={med.medication_id}
-                  role="option"
-                  aria-selected={value === med.medication_name}
-                  onClick={() => { onChange(med.medication_name); setOpen(false); }}
-                  className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
-                    ? 'bg-blue-600 text-white font-semibold'
-                    : 'text-[#A8B5D1] hover:bg-slate-800'
-                    }`}
-                >
-                  {med.medication_name}
-                </li>
-              ))}
-            </React.Fragment>
+          {medications.map(med => (
+            <li
+              key={med.medication_id}
+              role="option"
+              aria-selected={value === med.medication_name}
+              onClick={() => { onChange(med.medication_name); setOpen(false); }}
+              className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
+                ? 'bg-blue-600 text-white font-semibold'
+                : 'text-[#A8B5D1] hover:bg-slate-800'
+                }`}
+            >
+              {med.medication_name}
+            </li>
           ))}
         </ul>
       )}
@@ -163,7 +142,6 @@ const InteractionChecker: React.FC = () => {
             .from('ref_medications')
             .select('medication_id, medication_name, medication_category')
             .eq('is_active', true)
-            .order('medication_category')
             .order('medication_name')
         ]);
 
@@ -174,7 +152,6 @@ const InteractionChecker: React.FC = () => {
           const { data: fallbackMeds } = await supabase
             .from('ref_medications')
             .select('medication_id, medication_name, medication_category')
-            .order('medication_category')
             .order('medication_name');
           if (fallbackMeds) finalMeds = fallbackMeds;
         }
