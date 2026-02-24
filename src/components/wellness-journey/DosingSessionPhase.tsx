@@ -13,12 +13,13 @@ import { LiveSessionTimeline } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
+import { createSessionVital } from '../../services/clinicalLog';
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
 interface EBProps { onReset: () => void; children: React.ReactNode; }
 interface EBState { hasError: boolean; error: string; }
-export class Phase2ErrorBoundary extends Component<EBProps, EBState> {
+export class Phase2ErrorBoundary extends React.Component<EBProps, EBState> {
     public state: EBState = { hasError: false, error: '' };
 
     public static getDerivedStateFromError(err: Error): EBState {
@@ -27,6 +28,11 @@ export class Phase2ErrorBoundary extends Component<EBProps, EBState> {
     public componentDidCatch(err: Error, info: React.ErrorInfo) {
         console.error('[Phase2ErrorBoundary]', err, info);
     }
+    private handleReset = () => {
+        this.setState({ hasError: false, error: '' });
+        this.props.onReset();
+    };
+
     public render() {
         if (this.state.hasError) {
             return (
@@ -34,7 +40,7 @@ export class Phase2ErrorBoundary extends Component<EBProps, EBState> {
                     <p className="text-lg font-black text-red-300">Session view error — the session data was preserved.</p>
                     <p className="text-sm text-slate-400 font-mono">{this.state.error}</p>
                     <button
-                        onClick={() => { this.setState({ hasError: false, error: '' }); this.props.onReset(); }}
+                        onClick={this.handleReset}
                         className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors"
                     >
                         Reload Phase 2 View
@@ -248,7 +254,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     const [updateComfort, setUpdateComfort] = useState('');
     const [updateNote, setUpdateNote] = useState('');
     const [updateHR, setUpdateHR] = useState('');
-    const [updateBP, setUpdateBP] = useState('');
+    const [updateBPSys, setUpdateBPSys] = useState('');
+    const [updateBPDia, setUpdateBPDia] = useState('');
     // Companion overlay — open/close without affecting session timer
     const [showCompanion, setShowCompanion] = useState(false);
     interface SessionUpdateEntry {
@@ -263,7 +270,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
 
-    const handleSaveUpdate = () => {
+    const handleSaveUpdate = async () => {
+        const bpStr = (updateBPSys || updateBPDia) ? `${updateBPSys || '?'}/${updateBPDia || '?'}` : '';
         const entry: SessionUpdateEntry = {
             timestamp: new Date().toLocaleTimeString(),
             elapsed: elapsedTime,
@@ -272,12 +280,28 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             comfort: updateComfort,
             note: updateNote.trim(),
             hr: updateHR,
-            bp: updateBP,
+            bp: bpStr,
         };
         setUpdateLog(prev => [entry, ...prev]);
+
+        // Emit to log_clinical_vitals table seamlessly
+        if ((updateHR || updateBPSys || updateBPDia) && journey.session?.sessionNumber) {
+            try {
+                await createSessionVital({
+                    session_id: journey.session.sessionNumber.toString(),
+                    heart_rate: updateHR ? parseInt(updateHR, 10) : undefined,
+                    bp_systolic: updateBPSys ? parseInt(updateBPSys, 10) : undefined,
+                    bp_diastolic: updateBPDia ? parseInt(updateBPDia, 10) : undefined,
+                    source: 'Session Update Panel',
+                });
+            } catch (err) {
+                console.warn('[Session Update] Failed to sync clinical vital:', err);
+            }
+        }
+
         // Reset fields
         setUpdateAffect(''); setUpdateResponsiveness(''); setUpdateComfort('');
-        setUpdateNote(''); setUpdateHR(''); setUpdateBP('');
+        setUpdateNote(''); setUpdateHR(''); setUpdateBPSys(''); setUpdateBPDia('');
         setShowUpdatePanel(false);
         addToast({ title: 'Session Update Saved', message: `Logged at T+${elapsedTime}`, type: 'success' });
     };
@@ -883,15 +907,20 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 </select>
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-3 gap-3">
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm) — optional</label>
                                 <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">BP — optional</label>
-                                <input type="text" placeholder="e.g. 128/84" value={updateBP} onChange={e => setUpdateBP(e.target.value)}
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic — optional</label>
+                                <input type="number" placeholder="e.g. 120" value={updateBPSys} onChange={e => setUpdateBPSys(e.target.value)}
+                                    className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic — optional</label>
+                                <input type="number" placeholder="e.g. 80" value={updateBPDia} onChange={e => setUpdateBPDia(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                         </div>

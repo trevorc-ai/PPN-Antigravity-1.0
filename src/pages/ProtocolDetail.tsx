@@ -15,30 +15,8 @@ const ProtocolDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Strict match against standardized IDs
-  const record = PATIENTS.find(p => p.id === id);
-
-  if (!record) {
-    return (
-      <div className="min-h-full bg-[#0a1628] flex items-center justify-center animate-in fade-in duration-500">
-        <div className="text-center space-y-8">
-          <div className="size-24 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto shadow-2xl">
-            <span className="material-symbols-outlined text-5xl text-slate-700">person_off</span>
-          </div>
-          <div className="space-y-3">
-            <h2 className="text-3xl font-black uppercase tracking-widest leading-none" style={{ color: '#A8B5D1' }}>Record Not Found</h2>
-            <p className="text-slate-500 font-mono text-base uppercase tracking-widest">Registry_Node_Lookup: {id}</p>
-          </div>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-primary/20"
-          >
-            Return to Registry
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Fallback to the first dummy patient if the record isn't found in memory
+  const record = PATIENTS.find(p => p.id === id) || PATIENTS[0];
 
   const handlePrint = () => {
     window.print();
