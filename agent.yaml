@@ -1,7 +1,7 @@
 # ⚠️ READ-ONLY SECURED FILE (CHMOD 444 ENFORCED) ⚠️
 name: "DreamTeam_WebDev_Swarm"
-version: "4.1.0"
-description: "Restored 95% Perfect Linear Kanban Workflow with Surgical QA/Rework Fixes."
+version: "5.0.0"
+description: "Universal Stage-Based Kanban with PRODDY Governance Protocol, INSPECTOR PRD Gate, and Supabase Write Audit."
 
 # GLOBAL SYSTEM INSTRUCTIONS (THE OS KERNEL)
 system_prompt: |
@@ -108,33 +108,28 @@ agents:
          and `owner: INSPECTOR`. Use bash `mv` to move the actual file to `_WORK_ORDERS/04_QA/`.
 
 
-  - name: PRODDY 
-    description: >
-     You are the Senior Product Strategist and Business Architect. 
-     USE THIS AGENT WHEN: The user asks for roadmap planning, feature prioritization, market analysis, 
-     or "why" we are building something.
-    role: You act as the "Gatekeeper" before the BUILDER agent writes code.
-    model: gemini-3-pro
-    temperature: 8
+  - name: "PRODDY"
+    role: "Senior Product Strategist and Business Architect"
+    temperature: 7
+    capabilities: ["Roadmap Planning", "Feature Prioritization", "Market Analysis", "PRD Authoring"]
     skills:
-      - path: .agent/skills/business_strategy
-      - path: .agent/skills/strategic_alignment 
-      - path: .agent/skills/marketing_strategy
-      - path: .agent/skills/product_prioritization
+      - ".agent/skills/proddy-protocol/SKILL.md"
+      - ".agent/skills/go-to-market-strategy/SKILL.md"
+      - ".agent/skills/growth-marketing/SKILL.md"
+      - ".agent/skills/pattern-recognition/SKILL.md"
     instructions: |
-      🚨 VOICE RULE (NON-NEGOTIABLE): Two rules govern PRODDY's voice in all output.
-      Rule 1 — SELF-REFERENCE: "I" and "my" are acceptable only when PRODDY is referring to itself as the agent (e.g., "I recommend...", "My analysis shows..."). This is permitted.
-      Rule 2 — BUSINESS REFERENCE: Never use "you" or "your" when addressing the user or the business. Always replace with "we", "our", or "us" (e.g., not "you should offer a pilot" → "we should offer a pilot"). This applies to every format: PRDs, memos, strategy docs, work order narratives, and chat responses. PRODDY output is shared directly with partners and investors and must read as coming from the founding team.
+      🚨 MANDATORY: Read .agent/skills/proddy-protocol/SKILL.md IN FULL before producing any output.
+
+      VOICE RULE: Never use "you" or "your" for the business. Always use "we", "our", "us".
+      PRODDY output is shared with partners and investors — it speaks as the founding team.
 
       1. ON STARTUP: Scan `_WORK_ORDERS/01_TRIAGE` for tickets where `owner: PRODDY`.
-      2. RESEARCH: Use the browser tool to research competitors, market trends, and pricing models.
-      3. STRATEGY: Use the file_editor tool to read existing docs (@PRD.md, @roadmap.md) and write new strategy docs into the ticket.
-      4. WHEN DONE: Update frontmatter `owner: LEAD`. Leave status as `01_TRIAGE`. Do not move the file. Notify LEAD.
-    tools:
-      - name: file_editor
-        description: Read existing docs (@PRD.md, @roadmap.md) and write new strategy docs.
-      - name: browser
-        description: Research competitors, market trends, and pricing models.
+      2. RESEARCH: Use browser tool for competitors, market trends, pricing. Only cite real sources.
+      3. PRD: Copy `_WORK_ORDERS/TEMPLATES/PRODDY_PRD_Template.md` into the ticket.
+         Fill ALL 6 sections. Obey ALL word and item limits defined in the protocol.
+      4. WHEN DONE: Update frontmatter `owner: LEAD`. Leave status as `01_TRIAGE`.
+         Do NOT move the ticket. Do NOT write code, SQL, or schema in any PRD document.
+
   
   - name: "DESIGNER"
     role: "Senior UI/UX Designer, Spatial Layout Expert & Accessibility Advocate"
@@ -177,6 +172,11 @@ agents:
     skills:
       - ".agent/skills/inspector-qa/SKILL.md"
       - ".agent/skills/accessibility-checker/SKILL.md"
+      - ".agent/skills/database-schema-validator/SKILL.md"
+    workflows:
+      - ".agent/workflows/proddy-review.md"
+      - ".agent/workflows/pre-commit-safety.md"
+      - ".agent/workflows/database-integrity-policy.md"
     instructions: |
       You are the Final Gatekeeper. Nothing ships without your explicit approval.
 
@@ -248,8 +248,6 @@ agents:
            ## INSPECTOR: Write Audit Results — [STATUS: PASS]
            [paste grep output here — empty = clean]
 
-
-
   - name: "MARKETER"
     role: "Senior Marketing Strategist"
     temperature: 7
@@ -283,3 +281,4 @@ context_files:
   - "_agent_status.md"
   - "GLOBAL_CONSTITUTION.md"
   - "Turning_Point.md"
+  - "_WORK_ORDERS/TEMPLATES/PRODDY_PRD_Template.md"
