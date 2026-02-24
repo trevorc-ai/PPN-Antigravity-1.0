@@ -19,6 +19,7 @@ import Settings from './pages/Settings';
 import DataExport from './pages/DataExport';
 import SessionExportCenter from './pages/SessionExportCenter';
 import ClinicalReportPDF from './pages/ClinicalReportPDF';
+import DemoClinicalReportPDF from './pages/DemoClinicalReportPDF';
 import ProfileEdit from './pages/ProfileEdit';
 import Sidebar from './components/Sidebar';
 import TopHeader from './components/TopHeader';
@@ -316,6 +317,7 @@ const AppContent: React.FC = () => {
             <Route path="/data-export" element={<DataExport />} />
             <Route path="/session-export" element={<SessionExportCenter />} />
             <Route path="/clinical-report-pdf" element={<ClinicalReportPDF />} />
+            <Route path="/demo-clinical-report-pdf" element={<DemoClinicalReportPDF />} />
 
 
             <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Sign Out</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out</button></div>} />
