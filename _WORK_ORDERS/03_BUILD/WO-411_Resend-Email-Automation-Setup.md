@@ -1,7 +1,7 @@
 ---
 id: WO-411
-status: 00_INBOX
-owner: LEAD
+status: 03_BUILD
+owner: BUILDER
 cue_verified: true
 cue_note: "Ticket complete. Part 1 (Steps 1-3) requires Trevor to complete Resend account + domain setup first. Parts 2-4 route to BUILDER once API key is in hand."
 priority: P1
@@ -11,6 +11,11 @@ parent_ticket: WO-408
 sprint: Sprint 2
 tags: [email, resend, supabase, webhook, edge-function, builder]
 ---
+
+## LEAD ARCHITECTURE
+- **Routing:** Route to 03_BUILD for `owner: BUILDER`.
+- **Strategy:** BUILDER to wire up the Edge Function for Email 1. Trevor needs to verify the domain for Resend first. 
+- **Decision:** As for Emails 2 and 3, we will use **Option A (Resend Broadcasts)**. It is simpler for now. (Supabase Cron can be evaluated later if complexity requires it).
 
 # WO-411: Resend Email Automation — Waitlist Welcome Sequence
 

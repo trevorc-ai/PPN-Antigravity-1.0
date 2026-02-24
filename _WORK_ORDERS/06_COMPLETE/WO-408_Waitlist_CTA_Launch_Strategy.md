@@ -1,7 +1,7 @@
 ---
 id: WO-408
-status: 01_TRIAGE
-owner: LEAD
+status: 06_COMPLETE
+owner: USER
 priority: P1
 failure_count: 0
 created: 2026-02-24

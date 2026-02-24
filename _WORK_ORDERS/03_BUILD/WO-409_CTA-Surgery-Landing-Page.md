@@ -1,7 +1,7 @@
 ---
 id: WO-409
-status: 00_INBOX
-owner: LEAD
+status: 03_BUILD
+owner: BUILDER
 cue_verified: true
 cue_note: "Ticket complete. Route to BUILDER. No blockers — spec is fully defined."
 priority: P1
@@ -11,6 +11,10 @@ parent_ticket: WO-408
 sprint: Sprint 2
 tags: [landing-page, cta, builder]
 ---
+
+## LEAD ARCHITECTURE
+- **Routing:** Route to 03_BUILD for `owner: BUILDER`.
+- **Strategy:** All CTA surgery details are precisely defined in the PRD. Implement the changes in `src/pages/Landing.tsx`. Pay close attention to making sure NO fabricated numbers are used per the constitution update.
 
 # WO-409: CTA Surgery — Landing Page (`Landing.tsx`)
 

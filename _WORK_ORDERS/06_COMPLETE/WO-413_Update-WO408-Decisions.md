@@ -1,7 +1,7 @@
 ---
 id: WO-413
-status: 00_INBOX
-owner: LEAD
+status: 06_COMPLETE
+owner: USER
 cue_verified: true
 cue_note: "Decision log ticket. LEAD to read first — answers all open questions from WO-408 and provides routing instructions for WO-409 through WO-412."
 priority: P1

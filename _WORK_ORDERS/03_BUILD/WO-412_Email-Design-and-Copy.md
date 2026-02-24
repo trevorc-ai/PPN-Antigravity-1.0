@@ -1,7 +1,7 @@
 ---
 id: WO-412
-status: 00_INBOX
-owner: LEAD
+status: 03_BUILD
+owner: MARKETER
 cue_verified: true
 cue_note: "Ticket complete. Route: MARKETER (copy approval) → DESIGNER (3 HTML email files) → BUILDER (swap into WO-411 Edge Function). No blockers."
 priority: P1
@@ -11,6 +11,10 @@ parent_ticket: WO-408
 sprint: Sprint 2
 tags: [email, copy, design, marketer, designer, builder]
 ---
+
+## LEAD ARCHITECTURE
+- **Routing:** Route to 03_BUILD for `owner: MARKETER`.
+- **Strategy:** MARKETER is to finalize and approve the copy for the 3 emails. Once complete, HANDOFF to DESIGNER to create the HTML files.
 
 # WO-412: Email Design + Copy — Waitlist Welcome Sequence (3 Emails)
 
