@@ -16,21 +16,35 @@ const normalizeKi = (ki: number): number => {
   return Math.max(Math.round(150 - Math.log10(ki) * 50), 5);
 };
 
-const buildRadarData = (kiProfile: SubstanceKiProfile) => [
-  { subject: '5-HT2A', value: normalizeKi(kiProfile.ht2a), ki: kiProfile.ht2a, fullMark: 150 },
-  { subject: '5-HT1A', value: normalizeKi(kiProfile.ht1a), ki: kiProfile.ht1a, fullMark: 150 },
-  { subject: '5-HT2C', value: normalizeKi(kiProfile.ht2c), ki: kiProfile.ht2c, fullMark: 150 },
-  { subject: 'D2', value: normalizeKi(kiProfile.d2), ki: kiProfile.d2, fullMark: 150 },
-  { subject: 'SERT', value: normalizeKi(kiProfile.sert), ki: kiProfile.sert, fullMark: 150 },
-  { subject: 'NMDA', value: normalizeKi(kiProfile.nmda), ki: kiProfile.nmda, fullMark: 150 },
-];
+const buildRadarData = (kiProfile: SubstanceKiProfile) => {
+  // If the substance has D1 data AND SERT is not significant, swap SERT for D1
+  // This gives LSD-25's chart a meaningful 6th spoke instead of an empty SERT space
+  const useDopamineD1 = kiProfile.d1 !== undefined && kiProfile.sert >= 10000;
+  // If the substance has DAT data AND NMDA is not significant, swap NMDA for DAT
+  // This gives MDMA's chart a meaningful 6th spoke (DAT) instead of the empty NMDA space
+  const useDAT = kiProfile.dat !== undefined && kiProfile.nmda >= 10000;
+  return [
+    { subject: '5-HT2A', value: normalizeKi(kiProfile.ht2a), ki: kiProfile.ht2a, fullMark: 150 },
+    { subject: '5-HT1A', value: normalizeKi(kiProfile.ht1a), ki: kiProfile.ht1a, fullMark: 150 },
+    { subject: '5-HT2C', value: normalizeKi(kiProfile.ht2c), ki: kiProfile.ht2c, fullMark: 150 },
+    { subject: 'D2', value: normalizeKi(kiProfile.d2), ki: kiProfile.d2, fullMark: 150 },
+    useDopamineD1
+      ? { subject: 'D1', value: normalizeKi(kiProfile.d1!), ki: kiProfile.d1!, fullMark: 150 }
+      : { subject: 'SERT', value: normalizeKi(kiProfile.sert), ki: kiProfile.sert, fullMark: 150 },
+    useDAT
+      ? { subject: 'DAT', value: normalizeKi(kiProfile.dat!), ki: kiProfile.dat!, fullMark: 150 }
+      : { subject: 'NMDA', value: normalizeKi(kiProfile.nmda), ki: kiProfile.nmda, fullMark: 150 },
+  ];
+};
 
 const RECEPTOR_DESCRIPTIONS: Record<string, { role: string; clinicalNote: string }> = {
   '5-HT2A': { role: 'Serotonin 2A Receptor', clinicalNote: 'Primary driver of psychedelic effects. Agonism promotes neuroplasticity and altered perception.' },
   '5-HT1A': { role: 'Serotonin 1A Receptor', clinicalNote: 'Modulates anxiety and mood. Partial agonism associated with anxiolytic effects during sessions.' },
   '5-HT2C': { role: 'Serotonin 2C Receptor', clinicalNote: 'Influences appetite and impulsivity. Agonism linked to serotonin syndrome risk in SSRI combinations.' },
   'D2': { role: 'Dopamine D2 Receptor', clinicalNote: 'Modulates reward and psychosis risk. Relevance varies significantly by compound class.' },
+  'D1': { role: 'Dopamine D1 Receptor', clinicalNote: 'Unique to ergolines like LSD. D1 agonism contributes to the energetic, stimulating, and analytical character of the LSD experience — absent in tryptamines.' },
   'SERT': { role: 'Serotonin Transporter', clinicalNote: 'Blocks serotonin reuptake. High affinity raises serotonin syndrome risk with concurrent SSRIs/SNRIs.' },
+  'DAT': { role: 'Dopamine Transporter', clinicalNote: "MDMA's second major transporter target. DAT reversal releases presynaptic dopamine, contributing to euphoria and stimulant effects. Explains abuse potential and cardiovascular strain." },
   'NMDA': { role: 'NMDA Glutamate Receptor', clinicalNote: 'Antagonism produces dissociative states. Relevant for ketamine and PCP-class compounds.' },
 };
 

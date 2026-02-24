@@ -34,7 +34,9 @@ export interface SubstanceKiProfile {
   ht1a: number;   // 5-HT1A Ki in nM
   ht2c: number;   // 5-HT2C Ki in nM
   d2: number;     // D2 Ki in nM
+  d1?: number;    // D1 Ki in nM (optional — ergoline class distinguisher)
   sert: number;   // SERT Ki in nM
+  dat?: number;   // DAT Ki in nM (optional — transporter-class distinguisher)
   nmda: number;   // NMDA Ki in nM
 }
 
