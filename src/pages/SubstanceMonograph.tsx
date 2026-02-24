@@ -389,10 +389,10 @@ const SubstanceMonograph: React.FC = () => {
                               >
                                 {/* Highlight pill behind active label */}
                                 {isActive && (
-                                  <rect x={-32} y={-18} width={64} height={34} rx={8} fill={subColor} fillOpacity={0.15} />
+                                  <rect x={-45} y={-24} width={90} height={42} rx={8} fill={subColor} fillOpacity={0.15} />
                                 )}
-                                <text x={0} y={-4} textAnchor="middle" fill={isActive ? '#a5b4fc' : '#64748b'} fontSize={14} fontWeight={isActive ? 900 : 700}>{payload.value}</text>
-                                <text x={0} y={10} textAnchor="middle" fill={isActive ? subColor : '#475569'} fontSize={15} fontWeight={700}>{displayValue}</text>
+                                <text x={0} y={-6} textAnchor="middle" fill={isActive ? '#a5b4fc' : '#64748b'} fontSize={18} fontWeight={isActive ? 900 : 700}>{payload.value}</text>
+                                <text x={0} y={12} textAnchor="middle" fill={isActive ? subColor : '#475569'} fontSize={16} fontWeight={700}>{displayValue}</text>
                               </g>
                             );
                           }}
