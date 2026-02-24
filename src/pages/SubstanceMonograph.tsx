@@ -350,8 +350,8 @@ const SubstanceMonograph: React.FC = () => {
             <div className="relative z-10">
               {/* Header */}
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-base font-bold text-slate-400 flex items-center gap-3">
-                  <span className="material-symbols-outlined text-xl text-slate-500">hexagon</span>
+                <h2 className="text-xl font-bold text-slate-400 flex items-center gap-3">
+                  <span className="material-symbols-outlined text-2xl text-slate-500">hexagon</span>
                   Receptor Affinity Profile
                 </h2>
                 <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-sm font-semibold">Ki Binding</span>
@@ -391,8 +391,8 @@ const SubstanceMonograph: React.FC = () => {
                                 {isActive && (
                                   <rect x={-32} y={-18} width={64} height={34} rx={8} fill={subColor} fillOpacity={0.15} />
                                 )}
-                                <text x={0} y={-4} textAnchor="middle" fill={isActive ? '#a5b4fc' : '#64748b'} fontSize={11} fontWeight={isActive ? 900 : 700}>{payload.value}</text>
-                                <text x={0} y={10} textAnchor="middle" fill={isActive ? subColor : '#475569'} fontSize={12} fontWeight={700}>{displayValue}</text>
+                                <text x={0} y={-4} textAnchor="middle" fill={isActive ? '#a5b4fc' : '#64748b'} fontSize={14} fontWeight={isActive ? 900 : 700}>{payload.value}</text>
+                                <text x={0} y={10} textAnchor="middle" fill={isActive ? subColor : '#475569'} fontSize={15} fontWeight={700}>{displayValue}</text>
                               </g>
                             );
                           }}

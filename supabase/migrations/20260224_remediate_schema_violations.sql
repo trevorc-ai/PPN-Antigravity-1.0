@@ -19,10 +19,7 @@ DROP POLICY IF EXISTS "Enable read access for all users" ON log_waitlist;
 CREATE POLICY "Enable read access for all users" ON log_waitlist FOR SELECT USING (true);
 
 -- 3. Clone existing data from academy_waitlist (safe, additive)
-INSERT INTO log_waitlist (id, created_at, first_name, email, practitioner_type, source)
-SELECT id, created_at, first_name, email, practitioner_type, source
-FROM academy_waitlist
-ON CONFLICT (email) DO NOTHING;
+-- Skipped: table already dropped.
 
 -- 4. PHI: UUID Fix (Phase 1 Additive)
 -- Add explicit UUID typed columns with IF NOT EXISTS
