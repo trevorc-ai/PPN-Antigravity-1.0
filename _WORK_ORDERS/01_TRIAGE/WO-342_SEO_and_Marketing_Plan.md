@@ -6,6 +6,7 @@ created: 2026-02-23
 ref_tables_affected: none
 priority: P1
 sprint: Sprint 2
+last_updated: 2026-02-23 (v2 — meeting intelligence incorporated)
 ---
 
 # WO-342: Full SEO & Marketing Strategy — PPN Portal
@@ -211,6 +212,24 @@ The podcast transcripts reveal something extraordinary: **the exact language rea
 
 These are not copywriter inventions — they are real quotes from real practitioners that practitioners will recognize when they search and land on our content. **Recognition is trust.**
 
+### 4.1b Real Quote Asset — Dr. Allen Interview ✅ CONFIRMED REAL
+
+The file `tc_notes/Doctor_Interview.md` is a **real interview transcript** with an NIH-connected MD currently practicing psychedelic-assisted therapy ("trifecta" protocol — ketamine, MDMA, psilocybin). This is a publishable primary source with permission.
+
+**Quotable material (subject to Dr. Allen's written consent):**
+> *"We use a Venn diagram of qualitative, quantitative and intuitive information... We're on the fly because we're in a clinical setting with a limited period of time for people looking for something very specific."*
+
+> *"Do I add 75mg ketamine IM right now? Am I gonna affect MDMA receptors too much? These are nuances — and they come in handy because we're on the fly."*
+
+This is the clearest articulation of the real-time clinical decision support gap that PPN's network intelligence feature solves. Use in:
+- Homepage hero as operator testimonial
+- Blog post: "What a Real Psychedelic-Assisted Therapy Session Actually Looks Like" (Track A — no grey market content)
+- Dr. Allen demo context-setting slide
+
+**Action required:** Get written consent from Dr. Allen for public attribution before publishing. Jason is scheduling the Wednesday demo — add consent conversation to the agenda.
+
+---
+
 ### 4.2 The Weekly Content Cadence
 
 | Day | Output | Owner |
@@ -240,6 +259,25 @@ Root Domain Authority
     ├── /for-integration-therapists
     └── /for-entheogenic-organizations
 ```
+
+---
+
+## PART 4b: PRACTITIONER NETWORKING SEO LAYER
+
+*Added 2026-02-23 based on Jason-Trevor meeting and networking strategy session.*
+
+The practitioner networking features (contextual trigger links, supervision circles) generate their own SEO keyword territory. These pages should be built as the features go live:
+
+| Page URL | Target Keyword | Timing |
+|---|---|---|
+| `/network` or external domain hub | psychedelic practitioner network | Q2 2026 |
+| `/supervision-circles` | peer supervision psychedelic therapy | Q2 2026 |
+| `/case-consultation` | peer consultation psychedelic therapy | Q2 2026 |
+| `/verified-practitioners` | verified psychedelic therapist directory | Q2 2026 |
+
+**Domain decision pending:** The practitioner network layer must live on a domain separate from `ppnportal.net` to maintain the no-HIPAA-entanglement architecture. Domain recommendation: `ppn.community` — awaiting Trevor confirmation. All SEO work for the network layer is blocked until domain is chosen.
+
+**The networking feature IS a marketing asset.** When the contextual link fires during a safety check and says *"4 practitioners in the network have managed this contraindication"* — that moment, for a practitioner who has been working alone, is worth more than any landing page copy. Word-of-mouth from that moment is the growth engine.
 
 ---
 
