@@ -161,6 +161,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
 
 // ─── Catalog page ─────────────────────────────────────────────────────────────
 const SubstanceCatalog: React.FC = () => {
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -192,14 +193,28 @@ const SubstanceCatalog: React.FC = () => {
       <PageContainer className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8 space-y-10">
         <Section spacing="default" className="space-y-8">
 
-          {/* Page header */}
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-slate-300">
-              Substance Library
-            </h1>
-            <p className="text-base text-slate-500">
-              {SUBSTANCES.length} substances indexed · Clinical-grade pharmacological reference
-            </p>
+          {/* Page header and Molecular Pharmacology Link */}
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-2 border-b border-white/5">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold tracking-tight text-slate-300">
+                Substance Library
+              </h1>
+              <p className="text-base text-slate-500">
+                {SUBSTANCES.length} substances indexed · Clinical-grade pharmacological reference
+              </p>
+            </div>
+
+            <button
+              onClick={() => navigate('/deep-dives/molecular-pharmacology')}
+              className="group flex flex-col items-center sm:items-end sm:text-right gap-1 px-5 py-3 sm:py-2 bg-indigo-900/20 hover:bg-indigo-900/40 border border-indigo-700/40 hover:border-indigo-500/60 transition-all rounded-xl"
+            >
+              <div className="flex items-center gap-2 text-indigo-300 font-bold">
+                <span className="material-symbols-outlined shrink-0" aria-hidden="true">science</span>
+                <span>Compare Molecular Pharmacology</span>
+                <span className="shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+              </div>
+              <p className="text-xs text-indigo-400/70 font-medium">Receptor heatmaps & affinity matrices</p>
+            </button>
           </div>
 
           {/* Search + filters */}
