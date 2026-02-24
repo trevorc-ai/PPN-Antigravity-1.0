@@ -57,7 +57,7 @@ This schema has been stabilized after critical remediation work. Any changes req
 
 ## Last Schema Change
 
-**Commit:** TBD
+**Commit:** `3bde8f7`
 **Date:** 2026-02-24  
 **Changes:** Replaced MVP `academy_waitlist` with `log_waitlist`. Added strict `uuid` columns for patients to deprecate free text across 6 `log_` tables. Added `bigint` columns for justification constraints.
 
