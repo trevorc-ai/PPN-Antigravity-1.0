@@ -1,9 +1,9 @@
 ---
 id: WO-414
-status: 05_USER_REVIEW
-owner: USER
+status: 99_COMPLETED
+owner: SYSTEM
 priority: P0
-failure_count: 0
+failure_count: 1
 created: 2026-02-24
 tags: [database, schema, refactor, forensic-audit, compliance, soop, inspector]
 ---

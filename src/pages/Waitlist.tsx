@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { Activity, Rocket, Diamond, Settings2, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 
 const PRACTITIONER_TYPES = [
     { value: '', label: 'Select your practitioner type...' },
@@ -23,7 +24,7 @@ export const Waitlist: FC = () => {
         if (!form.firstName.trim() || !form.email.trim() || !form.practitionerType) return;
         setStatus('loading');
         try {
-            const { error } = await supabase.from('academy_waitlist').insert({
+            const { error } = await supabase.from('log_waitlist').insert({
                 first_name: form.firstName.trim(),
                 email: form.email.trim().toLowerCase(),
                 practitioner_type: form.practitionerType,
@@ -42,180 +43,158 @@ export const Waitlist: FC = () => {
     };
 
     return (
-        <>
-            <title>Join the Waitlist — PPN Research Portal</title>
+        <div className="min-h-screen bg-[#05070a] relative overflow-x-hidden flex flex-col font-sans text-slate-300 selection:bg-indigo-500/30">
+            <title>Join the Waitlist — PPN Portal</title>
 
-            <div className="min-h-screen" style={{ background: '#0a1628', fontFamily: 'Inter, sans-serif' }}>
-                <nav style={{
-                    position: 'sticky', top: 0, zIndex: 50,
-                    background: 'rgba(10,22,40,0.97)', backdropFilter: 'blur(16px)',
-                    borderBottom: '1px solid rgba(56,139,253,0.15)',
-                    padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }} onClick={() => navigate('/')}>
-                        <svg viewBox="0 0 28 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 22, height: 22 }}>
-                            <path d="M14 1L2 6v10c0 7 5.25 13 12 15 6.75-2 12-8 12-15V6L14 1z" fill="rgba(56,139,253,0.15)" stroke="#388bfd" strokeWidth="1.5" />
-                            <path d="M9 16l3.5 3.5 6-6" stroke="#39d0d8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <span style={{ fontSize: 14, fontWeight: 800, color: '#9fb0be', letterSpacing: '-0.01em' }}>
-                            PPN <span style={{ color: '#388bfd' }}>Portal</span>
-                        </span>
-                    </div>
-                </nav>
+            {/* Background orbs */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-indigo-900/15 rounded-full blur-[140px] opacity-50" />
+                <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-indigo-900/10 rounded-full blur-[140px] opacity-35" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-900/8 rounded-full blur-[100px] opacity-20" />
+            </div>
 
-                <section style={{ textAlign: 'center', padding: '72px 24px 20px', maxWidth: 720, margin: '0 auto' }}>
-                    <h1 style={{
-                        fontSize: 'clamp(28px, 5vw, 46px)', fontWeight: 900, lineHeight: 1.15,
-                        letterSpacing: '-0.03em', color: '#9fb0be', marginBottom: 20,
-                    }}>
+            {/* Navbar */}
+            <nav className="sticky top-0 z-50 bg-[#0a1628]/95 backdrop-blur-md border-b border-indigo-500/10 px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+                    <Activity className="text-indigo-500 w-6 h-6" />
+                    <span className="text-sm font-black tracking-tight text-slate-300 uppercase">
+                        PPN <span className="text-indigo-400">Portal</span>
+                    </span>
+                </div>
+                <button
+                    onClick={() => navigate('/')}
+                    className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-2"
+                >
+                    <span className="material-symbols-outlined text-sm">close</span>
+                    Close
+                </button>
+            </nav>
+
+            <main className="flex-1 relative z-10 w-full max-w-4xl mx-auto px-6 pt-16 pb-24 flex flex-col items-center">
+                {/* Hero Section */}
+                <div className="text-center mb-12 max-w-2xl">
+                    <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-slate-200 mb-4 leading-tight">
                         Join the Waitlist for <br />
-                        <span style={{ color: '#388bfd' }}>PPN Research Portal</span>
+                        <span className="text-indigo-500">PPN Portal</span>
                     </h1>
-
-                    <p style={{ fontSize: 16, color: '#6b7a8d', lineHeight: 1.65, maxWidth: 560, margin: '0 auto' }}>
+                    <p className="text-lg text-slate-400 font-medium leading-relaxed max-w-xl mx-auto">
                         Clinical infrastructure for psychedelic therapy practitioners. Request early access and join the founding cohort.
                     </p>
-                </section>
+                </div>
 
-                <section style={{ maxWidth: 860, margin: '0 auto', padding: '20px 24px 0' }}>
-                    <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 16 }}>
-                        <div style={{
-                            background: 'rgba(12,26,50,0.95)', border: '1px solid rgba(56,139,253,0.15)',
-                            borderRadius: 16, padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, width: '100%', maxWidth: '320px'
-                        }}>
-                            <div style={{ fontSize: 24 }}>🚀</div>
-                            <div style={{ fontSize: 13, color: '#9fb0be', lineHeight: 1.5, fontWeight: 500 }}>Priority access when the pilot opens (targeted early spring 2026)</div>
+                {/* Value Props */}
+                <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mb-16 w-full max-w-3xl">
+                    <div className="bg-[#1c222d]/50 border border-indigo-500/20 rounded-2xl p-5 flex items-center gap-4 flex-1 min-w-[280px] backdrop-blur-sm">
+                        <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <Rocket className="w-5 h-5 text-blue-400" />
                         </div>
-                        <div style={{
-                            background: 'rgba(12,26,50,0.95)', border: '1px solid rgba(56,139,253,0.15)',
-                            borderRadius: 16, padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, width: '100%', maxWidth: '320px'
-                        }}>
-                            <div style={{ fontSize: 24 }}>💎</div>
-                            <div style={{ fontSize: 13, color: '#9fb0be', lineHeight: 1.5, fontWeight: 500 }}>Founding practitioner pricing (locked rate for early adopters)</div>
-                        </div>
-                        <div style={{
-                            background: 'rgba(12,26,50,0.95)', border: '1px solid rgba(56,139,253,0.15)',
-                            borderRadius: 16, padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12, width: '100%', maxWidth: '320px'
-                        }}>
-                            <div style={{ fontSize: 24 }}>🛠️</div>
-                            <div style={{ fontSize: 13, color: '#9fb0be', lineHeight: 1.5, fontWeight: 500 }}>Direct input on the clinical platform roadmap</div>
-                        </div>
+                        <p className="text-sm font-bold text-slate-300 leading-snug">Priority access when the pilot opens (targeted early spring 2026)</p>
                     </div>
-                </section>
+                    <div className="bg-[#1c222d]/50 border border-indigo-500/20 rounded-2xl p-5 flex items-center gap-4 flex-1 min-w-[280px] backdrop-blur-sm">
+                        <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <Diamond className="w-5 h-5 text-purple-400" />
+                        </div>
+                        <p className="text-sm font-bold text-slate-300 leading-snug">Founding practitioner pricing (locked rate for early adopters)</p>
+                    </div>
+                    <div className="bg-[#1c222d]/50 border border-indigo-500/20 rounded-2xl p-5 flex items-center gap-4 flex-1 min-w-[280px] backdrop-blur-sm">
+                        <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <Settings2 className="w-5 h-5 text-emerald-400" />
+                        </div>
+                        <p className="text-sm font-bold text-slate-300 leading-snug">Direct input on the clinical platform roadmap</p>
+                    </div>
+                </div>
 
-                <section id="waitlist" style={{ maxWidth: 560, margin: '40px auto 0', padding: '0 24px 100px' }}>
-                    <div style={{
-                        background: 'rgba(12,26,50,0.95)', border: '1px solid rgba(56,139,253,0.2)',
-                        borderRadius: 24, padding: '40px 32px',
-                    }}>
+                {/* Form Card */}
+                <div className="w-full max-w-xl relative">
+                    {/* Glow ring like login */}
+                    <div className="absolute -inset-0.5 bg-indigo-500/10 blur-xl opacity-80 rounded-[2.5rem]" />
+
+                    <div className="relative bg-[#1c222d]/70 border border-slate-700/60 rounded-[2rem] p-8 sm:p-10 backdrop-blur-xl shadow-2xl">
                         {status === 'success' ? (
-                            <div style={{
-                                background: 'rgba(63,185,80,0.08)', border: '1px solid rgba(63,185,80,0.3)',
-                                borderRadius: 14, padding: '28px 24px', textAlign: 'center',
-                            }}>
-                                <div style={{ fontSize: 28, marginBottom: 12 }}>✅</div>
-                                <div style={{ fontSize: 18, fontWeight: 800, color: '#3fb950', marginBottom: 16 }}>You're on the list.</div>
-                                
-                                <div style={{ textAlign: 'left', marginBottom: 24, fontSize: 14, color: '#9fb0be', lineHeight: 1.6 }}>
-                                    <p style={{ fontWeight: 700, marginBottom: 8 }}>What happens next:</p>
-                                    <ul style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                        <li>You'll receive an email confirmation shortly.</li>
-                                        <li>We'll notify you when the pilot opens (targeted: early spring 2026).</li>
-                                        <li>Founding practitioners get priority onboarding + direct access to our team.</li>
+                            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-8 text-center animate-in fade-in duration-500">
+                                <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+                                </div>
+                                <h2 className="text-2xl font-black text-emerald-400 mb-2">You're on the list.</h2>
+
+                                <div className="text-left bg-[#0c0f14]/50 border border-slate-700/50 rounded-2xl p-5 mb-8 mt-6">
+                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">What happens next:</p>
+                                    <ul className="space-y-3 text-sm font-medium text-slate-300">
+                                        <li className="flex gap-2 items-start"><span className="text-indigo-400">•</span> You'll receive an email confirmation shortly.</li>
+                                        <li className="flex gap-2 items-start"><span className="text-indigo-400">•</span> We'll notify you when the pilot opens.</li>
+                                        <li className="flex gap-2 items-start"><span className="text-indigo-400">•</span> Priority onboarding + direct access to our team.</li>
                                     </ul>
                                 </div>
 
                                 <button
                                     onClick={() => navigate('/partner-demo')}
-                                    style={{
-                                        display: 'inline-block',
-                                        width: '100%', padding: '14px', borderRadius: 10, fontSize: 15, fontWeight: 700,
-                                        color: '#fff', border: 'none', cursor: 'pointer',
-                                        background: 'linear-gradient(135deg, #388bfd, #2060cc)',
-                                        textDecoration: 'none'
-                                    }}
+                                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-indigo-900/50"
                                 >
-                                    Watch the 2-minute demo while you wait →
+                                    Watch the Demo →
                                 </button>
                             </div>
                         ) : status === 'duplicate' ? (
-                            <div style={{
-                                background: 'rgba(57,208,216,0.06)', border: '1px solid rgba(57,208,216,0.25)',
-                                borderRadius: 14, padding: '24px', textAlign: 'center',
-                            }}>
-                                <div style={{ fontSize: 16, fontWeight: 800, color: '#39d0d8', marginBottom: 6 }}>You're already on the list.</div>
-                                <p style={{ fontSize: 14, color: '#9fb0be', marginBottom: 20 }}>We'll be in touch. Watch your inbox.</p>
+                            <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-3xl p-8 text-center animate-in fade-in duration-500">
+                                <div className="w-16 h-16 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <Activity className="w-8 h-8 text-cyan-400" />
+                                </div>
+                                <h2 className="text-2xl font-black text-cyan-400 mb-2">You're already on the list.</h2>
+                                <p className="text-slate-400 font-medium mb-8">We'll be in touch. Watch your inbox.</p>
+
                                 <button
                                     onClick={() => navigate('/partner-demo')}
-                                    style={{
-                                        width: '100%', padding: '12px', borderRadius: 10, fontSize: 14, fontWeight: 700,
-                                        color: '#39d0d8', border: '1px solid rgba(57,208,216,0.3)', cursor: 'pointer',
-                                        background: 'rgba(57,208,216,0.1)',
-                                    }}
+                                    className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 border border-cyan-500/30"
                                 >
                                     Watch the Demo →
                                 </button>
                             </div>
                         ) : (
-                            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 {status === 'error' && (
-                                    <div style={{
-                                        background: 'rgba(248,81,73,0.08)', border: '1px solid rgba(248,81,73,0.3)',
-                                        borderRadius: 10, padding: '12px 16px', fontSize: 13, color: '#f85149',
-                                    }}>
-                                        Something went wrong. Please try again or email us at info@ppnportal.net
+                                    <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-start gap-3">
+                                        <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <p className="text-sm text-red-400">Something went wrong. Please try again or email us.</p>
                                     </div>
                                 )}
 
                                 <div>
-                                    <label htmlFor="acad-name" style={{ fontSize: 12, fontWeight: 700, color: '#6b7a8d', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>First Name</label>
+                                    <label htmlFor="first-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
                                     <input
-                                        id="acad-name"
+                                        id="first-name"
                                         type="text"
                                         required
                                         placeholder="Your first name"
                                         value={form.firstName}
                                         onChange={(e) => setForm(f => ({ ...f, firstName: e.target.value }))}
-                                        style={{
-                                            width: '100%', padding: '13px 14px', borderRadius: 10, fontSize: 15,
-                                            background: 'rgba(56,139,253,0.06)', border: '1px solid rgba(56,139,253,0.2)',
-                                            color: '#9fb0be', outline: 'none', boxSizing: 'border-box',
-                                        }}
+                                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="acad-email" style={{ fontSize: 12, fontWeight: 700, color: '#6b7a8d', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>Email Address</label>
+                                    <label htmlFor="email" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
                                     <input
-                                        id="acad-email"
+                                        id="email"
                                         type="email"
                                         required
                                         placeholder="you@yourpractice.com"
                                         value={form.email}
                                         onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))}
-                                        style={{
-                                            width: '100%', padding: '13px 14px', borderRadius: 10, fontSize: 15,
-                                            background: 'rgba(56,139,253,0.06)', border: '1px solid rgba(56,139,253,0.2)',
-                                            color: '#9fb0be', outline: 'none', boxSizing: 'border-box',
-                                        }}
+                                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="acad-type" style={{ fontSize: 12, fontWeight: 700, color: '#6b7a8d', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>Practitioner Type</label>
+                                    <label htmlFor="practitioner-type" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Practitioner Type</label>
                                     <select
-                                        id="acad-type"
+                                        id="practitioner-type"
                                         required
                                         value={form.practitionerType}
                                         onChange={(e) => setForm(f => ({ ...f, practitionerType: e.target.value }))}
-                                        style={{
-                                            width: '100%', padding: '13px 14px', borderRadius: 10, fontSize: 15,
-                                            background: 'rgba(12,26,50,0.95)', border: '1px solid rgba(56,139,253,0.2)',
-                                            color: form.practitionerType ? '#9fb0be' : '#6b7a8d', outline: 'none', boxSizing: 'border-box',
-                                        }}
+                                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium appearance-none"
+                                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}
                                     >
                                         {PRACTITIONER_TYPES.map((t) => (
-                                            <option key={t.value} value={t.value} disabled={t.value === ''} style={{ background: '#0a1628', color: '#9fb0be' }}>
+                                            <option key={t.value} value={t.value} disabled={t.value === ''} className="bg-[#0c0f14] text-slate-300">
                                                 {t.label}
                                             </option>
                                         ))}
@@ -223,46 +202,42 @@ export const Waitlist: FC = () => {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="acad-challenge" style={{ fontSize: 12, fontWeight: 700, color: '#6b7a8d', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>
-                                        What's your biggest clinical documentation challenge? <span style={{ textTransform: 'none', fontWeight: 400, color: '#56667a' }}>(Optional — helps us prioritize what to build)</span>
+                                    <label htmlFor="challenge" className="block tracking-widest mb-2">
+                                        <span className="text-xs font-black text-slate-400 uppercase">Biggest clinical documentation challenge?</span>
+                                        <span className="text-xs text-slate-500 ml-2 normal-case font-medium tracking-normal">(Optional)</span>
                                     </label>
                                     <textarea
-                                        id="acad-challenge"
+                                        id="challenge"
                                         rows={3}
                                         maxLength={280}
                                         value={form.challenge}
                                         onChange={(e) => setForm(f => ({ ...f, challenge: e.target.value }))}
-                                        style={{
-                                            width: '100%', padding: '13px 14px', borderRadius: 10, fontSize: 15,
-                                            background: 'rgba(56,139,253,0.06)', border: '1px solid rgba(56,139,253,0.2)',
-                                            color: '#9fb0be', outline: 'none', boxSizing: 'border-box', resize: 'vertical'
-                                        }}
+                                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium resize-y"
+                                        placeholder="What's currently slowing down your practice..."
                                     />
                                 </div>
 
                                 <button
                                     type="submit"
-                                    disabled={status === 'loading' || !form.firstName || !form.email || !form.practitionerType}
-                                    style={{
-                                        width: '100%', padding: '15px', borderRadius: 10, fontSize: 16, fontWeight: 700,
-                                        color: '#fff', border: 'none', cursor: 'pointer', marginTop: 8,
-                                        background: 'linear-gradient(135deg, #388bfd, #2060cc)',
-                                        opacity: (status === 'loading' || !form.firstName || !form.email || !form.practitionerType) ? 0.55 : 1,
-                                        boxShadow: '0 6px 24px rgba(56,139,253,0.25)',
-                                    }}
+                                    disabled={status === 'loading' || !form.firstName.trim() || !form.email.trim() || !form.practitionerType}
+                                    className="w-full py-4 mt-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-indigo-900/30 flex items-center justify-center gap-2"
                                 >
-                                    {status === 'loading' ? 'Submitting...' : 'Join the Waitlist →'}
+                                    {status === 'loading' ? (
+                                        <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
+                                    ) : (
+                                        'Join the Waitlist'
+                                    )}
                                 </button>
 
-                                <p style={{ fontSize: 12, color: '#6b7a8d', textAlign: 'center', marginTop: 8 }}>
-                                    No spam. No payments. Just early access when we're ready.
+                                <p className="text-xs font-bold text-slate-500 text-center tracking-wide mt-2">
+                                    No spam. No payments. Just early access.
                                 </p>
                             </form>
                         )}
                     </div>
-                </section>
-            </div>
-        </>
+                </div>
+            </main>
+        </div>
     );
 };
 

@@ -57,7 +57,7 @@ export const Academy: FC = () => {
         if (!form.firstName.trim() || !form.email.trim() || !form.practitionerType) return;
         setStatus('loading');
         try {
-            const { error } = await supabase.from('academy_waitlist').insert({
+            const { error } = await supabase.from('log_waitlist').insert({
                 first_name: form.firstName.trim(),
                 email: form.email.trim().toLowerCase(),
                 practitioner_type: form.practitionerType,

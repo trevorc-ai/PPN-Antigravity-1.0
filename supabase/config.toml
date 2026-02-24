@@ -1,0 +1,16 @@
+project_id = "PPN-Antigravity-1.0"
+
+[api]
+port = 54321
+
+[db]
+port = 54322
+
+[studio]
+port = 54323
+
+[analytics]
+enabled = false
+
+[edge_runtime]
+enabled = false

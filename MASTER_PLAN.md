@@ -16,16 +16,15 @@ Build the Practice Operating System for Psychedelic Therapy - unifying safety, o
 - **Primary Design Directive:** WCAG 2.1 AA accessibility. No color-only meaning. Strict mathematical layouts and rich glassmorphism UI/UX.
 - **Database Architecture:** Absolute zero-PHI. Idempotent, additive SQL only via the `.agent/skills/migration-manager/SKILL.md` protocols. RLS is mandatory for all schemas.
 
-## 👥 The 9-Agent Swarm
+## 👥 The 8-Agent Swarm
 1. **CUE (Intake)** - Manages `00_INBOX` and instantiates Work Orders with exact templates.
 2. **LEAD (Coordinator)** - Defines the initial technical architecture. Routes tickets exactly by strict `agent.yaml` logic.
 3. **PRODDY (Product Strategy)** - Generates PRD roadmaps. Output MUST be validated by `/proddy-review`.
 4. **DESIGNER** - UI/UX Architecture. Constrained by `/accessibility-checker`.
 5. **BUILDER (Implementation)** - Writes React/TS code. Strict no-lazy-code rule. Wraps operations in Try/Catch.
-6. **SOOP (Database)** - Only writes idempotent `.sql` additions into `migrations/`. Schema pre-flight is mandatory.
-7. **MARKETER (Growth)** - Handles SEO, copy, and pricing tables.
-8. **ANALYST (Metrics)** - Key performance metrics without PHI violation.
-9. **INSPECTOR (QA Gatekeeper)** - Final authority. Mandates color-blind accessibility audits and Supabase Write Audits.
+6. **MARKETER (Growth)** - Handles SEO, copy, and pricing tables.
+7. **ANALYST (Metrics)** - Key performance metrics without PHI violation.
+8. **INSPECTOR (QA Gatekeeper & DB Admin)** - Final authority. Writes idempotent `.sql` additions into `supabase/migrations/` using local staging environment via `npx supabase start`. Mandates color-blind accessibility audits and Supabase Write Audits.
 
 ## 🚨 Critical Protocols
 1. **The Silent Conveyor Belt:** Work smoothly moves through 00_INBOX -> 01_TRIAGE -> 02_DESIGN -> 03_BUILD -> 04_QA -> 05_USER_REVIEW via bash `mv` commands entirely through YAML frontmatter states.

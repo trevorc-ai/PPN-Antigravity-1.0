@@ -34,6 +34,7 @@ import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
 import StarField from '../components/StarField';
 import AllianceWall from '../components/landing/AllianceWall';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
+import { WaitlistModal } from '../components/modals/WaitlistModal';
 
 const chartData = [
   { name: 'Site Avg', value: 68, color: '#334155' },
@@ -49,6 +50,7 @@ const Landing: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scrollY, setScrollY] = useState(0);
+  const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -185,7 +187,7 @@ const Landing: React.FC = () => {
             >
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => navigate('/waitlist')}
+                  onClick={() => setIsWaitlistModalOpen(true)}
                   className="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
                   Join the Waitlist
@@ -400,7 +402,7 @@ const Landing: React.FC = () => {
             <div className="flex flex-col items-center gap-4 w-full max-w-2xl relative z-10">
               <div className="flex items-center gap-3 px-6 py-4 bg-slate-900/60 border border-slate-700 rounded-2xl">
                 <span className="size-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
-                <p className="text-sm font-bold text-slate-300">Join the waitlist for founding practitioner access — <button onClick={() => navigate('/waitlist')} className="text-primary hover:text-blue-400 underline underline-offset-2">Join Waitlist</button></p>
+                <p className="text-sm font-bold text-slate-300">Join the waitlist for founding practitioner access — <button onClick={() => setIsWaitlistModalOpen(true)} className="text-primary hover:text-blue-400 underline underline-offset-2">Join Waitlist</button></p>
               </div>
               <p className="text-xs text-slate-600 font-medium italic max-w-md">
                 As our alliance grows, participating cities will be listed here — updated from the verified registry.
@@ -1032,7 +1034,7 @@ const Landing: React.FC = () => {
             </div>
 
             <div className="pt-12">
-              <button onClick={() => navigate('/waitlist')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 border border-indigo-400/50 hover:border-indigo-300">
+              <button onClick={() => setIsWaitlistModalOpen(true)} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 border border-indigo-400/50 hover:border-indigo-300">
                 Join the Mission
               </button>
             </div>
@@ -1111,6 +1113,11 @@ const Landing: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      <WaitlistModal
+        isOpen={isWaitlistModalOpen}
+        onClose={() => setIsWaitlistModalOpen(false)}
+      />
     </div>
   );
 };

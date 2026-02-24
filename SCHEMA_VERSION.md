@@ -1,7 +1,7 @@
 # DATABASE SCHEMA VERSION
 
-**Version:** 1.0.0  
-**Locked Date:** 2026-02-15  
+**Version:** 1.0.1  
+**Locked Date:** 2026-02-24  
 **Locked By:** INSPECTOR
 
 ---
@@ -26,6 +26,7 @@ This schema has been stabilized after critical remediation work. Any changes req
 - `log_patient_flow_events`
 - `log_patient_site_links`
 - `log_protocols`
+- `log_waitlist` (Added in v1.0.1)
 - `log_safety_events`
 - `log_sites`
 - `log_subscriptions`
@@ -56,9 +57,9 @@ This schema has been stabilized after critical remediation work. Any changes req
 
 ## Last Schema Change
 
-**Commit:** `2a3ecee`  
-**Date:** 2026-02-15  
-**Changes:** Renamed 11 tables to add `log_` prefix, deleted `site_code` column
+**Commit:** TBD
+**Date:** 2026-02-24  
+**Changes:** Replaced MVP `academy_waitlist` with `log_waitlist`. Added strict `uuid` columns for patients to deprecate free text across 6 `log_` tables. Added `bigint` columns for justification constraints.
 
 ---
 

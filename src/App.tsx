@@ -236,6 +236,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/landing" replace />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/about" element={<About />} />
+        <Route path="/waitlist" element={<Waitlist />} />
         <Route path="/secure-gate" element={<SecureGate />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
