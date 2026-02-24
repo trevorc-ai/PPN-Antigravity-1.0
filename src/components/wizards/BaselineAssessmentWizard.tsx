@@ -250,12 +250,6 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
     // TEMPORARY FOR TESTING: Allow submitting without psychometric scores
     const canSubmit = true; // was: atLeastOneScore;
 
-    const expectancyLabel =
-        data.setSetting.treatment_expectancy >= 70
-            ? { text: 'High expectancy — positive prognostic indicator', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' }
-            : data.setSetting.treatment_expectancy >= 40
-                ? { text: 'Moderate expectancy — discuss realistic outcomes', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' }
-                : { text: 'Low expectancy — consider additional preparation', color: 'text-red-400 bg-red-500/10 border-red-500/20' };
 
     // ── Completed state ───────────────────────────────────────────────────────
     // Removed: NarrativeViewer was flashing right before advancing
@@ -287,38 +281,6 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 </div>
             </section>
 
-            {/* ── Section 2: Treatment Expectancy ──────────────────────── */}
-            <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
-                <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
-                    Treatment Expectancy
-                    <AdvancedTooltip content="The patient's belief that this treatment will be effective. Higher expectancy is a positive prognostic factor — research shows it independently improves outcomes. Scores ≥70 indicate high confidence. Scores below 40 indicate a need for discussing realistic expectations and addressing ambivalence before proceeding." tier="standard">
-                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About treatment expectancy" />
-                    </AdvancedTooltip>
-                </h3>
-                <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                        <label htmlFor="expectancy" className="text-xs font-black text-slate-400 uppercase tracking-widest">
-                            Belief in Treatment
-                        </label>
-                        <span className="text-2xl font-black text-slate-400">{data.setSetting.treatment_expectancy}</span>
-                    </div>
-                    <input
-                        id="expectancy"
-                        type="range"
-                        min={0} max={100} step={5}
-                        value={data.setSetting.treatment_expectancy}
-                        onChange={(e) => updateData('setSetting', { treatment_expectancy: parseInt(e.target.value) })}
-                        className="ppn-range w-full cursor-pointer"
-                        style={{ background: `linear-gradient(to right, #ef4444 0%, #f59e0b 40%, #10b981 70%, #10b981 100%)` }}
-                    />
-                    <div className="flex justify-between text-xs text-slate-600">
-                        <span>Low (0)</span><span>High (100)</span>
-                    </div>
-                    <div className={`px-4 py-2.5 rounded-xl border text-sm font-semibold ${expectancyLabel.color}`}>
-                        {expectancyLabel.text}
-                    </div>
-                </div>
-            </section>
 
             {/* ── Section 3: Baseline Physiology (optional, 3-col) ─────── */}
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">

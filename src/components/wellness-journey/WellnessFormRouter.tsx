@@ -324,11 +324,9 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             patient_id: patientId,
             session_id: sessionId,
             change_date: data.change_date,
-            change_category: data.change_category,
             change_type_ids: data.change_type_ids,
-            impact_on_wellbeing: data.impact_on_wellbeing,
             confidence_sustaining: data.confidence_sustaining,
-            related_to_dosing: data.related_to_dosing,
+            is_positive: data.impact_on_wellbeing === 'highly_positive' || data.impact_on_wellbeing === 'moderately_positive',
         });
         result.success ? onSaved('Behavioral Change') : onError('Behavioral Change', result.error);
     }, [patientId, sessionId]);
@@ -367,7 +365,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <StructuredSafetyCheckForm
                 onSave={() => onSaved('Safety Screen')}
                 onComplete={onComplete}
-                onBack={() => onNavigate?.('consent') ?? onClose?.()}
+                onBack={() => onNavigate ? onNavigate('consent') : onClose?.()}
                 onExit={onExit ?? onClose ?? onComplete}
             />;
 
@@ -375,7 +373,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <SetAndSettingForm
                 onSave={handleSetAndSettingSave}
                 onComplete={onComplete}
-                onBack={() => onNavigate?.('mental-health') ?? onClose?.()}
+                onBack={() => onNavigate ? onNavigate('mental-health') : onClose?.()}
                 onExit={onExit ?? onClose ?? onComplete}
             />;
 
@@ -384,7 +382,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 patientId={patientId}
                 onComplete={onComplete}
                 onExit={onExit ?? onClose ?? onComplete}
-                onBack={() => onNavigate?.('structured-safety') ?? onClose?.()}
+                onBack={() => onNavigate ? onNavigate('structured-safety') : onClose?.()}
             />;
 
         // ── Phase 2: Dosing Session ───────────────────────────────────────────
