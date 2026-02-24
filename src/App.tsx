@@ -32,6 +32,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Landing from './pages/Landing';
 import Pricing from './pages/Pricing';
+import Waitlist from './pages/Waitlist';
 import ContributionModel from './pages/ContributionModel';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
