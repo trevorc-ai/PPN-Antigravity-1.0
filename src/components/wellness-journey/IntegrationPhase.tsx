@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activity, Calendar, Award, FileText } from 'lucide-react';
+import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activity, Award, FileText } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import SymptomDecayCurve from '../arc-of-care/SymptomDecayCurve';
 import PulseCheckWidget from '../arc-of-care/PulseCheckWidget';
@@ -8,37 +8,36 @@ import { NeuroplasticityWindowBadge } from './NeuroplasticityWindowBadge';
 import { PatientProgressSummary, type ProgressSummaryData } from './PatientProgressSummary';
 import { downloadDischargeSummary, type DischargeSummaryData } from '../../services/dischargeSummary';
 import { useToast } from '../../contexts/ToastContext';
+import { usePhase3Data } from '../../hooks/usePhase3Data';
+import { DemoDataBadge } from './DemoDataBadge';
 
 interface IntegrationPhaseProps {
     journey: any;
 }
 
-// Mock 7-day pulse check trend data
-const MOCK_PULSE_TREND = [
-    { day: 'Mon', connection: 3, sleep: 2, date: '2025-10-13' },
-    { day: 'Tue', connection: 3, sleep: 3, date: '2025-10-14' },
-    { day: 'Wed', connection: 4, sleep: 3, date: '2025-10-15' },
-    { day: 'Thu', connection: 4, sleep: 4, date: '2025-10-16' },
-    { day: 'Fri', connection: 5, sleep: 4, date: '2025-10-17' },
-    { day: 'Sat', connection: 4, sleep: 5, date: '2025-10-18' },
-    { day: 'Sun', connection: 5, sleep: 4, date: '2025-10-19' },
-];
+// Mock fallback removed — real data supplied by usePhase3Data hook
 
 export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) => {
     const [showPulseCheck, setShowPulseCheck] = useState(true);
     const [showProgressSummary, setShowProgressSummary] = useState(false);
     const { addToast } = useToast();
 
+    // ── Phase 3 real data hook (WO-402) ────────────────────────────────────────
+    const phase3 = usePhase3Data(journey.sessionId, journey.patientId);
+
     // Derive session date — use journey session date or fall back to ~7 days ago (demo)
     const sessionDateForBadge = journey.sessionDate
         ? new Date(journey.sessionDate)
         : (() => { const d = new Date(); d.setDate(d.getDate() - 7); return d; })();
 
-    // Export 7-day trend as CSV
+    // Active pulse trend data — real if available, mock fallback otherwise
+    const activePulseTrend = phase3.pulseTrend ?? [];
+
+    // Export 7-day trend as CSV (uses live or mock trend)
     const handleExportTrend = () => {
         const csvRows = [
             'date,day,connection_level,sleep_quality',
-            ...MOCK_PULSE_TREND.map(d => `${d.date},${d.day},${d.connection},${d.sleep}`),
+            ...activePulseTrend.map(d => `${d.date},${d.day},${d.connection},${d.sleep}`),
         ];
         const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -50,8 +49,26 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
     };
 
     // Calculate 7-day averages for trend display
-    const avgConnection = (MOCK_PULSE_TREND.reduce((s, d) => s + d.connection, 0) / MOCK_PULSE_TREND.length).toFixed(1);
-    const avgSleep = (MOCK_PULSE_TREND.reduce((s, d) => s + d.sleep, 0) / MOCK_PULSE_TREND.length).toFixed(1);
+    const avgConnection = activePulseTrend.length > 0
+        ? (activePulseTrend.reduce((s, d) => s + d.connection, 0) / activePulseTrend.length).toFixed(1)
+        : '—';
+    const avgSleep = activePulseTrend.length > 0
+        ? (activePulseTrend.reduce((s, d) => s + d.sleep, 0) / activePulseTrend.length).toFixed(1)
+        : '—';
+
+    // Compliance values — live or mock
+    const pulseCompliance = phase3.pulseCheckCompliance ?? journey.integration.pulseCheckCompliance ?? 0;
+    const phq9Compliance = phase3.phq9Compliance ?? journey.integration.phq9Compliance ?? 0;
+    const intAttended = phase3.integrationSessionsAttended ?? journey.integration.integrationSessionsAttended ?? 0;
+    const intScheduled = phase3.integrationSessionsScheduled ?? journey.integration.integrationSessionsScheduled ?? 0;
+
+    // Decay points — live or mock
+    const decayPoints = phase3.decayPoints ?? [
+        { day: 7, phq9: 14 }, { day: 14, phq9: 11 }, { day: 30, phq9: 9 },
+        { day: 60, phq9: 7 }, { day: 90, phq9: 6 }, { day: 120, phq9: 5 },
+        { day: 180, phq9: journey.integration.currentPhq9 ?? 4 },
+    ];
+    const baselinePhq9 = phase3.baselinePhq9 ?? journey.baseline.phq9 ?? 22;
 
     const handleDischargeSummary = () => {
         // In a real app, this would be fetched from the database
@@ -116,35 +133,35 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
 
 
             {/* NEW: Longitudinal Outcome Visualizations (WO-312) */}
+            {/* WO-402: Fixed sessionId — must be UUID from log_clinical_records, not sessionNumber */}
             <PatientOutcomePanel
-                patientId="PT-RISK9W2P"
-                sessionId={journey.session?.sessionNumber?.toString() || "1"}
+                patientId={journey.patientId ?? 'PT-RISK9W2P'}
+                sessionId={journey.sessionId ?? ''}
             />
 
             {/* 1. TOP ROW: Symptom Decay & Pulse Check Widget (Full Width Stack) */}
             <div className="space-y-6">
 
-                {/* Symptom Decay Curve */}
+                {/* Symptom Decay Curve — live data via usePhase3Data */}
                 <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 border-2 border-emerald-500/50 rounded-3xl p-6 shadow-lg shadow-emerald-900/20">
-                    <div className="flex items-center gap-3 mb-6">
-                        <TrendingUp className="w-8 h-8 text-emerald-400" />
-                        <div>
-                            <h3 className="text-2xl font-black text-emerald-100">Symptom Decay</h3>
-                            <p className="text-xs text-emerald-400/70 font-bold uppercase tracking-widest">PHQ-9 Trajectory</p>
+                    <div className="flex items-center justify-between gap-3 mb-6">
+                        <div className="flex items-center gap-3">
+                            <TrendingUp className="w-8 h-8 text-emerald-400" />
+                            <div>
+                                <h3 className="text-2xl font-black text-emerald-100">Symptom Decay</h3>
+                                <p className="text-xs text-emerald-400/70 font-bold uppercase tracking-widest">PHQ-9 Trajectory</p>
+                            </div>
                         </div>
+                        <DemoDataBadge isDemo={!phase3.hasRealDecayData} />
                     </div>
-                    <SymptomDecayCurve
-                        baselinePhq9={journey.baseline.phq9}
-                        dataPoints={[
-                            { day: 7, phq9: 14 },
-                            { day: 14, phq9: 11 },
-                            { day: 30, phq9: 9 },
-                            { day: 60, phq9: 7 },
-                            { day: 90, phq9: 6 },
-                            { day: 120, phq9: 5 },
-                            { day: 180, phq9: journey.integration.currentPhq9 }
-                        ]}
-                    />
+                    {phase3.isLoading ? (
+                        <div className="h-48 bg-slate-800/30 rounded-2xl animate-pulse" aria-label="Loading symptom decay data" />
+                    ) : (
+                        <SymptomDecayCurve
+                            baselinePhq9={baselinePhq9}
+                            dataPoints={decayPoints}
+                        />
+                    )}
                 </div>
 
                 {/* Daily Pulse Check Widget + 7-Day Trend */}
@@ -188,11 +205,17 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="p-4 bg-slate-800/40 rounded-xl text-center border border-slate-700/50">
                                         <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Connection</p>
-                                        <p className="text-3xl font-black text-pink-400">{avgConnection}<span className="text-base text-slate-600 font-normal">/5</span></p>
+                                        {phase3.isLoading
+                                            ? <div className="h-8 w-20 mx-auto bg-slate-700/50 rounded-lg animate-pulse" />
+                                            : <p className="text-3xl font-black text-pink-400">{avgConnection}<span className="text-base text-slate-600 font-normal">/5</span></p>
+                                        }
                                     </div>
                                     <div className="p-4 bg-slate-800/40 rounded-xl text-center border border-slate-700/50">
                                         <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Avg Sleep</p>
-                                        <p className="text-3xl font-black text-blue-400">{avgSleep}<span className="text-base text-slate-600 font-normal">/5</span></p>
+                                        {phase3.isLoading
+                                            ? <div className="h-8 w-20 mx-auto bg-slate-700/50 rounded-lg animate-pulse" />
+                                            : <p className="text-3xl font-black text-blue-400">{avgSleep}<span className="text-base text-slate-600 font-normal">/5</span></p>
+                                        }
                                     </div>
                                 </div>
 
@@ -213,7 +236,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                                     </div>
 
                                     <div className="grid grid-cols-7 gap-2 h-32 items-end pb-2">
-                                        {MOCK_PULSE_TREND.map((d) => (
+                                        {activePulseTrend.map((d) => (
                                             <div key={d.day} className="flex flex-col items-center gap-2 h-full justify-end group/bar">
                                                 {/* Stacked Bars */}
                                                 <div className="w-full relative flex flex-col items-center gap-1">
@@ -254,11 +277,14 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
             {/* 2. BOTTOM ROW: 3-Column Layout for Compliance, Outcomes, and Insights */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                {/* Compliance Metrics */}
+                {/* Compliance Metrics — live via usePhase3Data */}
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col">
-                    <div className="flex items-center gap-3 mb-6">
-                        <Activity className="w-6 h-6 text-indigo-400" />
-                        <h3 className="text-xl font-bold text-[#A8B5D1]">Compliance</h3>
+                    <div className="flex items-center justify-between gap-3 mb-6">
+                        <div className="flex items-center gap-3">
+                            <Activity className="w-6 h-6 text-indigo-400" />
+                            <h3 className="text-xl font-bold text-[#A8B5D1]">Compliance</h3>
+                        </div>
+                        <DemoDataBadge isDemo={!phase3.hasRealComplianceData} />
                     </div>
 
                     <div className="space-y-6 flex-1">
@@ -266,14 +292,14 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
                                 <span>Daily Pulse</span>
-                                <span className={journey.integration.pulseCheckCompliance >= 80 ? "text-emerald-400" : "text-amber-400"}>
-                                    {journey.integration.pulseCheckCompliance}%
+                                <span className={pulseCompliance >= 80 ? "text-emerald-400" : "text-amber-400"}>
+                                    {pulseCompliance}%
                                 </span>
                             </div>
                             <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full rounded-full ${journey.integration.pulseCheckCompliance >= 80 ? "bg-emerald-500" : "bg-amber-500"}`}
-                                    style={{ width: `${journey.integration.pulseCheckCompliance}%` }}
+                                    className={`h-full rounded-full transition-all duration-700 ${pulseCompliance >= 80 ? "bg-emerald-500" : "bg-amber-500"}`}
+                                    style={{ width: `${pulseCompliance}%` }}
                                 />
                             </div>
                         </div>
@@ -282,14 +308,14 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         <div className="space-y-2">
                             <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
                                 <span>Weekly PHQ-9</span>
-                                <span className={journey.integration.phq9Compliance >= 90 ? "text-emerald-400" : "text-amber-400"}>
-                                    {journey.integration.phq9Compliance}%
+                                <span className={phq9Compliance >= 90 ? "text-emerald-400" : "text-amber-400"}>
+                                    {phq9Compliance}%
                                 </span>
                             </div>
                             <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full rounded-full ${journey.integration.phq9Compliance >= 90 ? "bg-emerald-500" : "bg-amber-500"}`}
-                                    style={{ width: `${journey.integration.phq9Compliance}%` }}
+                                    className={`h-full rounded-full transition-all duration-700 ${phq9Compliance >= 90 ? "bg-emerald-500" : "bg-amber-500"}`}
+                                    style={{ width: `${phq9Compliance}%` }}
                                 />
                             </div>
                         </div>
@@ -297,7 +323,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                         {/* Integration Sessions */}
                         <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center mt-auto">
                             <div className="text-3xl font-black text-indigo-400 mb-1">
-                                {journey.integration.integrationSessionsAttended}<span className="text-xl text-slate-500 font-normal">/{journey.integration.integrationSessionsScheduled}</span>
+                                {intAttended}<span className="text-xl text-slate-500 font-normal">/{intScheduled}</span>
                             </div>
                             <div className="text-xs text-slate-500 font-bold uppercase tracking-widest">Integration Sessions</div>
                         </div>
