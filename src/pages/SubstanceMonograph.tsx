@@ -84,11 +84,12 @@ interface AccordionPanelProps {
   isOpen: boolean;
   onToggle: () => void;
   accentColor?: string;
+  citationUrl?: string;
   children: React.ReactNode;
 }
 
 const AccordionPanel: React.FC<AccordionPanelProps> = ({
-  icon, title, teaser, isOpen, onToggle, accentColor = '#475569', children
+  icon, title, teaser, isOpen, onToggle, accentColor = '#475569', citationUrl, children
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
@@ -134,6 +135,14 @@ const AccordionPanel: React.FC<AccordionPanelProps> = ({
           <div style={{ height: `${height}px`, overflow: 'hidden', transition: 'height 200ms ease-out' }}>
             <div ref={contentRef} className="px-6 pb-6">
               {children}
+              {citationUrl && (
+                <div className="mt-6 pt-4 border-t border-slate-700/40 flex justify-between items-center opacity-70 hover:opacity-100 transition-opacity">
+                  <span className="text-xs text-slate-500 font-mono tracking-wider">Clinical Context Verified</span>
+                  <a href={citationUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+                    Cite Source <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -515,6 +524,7 @@ const SubstanceMonograph: React.FC = () => {
             isOpen={openPanel === 'mechanism'}
             onToggle={() => togglePanel('mechanism')}
             accentColor="#6366f1"
+            citationUrl={`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(sub.name)}+mechanism+of+action`}
           >
             <div className="space-y-5 pt-1">
               {sub.mechanismText && (
@@ -550,6 +560,7 @@ const SubstanceMonograph: React.FC = () => {
             isOpen={openPanel === 'safety'}
             onToggle={() => togglePanel('safety')}
             accentColor="#ef4444"
+            citationUrl={`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(sub.name)}+contraindications+safety`}
           >
             <div className="space-y-6 pt-1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -601,6 +612,7 @@ const SubstanceMonograph: React.FC = () => {
             isOpen={openPanel === 'interactions'}
             onToggle={() => togglePanel('interactions')}
             accentColor="#f59e0b"
+            citationUrl={`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(sub.name)}+drug+interactions`}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               {interactions.map((inter, i) => (
@@ -628,6 +640,7 @@ const SubstanceMonograph: React.FC = () => {
             isOpen={openPanel === 'efficacy'}
             onToggle={() => togglePanel('efficacy')}
             accentColor="#22c55e"
+            citationUrl={`https://clinicaltrials.gov/search?term=${encodeURIComponent(sub.name)}`}
           >
             <div className="pt-2 space-y-3">
               {sub.historicalEfficacy && sub.historicalEfficacy.length > 1 ? (
@@ -665,6 +678,7 @@ const SubstanceMonograph: React.FC = () => {
           isOpen={openPanel === 'technical'}
           onToggle={() => togglePanel('technical')}
           accentColor="#8b5cf6"
+          citationUrl={`https://pubchem.ncbi.nlm.nih.gov/#query=${encodeURIComponent(sub.name)}`}
         >
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
             {[
@@ -693,6 +707,7 @@ const SubstanceMonograph: React.FC = () => {
           isOpen={openPanel === 'ai'}
           onToggle={() => togglePanel('ai')}
           accentColor="#6366f1"
+          citationUrl={`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(sub.name)}+clinical+trial&filter=years.2024-2025`}
         >
           <div className="pt-2">
             {isAiLoading ? (
