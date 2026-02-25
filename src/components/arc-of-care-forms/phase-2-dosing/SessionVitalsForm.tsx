@@ -4,6 +4,7 @@ import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
 import { FormFooter } from '../shared/FormFooter';
 import { QTIntervalTracker } from '../../arc-of-care/QTIntervalTracker';
+import { EKGComponent } from '../../arc-of-care/EKGComponent';
 import { useProtocol } from '../../../contexts/ProtocolContext';
 
 /**
@@ -65,6 +66,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
 }) => {
     const { config } = useProtocol();
     const showQTTracker = config.enabledFeatures.includes('session-vitals');
+    const showEKGMonitor = config.enabledFeatures.includes('ekg-monitoring');
     // Auto-stamp recorded_at on first render
     function nowStamp(): string {
         const d = new Date();
@@ -585,6 +587,17 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     divergenceThresholdMs={50} /* TODO: clinically pending Dr. Allen reply — WO-413 */
                                     deviceALabel="Device A"
                                     deviceBLabel="Device B"
+                                />
+                            </div>
+                        )}
+
+                        {/* EKG Monitoring Panel — WO-413 MT-1 Level 1
+                            Shown on last reading block only. Receives HR from this reading for Bazett QTc.
+                            Gated behind 'ekg-monitoring' feature flag. Display-only this sprint. */}
+                        {showEKGMonitor && index === readings.length - 1 && (
+                            <div className="pt-4 border-t border-amber-500/15">
+                                <EKGComponent
+                                    heartRate={reading.heart_rate}
                                 />
                             </div>
                         )}

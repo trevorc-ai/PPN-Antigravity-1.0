@@ -25,6 +25,7 @@ const DEFAULT_CONFIG: SessionConfig = {
         'dosing-protocol',
         'session-timeline',
         'session-vitals',
+        'ekg-monitoring',
         'session-observations',
         'safety-and-adverse-event',
         'rescue-protocol',

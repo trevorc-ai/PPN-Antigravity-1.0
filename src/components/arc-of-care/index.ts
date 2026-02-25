@@ -24,6 +24,8 @@ export { default as SessionMonitoringDashboard } from './SessionMonitoringDashbo
 export { default as RealTimeVitalsPanel } from './RealTimeVitalsPanel';
 export { default as SessionTimeline } from './SessionTimeline';
 export { default as RescueProtocolChecklist } from './RescueProtocolChecklist';
+export { EKGComponent } from './EKGComponent';
+export type { EKGData, EKGComponentProps } from './EKGComponent';
 
 // ===== PHASE 3: INTEGRATION TRACKER =====
 export { default as PulseCheckWidget } from './PulseCheckWidget';
