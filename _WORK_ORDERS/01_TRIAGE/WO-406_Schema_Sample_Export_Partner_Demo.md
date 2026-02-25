@@ -96,7 +96,9 @@ The USER noted on 2026-02-23 that some queries are currently writing direct valu
 - Column descriptions will be inaccurate (some columns will show raw strings instead of FK references)
 - The "No free-text fields" claim will be undermined if direct-write columns still exist
 
-**PRODDY will draft the copy and structure now. SOOP will validate column-by-column accuracy after the cleanup migration runs.**
+**PRODDY will draft the copy and structure now. INSPECTOR will validate column-by-column schema accuracy after the cleanup migration runs (USER approval required before final sign-off).**
+
+⚠️ **SOOP DISCONTINUED 2026-02-25** — schema validation role transferred to INSPECTOR.
 
 ---
 
@@ -108,4 +110,4 @@ The USER noted on 2026-02-23 that some queries are currently writing direct valu
 
 ## ROUTING
 
-PRODDY (copy + structure) → SOOP (schema accuracy validation post-cleanup) → DESIGNER (PDF layout) → INSPECTOR → 05_USER_REVIEW
+PRODDY (copy + structure) → INSPECTOR (schema accuracy validation + USER approval) → DESIGNER (PDF layout) → INSPECTOR (final QA gate) → 05_USER_REVIEW

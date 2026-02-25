@@ -1,6 +1,6 @@
-# PPN Research Portal - Master Plan
+# PPN Portal - Master Plan
 
-**Version:** 5.0.0
+**Version:** 5.1.0
 **Last Updated:** February 24, 2026
 **Status:** MVP Development Phase
 **Location:** `/MASTER_PLAN.md` (Project Root)
@@ -12,18 +12,16 @@ Build the Practice Operating System for Psychedelic Therapy - unifying safety, o
 
 ## 📊 Current Status
 - **Core App Framework:** React, Vite, Tailwind CSS, Supabase.
-- **Agent Governance:** We use a highly strict 9-agent silent Kanban system governed by `_WORK_ORDERS`.
+- **Agent Governance:** We use a highly strict multi-agent silent Kanban system governed by `_WORK_ORDERS`.
 - **Primary Design Directive:** WCAG 2.1 AA accessibility. No color-only meaning. Strict mathematical layouts and rich glassmorphism UI/UX.
 - **Database Architecture:** Absolute zero-PHI. Idempotent, additive SQL only via the `.agent/skills/migration-manager/SKILL.md` protocols. RLS is mandatory for all schemas.
 
 ## 👥 The 8-Agent Swarm
-1. **CUE (Intake)** - Manages `00_INBOX` and instantiates Work Orders with exact templates.
-2. **LEAD (Coordinator)** - Defines the initial technical architecture. Routes tickets exactly by strict `agent.yaml` logic.
+
+2. **LEAD (Coordinator)** - Monitors `00_INBOX` and instantiates Work Orders with exact templates, defines the initial technical architecture, Routes tickets exactly by strict `agent.yaml` logic.
 3. **PRODDY (Product Strategy)** - Generates PRD roadmaps. Output MUST be validated by `/proddy-review`.
 4. **DESIGNER** - UI/UX Architecture. Constrained by `/accessibility-checker`.
 5. **BUILDER (Implementation)** - Writes React/TS code. Strict no-lazy-code rule. Wraps operations in Try/Catch.
-6. **MARKETER (Growth)** - Handles SEO, copy, and pricing tables.
-7. **ANALYST (Metrics)** - Key performance metrics without PHI violation.
 8. **INSPECTOR (QA Gatekeeper & DB Admin)** - Final authority. Writes idempotent `.sql` additions into `supabase/migrations/` using local staging environment via `npx supabase start`. Mandates color-blind accessibility audits and Supabase Write Audits.
 
 ## 🚨 Critical Protocols

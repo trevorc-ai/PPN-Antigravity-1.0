@@ -1,0 +1,10 @@
+indication_id,indication_name,snomed_code,icd10_code,indication_category,is_active,created_at
+1,Major Depressive Disorder (MDD),,,mood,true,2026-02-10 06:18:51.52411+00
+2,Treatment-Resistant Depression (TRD),,,mood,true,2026-02-10 06:18:51.52411+00
+3,Post-Traumatic Stress Disorder (PTSD),,,trauma,true,2026-02-10 06:18:51.52411+00
+4,Generalized Anxiety Disorder (GAD),,,anxiety,true,2026-02-10 06:18:51.52411+00
+5,Social Anxiety Disorder,,,anxiety,true,2026-02-10 06:18:51.52411+00
+6,Obsessive-Compulsive Disorder (OCD),,,anxiety,true,2026-02-10 06:18:51.52411+00
+7,Substance Use Disorder,,,addiction,true,2026-02-10 06:18:51.52411+00
+8,End-of-Life Distress,,,palliative,true,2026-02-10 06:18:51.52411+00
+9,Other / Investigational,,,other,true,2026-02-10 06:18:51.52411+00

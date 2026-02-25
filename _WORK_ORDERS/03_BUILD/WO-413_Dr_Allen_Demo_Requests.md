@@ -71,7 +71,7 @@ I have conducted a forensic audit of the `src/` directory for direct `log_` tabl
    - **Heartbeat Requirement:** Auto-suspend sessions if no vitals are received for >2 hours, requiring a "Resume Session" tap to ensure safety monitoring is active.
 
 ### Action Plan
-1. **Migration (SOOP):** Create a migration to add `ref_severity_tiers` and `ref_session_types` tables. Update `log_` tables to include FK columns and migrate existing data.
+1. **Migration (INSPECTOR — USER approval required):** Create a migration to add `ref_severity_tiers` and `ref_session_types` tables. Update `log_` tables to include FK columns and migrate existing data. ⚠️ SOOP discontinued 2026-02-25 — INSPECTOR owns SQL authorship.
 2. **Refactor (BUILDER):** Update `clinicalLog.ts`, `CrisisLogger.tsx`, and `AdverseEventLogger.tsx` to use these new reference IDs.
 
 **Action Required:** LEAD/PRODDY to triage these migration tasks alongside the feature requests (Dose Calc, QT tracker, EKG baseline).
@@ -215,7 +215,7 @@ These are small enough for BUILDER to implement directly. LEAD to route as inlin
 
 **MT-1: EKG Field in Baseline Vitals**
 - Add a single `ekg_rhythm` dropdown to the Baseline Prep vitals section with values: `Normal Sinus Rhythm | Sinus Bradycardia | Sinus Tachycardia | Atrial Fibrillation | QT Prolonged | Other`.
-- This is a reference-coded field — **INSPECTOR** must add a `ref_ekg_rhythms` table (migration in Docker test DB) before BUILDER wires the dropdown. SOOP is not in the routing chain for this sprint.
+- This is a reference-coded field — **INSPECTOR** must add a `ref_ekg_rhythms` table (migration in Docker test DB, USER approval required) before BUILDER wires the dropdown.
 - Priority: **P1** — Dr. Allen mentioned it; not a demo blocker but quickly noticeable in a pilot.
 
 **MT-2: Patient Weight Field — lbs → kg Conversion**

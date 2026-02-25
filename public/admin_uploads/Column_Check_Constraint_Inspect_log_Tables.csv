@@ -1,0 +1,441 @@
+table_name,column_name,data_type,character_maximum_length,is_nullable,column_default,check_clause
+log_baseline_assessments,baseline_assessment_id,integer,null,NO,nextval('log_baseline_assessments_baseline_assessment_id_seq'::regclass),null
+log_baseline_assessments,baseline_assessment_id,integer,null,NO,nextval('log_baseline_assessments_baseline_assessment_id_seq'::regclass),null
+log_baseline_assessments,patient_id,character varying,20,NO,null,null
+log_baseline_assessments,site_id,uuid,null,YES,null,null
+log_baseline_assessments,assessment_date,timestamp without time zone,null,NO,now(),null
+log_baseline_assessments,phq9_score,integer,null,YES,null,((phq9_score >= 0) AND (phq9_score <= 27))
+log_baseline_assessments,gad7_score,integer,null,YES,null,((gad7_score >= 0) AND (gad7_score <= 21))
+log_baseline_assessments,ace_score,integer,null,YES,null,((ace_score >= 0) AND (ace_score <= 10))
+log_baseline_assessments,pcl5_score,integer,null,YES,null,((pcl5_score >= 0) AND (pcl5_score <= 80))
+log_baseline_assessments,expectancy_scale,integer,null,YES,null,((expectancy_scale >= 1) AND (expectancy_scale <= 100))
+log_baseline_assessments,resting_hrv,numeric,null,YES,null,null
+log_baseline_assessments,resting_bp_systolic,integer,null,YES,null,null
+log_baseline_assessments,resting_bp_diastolic,integer,null,YES,null,null
+log_baseline_assessments,completed_by_user_id,uuid,null,YES,null,null
+log_baseline_assessments,created_at,timestamp without time zone,null,YES,now(),null
+log_baseline_assessments,updated_at,timestamp without time zone,null,YES,now(),null
+log_baseline_assessments,patient_uuid,uuid,null,YES,null,null
+log_baseline_observations,id,integer,null,NO,nextval('log_baseline_observations_id_seq'::regclass),null
+log_baseline_observations,baseline_assessment_id,integer,null,YES,null,null
+log_baseline_observations,observation_id,integer,null,YES,null,null
+log_baseline_observations,created_at,timestamp without time zone,null,YES,now(),null
+log_behavioral_changes,behavioral_change_id,integer,null,NO,nextval('log_behavioral_changes_behavioral_change_id_seq'::regclass),null
+log_behavioral_changes,patient_id,character varying,20,NO,null,null
+log_behavioral_changes,session_id,uuid,null,YES,null,null
+log_behavioral_changes,change_date,date,null,NO,null,null
+log_behavioral_changes,change_type,character varying,50,NO,null,null
+log_behavioral_changes,change_description,text,null,NO,null,null
+log_behavioral_changes,is_positive,boolean,null,NO,null,null
+log_behavioral_changes,logged_at,timestamp without time zone,null,YES,now(),null
+log_behavioral_changes,change_category,character varying,50,YES,null,"((change_category)::text = ANY ((ARRAY['relationship'::character varying, 'substance_use'::character varying, 'exercise'::character varying, 'work'::character varying, 'hobby'::character varying, 'self_care'::character varying])::text[]))"
+log_behavioral_changes,change_type_ids,ARRAY,null,YES,null,null
+log_behavioral_changes,impact_on_wellbeing,character varying,30,YES,null,"((impact_on_wellbeing)::text = ANY ((ARRAY['highly_positive'::character varying, 'moderately_positive'::character varying, 'neutral'::character varying, 'moderately_negative'::character varying, 'highly_negative'::character varying])::text[]))"
+log_behavioral_changes,confidence_sustaining,integer,null,YES,null,((confidence_sustaining >= 1) AND (confidence_sustaining <= 5))
+log_behavioral_changes,related_to_dosing,character varying,30,YES,null,"((related_to_dosing)::text = ANY ((ARRAY['direct_insight'::character varying, 'indirect_influence'::character varying, 'unrelated'::character varying])::text[]))"
+log_behavioral_changes,patient_uuid,uuid,null,YES,null,null
+log_chain_of_custody,id,uuid,null,NO,gen_random_uuid(),null
+log_chain_of_custody,site_id,uuid,null,NO,null,null
+log_chain_of_custody,session_id,uuid,null,YES,null,null
+log_chain_of_custody,substance,text,null,NO,null,null
+log_chain_of_custody,batch_number,text,null,YES,null,null
+log_chain_of_custody,lot_number,text,null,YES,null,null
+log_chain_of_custody,supplier_name,text,null,YES,null,null
+log_chain_of_custody,supplier_license_number,text,null,YES,null,null
+log_chain_of_custody,quantity_received_mg,numeric,null,YES,null,null
+log_chain_of_custody,date_received,date,null,YES,null,null
+log_chain_of_custody,storage_location,text,null,YES,null,null
+log_chain_of_custody,storage_conditions,text,null,YES,null,null
+log_chain_of_custody,quantity_administered_mg,numeric,null,YES,null,null
+log_chain_of_custody,route,text,null,YES,null,"(route = ANY (ARRAY['oral'::text, 'IM'::text, 'IV'::text, 'intranasal'::text, 'sublingual'::text, 'other'::text]))"
+log_chain_of_custody,patient_link_code,text,null,YES,null,null
+log_chain_of_custody,session_date,date,null,YES,null,null
+log_chain_of_custody,administering_clinician_id,uuid,null,YES,null,null
+log_chain_of_custody,quantity_wasted_mg,numeric,null,YES,null,null
+log_chain_of_custody,destruction_method,text,null,YES,null,null
+log_chain_of_custody,destruction_witness_name,text,null,YES,null,null
+log_chain_of_custody,destruction_date,date,null,YES,null,null
+log_chain_of_custody,created_at,timestamp with time zone,null,NO,now(),null
+log_chain_of_custody,updated_at,timestamp with time zone,null,NO,now(),null
+log_chain_of_custody,created_by,uuid,null,YES,null,null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,id,uuid,null,NO,gen_random_uuid(),null
+log_clinical_records,created_at,timestamp with time zone,null,NO,"timezone('utc'::text, now())",null
+log_clinical_records,practitioner_id,uuid,null,NO,null,null
+log_clinical_records,patient_link_code,character varying,20,NO,null,null
+log_clinical_records,session_type,character varying,50,NO,null,null
+log_clinical_records,substance_id,integer,null,YES,null,null
+log_clinical_records,protocol_id,integer,null,YES,null,null
+log_clinical_records,dosage_amount,numeric,null,YES,null,null
+log_clinical_records,outcome_measure,character varying,50,YES,null,null
+log_clinical_records,outcome_score,integer,null,YES,null,null
+log_clinical_records,safety_event_category,character varying,100,YES,null,null
+log_clinical_records,severity_rating,integer,null,YES,0,null
+log_clinical_records,site_id,uuid,null,YES,null,null
+log_clinical_records,clinical_phenotype,text,null,YES,null,null
+log_clinical_records,indication_id,bigint,null,YES,null,null
+log_clinical_records,session_number,integer,null,YES,null,null
+log_clinical_records,session_date,date,null,YES,null,null
+log_clinical_records,protocol_template_id,uuid,null,YES,null,null
+log_clinical_records,concomitant_meds,text,null,YES,null,null
+log_clinical_records,support_modality_ids,ARRAY,null,YES,null,null
+log_clinical_records,patient_weight_range,text,null,YES,null,null
+log_clinical_records,patient_sex,text,null,YES,null,null
+log_clinical_records,patient_age,text,null,YES,null,null
+log_clinical_records,patient_smoking_status_id,bigint,null,YES,null,null
+log_clinical_records,baseline_phq9_score,integer,null,YES,null,null
+log_clinical_records,psychological_difficulty_score,integer,null,YES,null,null
+log_clinical_records,route_id,bigint,null,YES,null,null
+log_clinical_records,safety_event_id,bigint,null,YES,null,null
+log_clinical_records,severity_grade_id,bigint,null,YES,null,null
+log_clinical_records,resolution_status_id,bigint,null,YES,null,null
+log_clinical_records,is_submitted,boolean,null,YES,false,null
+log_clinical_records,submitted_at,timestamp with time zone,null,YES,null,null
+log_clinical_records,dosage_mg,numeric,null,YES,null,null
+log_clinical_records,dosage_route,character varying,20,YES,null,null
+log_clinical_records,batch_number,character varying,50,YES,null,null
+log_clinical_records,dose_administered_at,timestamp without time zone,null,YES,null,null
+log_clinical_records,onset_reported_at,timestamp without time zone,null,YES,null,null
+log_clinical_records,peak_intensity_at,timestamp without time zone,null,YES,null,null
+log_clinical_records,session_ended_at,timestamp without time zone,null,YES,null,null
+log_clinical_records,meq30_score,integer,null,YES,null,((meq30_score >= 0) AND (meq30_score <= 100))
+log_clinical_records,meq30_completed_at,timestamp without time zone,null,YES,null,null
+log_clinical_records,edi_score,integer,null,YES,null,((edi_score >= 0) AND (edi_score <= 100))
+log_clinical_records,edi_completed_at,timestamp without time zone,null,YES,null,null
+log_clinical_records,ceq_score,integer,null,YES,null,((ceq_score >= 0) AND (ceq_score <= 100))
+log_clinical_records,ceq_completed_at,timestamp without time zone,null,YES,null,null
+log_clinical_records,guide_user_id,uuid,null,YES,null,null
+log_clinical_records,session_notes,text,null,YES,null,null
+log_clinical_records,contraindication_verdict,text,null,YES,null,"(contraindication_verdict = ANY (ARRAY['CLEAR'::text, 'PROCEED_WITH_CAUTION'::text, 'DO_NOT_PROCEED'::text]))"
+log_clinical_records,contraindication_override_reason,text,null,YES,null,null
+log_clinical_records,contraindication_assessed_at,timestamp with time zone,null,YES,null,null
+log_clinical_records,session_type_id,integer,null,YES,null,null
+log_consent,id,bigint,null,NO,null,null
+log_consent,created_at,timestamp with time zone,null,NO,"timezone('utc'::text, now())",null
+log_consent,record_id,bigint,null,YES,null,null
+log_consent,verified,boolean,null,YES,null,null
+log_consent,timestamp,text,null,YES,null,null
+log_consent,type,text,null,YES,null,null
+log_consent,site_id,uuid,null,YES,null,null
+log_consent,verified_at,timestamp with time zone,null,YES,null,null
+log_consent,consent_type_id,integer,null,YES,null,null
+log_corrections,correction_id,uuid,null,NO,gen_random_uuid(),null
+log_corrections,source_table,text,null,NO,null,null
+log_corrections,source_row_id,uuid,null,NO,null,null
+log_corrections,field_name,text,null,NO,null,null
+log_corrections,old_value_json,jsonb,null,YES,null,null
+log_corrections,new_value_json,jsonb,null,NO,null,null
+log_corrections,correction_type,text,null,NO,null,"(correction_type = ANY (ARRAY['data_entry_error'::text, 'late_entry'::text, 'amendment'::text, 'withdrawal'::text]))"
+log_corrections,correction_reason,text,null,NO,null,((length(correction_reason) >= 10) AND (length(correction_reason) <= 500))
+log_corrections,corrected_by,uuid,null,YES,null,null
+log_corrections,site_id,uuid,null,YES,null,null
+log_corrections,corrected_at,timestamp with time zone,null,YES,now(),null
+log_corrections,approved_by,uuid,null,YES,null,null
+log_corrections,approved_at,timestamp with time zone,null,YES,null,null
+log_dose_events,id,bigint,null,NO,nextval('log_dose_events_id_seq'::regclass),null
+log_dose_events,session_id,uuid,null,NO,null,null
+log_dose_events,patient_id,character varying,20,NO,null,null
+log_dose_events,substance_id,bigint,null,NO,null,null
+log_dose_events,dose_mg,numeric,null,NO,null,(dose_mg > (0)::numeric)
+log_dose_events,weight_kg,numeric,null,NO,null,(weight_kg > (0)::numeric)
+log_dose_events,dose_mg_per_kg,numeric,null,YES,null,null
+log_dose_events,cumulative_mg,numeric,null,YES,null,null
+log_dose_events,cumulative_mg_per_kg,numeric,null,YES,null,null
+log_dose_events,event_type,character varying,10,NO,'booster'::character varying,"((event_type)::text = ANY ((ARRAY['initial'::character varying, 'booster'::character varying, 'rescue'::character varying])::text[]))"
+log_dose_events,administered_at,timestamp without time zone,null,NO,now(),null
+log_dose_events,created_at,timestamp without time zone,null,NO,now(),null
+log_feature_flags,id,bigint,null,NO,nextval('feature_flags_id_seq'::regclass),null
+log_feature_flags,flag_name,text,null,NO,null,null
+log_feature_flags,description,text,null,YES,null,null
+log_feature_flags,enabled_for_all,boolean,null,YES,false,null
+log_feature_flags,enabled_site_ids,ARRAY,null,YES,'{}'::uuid[],null
+log_feature_flags,enabled_user_ids,ARRAY,null,YES,'{}'::uuid[],null
+log_feature_flags,enabled_tiers,ARRAY,null,YES,'{}'::text[],null
+log_feature_flags,created_at,timestamp with time zone,null,NO,now(),null
+log_feature_flags,updated_at,timestamp with time zone,null,NO,now(),null
+log_feature_flags,created_by,uuid,null,YES,null,null
+log_feature_requests,request_id,integer,null,NO,nextval('log_feature_requests_request_id_seq'::regclass),null
+log_feature_requests,user_id,uuid,null,YES,null,null
+log_feature_requests,site_id,uuid,null,YES,null,null
+log_feature_requests,request_type,character varying,50,NO,null,null
+log_feature_requests,requested_text,text,null,NO,null,null
+log_feature_requests,category,character varying,50,YES,null,null
+log_feature_requests,status,character varying,20,YES,'pending'::character varying,null
+log_feature_requests,reviewed_by,uuid,null,YES,null,null
+log_feature_requests,reviewed_at,timestamp without time zone,null,YES,null,null
+log_feature_requests,rejection_reason,text,null,YES,null,null
+log_feature_requests,created_at,timestamp without time zone,null,YES,now(),null
+log_integration_sessions,integration_session_id,integer,null,NO,nextval('log_integration_sessions_integration_session_id_seq'::regclass),null
+log_integration_sessions,patient_id,character varying,20,NO,null,null
+log_integration_sessions,dosing_session_id,uuid,null,YES,null,null
+log_integration_sessions,integration_session_number,integer,null,NO,null,null
+log_integration_sessions,session_date,date,null,NO,null,null
+log_integration_sessions,session_duration_minutes,integer,null,YES,null,null
+log_integration_sessions,therapist_user_id,uuid,null,YES,null,null
+log_integration_sessions,attended,boolean,null,YES,true,null
+log_integration_sessions,created_at,timestamp without time zone,null,YES,now(),null
+log_integration_sessions,cancellation_reason_id,integer,null,YES,null,null
+log_integration_sessions,insight_integration_rating,integer,null,YES,null,((insight_integration_rating >= 1) AND (insight_integration_rating <= 5))
+log_integration_sessions,emotional_processing_rating,integer,null,YES,null,((emotional_processing_rating >= 1) AND (emotional_processing_rating <= 5))
+log_integration_sessions,behavioral_application_rating,integer,null,YES,null,((behavioral_application_rating >= 1) AND (behavioral_application_rating <= 5))
+log_integration_sessions,engagement_level_rating,integer,null,YES,null,((engagement_level_rating >= 1) AND (engagement_level_rating <= 5))
+log_integration_sessions,session_focus_ids,ARRAY,null,YES,null,(cardinality(session_focus_ids) <= 10)
+log_integration_sessions,homework_assigned_ids,ARRAY,null,YES,null,(cardinality(homework_assigned_ids) <= 10)
+log_integration_sessions,therapist_observation_ids,ARRAY,null,YES,null,(cardinality(therapist_observation_ids) <= 10)
+log_integration_sessions,patient_uuid,uuid,null,YES,null,null
+log_interventions,id,bigint,null,NO,null,null
+log_interventions,created_at,timestamp with time zone,null,NO,"timezone('utc'::text, now())",null
+log_interventions,site_id,uuid,null,YES,null,null
+log_interventions,status,text,null,YES,null,null
+log_interventions,demographics,jsonb,null,YES,null,null
+log_interventions,protocol,jsonb,null,YES,null,null
+log_interventions,context,jsonb,null,YES,null,null
+log_interventions,safety_events,jsonb,null,YES,null,null
+log_interventions,substance_id,bigint,null,YES,null,null
+log_interventions,support_modality_ids,ARRAY,null,YES,'{}'::bigint[],null
+log_interventions,session_id,uuid,null,YES,null,null
+log_interventions,intervention_type_id,integer,null,YES,null,null
+log_longitudinal_assessments,longitudinal_assessment_id,integer,null,NO,nextval('log_longitudinal_assessments_longitudinal_assessment_id_seq'::regclass),null
+log_longitudinal_assessments,patient_id,character varying,20,NO,null,null
+log_longitudinal_assessments,session_id,uuid,null,YES,null,null
+log_longitudinal_assessments,assessment_date,date,null,NO,null,null
+log_longitudinal_assessments,days_post_session,integer,null,YES,null,null
+log_longitudinal_assessments,phq9_score,integer,null,YES,null,((phq9_score >= 0) AND (phq9_score <= 27))
+log_longitudinal_assessments,gad7_score,integer,null,YES,null,((gad7_score >= 0) AND (gad7_score <= 21))
+log_longitudinal_assessments,whoqol_score,integer,null,YES,null,((whoqol_score >= 0) AND (whoqol_score <= 100))
+log_longitudinal_assessments,psqi_score,integer,null,YES,null,((psqi_score >= 0) AND (psqi_score <= 21))
+log_longitudinal_assessments,cssrs_score,integer,null,YES,null,((cssrs_score >= 0) AND (cssrs_score <= 5))
+log_longitudinal_assessments,completed_at,timestamp without time zone,null,YES,now(),null
+log_longitudinal_assessments,patient_uuid,uuid,null,YES,null,null
+log_outcomes,id,bigint,null,NO,null,null
+log_outcomes,created_at,timestamp with time zone,null,NO,"timezone('utc'::text, now())",null
+log_outcomes,record_id,bigint,null,YES,null,null
+log_outcomes,date,text,null,YES,null,null
+log_outcomes,score,integer,null,YES,null,null
+log_outcomes,type,text,null,YES,null,null
+log_outcomes,interpretation,text,null,YES,null,null
+log_outcomes,site_id,uuid,null,YES,null,null
+log_outcomes,observed_at,timestamp with time zone,null,YES,null,null
+log_patient_flow_events,id,uuid,null,NO,uuid_generate_v4(),null
+log_patient_flow_events,site_id,uuid,null,NO,null,null
+log_patient_flow_events,practitioner_id,uuid,null,YES,null,null
+log_patient_flow_events,patient_link_code_hash,text,null,NO,null,((patient_link_code_hash IS NULL) OR (patient_link_code_hash ~ '^[0-9a-f]{64}$'::text))
+log_patient_flow_events,event_type_id,bigint,null,NO,null,null
+log_patient_flow_events,event_at,timestamp with time zone,null,NO,null,null
+log_patient_flow_events,protocol_id,uuid,null,YES,null,null
+log_patient_flow_events,substance_id,bigint,null,YES,null,null
+log_patient_flow_events,route_id,bigint,null,YES,null,null
+log_patient_flow_events,support_modality_ids,ARRAY,null,YES,null,null
+log_patient_flow_events,source_table,text,null,YES,null,null
+log_patient_flow_events,source_id,uuid,null,YES,null,null
+log_patient_flow_events,notes,text,null,YES,null,null
+log_patient_flow_events,created_at,timestamp with time zone,null,YES,now(),null
+log_patient_flow_events,created_by,uuid,null,YES,null,null
+log_patient_flow_events,updated_at,timestamp with time zone,null,YES,now(),null
+log_patient_flow_events,justification_id,bigint,null,YES,null,null
+log_patient_site_links,id,bigint,null,NO,nextval('patient_site_links_id_seq'::regclass),null
+log_patient_site_links,patient_link_code,text,null,NO,null,null
+log_patient_site_links,site_id,uuid,null,NO,null,null
+log_patient_site_links,transferred_from_site_id,uuid,null,YES,null,null
+log_patient_site_links,transfer_date,timestamp with time zone,null,YES,null,null
+log_patient_site_links,transfer_reason,text,null,YES,null,null
+log_patient_site_links,is_active,boolean,null,YES,true,null
+log_patient_site_links,created_at,timestamp with time zone,null,NO,now(),null
+log_patient_site_links,updated_at,timestamp with time zone,null,NO,now(),null
+log_protocols,id,uuid,null,NO,gen_random_uuid(),null
+log_protocols,user_id,uuid,null,YES,null,null
+log_protocols,created_at,timestamp with time zone,null,YES,now(),null
+log_protocols,updated_at,timestamp with time zone,null,YES,now(),null
+log_protocols,name,text,null,NO,null,null
+log_protocols,substance,text,null,NO,null,null
+log_protocols,indication,text,null,YES,null,null
+log_protocols,status,text,null,YES,'draft'::text,null
+log_protocols,dosing_schedule,jsonb,null,YES,null,null
+log_protocols,safety_criteria,jsonb,null,YES,null,null
+log_protocols,outcome_measures,jsonb,null,YES,null,null
+log_protocols,notes,text,null,YES,null,null
+log_protocols,protocol_rationale_id,bigint,null,YES,null,null
+log_pulse_checks,pulse_check_id,integer,null,NO,nextval('log_pulse_checks_pulse_check_id_seq'::regclass),null
+log_pulse_checks,patient_id,character varying,20,NO,null,null
+log_pulse_checks,session_id,uuid,null,YES,null,null
+log_pulse_checks,check_date,date,null,NO,CURRENT_DATE,null
+log_pulse_checks,connection_level,integer,null,YES,null,((connection_level >= 1) AND (connection_level <= 5))
+log_pulse_checks,sleep_quality,integer,null,YES,null,((sleep_quality >= 1) AND (sleep_quality <= 5))
+log_pulse_checks,mood_level,integer,null,YES,null,((mood_level >= 1) AND (mood_level <= 5))
+log_pulse_checks,anxiety_level,integer,null,YES,null,((anxiety_level >= 1) AND (anxiety_level <= 5))
+log_pulse_checks,completed_at,timestamp without time zone,null,YES,now(),null
+log_pulse_checks,patient_uuid,uuid,null,YES,null,null
+log_red_alerts,red_alert_id,integer,null,NO,nextval('log_red_alerts_red_alert_id_seq'::regclass),null
+log_red_alerts,patient_id,character varying,20,NO,null,null
+log_red_alerts,alert_type,character varying,50,NO,null,null
+log_red_alerts,alert_severity,character varying,20,NO,null,null
+log_red_alerts,alert_triggered_at,timestamp without time zone,null,NO,now(),null
+log_red_alerts,trigger_value,jsonb,null,YES,null,null
+log_red_alerts,is_acknowledged,boolean,null,YES,false,null
+log_red_alerts,acknowledged_by_user_id,uuid,null,YES,null,null
+log_red_alerts,acknowledged_at,timestamp without time zone,null,YES,null,null
+log_red_alerts,is_resolved,boolean,null,YES,false,null
+log_red_alerts,resolved_at,timestamp without time zone,null,YES,null,null
+log_red_alerts,created_at,timestamp without time zone,null,YES,now(),null
+log_red_alerts,crisis_event_type_id,integer,null,YES,null,null
+log_red_alerts,severity_grade_fk,bigint,null,YES,null,null
+log_red_alerts,patient_uuid,uuid,null,YES,null,null
+log_safety_event_observations,id,integer,null,NO,nextval('log_safety_event_observations_id_seq'::regclass),null
+log_safety_event_observations,safety_event_id,text,null,YES,null,null
+log_safety_event_observations,observation_id,integer,null,YES,null,null
+log_safety_event_observations,created_at,timestamp without time zone,null,YES,now(),null
+log_safety_events,ae_id,text,null,NO,null,null
+log_safety_events,ae_id,text,null,NO,null,null
+log_safety_events,exposure_id,text,null,YES,null,null
+log_safety_events,event_id,text,null,YES,null,null
+log_safety_events,severity_grade_id,text,null,YES,null,null
+log_safety_events,causality_code,text,null,YES,null,null
+log_safety_events,resolution_status_id,text,null,YES,null,null
+log_safety_events,site_id,uuid,null,YES,null,null
+log_safety_events,session_id,uuid,null,YES,null,null
+log_safety_events,event_type,character varying,50,YES,null,null
+log_safety_events,meddra_code_id,integer,null,YES,null,null
+log_safety_events,intervention_type_id,integer,null,YES,null,null
+log_safety_events,is_resolved,boolean,null,YES,false,null
+log_safety_events,resolved_at,timestamp without time zone,null,YES,null,null
+log_safety_events,logged_by_user_id,uuid,null,YES,null,null
+log_safety_events,report_pdf_url,text,null,YES,null,null
+log_safety_events,report_generated_at,timestamp with time zone,null,YES,null,null
+log_safety_events,ctcae_grade,smallint,null,YES,null,((ctcae_grade >= 1) AND (ctcae_grade <= 5))
+log_session_observations,id,integer,null,NO,nextval('log_session_observations_id_seq'::regclass),null
+log_session_observations,session_id,uuid,null,YES,null,null
+log_session_observations,observation_id,integer,null,YES,null,null
+log_session_observations,created_at,timestamp without time zone,null,YES,now(),null
+log_session_timeline_events,timeline_event_id,uuid,null,NO,gen_random_uuid(),null
+log_session_timeline_events,session_id,uuid,null,YES,null,null
+log_session_timeline_events,event_timestamp,timestamp with time zone,null,NO,null,null
+log_session_timeline_events,event_type,character varying,50,NO,null,"((event_type)::text = ANY ((ARRAY['dose_admin'::character varying, 'vital_check'::character varying, 'patient_observation'::character varying, 'clinical_decision'::character varying, 'music_change'::character varying, 'touch_consent'::character varying, 'safety_event'::character varying, 'other'::character varying])::text[]))"
+log_session_timeline_events,event_type_id,integer,null,YES,null,null
+log_session_timeline_events,performed_by,uuid,null,YES,null,null
+log_session_timeline_events,metadata,jsonb,null,YES,null,null
+log_session_timeline_events,created_at,timestamp with time zone,null,YES,now(),null
+log_session_vitals,session_vital_id,integer,null,NO,nextval('log_session_vitals_session_vital_id_seq'::regclass),null
+log_session_vitals,session_id,uuid,null,YES,null,null
+log_session_vitals,recorded_at,timestamp without time zone,null,NO,null,null
+log_session_vitals,heart_rate,integer,null,YES,null,((heart_rate >= 40) AND (heart_rate <= 200))
+log_session_vitals,hrv,numeric,null,YES,null,null
+log_session_vitals,bp_systolic,integer,null,YES,null,((bp_systolic >= 60) AND (bp_systolic <= 250))
+log_session_vitals,bp_diastolic,integer,null,YES,null,((bp_diastolic >= 40) AND (bp_diastolic <= 150))
+log_session_vitals,oxygen_saturation,integer,null,YES,null,((oxygen_saturation >= 70) AND (oxygen_saturation <= 100))
+log_session_vitals,source,character varying,50,YES,null,null
+log_session_vitals,device_id,character varying,100,YES,null,null
+log_session_vitals,created_at,timestamp without time zone,null,YES,now(),null
+log_session_vitals,respiratory_rate,integer,null,YES,null,((respiratory_rate >= 0) AND (respiratory_rate <= 60))
+log_session_vitals,temperature,numeric,null,YES,null,((temperature >= 85.0) AND (temperature <= 115.0))
+log_session_vitals,diaphoresis_score,integer,null,YES,null,((diaphoresis_score >= 0) AND (diaphoresis_score <= 3))
+log_session_vitals,level_of_consciousness,character varying,20,YES,null,"((level_of_consciousness)::text = ANY ((ARRAY['alert'::character varying, 'verbal'::character varying, 'pain'::character varying, 'unresponsive'::character varying])::text[]))"
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_id,uuid,null,NO,gen_random_uuid(),null
+log_sites,site_name,text,null,NO,null,null
+log_sites,region,text,null,YES,null,null
+log_sites,created_at,timestamp with time zone,null,NO,now(),null
+log_sites,is_active,boolean,null,YES,true,null
+log_sites,site_type,text,null,YES,null,null
+log_subscriptions,id,uuid,null,NO,gen_random_uuid(),null
+log_subscriptions,site_id,uuid,null,NO,null,null
+log_subscriptions,stripe_customer_id,text,null,YES,null,null
+log_subscriptions,stripe_subscription_id,text,null,YES,null,null
+log_subscriptions,stripe_price_id,text,null,YES,null,null
+log_subscriptions,tier,text,null,NO,null,"(tier = ANY (ARRAY['solo'::text, 'clinic'::text, 'network'::text, 'research'::text, 'custom'::text]))"
+log_subscriptions,status,text,null,NO,null,"(status = ANY (ARRAY['active'::text, 'trialing'::text, 'past_due'::text, 'canceled'::text, 'incomplete'::text]))"
+log_subscriptions,current_period_start,timestamp with time zone,null,YES,null,null
+log_subscriptions,current_period_end,timestamp with time zone,null,YES,null,null
+log_subscriptions,trial_end,timestamp with time zone,null,YES,null,null
+log_subscriptions,canceled_at,timestamp with time zone,null,YES,null,null
+log_subscriptions,max_users,integer,null,YES,null,null
+log_subscriptions,max_sites,integer,null,YES,null,null
+log_subscriptions,max_records_per_month,integer,null,YES,null,null
+log_subscriptions,created_at,timestamp with time zone,null,NO,now(),null
+log_subscriptions,updated_at,timestamp with time zone,null,NO,now(),null
+log_system_events,event_id,bigint,null,NO,nextval('system_events_event_id_seq'::regclass),null
+log_system_events,actor_id,uuid,null,YES,null,null
+log_system_events,event_type,text,null,NO,null,null
+log_system_events,event_details,jsonb,null,YES,null,null
+log_system_events,event_status,text,null,YES,null,null
+log_system_events,created_at,timestamp with time zone,null,NO,now(),null
+log_system_events,ledger_hash,text,null,YES,null,null
+log_system_events,site_id,uuid,null,YES,null,null
+log_system_events,action_type_id,integer,null,YES,null,null
+log_usage_metrics,id,bigint,null,NO,nextval('usage_metrics_id_seq'::regclass),null
+log_usage_metrics,site_id,uuid,null,NO,null,null
+log_usage_metrics,metric_type,text,null,NO,null,"(metric_type = ANY (ARRAY['records_created'::text, 'users_active'::text, 'api_calls'::text, 'exports'::text, 'storage_mb'::text]))"
+log_usage_metrics,metric_type,text,null,NO,null,null
+log_usage_metrics,count,integer,null,NO,0,null
+log_usage_metrics,period_start,date,null,NO,null,null
+log_usage_metrics,period_end,date,null,NO,null,null
+log_usage_metrics,created_at,timestamp with time zone,null,NO,now(),null
+log_user_profiles,id,uuid,null,NO,gen_random_uuid(),null
+log_user_profiles,user_id,uuid,null,NO,null,null
+log_user_profiles,created_at,timestamp with time zone,null,YES,now(),null
+log_user_profiles,role_id,integer,null,YES,3,null
+log_user_saved_views,id,uuid,null,NO,uuid_generate_v4(),null
+log_user_saved_views,user_id,uuid,null,NO,null,null
+log_user_saved_views,view_name,text,null,NO,null,null
+log_user_saved_views,deep_dive_page,text,null,NO,null,null
+log_user_saved_views,filter_state,jsonb,null,NO,null,null
+log_user_saved_views,is_default,boolean,null,YES,false,null
+log_user_saved_views,created_at,timestamp with time zone,null,YES,now(),null
+log_user_saved_views,updated_at,timestamp with time zone,null,YES,now(),null
+log_user_sites,user_id,uuid,null,NO,null,null
+log_user_sites,site_id,uuid,null,NO,null,null
+log_user_sites,role,text,null,NO,null,"(role = ANY (ARRAY['network_admin'::text, 'site_admin'::text, 'clinician'::text, 'analyst'::text, 'auditor'::text]))"
+log_user_sites,is_active,boolean,null,YES,true,null
+log_user_subscriptions,id,uuid,null,NO,uuid_generate_v4(),null
+log_user_subscriptions,user_id,uuid,null,NO,null,null
+log_user_subscriptions,stripe_customer_id,text,null,NO,null,null
+log_user_subscriptions,stripe_subscription_id,text,null,NO,null,null
+log_user_subscriptions,tier,text,null,NO,null,"(tier = ANY (ARRAY['solo'::text, 'clinic'::text, 'enterprise'::text]))"
+log_user_subscriptions,status,text,null,NO,null,"(status = ANY (ARRAY['active'::text, 'trialing'::text, 'past_due'::text, 'canceled'::text, 'incomplete'::text, 'incomplete_expired'::text, 'unpaid'::text]))"
+log_user_subscriptions,trial_end,timestamp with time zone,null,YES,null,null
+log_user_subscriptions,current_period_end,timestamp with time zone,null,NO,null,null
+log_user_subscriptions,cancel_at_period_end,boolean,null,YES,false,null
+log_user_subscriptions,created_at,timestamp with time zone,null,YES,now(),null
+log_user_subscriptions,updated_at,timestamp with time zone,null,YES,now(),null
+log_vocabulary_requests,request_id,uuid,null,NO,gen_random_uuid(),null
+log_vocabulary_requests,site_id,uuid,null,YES,null,null
+log_vocabulary_requests,requesting_user,uuid,null,YES,null,null
+log_vocabulary_requests,target_ref_table,text,null,NO,null,null
+log_vocabulary_requests,proposed_label,text,null,NO,null,null
+log_vocabulary_requests,proposed_category,text,null,YES,null,null
+log_vocabulary_requests,clinical_rationale,text,null,YES,null,null
+log_vocabulary_requests,status,text,null,NO,'pending'::text,"(status = ANY (ARRAY['pending'::text, 'under_review'::text, 'approved'::text, 'rejected'::text]))"
+log_vocabulary_requests,request_count,integer,null,YES,1,null
+log_vocabulary_requests,requesting_sites,ARRAY,null,YES,null,null
+log_vocabulary_requests,advisory_notes,text,null,YES,null,null
+log_vocabulary_requests,created_at,timestamp with time zone,null,YES,now(),null
+log_vocabulary_requests,reviewed_at,timestamp with time zone,null,YES,null,null
+log_vocabulary_requests,converted_to_ref_id,bigint,null,YES,null,null
+log_waitlist,id,uuid,null,NO,gen_random_uuid(),null
+log_waitlist,created_at,timestamp with time zone,null,YES,now(),null
+log_waitlist,first_name,text,null,NO,null,null
+log_waitlist,email,text,null,NO,null,null
+log_waitlist,practitioner_type,text,null,NO,null,null
+log_waitlist,source,text,null,YES,'landing_page'::text,null

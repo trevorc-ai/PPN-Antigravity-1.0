@@ -29,7 +29,7 @@ This question was deferred from WO-413. The Notes column has been **removed from
 |---|---|
 | Notes are **never persisted** (ephemeral in-session only) | Zero PHI risk — data evaporates on session end. Simple. |
 | Notes are **persisted to a `log_` table** as free text | **Direct PHI violation** — our architecture forbids free-text clinical notes per the Global Constitution. Requires redesign. |
-| Notes are **persisted as a coded reference** (e.g., "symptom_reported" FK to `ref_qt_observations`) | Compliant — but requires SOOP to define the reference table and limits expressivity. |
+| Notes are **persisted as a coded reference** (e.g., "symptom_reported" FK to `ref_qt_observations`) | Compliant — but requires INSPECTOR (with USER approval) to define the reference table and limits expressivity. |
 | Notes are **exported-only** (printed at session end, never stored) | Compliant if never written to DB, but needs a client-side print/export function. |
 
 ---
@@ -37,14 +37,14 @@ This question was deferred from WO-413. The Notes column has been **removed from
 ## What LEAD Needs to Decide
 
 1. **Do we ever persist QT observation notes?** Yes / No / Export-only.
-2. **If yes** — reference-coded only (SOOP to build `ref_qt_observations`) or free-text export that is never stored?
+2. **If yes** — reference-coded only (INSPECTOR to author `ref_qt_observations` migration, USER to approve) or free-text export that is never stored?
 3. **Timing** — is this a sprint blocker, or can the Notes field stay excluded through the Dr. Allen pilot and be revisited post-Friday?
 
 ---
 
 ## PRODDY Recommendation (Non-Binding)
 
-Recommend **export-only**: the Notes field renders in-session, facilitator types, and the content is included in any session PDF/print export but is never written to Supabase. This preserves clinical expressivity, eliminates PHI risk entirely, and requires no SOOP migration.
+Recommend **export-only**: the Notes field renders in-session, facilitator types, and the content is included in any session PDF/print export but is never written to Supabase. This preserves clinical expressivity, eliminates PHI risk entirely, and requires no database migration.
 
 LEAD and INSPECTOR to confirm before BUILDER implements.
 
