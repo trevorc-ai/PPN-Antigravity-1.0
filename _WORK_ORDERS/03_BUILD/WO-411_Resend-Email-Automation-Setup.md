@@ -1,7 +1,7 @@
 ---
 id: WO-411
-status: 04_QA
-owner: INSPECTOR
+status: 03_BUILD
+owner: BUILDER
 cue_verified: true
 cue_note: "Ticket complete. Part 1 (Steps 1-3) requires Trevor to complete Resend account + domain setup first. Parts 2-4 route to BUILDER once API key is in hand."
 priority: P1
@@ -10,6 +10,7 @@ created: 2026-02-24
 parent_ticket: WO-408
 sprint: Sprint 2
 tags: [email, resend, supabase, webhook, edge-function, builder]
+blocked_on: "Trevor must complete DNS verification + Resend API key before INSPECTOR can verify email delivery. Edge function exists in supabase/functions/send-waitlist-welcome/. INSPECTOR hold — not a code failure."
 ---
 
 ## LEAD ARCHITECTURE

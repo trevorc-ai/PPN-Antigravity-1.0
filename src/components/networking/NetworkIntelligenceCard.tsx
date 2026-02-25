@@ -95,7 +95,7 @@ const NetworkIntelligenceCard: React.FC<NetworkIntelligenceCardProps> = ({
                             aria-hidden="true"
                         />
                     </div>
-                    <h3 className="ppn-card-title text-amber-300 uppercase tracking-widest text-sm">
+                    <h3 className="ppn-card-title text-amber-300 uppercase tracking-widest">
                         🩺 Network Intelligence
                     </h3>
                 </div>
