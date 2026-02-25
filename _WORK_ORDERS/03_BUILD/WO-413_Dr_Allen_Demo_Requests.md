@@ -258,3 +258,24 @@ The following were identified in the transcript gap analysis and **explicitly de
 | Safari/iPad cross-browser QA formal ticket (WO-416) | Resolved inline. No separate ticket needed. |
 | Aggregated data education layer | Not a new feature — is the Global Benchmark Intelligence layer already in roadmap |
 | Predictive text aggregator ("Other" fields) | Baked into future `ref_picker` component spec — not this sprint |
+
+---
+
+## BUILDER Status Notes — 2026-02-25
+
+### Micro-Tasks Audited
+
+| Task | Status | Notes |
+|------|--------|-------|
+| **MT-1: EKG Field in Baseline Vitals** | ✅ COMPLETE (prior sprint) | `EKGComponent.tsx` exists and is integrated in `SessionVitalsForm`. Wires to `ref_ekg_rhythms` table from Supabase via `useReferenceData`. |
+| **MT-2: Patient Weight kg Conversion** | ✅ COMPLETE (prior sprint) | `Tab1_PatientInfo.tsx` uses a `ButtonGroup` with kg-range options (< 50 kg, 50-60 kg, ...). No raw number entry. |
+| **MT-3: Consent Acknowledgment UX Polish** | ✅ COMPLETE (already present) | `ConsentForm.tsx` lines 244-247 already contain: *"Your paper or digital consent form is stored in your own records. PPN Portal logs the acknowledgment and timestamp only — it is not a document storage system."* |
+| **PRD B: QT Interval Tracker** | ✅ COMPLETE (prior sprint) | `QTIntervalTracker.tsx` exists with dual-device rows, delta calculation, `[STATUS: DIVERGENCE]` label, configurable `divergenceThresholdMs` prop. |
+| **PRD A: Cumulative Dose Calculator** | ⚠️ BLOCKED | Waiting on INSPECTOR to signal `log_dose_events` migration complete in Docker test DB (per WO-413 architectural decision Q3). |
+| **MT-1: ref_ekg_rhythms migration** | ✅ COMPLETE | Migration was confirmed by INSPECTOR in prior sprint. |
+
+### WO-343 (NetworkIntelligenceCard)
+- ✅ COMPLETE — moved to `04_QA/`
+
+### Remaining BUILDER Work on WO-413
+When INSPECTOR signals `log_dose_events` migration complete, BUILDER will wire `CumulativeDoseCalculator` DB persist calls. No other BUILDER blockers remain.

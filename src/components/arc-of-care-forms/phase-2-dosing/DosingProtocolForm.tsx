@@ -5,6 +5,7 @@ import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationMo
 import { FormFooter } from '../shared/FormFooter';
 import { useReferenceData } from '../../../hooks/useReferenceData';
 import { runContraindicationEngine } from '../../../services/contraindicationEngine';
+import NetworkIntelligenceCard from '../../networking/NetworkIntelligenceCard';
 
 /**
  * DosingProtocolForm - Substance Administration Details
@@ -202,6 +203,16 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                         </div>
                     ))}
                 </div>
+            )}
+
+            {/* ── Network Intelligence (WO-343) — renders after warnings with 300ms fade ── */}
+            {hasContraindications && contraindicationResult && (
+                <NetworkIntelligenceCard
+                    activeWarnings={[
+                        ...contraindicationResult.absoluteFlags.map(f => f.id),
+                        ...contraindicationResult.relativeFlags.map(f => f.id),
+                    ]}
+                />
             )}
 
             {/* Form Grid */}

@@ -1,6 +1,6 @@
 ---
-status: 03_BUILD
-owner: BUILDER
+status: 04_QA
+owner: INSPECTOR
 failure_count: 0
 created: 2026-02-23
 priority: P0 — DEMO BLOCKER (Wednesday Dr. Allen demo)
@@ -145,3 +145,32 @@ on the external domain with "Practitioner Network — Coming Soon" is sufficient
 
 *Spec authored by PRODDY — 2026-02-23*
 *Deadline: Wednesday 2026-02-26 (Dr. Allen demo)*
+
+---
+
+## BUILDER Implementation Notes — 2026-02-25
+
+**[STATUS: COMPLETE — READY FOR INSPECTOR QA]**
+
+### Files Created
+- `src/components/networking/NetworkIntelligenceCard.tsx` — new standalone component
+
+### Files Modified
+- `src/components/arc-of-care-forms/phase-2-dosing/DosingProtocolForm.tsx`
+  - Added `import NetworkIntelligenceCard`
+  - Wired component below the contraindication flags block, conditional on `hasContraindications && contraindicationResult`
+  - Passes `activeWarnings` as the combined list of absolute + relative flag IDs
+
+### AC Compliance
+- ✅ AC-1: Renders only when `hasContraindications === true` in `DosingProtocolForm`. Renders nothing if `activeWarnings` is empty.
+- ✅ AC-2: Shows network count from static `NETWORK_COUNTS` lookup map keyed on flag IDs (lithium=4, ssri=7, maoi=3, default=2). Link routes to `https://ppnportal.com/practitioners?contraindication=[slug]`. Opens in new tab with `rel="noopener noreferrer"`. Opt-in footnote present.
+- ✅ AC-3: Amber/gold card tint distinct from red warning above. `Users` icon from lucide-react. Font sizes: header `ppn-card-title` (18px), body `ppn-body` (15px), footnote `ppn-meta` (12px ✅). Fade-in with 300ms `setTimeout` delay via `useEffect`.
+- ✅ AC-4: Zero Supabase queries. No new DB tables.
+- ✅ AC-5: Descriptive `aria-label` on CTA link. `role="complementary"` on outer wrapper. No color-only meaning (icon + text present). `target="_blank"` with `rel="noopener noreferrer"`.
+
+### Demo Trigger Instructions (for Jason)
+1. Navigate to Phase 2 → Dosing Protocol form
+2. Select **Psilocybin** as the substance (demo patient has Sertraline tapering in medications)
+3. The SSRI relative contraindication card fires
+4. The Network Intelligence card fades in 300ms later below it showing 7 practitioners
+
