@@ -60,11 +60,13 @@ export interface SessionVitalData {
 export interface TimelineEventData {
     session_id: string;
     event_timestamp: string;
-    event_type: string;
+    // Must match log_session_timeline_events.event_type CHECK constraint
+    event_type?: 'dose_admin' | 'vital_check' | 'patient_observation' | 'clinical_decision' | 'music_change' | 'touch_consent' | 'safety_event' | 'other';
     event_type_id?: number;
     performed_by?: string;
     metadata?: Record<string, unknown>;
 }
+
 
 export interface IntegrationSessionData {
     patient_id: string;
@@ -315,18 +317,33 @@ export async function createSessionObservation(sessionId: string, observationId:
     }
 }
 
+// Valid values for log_session_timeline_events.event_type CHECK constraint
+const VALID_TIMELINE_EVENT_TYPES = new Set([
+    'dose_admin', 'vital_check', 'patient_observation',
+    'clinical_decision', 'music_change', 'touch_consent',
+    'safety_event', 'other',
+]);
+
 /** Records a timeline event. Maps to log_session_timeline_events. */
 export async function createTimelineEvent(data: TimelineEventData) {
+    // Resolve event_type string — must satisfy CHECK constraint in live schema.
+    // Falls back to 'other' for any unrecognized value. event_type is NOT NULL.
+    const resolvedEventType = (
+        data.event_type && VALID_TIMELINE_EVENT_TYPES.has(data.event_type)
+            ? data.event_type
+            : 'other'
+    );
+
     try {
         const { data: result, error } = await supabase
             .from('log_session_timeline_events')
             .insert([{
                 session_id: data.session_id,
                 event_timestamp: data.event_timestamp,
-                // event_type (free text) removed — use event_type_id FK to ref_flow_event_types
-                event_type_id: data.event_type_id,
-                performed_by: data.performed_by, // user UUID — acceptable reference ID
-                // metadata JSON blob removed — no free text allowed in log tables
+                event_type: resolvedEventType,               // NOT NULL CHECK ✅ — migration 066 DEFAULT 'other'
+                event_type_id: data.event_type_id ?? null,  // INTEGER FK → ref_flow_event_types (optional)
+                performed_by: data.performed_by ?? null,     // UUID FK → auth.users
+                // metadata: intentionally omitted — no free-text JSON blobs in log tables
             }])
             .select()
             .single();

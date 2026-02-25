@@ -124,18 +124,21 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                     .eq('event_code', eventType)
                     .single();
 
-                const severityLabel =
+                // Derive severity from ref tier — must match CHECK constraint values
+                const severityLabel: 'mild' | 'moderate' | 'severe' =
                     refRow?.severity_tier === 3 ? 'severe' :
                         refRow?.severity_tier === 2 ? 'moderate' : 'mild';
 
                 await supabase.from('log_red_alerts').insert({
-                    session_id: sessionId,
-                    crisis_event_type_id: refRow?.id ?? null,   // INTEGER FK ✅
-                    alert_severity: severityLabel,               // legacy NOT NULL column — FK migration in Wave 2
+                    session_id: sessionId,                       // UUID FK → log_clinical_records ✅
+                    crisis_event_type_id: refRow?.id ?? null,   // INTEGER FK → ref_crisis_event_types ✅
+                    alert_severity: severityLabel,               // CHECK ('mild','moderate','severe') ✅ migration 066
                     alert_triggered_at: loggedAt.toISOString(),
                     trigger_value: { seconds_since_ingestion: seconds },
                     is_acknowledged: false,
                     is_resolved: false,
+                    // patient_id: nullable per migration 066 — CrisisLogger has session context only
+                    // alert_type: nullable per migration 066 — replaced by crisis_event_type_id FK
                 });
             } catch {
                 // Silently continue — local state is the source of truth during crisis
