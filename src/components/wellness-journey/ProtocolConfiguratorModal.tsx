@@ -218,15 +218,37 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                 </div>
 
                                 <div>
-                                    <label htmlFor="intake-weight" className="block text-sm font-semibold text-slate-300 mb-2">Weight (kg)</label>
-                                    <input
-                                        id="intake-weight"
-                                        type="number"
-                                        placeholder="e.g. 68"
-                                        value={weight}
-                                        onChange={e => setWeight(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
-                                    />
+                                    <label htmlFor="intake-weight" className="block text-sm font-semibold text-slate-300 mb-2">
+                                        Weight
+                                        <AdvancedTooltip
+                                            content="Enter weight in kilograms (kg). To convert from pounds: divide lbs by 2.205. Example: 150 lbs ÷ 2.205 = 68 kg. All mg/kg dosing calculations use this value."
+                                            tier="standard"
+                                            type="info"
+                                            side="bottom"
+                                        >
+                                            <span className="ml-1.5 text-slate-500 cursor-help text-xs font-normal">(kg) ⓘ</span>
+                                        </AdvancedTooltip>
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            id="intake-weight"
+                                            type="number"
+                                            min="20"
+                                            max="300"
+                                            step="0.1"
+                                            placeholder="e.g. 68"
+                                            value={weight}
+                                            onChange={e => setWeight(e.target.value)}
+                                            className="w-full px-4 py-2.5 pr-10 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                        />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">kg</span>
+                                    </div>
+                                    {/* Live lbs equivalent — prevents lbs/kg entry error */}
+                                    {weight && !isNaN(parseFloat(weight)) && parseFloat(weight) > 0 && (
+                                        <p className="mt-1 text-xs text-slate-500">
+                                            ≈ {(parseFloat(weight) * 2.205).toFixed(1)} lbs
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="sm:col-span-2">

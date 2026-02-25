@@ -3,6 +3,8 @@ import { Heart, Activity, Droplet, Clock, Save, Plus, Trash2, CheckCircle, Wind,
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
 import { FormFooter } from '../shared/FormFooter';
+import { QTIntervalTracker } from '../../arc-of-care/QTIntervalTracker';
+import { useProtocol } from '../../../contexts/ProtocolContext';
 
 /**
  * SessionVitalsForm - Real-Time Vital Signs Tracking
@@ -61,6 +63,8 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     onExit,
     onBack
 }) => {
+    const { config } = useProtocol();
+    const showQTTracker = config.enabledFeatures.includes('session-vitals');
     // Auto-stamp recorded_at on first render
     function nowStamp(): string {
         const d = new Date();
@@ -572,6 +576,18 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </div>
                             </div>
                         </div>
+
+                        {/* QT Interval Tracker — Phase 2 cardiac monitoring (WO-413 PRD B)
+                            Shown on last reading block only. Mounts when session-vitals is enabled. */}
+                        {showQTTracker && index === readings.length - 1 && (
+                            <div className="pt-4 border-t border-amber-500/15">
+                                <QTIntervalTracker
+                                    divergenceThresholdMs={50} /* TODO: clinically pending Dr. Allen reply — WO-413 */
+                                    deviceALabel="Device A"
+                                    deviceBLabel="Device B"
+                                />
+                            </div>
+                        )}
 
                         {/* Recorded At + Add Another Reading (inline) */}
                         <div className="flex items-end gap-3 pt-4 border-t border-slate-700/50">

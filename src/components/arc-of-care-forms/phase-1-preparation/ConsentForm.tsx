@@ -241,6 +241,10 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                                 informed of the treatment, risks, benefits, and alternatives, and
                                 has voluntarily agreed to proceed.
                             </p>
+                            <p className="text-xs text-slate-500 mt-1.5">
+                                Your paper or digital consent form is stored in your own records.
+                                PPN Portal logs the acknowledgment and timestamp only — it is not a document storage system.
+                            </p>
                         </div>
                     </label>
                 </div>
