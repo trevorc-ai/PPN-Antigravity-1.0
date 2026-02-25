@@ -72,21 +72,20 @@ CREATE POLICY "ref_weight_ranges_read"
     ON public.ref_weight_ranges FOR SELECT
     TO authenticated USING (true);
 
--- ── updated_at trigger (matches migration 012 pattern) ────────
--- Only create if the update_updated_at_column function exists
+-- ── updated_at trigger ─────────────────────────────────────────
+-- Uses EXCEPTION handler — safer than pg_proc pre-check which
+-- doesn't account for search_path resolution at trigger registration time.
 DO $$
 BEGIN
-    IF EXISTS (
-        SELECT 1 FROM pg_proc WHERE proname = 'update_updated_at_column'
-    ) THEN
-        -- Drop existing trigger if it exists from migration 012
-        DROP TRIGGER IF EXISTS update_ref_weight_ranges_updated_at
-            ON public.ref_weight_ranges;
+    DROP TRIGGER IF EXISTS update_ref_weight_ranges_updated_at
+        ON public.ref_weight_ranges;
 
-        CREATE TRIGGER update_ref_weight_ranges_updated_at
-            BEFORE UPDATE ON public.ref_weight_ranges
-            FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-    END IF;
+    CREATE TRIGGER update_ref_weight_ranges_updated_at
+        BEFORE UPDATE ON public.ref_weight_ranges
+        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+EXCEPTION
+    WHEN undefined_function THEN
+        NULL; -- function not available in this environment, skip gracefully
 END $$;
 
 -- ── Verification ──────────────────────────────────────────────

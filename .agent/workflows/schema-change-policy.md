@@ -4,6 +4,17 @@ description: Policy for making database schema changes
 
 # Schema Change Policy
 
+## 🚨 RULE ZERO — DOCKER-FIRST EXECUTION (NON-NEGOTIABLE)
+
+**All migrations MUST be tested in the local Docker Supabase instance before touching the cloud database.**
+
+This rule was established after a catastrophic destructive migration passed INSPECTOR review and
+nearly destroyed live clinical data. See: `.agent/workflows/migration-execution-protocol.md`
+
+**INSPECTOR must REJECT any ticket where this step was skipped. No exceptions. No shortcuts.**
+
+---
+
 ## ⚠️ CRITICAL: Schema is Currently LOCKED
 
 The database schema was stabilized on 2026-02-15 after critical remediation work. 
