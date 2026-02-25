@@ -1,6 +1,0 @@
-meddra_code_id,meddra_code,preferred_term,system_organ_class,severity_level,description,is_active,created_at
-1,10028813,Nausea,Gastrointestinal disorders,mild,,true,2026-02-16 14:31:00.981134
-2,10033772,Panic attack,Psychiatric disorders,moderate,,true,2026-02-16 14:31:00.981134
-3,10019211,Hypertension,Vascular disorders,moderate,,true,2026-02-16 14:31:00.981134
-4,10013968,Dizziness,Nervous system disorders,mild,,true,2026-02-16 14:31:00.981134
-5,10002026,Anxiety,Psychiatric disorders,moderate,,true,2026-02-16 14:31:00.981134
