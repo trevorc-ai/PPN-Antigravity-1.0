@@ -147,7 +147,8 @@ export async function createClinicalSession(
                 site_id: siteId,
                 practitioner_id: user.id,          // UUID FK — authenticated user ✅
                 session_date: new Date().toISOString().split('T')[0],
-                session_type: 'preparation',        // NOT NULL — set at creation; updated as session progresses
+                session_type: 'preparation',        // DEPRECATED VARCHAR — kept for read compatibility
+                session_type_id: 1,                 // FK → ref_session_types(id=1, PREPARATION) ✅ migration 067
             }])
             .select('id')
             .single();
