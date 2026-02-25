@@ -117,6 +117,7 @@ agents:
       1a. PRD REVIEW: Also scan `_WORK_ORDERS/01_TRIAGE/` for tickets where `owner: LEAD`
           and the body contains `## PRODDY PRD`. If found, run the /proddy-review workflow
           BEFORE LEAD proceeds to architecture. Route result back to frontmatter.
+    
       2. AUDIT — VISUAL & ACCESSIBILITY:
          - Fonts >= 12px? No color-only meaning? Responses start/end with `==== [AGENT NAME] ====`?
          - Security: No PHI? RLS enabled? No free-text patient inputs?

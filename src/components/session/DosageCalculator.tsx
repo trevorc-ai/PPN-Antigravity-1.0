@@ -57,17 +57,15 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({ sessionId, o
         setError(null);
 
         try {
-            const { error: insertError } = await supabase
-                .from('log_doses')
-                .insert({
-                    session_id: sessionId,
-                    substance_id: selectedSubstanceId,
-                    weight_grams: weight,
-                    potency_modifier: potencyModifier,
-                    effective_dose_mg: effectiveDoseMg
-                });
-
-            if (insertError) throw insertError;
+            // TODO (WO-420 Item 6): Wire to log_dose_events when this component
+            // is promoted to production. Current table name 'log_doses' does not exist.
+            // Correct table: log_dose_events
+            // Required fields: session_id, patient_id (NOT NULL), substance_id,
+            //   dose_mg, weight_kg, event_type IN ('initial','booster','rescue')
+            // patient_id prop must be added to DosageCalculatorProps before wiring.
+            // DEV-ONLY: component currently only rendered in ComponentShowcase.tsx.
+            // -- INSPECTOR 2026-02-25
+            console.log('[DosageCalculator] TODO: persist to log_dose_events — see WO-420 Item 6');
 
             // Success - reset form
             setSelectedSubstanceId(null);
