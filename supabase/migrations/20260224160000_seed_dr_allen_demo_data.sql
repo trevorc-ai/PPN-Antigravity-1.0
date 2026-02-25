@@ -47,21 +47,21 @@ BEGIN
     SELECT substance_id INTO v_substance_ketamine FROM public.ref_substances WHERE substance_name ILIKE '%Ketamine%' LIMIT 1;
 
     -- 5. Seed Pristine, Highly Compliant Clinical Records (Dashboards)
-    -- PT-A001: Dr. Allen Demo - MDMA Protocol
+    -- Dr. Allen Demo - MDMA Protocol
     INSERT INTO public.log_clinical_records
         (id, practitioner_id, patient_link_code, site_id, substance_id, session_date, session_number, session_type)
     VALUES
-        (v_session_a, v_user_uuid, 'PT-ALLEN-001', v_site_alpha, COALESCE(v_substance_mdma, 1), CURRENT_DATE - INTERVAL '14 days', 1, 'Dosing Session'),
-        (v_session_b, v_user_uuid, 'PT-ALLEN-002', v_site_alpha, COALESCE(v_substance_psilocybin, 2), CURRENT_DATE - INTERVAL '30 days', 1, 'Dosing Session'),
-        (v_session_c, v_user_uuid, 'PT-ALLEN-003', v_site_alpha, COALESCE(v_substance_ketamine, 3), CURRENT_DATE, 1, 'Preparation');
+        (v_session_a, v_user_uuid, 'PT-XQY4A9', v_site_alpha, COALESCE(v_substance_mdma, 1), CURRENT_DATE - INTERVAL '14 days', 1, 'Dosing Session'),
+        (v_session_b, v_user_uuid, 'PT-BZT8M2', v_site_alpha, COALESCE(v_substance_psilocybin, 2), CURRENT_DATE - INTERVAL '30 days', 1, 'Dosing Session'),
+        (v_session_c, v_user_uuid, 'PT-KLV7P5', v_site_alpha, COALESCE(v_substance_ketamine, 3), CURRENT_DATE, 1, 'Preparation');
 
     -- 6. Add rich dashboard context data
     -- (Baseline Assessments map risk factors on the UI)
     INSERT INTO public.log_baseline_assessments (patient_id, patient_uuid, site_id, assessment_date, phq9_score, gad7_score)
     VALUES
-        ('PT-ALLEN-001', gen_random_uuid(), v_site_alpha, CURRENT_DATE - INTERVAL '14 days', 18, 15),
-        ('PT-ALLEN-002', gen_random_uuid(), v_site_alpha, CURRENT_DATE - INTERVAL '30 days', 22, 19),
-        ('PT-ALLEN-003', gen_random_uuid(), v_site_alpha, CURRENT_DATE, 14, 12);
+        ('PT-XQY4A9', gen_random_uuid(), v_site_alpha, CURRENT_DATE - INTERVAL '14 days', 18, 15),
+        ('PT-BZT8M2', gen_random_uuid(), v_site_alpha, CURRENT_DATE - INTERVAL '30 days', 22, 19),
+        ('PT-KLV7P5', gen_random_uuid(), v_site_alpha, CURRENT_DATE, 14, 12);
 
     RAISE NOTICE 'Demo Data successfully initialized for Dr. Allen!';
 END $$;
