@@ -238,9 +238,11 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     const handleSafetyEventSave = useCallback(async (data: SafetyAndAdverseEventData) => {
         if (!sessionId) return; // silent
+        // Pass event_type display label — clinicalLog.ts maps it to safety_event_type_id FK
+        // via SAFETY_EVENT_TYPE_ID lookup table (WO-420 Item 1, migration 071b)
         const result = await createSessionEvent({
             session_id: sessionId,
-            event_type: data.event_type ?? 'other',
+            event_type: data.event_type ?? 'Other', // SAFETY_EVENT_TYPE_ID lookup fallback = 13 (OTHER)
             severity_grade_id: data.severity_grade?.toString(),
             is_resolved: data.resolved,
         });
@@ -249,6 +251,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     const handleRescueProtocolSave = useCallback(async (data: RescueProtocolData) => {
         if (!sessionId) return; // silent — Rescue form auto-saves immediately, session may not exist yet
+        // 'rescue' maps to safety_event_type_id = 13 (OTHER) via SAFETY_EVENT_TYPE_ID in clinicalLog.ts
         const result = await createSessionEvent({
             session_id: sessionId,
             event_type: 'rescue',

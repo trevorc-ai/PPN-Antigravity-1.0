@@ -1,9 +1,10 @@
 ---
 status: 04_QA
-owner: LEAD
+owner: INSPECTOR
 failure_count: 0
 created: 2026-02-25
-session_closed: true
+phase2_started: 2026-02-25
+session_closed: false
 ---
 
 # WO-420: Database Integrity Cleanup — Phase 2 Handoff
@@ -334,3 +335,106 @@ Per the INSPECTOR rule added 2026-02-25:
 ---
 
 *Artifact created: 2026-02-25T11:02 PST — End of database integrity cleanup Phase 1 session.*
+
+---
+
+## LEAD ARCHITECTURE — Phase 2 Execution Session (2026-02-25T13:40 PST)
+
+### Architectural Findings Before Execution
+
+**CRITICAL CORRECTION TO ITEM 2:**
+The WO-420 ticket stated `log_protocols.substance TEXT` and `log_protocols.indication TEXT` store free-text. This is correct for `log_protocols`. However, the `ProtocolBuilder.tsx` page **writes to `log_clinical_records`** (not `log_protocols`). `log_clinical_records` already has `indication_id` and `substance_id` as integer FK columns (confirmed via `ProtocolFormData` interface and `handleSubmit` — these were already wired pre-Phase 2). Migration 072 therefore targets `log_protocols` only — no code changes needed for ProtocolBuilder.
+
+**ITEM 1 CLARIFICATION:**
+`createSessionEvent()` in `clinicalLog.ts` was previously NOT writing `event_type` text (line 279 stated `// event_type (free text) removed`), but `safety_event_type_id` FK also wasn't being written. The column didn't exist yet. Post-071b and this code fix, `safety_event_type_id` FK is now resolved and written.
+
+---
+
+## BUILDER IMPLEMENTATION COMPLETE
+
+### Migration Files Written
+
+| File | Purpose | Status |
+|---|---|---|
+| `migrations/071a_populate_ref_safety_events_event_code.sql` | Populate ref_safety_events.event_code for all 13 rows | ✅ Written — awaiting USER execution |
+| `migrations/071b_add_safety_event_type_id_fk.sql` | ADD COLUMN safety_event_type_id FK + DROP chk_safety_events_event_type | ✅ Written — awaiting USER execution |
+| `migrations/072_add_substance_indication_fks_to_log_protocols.sql` | ADD COLUMN substance_id + indication_id to log_protocols | ✅ Written — awaiting USER execution |
+| `migrations/073_add_justification_code_id_fk.sql` | ADD COLUMN justification_code_id to log_clinical_records | ✅ Written — awaiting USER execution |
+| `migrations/074_add_destruction_witness_id_fk.sql` | ADD COLUMN destruction_witness_id UUID FK to log_chain_of_custody | ✅ Written — awaiting USER execution |
+
+### Code Changes — `src/services/clinicalLog.ts`
+
+- `SessionEventData` interface: `event_type` field made optional (deprecated), `safety_event_type_id?: number` FK field added
+- `SAFETY_EVENT_TYPE_ID` lookup map added (display label → ref_safety_events integer PK)
+- `createSessionEvent()` now resolves and writes `safety_event_type_id` FK (falls back to 13=OTHER)
+
+### Code Changes — `src/components/wellness-journey/WellnessFormRouter.tsx`
+
+- `handleSafetyEventSave`: added comment documenting the safety_event_type_id FK resolution path in clinicalLog.ts
+- `handleRescueProtocolSave`: added comment confirming 'rescue' maps to safety_event_type_id=13
+
+### Items Left for Product Discussion (No Migration Yet)
+
+| Item | Column | Decision Needed |
+|---|---|---|
+| Item 5a | log_clinical_records.session_notes TEXT | Remove or accept as non-PHI clinical annotation? |
+| Item 5b | log_clinical_records.clinical_phenotype TEXT | Build ref table or accept as research annotation? |
+| Item 5c | log_clinical_records.concomitant_meds TEXT | Wire to ref_medications (exists!) or accept? |
+| Item 5d | log_clinical_records.outcome_measure TEXT | Wire to ref_assessments (exists!) or accept? |
+| Item 6 | DosageCalculator.tsx writes to log_doses (doesn't exist) | TableName fix: log_dose_events — deferred to when promoted to prod |
+| Item 7 | ref_primary_adverse DEPRECATED | Add COMMENT after Item 1 confirmed in prod |
+
+### Pre-Flight Checklist for USER Before Running Each Migration
+
+**Run these SELECTs in Supabase SQL Editor BEFORE executing each migration:**
+
+**Before 071a:**
+```sql
+SELECT event_code, COUNT(*) FROM ref_safety_events GROUP BY event_code;
+-- Expect: (NULL, 13) — all NULL
+```
+
+**Before 071b:**
+```sql
+SELECT column_name FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'ref_safety_events'
+ORDER BY ordinal_position LIMIT 5;
+-- Confirm: safety_event_id is PK name
+
+SELECT event_type, COUNT(*) FROM log_safety_events
+WHERE event_type IS NOT NULL GROUP BY event_type;
+-- Expect: 0 rows
+```
+
+**Before 072:**
+```sql
+SELECT substance, COUNT(*) FROM log_protocols WHERE substance IS NOT NULL GROUP BY substance;
+SELECT indication, COUNT(*) FROM log_protocols WHERE indication IS NOT NULL GROUP BY indication;
+SELECT column_name FROM information_schema.columns
+WHERE table_name = 'log_protocols' AND column_name IN ('substance_id', 'indication_id');
+-- Expect: 0 rows
+```
+
+**Before 073:**
+```sql
+SELECT contraindication_override_reason, COUNT(*)
+FROM log_clinical_records
+WHERE contraindication_override_reason IS NOT NULL
+GROUP BY contraindication_override_reason;
+-- Document any rows before proceeding
+```
+
+**Before 074:**
+```sql
+SELECT destruction_witness_name, COUNT(*)
+FROM log_chain_of_custody
+WHERE destruction_witness_name IS NOT NULL
+GROUP BY destruction_witness_name;
+-- Expect: 0 rows
+```
+
+### Execution Order (CRITICAL — run in sequence)
+
+1. `071a` → 2. `071b` → 3. `072` → 4. `073` → 5. `074`
+
+**071a MUST run before 071b** (event_code populated before schema change).

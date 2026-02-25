@@ -24,8 +24,9 @@ export interface BaselineAssessmentData {
 
 export interface SessionEventData {
     session_id: string;             // UUID — log_clinical_records.id
-    event_type: string;             // VARCHAR — matches log_safety_events.event_type
-    meddra_code_id?: number;        // FK to ref_safety_events
+    event_type?: string;            // DEPRECATED display label — use safety_event_type_id instead
+    safety_event_type_id?: number;  // FK → ref_safety_events(safety_event_id) — migration 071b
+    meddra_code_id?: number;        // FK to ref_meddra_codes
     intervention_type_id?: number;
     severity_grade_id?: string;     // TEXT — matches log_safety_events.severity_grade_id
     is_resolved?: boolean;
@@ -268,15 +269,45 @@ export async function createConsent(
 // PHASE 2: SESSION LOGGER
 // ============================================================================
 
+/**
+ * Maps SafetyAndAdverseEventForm display labels → ref_safety_events integer PKs.
+ * Source of truth: ref_safety_events table (confirmed 2026-02-25, migration 071b).
+ * Falls back to 13 (OTHER) for any unrecognized label.
+ */
+const SAFETY_EVENT_TYPE_ID: Record<string, number> = {
+    'Nausea / Vomiting': 8,   // NAUSEA
+    'Panic Attack': 9,   // PANIC_ATTACK
+    'Hypertension': 6,   // HYPERTENSION
+    'Tachycardia': 11,  // TACHYCARDIA
+    'Dizziness / Syncope': 4,   // DIZZINESS
+    'Severe Anxiety': 1,   // ANXIETY
+    'Psychotic Episode': 2,   // CONFUSIONAL_STATE (closest match)
+    'Cardiac Event': 11,  // TACHYCARDIA (closest match)
+    'Respiratory Distress': 13,  // OTHER
+    'Headache': 5,   // HEADACHE
+    'Other': 13,  // OTHER
+    'rescue': 13,  // OTHER
+};
+
 /** Logs a safety/adverse event. Maps to log_safety_events. */
 export async function createSessionEvent(data: SessionEventData) {
+    // Resolve safety_event_type_id FK:
+    //   1. Use explicit FK if caller already resolved it (preferred path).
+    //   2. Fall back to mapping event_type display label → integer FK.
+    //   3. If neither available, leave null (column is nullable post-071b).
+    const safety_event_type_id =
+        data.safety_event_type_id ??
+        (data.event_type ? (SAFETY_EVENT_TYPE_ID[data.event_type] ?? 13) : null);
+
     try {
         const { data: result, error } = await supabase
             .from('log_safety_events')
             .insert([{
                 ae_id: crypto.randomUUID(),
                 session_id: data.session_id,
-                // event_type (free text) removed — use meddra_code_id FK instead
+                // safety_event_type_id FK → ref_safety_events ✅ migration 071b
+                safety_event_type_id,
+                // event_type TEXT deprecated — not written (column retained in DB per additive rule)
                 meddra_code_id: data.meddra_code_id,
                 intervention_type_id: data.intervention_type_id,
                 severity_grade_id: data.severity_grade_id,
