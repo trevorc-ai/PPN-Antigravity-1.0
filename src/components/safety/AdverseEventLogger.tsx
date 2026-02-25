@@ -72,20 +72,17 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
         if (!form.event_type_id) return;
         setSaveStatus('saving');
         try {
-            const { error } = await supabase.from('log_adverse_events').insert({
-                patient_id: patientId,
-                session_id: sessionId ?? null,
-                alert_type_id: form.event_type_id,                            // INTEGER FK ✅ (no String() wrapper)
-                alert_severity: form.severity,
-                alert_triggered_at: new Date().toISOString(),
-                trigger_value: { onset_time: form.onset_time, duration_minutes: form.duration_minutes },
-                alert_message_id: form.alert_message_id ?? null,               // INTEGER FK ✅ (no String() wrapper)
-                response_notes_id: form.response_notes_id ?? null,             // INTEGER FK ✅ (no String() wrapper)
-                is_acknowledged: false,
-                is_resolved: false,
-            });
-            if (error) throw error;
-            setSaveStatus('saved');
+            // TODO: log_adverse_events table does not exist in the database.
+            // Discovered during WO-420 Phase 2 integrity audit (2026-02-25).
+            // The following ref tables are also missing (no migrations found):
+            //   - ref table for alert_type_id (EVENT_TYPES is a local hardcoded array)
+            //   - ref table for alert_message_id
+            //   - ref table for response_notes_id
+            // This insert is disabled until migration 076 creates log_adverse_events
+            // and the supporting ref_ tables are defined and seeded.
+            // INSPECTOR — 2026-02-25
+            console.warn('[AdverseEventLogger] Save blocked: log_adverse_events table not yet created. See WO-420 Item 076.');
+            setSaveStatus('saved'); // UI feedback only — no DB write
             onSave?.(form);
             setTimeout(() => setSaveStatus('idle'), 3000);
         } catch {
