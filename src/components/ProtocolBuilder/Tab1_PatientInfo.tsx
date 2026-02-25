@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check } from 'lucide-react';
+import { useReferenceData } from '../../hooks/useReferenceData';
 
 interface ButtonGroupOption {
     value: string;
@@ -80,12 +81,24 @@ interface Tab1PatientInfoProps {
     preFillDate?: string;
 }
 
+// Fallback list used while the DB table loads or if migration 065 hasn't run yet
+const WEIGHT_FALLBACK: ButtonGroupOption[] = [
+    { value: '< 50 kg', label: '< 50 kg' },
+    { value: '50-60 kg', label: '50-60 kg' },
+    { value: '60-70 kg', label: '60-70 kg' },
+    { value: '70-80 kg', label: '70-80 kg' },
+    { value: '80-90 kg', label: '80-90 kg' },
+    { value: '90-100 kg', label: '90-100 kg' },
+    { value: '> 100 kg', label: '> 100 kg' },
+];
+
 export const Tab1_PatientInfo: React.FC<Tab1PatientInfoProps> = ({
     formData,
     onChange,
     isPreFilled,
     preFillDate,
 }) => {
+    const { weightRanges, loading: refLoading } = useReferenceData();
     const ageOptions: ButtonGroupOption[] = [
         { value: '18-25', label: '18-25' },
         { value: '26-35', label: '26-35' },
@@ -102,15 +115,13 @@ export const Tab1_PatientInfo: React.FC<Tab1PatientInfoProps> = ({
         { value: 'Unknown', label: 'Unknown' },
     ];
 
-    const weightOptions: ButtonGroupOption[] = [
-        { value: '40-50kg', label: '40-50kg' },
-        { value: '51-60kg', label: '51-60kg' },
-        { value: '61-70kg', label: '61-70kg' },
-        { value: '71-80kg', label: '71-80kg' },
-        { value: '81-90kg', label: '81-90kg' },
-        { value: '91-100kg', label: '91-100kg' },
-        { value: '101+kg', label: '101+kg' },
-    ];
+    // Derive weight options from live ref_weight_ranges; fall back if loading
+    const weightOptions: ButtonGroupOption[] =
+        !refLoading && weightRanges.length > 0
+            ? weightRanges
+                .filter((r: any) => r.is_active !== false)
+                .map((r: any) => ({ value: r.range_label, label: r.range_label }))
+            : WEIGHT_FALLBACK;
 
     const smokingOptions: ButtonGroupOption[] = [
         { value: 'Current Daily', label: 'Current Daily' },
