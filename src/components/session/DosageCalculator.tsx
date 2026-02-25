@@ -3,6 +3,10 @@ import { supabase } from '../../supabaseClient';
 
 interface DosageCalculatorProps {
     sessionId: string;
+    /** Synthetic Subject_ID (e.g. "XK7P2M") — never a real patient name */
+    patientId: string;
+    /** Patient body weight in kg — used for mg/kg calculation */
+    patientWeightKg: number;
     onConfirm?: () => void;
 }
 
@@ -13,7 +17,12 @@ interface Substance {
     safety_tier: string;
 }
 
-export const DosageCalculator: React.FC<DosageCalculatorProps> = ({ sessionId, onConfirm }) => {
+export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
+    sessionId,
+    patientId,
+    patientWeightKg,
+    onConfirm,
+}) => {
     const [substances, setSubstances] = useState<Substance[]>([]);
     const [selectedSubstanceId, setSelectedSubstanceId] = useState<number | null>(null);
     const [weightGrams, setWeightGrams] = useState<string>('');
@@ -52,29 +61,60 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({ sessionId, o
             setError('Please select a substance and enter a valid weight.');
             return;
         }
+        if (!patientId || patientWeightKg <= 0) {
+            setError('Patient ID and weight required to log dose. Contact your session coordinator.');
+            return;
+        }
 
         setLoading(true);
         setError(null);
 
         try {
-            // TODO (WO-420 Item 6): Wire to log_dose_events when this component
-            // is promoted to production. Current table name 'log_doses' does not exist.
-            // Correct table: log_dose_events
-            // Required fields: session_id, patient_id (NOT NULL), substance_id,
-            //   dose_mg, weight_kg, event_type IN ('initial','booster','rescue')
-            // patient_id prop must be added to DosageCalculatorProps before wiring.
-            // DEV-ONLY: component currently only rendered in ComponentShowcase.tsx.
-            // -- INSPECTOR 2026-02-25
-            console.log('[DosageCalculator] TODO: persist to log_dose_events — see WO-420 Item 6');
+            // Determine event_type: first row for this session_id = 'initial', subsequent = 'booster'
+            const { count } = await supabase
+                .from('log_dose_events')
+                .select('id', { count: 'exact', head: true })
+                .eq('session_id', sessionId);
 
-            // Success - reset form
+            const eventType = (count ?? 0) === 0 ? 'initial' : 'booster';
+
+            // Fetch cumulative totals for this session so far
+            const { data: priorEvents } = await supabase
+                .from('log_dose_events')
+                .select('dose_mg')
+                .eq('session_id', sessionId);
+
+            const priorCumulativeMg = (priorEvents ?? []).reduce(
+                (sum, row) => sum + (row.dose_mg ?? 0),
+                0
+            );
+            const cumulativeMg = priorCumulativeMg + effectiveDoseMg;
+
+            const { error: insertError } = await supabase
+                .from('log_dose_events')
+                .insert({
+                    session_id: sessionId,
+                    patient_id: patientId,          // synthetic Subject_ID — never PII
+                    substance_id: selectedSubstanceId,
+                    dose_mg: effectiveDoseMg,
+                    weight_kg: patientWeightKg,
+                    dose_mg_per_kg: effectiveDoseMg / patientWeightKg,
+                    cumulative_mg: cumulativeMg,
+                    cumulative_mg_per_kg: cumulativeMg / patientWeightKg,
+                    event_type: eventType,
+                    administered_at: new Date().toISOString(),
+                });
+
+            if (insertError) throw insertError;
+
+            // Reset form on success
             setSelectedSubstanceId(null);
             setWeightGrams('');
             setPotencyModifier(1.0);
 
             if (onConfirm) onConfirm();
         } catch (err) {
-            console.error('Error saving dose:', err);
+            console.error('[DosageCalculator] Error persisting to log_dose_events:', err);
             setError('Failed to save dose. Please try again.');
         } finally {
             setLoading(false);

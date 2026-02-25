@@ -279,3 +279,51 @@ The following were identified in the transcript gap analysis and **explicitly de
 
 ### Remaining BUILDER Work on WO-413
 When INSPECTOR signals `log_dose_events` migration complete, BUILDER will wire `CumulativeDoseCalculator` DB persist calls. No other BUILDER blockers remain.
+
+---
+
+## 🟢 INSPECTOR SIGNAL — PRD A UNBLOCKED (2026-02-25T15:44 PST)
+
+**`log_dose_events` table confirmed LIVE in Docker.** Created by migration 063. No new migration needed.
+
+BUILDER: wire `DosageCalculator.tsx` using the **following confirmed column names** (verified against local Docker schema):
+
+```sql
+-- Confirmed schema: public.log_dose_events
+id                   BIGSERIAL   PK
+session_id           UUID        NOT NULL  -- FK → log_clinical_records(id)
+patient_id           VARCHAR(20) NOT NULL  -- synthetic Subject_ID only
+substance_id         INTEGER     NOT NULL  -- FK → ref_substances(substance_id)
+dose_mg              NUMERIC     NOT NULL
+weight_kg            NUMERIC     NOT NULL  -- patient weight in kg at time of dose
+dose_mg_per_kg       NUMERIC     NULLABLE  -- send calculated value from client
+cumulative_mg        NUMERIC     NULLABLE  -- running total from client
+cumulative_mg_per_kg NUMERIC     NULLABLE  -- running total/kg from client
+event_type           VARCHAR(10) NOT NULL  -- CHECK: 'initial' | 'booster' | 'rescue'
+administered_at      TIMESTAMP   NOT NULL  DEFAULT NOW()
+created_at           TIMESTAMP   NOT NULL  DEFAULT NOW()
+```
+
+**RLS Policies Active:**
+- `Users can select log_dose_events` — SELECT for authenticated
+- `Users can insert log_dose_events` — INSERT for authenticated
+
+**Insert shape BUILDER should use:**
+```typescript
+await supabase.from('log_dose_events').insert({
+  session_id: sessionId,          // UUID from current session
+  patient_id: subjectId,          // synthetic Subject_ID, NOT a patient name
+  substance_id: substanceId,      // integer FK from ref_substances
+  dose_mg: doseMg,                // numeric
+  weight_kg: weightKg,            // numeric — from patient weight range midpoint
+  dose_mg_per_kg: doseMg / weightKg,
+  cumulative_mg: cumulativeMg,
+  cumulative_mg_per_kg: cumulativeMg / weightKg,
+  event_type: 'initial' | 'booster' | 'rescue',
+  administered_at: new Date().toISOString(),
+});
+```
+
+**Note on `patient_id`:** This field is named `patient_id` in the existing schema but per Architecture Constitution it MUST be populated with the synthetic `Subject_ID` hash only (e.g., `"XK7P2M"`). Never a real name or DOB. The column name is a legacy label — the constraint is on what goes IN it.
+
+**Migration 076 status:** Retired (renamed to `076_RETIRED_`). The table already existed via migration 063. No cloud execution needed.
