@@ -203,22 +203,58 @@ export async function createBaselineAssessment(data: BaselineAssessmentData) {
 }
 
 /**
- * Records consent verification. Inserts one row per consent event.
- * NOTE: consent type string removed — requires ref_consent_types table with numeric IDs.
- * Until that table exists, only verification timestamp and site are recorded.
+ * Records consent verification. Inserts one row per consent type selected.
+ * Maps form string codes → ref_consent_types integer IDs (migration 068).
+ *
+ * ref_consent_types mapping (confirmed 2026-02-25):
+ *   id=1  INFORMED_CONSENT      ← form: 'informed_consent'
+ *   id=2  DATA_USE              ← (not in form currently)
+ *   id=3  PHOTO_VIDEO           ← form: 'photography_recording'
+ *   id=4  RESEARCH_PARTICIPATION ← form: 'research_participation'
+ *   id=5  EMERGENCY_CONTACT     ← (not in form currently)
+ *   id=6  HIPAA_AUTHORIZATION   ← form: 'hipaa_authorization' (added migration 068)
  */
+const CONSENT_TYPE_ID_MAP: Record<string, number> = {
+    informed_consent: 1,        // INFORMED_CONSENT
+    data_use: 2,                // DATA_USE
+    photography_recording: 3,   // PHOTO_VIDEO
+    photo_video: 3,             // PHOTO_VIDEO (alternate key)
+    research_participation: 4,  // RESEARCH_PARTICIPATION
+    emergency_contact: 5,       // EMERGENCY_CONTACT
+    hipaa_authorization: 6,     // HIPAA_AUTHORIZATION (added migration 068)
+};
+
 export async function createConsent(
-    consentTypes: string[], // param kept for caller compatibility; count used for multi-insert
+    consentTypes: string[], // form string codes from ConsentForm.CONSENT_TYPES
     siteId: string,
 ): Promise<{ success: boolean; error?: unknown }> {
     try {
         const now = new Date().toISOString();
-        // One row per consent event — type field omitted until ref_consent_types FK exists
-        const rows = consentTypes.map(() => ({
-            verified: true,
-            verified_at: now,
-            site_id: siteId,
-        }));
+
+        // Map each string code → integer FK. Unknown codes are logged and skipped.
+        const rows = consentTypes
+            .map(code => {
+                const typeId = CONSENT_TYPE_ID_MAP[code.toLowerCase()];
+                if (!typeId) {
+                    console.warn('[clinicalLog] createConsent: unknown consent type code:', code, '— skipped');
+                    return null;
+                }
+                return {
+                    verified: true,
+                    verified_at: now,
+                    site_id: siteId,
+                    consent_type_id: typeId,  // INTEGER FK → ref_consent_types ✅ migration 068
+                    // type: intentionally omitted — deprecated TEXT column
+                };
+            })
+            .filter((r): r is NonNullable<typeof r> => r !== null);
+
+        // If no valid types mapped (e.g. only checkbox ticked, no types selected),
+        // insert a single row with consent_obtained = true and no type FK.
+        if (rows.length === 0) {
+            rows.push({ verified: true, verified_at: now, site_id: siteId, consent_type_id: null as unknown as number });
+        }
+
         const { error } = await supabase.from('log_consent').insert(rows);
         if (error) throw error;
         return { success: true };
