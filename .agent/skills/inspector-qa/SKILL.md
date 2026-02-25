@@ -182,6 +182,79 @@ grep -n "TEXT\[\]" migrations/NNN_*.sql
 
 ---
 
+## Step 5c: 🚨 MIGRATION CONSTRAINT PRE-FLIGHT GATE (Added 2026-02-25 — 066 series lessons)
+
+> These checks were added after the 066 migration series required 5 patch files (066–066e)
+> due to missing pre-flight verification. INSPECTOR must enforce these on every schema migration.
+
+### ADD CONSTRAINT Check — Mandatory Data Pre-Flight Evidence Required
+
+If the migration contains ANY of:
+- `ADD CONSTRAINT ... CHECK (...)`
+- `ADD CONSTRAINT ... NOT NULL`
+- `ALTER COLUMN ... SET NOT NULL`
+
+Then the ticket MUST contain a pre-flight query result showing ZERO violating rows.
+
+**Required evidence format (must appear in ticket before INSPECTOR reviews):**
+```
+Pre-flight query:
+SELECT col_name, COUNT(*) FROM table_name GROUP BY col_name;
+
+Result:
+| col_name    | count |
+| valid_value | 42    |
+← No rows outside proposed CHECK values
+```
+
+**If pre-flight evidence is missing → AUTOMATIC FAIL. No exceptions.**
+
+If violating rows exist, the ticket MUST show a separate data-normalization migration
+that ran FIRST — then the constraint migration. Bundling both in one file = FAIL (see below).
+
+### One-Concern-Per-File Check
+
+Reject any migration file that bundles:
+- Data normalization UPDATEs + ADD CONSTRAINT changes in the same file
+- FK column additions + nullability changes on unrelated tables in the same file
+- Multiple independent operations where one failing would silently roll back the others
+
+Supabase SQL Editor runs scripts as single atomic transactions. A single failure
+rolls back ALL prior statements in the same file. Bundled migrations create silent
+partial-state disasters.
+
+**Rule:** If a migration failure would leave the DB in an inconsistent half-applied state,
+the migration is too large. Split it. FAIL until split.
+
+### FK Column Name Verification
+
+If the migration contains `REFERENCES some_table(col_name)`:
+
+INSPECTOR must confirm the FK column name is correct by running:
+```sql
+SELECT column_name FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'some_table'
+ORDER BY ordinal_position LIMIT 5;
+```
+
+Ref tables in this codebase use NAMED PKs — never generic `id`:
+- `ref_severity_grade` → `severity_grade_id`
+- `ref_resolution_status` → `resolution_status_id`  
+- `ref_substances` → `substance_id`
+- `ref_indications` → DO NOT ASSUME — always verify
+
+**If FK references `(id)` on any ref_ table → AUTOMATIC FAIL. Verify first.**
+
+### Inline Verification Queries Check
+
+Every migration file MUST end with commented (or live) SELECT queries that prove
+the migration applied. INSPECTOR must confirm these queries are present.
+
+If missing → request them before approval. This is the only way to confirm
+the migration actually ran as intended.
+
+---
+
 ## Step 6: No Regressions
 
 For any page or component modified, verify:
