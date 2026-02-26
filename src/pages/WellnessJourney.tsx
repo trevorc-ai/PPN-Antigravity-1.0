@@ -238,6 +238,10 @@ const WellnessJourneyInternal: React.FC = () => {
         }
     }, [addToast, navigate]);
 
+    // Stable callback for closing the patient modal — prevents PatientSelectModal's
+    // Escape listener from re-registering on every render (escape-key boot bug fix).
+    const handleClosePatientModal = useCallback(() => setShowPatientModal(false), []);
+
     // WO-113: SlideOut form panel state
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [activeFormId, setActiveFormId] = useState<WellnessFormId | null>(null);
@@ -543,7 +547,7 @@ const WellnessJourneyInternal: React.FC = () => {
             {showPatientModal && (
                 <PatientSelectModal
                     onSelect={handlePatientSelect}
-                    onClose={() => setShowPatientModal(false)}
+                    onClose={handleClosePatientModal}
                     initialView={patientModalView}
                 />
             )}

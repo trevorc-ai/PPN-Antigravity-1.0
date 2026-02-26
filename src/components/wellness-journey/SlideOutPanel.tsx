@@ -59,16 +59,20 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
         }
     }, [isOpen, title]);
 
-    // Handle Escape key
+    // Handle Escape key — stopPropagation prevents the event from
+    // reaching other global listeners (e.g. PatientSelectModal) when
+    // this panel is the topmost interactive layer.
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape' && isOpen) {
+                e.stopPropagation();
                 onClose();
             }
         };
 
-        document.addEventListener('keydown', handleEscape);
-        return () => document.removeEventListener('keydown', handleEscape);
+        // Use capture phase so this fires BEFORE other listeners
+        document.addEventListener('keydown', handleEscape, true);
+        return () => document.removeEventListener('keydown', handleEscape, true);
     }, [isOpen, onClose]);
 
     // Lock body scroll when panel is open
