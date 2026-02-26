@@ -3,6 +3,28 @@ import { supabase } from '../supabaseClient';
 import { User, Session } from '@supabase/supabase-js';
 import { clearDataCache } from '../hooks/useDataCache';
 
+// ── Invite-flow detection ────────────────────────────────────────────────────
+// We MUST read the URL hash at module-load time, BEFORE React Router (HashRouter)
+// processes the fragment and strips the Supabase token parameters from it.
+// Supabase appends tokens to the hash like:
+//   https://ppnportal.net/#access_token=xxx&type=invite
+// HashRouter then rewrites the hash to route paths like /#/search,
+// which destroys the type=invite param before onAuthStateChange fires.
+(function captureInviteFlag() {
+    if (typeof window === 'undefined') return;
+    try {
+        const rawHash = window.location.hash;
+        // Parse as URLSearchParams by stripping the leading '#'
+        const params = new URLSearchParams(rawHash.replace(/^#/, ''));
+        const type = params.get('type');
+        if (type === 'invite' || type === 'signup') {
+            sessionStorage.setItem('ppn_pending_invite', 'true');
+        }
+    } catch {
+        // Non-critical — fail silently
+    }
+})();
+
 interface AuthContextType {
     user: User | null;
     session: Session | null;
@@ -28,22 +50,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Listen for auth changes
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
 
-            // Detect invite link activation.
-            // Supabase appends type=signup (or type=invite) to the URL hash
-            // when a user clicks an invite link. In that case we redirect to
-            // the password-setting page so they can choose their own password
-            // and save it to their phone's password manager.
+            // ── Invite / signup link interception ───────────────────────────
+            // Two signals are checked (either is sufficient):
+            //   1. sessionStorage flag set at module-load time (reliable across
+            //      all browsers, survives HashRouter fragment rewrite)
+            //   2. URL hash still contains 'type=invite' or 'type=signup'
+            //      (works when the page load is very fast)
+            //
+            // On detection we do a hard replace() to /reset-password so the
+            // user MUST create their own password before entering the portal.
+            // This prevents the scenario where a user gets silently logged in
+            // via magic link, never sets a password, then can't log back in.
             if (session && typeof window !== 'undefined') {
+                const pendingInvite = sessionStorage.getItem('ppn_pending_invite');
                 const rawHash = window.location.hash;
+                const hashParams = new URLSearchParams(rawHash.replace(/^#/, ''));
+                const hashType = hashParams.get('type');
                 const isInviteFlow =
-                    rawHash.includes('type=signup') || rawHash.includes('type=invite');
+                    pendingInvite === 'true' ||
+                    hashType === 'invite' ||
+                    hashType === 'signup';
+
                 if (isInviteFlow) {
-                    window.location.hash = '#/reset-password';
+                    sessionStorage.removeItem('ppn_pending_invite');
+                    // Use replace() so the back button doesn't return to the
+                    // raw invite URL (which is already consumed/expired).
+                    window.location.replace(
+                        window.location.origin + window.location.pathname + '#/reset-password'
+                    );
+                    return;
                 }
             }
         });

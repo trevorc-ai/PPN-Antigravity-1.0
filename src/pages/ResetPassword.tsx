@@ -70,11 +70,10 @@ const ResetPassword: React.FC = () => {
             if (error) throw error;
 
             setSuccess(true);
-
-            // Redirect to dashboard after 3 seconds — session is already active
+            // Redirect to /search (the correct post-login home, WO-510)
             setTimeout(() => {
-                navigate('/dashboard');
-            }, 3000);
+                navigate('/search');
+            }, 2500);
         } catch (err: any) {
             setError(err.message || 'Failed to reset password. Please try again.');
         } finally {
@@ -258,12 +257,12 @@ const ResetPassword: React.FC = () => {
                                     {loading ? (
                                         <>
                                             <Loader2 className="w-4 h-4 animate-spin" />
-                                            Resetting Password...
+                                            Setting Password...
                                         </>
                                     ) : (
                                         <>
                                             <Lock className="w-4 h-4" />
-                                            Reset Password
+                                            Set My Password
                                         </>
                                     )}
                                 </button>
@@ -277,14 +276,14 @@ const ResetPassword: React.FC = () => {
                                     <CheckCircle className="w-8 h-8 text-emerald-400" />
                                 </div>
                                 <h2 className="text-2xl font-black tracking-tight text-slate-300 mb-3">
-                                    Password Reset Successfully
+                                    Password Set!
                                 </h2>
                                 <p className="text-slate-300 text-sm font-medium mb-6">
-                                    Your password has been set. Taking you into the portal now.
+                                    Your password is saved. Taking you into the portal now.
                                 </p>
                                 <div className="inline-flex items-center gap-2 text-xs text-slate-500 font-medium">
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    Redirecting to login...
+                                    Entering the portal...
                                 </div>
                             </div>
                         </>
