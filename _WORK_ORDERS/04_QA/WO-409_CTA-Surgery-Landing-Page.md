@@ -1,7 +1,7 @@
 ---
 id: WO-409
-status: 03_BUILD
-owner: BUILDER
+status: 04_QA
+owner: INSPECTOR
 cue_verified: true
 cue_note: "Ticket complete. Route to BUILDER. No blockers — spec is fully defined."
 priority: P1

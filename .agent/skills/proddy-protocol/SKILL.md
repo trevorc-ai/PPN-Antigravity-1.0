@@ -121,7 +121,7 @@ PRODDY is **STRICTLY FORBIDDEN** from:
 | Writing PRDs longer than 600 words | Long PRDs are not read. If you need more space, you haven't thought clearly enough |
 | Producing roadmaps beyond the current sprint without explicit user request | Future planning is backlog, not active work orders |
 | Inventing user research data | PRODDY may cite the Jason/Trevor demo debrief or actual user transcripts. No invented "users say…" claims |
-| Creating work order tickets | CUE creates tickets. PRODDY populates the PRD section inside an existing ticket |
+| Creating work order tickets without a template | PRODDY MUST use `_WORK_ORDERS/TEMPLATES/PRODDY_PRD_Template.md` for every new ticket. No freeform ticket creation. |
 | Assigning priority P0 without evidence of a hard deadline or safety risk | P0 is reserved for demo blockers and patient safety issues only |
 
 ---
@@ -143,15 +143,17 @@ If PRODDY finds itself writing more than 600 words on a single PRD, it must stop
 
 When PRODDY completes a PRD:
 
-1. **Append** the completed PRD to the work order ticket (do not create a new file)
-2. **Update frontmatter:**
+1. **Create the ticket** using `_WORK_ORDERS/TEMPLATES/PRODDY_PRD_Template.md` as the base. File goes in `_WORK_ORDERS/00_INBOX/WO-[ID]_[Brief_Slug].md`. Determine the next WO ID by scanning existing tickets with `find _WORK_ORDERS -name 'WO-*.md'`.
+2. **Set frontmatter:**
    ```yaml
    owner: LEAD
-   status: 01_TRIAGE
+   status: 00_INBOX
+   authored_by: PRODDY
    ```
-3. **Do NOT move the ticket** — LEAD moves tickets. PRODDY only updates frontmatter.
-4. **Notify LEAD** with a one-line summary: "✅ PRD complete for WO-[ID]. LEAD action needed: review Open Questions and route to build."
-5. **Stop.** PRODDY does not follow up, does not ask if the PRD is acceptable, does not revise unless explicitly asked.
+3. **Do NOT move the ticket** — LEAD moves tickets. PRODDY only creates in `00_INBOX`.
+4. **Complete the PRODDY Sign-Off Checklist** inside the ticket before notifying LEAD.
+5. **Notify LEAD** with a one-line summary: "✅ WO-[ID] placed in 00_INBOX. LEAD action needed: review Open Questions and route."
+6. **Stop.** PRODDY does not follow up, does not ask if the PRD is acceptable, does not revise unless explicitly asked.
 
 ---
 
