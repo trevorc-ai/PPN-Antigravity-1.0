@@ -21,7 +21,7 @@ interface WaitlistModalProps {
 
 export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ firstName: '', email: '', practitionerType: '', challenge: '' });
+    const [form, setForm] = useState({ firstName: '', email: '', practitionerType: '' });
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle');
 
     // Prevent background scrolling when modal is open
@@ -48,7 +48,6 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                 first_name: form.firstName.trim(),
                 email: form.email.trim().toLowerCase(),
                 practitioner_type: form.practitionerType,
-                message: form.challenge.trim() || null,
                 source: 'ppn_portal_main',
             });
             if (sbError) {
@@ -218,21 +217,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                         </select>
                                     </div>
 
-                                    <div>
-                                        <label htmlFor="modal-challenge" className="block tracking-widest mb-2">
-                                            <span className="text-[11px] font-black text-slate-400 uppercase">Biggest challenge?</span>
-                                            <span className="text-[11px] text-slate-500 ml-2 normal-case font-medium tracking-normal">(Optional)</span>
-                                        </label>
-                                        <textarea
-                                            id="modal-challenge"
-                                            rows={2}
-                                            maxLength={280}
-                                            value={form.challenge}
-                                            onChange={(e) => setForm(f => ({ ...f, challenge: e.target.value }))}
-                                            className="w-full px-4 py-3 bg-[#080c14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium resize-y"
-                                            placeholder="What's currently slowing down your practice..."
-                                        />
-                                    </div>
+
 
                                     <button
                                         type="submit"

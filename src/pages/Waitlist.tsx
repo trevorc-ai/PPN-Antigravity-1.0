@@ -16,7 +16,7 @@ const PRACTITIONER_TYPES = [
 
 export const Waitlist: FC = () => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ firstName: '', email: '', practitionerType: '', challenge: '' });
+    const [form, setForm] = useState({ firstName: '', email: '', practitionerType: '' });
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle');
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +28,6 @@ export const Waitlist: FC = () => {
                 first_name: form.firstName.trim(),
                 email: form.email.trim().toLowerCase(),
                 practitioner_type: form.practitionerType,
-                message: form.challenge.trim() || null,
                 source: 'ppn_portal_main',
             });
             if (error) {
@@ -201,21 +200,7 @@ export const Waitlist: FC = () => {
                                     </select>
                                 </div>
 
-                                <div>
-                                    <label htmlFor="challenge" className="block tracking-widest mb-2">
-                                        <span className="text-xs font-black text-slate-400 uppercase">Biggest clinical documentation challenge?</span>
-                                        <span className="text-xs text-slate-500 ml-2 normal-case font-medium tracking-normal">(Optional)</span>
-                                    </label>
-                                    <textarea
-                                        id="challenge"
-                                        rows={3}
-                                        maxLength={280}
-                                        value={form.challenge}
-                                        onChange={(e) => setForm(f => ({ ...f, challenge: e.target.value }))}
-                                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium resize-y"
-                                        placeholder="What's currently slowing down your practice..."
-                                    />
-                                </div>
+
 
                                 <button
                                     type="submit"
