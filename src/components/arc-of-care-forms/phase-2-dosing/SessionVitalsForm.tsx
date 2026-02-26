@@ -576,17 +576,64 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         </p>
                                     )}
                                 </div>
+                                {/* Neurological Observations — WO-413 GAP-2 (Dr. Allen FRD 2026-02-25)
+                                    Display-only this sprint. clonus + saccadic = ibogaine safety flags.
+                                    diaphoresis is already persisted above (0-3 scale). */}
+                                <div className="col-span-full pt-3 border-t border-slate-700/30">
+                                    <h4 className="ppn-label text-slate-500 uppercase tracking-wider mb-3">Neurological Observations</h4>
+                                    <div className="flex flex-wrap gap-4">
+
+                                        {/* Clonus */}
+                                        <label
+                                            htmlFor={`clonus-${reading.id}`}
+                                            className="flex items-center gap-3 cursor-pointer group"
+                                        >
+                                            <input
+                                                id={`clonus-${reading.id}`}
+                                                type="checkbox"
+                                                className="w-5 h-5 rounded border-slate-600 bg-slate-900 checked:bg-amber-600 checked:border-amber-500 focus:ring-2 focus:ring-amber-500/40 transition-all cursor-pointer"
+                                                aria-label="Clonus observed — muscle reflex activity"
+                                            />
+                                            <span className="ppn-body text-slate-300 group-hover:text-slate-100 transition-colors">
+                                                Clonus
+                                                <span className="ppn-meta text-slate-500 ml-1">(muscle reflex activity)</span>
+                                            </span>
+                                        </label>
+
+                                        {/* Saccadic Eye Movements */}
+                                        <label
+                                            htmlFor={`saccadic-${reading.id}`}
+                                            className="flex items-center gap-3 cursor-pointer group"
+                                        >
+                                            <input
+                                                id={`saccadic-${reading.id}`}
+                                                type="checkbox"
+                                                className="w-5 h-5 rounded border-slate-600 bg-slate-900 checked:bg-amber-600 checked:border-amber-500 focus:ring-2 focus:ring-amber-500/40 transition-all cursor-pointer"
+                                                aria-label="Saccadic eye movements observed — rapid involuntary eye movement"
+                                            />
+                                            <span className="ppn-body text-slate-300 group-hover:text-slate-100 transition-colors">
+                                                Saccadic Eye Movements
+                                                <span className="ppn-meta text-slate-500 ml-1">(rapid involuntary)</span>
+                                            </span>
+                                        </label>
+
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 
                         {/* QT Interval Tracker — Phase 2 cardiac monitoring (WO-413 PRD B)
-                            Shown on last reading block only. Mounts when session-vitals is enabled. */}
+                            Confirmed defaults: Philips IntelliVue / Schiller ETM — Dr. Allen 2026-02-25
+                            dangerThresholdMs=500, cautionThresholdMs=475 — Dr. Allen confirmed 2026-02-25 */}
                         {showQTTracker && index === readings.length - 1 && (
                             <div className="pt-4 border-t border-amber-500/15">
                                 <QTIntervalTracker
-                                    divergenceThresholdMs={50} /* TODO: clinically pending Dr. Allen reply — WO-413 */
-                                    deviceALabel="Device A"
-                                    deviceBLabel="Device B"
+                                    divergenceThresholdMs={50}
+                                    dangerThresholdMs={500}
+                                    cautionThresholdMs={475}
+                                    deviceALabel="Philips IntelliVue"
+                                    deviceBLabel="Schiller ETM"
                                 />
                             </div>
                         )}

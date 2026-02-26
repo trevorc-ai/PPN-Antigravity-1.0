@@ -47,16 +47,26 @@ export interface QTReading {
 }
 
 interface QTIntervalTrackerProps {
-    /** Label for the first device. Default: 'Device A'. Pending Dr. Allen reply — WO-413. */
+    /** Label for the first device. Default: 'Philips IntelliVue'. Confirmed: Dr. Allen 2026-02-25. */
     deviceALabel?: string;
-    /** Label for the second device. Default: 'Device B'. Pending Dr. Allen reply — WO-413. */
+    /** Label for the second device. Default: 'Schiller ETM'. Confirmed: Dr. Allen 2026-02-25. */
     deviceBLabel?: string;
     /**
      * Delta threshold (ms) for flagging [STATUS: DIVERGENCE].
-     * Default: 50ms.
-     * // TODO: clinically pending Dr. Allen reply — WO-413
+     * Default: 50ms — confirmed by Dr. Allen 2026-02-25.
      */
     divergenceThresholdMs?: number;
+    /**
+     * Absolute QTc danger threshold (ms). Any single-device reading ≥ this value
+     * triggers [STATUS: DANGER — QTc ≥ 500ms]. Default: 500ms — Dr. Allen confirmed.
+     */
+    dangerThresholdMs?: number;
+    /**
+     * Absolute QTc caution threshold (ms). Readings in [cautionThresholdMs, dangerThresholdMs)
+     * trigger [STATUS: CAUTION — Approaching 500ms]. Default: 475ms.
+     * Implements Dr. Allen's "approaching 500ms" directive (2026-02-25).
+     */
+    cautionThresholdMs?: number;
     /** Called whenever readings change — parent can persist or display summary. */
     onReadingsChange?: (readings: QTReading[]) => void;
 }
@@ -88,9 +98,11 @@ function calcDelta(a: string, b: string): number | null {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
-    deviceALabel = 'Device A',
-    deviceBLabel = 'Device B',
-    divergenceThresholdMs = 50, // TODO: clinically pending Dr. Allen reply — WO-413
+    deviceALabel = 'Philips IntelliVue',
+    deviceBLabel = 'Schiller ETM',
+    divergenceThresholdMs = 50,   // ✅ Confirmed by Dr. Allen 2026-02-25
+    dangerThresholdMs = 500,      // ✅ Confirmed by Dr. Allen 2026-02-25 — hERG channel block risk
+    cautionThresholdMs = 475,     // ✅ "Approaching 500ms" — Dr. Allen 2026-02-25
     onReadingsChange,
 }) => {
     const [readings, setReadings] = useState<QTReading[]>([makeEmptyReading()]);
@@ -184,6 +196,16 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                     const isDivergent = delta !== null && delta >= divergenceThresholdMs;
                     const bothEntered = reading.deviceAValue !== '' && reading.deviceBValue !== '';
 
+                    // Per-device absolute QTc threshold evaluation (Dr. Allen 2026-02-25)
+                    const aVal = parseInt(reading.deviceAValue, 10);
+                    const bVal = parseInt(reading.deviceBValue, 10);
+                    const aIsDanger = !isNaN(aVal) && aVal >= dangerThresholdMs;
+                    const bIsDanger = !isNaN(bVal) && bVal >= dangerThresholdMs;
+                    const aIsCaution = !isNaN(aVal) && aVal >= cautionThresholdMs && aVal < dangerThresholdMs;
+                    const bIsCaution = !isNaN(bVal) && bVal >= cautionThresholdMs && bVal < dangerThresholdMs;
+                    const anyDanger = aIsDanger || bIsDanger;
+                    const anyCaution = !anyDanger && (aIsCaution || bIsCaution);
+
                     return (
                         <div
                             key={reading.id}
@@ -222,14 +244,16 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 <div className="space-y-1">
                                     <input
                                         id={`qt-device-a-${reading.id}`}
-                                        type="text"
+                                        type="number"
                                         inputMode="numeric"
-                                        pattern="[0-9]*"
+                                        min={200}
+                                        max={800}
+                                        step={5}
                                         value={reading.deviceAValue}
-                                        onChange={e => updateReading(reading.id, 'deviceAValue', e.target.value.replace(/\D/g, ''))}
-                                        placeholder="e.g. 420"
-                                        aria-label={`${deviceALabel} QT reading in milliseconds`}
-                                        className={inputCls}
+                                        onChange={e => updateReading(reading.id, 'deviceAValue', e.target.value)}
+                                        placeholder="420"
+                                        aria-label={`${deviceALabel} QT reading in milliseconds — 5ms increments`}
+                                        className={`${inputCls} ${aIsDanger ? 'border-red-500/70 bg-red-950/20' : aIsCaution ? 'border-amber-500/70 bg-amber-950/20' : ''}`}
                                     />
                                     <select
                                         value={reading.methodA}
@@ -248,14 +272,16 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 <div className="space-y-1">
                                     <input
                                         id={`qt-device-b-${reading.id}`}
-                                        type="text"
+                                        type="number"
                                         inputMode="numeric"
-                                        pattern="[0-9]*"
+                                        min={200}
+                                        max={800}
+                                        step={5}
                                         value={reading.deviceBValue}
-                                        onChange={e => updateReading(reading.id, 'deviceBValue', e.target.value.replace(/\D/g, ''))}
-                                        placeholder="e.g. 415"
-                                        aria-label={`${deviceBLabel} QT reading in milliseconds`}
-                                        className={inputCls}
+                                        onChange={e => updateReading(reading.id, 'deviceBValue', e.target.value)}
+                                        placeholder="415"
+                                        aria-label={`${deviceBLabel} QT reading in milliseconds — 5ms increments`}
+                                        className={`${inputCls} ${bIsDanger ? 'border-red-500/70 bg-red-950/20' : bIsCaution ? 'border-amber-500/70 bg-amber-950/20' : ''}`}
                                     />
                                     <select
                                         value={reading.methodB}
@@ -341,7 +367,42 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 </div>
                             </div>
 
-                            {/* Divergence banner — shows below row when flagged */}
+                            {/* ── Absolute QTc DANGER banner (≥ 500ms) — patient safety critical ── */}
+                            {anyDanger && (
+                                <div
+                                    className="flex items-center gap-2 px-4 py-2.5 bg-red-600/20 border-t border-red-500/60 rounded-b-xl"
+                                    role="alert"
+                                    aria-live="assertive"
+                                    aria-atomic="true"
+                                >
+                                    <AlertTriangle className="w-4 h-4 text-red-300 flex-shrink-0" aria-hidden="true" />
+                                    <span className="text-sm font-black text-red-200 uppercase tracking-wide">
+                                        [STATUS: DANGER — QTc ≥ {dangerThresholdMs}ms]
+                                    </span>
+                                    <span className="ppn-meta text-red-300 ml-1">
+                                        {aIsDanger && `${deviceALabel}: ${aVal}ms`}{aIsDanger && bIsDanger && ' · '}{bIsDanger && `${deviceBLabel}: ${bVal}ms`}.
+                                        Arrhythmia risk elevated. Assess for Torsades de Pointes.
+                                    </span>
+                                </div>
+                            )}
+
+                            {/* ── Absolute QTc CAUTION banner (475–499ms) — approaching danger ── */}
+                            {anyCaution && (
+                                <div
+                                    className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border-t border-amber-500/30 rounded-b-xl"
+                                    role="alert"
+                                    aria-live="polite"
+                                >
+                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" aria-hidden="true" />
+                                    <span className="ppn-meta text-amber-300 font-semibold">
+                                        [STATUS: CAUTION — Approaching {dangerThresholdMs}ms]
+                                        {aIsCaution && ` ${deviceALabel}: ${aVal}ms`}{aIsCaution && bIsCaution && ' ·'}{bIsCaution && ` ${deviceBLabel}: ${bVal}ms`}.
+                                        Monitor closely. Increase reading frequency.
+                                    </span>
+                                </div>
+                            )}
+
+                            {/* ── Divergence banner — inter-device delta ── */}
                             {isDivergent && (
                                 <div
                                     className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-t border-red-500/30 rounded-b-xl"

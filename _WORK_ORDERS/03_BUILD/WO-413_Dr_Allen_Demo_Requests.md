@@ -2,6 +2,7 @@
 status: 03_BUILD
 owner: BUILDER
 failure_count: 0
+review_type: preliminary_architecture_COMPLETE
 ---
 
 # User Intent
@@ -327,3 +328,235 @@ await supabase.from('log_dose_events').insert({
 **Note on `patient_id`:** This field is named `patient_id` in the existing schema but per Architecture Constitution it MUST be populated with the synthetic `Subject_ID` hash only (e.g., `"XK7P2M"`). Never a real name or DOB. The column name is a legacy label — the constraint is on what goes IN it.
 
 **Migration 076 status:** Retired (renamed to `076_RETIRED_`). The table already existed via migration 063. No cloud execution needed.
+
+---
+
+## LEAD Architecture Addendum — Dr. Allen FRD Review (2026-02-25)
+
+**Source:** `public/admin_uploads/Ibogaine_Research_SaaS.md` — Functional Requirements Document authored by Dr. Jason Allen in response to BUILDER's open questions.
+
+**LEAD Ruling:** The document resolves all primary blockers. Three enhancement gaps were surfaced and are documented below. BUILDER is cleared for execution on the core PRD A and PRD B features. The gaps below are **in-scope enhancements** to implement in this same sprint before handoff.
+
+---
+
+### ✅ Confirmed Answers (Resolved Pending Items)
+
+| Item | Resolution |
+|---|---|
+| TPA vs. Ibogaine HCl differentiation | TPA = ~80% active ibogaine. Backend/client applies `estimated_active_ibogaine_mg = administered_mg × 0.80`. |
+| Device labels (PRD B default presets) | Device A = **Philips IntelliVue** (continuous, Fridericia formula). Device B = **Schiller ETM** (12-lead, Bazett formula). |
+| QTc danger threshold | **500ms** is the confirmed clinical threshold. Alert/flag when QTc ≥ 500ms. |
+| Morphology checkboxes | Confirmed list: `sinus_bradycardia`, `t_wave_flattening`, `t_wave_notching`, `t_peak_t_end_prolongation`. |
+| log_dose_events schema alignment | JSON payload maps 1:1 to migration 063 schema. No schema changes needed. |
+
+---
+
+### ⚠️ Architecture Gaps — BUILDER Must Implement (Same Sprint)
+
+#### GAP-1: QTc Formula Selector (PRD B Enhancement)
+- **What:** Each device row in `QTIntervalTracker` must include a `qtc_formula` toggle/selector: `BAZETT` or `FRIDERICIA`.
+- **Why:** The Philips IntelliVue uses Fridericia; the Schiller ETM uses Bazett. A raw ms delta comparison between two devices using different formulas is clinically meaningless. The formula must be labeled per-reading.
+- **Default presets:** Device A (Philips IntelliVue) → pre-set `FRIDERICIA`. Device B (Schiller ETM) → pre-set `BAZETT`.
+- **DB scope:** The `qtc_formula` field is display-only this sprint. No new DB column required — QT tracker is not persisting rows to DB this sprint (per PRD B Out of Scope).
+- **Implementation note:** Add a small `<select>` or `<ButtonGroup>` with `BAZETT | FRIDERICIA` inline in the QT row. Update the `[STATUS: DIVERGENCE]` label logic to also display which formulas were used when divergence is flagged.
+
+#### GAP-2: Neurological Observation Flags (New Sub-Section)
+- **What:** Add a brief neurological observation sub-section to the session vitals panel (or as an optional sub-panel of the QT Tracker). Three boolean flags:
+  - `clonus` — muscle reflex / tonic-clonic activity
+  - `saccadic_eye_movements` — rapid, involuntary eye movement (ibogaine visual effect)
+  - `diaphoresis` — profuse sweating (sympathetic activation signal)
+- **Why:** Dr. Allen's FRD explicitly includes these in the vitals payload. They are standard ibogaine safety observation points.
+- **Scope:** Checkboxes only — display/UI capture. Not persisting to DB this sprint.
+- **Placement:** Add as a collapsible "Neurological Observations" sub-section beneath the morphology flags in the vitals panel or below the QT Tracker.
+
+#### GAP-3: Estimated Active Ibogaine Column (PRD A Enhancement)
+- **What:** The `CumulativeDoseCalculator` table must display two dose columns side-by-side:
+  - `Administered (mg)` — raw dose entered by practitioner
+  - `Active Ibogaine (mg)` — calculated: if `substance_type === 'TPA'`, multiply by 0.80; if `substance_type === 'HCl'`, value equals administered_mg.
+- **Why:** Dr. Allen's FRD payload includes `estimated_active_ibogaine_mg` as a distinct field. Displaying only the raw dose without surfacing the active-ibogaine equivalent creates a safety gap — 200mg TPA ≠ 200mg HCl.
+- **Substance selector:** Add a per-row `substance_type` toggle: `Ibogaine HCl | TPA (Total Plant Alkaloid)`. Default: `HCl`.
+- **DB:** The existing `log_dose_events` schema does not have a `substance_type` column. **INSPECTOR must author a migration** to add `substance_type VARCHAR(10) NOT NULL DEFAULT 'HCl' CHECK (substance_type IN ('HCl', 'TPA'))` to `log_dose_events` before BUILDER wires persistence. This is **a new migration requirement.**
+
+---
+
+## INSPECTOR Preliminary Architecture Review — 2026-02-25T16:20 PST
+
+**Review Type:** Architecture Pre-Clearance (not post-build QA)
+**Conducted by:** INSPECTOR
+
+---
+
+### Dr. Allen Threshold Confirmation — ALL VALUES LOCKED ✅
+
+**Verbatim reply (2026-02-25):**
+> *"All of the device and software methods are in the paper I linked you to yesterday. 50 ms is good. Anything approaching or above 500 ms would ideally be I. [sic] Smaller units, even 5 ms intervals."*
+
+**INSPECTOR Parsing:**
+
+| Parameter | Value | Status |
+|---|---|---|
+| Divergence threshold (Device A vs. Device B delta) | **50ms** | ✅ LOCKED — confirmed by Dr. Allen |
+| QTc absolute danger threshold | **500ms** | ✅ LOCKED — confirmed by Dr. Allen |
+| QTc input granularity | **5ms steps** | ✅ NEW — Dr. Allen wants 5ms precision near/above the danger zone |
+| Device/formula methods source | FRD paper already reviewed | ✅ CLOSED — no further clarification needed |
+
+**Granularity interpretation (architectural):** "Smaller units, even 5ms intervals" means QT inputs should use `step="5"` on `type="number"` fields so arrow-key increments and value snapping respect 5ms resolution. Additionally, a **caution zone** warning should appear when any individual QTc reading is between **475ms and 499ms** (approaching danger) — distinct from the ≥500ms danger alert. This gives the clinician a pre-threshold heads-up before the hard limit is crossed.
+
+---
+
+### Gap Analysis Findings
+
+#### GAP-1: QTc Formula Selector — ✅ ALREADY BUILT (Not a gap)
+
+**Evidence:**
+```
+QTIntervalTracker.tsx:26-35 — QT_METHODS = ['Bazett', 'Fridericia', 'Framingham', 'Hodges', 'Simpson', 'Pearson', 'Device Auto', 'Other']
+QTIntervalTracker.tsx:234 — <select> for methodA (Device A formula)
+QTIntervalTracker.tsx:260 — <select> for methodB (Device B formula)
+QTIntervalTracker.tsx:237 — aria-label="Device A QT calculation method"
+QTIntervalTracker.tsx:263 — aria-label="Device B QT calculation method"
+```
+
+**INSPECTOR ruling:** Formula selectors exist and are fully implemented. LEAD's gap assessment was based on incomplete codebase knowledge. This is not a gap — it is already done.
+
+**Remaining BUILDER action (2-line fix only):** Update `SessionVitalsForm.tsx` lines 588-589 to pass the confirmed device labels:
+- `deviceALabel="Philips IntelliVue"` (currently: `"Device A"`)
+- `deviceBLabel="Schiller ETM"` (currently: `"Device B"`)
+
+No other changes to `QTIntervalTracker.tsx` needed for formula selection.
+
+---
+
+#### GAP-2: Neurological Observation Flags — ⚠️ PARTIAL
+
+**Evidence:**
+```
+SessionVitalsForm.tsx:41 — diaphoresis_score: 0|1|2|3 (4-point severity scale — exceeds spec)
+SessionVitalsForm.tsx:532-545 — full diaphoresis input, onChange, status label
+clinicalLog.ts:341 — diaphoresis_score persisted to DB already
+grep "clonus" src/ → 0 results
+grep "saccadic" src/ → 0 results
+```
+
+**INSPECTOR ruling:**
+- `diaphoresis` ✅ — already implemented at HIGHER fidelity than the FRD requested (0-3 scale vs. boolean)
+- `clonus` ❌ — NOT implemented
+- `saccadic_eye_movements` ❌ — NOT implemented
+
+**PHI/Compliance check:** No risk. These are boolean observational checkboxes. No free-text. No DB persistence this sprint. ✅ CLEARED for BUILDER.
+
+**BUILDER spec:** Add two boolean checkboxes to the vitals form — a "Neurological Observations" collapsible sub-section:
+- `clonus` — checkbox, label: "Clonus (muscle reflex activity)"
+- `saccadic_eye_movements` — checkbox, label: "Saccadic Eye Movements (rapid involuntary)"
+
+Placement: below the existing diaphoresis field in `SessionVitalsForm.tsx`. State-only (no DB write). No migration needed.
+
+---
+
+#### GAP-3: `substance_type` Column on `log_dose_events` — ✅ MIGRATION AUTHORED
+
+**Evidence:**
+```
+migrations/063_create_log_dose_events.sql — NO substance_type column found
+DosageCalculator.tsx:93-106 — insert payload has no substance_type field
+```
+
+**INSPECTOR ruling:** Column missing from live schema. Migration authored as `migrations/077_add_substance_type_to_log_dose_events.sql`. Additive-only. CHECK constraint enforces finite vocabulary. Default `'HCl'` backfills all existing rows cleanly.
+
+## 🟢 INSPECTOR SIGNAL — Migration 077 CONFIRMED LIVE (2026-02-25T16:29 PST)
+
+**Supabase verification result (USER-confirmed):**
+```
+| conname                              | definition                                                                                                   |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| log_dose_events_substance_type_check | CHECK (((substance_type)::text = ANY ((ARRAY['HCl'::character varying, 'TPA'::character varying])::text[]))) |
+```
+
+✅ Constraint `log_dose_events_substance_type_check` confirmed present  
+✅ Allowed values: `'HCl'` and `'TPA'` — enforced at DB level  
+✅ Default `'HCl'` applied to all existing rows  
+✅ RLS policies inherited from parent table — no new policies needed  
+
+**GAP-3 is fully unblocked. BUILDER may now wire `substance_type` into `DosageCalculator.tsx`.**
+
+**BUILDER spec (after migration):** Update `DosageCalculator.tsx`:
+1. Add `substanceType` state: `useState<'HCl' | 'TPA'>('HCl')`
+2. Add per-row substance selector: `<ButtonGroup options={['Ibogaine HCl', 'TPA']}>`
+3. Add derived column: `estimatedActiveIbogaineMg = substanceType === 'TPA' ? doseMg * 0.80 : doseMg`
+4. Display both `Administered (mg)` and `Active Ibogaine (mg)` columns in the table
+5. Include `substance_type` in the `log_dose_events.insert()` payload
+
+---
+
+#### GAP-4 (INSPECTOR-IDENTIFIED): 500ms Absolute QTc Danger Alert — ❌ NOT BUILT
+
+**Evidence:**
+```
+grep "500" QTIntervalTracker.tsx → 0 danger-threshold results
+Current logic: only flags [STATUS: DIVERGENCE] (device A vs. B delta)
+No per-reading absolute QTc threshold check exists
+```
+
+**INSPECTOR ruling:** This is a **patient safety requirement** per Dr. Allen's FRD and confirmed threshold. A QTc of 498ms on both devices currently shows `[STATUS: OK]` — clinically incorrect and dangerous for an Ibogaine session.
+
+**BUILDER spec — SAFETY CRITICAL:** Add two threshold behaviors to `QTIntervalTracker`:
+
+1. **New prop:** `dangerThresholdMs?: number` (default: `500` — Dr. Allen confirmed)
+2. **New prop:** `cautionThresholdMs?: number` (default: `475` — "approaching" in Dr. Allen's words)
+3. **Per-reading evaluation** (check EACH device's value independently):
+   - Device value ≥ `dangerThresholdMs` → show `[STATUS: DANGER — QTc ≥ 500ms]` red banner
+   - Device value ≥ `cautionThresholdMs` AND < `dangerThresholdMs` → show `[STATUS: CAUTION — Approaching 500ms]` amber banner
+   - These are independent of the `[STATUS: DIVERGENCE]` inter-device check — both can show simultaneously
+4. **Input step:** Change both QT inputs from `type="text"` to `type="number"` with `step={5}` `min={200}` `max={800}`. Keep `inputMode="numeric"` for iPad. This implements Dr. Allen's "5ms interval" directive — arrow-key increments snap to 5ms; validates that QTc entries are clinically plausible.
+
+---
+
+### INSPECTOR PRELIMINARY CLEARANCE DECISION
+
+**[STATUS: PASS — CONDITIONAL]** — BUILDER is cleared to proceed on all items below:
+
+#### Cleared for Immediate Build (No Migration Dependency):
+
+| Task | Action |
+|---|---|
+| GAP-1 device labels | `SessionVitalsForm.tsx` lines 588-589 — update 2 prop values |
+| GAP-2 neurological flags | Add `clonus` + `saccadic_eye_movements` checkboxes to `SessionVitalsForm.tsx` |
+| GAP-4 QTc danger/caution thresholds | Add `dangerThresholdMs`, `cautionThresholdMs` props + per-reading evaluation to `QTIntervalTracker.tsx` |
+| GAP-4 input step | Change QT inputs to `type="number" step={5} min={200} max={800}` |
+
+#### ✅ Previously Blocked — Now Cleared (Migration 077 Confirmed Live 2026-02-25T16:29 PST):
+
+| Task | Status |
+|---|---|
+| GAP-3 substance_type in DosageCalculator | ✅ UNBLOCKED — `substance_type` column + CHECK constraint confirmed in Supabase |
+
+#### Branch Blocker (BUILDER must resolve BEFORE INSPECTOR final pass):
+
+All work is currently on `feature/benchmark-confidencecone-live-data`, **not `main`**. BUILDER must merge to `main` and push as part of this ticket's completion. INSPECTOR will not issue a final PASS on a feature branch.
+
+---
+
+### BUILDER Acceptance Criteria Checklist
+
+For INSPECTOR final post-build review, BUILDER must check off ALL of the following:
+
+- [ ] `SessionVitalsForm.tsx` line 588: `deviceALabel="Philips IntelliVue"`
+- [ ] `SessionVitalsForm.tsx` line 589: `deviceBLabel="Schiller ETM"`
+- [ ] `clonus` checkbox present in `SessionVitalsForm.tsx` (display-only, no DB)
+- [ ] `saccadic_eye_movements` checkbox present in `SessionVitalsForm.tsx` (display-only, no DB)
+- [ ] `QTIntervalTracker.tsx` has `dangerThresholdMs` prop (default: 500)
+- [ ] `QTIntervalTracker.tsx` has `cautionThresholdMs` prop (default: 475)
+- [ ] `[STATUS: DANGER — QTc ≥ 500ms]` banner renders when any single device value ≥ 500ms
+- [ ] `[STATUS: CAUTION — Approaching 500ms]` banner renders when any single device value 475-499ms
+- [ ] QT inputs use `type="number" step={5} min={200} max={800}`
+- [ ] Migration 077 executed (USER confirms) — `substance_type` column exists in `log_dose_events`
+- [ ] `DosageCalculator.tsx` has substance type selector (`HCl` / `TPA`)
+- [ ] `DosageCalculator.tsx` displays both `Administered (mg)` and `Active Ibogaine (mg)` columns
+- [ ] `DosageCalculator.tsx` insert payload includes `substance_type`
+- [ ] All work committed to `main` branch and pushed to `origin/main`
+- [ ] No `text-xs` font violations in new UI elements
+- [ ] All new interactive elements have unique `id` and `aria-label` attributes
+
+---
+
+*INSPECTOR preliminary review complete — 2026-02-25T16:20 PST. Routing to BUILDER.*
