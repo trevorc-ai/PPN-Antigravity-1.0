@@ -224,6 +224,27 @@ function checkAbsoluteContraindications(data: IntakeScreeningData): Contraindica
         });
     }
 
+    // A10 — Bupropion (Wellbutrin) + MDMA (ABSOLUTE — CYP2D6 inhibition + seizure risk)
+    // Bupropion inhibits CYP2D6, the primary enzyme metabolizing MDMA.
+    // This causes dangerous MDMA plasma accumulation (up to 3–4x normal levels).
+    // Additionally: additive seizure threshold lowering, noradrenergic/dopaminergic
+    // potentiation. NOT an SSRI but must be treated as absolute with MDMA.
+    const bupropionTerms = ['bupropion', 'wellbutrin', 'zyban', 'aplenzin', 'forfivo', 'budeprion'];
+    if (
+        (substanceLower === 'mdma' || substanceLower.includes('mdma')) &&
+        matchesAny(data.medications, bupropionTerms)
+    ) {
+        flags.push({
+            id: 'ABS-MEDICATION-BUPROPION-MDMA',
+            severity: 'ABSOLUTE',
+            category: 'MEDICATION',
+            headline: 'Bupropion detected with MDMA session — CYP2D6 inhibition danger',
+            detail: 'Bupropion (Wellbutrin) is a potent CYP2D6 inhibitor - the primary enzyme responsible for MDMA metabolism. Co-administration causes MDMA plasma levels to accumulate 3-4x above expected levels, dramatically increasing cardiovascular strain, hyperthermia risk, and neurotoxicity. Bupropion also independently lowers seizure threshold, compounding MDMA CNS effects. This combination is absolutely contraindicated.',
+            source: 'Baseline Observations — Medication List',
+            regulatoryBasis: 'Farré et al. (2015) J Pharmacol Exp Ther; MAPS Protocol S2 §7.2; FDA CYP2D6 Drug Interaction Guidance',
+        });
+    }
+
     return flags;
 }
 

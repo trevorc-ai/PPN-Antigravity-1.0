@@ -575,6 +575,29 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <div className="mt-auto pt-2">
                                         {step.isComplete ? (
                                             <div className="flex flex-col items-center gap-1 mt-2">
+                                                {/* Dosage HUD — only for dosing-protocol step */}
+                                                {step.id === 'dosing-protocol' && (() => {
+                                                    try {
+                                                        const raw = localStorage.getItem('ppn_dosing_protocol');
+                                                        if (!raw) return null;
+                                                        const p = JSON.parse(raw);
+                                                        const name = p.substance_name || p.substance;
+                                                        const dose = p.dosage_amount;
+                                                        const unit = p.dosage_unit || 'mg';
+                                                        const route = p.route_of_administration;
+                                                        if (!name) return null;
+                                                        return (
+                                                            <div className="w-full mb-2 px-3 py-2 bg-emerald-950/40 border border-emerald-700/30 rounded-xl text-center">
+                                                                <p className="text-base font-black text-emerald-200 uppercase tracking-widest leading-tight">{name}</p>
+                                                                <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-emerald-300/80">
+                                                                    {dose && <span>{dose}{unit}</span>}
+                                                                    {dose && route && <span className="text-emerald-700">·</span>}
+                                                                    {route && <span>{route}</span>}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    } catch { return null; }
+                                                })()}
                                                 <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-teal-400">
                                                     <CheckCircle2 className="w-4 h-4" /> COMPLETED
                                                 </span>
