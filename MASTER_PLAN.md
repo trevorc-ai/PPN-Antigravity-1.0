@@ -6,6 +6,7 @@
 **Location:** `/MASTER_PLAN.md` (Project Root)
 
 > **⚠️ SINGLE SOURCE OF TRUTH**: All agents must reference this document for immediate high-level project state context. It is strictly minimized to save Gemini API tokens.
+> **Read next:** `/RELEASE_STATUS.md` — current beta tester roster, active sprint tickets, and known UX gaps. LEAD keeps it current after every completed session.
 
 ## 🎯 Current Mission
 Build the Practice Operating System for Psychedelic Therapy - unifying safety, outcomes, and compliance into a secure platform trusted worldwide.

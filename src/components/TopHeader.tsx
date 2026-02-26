@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import InstantConnectModal from './modals/InstantConnectModal';
+import FeedbackCard from './FeedbackCard';
+import { MessageSquarePlus } from 'lucide-react';
 import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
@@ -56,6 +58,8 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isInstantConnectOpen, setIsInstantConnectOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
 
   const isLanding = location.pathname === '/';
 
@@ -244,6 +248,30 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   </div>
                 </div>
 
+                {/* Feedback — Hidden on mobile, visible via dropdown */}
+                <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
+                  <button
+                    ref={feedbackTriggerRef}
+                    onClick={() => setIsFeedbackOpen(prev => !prev)}
+                    aria-label="Leave feedback"
+                    aria-expanded={isFeedbackOpen}
+                    className="size-11 rounded-xl bg-white/5 border border-teal-400/50 hover:border-teal-400/80 flex items-center justify-center text-teal-300 hover:text-teal-200 transition-all hover:bg-teal-500/10 shadow-sm shadow-teal-500/10 group active:scale-90"
+                  >
+                    <MessageSquarePlus className="w-5 h-5 transition-transform group-active:scale-90" aria-hidden="true" />
+                  </button>
+                  {/* Tooltip */}
+                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
+                    <span className="text-[12px] font-black text-teal-300 tracking-[0.15em] relative z-10">Leave Feedback</span>
+                  </div>
+                  {/* Feedback card anchored here */}
+                  <FeedbackCard
+                    isOpen={isFeedbackOpen}
+                    onClose={() => setIsFeedbackOpen(false)}
+                    triggerRef={feedbackTriggerRef}
+                  />
+                </div>
+
                 {/* Instant Connect (Send to Phone) - Hidden on mobile */}
                 <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
                   <button
@@ -322,6 +350,15 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     >
                       <span className="material-symbols-outlined text-lg">settings_applications</span>
                       Account Settings
+                    </button>
+
+                    {/* Mobile-only: Leave Feedback */}
+                    <button
+                      onClick={() => { setIsMenuOpen(false); setIsFeedbackOpen(true); }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-teal-400 hover:text-teal-300 hover:bg-teal-400/5 transition-all text-sm font-bold lg:hidden"
+                    >
+                      <MessageSquarePlus className="w-[18px] h-[18px]" aria-hidden="true" />
+                      Leave Feedback
                     </button>
 
                     <div className="h-px bg-white/5 my-2"></div>

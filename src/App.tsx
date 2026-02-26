@@ -137,6 +137,9 @@ const ProtectedLayout: React.FC<{
   // if (!isAuthenticated && !isDemoMode) return null;
 
   const completeTour = () => {
+    // Persist both flags so the auto-trigger and welcome banner never re-fire
+    localStorage.setItem('ppn_tour_completed', 'true');
+    localStorage.setItem('ppn_has_seen_welcome', 'true');
     setShowTour(false);
   };
 
@@ -207,6 +210,17 @@ const AppContent: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showTour, setShowTour] = useState(false);
 
+  // ── First-login auto-tour trigger (WO-508) ───────────────────────────────
+  // Fires once when the user session becomes truthy (post-auth).
+  // If the user has never completed the tour, auto-launches it after 1500ms
+  // so the Dashboard has time to fully render before the overlay appears.
+  useEffect(() => {
+    if (!user) return;
+    if (localStorage.getItem('ppn_tour_completed')) return;
+    const timer = setTimeout(() => setShowTour(true), 1500);
+    return () => clearTimeout(timer);
+  }, [user]);
+
   // Suppress ResizeObserver Warnings
   useEffect(() => {
     const handleResizeError = (e: ErrorEvent) => {
@@ -234,7 +248,7 @@ const AppContent: React.FC = () => {
       <ScrollToTop />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/landing" replace />} />
+        <Route path="/" element={user ? <Navigate to="/search" replace /> : <Navigate to="/landing" replace />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/about" element={<About />} />
         <Route path="/waitlist" element={<Waitlist />} />
@@ -251,7 +265,7 @@ const AppContent: React.FC = () => {
         <Route path="/meq30" element={<MEQ30Page />} />
         <Route path="/patient-form/:formId" element={<PatientFormPage />} />
         <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
-        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
+        <Route path="/login" element={user ? <Navigate to="/search" replace /> : <Login />} />
         <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/academy" replace />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
@@ -280,6 +294,7 @@ const AppContent: React.FC = () => {
               setShowTour={setShowTour}
             />
           }>
+            <Route path="/search" element={<SimpleSearch onStartTour={() => setShowTour(true)} />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/news" element={<News />} />

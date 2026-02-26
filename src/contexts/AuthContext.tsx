@@ -32,6 +32,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+
+            // Detect invite link activation.
+            // Supabase appends type=signup (or type=invite) to the URL hash
+            // when a user clicks an invite link. In that case we redirect to
+            // the password-setting page so they can choose their own password
+            // and save it to their phone's password manager.
+            if (session && typeof window !== 'undefined') {
+                const rawHash = window.location.hash;
+                const isInviteFlow =
+                    rawHash.includes('type=signup') || rawHash.includes('type=invite');
+                if (isInviteFlow) {
+                    window.location.hash = '#/reset-password';
+                }
+            }
         });
 
         return () => subscription.unsubscribe();

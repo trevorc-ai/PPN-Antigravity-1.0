@@ -120,7 +120,7 @@ export const Waitlist: FC = () => {
             </nav>
 
             {/* Main — two-column split layout */}
-            <main className="flex-1 relative z-10 flex flex-col lg:flex-row">
+            <main className="flex-1 relative z-10 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full">
 
                 {/* ── LEFT COLUMN — Copy & Value Props ─────────────────── */}
                 <div className="flex-1 flex flex-col justify-center px-10 xl:px-20 py-16 lg:py-24 max-w-2xl mx-auto lg:mx-0 lg:max-w-none">
@@ -160,7 +160,7 @@ export const Waitlist: FC = () => {
                     {/* Social proof line */}
                     <div className="flex items-center gap-3 mt-10">
                         <div className="flex -space-x-2">
-                            {['JA', 'TC', 'KM'].map((initials) => (
+                            {['JA', 'TC', 'JB'].map((initials) => (
                                 <div key={initials} className="w-8 h-8 rounded-full bg-indigo-700/50 border border-indigo-500/40 flex items-center justify-center text-[10px] font-black text-indigo-300">
                                     {initials}
                                 </div>

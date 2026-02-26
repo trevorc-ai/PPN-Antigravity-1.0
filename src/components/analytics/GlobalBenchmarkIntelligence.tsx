@@ -118,7 +118,7 @@ function BenchmarkTooltip({ active, payload }: any) {
 // Main component
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function GlobalBenchmarkIntelligence() {
+export default function GlobalBenchmarkIntelligence({ alwaysShow = false }: { alwaysShow?: boolean }) {
     const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
     const [cohorts, setCohorts] = useState<BenchmarkCohort[]>([]);
     const [loading, setLoading] = useState(true);
@@ -129,7 +129,8 @@ export default function GlobalBenchmarkIntelligence() {
     useEffect(() => {
         let cancelled = false;
         async function load() {
-            if (!isContributor || statusLoading) {
+            // alwaysShow bypasses the contributor gate (used on /search for beta)
+            if (!alwaysShow && (!isContributor || statusLoading)) {
                 if (!statusLoading) setLoading(false);
                 return;
             }
@@ -199,7 +200,7 @@ export default function GlobalBenchmarkIntelligence() {
         );
     }
 
-    if (!isContributor) {
+    if (!alwaysShow && !isContributor) {
         return (
             <div className="bg-[#0a0c12]/60 border border-slate-800/50 rounded-2xl p-8 text-center relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

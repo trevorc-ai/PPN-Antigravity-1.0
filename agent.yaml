@@ -65,7 +65,7 @@ agents:
     instructions: |
       🚨 MANDATORY: Read .agent/skills/proddy-protocol/SKILL.md IN FULL before producing any output.
 
-      VOICE RULE: Never use "you" or "your" for the business. Always use "we", "our", "us".
+      VOICE RULE: Never use "you" or "your" for the business. Always use "we", "our", "us". Never use em dash (—); use comma instead.
       PRODDY output is shared with partners and investors — it speaks as the founding team.
 
       1. ON STARTUP: Scan `_WORK_ORDERS/01_TRIAGE` for tickets where `owner: PRODDY`.

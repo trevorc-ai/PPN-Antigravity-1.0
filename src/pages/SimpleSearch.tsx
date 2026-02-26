@@ -1,103 +1,226 @@
+/**
+ * SimpleSearch.tsx — WO-510 (rebuilt)
+ *
+ * Post-login home. Replaces /dashboard as the default authenticated route.
+ *
+ * Structure:
+ *   1. WelcomeHeroBanner     — first-time users only (localStorage flag)
+ *   2. Portal header + "coming soon" search bar
+ *   3. Quick-access chips    — 4 live destinations
+ *   4. Receptor Binding Affinity Matrix  — filterable, self-contained
+ *   5. Global Benchmark Intelligence     — real outcome data, alwaysShow=true for beta
+ *
+ * Props:
+ *   onStartTour  — wired from ProtectedLayout via App.tsx, triggers GuidedTour
+ */
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PageContainer } from '../components/layouts/PageContainer';
+import {
+  Zap,
+  HeartPulse,
+  FlaskConical,
+  BarChart3,
+  SearchX,
+} from 'lucide-react';
 
-const SimpleSearch: React.FC = () => {
-  const [query, setQuery] = useState('');
+import WelcomeHeroBanner from '../components/WelcomeHeroBanner';
+import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatmap';
+import GlobalBenchmarkIntelligence from '../components/analytics/GlobalBenchmarkIntelligence';
+import { useAuth } from '../contexts/AuthContext';
+
+interface SimpleSearchProps {
+  onStartTour?: () => void;
+}
+
+// ─── Quick-access chip definitions ───────────────────────────────────────────
+
+const QUICK_LINKS = [
+  {
+    label: 'Interaction Checker',
+    path: '/interactions',
+    icon: Zap,
+    description: 'Check compound safety combinations',
+    color: 'text-amber-400',
+    border: 'border-amber-500/20 hover:border-amber-500/40',
+    bg: 'hover:bg-amber-500/5',
+  },
+  {
+    label: 'Wellness Journey',
+    path: '/wellness-journey',
+    icon: HeartPulse,
+    description: 'Log and track patient sessions',
+    color: 'text-teal-400',
+    border: 'border-teal-500/20 hover:border-teal-500/40',
+    bg: 'hover:bg-teal-500/5',
+  },
+  {
+    label: 'Substance Catalog',
+    path: '/catalog',
+    icon: FlaskConical,
+    description: 'Monographs, dosing, and pharmacology',
+    color: 'text-indigo-400',
+    border: 'border-indigo-500/20 hover:border-indigo-500/40',
+    bg: 'hover:bg-indigo-500/5',
+  },
+  {
+    label: 'Clinical Analytics',
+    path: '/analytics',
+    icon: BarChart3,
+    description: 'Outcomes, benchmarks, and reporting',
+    color: 'text-violet-400',
+    border: 'border-violet-500/20 hover:border-violet-500/40',
+    bg: 'hover:bg-violet-500/5',
+  },
+];
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      navigate(`/advanced-search?q=${encodeURIComponent(query.trim())}`);
-    }
+  // Welcome banner — shown once, dismissed via localStorage
+  const [showBanner, setShowBanner] = useState(
+    !localStorage.getItem('ppn_has_seen_welcome')
+  );
+
+  const handleStartTour = () => {
+    localStorage.setItem('ppn_has_seen_welcome', 'true');
+    setShowBanner(false);
+    onStartTour?.();
   };
 
-  const quickLinks = [
-    { label: 'Ketamine Protocols', icon: 'biotech', path: '/catalog' },
-    { label: 'Practitioners', icon: 'groups', path: '/clinicians' },
-    { label: 'Safety Matrix', icon: 'health_and_safety', path: '/interactions' },
-    { label: 'Audit Logs', icon: 'history', path: '/audit' },
-  ];
+  const handleDismissBanner = () => {
+    localStorage.setItem('ppn_has_seen_welcome', 'true');
+    setShowBanner(false);
+  };
+
+  // Derive display name from email prefix
+  const userName = user?.email?.split('@')[0] ?? '';
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 sm:p-12 pt-24 lg:pt-0 relative overflow-hidden animate-in fade-in duration-1000">
-      {/* Dynamic Background Decor */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-[140px] pointer-events-none animate-pulse"></div>
-      <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+    <div className="min-h-screen animate-in fade-in duration-500">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
 
-      <PageContainer width="narrow" className="space-y-10 relative z-10 text-center">
-        <div className="space-y-4">
-          <div className="inline-flex items-center justify-center size-20 rounded-[2rem] bg-slate-900 border border-slate-800 shadow-2xl mb-4 group hover:border-primary/50 transition-all duration-500">
-            <span className="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">auto_awesome</span>
+        {/* ── 1. Welcome Banner (first-time only) ─────────────────────────── */}
+        {showBanner && (
+          <WelcomeHeroBanner
+            userName={userName}
+            onStartTour={handleStartTour}
+            onDismiss={handleDismissBanner}
+          />
+        )}
+
+        {/* ── 2. Portal header + disabled search bar ──────────────────────── */}
+        <div className="text-center space-y-6">
+          {/* Eyebrow */}
+          <div className="flex items-center justify-center gap-2">
+            <span className="ppn-meta uppercase tracking-widest text-indigo-400">
+              PPN Research Portal
+            </span>
+            <span className="ppn-meta text-slate-600">·</span>
+            <span className="ppn-meta uppercase tracking-widest text-slate-500">
+              Beta
+            </span>
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tighter text-slate-300">PPN Portal</h1>
-          <p className="text-slate-300 text-sm sm:text-lg max-w-lg mx-auto leading-relaxed font-medium">
-            Access the unified clinical database for high-fidelity molecular research and protocol discovery.
-          </p>
+
+          {/* Heading — only shown when banner is not present */}
+          {!showBanner && (
+            <h1 className="ppn-section-title">
+              {userName ? `Welcome back, ${userName}.` : 'Clinical Intelligence Portal'}
+            </h1>
+          )}
+
+          {/* Search bar — visually present, marked coming soon */}
+          <div className="relative max-w-2xl mx-auto group">
+            {/* Ambient glow on focus */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-indigo-500/10 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                disabled
+                placeholder="Neural Copilot search — coming soon..."
+                aria-label="Search — Neural Copilot (coming soon)"
+                className="
+                  w-full h-16 sm:h-[4.5rem]
+                  bg-slate-900/60 border border-slate-700/50
+                  rounded-[2rem] px-8 sm:px-12
+                  text-sm text-slate-500
+                  placeholder:text-slate-600
+                  cursor-not-allowed
+                  backdrop-blur-xl
+                  font-medium
+                "
+              />
+              <div
+                aria-hidden="true"
+                className="absolute right-3 size-11 sm:size-14 bg-slate-800/60 border border-slate-700/50 rounded-full flex items-center justify-center"
+              >
+                <SearchX className="w-5 h-5 text-slate-600" />
+              </div>
+            </div>
+            <p className="ppn-meta text-slate-600 mt-2 text-center">
+              Semantic search across substances, protocols, and clinical outcomes is in development.
+            </p>
+          </div>
         </div>
 
-        <form onSubmit={handleSearch} className="relative group max-w-2xl mx-auto">
-          <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 via-accent-blue/20 to-primary/20 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity duration-700"></div>
-          <div className="relative">
-            <input
-              type="text"
-              autoFocus
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && query.trim()) {
-                  e.preventDefault();
-                  navigate(`/advanced-search?q=${encodeURIComponent(query.trim())}`);
-                }
-              }}
-              placeholder="Search protocols, adverse events, or ask the Neural Copilot..."
-              aria-label="Search the PPN clinical database"
-              className="w-full h-16 sm:h-24 bg-slate-900/90 border border-slate-700/50 rounded-[2.5rem] px-10 sm:px-14 text-sm text-slate-300 focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all backdrop-blur-2xl shadow-2xl placeholder:text-slate-600 font-bold"
-            />
-            <button
-              type="submit"
-              className="absolute right-4 top-1/2 -translate-y-1/2 size-12 sm:size-16 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 rounded-full flex items-center justify-center text-slate-300 transition-all shadow-xl active:scale-95 group/btn"
-            >
-              <span className="material-symbols-outlined text-2xl sm:text-3xl group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-            </button>
-          </div>
-        </form>
-
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
-          <span className="text-sm font-black text-slate-500 tracking-[0.2em] mr-2 w-full sm:w-auto mb-2 sm:mb-0">Fast Access Nodes:</span>
-          {quickLinks.map((link) => (
-            <button
-              key={link.label}
-              onClick={() => navigate(link.path)}
-              className="px-6 py-3 bg-slate-900/40 hover:bg-slate-800/80 border border-slate-800 hover:border-primary/30 rounded-full text-sm font-black text-slate-300 hover:text-slate-300 transition-all flex items-center gap-3 shadow-lg group/link"
-            >
-              <span className="material-symbols-outlined text-lg group-hover:link:text-primary transition-colors">{link.icon}</span>
-              <span className="tracking-widest">{link.label}</span>
-            </button>
-          ))}
-        </div>
-
-        <div className="pt-16 grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-2xl mx-auto border-t border-slate-800/50">
-          <div className="text-center space-y-1">
-            <p className="text-2xl font-black text-slate-300">12,482</p>
-            <p className="text-sm font-black text-slate-500 tracking-widest">Indexed Nodes</p>
-          </div>
-          <div className="text-center space-y-1">
-            <p className="text-2xl font-black text-clinical-green">14.2ms</p>
-            <p className="text-sm font-black text-slate-500 tracking-widest">Query Latency</p>
-          </div>
-          <div className="text-center space-y-1">
-            <p className="text-2xl font-black text-primary">Live</p>
-            <p className="text-sm font-black text-slate-500 tracking-widest">Protocol Sync</p>
-          </div>
-          <div className="text-center space-y-1">
-            <p className="text-2xl font-black text-indigo-400">98%</p>
-            <p className="text-sm font-black text-slate-500 tracking-widest">Search Recall</p>
+        {/* ── 3. Quick-access chips ────────────────────────────────────────── */}
+        <div className="space-y-3">
+          <p className="ppn-label text-center text-slate-600">Quick Access</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {QUICK_LINKS.map((link) => (
+              <button
+                key={link.path}
+                id={`quick-link-${link.path.replace('/', '')}`}
+                onClick={() => navigate(link.path)}
+                className={`
+                  flex flex-col items-start gap-2 p-4 rounded-2xl
+                  bg-slate-900/40 ${link.bg}
+                  border ${link.border}
+                  transition-all hover:scale-[1.02] active:scale-[0.98]
+                  text-left
+                `}
+              >
+                <link.icon className={`w-5 h-5 ${link.color} flex-shrink-0`} aria-hidden="true" />
+                <div>
+                  <p className={`text-sm font-black ${link.color} leading-tight`}>
+                    {link.label}
+                  </p>
+                  <p className="ppn-meta text-slate-500 mt-0.5 leading-snug">
+                    {link.description}
+                  </p>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
-      </PageContainer>
+
+        {/* ── 4. Receptor Binding Affinity Matrix ─────────────────────────── */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <h2 className="ppn-card-title text-slate-400">Molecular Pharmacology</h2>
+            <span className="ppn-meta uppercase tracking-widest text-slate-600">
+              10 compounds · 8 receptor systems
+            </span>
+          </div>
+          <ReceptorBindingHeatmap />
+        </div>
+
+        {/* ── 5. Global Benchmark Intelligence ────────────────────────────── */}
+        <div className="space-y-3 pb-12">
+          <div className="flex items-center gap-3">
+            <h2 className="ppn-card-title text-slate-400">Global Benchmark Intelligence</h2>
+            <span className="ppn-meta uppercase tracking-widest text-slate-600">
+              Live data
+            </span>
+          </div>
+          {/* alwaysShow=true bypasses the isContributor gate for all beta testers */}
+          <GlobalBenchmarkIntelligence alwaysShow={true} />
+        </div>
+
+      </div>
     </div>
   );
 };

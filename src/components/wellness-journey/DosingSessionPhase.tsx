@@ -1034,18 +1034,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             {
                 showCompanion && (
                     <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden selection:bg-transparent">
-                        {/* Spherecules video */}
-                        <div className="absolute inset-0 z-0 pointer-events-none">
-                            <video
-                                src="/admin_uploads/spherecules.mp4"
-                                autoPlay loop muted playsInline
-                                className="w-full h-full object-cover opacity-90 mix-blend-screen"
-                            />
-                        </div>
-                        {/* Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/60 z-10 pointer-events-none" />
 
-                        {/* Close button — top-right, instant exit */}
+                        {/* Close button — top-right */}
                         <button
                             onClick={() => setShowCompanion(false)}
                             className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white/70 hover:bg-white/20 hover:text-white backdrop-blur-md transition-all"
@@ -1053,20 +1043,42 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         >
                             <X className="w-4 h-4" />
                         </button>
-                        <div className="absolute top-4 right-16 z-50">
+                        <div className="absolute top-4 right-16 z-50 flex items-center h-10">
                             <span className="text-[11px] font-bold tracking-widest text-white/40 uppercase">Return to session</span>
                         </div>
 
+                        {/* ── Video player — contained, never hidden by buttons ── */}
+                        <div className="flex-1 flex items-center justify-center p-6 pt-16 min-h-0">
+                            <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-2xl shadow-black/80"
+                                style={{ aspectRatio: '16/9' }}>
+                                <video
+                                    src="/admin_uploads/spherecules.mp4"
+                                    autoPlay loop muted playsInline
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        // Graceful fallback: hide video, show ambient background
+                                        (e.target as HTMLVideoElement).style.display = 'none';
+                                    }}
+                                />
+                                {/* Ambient fallback shown when video fails */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-violet-950 flex items-center justify-center -z-0">
+                                    <div className="text-center space-y-3 opacity-40">
+                                        <div className="w-16 h-16 rounded-full border-2 border-indigo-500/50 mx-auto flex items-center justify-center">
+                                            <Sparkles className="w-8 h-8 text-indigo-400" />
+                                        </div>
+                                        <p className="text-white/50 text-sm font-semibold tracking-widest uppercase">Companion Mode</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Prompt */}
-                        <div className="relative z-20 pt-5 text-center pointer-events-none">
+                        <div className="text-center pb-3">
                             <p className="text-white/40 text-sm font-semibold tracking-[0.2em] uppercase">Tap to quietly log your state</p>
                         </div>
 
-                        {/* Spacer — lets video breathe above buttons */}
-                        <div className="flex-1" />
-
-                        {/* Button grid — solid dark block BELOW video */}
-                        <div className="relative z-20 w-full bg-black/70 backdrop-blur-md border-t border-white/10 px-4 py-5">
+                        {/* Button grid — solid dark block BELOW video, never overlaps */}
+                        <div className="relative z-20 w-full bg-black/80 backdrop-blur-md border-t border-white/10 px-4 py-5 flex-shrink-0">
                             <div className="grid grid-cols-4 gap-2 max-w-5xl mx-auto">
                                 {COMPANION_FEELINGS.map(f => (
                                     <button
@@ -1084,7 +1096,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             </div>
                         </div>
                     </div>
-                )}
+                )
+            }
         </>
     );
 };

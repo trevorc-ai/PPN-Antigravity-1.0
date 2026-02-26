@@ -71,9 +71,9 @@ const ResetPassword: React.FC = () => {
 
             setSuccess(true);
 
-            // Redirect to login after 3 seconds
+            // Redirect to dashboard after 3 seconds — session is already active
             setTimeout(() => {
-                navigate('/login');
+                navigate('/dashboard');
             }, 3000);
         } catch (err: any) {
             setError(err.message || 'Failed to reset password. Please try again.');
@@ -142,10 +142,10 @@ const ResetPassword: React.FC = () => {
                                     <Lock className="w-8 h-8 text-primary" />
                                 </div>
                                 <h1 className="text-3xl font-black tracking-tight text-slate-300 mb-2">
-                                    Set New Password
+                                    Create Your Password
                                 </h1>
                                 <p className="text-slate-300 text-sm font-medium">
-                                    Choose a strong password for your account
+                                    Choose a strong password. You'll use this to log in from any device.
                                 </p>
                             </div>
 
@@ -280,7 +280,7 @@ const ResetPassword: React.FC = () => {
                                     Password Reset Successfully
                                 </h2>
                                 <p className="text-slate-300 text-sm font-medium mb-6">
-                                    Your password has been updated. You can now sign in with your new password.
+                                    Your password has been set. Taking you into the portal now.
                                 </p>
                                 <div className="inline-flex items-center gap-2 text-xs text-slate-500 font-medium">
                                     <Loader2 className="w-4 h-4 animate-spin" />
