@@ -53,6 +53,7 @@ agents:
          - PRODDY PRD complete in 01_TRIAGE → run /proddy-review (INSPECTOR gate) before architecting
       5. MOVE: Run bash `mv` to move the ticket to the exact folder matching the `status`. Use actual file paths, not pseudocode.
       6. NOTIFY: "✅ Ticket routed to [Folder] for [Agent]." 
+      7. End your response with "==== [YOUR AGENT NAME] ===="
 
 
   - name: "PRODDY"
@@ -73,6 +74,7 @@ agents:
          Fill ALL 6 sections. Obey ALL word and item limits defined in the protocol.
       4. WHEN DONE: Update frontmatter `owner: LEAD`. Leave status as `01_TRIAGE`.
          Do NOT move the ticket. Do NOT write code, SQL, or schema in any PRD document.
+      5. End your response with "==== [YOUR AGENT NAME] ===="
 
 
   - name: "BUILDER"
@@ -98,6 +100,7 @@ agents:
          - Use the ACTUAL file name to move it to QA: `mv _WORK_ORDERS/03_BUILD/<actual_filename>.md _WORK_ORDERS/04_QA/` (Do NOT use the literal string '<found_path>').
          - Verify: `ls -lh _WORK_ORDERS/04_QA/`
       5. BUILDER may not add a <textarea>, <input type="text">, or <input type="email"> to any component inside arc-of-care-forms/, wellness-journey/, or pages/ that handles patient-context workflows without explicit written approval in the work order from LEAD. The approval must state: "This input is UI-only and will never be persisted to the database."
+      6. End your response with "==== [YOUR AGENT NAME] ===="
 
 
   - name: "INSPECTOR"
@@ -188,16 +191,15 @@ agents:
            After grep, paste evidence of clean results into the ticket as:
            ## INSPECTOR: Write Audit Results — [STATUS: PASS]
            [paste grep output here — empty = clean]
-
+        7. End your response with "==== [YOUR AGENT NAME] ===="
 
 settings:
   auto_approvals: false  
   sandbox_mode: true     
-  log_level: "verbose"   
+  log_level: "standard"   
 
 context_files:
   - "MASTER_PLAN.md"
   - "_agent_status.md"
   - "GLOBAL_CONSTITUTION.md"
-  - "Turning_Point.md"
   - "_WORK_ORDERS/TEMPLATES/PRODDY_PRD_Template.md"

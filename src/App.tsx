@@ -320,6 +320,10 @@ const AppContent: React.FC = () => {
             <Route path="/demo-clinical-report-pdf" element={<DemoClinicalReportPDF />} />
 
 
+            {/* DEV/TEST SHOWCASE ROUTES */}
+            <Route path="/component-showcase" element={<ComponentShowcase />} />
+            <Route path="/hidden-components" element={<HiddenComponentsShowcase />} />
+
             <Route path="/logout" element={<div className="p-8 text-center flex flex-col items-center justify-center h-full"><h2 className="text-2xl font-black mb-4">Confirm Sign Out</h2><button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out</button></div>} />
 
             {/* Catch-all for undefined protected routes */}

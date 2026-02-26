@@ -1,7 +1,7 @@
 ---
 id: WO-409
-status: 04_QA
-owner: INSPECTOR
+status: 05_USER_REVIEW
+owner: USER
 cue_verified: true
 cue_note: "Ticket complete. Route to BUILDER. No blockers — spec is fully defined."
 priority: P1
@@ -98,3 +98,30 @@ Update to: `"Join the waitlist for founding practitioner access"` with the CTA l
 3. Add a `## BUILDER IMPLEMENTATION COMPLETE` section to the ticket documenting what was changed
 
 **Note for BUILDER:** The modal UX is not wrong — but the spec contract specifies the standalone `/waitlist` route. The modal can be retained for secondary entry points (e.g., Global Alliance section line 405). Only the two ACs above need the route change.
+
+---
+
+## BUILDER IMPLEMENTATION COMPLETE
+- Hero CTA `onClick` changed from `setIsWaitlistModalOpen(true)` → `navigate('/waitlist')` (Landing.tsx:190)
+- Veterans "Join the Mission" button changed from `setIsWaitlistModalOpen(true)` → `navigate('/waitlist')` (Landing.tsx:1037)
+- "Start Free Trial" removed entirely — confirmed 0 results in grep
+- Benchmarking "View Live Demo" → `navigate('/partner-demo')` (Landing.tsx:753) — already passing, retained
+- Modal `WaitlistModal` retained for Global Alliance secondary CTA (line 405) — per Inspector note
+
+---
+
+## ✅ [STATUS: PASS] — INSPECTOR APPROVED
+**Reviewed by:** INSPECTOR
+**Date:** 2026-02-26T09:19 PST
+
+**Verification Evidence:**
+- `grep -n 'navigate.*waitlist' Landing.tsx` → lines 190, 1037 ✅
+- `grep -n 'Start Free Trial' Landing.tsx` → 0 results ✅
+- `grep -n 'partner-demo' Landing.tsx` → lines 197, 753 ✅
+- `git log --oneline -1` → `85f8033 (HEAD -> main, origin/main)` ✅ code is on GitHub
+
+**Audit Results:**
+- Acceptance Criteria: ALL CHECKED ✅
+- Deferred items: NONE ✅
+- PHI check: PASSED ✅ (no patient data on landing page)
+- Git push: CONFIRMED ✅
