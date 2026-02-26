@@ -325,9 +325,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (!substanceName && journey.session?.substance) {
                 substanceName = journey.session.substance;
             }
-            // Read actual patient medications — no hardcoded demo fallback.
-            // If nothing is stored, return null (no data = no phantom warnings).
-            let medications: string[] = [];
+            // Medications: use same source + same fallback as patientMeds display below.
+            // The isDosingProtocolComplete guard (line 315) already prevents phantom
+            // warnings from stale localStorage — the fallback is safe here.
+            const MED_FALLBACK = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
+            let medications: string[] = MED_FALLBACK;
             try {
                 const cachedMeds = localStorage.getItem('mock_patient_medications_names');
                 if (cachedMeds) {
