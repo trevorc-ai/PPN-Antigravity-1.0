@@ -219,6 +219,20 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
             {/* ── Form body ───────────────────────────────────────────────── */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-8">
 
+                {/* Unchecked warning */}
+                {!data.consent_obtained && (
+                    <div className="flex items-start gap-3 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-lg">
+                        <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <div>
+                            <p className="text-yellow-400 font-semibold text-sm">Consent Required</p>
+                            <p className="text-yellow-400/80 text-sm mt-1">
+                                Patient consent must be obtained and documented before proceeding
+                                with treatment.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* ── Step 1: Consent checkbox (always visible) ─────────── */}
                 <div className={`p-6 rounded-lg border-2 transition-all ${data.consent_obtained
                     ? 'bg-emerald-500/5 border-emerald-500/50'
@@ -248,20 +262,6 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                         </div>
                     </label>
                 </div>
-
-                {/* Unchecked warning */}
-                {!data.consent_obtained && (
-                    <div className="flex items-start gap-3 p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-lg">
-                        <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                        <div>
-                            <p className="text-yellow-400 font-semibold text-sm">Consent Required</p>
-                            <p className="text-yellow-400/80 text-sm mt-1">
-                                Patient consent must be obtained and documented before proceeding
-                                with treatment.
-                            </p>
-                        </div>
-                    </div>
-                )}
 
                 {/* ── Step 2: Timestamp + type buttons (only after checkbox) ─ */}
                 {data.consent_obtained && (

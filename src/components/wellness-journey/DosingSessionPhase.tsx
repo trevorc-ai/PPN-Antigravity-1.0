@@ -307,7 +307,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     };
 
     // ── Contraindication checker — MUST stay above early returns (Rules of Hooks) ──
+    // GUARD: Only run after the practitioner has actually completed the Dosing Protocol form.
+    // Without this, stale localStorage from a previous session would trigger warnings
+    // before the user has entered anything in the current session.
     const contraindicationResults = useMemo(() => {
+        // Do not evaluate until the step is complete
+        if (!isDosingProtocolComplete) return null;
         try {
             let substanceName = '';
             try {
@@ -320,20 +325,19 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (!substanceName && journey.session?.substance) {
                 substanceName = journey.session.substance;
             }
-            const DEMO_MEDS = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
-            let medications: string[] = [];
+            // Medications: use same source + same fallback as patientMeds display below.
+            // The isDosingProtocolComplete guard (line 315) already prevents phantom
+            // warnings from stale localStorage — the fallback is safe here.
+            const MED_FALLBACK = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
+            let medications: string[] = MED_FALLBACK;
             try {
                 const cachedMeds = localStorage.getItem('mock_patient_medications_names');
                 if (cachedMeds) {
                     const parsed = JSON.parse(cachedMeds);
-                    medications = Array.isArray(parsed) && parsed.length ? parsed : DEMO_MEDS;
-                } else {
-                    medications = DEMO_MEDS;
+                    if (Array.isArray(parsed) && parsed.length) medications = parsed;
                 }
-            } catch (_) {
-                medications = DEMO_MEDS;
-            }
-            if (!substanceName || !medications.length) return null;
+            } catch (_) { }
+            if (!substanceName) return null;
             const engineInput: import('../../services/contraindicationEngine').IntakeScreeningData = {
                 patientId: 'demo',
                 sessionSubstance: substanceName.toLowerCase(),
@@ -575,6 +579,29 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <div className="mt-auto pt-2">
                                         {step.isComplete ? (
                                             <div className="flex flex-col items-center gap-1 mt-2">
+                                                {/* Dosage HUD — only for dosing-protocol step */}
+                                                {step.id === 'dosing-protocol' && (() => {
+                                                    try {
+                                                        const raw = localStorage.getItem('ppn_dosing_protocol');
+                                                        if (!raw) return null;
+                                                        const p = JSON.parse(raw);
+                                                        const name = p.substance_name || p.substance;
+                                                        const dose = p.dosage_amount;
+                                                        const unit = p.dosage_unit || 'mg';
+                                                        const route = p.route_of_administration;
+                                                        if (!name) return null;
+                                                        return (
+                                                            <div className="w-full mb-2 px-3 py-2 bg-emerald-950/40 border border-emerald-700/30 rounded-xl text-center">
+                                                                <p className="text-base font-black text-emerald-200 uppercase tracking-widest leading-tight">{name}</p>
+                                                                <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-emerald-300/80">
+                                                                    {dose && <span>{dose}{unit}</span>}
+                                                                    {dose && route && <span className="text-emerald-700">·</span>}
+                                                                    {route && <span>{route}</span>}
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    } catch { return null; }
+                                                })()}
                                                 <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-teal-400">
                                                     <CheckCircle2 className="w-4 h-4" /> COMPLETED
                                                 </span>

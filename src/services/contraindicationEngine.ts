@@ -84,14 +84,14 @@ function matchesAny(haystack: string[], needles: string[]): boolean {
 function checkAbsoluteContraindications(data: IntakeScreeningData): ContraindicationFlag[] {
     const flags: ContraindicationFlag[] = [];
 
-    // A1 — Active lithium use
+    // A1 — Active lithium use (ALL psychedelics — no substance restriction)
     if (matchesAny(data.medications, ['lithium'])) {
         flags.push({
             id: 'ABS-MEDICATION-LITHIUM',
             severity: 'ABSOLUTE',
             category: 'MEDICATION',
             headline: 'Active lithium detected — session contraindicated',
-            detail: 'Concurrent lithium use significantly elevates risk of serotonin syndrome and cardiac arrhythmia in combination with serotonergic psychedelics. Lithium must be discontinued under physician supervision before any session.',
+            detail: 'Concurrent lithium use significantly elevates risk of serotonin syndrome, neurotoxicity, and cardiac arrhythmia in combination with serotonergic psychedelics (psilocybin, MDMA, LSD, ibogaine). Lithium must be discontinued under physician supervision before any psychedelic session. Minimum washout as directed by prescribing physician.',
             source: 'Baseline Observations — Medication List',
             regulatoryBasis: 'OHA OAR 333-333-4020(3)(c); MAPS Protocol S2 §8.3.1',
         });
@@ -195,6 +195,53 @@ function checkAbsoluteContraindications(data: IntakeScreeningData): Contraindica
             detail: 'Oregon Psilocybin Services Act (Measure 109) sets minimum client age at 21 years. Sessions with clients under 21 are not permitted under any circumstance.',
             source: 'Baseline Observations — Demographics',
             regulatoryBasis: 'Oregon Ballot Measure 109; OHA OAR 333-333-4010',
+        });
+    }
+
+    // A9 — SSRI + MDMA (ABSOLUTE — Serotonin Syndrome, potentially fatal)
+    // Corrected 2026-02-25: Previously classified as RELATIVE (R3).
+    // Active SSRI with MDMA is a potentially fatal combination and must be
+    // treated as an absolute contraindication, not a caution.
+    // Source: MAPS Protocol S2 §7.2; FDA Drug Interaction Guidance
+    const ssriDrugsAbsolute = [
+        'ssri', 'sertraline', 'fluoxetine', 'escitalopram', 'citalopram',
+        'paroxetine', 'fluvoxamine', 'zoloft', 'prozac', 'lexapro', 'paxil',
+        'luvox', 'viibryd', 'vilazodone', 'trintellix', 'vortioxetine',
+    ];
+    const substanceLower = data.sessionSubstance.toLowerCase();
+    if (
+        (substanceLower === 'mdma' || substanceLower.includes('mdma')) &&
+        matchesAny(data.medications, ssriDrugsAbsolute)
+    ) {
+        flags.push({
+            id: 'ABS-MEDICATION-SSRI-MDMA',
+            severity: 'ABSOLUTE',
+            category: 'MEDICATION',
+            headline: 'SSRI detected with MDMA session — Serotonin Syndrome risk',
+            detail: 'Active SSRI use combined with MDMA carries a serious risk of Serotonin Syndrome, a potentially life-threatening condition. MDMA dramatically increases synaptic serotonin; SSRIs block reuptake, compounding the effect. Minimum 2-week tapering washout under physician supervision is required before any MDMA session. Do NOT discontinue SSRIs abruptly.',
+            source: 'Baseline Observations — Medication List',
+            regulatoryBasis: 'MAPS Protocol S2 §7.2; FDA Drug Interaction Guidance',
+        });
+    }
+
+    // A10 — Bupropion (Wellbutrin) + MDMA (ABSOLUTE — CYP2D6 inhibition + seizure risk)
+    // Bupropion inhibits CYP2D6, the primary enzyme metabolizing MDMA.
+    // This causes dangerous MDMA plasma accumulation (up to 3–4x normal levels).
+    // Additionally: additive seizure threshold lowering, noradrenergic/dopaminergic
+    // potentiation. NOT an SSRI but must be treated as absolute with MDMA.
+    const bupropionTerms = ['bupropion', 'wellbutrin', 'zyban', 'aplenzin', 'forfivo', 'budeprion'];
+    if (
+        (substanceLower === 'mdma' || substanceLower.includes('mdma')) &&
+        matchesAny(data.medications, bupropionTerms)
+    ) {
+        flags.push({
+            id: 'ABS-MEDICATION-BUPROPION-MDMA',
+            severity: 'ABSOLUTE',
+            category: 'MEDICATION',
+            headline: 'Bupropion detected with MDMA session — CYP2D6 inhibition danger',
+            detail: 'Bupropion (Wellbutrin) is a potent CYP2D6 inhibitor - the primary enzyme responsible for MDMA metabolism. Co-administration causes MDMA plasma levels to accumulate 3-4x above expected levels, dramatically increasing cardiovascular strain, hyperthermia risk, and neurotoxicity. Bupropion also independently lowers seizure threshold, compounding MDMA CNS effects. This combination is absolutely contraindicated.',
+            source: 'Baseline Observations — Medication List',
+            regulatoryBasis: 'Farré et al. (2015) J Pharmacol Exp Ther; MAPS Protocol S2 §7.2; FDA CYP2D6 Drug Interaction Guidance',
         });
     }
 

@@ -66,7 +66,7 @@ export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, compl
     // In production, this would use live clinical records.
     const mockIntakeData: IntakeScreeningData = {
         patientId: 'PT-RISK9W2P',
-        sessionSubstance: 'Psilocybin',
+        sessionSubstance: 'psilocybin',
         medications: ['Sertraline (tapering)', 'Lisinopril'], // Relative: SSRI
         psychiatricHistory: ['Anxiety', 'Depression'],
         familyHistory: [],

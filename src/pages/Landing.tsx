@@ -187,7 +187,7 @@ const Landing: React.FC = () => {
             >
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => setIsWaitlistModalOpen(true)}
+                  onClick={() => navigate('/waitlist')}
                   className="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
                   Join the Waitlist
@@ -1034,7 +1034,7 @@ const Landing: React.FC = () => {
             </div>
 
             <div className="pt-12">
-              <button onClick={() => setIsWaitlistModalOpen(true)} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 border border-indigo-400/50 hover:border-indigo-300">
+              <button onClick={() => navigate('/waitlist')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95 border border-indigo-400/50 hover:border-indigo-300">
                 Join the Mission
               </button>
             </div>

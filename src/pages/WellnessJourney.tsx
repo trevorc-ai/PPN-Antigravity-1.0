@@ -23,6 +23,7 @@ import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
 import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
+import { supabase } from '../supabaseClient'; // WO-430: medication hydration on patient select
 import { createClinicalSession } from '../services/clinicalLog';
 import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
 import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components/wellness-journey/ProtocolConfiguratorModal';
@@ -169,6 +170,17 @@ const WellnessJourneyInternal: React.FC = () => {
     };
 
     const handlePatientSelect = useCallback(async (patientId: string, isNew: boolean, phase: string) => {
+        // ── STEP 0: Clear previous patient's session data from localStorage ──────
+        // Without this, stale substance/medication/dosage data from the previous
+        // patient bleeds into the new session causing phantom contraindication
+        // warnings and incorrect form pre-population.
+        const SESSION_CACHE_KEYS = [
+            'ppn_dosing_protocol',
+            'mock_patient_medications_names',
+            'ppn_latest_vitals',
+        ];
+        SESSION_CACHE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch (_) { } });
+
         // Create a REAL log_clinical_records row in the DB so that all Phase 2 form
         // writes (vitals, observations, timeline) satisfy the FK constraint:
         //   log_session_vitals.session_id → log_clinical_records.id
@@ -182,8 +194,6 @@ const WellnessJourneyInternal: React.FC = () => {
             if (result.success && result.sessionId) {
                 sessionId = result.sessionId;
             } else {
-                // Log loudly — this means the patient WON'T appear in Existing Patient lookup
-                // because no row was written to log_clinical_records.
                 console.error('[WellnessJourney] ❌ createClinicalSession FAILED — patient will NOT persist to DB.', result.error);
                 sessionId = crypto.randomUUID();
             }
@@ -192,17 +202,51 @@ const WellnessJourneyInternal: React.FC = () => {
             sessionId = crypto.randomUUID();
         }
 
+        // ── STEP 1: Load medications for existing patients from Supabase ─────────
+        // Query their most recent StructuredSafetyCheck / intake record for
+        // the medication name list and write it to localStorage so that:
+        //   a) DosingProtocolForm contraindication engine has real meds
+        //   b) DosingSessionPhase medication pills + engine both show real data
+        if (!isNew) {
+            try {
+                const { data: intakeData } = await supabase
+                    .from('log_patient_intake')
+                    .select('medications_text, medication_ids')
+                    .eq('patient_link_code', patientId)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                if (intakeData?.medications_text && Array.isArray(intakeData.medications_text) && intakeData.medications_text.length > 0) {
+                    // medications_text column: array of free-text medication names entered by practitioner
+                    localStorage.setItem('mock_patient_medications_names', JSON.stringify(intakeData.medications_text));
+                    console.log('[WellnessJourney] Patient medications loaded from intake record:', intakeData.medications_text);
+                } else if (intakeData?.medication_ids && Array.isArray(intakeData.medication_ids) && intakeData.medication_ids.length > 0) {
+                    // Resolve medication IDs → names via ref_medications
+                    const { data: medRows } = await supabase
+                        .from('ref_medications')
+                        .select('medication_name')
+                        .in('medication_id', intakeData.medication_ids);
+                    if (medRows && medRows.length > 0) {
+                        const names = medRows.map((m: any) => m.medication_name);
+                        localStorage.setItem('mock_patient_medications_names', JSON.stringify(names));
+                        console.log('[WellnessJourney] Patient medications resolved from IDs:', names);
+                    }
+                } else {
+                    console.log('[WellnessJourney] No medication data found for patient — medication list will be empty.');
+                }
+            } catch (err) {
+                console.warn('[WellnessJourney] Could not load patient medications — engine will use empty list.', err);
+            }
+        }
+
         setJourney(prev => ({
             ...prev,
             patientId,
             sessionId,
-            // New patients always start with empty demographics — no stale carry-over.
-            // Existing patients will have demographics populated when the patient record
-            // lookup is wired in (WO-406). For now, clear on new, preserve on existing.
             demographics: isNew ? undefined : prev.demographics,
         }));
         setShowPatientModal(false);
-        // Next time the modal opens, start in the right view for the patient's phase
         setPatientModalView(isNew ? 'choose' : 'existing');
         const targetPhase = isNew ? 1 : (PHASE_TAB_MAP[phase] ?? 1);
         setActivePhase(targetPhase);
@@ -225,9 +269,7 @@ const WellnessJourneyInternal: React.FC = () => {
                 message: `Session started for ${patientId} — Phase 1: Preparation`,
                 type: 'success',
             });
-            // Show config modal right after selection for new sessions
             setShowProtocolConfigurator(true);
-            // Land on Phase 1 with all steps pending — practitioner chooses where to start
         } else {
             const phaseLabel = targetPhase === 1 ? 'Preparation' : targetPhase === 2 ? 'Treatment' : 'Integration';
             addToast({
@@ -237,6 +279,10 @@ const WellnessJourneyInternal: React.FC = () => {
             });
         }
     }, [addToast, navigate]);
+
+    // Stable callback for closing the patient modal — prevents PatientSelectModal's
+    // Escape listener from re-registering on every render (escape-key boot bug fix).
+    const handleClosePatientModal = useCallback(() => setShowPatientModal(false), []);
 
     // WO-113: SlideOut form panel state
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -543,7 +589,7 @@ const WellnessJourneyInternal: React.FC = () => {
             {showPatientModal && (
                 <PatientSelectModal
                     onSelect={handlePatientSelect}
-                    onClose={() => setShowPatientModal(false)}
+                    onClose={handleClosePatientModal}
                     initialView={patientModalView}
                 />
             )}
