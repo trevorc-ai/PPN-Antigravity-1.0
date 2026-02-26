@@ -307,7 +307,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     };
 
     // ── Contraindication checker — MUST stay above early returns (Rules of Hooks) ──
+    // GUARD: Only run after the practitioner has actually completed the Dosing Protocol form.
+    // Without this, stale localStorage from a previous session would trigger warnings
+    // before the user has entered anything in the current session.
     const contraindicationResults = useMemo(() => {
+        // Do not evaluate until the step is complete
+        if (!isDosingProtocolComplete) return null;
         try {
             let substanceName = '';
             try {
@@ -320,20 +325,17 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (!substanceName && journey.session?.substance) {
                 substanceName = journey.session.substance;
             }
-            const DEMO_MEDS = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
+            // Read actual patient medications — no hardcoded demo fallback.
+            // If nothing is stored, return null (no data = no phantom warnings).
             let medications: string[] = [];
             try {
                 const cachedMeds = localStorage.getItem('mock_patient_medications_names');
                 if (cachedMeds) {
                     const parsed = JSON.parse(cachedMeds);
-                    medications = Array.isArray(parsed) && parsed.length ? parsed : DEMO_MEDS;
-                } else {
-                    medications = DEMO_MEDS;
+                    if (Array.isArray(parsed) && parsed.length) medications = parsed;
                 }
-            } catch (_) {
-                medications = DEMO_MEDS;
-            }
-            if (!substanceName || !medications.length) return null;
+            } catch (_) { }
+            if (!substanceName) return null;
             const engineInput: import('../../services/contraindicationEngine').IntakeScreeningData = {
                 patientId: 'demo',
                 sessionSubstance: substanceName.toLowerCase(),

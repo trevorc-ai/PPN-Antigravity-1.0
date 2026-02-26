@@ -31,42 +31,61 @@ interface MedDropdownProps {
 
 const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange, disabled, placeholder }) => {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const ref = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        setSearch('');
+      }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  // Close on Escape
+  // Close on Escape — stopPropagation so it doesn't bubble to SlideOutPanel
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  }, []);
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        e.stopPropagation();
+        setOpen(false);
+        setSearch('');
+      }
+    };
+    document.addEventListener('keydown', handler, true);
+    return () => document.removeEventListener('keydown', handler, true);
+  }, [open]);
 
+  // Auto-focus search input when dropdown opens
+  useEffect(() => {
+    if (open && searchRef.current) {
+      setTimeout(() => searchRef.current?.focus(), 50);
+    }
+  }, [open]);
 
+  const filtered = search.trim()
+    ? medications.filter(m => m.medication_name.toLowerCase().includes(search.toLowerCase()))
+    : medications;
 
   const displayValue = value || placeholder || 'Select Interactor...';
 
   return (
     <div ref={ref} className="relative">
-      {/* Trigger button — matches the original select styling */}
+      {/* Trigger button */}
       <button
         type="button"
         id="medication-select-trigger"
         aria-haspopup="listbox"
         aria-expanded={open}
         disabled={disabled}
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { setOpen(o => !o); if (open) setSearch(''); }}
         className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait text-left"
         style={{ color: value ? '#8B9DC3' : '#4B5E7A' }}
       >
-        {/* Dataset icon — matches original absolute-positioned icon */}
         <span className="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-xl text-slate-300 pointer-events-none">
           dataset
         </span>
@@ -78,36 +97,56 @@ const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange,
 
       {/* Dropdown panel */}
       {open && (
-        <ul
-          role="listbox"
-          aria-label="Select medication"
-          className="absolute z-50 left-0 right-0 mt-2 max-h-80 overflow-y-auto bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-2"
-        >
-          {/* Clear option */}
-          <li
-            role="option"
-            aria-selected={value === ''}
-            onClick={() => { onChange(''); setOpen(false); }}
-            className="px-4 py-2.5 text-sm text-slate-400 hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-700/50"
+        <div className="absolute z-50 left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
+          {/* Search input */}
+          <div className="p-3 border-b border-slate-700/60">
+            <input
+              ref={searchRef}
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Type to search medications..."
+              className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary"
+              aria-label="Search medications"
+            />
+          </div>
+          <ul
+            role="listbox"
+            aria-label="Select medication"
+            className="max-h-72 overflow-y-auto py-2"
           >
-            {placeholder || 'Select Interactor...'}
-          </li>
+            {/* Clear option */}
+            {!search && (
+              <li
+                role="option"
+                aria-selected={value === ''}
+                onClick={() => { onChange(''); setOpen(false); setSearch(''); }}
+                className="px-4 py-2.5 text-sm text-slate-400 hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-700/50"
+              >
+                {placeholder || 'Select Interactor...'}
+              </li>
+            )}
 
-          {medications.map(med => (
-            <li
-              key={med.medication_id}
-              role="option"
-              aria-selected={value === med.medication_name}
-              onClick={() => { onChange(med.medication_name); setOpen(false); }}
-              className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
-                ? 'bg-blue-600 text-white font-semibold'
-                : 'text-[#A8B5D1] hover:bg-slate-800'
-                }`}
-            >
-              {med.medication_name}
-            </li>
-          ))}
-        </ul>
+            {filtered.length === 0 && (
+              <li className="px-5 py-4 text-sm text-slate-500 text-center">No medications match "{search}"</li>
+            )}
+
+            {filtered.map(med => (
+              <li
+                key={med.medication_id}
+                role="option"
+                aria-selected={value === med.medication_name}
+                onClick={() => { onChange(med.medication_name); setOpen(false); setSearch(''); }}
+                className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
+                    ? 'bg-blue-600 text-white font-semibold'
+                    : 'text-[#A8B5D1] hover:bg-slate-800'
+                  }`}
+              >
+                {med.medication_name}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
