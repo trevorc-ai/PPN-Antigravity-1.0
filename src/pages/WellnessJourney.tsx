@@ -354,53 +354,53 @@ const WellnessJourneyInternal: React.FC = () => {
         let isLastPhase1Form = false;
 
         if (formId && activePhase === 1) {
-            const updatedForms = new Set([...completedForms, formId]);
-            setCompletedForms(updatedForms);
+            // Use functional form to avoid stale `completedForms` closure — this
+            // is the root cause of the WO-354 "button stays illuminated" bug.
+            // When the form's onComplete fires after an async save, the captured
+            // `completedForms` Set might not yet include the just-saved formId.
+            setCompletedForms(prev => {
+                const updated = new Set([...prev, formId]);
 
-            if (!exit) {
-                const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
-                const next = PHASE1_STEPS[currentIndex + 1];
-                nextId = next ? next.id : null;
-            }
-
-            // If no next step — all Phase 1 forms saved, complete the phase
-            if (!nextId && !exit) {
-                isLastPhase1Form = true;
-                const updatedPhases = [...new Set([...completedPhases, 1 as number])];
-                setCompletedPhases(updatedPhases);
-                localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updatedPhases));
-            } else if (!nextId && exit) {
-                // Even if we exit, check if all are done
-                const allDone = PHASE1_STEPS.every(s => updatedForms.has(s.id));
-                if (allDone && !completedPhases.includes(1)) {
-                    isLastPhase1Form = true;
-                    const updatedPhases = [...new Set([...completedPhases, 1 as number])];
-                    setCompletedPhases(updatedPhases);
-                    localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updatedPhases));
+                // Determine next step based on the updated set
+                if (!exit) {
+                    const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
+                    const next = PHASE1_STEPS[currentIndex + 1];
+                    nextId = next ? next.id : null;
                 }
-            }
+
+                // If no next step — all Phase 1 forms saved, complete the phase
+                if (!nextId && !exit) {
+                    isLastPhase1Form = true;
+                } else if (!nextId && exit) {
+                    const allDone = PHASE1_STEPS.every(s => updated.has(s.id));
+                    if (allDone) isLastPhase1Form = true;
+                }
+
+                if (isLastPhase1Form) {
+                    setCompletedPhases(prevPhases => {
+                        const newPhases = [...new Set([...prevPhases, 1 as number])];
+                        localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(newPhases));
+                        return newPhases;
+                    });
+                }
+
+                return updated;
+            });
         }
 
         // ── Phase 2: track form completions so step cards illuminate correctly ──
-        // dosing-protocol and session-vitals must both be in completedForms before
-        // the Start Session gate unlocks. Phase 1 sequencing doesn't apply here.
         if (formId && activePhase === 2) {
             setCompletedForms(prev => new Set([...prev, formId]));
         }
 
         if (nextId) {
-            // Same panel, swap content — no close/reopen flash
             setActiveFormId(nextId);
             setActiveFormTitle(FORM_LABELS[nextId] ?? 'Clinical Form');
             setActiveFormSubtitle(FORM_SUBTITLES[nextId]);
-            // Panel stays open (isFormOpen remains true)
         } else {
-            // No next form: close the panel
             setIsFormOpen(false);
             setTimeout(() => setActiveFormId(null), 320);
 
-            // Phase 1 complete — show toast prompt; practitioner navigates to Phase 2 manually.
-            // Auto-advance to Phase 2 will be wired once the Phase 1 report data-viz is in place.
             if (isLastPhase1Form) {
                 setTimeout(() => {
                     addToast({
@@ -412,7 +412,7 @@ const WellnessJourneyInternal: React.FC = () => {
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activePhase, completedForms, completedPhases]);
+    }, [activePhase, addToast]);
 
 
 
