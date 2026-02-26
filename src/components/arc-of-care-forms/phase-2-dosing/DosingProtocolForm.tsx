@@ -154,10 +154,12 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const substanceName = selectedSubstance?.substance_name ?? '';
 
     // Run local contraindication engine — instant, no DB required
+    // IMPORTANT: substanceName must be lowercased — engine rules use lowercase string matching.
+    // DB substance_name values are title-case (e.g. 'MDMA', 'Psilocybin') and will miss rules without this.
     const contraindicationResult = substanceName
         ? runContraindicationEngine({
             patientId: patientId ?? 'UNKNOWN',
-            sessionSubstance: substanceName,
+            sessionSubstance: substanceName.toLowerCase(),
             medications: storedMedNames,
             psychiatricHistory: [],
             familyHistory: [],
