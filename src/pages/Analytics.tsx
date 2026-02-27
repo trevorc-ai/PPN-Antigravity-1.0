@@ -128,41 +128,7 @@ const Analytics = () => {
                 </Section>
             )}
 
-            {/* EMPTY STATE */}
-            {!analytics.loading && !analytics.error && analytics.activeProtocols === 0 && (
-                <Section spacing="tight">
-                    {/* Demo-aware empty state — explains the model, doesn't look broken */}
-                    <div className="relative overflow-hidden bg-[#0a0c12]/60 border border-indigo-500/20 rounded-[2rem] p-10">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/40 via-blue-400/60 to-indigo-500/40" />
-                        <div className="flex flex-col md:flex-row items-start gap-8">
-                            <div className="shrink-0 w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                                <Activity className="w-8 h-8 text-indigo-400" />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-xs font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">Network Intelligence — Give-to-Get Model</p>
-                                <h3 className="text-2xl font-black tracking-tighter mb-3" style={{ color: '#A8B5D1' }}>
-                                    Analytics unlock after 10+ sessions
-                                </h3>
-                                <p className="text-base mb-6" style={{ color: '#8B9DC3' }}>
-                                    Once your clinic logs sessions via the Wellness Journey, this dashboard populates with real-time outcome benchmarks, safety performance scores, and network-wide comparative data.
-                                </p>
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    {[
-                                        { label: 'Performance Radar', desc: 'Your outcomes vs network avg across 6 dimensions' },
-                                        { label: 'Safety Benchmark', desc: 'Adverse event rate percentile — all active sites' },
-                                        { label: 'Patient Galaxy', desc: 'Outcome scatter across substance + indication' },
-                                    ].map((item) => (
-                                        <div key={item.label} className="p-4 bg-slate-900/40 border border-slate-800 rounded-xl">
-                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
-                                            <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Section>
-            )}
+
 
             {/* KPI RIBBON */}
             <Section spacing="tight" className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2">
