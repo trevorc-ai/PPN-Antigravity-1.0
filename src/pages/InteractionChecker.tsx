@@ -138,8 +138,8 @@ const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange,
                 aria-selected={value === med.medication_name}
                 onClick={() => { onChange(med.medication_name); setOpen(false); setSearch(''); }}
                 className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
-                    ? 'bg-blue-600 text-white font-semibold'
-                    : 'text-[#A8B5D1] hover:bg-slate-800'
+                  ? 'bg-blue-600 text-white font-semibold'
+                  : 'text-[#A8B5D1] hover:bg-slate-800'
                   }`}
               >
                 {med.medication_name}
@@ -406,7 +406,7 @@ const InteractionChecker: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Input: Psychedelic */}
-          <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
+          <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedPsychedelic ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
             <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
             <div className="relative group">
               <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
@@ -436,7 +436,7 @@ const InteractionChecker: React.FC = () => {
           </section>
 
           {/* Input: Medication */}
-          <section className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 shadow-xl space-y-4">
+          <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedMedication ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
             <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
             <MedDropdown
               medications={medications}

@@ -288,7 +288,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
-            <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col max-h-[90dvh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                     <div className="flex items-center gap-4">

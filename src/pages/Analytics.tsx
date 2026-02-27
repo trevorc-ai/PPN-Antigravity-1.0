@@ -98,10 +98,10 @@ const Analytics = () => {
                     </button>
                     <button
                         onClick={handlePrint}
-                        className="p-3 bg-indigo-600 hover:bg-indigo-500 text-slate-300 rounded-xl flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
+                        className="hidden md:flex p-3 bg-indigo-600 hover:bg-indigo-500 text-slate-300 rounded-xl items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
                     >
                         <Printer className="w-5 h-5" />
-                        <span className="font-bold">Print Report</span>
+                        <span className="font-bold">Export Report</span>
                     </button>
                 </div>
             </Section>
@@ -338,6 +338,17 @@ const Analytics = () => {
 
 
             </Section>
+
+            {/* MOBILE-ONLY: Export button at bottom — easier to reach on phone */}
+            <div className="md:hidden flex justify-center pb-4 print:hidden">
+                <button
+                    onClick={handlePrint}
+                    className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-slate-300 rounded-xl transition-colors shadow-lg shadow-indigo-500/20 font-bold"
+                >
+                    <Printer className="w-5 h-5" />
+                    Export Report
+                </button>
+            </div>
 
             {/* PRINT FOOTER */}
             <div className="hidden print:block text-center text-xs text-slate-400 pt-8 border-t border-gray-200 mt-8">
