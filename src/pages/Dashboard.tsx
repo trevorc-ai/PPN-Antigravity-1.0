@@ -229,36 +229,8 @@ export default function Dashboard() {
           </button>
         </Section>
 
-        <Section spacing="tight">
-          <div className="flex items-center gap-3 mb-4">
-            <CheckCircle className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Protocol Insights</h2>
-            <span className="ml-auto text-xs text-slate-500 font-medium">Updated today</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <NextStepItem
-              number={1}
-              text="Start a new Wellness Journey session"
-              link="/wellness-journey"
-              urgent={false}
-            />
-            <NextStepItem
-              number={2}
-              text="View your Clinical Intelligence report"
-              link="/analytics"
-            />
-            <NextStepItem
-              number={3}
-              text="Log pending follow-up sessions"
-              link="/wellness-journey"
-            />
-          </div>
-        </Section>
-
-
-
         {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}
-        < Section spacing="tight" >
+        <Section spacing="tight">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
             <span className="text-xs text-slate-500 font-medium">This Month</span>
@@ -299,66 +271,132 @@ export default function Dashboard() {
               color="bg-blue-500"
             />
           </div>
-        </Section >
+        </Section>
 
-
-        {/* QUICK ACTIONS */}
+        {/* SUGGESTED NEXT STEPS — contextual, below data */}
         <Section spacing="tight">
-          <div className="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
-            <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
+          <div className="flex items-center gap-3 mb-4">
+            <CheckCircle className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-base font-black tracking-tight" style={{ color: '#A8B5D1' }}>Suggested Next Steps</h2>
+            <span className="ml-auto text-xs text-slate-500 font-medium">Based on your activity</span>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <NextStepItem number={1} text="Start a new Wellness Journey session" link="/wellness-journey" />
+            <NextStepItem number={2} text="View your Clinical Intelligence report" link="/analytics" />
+            <NextStepItem number={3} text="Log pending follow-up sessions" link="/wellness-journey" />
+          </div>
+        </Section>
+
+
+        {/* QUICK ACTIONS — always-on color, not hover-only */}
+        <Section spacing="tight">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+
+            {/* Log Protocol — indigo */}
             <button
+              id="quick-action-log-protocol"
               data-tour="wellness-journey"
               onClick={() => navigate('/wellness-journey')}
-              className="group flex flex-col items-center justify-center gap-3 p-6 rounded-3xl bg-slate-900/50 hover:bg-indigo-500/10 text-slate-400 hover:text-indigo-300 border border-slate-800 hover:border-indigo-500/50 transition-all active:scale-95 cursor-pointer shadow-lg"
+              className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl
+                bg-indigo-500/12 hover:bg-indigo-500/22
+                border border-indigo-500/35 hover:border-indigo-400/60
+                shadow-lg shadow-indigo-900/30
+                transition-all active:scale-95 cursor-pointer overflow-hidden"
             >
-              <div className="p-3 bg-indigo-500/10 rounded-2xl group-hover:bg-indigo-500/20 transition-colors">
-                <Plus className="w-6 h-6 text-indigo-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 to-transparent pointer-events-none" />
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/25 flex items-center justify-center shadow-inner">
+                <Plus className="w-6 h-6 text-indigo-300" />
               </div>
-              <span className="text-xs font-black uppercase tracking-widest text-slate-300">Log Protocol</span>
+              <div className="text-center relative z-10">
+                <p className="text-sm font-black text-indigo-200 leading-tight">Log Protocol</p>
+                <p className="text-xs text-indigo-400/70 mt-0.5 hidden sm:block">New session</p>
+              </div>
             </button>
 
+            {/* Analytics — blue */}
             <button
+              id="quick-action-analytics"
               onClick={() => navigate('/analytics')}
-              className="group flex flex-col items-center justify-center gap-3 p-6 rounded-3xl bg-slate-900/50 hover:bg-blue-500/10 text-slate-400 hover:text-blue-300 border border-slate-800 hover:border-blue-500/50 transition-all active:scale-95 cursor-pointer shadow-lg"
+              className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl
+                bg-blue-500/12 hover:bg-blue-500/22
+                border border-blue-500/35 hover:border-blue-400/60
+                shadow-lg shadow-blue-900/30
+                transition-all active:scale-95 cursor-pointer overflow-hidden"
             >
-              <div className="p-3 bg-blue-500/10 rounded-2xl group-hover:bg-blue-500/20 transition-colors">
-                <BarChart3 className="w-6 h-6 text-blue-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent pointer-events-none" />
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/25 flex items-center justify-center shadow-inner">
+                <BarChart3 className="w-6 h-6 text-blue-300" />
               </div>
-              <span className="text-xs font-black uppercase tracking-widest text-slate-300">Analytics</span>
+              <div className="text-center relative z-10">
+                <p className="text-sm font-black text-blue-200 leading-tight">Analytics</p>
+                <p className="text-xs text-blue-400/70 mt-0.5 hidden sm:block">Outcomes</p>
+              </div>
             </button>
 
+            {/* Interactions — amber */}
             <button
+              id="quick-action-interactions"
               data-tour="interaction-checker"
               onClick={() => navigate('/interactions')}
-              className="group flex flex-col items-center justify-center gap-3 p-6 rounded-3xl bg-slate-900/50 hover:bg-amber-500/10 text-slate-400 hover:text-amber-300 border border-slate-800 hover:border-amber-500/50 transition-all active:scale-95 cursor-pointer shadow-lg"
+              className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl
+                bg-amber-500/12 hover:bg-amber-500/22
+                border border-amber-500/35 hover:border-amber-400/60
+                shadow-lg shadow-amber-900/30
+                transition-all active:scale-95 cursor-pointer overflow-hidden"
             >
-              <div className="p-3 bg-amber-500/10 rounded-2xl group-hover:bg-amber-500/20 transition-colors">
-                <Activity className="w-6 h-6 text-amber-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-600/10 to-transparent pointer-events-none" />
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/25 flex items-center justify-center shadow-inner">
+                <Activity className="w-6 h-6 text-amber-300" />
               </div>
-              <span className="text-xs font-black uppercase tracking-widest text-slate-300 text-center">Interactions</span>
+              <div className="text-center relative z-10">
+                <p className="text-sm font-black text-amber-200 leading-tight">Interactions</p>
+                <p className="text-xs text-amber-400/70 mt-0.5 hidden sm:block">Drug checker</p>
+              </div>
             </button>
 
+            {/* Export Data — emerald */}
             <button
+              id="quick-action-export"
               onClick={() => navigate('/data-export')}
-              className="group flex flex-col items-center justify-center gap-3 p-6 rounded-3xl bg-slate-900/50 hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-300 border border-slate-800 hover:border-emerald-500/50 transition-all active:scale-95 cursor-pointer shadow-lg"
+              className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl
+                bg-emerald-500/12 hover:bg-emerald-500/22
+                border border-emerald-500/35 hover:border-emerald-400/60
+                shadow-lg shadow-emerald-900/30
+                transition-all active:scale-95 cursor-pointer overflow-hidden"
             >
-              <div className="p-3 bg-emerald-500/10 rounded-2xl group-hover:bg-emerald-500/20 transition-colors">
-                <TrendingUp className="w-6 h-6 text-emerald-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-transparent pointer-events-none" />
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/25 flex items-center justify-center shadow-inner">
+                <TrendingUp className="w-6 h-6 text-emerald-300" />
               </div>
-              <span className="text-xs font-black uppercase tracking-widest text-slate-300">Export Data</span>
+              <div className="text-center relative z-10">
+                <p className="text-sm font-black text-emerald-200 leading-tight">Export Data</p>
+                <p className="text-xs text-emerald-400/70 mt-0.5 hidden sm:block">CSV / PDF</p>
+              </div>
             </button>
 
+            {/* Benchmarks — purple */}
             <button
+              id="quick-action-benchmarks"
               onClick={() => navigate('/deep-dives/clinic-performance')}
-              className="group flex flex-col items-center justify-center gap-3 p-6 rounded-3xl bg-slate-900/50 hover:bg-purple-500/10 text-slate-400 hover:text-purple-300 border border-slate-800 hover:border-purple-500/50 transition-all active:scale-95 cursor-pointer shadow-lg"
+              className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl
+                bg-purple-500/12 hover:bg-purple-500/22
+                border border-purple-500/35 hover:border-purple-400/60
+                shadow-lg shadow-purple-900/30
+                transition-all active:scale-95 cursor-pointer overflow-hidden"
             >
-              <div className="p-3 bg-purple-500/10 rounded-2xl group-hover:bg-purple-500/20 transition-colors">
-                <Users className="w-6 h-6 text-purple-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-transparent pointer-events-none" />
+              <div className="w-12 h-12 rounded-2xl bg-purple-500/25 flex items-center justify-center shadow-inner">
+                <Users className="w-6 h-6 text-purple-300" />
               </div>
-              <span className="text-xs font-black uppercase tracking-widest text-slate-300">Benchmarks</span>
+              <div className="text-center relative z-10">
+                <p className="text-sm font-black text-purple-200 leading-tight">Benchmarks</p>
+                <p className="text-xs text-purple-400/70 mt-0.5 hidden sm:block">Peer network</p>
+              </div>
             </button>
+
           </div>
         </Section>
 
