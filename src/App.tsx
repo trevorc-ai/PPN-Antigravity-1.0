@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation, Navigate, useNavigate, Outlet } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // WO-513: Route-Based Code Splitting
@@ -34,7 +34,7 @@ const SubstanceCatalog = lazy(() => import('./pages/SubstanceCatalog'));
 const SubstanceMonograph = lazy(() => import('./pages/SubstanceMonograph'));
 const InteractionChecker = lazy(() => import('./pages/InteractionChecker'));
 const AuditLogs = lazy(() => import('./pages/AuditLogs'));
-const MyProtocols = lazy(() => import('./pages/MyProtocols').then(m => ({ default: m.MyProtocols })));
+const MyProtocols = lazy(() => import('./pages/MyProtocols'));
 const ProtocolDetail = lazy(() => import('./pages/ProtocolDetail'));
 const ClinicianProfile = lazy(() => import('./pages/ClinicianProfile'));
 const Notifications = lazy(() => import('./pages/Notifications'));
@@ -101,6 +101,7 @@ import {
   HelpDevices,
   HelpSettings,
 } from './components/help/HelpPages';
+import HelpFAQ from './pages/HelpFAQ';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page Loading Fallback
@@ -366,9 +367,6 @@ const AppContent: React.FC = () => {
     </Router>
   );
 };
-
-// ── HelpFAQ needs onStartTour prop — lazy import with named export ────────────
-import HelpFAQ from './pages/HelpFAQ';
 
 const App = () => {
   return (
