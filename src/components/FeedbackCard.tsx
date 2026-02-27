@@ -189,12 +189,7 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ isOpen, onClose, triggerRef
                         }
                         aria-label="Feedback message"
                         rows={4}
-                        className="
-              w-full form-input resize-none
-              text-sm text-slate-300
-              placeholder:text-slate-600
-              rounded-xl
-            "
+                        className="w-full resize-none rounded-xl px-4 py-3 text-sm text-slate-300 placeholder:text-slate-600 bg-slate-900 border border-slate-700 focus:border-indigo-500/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
                     />
 
                     {/* Character count + error */}
