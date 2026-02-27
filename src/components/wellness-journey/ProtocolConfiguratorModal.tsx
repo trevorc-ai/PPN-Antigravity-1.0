@@ -309,7 +309,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     <div className="flex items-start gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
                         <Info className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
                         <div>
-                            <p className="text-base text-indigo-200 font-medium tracking-wide">Customize Your Workspace</p>
+                            <p className="text-base text-indigo-200 font-medium tracking-wide">Choose Your Workspace</p>
                             <p className="text-base text-indigo-300/80 mt-1.5 leading-relaxed">
                                 Select the tools you actually use to keep your interface clean and fast.
                                 <strong className="text-indigo-200 font-medium"> Please don't over-select "just in case"</strong> — you can change these settings at any time!

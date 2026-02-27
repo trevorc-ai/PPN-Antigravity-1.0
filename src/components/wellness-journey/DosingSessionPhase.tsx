@@ -803,44 +803,62 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 )}
 
-                {/* ── Timer Bar (sticky when live) ──────────────────────────────────── */}
+                {/* ── Session HUD (sticky when live) — shows timer + most recent vitals ── */}
                 <div className={`rounded-2xl border transition-all duration-500 ${isLive ? 'sticky top-2 z-30 bg-[#061115]/95 border-emerald-900/40 shadow-lg shadow-emerald-950/30 backdrop-blur-xl'
                     : 'bg-slate-900/30 border-slate-800/40 opacity-50 select-none'
                     }`}>
-                    <div className="flex items-center justify-between px-5 py-4 gap-4">
-                        <div>
-                            <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-0.5">
-                                {isLive ? 'Session Active' : 'Session Timer'}
-                            </p>
-                            <p className="text-3xl font-black text-emerald-50/90 font-mono tracking-tight leading-none tabular-nums">
-                                {elapsedTime}
-                            </p>
+                    <div className="flex items-center justify-between px-5 py-4 gap-4 flex-wrap">
+
+                        {/* ── Left: Session status + elapsed timer ── */}
+                        <div className="flex items-center gap-5">
+                            <div>
+                                <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-0.5">
+                                    {isLive ? 'Session Active' : 'Session Timer'}
+                                </p>
+                                <p className="text-2xl font-black text-emerald-50/90 font-mono tracking-tight leading-none tabular-nums">
+                                    {elapsedTime}
+                                </p>
+                            </div>
+
+                            {/* ── Most recently logged vitals from Session Updates ── */}
+                            {isLive && (() => {
+                                // Pull the most recent update entry that has vitals
+                                const lastWithVitals = updateLog.find(e => e.hr || e.bp);
+                                const latestHr = lastWithVitals?.hr || liveVitals.hr.toString();
+                                const latestBp = lastWithVitals?.bp || liveVitals.bp;
+                                const latestSpo2 = liveVitals.spo2;
+                                const lastTime = lastWithVitals?.timestamp;
+                                return (
+                                    <div className="flex items-stretch gap-0 bg-[#040C0E]/60 rounded-xl border border-[#14343B]/40 overflow-hidden">
+                                        <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
+                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
+                                            <div className="flex items-center gap-1 justify-center">
+                                                <Heart className="w-3 h-3 text-rose-500/80 fill-rose-500/30 animate-pulse" />
+                                                <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestHr}</p>
+                                                <p className="text-[10px] text-slate-600 font-semibold self-end mb-0.5">bpm</p>
+                                            </div>
+                                        </div>
+                                        <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
+                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
+                                            <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestBp}</p>
+                                        </div>
+                                        <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
+                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
+                                            <p className={`text-xl font-black leading-none tabular-nums ${latestSpo2 < 95 ? 'text-amber-400' : 'text-emerald-100'
+                                                }`}>{latestSpo2}%</p>
+                                        </div>
+                                        <div className="px-3 py-2.5 flex flex-col justify-center">
+                                            <p className="text-[9px] uppercase tracking-widest text-[#507882] font-semibold">Last logged</p>
+                                            <p className="text-[11px] font-mono text-slate-500 leading-tight mt-0.5">
+                                                {lastTime ?? '— not yet recorded'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </div>
 
-                        {/* Live vitals ticker */}
-                        {isLive && config.enabledFeatures.includes('session-vitals') && (
-                            <div className="flex items-center gap-5 bg-[#040C0E]/60 px-4 py-3 rounded-xl border border-[#14343B]/40">
-                                <div className="text-right">
-                                    <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-0.5">HR</p>
-                                    <div className="flex items-center gap-1 justify-end">
-                                        <Heart className="w-3 h-3 text-rose-500/80 fill-rose-500/30 animate-pulse" />
-                                        <p className="text-lg font-bold text-emerald-100 leading-none">{liveVitals.hr}</p>
-                                    </div>
-                                </div>
-                                <div className="w-px h-6 bg-[#14343B]/50" />
-                                <div className="text-right">
-                                    <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-0.5">BP</p>
-                                    <p className="text-lg font-bold text-emerald-100 leading-none">{liveVitals.bp}</p>
-                                </div>
-                                <div className="w-px h-6 bg-[#14343B]/50" />
-                                <div className="text-right">
-                                    <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-0.5">SpO2</p>
-                                    <p className={`text-lg font-bold leading-none ${liveVitals.spo2 < 95 ? 'text-amber-400' : 'text-emerald-100'}`}>{liveVitals.spo2}%</p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* End session button — only when live */}
+                        {/* ── Right: Companion + End Session buttons (live only) ── */}
                         {isLive && (
                             <div className="flex items-center gap-3 ml-auto">
                                 <button
@@ -1009,7 +1027,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     <div className="space-y-6">
                         {config.enabledFeatures.includes('session-vitals') && (
                             <SessionVitalsTrendChart
-                                sessionId={journey.session?.sessionNumber?.toString() || '1'}
+                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                                 substance={journey.session?.substance}
                                 onThresholdViolation={(vital, value) => {
                                     addToast({
@@ -1022,7 +1040,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             />
                         )}
                         <LiveSessionTimeline
-                            sessionId={journey.session?.sessionNumber?.toString() || '1'}
+                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                             active={true}
                         />
                     </div>
@@ -1046,28 +1064,63 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <span className="text-[11px] font-bold tracking-widest text-white/40 uppercase">Return to session</span>
                         </div>
 
-                        {/* ── Video player — contained, never hidden by buttons ── */}
+                        {/* ── Ambient visual — breathing gradient orb, no video file required ── */}
                         <div className="flex-1 flex items-center justify-center p-6 pt-16 min-h-0">
-                            <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden bg-slate-900 border border-white/10 shadow-2xl shadow-black/80"
+                            <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl shadow-black/80"
                                 style={{ aspectRatio: '16/9' }}>
-                                <video
-                                    src="/admin_uploads/spherecules.mp4"
-                                    autoPlay loop muted playsInline
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        // Graceful fallback: hide video, show ambient background
-                                        (e.target as HTMLVideoElement).style.display = 'none';
+                                {/* CSS animated ambient companion background */}
+                                <div
+                                    className="absolute inset-0"
+                                    style={{
+                                        background: 'radial-gradient(ellipse at 50% 50%, #1e1b4b 0%, #0a0a1a 60%, #000 100%)',
+                                        animation: 'none',
                                     }}
-                                />
-                                {/* Ambient fallback shown when video fails */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-violet-950 flex items-center justify-center -z-0">
-                                    <div className="text-center space-y-3 opacity-40">
-                                        <div className="w-16 h-16 rounded-full border-2 border-indigo-500/50 mx-auto flex items-center justify-center">
-                                            <Sparkles className="w-8 h-8 text-indigo-400" />
+                                >
+                                    {/* Breathing orb */}
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            top: '50%', left: '50%',
+                                            transform: 'translate(-50%, -50%)',
+                                            width: '40%', height: '40%',
+                                            borderRadius: '50%',
+                                            background: 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(139,92,246,0.15) 50%, transparent 80%)',
+                                            animation: 'companion-breathe 6s ease-in-out infinite',
+                                            filter: 'blur(24px)',
+                                        }}
+                                        aria-hidden="true"
+                                    />
+                                    {/* Outer slow pulse ring */}
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            top: '50%', left: '50%',
+                                            transform: 'translate(-50%, -50%)',
+                                            width: '60%', height: '60%',
+                                            borderRadius: '50%',
+                                            border: '1px solid rgba(99,102,241,0.12)',
+                                            animation: 'companion-breathe 6s ease-in-out infinite 1.5s',
+                                        }}
+                                        aria-hidden="true"
+                                    />
+                                    {/* Center icon */}
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="text-center space-y-3 opacity-50">
+                                            <div className="w-14 h-14 rounded-full border border-indigo-500/30 mx-auto flex items-center justify-center"
+                                                style={{ animation: 'companion-breathe 6s ease-in-out infinite 0.5s' }}>
+                                                <Sparkles className="w-6 h-6 text-indigo-400" />
+                                            </div>
+                                            <p className="text-white/40 text-[11px] font-semibold tracking-[0.3em] uppercase">Companion Mode</p>
                                         </div>
-                                        <p className="text-white/50 text-sm font-semibold tracking-widest uppercase">Companion Mode</p>
                                     </div>
                                 </div>
+                                {/* Keyframe style injected inline — avoids global CSS dependency */}
+                                <style>{`
+                                    @keyframes companion-breathe {
+                                        0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+                                        50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.12); }
+                                    }
+                                `}</style>
                             </div>
                         </div>
 
