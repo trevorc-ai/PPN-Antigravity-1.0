@@ -388,7 +388,8 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 onBack={() => onNavigate ? onNavigate('structured-safety') : onClose?.()}
             />;
 
-            // ── Phase 2: Dosing Session ───────────────────────────────────────────
+        // ── Phase 2: Dosing Session ───────────────────────────────────────────
+        case 'dosing-protocol': {
             // Rehydrate previously saved dosing data so "Amend" pre-populates the form.
             // DosingProtocolForm writes to localStorage on every field change via updateField().
             // Reading it back here ensures the practitioner never has to re-enter a dose.
@@ -396,7 +397,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 try {
                     const raw = localStorage.getItem('ppn_dosing_protocol');
                     if (raw) return JSON.parse(raw);
-                } catch (_) { }
+                } catch (_) { /* ignore parse errors */ }
                 return {};
             })();
             return <DosingProtocolForm
@@ -408,6 +409,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 onBack={onClose ?? onComplete}
                 onExit={onExit ?? onClose ?? onComplete}
             />;
+        }
 
         case 'session-timeline':
             return <SessionTimelineForm onSave={handleTimelineSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
