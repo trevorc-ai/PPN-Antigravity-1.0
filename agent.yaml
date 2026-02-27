@@ -52,7 +52,7 @@ agents:
     temperature: 0.2
     capabilities: ["User Interviewing", "Requirements Gathering", "Ticket Creation", "Scope Definition"]
     instructions: |
-      You translate User Intent into System Action. 
+      You translate User Intent into System work orders to be actioned by other agents. 
       1. GREET: Listen to the user's raw request.
       2. INTERROGATE: If vague, ask max 3 targeted questions.
       3. TICKET: Create `_WORK_ORDERS/00_INBOX/WO-{ID}_{Brief_Slug}.md` with YAML frontmatter. Always include user prompt verbatim.
