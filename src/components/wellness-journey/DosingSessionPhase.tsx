@@ -328,8 +328,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             // Medications: use same source + same fallback as patientMeds display below.
             // The isDosingProtocolComplete guard (line 315) already prevents phantom
             // warnings from stale localStorage — the fallback is safe here.
-            const MED_FALLBACK = ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
-            let medications: string[] = MED_FALLBACK;
+            let medications: string[] = [];
             try {
                 const cachedMeds = localStorage.getItem('mock_patient_medications_names');
                 if (cachedMeds) {
@@ -359,7 +358,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 if (Array.isArray(parsed) && parsed.length) return parsed as string[];
             }
         } catch (_) { }
-        return ['Lithium', 'Sertraline (tapering)', 'Lisinopril'];
+        return [];
     }, []);
 
     // ── POST-SESSION VIEW ──────────────────────────────────────────────────────────
