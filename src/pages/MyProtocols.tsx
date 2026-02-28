@@ -2,31 +2,29 @@ import { useDataCache } from '../hooks/useDataCache';
 import { supabase } from '../supabaseClient';
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, Search, ChevronRight, ClipboardList, ChevronUp, ChevronDown } from 'lucide-react';
-
-const SESSION_TYPE_LABELS: Record<number, string> = {
-    1: 'Preparation',
-    2: 'Dosing',
-    3: 'Integration',
-};
+import { PlusCircle, Search, ChevronRight, ClipboardList, Activity, Info, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface Protocol {
-    id: string;
+    id: string; // Changed from number to string (UUID)
     subject_id: string;
+    session_number: number;
     substance_name: string;
+    indication_name: string;
     session_date: string;
     submitted_at: string | null;
-    session_type_id: number | null;
+    dosage_mg: number;
+    dosage_unit: string;
     status: string;
+    patient_sex: string;
 }
 
-type SortField = 'subject_id' | 'substance_name' | 'session_date' | 'status';
+type SortField = 'subject_id' | 'substance_name' | 'session_date' | 'dosage_mg' | 'status';
 type SortDirection = 'asc' | 'desc';
 
 export const MyProtocols = () => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortField, setSortField] = useState<SortField>('session_date');
+    const [sortField, setSortField] = useState<SortField>('subject_id');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
     const { data: cachedProtocols, loading, refetch, lastFetchedAt } = useDataCache(
@@ -39,7 +37,7 @@ export const MyProtocols = () => {
               id,
               patient_link_code,
               session_date,
-              session_type_id,
+              substance_id,
               ref_substances (substance_name)
             `)
                     .order('created_at', { ascending: false })
@@ -49,12 +47,16 @@ export const MyProtocols = () => {
 
                 const formattedData = data?.map((record: any) => ({
                     id: record.id,
-                    subject_id: record.patient_link_code || 'Unknown',
+                    subject_id: record.patient_link_code || 'Unknown Patient',
+                    session_number: 1,
                     substance_name: record.ref_substances?.substance_name || 'Unknown',
-                    session_date: record.session_date || '—',
-                    submitted_at: record.created_at ?? null,
-                    session_type_id: record.session_type_id ?? null,
-                    status: SESSION_TYPE_LABELS[record.session_type_id as number] ?? 'In Progress',
+                    indication_name: 'Research',
+                    session_date: record.session_date || new Date().toISOString().split('T')[0],
+                    submitted_at: record.created_at,
+                    dosage_mg: 25,
+                    dosage_unit: 'mg',
+                    status: 'Completed',
+                    patient_sex: 'Unknown',
                 })) || [];
 
                 return { data: formattedData, error: null };
@@ -85,8 +87,14 @@ export const MyProtocols = () => {
 
         // Sort the filtered results
         return filtered.sort((a, b) => {
-            const aVal = a[sortField] ?? '';
-            const bVal = b[sortField] ?? '';
+            let aVal = a[sortField];
+            let bVal = b[sortField];
+
+            // Handle numeric sorting for dosage
+            if (sortField === 'dosage_mg') {
+                aVal = Number(aVal);
+                bVal = Number(bVal);
+            }
 
             if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
             if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
@@ -173,6 +181,7 @@ export const MyProtocols = () => {
                                         <SortableHeader field="subject_id" label="Protocol Reference" />
                                         <SortableHeader field="substance_name" label="Substance" />
                                         <SortableHeader field="session_date" label="Date" />
+                                        <SortableHeader field="dosage_mg" label="Dosage" />
                                         <SortableHeader field="status" label="Status" />
                                         <th className="px-8 py-6 text-right">Action</th>
                                     </tr>
@@ -186,7 +195,7 @@ export const MyProtocols = () => {
                                                         {p.substance_name} Protocol
                                                     </span>
                                                     <span className="text-xs font-mono text-slate-500 font-bold uppercase tracking-tight mt-1">
-                                                        {p.subject_id}
+                                                        {p.subject_id} • Session {p.session_number}
                                                     </span>
                                                 </div>
                                             </td>
@@ -196,10 +205,13 @@ export const MyProtocols = () => {
                                             <td className="px-8 py-6">
                                                 <span className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{p.session_date}</span>
                                             </td>
+                                            <td className="px-8 py-6 text-sm font-mono" style={{ color: '#8B9DC3' }}>
+                                                {p.dosage_mg} {p.dosage_unit}
+                                            </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-2">
-                                                    <div className={`size-1.5 rounded-full ${p.status === 'Integration' ? 'bg-clinical-green' : 'bg-primary'}`}></div>
-                                                    <span className={`text-xs font-black uppercase tracking-widest ${p.status === 'Integration' ? 'text-clinical-green' : 'text-primary'}`}>
+                                                    <div className={`size-1.5 rounded-full ${p.status === 'Completed' ? 'bg-clinical-green' : 'bg-primary'}`}></div>
+                                                    <span className={`text-xs font-black uppercase tracking-widest ${p.status === 'Completed' ? 'text-clinical-green' : 'text-slate-500'}`}>
                                                         {p.status}
                                                     </span>
                                                 </div>
