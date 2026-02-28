@@ -8,12 +8,38 @@ This document supersedes all other instructions. All agents MUST abide by these 
 *   **Identify Yourself:** Begin and end EVERY response with `==== [YOUR AGENT NAME] ====`.
 *   **Visual Design (DESIGNER/BUILDER):** Enforce WCAG 2.2 AA standards. Minimum font size must be 12px. Use visual textures, patterns, and icons alongside colors in all UI components.
 
-## 2. 🗄️ DATABASE & DATA ARCHITECTURE (INSPECTOR & BUILDER)
-[CONTEXT: Security and Data Integrity are non-negotiable.]
-*   **Zero PHI / PII:** Use synthetic, system-generated `Subject_ID`s for all records. Store ONLY ref_ table codes in log_ tables. Store dropdown selections as foreign keys (e.g., `substance_id`).
-*   **Additive Migrations Only:** Write schema changes using `CREATE TABLE IF NOT EXISTS` and `ALTER TABLE ADD COLUMN`. Do not use DROP or DELETE commands on columns or tables. 
-*   **Supabase Security:** All tables must reside in the `public` schema. Row Level Security (RLS) MUST be enabled on every table. Isolate user data strictly via a `user_sites` mapping table.
-*   **SQL Hygiene:** Enforce 3rd Normal Form (3NF). Use `snake_case` for all tables and columns. Explicitly name columns in queries (Never use `SELECT *`).
+## 2. DATABASE & DATA ARCHITECTURE (MANDATORY — ALL AGENTS)
+
+*   **Zero Free-Text Absolute Rule:** log_ tables may ONLY contain:
+    INTEGER/BIGINT FKs to ref_ tables, UUIDs, numeric measurements,
+    timestamps, CHECK-constrained enum VARCHAR, cryptographic hashes,
+    machine identifiers, and Stripe external IDs.
+    No free-text (TEXT/VARCHAR) clinical narrative columns — ever.
+
+*   **USER IS THE SOLE DATABASE OPERATOR:**
+    Agents may NOT write or execute ANY SQL that modifies database
+    structure or data. This includes:
+      - DDL: CREATE TABLE, ALTER TABLE, DROP TABLE/COLUMN, CREATE POLICY
+      - DML: INSERT, UPDATE, DELETE via SQL
+      - Migration files (.sql) — agents do NOT author these
+    Agents that output raw SQL to the chat for USER review are permitted.
+    Agents that create .sql files or attempt to execute them are in violation.
+
+*   **Agent DB Permissions (READ + APP-LAYER WRITE ONLY):**
+    - SELECT queries (diagnostics, audits, verification) → ALLOWED
+    - INSERT/UPDATE via React/Supabase client (application code) → BUILDER ALLOWED
+    - Any SQL file creation → FORBIDDEN
+    - Any Supabase MCP or direct DB connection → FORBIDDEN
+
+*   **Additive Schema Policy (USER-enforced):**
+    The USER manually applies all schema changes via the Supabase SQL Editor.
+    When a schema change is needed, agents output the SQL block in chat
+    for USER review — labeled clearly with expected result and pre-flight queries.
+    The USER runs it, pastes the result, and the agent verifies.
+
+*   **RLS is Mandatory:** Row Level Security must be ON for every public table.
+    All application writes are site-scoped via log_user_sites.
+
 
 ## 3. ⚙️ THE SILENT CONVEYOR BELT WORKFLOW (ALL AGENTS)
 [CONTEXT: We operate on a silent, file-based Kanban system.]

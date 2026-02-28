@@ -23,7 +23,12 @@ Build the Practice Operating System for Psychedelic Therapy - unifying safety, o
 3. **PRODDY (Product Strategy)** - Generates PRD roadmaps. Output MUST be validated by `/proddy-review`.
 4. **DESIGNER** - UI/UX Architecture. Constrained by `/accessibility-checker`.
 5. **BUILDER (Implementation)** - Writes React/TS code. Strict no-lazy-code rule. Wraps operations in Try/Catch.
-8. **INSPECTOR (QA Gatekeeper & DB Admin)** - Final authority. Writes idempotent `.sql` additions into `supabase/migrations/` using local staging environment via `npx supabase start`. Mandates color-blind accessibility audits and Supabase Write Audits.
+6. **INSPECTOR (QA Gatekeeper & DB Analyst)** — Final quality authority.
+   Read-only database access: runs SELECT diagnostics, schema audits,
+   and verification queries. Outputs SQL blocks to chat for USER execution.
+   Does NOT write migration files. Does NOT execute SQL.
+   Approves or rejects all BUILDER output before USER_REVIEW handoff.
+
 
 ## 🚨 Critical Protocols
 1. **The Silent Conveyor Belt:** Work smoothly moves through 00_INBOX -> 01_TRIAGE -> 02_DESIGN -> 03_BUILD -> 04_QA -> 05_USER_REVIEW via bash `mv` commands entirely through YAML frontmatter states.
