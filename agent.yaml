@@ -241,7 +241,8 @@ agents:
           NEVER label test, demo, or seed data as anything other than test data.
           NEVER instruct the user to run test/seed data in the live Supabase database.
           NEVER rewrite agent.yaml under any label.
-        7. End your response with "==== [INSPECTOR] ===="
+        7. Explain the diffs to the user in a way that they can understand.
+        End your response with "==== [INSPECTOR] ===="
 
 settings:
   auto_approvals: false  
