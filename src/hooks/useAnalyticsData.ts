@@ -29,7 +29,7 @@ export function useAnalyticsData(siteId: number | null): AnalyticsKPIs & { refet
                     const avgSuccessRate = benchmarkData.length > 0
                         ? benchmarkData.reduce((sum, row) => sum + (row.success_rate || 0), 0) / benchmarkData.length
                         : 0;
-                    const efficiency = avgSuccessRate * 100;
+                    const efficiency = Number.isFinite(avgSuccessRate) ? avgSuccessRate * 100 : 0;
                     const estimatedSafetyEvents = Math.round(totalSessions * (1 - avgSuccessRate));
                     const safetyRate = totalSessions > 0 ? (estimatedSafetyEvents / totalSessions) * 100 : 0;
                     const riskScore = safetyRate < 5 ? 'Low' : safetyRate < 15 ? 'Medium' : 'High';
@@ -38,7 +38,7 @@ export function useAnalyticsData(siteId: number | null): AnalyticsKPIs & { refet
                         data: {
                             activeProtocols: totalPatients,
                             patientAlerts: estimatedSafetyEvents,
-                            networkEfficiency: Math.round(efficiency * 10) / 10,
+                            networkEfficiency: Number.isFinite(efficiency) ? Math.round(efficiency * 10) / 10 : 0,
                             riskScore,
                         },
                         error: null,
@@ -81,7 +81,7 @@ export function useAnalyticsData(siteId: number | null): AnalyticsKPIs & { refet
                     data: {
                         activeProtocols: uniquePatients.size,
                         patientAlerts: safetyData?.length || 0,
-                        networkEfficiency: Math.round(efficiencyFb * 10) / 10,
+                        networkEfficiency: Number.isFinite(efficiencyFb) ? Math.round(efficiencyFb * 10) / 10 : 0,
                         riskScore: riskScoreFb,
                     },
                     error: null,
@@ -99,7 +99,7 @@ export function useAnalyticsData(siteId: number | null): AnalyticsKPIs & { refet
     return {
         activeProtocols: data?.activeProtocols || 0,
         patientAlerts: data?.patientAlerts || 0,
-        networkEfficiency: data?.networkEfficiency || 0,
+        networkEfficiency: Number.isFinite(data?.networkEfficiency) ? data!.networkEfficiency : 0,
         riskScore: data?.riskScore || 'Unknown',
         loading,
         error: error ? String(error) : null,
