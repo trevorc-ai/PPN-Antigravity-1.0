@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Lock } from 'lucide-react';
+import { Lock, Check } from 'lucide-react';
 
 interface PatientLogEvent {
     timestamp: string;
@@ -9,22 +9,22 @@ interface PatientLogEvent {
 
 // 16 emotional states — clinical psychedelic therapy state tracking
 const FEELINGS = [
-    { id: 'blissful', label: 'Blissful', color: 'bg-emerald-500/20 border-emerald-400/50 hover:bg-emerald-500/40 text-emerald-100' },
-    { id: 'peaceful', label: 'Peaceful', color: 'bg-teal-500/20 border-teal-400/50 hover:bg-teal-500/40 text-teal-100' },
-    { id: 'grounded', label: 'Grounded / Safe', color: 'bg-cyan-500/20 border-cyan-400/50 hover:bg-cyan-500/40 text-cyan-100' },
-    { id: 'connected', label: 'Connected', color: 'bg-sky-500/20 border-sky-400/50 hover:bg-sky-500/40 text-sky-100' },
-    { id: 'euphoric', label: 'Euphoric', color: 'bg-violet-500/20 border-violet-400/50 hover:bg-violet-500/40 text-violet-100' },
-    { id: 'drifting', label: 'Drifting / Floating', color: 'bg-indigo-500/20 border-indigo-400/50 hover:bg-indigo-500/40 text-indigo-100' },
-    { id: 'curious', label: 'Curious', color: 'bg-purple-500/20 border-purple-400/50 hover:bg-purple-500/40 text-purple-100' },
-    { id: 'open', label: 'Open / Surrendered', color: 'bg-fuchsia-500/20 border-fuchsia-400/50 hover:bg-fuchsia-500/40 text-fuchsia-100' },
-    { id: 'emotional', label: 'Emotional / Crying', color: 'bg-blue-500/20 border-blue-400/50 hover:bg-blue-500/40 text-blue-100' },
-    { id: 'confused', label: 'Confused', color: 'bg-slate-500/20 border-slate-400/50 hover:bg-slate-500/40 text-slate-100' },
-    { id: 'anxious', label: 'Anxious', color: 'bg-amber-500/20 border-amber-400/50 hover:bg-amber-500/40 text-amber-100' },
-    { id: 'overwhelmed', label: 'Overwhelmed', color: 'bg-orange-500/20 border-orange-400/50 hover:bg-orange-500/40 text-orange-100' },
-    { id: 'tense', label: 'Tense / Resistance', color: 'bg-rose-500/20 border-rose-400/50 hover:bg-rose-500/40 text-rose-100' },
-    { id: 'fearful', label: 'Fearful', color: 'bg-red-600/20 border-red-500/50 hover:bg-red-600/40 text-red-100' },
-    { id: 'nauseous', label: 'Nauseous', color: 'bg-yellow-700/20 border-yellow-600/50 hover:bg-yellow-700/40 text-yellow-100' },
-    { id: 'need_support', label: 'Need Support', color: 'bg-pink-600/30 border-pink-400/60 hover:bg-pink-600/50 text-pink-100 ring-1 ring-pink-400/40' },
+    { id: 'blissful', label: 'Blissful', color: 'bg-emerald-500/20 border-emerald-400/50 hover:bg-emerald-500/40 text-emerald-100', logged: 'bg-emerald-500 border-emerald-400 text-white' },
+    { id: 'peaceful', label: 'Peaceful', color: 'bg-teal-500/20 border-teal-400/50 hover:bg-teal-500/40 text-teal-100', logged: 'bg-teal-500 border-teal-400 text-white' },
+    { id: 'grounded', label: 'Grounded / Safe', color: 'bg-cyan-500/20 border-cyan-400/50 hover:bg-cyan-500/40 text-cyan-100', logged: 'bg-cyan-500 border-cyan-400 text-white' },
+    { id: 'connected', label: 'Connected', color: 'bg-sky-500/20 border-sky-400/50 hover:bg-sky-500/40 text-sky-100', logged: 'bg-sky-500 border-sky-400 text-white' },
+    { id: 'euphoric', label: 'Euphoric', color: 'bg-violet-500/20 border-violet-400/50 hover:bg-violet-500/40 text-violet-100', logged: 'bg-violet-500 border-violet-400 text-white' },
+    { id: 'drifting', label: 'Drifting / Floating', color: 'bg-indigo-500/20 border-indigo-400/50 hover:bg-indigo-500/40 text-indigo-100', logged: 'bg-indigo-500 border-indigo-400 text-white' },
+    { id: 'curious', label: 'Curious', color: 'bg-purple-500/20 border-purple-400/50 hover:bg-purple-500/40 text-purple-100', logged: 'bg-purple-500 border-purple-400 text-white' },
+    { id: 'open', label: 'Open / Surrendered', color: 'bg-fuchsia-500/20 border-fuchsia-400/50 hover:bg-fuchsia-500/40 text-fuchsia-100', logged: 'bg-fuchsia-500 border-fuchsia-400 text-white' },
+    { id: 'emotional', label: 'Emotional / Crying', color: 'bg-blue-500/20 border-blue-400/50 hover:bg-blue-500/40 text-blue-100', logged: 'bg-blue-500 border-blue-400 text-white' },
+    { id: 'confused', label: 'Confused', color: 'bg-slate-500/20 border-slate-400/50 hover:bg-slate-500/40 text-slate-100', logged: 'bg-slate-500 border-slate-400 text-white' },
+    { id: 'anxious', label: 'Anxious', color: 'bg-amber-500/20 border-amber-400/50 hover:bg-amber-500/40 text-amber-100', logged: 'bg-amber-500 border-amber-400 text-white' },
+    { id: 'overwhelmed', label: 'Overwhelmed', color: 'bg-orange-500/20 border-orange-400/50 hover:bg-orange-500/40 text-orange-100', logged: 'bg-orange-500 border-orange-400 text-white' },
+    { id: 'tense', label: 'Tense / Resistance', color: 'bg-rose-500/20 border-rose-400/50 hover:bg-rose-500/40 text-rose-100', logged: 'bg-rose-500 border-rose-400 text-white' },
+    { id: 'fearful', label: 'Fearful', color: 'bg-red-600/20 border-red-500/50 hover:bg-red-600/40 text-red-100', logged: 'bg-red-600 border-red-500 text-white' },
+    { id: 'nauseous', label: 'Nauseous', color: 'bg-yellow-700/20 border-yellow-600/50 hover:bg-yellow-700/40 text-yellow-100', logged: 'bg-yellow-600 border-yellow-500 text-white' },
+    { id: 'need_support', label: 'Need Support', color: 'bg-pink-600/30 border-pink-400/60 hover:bg-pink-600/50 text-pink-100 ring-1 ring-pink-400/40', logged: 'bg-pink-500 border-pink-400 text-white ring-2 ring-pink-300' },
 ];
 
 export default function PatientCompanionPage() {
@@ -32,10 +32,13 @@ export default function PatientCompanionPage() {
     const navigate = useNavigate();
 
     const [recentLog, setRecentLog] = useState<string | null>(null);
+    // Track which button just fired — shows ✓ LOGGED for 1.5s on that specific button
+    const [lastLoggedId, setLastLoggedId] = useState<string | null>(null);
     const [lockHoldProgress, setLockHoldProgress] = useState(0);
 
     const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
     const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const loggedTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleLogFeeling = (feelingId: string, feelingLabel: string) => {
         const storageKey = `companion_logs_${sessionId}`;
@@ -43,6 +46,13 @@ export default function PatientCompanionPage() {
         const logs: PatientLogEvent[] = existingLogsStr ? JSON.parse(existingLogsStr) : [];
         logs.push({ timestamp: new Date().toISOString(), feeling: feelingId });
         localStorage.setItem(storageKey, JSON.stringify(logs));
+
+        // Flash this specific button
+        setLastLoggedId(feelingId);
+        if (loggedTimerRef.current) clearTimeout(loggedTimerRef.current);
+        loggedTimerRef.current = setTimeout(() => setLastLoggedId(null), 1500);
+
+        // Mid-screen toast
         setRecentLog(feelingLabel);
         setTimeout(() => setRecentLog(null), 2500);
     };
@@ -143,24 +153,37 @@ export default function PatientCompanionPage() {
             {/*   shrink-0 ensures it is never compressed by the video container                       */}
             <div className="relative z-20 shrink-0 px-4 pb-5 pt-3 w-full max-w-5xl mx-auto bg-black/30">
                 <div className="grid grid-cols-4 gap-2">
-                    {FEELINGS.map((f) => (
-                        <button
-                            key={f.id}
-                            onClick={() => handleLogFeeling(f.id, f.label)}
-                            className={`
-                                ${f.color}
-                                backdrop-blur-lg border rounded-xl
-                                px-2 py-3
-                                text-xs font-bold tracking-wide uppercase text-center
-                                transition-all duration-200
-                                active:scale-95 active:brightness-150
-                                shadow-lg
-                            `}
-                            aria-label={`Log feeling: ${f.label}`}
-                        >
-                            {f.label}
-                        </button>
-                    ))}
+                    {FEELINGS.map((f) => {
+                        const isLogged = lastLoggedId === f.id;
+                        return (
+                            <button
+                                key={f.id}
+                                onClick={() => handleLogFeeling(f.id, f.label)}
+                                className={`
+                                    backdrop-blur-lg border rounded-xl
+                                    px-2 py-3
+                                    text-xs font-bold tracking-wide uppercase text-center
+                                    transition-all duration-200
+                                    shadow-lg
+                                    ${isLogged
+                                        ? `${f.logged} scale-105 shadow-xl`
+                                        : `${f.color} active:scale-95`
+                                    }
+                                `}
+                                aria-label={`Log feeling: ${f.label}`}
+                                aria-pressed={isLogged}
+                            >
+                                {isLogged ? (
+                                    <span className="flex items-center justify-center gap-1">
+                                        <Check className="w-3 h-3 flex-shrink-0" />
+                                        Logged
+                                    </span>
+                                ) : (
+                                    f.label
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 

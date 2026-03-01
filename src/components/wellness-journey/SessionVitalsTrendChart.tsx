@@ -47,53 +47,59 @@ const VITAL_THRESHOLDS = {
 };
 
 /**
- * Clinical severity band map — Y position within the chart for each event type.
- * Gradient: TOP (Y≈165) = most serious adverse/crisis → BOTTOM (Y≈56) = pleasant/rescue.
- * Events are plotted as colored dots in these bands — no overlap with vitals lines.
+ * Clinical severity band map — 10 evenly-spaced Y rows across domain [45, 175].
+ * Each band is ~13 units apart, clearly readable as distinct horizontal rows.
  *
- * RED/Top    ── adverse events, safety crises
- * ORANGE     ── clinical decisions during difficult moments
- * AMBER      ── patient observations (concern)
- * NEUTRAL    ── general notes, session updates
- * TEAL       ── vital checks, routine monitoring
- * BLUE       ── dose administration
- * GREEN/Bot  ── rescue protocol, music/grounding, pleasant
+ * RED/TOP   Y=172  adverse / safety crisis
+ * ORANGE    Y=159  clinical decision
+ * AMBER     Y=146  peak experience
+ * AMBER2    Y=133  patient observation
+ * NEUTRAL   Y=120  general note
+ * SLATE     Y=107  session update
+ * TEAL      Y=94   vital check
+ * BLUE      Y=81   dose administration
+ * PURPLE    Y=68   music / grounding
+ * GREEN/BOT Y=55   rescue / consent / close
  */
 const EVENT_Y_BAND: Record<string, number> = {
-    // ── TOP — adverse / crisis (red) ──────────────────────────────────
-    'safety-and-adverse-event': 165,
-    'safety_event': 165,
-    'SAFETY': 165,
-    // ── UPPER — clinical decision (orange) ────────────────────────────
-    'clinical_decision': 150,
-    // ── UPPER-MID — patient observation (amber) ───────────────────────
-    'patient_observation': 135,
-    'OBSERVATION': 135,
-    // ── MID — general / session update (neutral) ─────────────────────
-    'general_note': 118,
-    'session_update': 108,
-    'UPDATE': 108,
-    // ── LOWER-MID — vital check (teal) ────────────────────────────────
-    'vital_check': 92,
-    // ── LOWER — dose administration (blue/emerald) ────────────────────
-    'dose_admin': 76,
-    'DOSE': 76,
-    // ── BOTTOM — rescue / music / grounding / consent (green) ───────────────────
-    'rescue-protocol': 58,
-    'rescue': 58,
-    'CLOSE': 60,
-    'music_change': 63,
-    'touch_consent': 67,
-    'INTERVENTION': 70,
+    // ── ROW 1 (TOP, Y=172) — adverse / crisis (red) ────────────────────
+    'safety-and-adverse-event': 172,
+    'safety_event': 172,
+    'SAFETY': 172,
+    // ── ROW 2 (Y=159) — clinical decision (orange) ───────────────────
+    'clinical_decision': 159,
+    // ── ROW 3 (Y=146) — peak experience (fuchsia) ───────────────────
+    'PEAK': 146,
+    // ── ROW 4 (Y=133) — patient observation (amber) ──────────────────
+    'patient_observation': 133,
+    'OBSERVATION': 133,
+    // ── ROW 5 (Y=120) — general note (slate/neutral) ─────────────────
+    'general_note': 120,
+    // ── ROW 6 (Y=107) — session update (sky) ──────────────────────
+    'session_update': 107,
+    'UPDATE': 107,
+    // ── ROW 7 (Y=94) — vital check (blue) ──────────────────────────
+    'vital_check': 94,
+    // ── ROW 8 (Y=81) — dose administration (emerald) ─────────────────
+    'dose_admin': 81,
+    'DOSE': 81,
+    'INTERVENTION': 81,
+    // ── ROW 9 (Y=68) — music / grounding (violet) ───────────────────
+    'music_change': 68,
+    // ── ROW 10 (BOTTOM, Y=55) — rescue / consent / close (green) ────────
+    'rescue-protocol': 55,
+    'rescue': 55,
+    'CLOSE': 55,
+    'touch_consent': 55,
 };
 
-/** Returns the Y band for a given event type, defaulting to the neutral mid-row. */
+/** Returns the Y band for a given event type, defaulting to the neutral note row. */
 function getEventDotY(type: string): number {
-    return EVENT_Y_BAND[type] ?? 108;
+    return EVENT_Y_BAND[type] ?? 120;
 }
 
-// Y-axis domain — expanded to 172 so top-band event dots sit above the BP/HR alert lines
-const Y_DOMAIN: [number, number] = [50, 172];
+// Y-axis domain — 10 evenly-spaced bands across [45, 175]
+const Y_DOMAIN: [number, number] = [45, 175];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -163,9 +169,18 @@ const SERIES = [
 type SeriesKey = typeof SERIES[number]['key'];
 
 // ── Custom event dot — renders inside the chart at its severity-band Y ──────
+// onHover/onHoverEnd lifted to chart level so tooltip can be rendered as a
+// DOM overlay (Recharts Tooltip is unreliable for Scatter in ComposedChart).
 
-const EventDot = (props: any) => {
-    const { cx, cy, payload } = props;
+interface EventDotProps {
+    cx?: number;
+    cy?: number;
+    payload?: any;
+    onHover?: (ev: SessionEventPin, cx: number, cy: number) => void;
+    onHoverEnd?: () => void;
+}
+
+const EventDot: React.FC<EventDotProps> = ({ cx, cy, payload, onHover, onHoverEnd }) => {
     const p = getPinStyle(payload?.type ?? '');
     const [hovered, setHovered] = useState(false);
     if (!cx || !cy) return null;
@@ -173,21 +188,27 @@ const EventDot = (props: any) => {
         <g>
             {/* Outer glow ring on hover */}
             {hovered && (
-                <circle cx={cx} cy={cy} r={12} fill={p.fill} fillOpacity={0.2} stroke={p.stroke} strokeWidth={1} />
+                <circle cx={cx} cy={cy} r={14} fill={p.fill} fillOpacity={0.18} stroke={p.stroke} strokeWidth={1} />
             )}
             {/* Main dot */}
             <circle
-                cx={cx} cy={cy} r={7}
+                cx={cx} cy={cy} r={8}
                 fill={p.fill} stroke={p.stroke} strokeWidth={1.5}
                 style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
+                onMouseEnter={() => {
+                    setHovered(true);
+                    onHover?.(payload as SessionEventPin, cx, cy);
+                }}
+                onMouseLeave={() => {
+                    setHovered(false);
+                    onHoverEnd?.();
+                }}
             />
             {/* Emoji glyph inside dot */}
             <text
                 x={cx} y={cy + 4}
                 textAnchor="middle"
-                fontSize={8}
+                fontSize={9}
                 style={{ pointerEvents: 'none', userSelect: 'none' }}
             >
                 {p.emoji}
@@ -271,6 +292,11 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     });
     const toggle = (key: SeriesKey) => setVisible(v => ({ ...v, [key]: !v[key] }));
 
+    // Hovered event dot — lifted state for the custom tooltip overlay
+    const [hoveredEvent, setHoveredEvent] = useState<{
+        ev: SessionEventPin; cx: number; cy: number;
+    } | null>(null);
+
     // X-axis domain always ends at current session time (minimum 10 min)
     const domainMaxSec = useMemo(() => {
         const allElapsed = [
@@ -348,7 +374,8 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
             </div>
 
             {/* ── Chart ──────────────────────────────────────────────────── */}
-            <div className="h-[300px] w-full">
+            {/* position:relative anchors the absolute event tooltip overlay   */}
+            <div className="h-[300px] w-full relative">
                 {(hasData || events.length > 0) ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart margin={{ top: 10, right: 20, bottom: 24, left: -10 }}>
@@ -464,7 +491,13 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                                     name="events"
                                     data={eventScatterData}
                                     dataKey="y"
-                                    shape={<EventDot />}
+                                    shape={(props: any) => (
+                                        <EventDot
+                                            {...props}
+                                            onHover={(ev, cx, cy) => setHoveredEvent({ ev, cx, cy })}
+                                            onHoverEnd={() => setHoveredEvent(null)}
+                                        />
+                                    )}
                                     isAnimationActive={false}
                                 />
                             )}
@@ -479,6 +512,48 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                         </p>
                     </div>
                 )}
+
+                {/* ── Event dot hover tooltip overlay ────────────────────────────────
+                 *  Sibling of the ternary — always present in the relative wrapper div.
+                 *  Positioned using cx/cy pixel coords from the hovered EventDot.
+                 */}
+                {hoveredEvent && (() => {
+                    const { ev, cx, cy } = hoveredEvent;
+                    const p = getPinStyle(ev.type);
+                    return (
+                        <div
+                            className="absolute z-50 pointer-events-none"
+                            style={{
+                                left: cx,
+                                top: cy,
+                                transform: 'translate(-50%, -115%)',
+                            }}
+                        >
+                            <div
+                                className="bg-slate-800/95 backdrop-blur-md border border-slate-600/80 rounded-xl shadow-2xl p-3 min-w-[190px] max-w-[240px]"
+                                style={{ borderLeft: `3px solid ${p.fill}` }}
+                            >
+                                {/* Badge row */}
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-base leading-none">{p.emoji}</span>
+                                    <span className="font-bold text-white text-sm">{p.label}</span>
+                                </div>
+                                {/* Elapsed time */}
+                                <p className="text-xs font-mono text-slate-400 mb-1">{fmtElapsed(ev.elapsedSec)}</p>
+                                {/* Description / note content */}
+                                {ev.label && ev.label !== p.label && (
+                                    <p className="text-xs text-slate-300 leading-relaxed border-t border-slate-700 pt-1.5 mt-1.5">
+                                        {ev.label}
+                                    </p>
+                                )}
+                            </div>
+                            {/* Downward arrow */}
+                            <div
+                                className="absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-3 h-3 rotate-45 bg-slate-800/95 border-r border-b border-slate-600/80"
+                            />
+                        </div>
+                    );
+                })()}
             </div>
 
             {/* ── Legend ──────────────────────────────────────────────────── */}
