@@ -172,8 +172,8 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
     };
 
     return (
-        <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-2 pb-3 pt-2 sm:px-3 sm:pb-5 sm:pt-3">
-            <div className="grid grid-cols-4 gap-1 sm:gap-1.5 max-w-2xl mx-auto">
+        <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-2 pb-3 pt-2">
+            <div className="grid grid-cols-4 gap-1 w-full">
                 {COMPANION_FEELINGS.map(f => {
                     const isLit = litId === f.id;
                     return (
@@ -181,15 +181,16 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
                             key={f.id}
                             onClick={() => handleTap(f.id)}
                             className={[
-                                'backdrop-blur-md border rounded-lg sm:rounded-xl',
-                                'px-1 py-1 sm:px-1.5 sm:py-2.5',
-                                'min-h-[36px] sm:min-h-[44px]',
-                                'text-[7px] sm:text-[10px] font-semibold tracking-wide uppercase text-center leading-tight',
+                                'backdrop-blur-md border rounded-lg',
+                                'px-1 py-1.5',
+                                'min-h-[36px]',
+                                'font-semibold tracking-wide text-center leading-tight',
                                 'shadow-sm select-none',
                                 isLit
                                     ? `${f.glow} transition-none scale-[1.04] shadow-lg`
                                     : `${f.rest} transition-[background-color,border-color,box-shadow] duration-[1800ms] ease-out active:scale-95`,
                             ].join(' ')}
+                            style={{ fontSize: 'clamp(8px, 2.2vw, 11px)' }}
                             aria-label={`Log feeling: ${f.label}`}
                         >
                             {f.label}
@@ -197,6 +198,85 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
                     );
                 })}
             </div>
+        </div>
+    );
+};
+
+/**
+ * CompanionVideo — orientation-aware video player.
+ * Landscape device: 16:9 video plays naturally, fills full width.
+ * Portrait device: video width↔height are swapped then rotated -90° so the
+ *   landscape video content fills the portrait container without cropping.
+ * On every resize/orientationchange the container is remeasured and video
+ *   dimensions recalculated to maintain perfect fit.
+ */
+const CompanionVideo: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState({ w: 0, h: 0 });
+    const [isPortrait, setIsPortrait] = useState(
+        () => typeof window !== 'undefined'
+            ? window.matchMedia('(orientation: portrait)').matches
+            : true
+    );
+
+    useEffect(() => {
+        const measure = () => {
+            if (containerRef.current) {
+                const r = containerRef.current.getBoundingClientRect();
+                setSize({ w: r.width, h: r.height });
+            }
+            setIsPortrait(window.matchMedia('(orientation: portrait)').matches);
+        };
+        measure();
+        window.addEventListener('resize', measure);
+        window.addEventListener('orientationchange', measure);
+        return () => {
+            window.removeEventListener('resize', measure);
+            window.removeEventListener('orientationchange', measure);
+        };
+    }, []);
+
+    // Portrait: swap dims so rotated video fills container exactly
+    // Landscape: natural object-cover fill
+    const videoStyle: React.CSSProperties = (isPortrait && size.w > 0 && size.h > 0)
+        ? {
+            position: 'absolute',
+            width: `${size.h}px`,    // height ↔ width intentionally swapped
+            height: `${size.w}px`,   // so that after -90° rotate both axes fill
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) rotate(-90deg)',
+            opacity: 0.9,
+        }
+        : {
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover' as const,
+            opacity: 0.9,
+        };
+
+    return (
+        <div
+            ref={containerRef}
+            className="relative flex-1 overflow-hidden pointer-events-none w-full"
+            aria-hidden="true"
+        >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
+            <div className="absolute top-5 left-0 right-0 text-center z-20">
+                <p className="text-white/20 text-xs font-medium tracking-[0.25em]">
+                    Tap to quietly log your state
+                </p>
+            </div>
+            <video
+                src="/admin_uploads/spherecules.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                style={videoStyle}
+            />
         </div>
     );
 };
@@ -1267,41 +1347,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">Return to session</span>
                         </div>
 
-                        {/* ══ CONTENT COLUMN ═══════════════════════════════════════════
-                         *  max-w-2xl centers the portrait panel on any wider screen.
-                         *  flex-col: video fills remaining height, buttons shrink-0 below.
-                         *  On desktop: narrow portrait panel on black bg.
-                         *  On phone:  fills edge-to-edge naturally.
-                         * ════════════════════════════════════════════════════════════ */}
-                        <div className="flex flex-col w-full max-w-2xl mx-auto flex-1 min-h-0">
-
-                            {/* ZONE 1 — Video: fills remaining height in the column */}
-                            <div
-                                className="relative flex-1 overflow-hidden pointer-events-none rounded-t-2xl"
-                                aria-hidden="true"
-                            >
-                                {/* Soft gradient for legibility */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
-
-                                {/* Dim prompt at top */}
-                                <div className="absolute top-5 left-0 right-0 text-center z-20">
-                                    <p className="text-white/20 text-xs font-medium tracking-[0.25em] uppercase">
-                                        Tap to quietly log your state
-                                    </p>
-                                </div>
-
-                                {/* Spherecules — portrait video, object-cover fills the portrait column */}
-                                <video
-                                    src="/admin_uploads/spherecules.mp4"
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    className="absolute inset-0 w-full h-full object-cover opacity-90"
-                                />
-                            </div>
-
-                            {/* ZONE 2 — Buttons: always at the bottom of the column */}
+                        {/* ══ CONTENT COLUMN ═══════════════════════════════════════
+                         *  Full-width: no max-w constraint — video and buttons both
+                         *  fill the entire screen. Video orientation-aware (see
+                         *  CompanionVideo). Buttons compact full-width grid.
+                         */}
+                        <div className="flex flex-col w-full flex-1 min-h-0">
+                            <CompanionVideo />
                             <CompanionButtonGrid
                                 sessionId={journey.sessionId || 'demo-1'}
                             />

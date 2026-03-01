@@ -1,9 +1,11 @@
 ---
 id: WO-543
 title: Live Active Session Indicator — Header Pill Cards & Dashboard Widget
-owner: LEAD
-status: 01_TRIAGE
+owner: BUILDER
+status: 03_BUILD
 reviewed_by: LEAD
+approved_by: USER
+approved_at: 2026-03-01
 authored_by: CUE
 priority: P1
 created: 2026-03-01
