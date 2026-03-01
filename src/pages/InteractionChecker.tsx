@@ -400,7 +400,7 @@ const InteractionChecker: React.FC = () => {
             </div>
             <div className="flex items-center gap-2 px-2">
               <span className="material-symbols-outlined text-sm text-slate-400">lock</span>
-              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Validated Protocol List Only</span>
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Validated list only</span>
             </div>
           </section>
 

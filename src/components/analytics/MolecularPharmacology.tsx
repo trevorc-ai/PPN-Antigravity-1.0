@@ -101,20 +101,22 @@ export default function MolecularPharmacology() {
                         Receptor Binding Potential (Standardized $K_i$ Affinity).
                     </p>
                 </div>
-                <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto no-scrollbar shrink-0 max-w-full">
-                    {Object.keys(MOLECULES).map((key) => (
-                        <button
-                            key={key}
-                            onClick={() => setActiveMol(key)}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${activeMol === key
-                                ? 'bg-indigo-600 text-slate-300 shadow-lg'
-                                : 'text-slate-500 hover:text-slate-300'
-                                }`}
-                            title={`Load pharmacology data for ${key}`}
-                        >
-                            {key}
-                        </button>
-                    ))}
+                <div className="overflow-x-auto -mx-3 px-3 pb-1 no-scrollbar">
+                    <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800 min-w-max">
+                        {Object.keys(MOLECULES).map((key) => (
+                            <button
+                                key={key}
+                                onClick={() => setActiveMol(key)}
+                                className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all min-h-[40px] ${activeMol === key
+                                    ? 'bg-indigo-600 text-slate-300 shadow-lg'
+                                    : 'text-slate-500 hover:text-slate-300'
+                                    }`}
+                                title={`Load pharmacology data for ${key}`}
+                            >
+                                {key}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 

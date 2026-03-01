@@ -153,19 +153,21 @@ const AuditLogs: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex gap-3 bg-[#0a0c10] p-1.5 rounded-2xl border border-slate-800">
-          {['All', 'Security', 'Clinical'].map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`px-8 py-3 rounded-xl text-sm font-bold transition-all ${activeFilter === filter
-                ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-200 shadow-lg shadow-primary/20'
-                : 'text-slate-400 hover:text-slate-300'
-                }`}
-            >
-              {filter}
-            </button>
-          ))}
+        <div className="overflow-x-auto -mx-1 px-1">
+          <div className="flex gap-3 bg-[#0a0c10] p-1.5 rounded-2xl border border-slate-800 min-w-max">
+            {['All', 'Security', 'Clinical'].map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-8 py-3 rounded-xl text-sm font-bold transition-all min-h-[44px] ${activeFilter === filter
+                  ? 'bg-indigo-600 hover:bg-indigo-500 text-slate-200 shadow-lg shadow-primary/20'
+                  : 'text-slate-400 hover:text-slate-300'
+                  }`}
+              >
+                {filter}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
