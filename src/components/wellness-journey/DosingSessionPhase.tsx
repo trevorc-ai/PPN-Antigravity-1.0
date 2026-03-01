@@ -159,21 +159,64 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // Bump this counter whenever we want to force a contraindication re-evaluation
     const [contraindicationKey, setContraindicationKey] = useState(0);
 
-    // Re-evaluate contraindications when dosing protocol or medications are updated
-    // in localStorage (DosingProtocolForm and StructuredSafetyCheckForm write these keys)
+    // WO-528: declare eventLog + getElapsedSec BEFORE any useEffect that references them
+    const [eventLog, setEventLog] = useState<SessionEventPin[]>([]);
+
+    // Helper: returns elapsed seconds since session start. Safe to call at any time.
+    const getElapsedSec = useCallback((): number => {
+        try {
+            const raw = localStorage.getItem(SESSION_START_KEY);
+            if (!raw) return 0;
+            return Math.round((Date.now() - Number(raw)) / 1000);
+        } catch { return 0; }
+    }, [SESSION_START_KEY]);
+
+    // Re-evaluate contraindications + stamp DOSE event pin when dosing protocol saved
     useEffect(() => {
         const bump = () => setContraindicationKey(k => k + 1);
-        // storage event = cross-tab writes; ppn:dosing-updated = same-tab writes
         const handleStorage = (e: StorageEvent) => {
             if (e.key === 'ppn_dosing_protocol' || e.key === 'mock_patient_medications_names') bump();
         };
+        // When dosing protocol is saved while live, push a dose_admin event pin
+        const handleDosingUpdated = () => {
+            bump();
+            setEventLog(prev => [
+                ...prev,
+                {
+                    id: `dose-${Date.now()}`,
+                    elapsedSec: getElapsedSec(),
+                    type: 'dose_admin',
+                    label: 'Dose Admin',
+                } satisfies SessionEventPin,
+            ]);
+        };
         window.addEventListener('storage', handleStorage);
-        window.addEventListener('ppn:dosing-updated', bump);
+        window.addEventListener('ppn:dosing-updated', handleDosingUpdated);
         return () => {
             window.removeEventListener('storage', handleStorage);
-            window.removeEventListener('ppn:dosing-updated', bump);
+            window.removeEventListener('ppn:dosing-updated', handleDosingUpdated);
         };
-    }, []);
+        // getElapsedSec is stable (useCallback), safe to include
+    }, [getElapsedSec]);
+
+    // Mirror every LiveSessionTimeline quick-action onto the chart as an event pin
+    useEffect(() => {
+        const handleSessionEvent = (e: Event) => {
+            const { type, label } = (e as CustomEvent).detail ?? {};
+            if (!type) return;
+            setEventLog(prev => [
+                ...prev,
+                {
+                    id: `tl-${Date.now()}`,
+                    elapsedSec: getElapsedSec(),
+                    type,
+                    label: label ?? type,
+                } satisfies SessionEventPin,
+            ]);
+        };
+        window.addEventListener('ppn:session-event', handleSessionEvent);
+        return () => window.removeEventListener('ppn:session-event', handleSessionEvent);
+    }, [getElapsedSec]);
 
     // Restore mode from localStorage on mount (survives companion-page navigation)
     const [mode, setMode] = useState<SessionMode>(() => {
@@ -231,7 +274,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
             switch (e.key.toLowerCase()) {
                 case 'u': setShowUpdatePanel(p => !p); break;
-                case 'v': onOpenForm('session-vitals'); break;
+                case 'v':
+                    // Stamp a vital_check pin on the chart when practitioner opens vitals form
+                    setEventLog(prev => [...prev, {
+                        id: `vitals-${Date.now()}`,
+                        elapsedSec: getElapsedSec(),
+                        type: 'vital_check',
+                        label: 'Vitals Recorded',
+                    } satisfies SessionEventPin]);
+                    onOpenForm('session-vitals');
+                    break;
                 case 'a': onOpenForm('safety-and-adverse-event'); break;
             }
         };
@@ -271,19 +323,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         tempF?: number; // reserved for future temperature field
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
-
-    // WO-528: eventLog captures non-vitals session events (rescue, adverse, dose_admin from
-    // timeline quick-actions) as SessionEventPin[] for the chart overlay strip.
-    const [eventLog, setEventLog] = useState<SessionEventPin[]>([]);
-
-    // Helper: returns elapsed seconds since session start. Safe to call at any time.
-    const getElapsedSec = useCallback((): number => {
-        try {
-            const raw = localStorage.getItem(SESSION_START_KEY);
-            if (!raw) return 0;
-            return Math.round((Date.now() - Number(raw)) / 1000);
-        } catch { return 0; }
-    }, [SESSION_START_KEY]);
 
     // WO-528: derive VitalsSnapshot[] from updateLog entries that contain HR or BP data.
     // Each entry is mapped to an elapsed-time X value so the chart uses a consistent timeline.

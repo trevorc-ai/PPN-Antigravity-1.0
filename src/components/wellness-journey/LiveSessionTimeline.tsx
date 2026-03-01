@@ -68,6 +68,10 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         };
 
         await createTimelineEvent(eventData);
+        // Notify DosingSessionPhase chart listener — zero prop drilling
+        window.dispatchEvent(new CustomEvent('ppn:session-event', {
+            detail: { type, label: description, timestamp: eventData.event_timestamp }
+        }));
         if (!presetDesc) setDraftNote('');
         setIsSubmitting(false);
         fetchLocalEvents();
