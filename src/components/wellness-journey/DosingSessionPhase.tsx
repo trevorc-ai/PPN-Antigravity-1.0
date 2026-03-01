@@ -293,9 +293,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             .map((e, i) => ({
                 id: `upd-${i}`,
                 elapsedSec: e.elapsedSec ?? 0,
-                heartRate: e.hr ? parseInt(e.hr, 10) : 0,
-                bpSystolic: e.bp ? parseInt(e.bp.split('/')[0], 10) : 0,
-                temperatureF: e.tempF ?? 98.6,
+                // Use undefined for unrecorded fields — Recharts treats undefined as a gap,
+                // so no line is drawn toward zero when a field was not entered.
+                heartRate: e.hr ? parseInt(e.hr, 10) : undefined,
+                bpSystolic: e.bp ? parseInt(e.bp.split('/')[0], 10) : undefined,
+                temperatureF: e.tempF ?? undefined, // no default — only plot when explicitly recorded
             }))
             .sort((a, b) => a.elapsedSec - b.elapsedSec);
     }, [updateLog]);

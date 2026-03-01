@@ -12,9 +12,10 @@ export interface VitalsSnapshot {
     id: string;
     /** Elapsed seconds from session start (T+0) */
     elapsedSec: number;
-    heartRate: number;
-    bpSystolic: number;
-    temperatureF: number;
+    /** undefined when not recorded — Recharts skips undefined as a gap */
+    heartRate?: number;
+    bpSystolic?: number;
+    temperatureF?: number;
 }
 
 /** A session event to plot as a dot inside the vitals chart */
@@ -267,8 +268,8 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                             aria-pressed={visible[s.key]}
                             aria-label={`${visible[s.key] ? 'Hide' : 'Show'} ${s.label}`}
                             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold uppercase tracking-wide transition-all ${visible[s.key]
-                                    ? 'border-opacity-60 shadow-sm'
-                                    : 'bg-slate-800/60 border-slate-700/40 text-slate-500'
+                                ? 'border-opacity-60 shadow-sm'
+                                : 'bg-slate-800/60 border-slate-700/40 text-slate-500'
                                 }`}
                             style={visible[s.key] ? {
                                 backgroundColor: `${s.color}25`,
@@ -331,6 +332,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                                 tickLine={false}
                                 dx={-8}
                                 domain={Y_DOMAIN}
+                                allowDataOverflow={false}
                             />
 
                             <Tooltip content={<ChartTooltip />} />
