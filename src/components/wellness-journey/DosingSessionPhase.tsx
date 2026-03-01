@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useMemo } from 'react';
+import React, { Component, useState, useEffect, useMemo, useCallback } from 'react';
 import {
     Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download,
     Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
@@ -10,7 +10,7 @@ import { WorkflowActionCard } from './WorkflowCards';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import { WellnessFormId } from './WellnessFormRouter';
 import { LiveSessionTimeline } from './LiveSessionTimeline';
-import { SessionVitalsTrendChart } from './SessionVitalsTrendChart';
+import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
 import { createSessionVital } from '../../services/clinicalLog';
@@ -267,22 +267,68 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         note: string;
         hr: string;
         bp: string;
+        elapsedSec?: number; // WO-528: stamp elapsed seconds for chart X-axis
+        tempF?: number; // reserved for future temperature field
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
 
+    // WO-528: eventLog captures non-vitals session events (rescue, adverse, dose_admin from
+    // timeline quick-actions) as SessionEventPin[] for the chart overlay strip.
+    const [eventLog, setEventLog] = useState<SessionEventPin[]>([]);
+
+    // Helper: returns elapsed seconds since session start. Safe to call at any time.
+    const getElapsedSec = useCallback((): number => {
+        try {
+            const raw = localStorage.getItem(SESSION_START_KEY);
+            if (!raw) return 0;
+            return Math.round((Date.now() - Number(raw)) / 1000);
+        } catch { return 0; }
+    }, [SESSION_START_KEY]);
+
+    // WO-528: derive VitalsSnapshot[] from updateLog entries that contain HR or BP data.
+    // Each entry is mapped to an elapsed-time X value so the chart uses a consistent timeline.
+    const vitalsChartData: VitalsSnapshot[] = useMemo(() => {
+        return updateLog
+            .filter(e => e.hr || e.bp)
+            .map((e, i) => ({
+                id: `upd-${i}`,
+                elapsedSec: e.elapsedSec ?? 0,
+                heartRate: e.hr ? parseInt(e.hr, 10) : 0,
+                bpSystolic: e.bp ? parseInt(e.bp.split('/')[0], 10) : 0,
+                temperatureF: e.tempF ?? 98.6,
+            }))
+            // Sort ascending by elapsed time for correct chart line order
+            .sort((a, b) => a.elapsedSec - b.elapsedSec);
+    }, [updateLog]);
+
     const handleSaveUpdate = async () => {
         const bpStr = (updateBPSys || updateBPDia) ? `${updateBPSys || '?'}/${updateBPDia || '?'}` : '';
+        const elapsedSec = getElapsedSec();
         const entry: SessionUpdateEntry = {
             timestamp: new Date().toLocaleTimeString(),
             elapsed: elapsedTime,
+            elapsedSec,         // WO-528: stamp elapsed seconds for chart X-axis
             affect: updateAffect,
             responsiveness: updateResponsiveness,
             comfort: updateComfort,
             note: updateNote.trim(),
             hr: updateHR,
             bp: bpStr,
+            tempF: undefined,   // reserved for future temperature field
         };
         setUpdateLog(prev => [entry, ...prev]);
+
+        // WO-528: push a SESSION_UPDATE event pin for the chart overlay strip
+        // regardless of whether vitals were entered — qualitative updates still appear
+        setEventLog(prev => [
+            ...prev,
+            {
+                id: `upd-pin-${Date.now()}`,
+                elapsedSec,
+                type: 'session_update',
+                label: updateAffect ? `Update: ${updateAffect}` : 'Session Update',
+            } satisfies SessionEventPin,
+        ]);
 
         // Emit to log_clinical_vitals table seamlessly
         if ((updateHR || updateBPSys || updateBPDia) && journey.session?.sessionNumber) {
@@ -932,13 +978,31 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
                         <span>Session Update</span>
                     </button>
-                    <button onClick={isLive ? () => onOpenForm('rescue-protocol') : undefined} disabled={!isLive}
+                    <button onClick={isLive ? () => {
+                        // WO-528: stamp rescue event pin on the chart immediately
+                        setEventLog(prev => [...prev, {
+                            id: `rescue-${Date.now()}`,
+                            elapsedSec: getElapsedSec(),
+                            type: 'rescue-protocol',
+                            label: 'Rescue Protocol',
+                        } satisfies SessionEventPin]);
+                        onOpenForm('rescue-protocol');
+                    } : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-purple-900/60 to-fuchsia-900/40 hover:from-purple-800/70 border-purple-500/40 hover:border-purple-400/60 text-purple-100 shadow-lg shadow-purple-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
                         aria-label="Log rescue protocol">
                         <span className={`material-symbols-outlined text-[20px] ${isLive ? 'text-purple-300' : 'text-slate-600'}`}>emergency</span>
                         <span>Rescue Protocol</span>
                     </button>
-                    <button onClick={isLive ? () => onOpenForm('safety-and-adverse-event') : undefined} disabled={!isLive}
+                    <button onClick={isLive ? () => {
+                        // WO-528: stamp adverse event pin on the chart immediately
+                        setEventLog(prev => [...prev, {
+                            id: `adverse-${Date.now()}`,
+                            elapsedSec: getElapsedSec(),
+                            type: 'safety-and-adverse-event',
+                            label: 'Adverse Event',
+                        } satisfies SessionEventPin]);
+                        onOpenForm('safety-and-adverse-event');
+                    } : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-red-900/60 to-rose-900/40 hover:from-red-800/70 border-red-500/40 hover:border-red-400/60 text-red-100 shadow-lg shadow-red-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
                         aria-label="Log adverse reaction">
                         <AlertTriangle className={`w-5 h-5 ${isLive ? 'text-red-300' : 'text-slate-600'}`} />
@@ -1073,6 +1137,9 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         persistent: true
                                     });
                                 }}
+                                // WO-528: live data feeds — update immediately on every user action
+                                data={vitalsChartData}
+                                events={eventLog}
                             />
                         )}
                         <LiveSessionTimeline

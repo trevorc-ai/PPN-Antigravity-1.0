@@ -1,8 +1,8 @@
 ---
 id: WO-527
 title: "Wellness Journey HUD and Bottom Bar Review"
-status: 00_INBOX
-owner: PENDING
+status: 03_BUILD
+owner: BUILDER
 created: 2026-03-01T00:17:46-08:00
 failure_count: 0
 priority: NORMAL
@@ -26,3 +26,13 @@ None — request was clear.
 - Any changes to the slideout panel forms themselves
 - Phase 2 Live Session HUD / session timer (separate feature)
 - Analytics pages or any other non-Wellness-Journey screens
+
+---
+
+## LEAD Decisions (Pre-authorized for BUILDER)
+
+**Item 1 — Phase 1 Compact HUD strip:**  
+Build it. `Phase1HUD` is already wired in `PreparationPhase.tsx` reading from localStorage via `HUDChip` components. Builder should update chip content to show clinically-relevant fields: **Risk Level** (color-coded), **PHQ-9 severity label**, **Substance**, **Patient Age**. Follow the WO-533 chip design pattern already in place. No new architecture needed.
+
+**Item 2 — 3-column bottom container (all phases):**  
+Delete it. Confirmed 100% static/mock data in the audit (WO-531). The Phase 2 sticky session HUD and vitals chart already provide live observability. Static fake data erodes clinical trust. Remove the container from Phase 1, Phase 2, and Phase 3 — no replacement component required.

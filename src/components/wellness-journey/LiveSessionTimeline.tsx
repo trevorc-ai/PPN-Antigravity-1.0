@@ -16,7 +16,8 @@ interface LiveSessionTimelineProps {
     active: boolean; // Controls whether refetching happens
 }
 
-const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string, symbol: string, label: string }> = {
+// WO-528: exported so SessionVitalsTrendChart can reuse the same palette
+export const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string, symbol: string, label: string }> = {
     DOSE: { icon: <Pill className="w-4 h-4" />, color: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30', symbol: '●', label: '[DOSE]' },
     dose_admin: { icon: <Pill className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '●', label: '[DOSE]' },
     vital_check: { icon: <Activity className="w-4 h-4" />, color: 'text-blue-400 bg-blue-500/20 border-blue-500/30', symbol: '○', label: '[VITALS]' },
@@ -61,7 +62,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         const eventData = {
             session_id: sessionId,
             event_timestamp: new Date().toISOString(),
-            event_type: type,
+            event_type: type as any, // QUICK_ACTIONS types are validated by the BE; cast to satisfy union
             performed_by: 'Current Clinician',
             metadata: { event_description: description }
         };

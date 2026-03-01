@@ -1,8 +1,8 @@
 ---
 id: WO-528
 title: "Phase 2 HUD: Unified Session Event Graph"
-status: 01_TRIAGE
-owner: LEAD
+status: 03_BUILD
+owner: BUILDER
 authored_by: PRODDY
 created: 2026-03-01T00:39:46-08:00
 amended: 2026-03-01T00:45:45-08:00
@@ -12,6 +12,7 @@ amendments:
   - "Added per-reading dot marker requirement"
   - "LEAD granted layout flexibility (multi-line, separate graphs, or overlays)"
   - "Open Question 2 resolved; replaced with layout decision question"
+  - "All 5 LEAD open questions answered — ready for BUILD"
 failure_count: 0
 priority: P1
 ---
@@ -98,5 +99,27 @@ A licensed psychedelic therapy facilitator needs to see every recorded session e
 - [x] Open Questions list is ≤5 items
 - [x] Total PRD word count is ≤600 words
 - [x] No code, SQL, or schema written anywhere in this document
-- [x] Frontmatter updated: `owner: LEAD`, `status: 01_TRIAGE`
+- [x] Frontmatter updated: `owner: BUILDER`, `status: 03_BUILD`
 - [x] Response wrapped in `==== PRODDY ====`
+
+---
+
+## LEAD Answers to Open Questions
+
+**Q1 — Event data flow:**  
+`DosingSessionPhase` lifts state. `updateLog` already lives there. Add a new `eventLog` state array in `DosingSessionPhase` for non-vitals events. Pass the combined `events` array (both logs merged) down as a new prop to `SessionVitalsTrendChart`. Keep data flow unidirectional — no independent subscription inside the chart.
+
+**Q2 — Visual layout (LEAD decision):**  
+**Icon-pin overlay strip.** Render a narrow dedicated horizontal event lane beneath the vitals chart lines. Each event is an icon-pin at its elapsed-time X position, color-coded by event type from `EVENT_CONFIG` in `LiveSessionTimeline.tsx`. The pins share the same X-axis as the vitals lines, making vertical correlation visually obvious without cluttering the Y-axis.
+
+**Q3 — Rescue & Adverse Event data shape:**  
+These forms do NOT currently emit a timestamp back to the parent. Builder must add a lightweight `onEventLogged` callback in `DosingSessionPhase`. When `onComplete` fires for `rescue-protocol` or `safety-and-adverse-event`, record `{ type, elapsed, timestamp }` into the new `eventLog` state. This feeds the chart events prop.
+
+**Q4 — Refresh cadence:**  
+**Event-driven.** Each user action updates in-memory state → prop flows to chart → Recharts re-renders immediately. No polling interval needed — the data is local state, not fetched from Supabase.
+
+**Q5 — Session Update dual representation:**  
+A Session Update produces **two markers** if both data types are present:
+- If HR or BP entered → dot plotted on the vitals line (already handled by `updateLog`)
+- Always → a `📋 UPDATE` event pin in the overlay strip at that elapsed time
+A pure-qualitative update (Affect/Comfort only, no vitals) still renders the UPDATE pin. The two representations are additive, not mutually exclusive.
