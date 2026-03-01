@@ -5,7 +5,7 @@ import { PageContainer } from '../components/layouts/PageContainer';
 import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../supabaseClient';
 import { useDataCache } from '../hooks/useDataCache';
-import ComboSelect, { ComboOption } from '../components/ui/ComboSelect';
+import { ComboSelect, ComboOption } from '../components/ui/ComboSelect';
 
 // WO-096: Types for live ref table data
 interface RefSubstance {
@@ -30,6 +30,23 @@ const InteractionChecker: React.FC = () => {
   const [dbRule, setDbRule] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
+
+  // ── WO-526: Flash bug fix — clear stale result immediately on selection change
+  // Without this, the previous dbRule shows for ~300ms (debounce delay) before
+  // the new query fires, causing a flash of wrong results.
+  const handlePsychedelicChange = (val: string) => {
+    setSelectedPsychedelic(val);
+    setDbRule(null);
+    setErrorState(null);
+    if (val && selectedMedication) setIsLoading(true);
+  };
+
+  const handleMedicationChange = (val: string) => {
+    setSelectedMedication(val);
+    setDbRule(null);
+    setErrorState(null);
+    if (selectedPsychedelic && val) setIsLoading(true);
+  };
 
   const [substances, setSubstances] = useState<RefSubstance[]>([]);
   const [medications, setMedications] = useState<RefMedication[]>([]);
@@ -238,6 +255,24 @@ const InteractionChecker: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] overflow-hidden text-slate-300">
+      {/* ── Print Styles: clean white PDF output ── */}
+      <style>{`
+        @media print {
+          body { background: #ffffff !important; color: #0f172a !important; }
+          .bg-gradient-to-br, [class*="bg-"] { background: #ffffff !important; box-shadow: none !important; }
+          [class*="border-"] { border-color: #cbd5e1 !important; }
+          [class*="text-slate"], [class*="text-primary"], [style*="color"] { color: #0f172a !important; }
+          [class*="rounded-"] { border-radius: 0.5rem !important; }
+          button, nav, .sticky, [class*="blur"] { display: none !important; }
+          /* Keep Print / Save button visible in print preview only */ 
+          [data-print-btn] { display: none !important; }
+          [class*="shadow"], [class*="glow"] { box-shadow: none !important; }
+          [class*="opacity-5"], [class*="opacity-10"] { display: none !important; }
+          h1, h2, h3 { color: #0f172a !important; page-break-after: avoid; }
+          .print\:hidden { display: none !important; }
+          @page { margin: 1.5cm 2cm; size: letter portrait; }
+        }
+      `}</style>
       {/* Background Texture & Glows */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)] pointer-events-none z-0" />
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none opacity-50 z-0" />
@@ -284,15 +319,14 @@ const InteractionChecker: React.FC = () => {
               Primary Agent (Psychedelic)
             </label>
             <ComboSelect
-              id="combo-psychedelic"
               options={substanceOptions}
               value={selectedPsychedelic}
-              onChange={setSelectedPsychedelic}
+              onChange={handlePsychedelicChange}
               disabled={refLoading}
               placeholder={refLoading ? 'Loading...' : 'Select Controlled Substance...'}
               leftIcon="biotech"
-            />
-            <div className="flex items-center gap-2 px-2">
+              id="primary-agent-select"
+            /><div className="flex items-center gap-2 px-2">
               <span className="material-symbols-outlined text-sm text-slate-400">lock</span>
               <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Validated list only</span>
             </div>
@@ -304,24 +338,26 @@ const InteractionChecker: React.FC = () => {
               Secondary Agent (Medication/Condition)
             </label>
             <ComboSelect
-              id="combo-medication"
               options={medicationOptions}
               value={selectedMedication}
-              onChange={setSelectedMedication}
+              onChange={handleMedicationChange}
               disabled={refLoading}
               placeholder={refLoading ? 'Loading medications...' : medications.length === 0 ? 'No medications in database' : 'Select Interactor...'}
               leftIcon="dataset"
+              id="secondary-agent-select"
             />
 
             {/* Missing Agent Workflow */}
             <div className="px-2">
-              <button
-                onClick={handleRequestAgent}
-                className="text-sm font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2 group"
+              {/* a11y: blue-300 (#93c5fd) achieves ~4.8:1 on dark card bg — WCAG AA pass */}
+              <a
+                href="mailto:support@ppnportal.net?subject=Database%20Update%20Request&body=Please%20add%20the%20following%20agent%20to%20the%20institutional%20database%3A%0A%0AAgent%20Name%3A%20%0AAgent%20Class%3A%20%0AReference%20Source%3A%20"
+                className="text-sm font-bold text-[#93c5fd] hover:text-[#bfdbfe] uppercase tracking-widest transition-colors flex items-center gap-2 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#93c5fd]"
+                aria-label="Request institutional database update via email"
               >
                 <span>Agent not listed? Request institutional database update.</span>
-                <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">arrow_forward</span>
-              </button>
+                <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
+              </a>
             </div>
           </section>
         </div>

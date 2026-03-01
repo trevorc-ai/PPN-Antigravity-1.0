@@ -26,6 +26,7 @@ src/components/wellness-journey/WellnessFormRouter.tsx
 src/components/wellness-journey/SlideOutPanel.tsx
 
 
+
 # ── Add files here when approaching a milestone ──
 # Uncomment to protect:
 # src/pages/InteractionChecker.tsx
