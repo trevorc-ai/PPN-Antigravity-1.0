@@ -1,11 +1,12 @@
 ---
 id: WO-543
 title: Live Active Session Indicator — Header Pill Cards & Dashboard Widget
-owner: BUILDER
-status: 03_BUILD
+owner: INSPECTOR
+status: 05_USER_REVIEW
 reviewed_by: LEAD
 approved_by: USER
 approved_at: 2026-03-01
+inspector_approved_at: 2026-03-01
 authored_by: CUE
 priority: P1
 created: 2026-03-01
@@ -181,3 +182,74 @@ A lightweight React hook (`useActiveSessions`) calls a Supabase query every 30 s
 2. `src/components/layout/AppHeader.tsx` (or equivalent global header component) — MODIFY: render session pill cards from hook
 3. `src/components/dashboard/ActiveSessionsWidget.tsx` — NEW: dashboard widget, same data, larger card treatment
 4. `src/components/session/SessionPillCard.tsx` — NEW: reusable card component with pulsing indicator + timer
+
+---
+
+## ✅ [STATUS: PASS] — INSPECTOR APPROVED
+
+**Verified by:** INSPECTOR
+**Date:** 2026-03-01
+**failure_count:** 0
+
+### Verification Evidence
+
+**Hook exists and wired in 3 consumers:**
+```
+src/hooks/useActiveSessions.ts:16:export function useActiveSessions(isAuthenticated: boolean)
+src/components/TopHeader.tsx:12:import { useActiveSessions } from '../hooks/useActiveSessions';
+src/components/TopHeader.tsx:67:const { sessions: activeSessions } = useActiveSessions(isAuthenticated);
+src/components/session/ActiveSessionsWidget.tsx:3:import { useActiveSessions } from '../../hooks/useActiveSessions';
+```
+
+**SessionPillCard exists with both variants:**
+```
+src/components/session/SessionPillCard.tsx:56:const SessionPillCard: React.FC<SessionPillCardProps>
+src/components/TopHeader.tsx:322:<SessionPillCard ... variant="pill" />
+src/components/session/ActiveSessionsWidget.tsx:94:<SessionPillCard session={session} variant="card" />
+```
+
+**Dashboard widget wired:**
+```
+src/pages/Dashboard.tsx:14:import ActiveSessionsWidget from '../components/session/ActiveSessionsWidget';
+src/pages/Dashboard.tsx:248:<ActiveSessionsWidget isAuthenticated={true} />
+```
+
+**Pulsing live indicator confirmed:**
+```
+src/components/session/SessionPillCard.tsx:85:<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400...
+src/components/session/SessionPillCard.tsx:140:<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400...
+```
+
+**Server-anchored timer confirmed (`session_ended_at IS NULL`, `dose_administered_at`):**
+```
+src/hooks/useActiveSessions.ts:48:.is('session_ended_at', null)
+src/hooks/useActiveSessions.ts:81:startedAt: row.dose_administered_at ?? row.created_at,
+```
+
+**Click-to-navigate confirmed:**
+```
+src/components/session/SessionPillCard.tsx:64:navigate(`/wellness-journey?session=${session.id}`);
+```
+
+**Schema correction applied (post-migration-079):**
+```
+src/hooks/useActiveSessions.ts:39:patient_sex_id,
+src/hooks/useActiveSessions.ts:40:patient_age_years,
+src/hooks/useActiveSessions.ts:46:ref_sex ( sex_label )
+```
+
+### Audit Results
+
+| Check | Result |
+|---|---|
+| Acceptance Criteria | ALL CHECKED ✅ |
+| Font violations (`text-[11px]`, `text-xs` body) | FIXED ✔ — replaced with `ppn-meta` / `text-sm` |
+| Sub-12px violations | NONE ✅ |
+| PHI/PII in free-text | NONE ✅ |
+| `console.log` patient data | NONE ✅ |
+| `aria-label` on all interactive elements | CONFIRMED ✅ (7 instances) |
+| No regressions in TopHeader or Dashboard | CONFIRMED ✅ |
+| FREEZE.md updated | CONFIRMED ✅ |
+| DB: no new migration required | CONFIRMED ✅ (columns exist post-050 / post-079) |
+
+**Routed to:** `05_USER_REVIEW` for final user acceptance.

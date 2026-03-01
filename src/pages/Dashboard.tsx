@@ -11,6 +11,7 @@ import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import SafetyRiskMatrix from '../components/analytics/SafetyRiskMatrix';
 import { usePractitionerProtocols } from '../hooks/usePractitionerProtocols';
+import ActiveSessionsWidget from '../components/session/ActiveSessionsWidget';
 
 // --- COMPONENT: CLINIC PERFORMANCE CARD (PRIMARY) ---
 interface ClinicPerformanceCardProps {
@@ -236,6 +237,15 @@ export default function Dashboard() {
               Log Session
             </button>
           </div>
+        </Section>
+
+        {/* ACTIVE SESSIONS COMMAND CENTER ─────────────────────────────────
+             WO-543: Live session indicator.
+             Shown only when sessions are running — zero noise when idle.
+             Dr. Allen's room-management view for 3-4 simultaneous patients.
+        ──────────────────────────────────────────────────────────────── */}
+        <Section spacing="tight">
+          <ActiveSessionsWidget isAuthenticated={true} />
         </Section>
 
         {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}

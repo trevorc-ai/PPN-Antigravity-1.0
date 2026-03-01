@@ -9,6 +9,8 @@ import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useActiveSessions } from '../hooks/useActiveSessions';
+import SessionPillCard from './session/SessionPillCard';
 
 
 interface TopHeaderProps {
@@ -60,6 +62,9 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const [isInstantConnectOpen, setIsInstantConnectOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // Live session pills — polls every 30s, zero cost when no sessions are active
+  const { sessions: activeSessions } = useActiveSessions(isAuthenticated);
 
   const isLanding = location.pathname === '/';
 
@@ -302,6 +307,26 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
               </div>
 
 
+              {/* ── Live Active Session Pills ─────────────────────────────
+                   Renders one compact pill per active dosing session.
+                   Hidden entirely when no sessions are active (no noise).
+                   WO-543: server-anchored timers, click-to-navigate.
+              ────────────────────────────────────────────────────────── */}
+              {activeSessions.length > 0 && (
+                <div
+                  className="hidden lg:flex items-center gap-2 mr-2 pl-4 border-l border-slate-700/50"
+                  role="region"
+                  aria-label="Active dosing sessions"
+                >
+                  {activeSessions.map((session) => (
+                    <SessionPillCard
+                      key={session.id}
+                      session={session}
+                      variant="pill"
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* User Dropdown Menu */}
               <div id="tour-user-profile" className="relative" ref={menuRef}>
