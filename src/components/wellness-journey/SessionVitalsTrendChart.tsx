@@ -78,10 +78,13 @@ const EVENT_Y_BAND: Record<string, number> = {
     // ── LOWER — dose administration (blue/emerald) ────────────────────
     'dose_admin': 76,
     'DOSE': 76,
-    // ── BOTTOM — rescue / music / grounding (green) ───────────────────
+    // ── BOTTOM — rescue / music / grounding / consent (green) ───────────────────
     'rescue-protocol': 58,
     'rescue': 58,
-    'music_change': 62,
+    'CLOSE': 60,
+    'music_change': 63,
+    'touch_consent': 67,
+    'INTERVENTION': 70,
 };
 
 /** Returns the Y band for a given event type, defaulting to the neutral mid-row. */
@@ -114,18 +117,34 @@ function generateTicks(domainMaxSec: number): number[] {
 // ── Event pin colour map ──────────────────────────────────────────────────────
 
 const PIN_COLORS: Record<string, { fill: string; stroke: string; emoji: string; label: string }> = {
+    // ── Dose ───────────────────────────────────────────────────────────────────────
     DOSE: { fill: '#6366f1', stroke: '#818cf8', emoji: '💊', label: 'Dose' },
     dose_admin: { fill: '#10b981', stroke: '#34d399', emoji: '💊', label: 'Dose Admin' },
+    // ── Safety / Adverse ─────────────────────────────────────────────────────
     SAFETY: { fill: '#ef4444', stroke: '#f87171', emoji: '⚠', label: 'Safety' },
     safety_event: { fill: '#ef4444', stroke: '#f87171', emoji: '⚠', label: 'Safety Event' },
-    'safety-and-adverse-event': { fill: '#f97316', stroke: '#fb923c', emoji: '⚠', label: 'Adverse Event' },
-    'rescue-protocol': { fill: '#f43f5e', stroke: '#fb7185', emoji: '🛟', label: 'Rescue Protocol' },
-    rescue: { fill: '#f43f5e', stroke: '#fb7185', emoji: '🛟', label: 'Rescue' },
+    'safety-and-adverse-event': { fill: '#dc2626', stroke: '#ef4444', emoji: '🚨', label: 'Adverse Event' },
+    // ── Rescue / Intervention ─────────────────────────────────────────────────
+    'rescue-protocol': { fill: '#22c55e', stroke: '#4ade80', emoji: '🛟', label: 'Rescue Protocol' },
+    rescue: { fill: '#22c55e', stroke: '#4ade80', emoji: '🛟', label: 'Rescue' },
+    INTERVENTION: { fill: '#f59e0b', stroke: '#fbbf24', emoji: '🙌', label: 'Intervention' },
+    CLOSE: { fill: '#10b981', stroke: '#34d399', emoji: '✅', label: 'Close' },
+    // ── Session updates ─────────────────────────────────────────────────────
     session_update: { fill: '#0ea5e9', stroke: '#38bdf8', emoji: '📋', label: 'Session Update' },
     UPDATE: { fill: '#0ea5e9', stroke: '#38bdf8', emoji: '📋', label: 'Update' },
+    // ── Vitals / monitoring ───────────────────────────────────────────────────
     vital_check: { fill: '#3b82f6', stroke: '#60a5fa', emoji: '❤', label: 'Vital Check' },
+    // ── Observations ──────────────────────────────────────────────────────────
     patient_observation: { fill: '#f59e0b', stroke: '#fbbf24', emoji: '👁', label: 'Observation' },
     OBSERVATION: { fill: '#f59e0b', stroke: '#fbbf24', emoji: '👁', label: 'Observation' },
+    PEAK: { fill: '#d946ef', stroke: '#e879f9', emoji: '✨', label: 'Peak' },
+    // ── Clinical decision ────────────────────────────────────────────────────────
+    clinical_decision: { fill: '#f97316', stroke: '#fb923c', emoji: '🧠', label: 'Decision' },
+    // ── Music / grounding ─────────────────────────────────────────────────────────
+    music_change: { fill: '#8b5cf6', stroke: '#a78bfa', emoji: '🎵', label: 'Music Change' },
+    // ── Consent ─────────────────────────────────────────────────────────────────────
+    touch_consent: { fill: '#ec4899', stroke: '#f472b6', emoji: '✋', label: 'Consent' },
+    // ── Notes ───────────────────────────────────────────────────────────────────────
     general_note: { fill: '#64748b', stroke: '#94a3b8', emoji: '📝', label: 'Note' },
 };
 
