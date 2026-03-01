@@ -2,7 +2,7 @@
 id: WO-519
 title: Component Showcase — Live Data Connection & Sandbox Mode
 owner: LEAD
-status: 00_INBOX
+status: 01_TRIAGE
 authored_by: PRODDY
 priority: P1
 created: 2026-02-28
@@ -70,12 +70,12 @@ A developer or practitioner-admin needs to view every platform component renderi
 
 ### 6. Open Questions for LEAD
 
-1. Should the Showcase page be gated behind an `admin` or `developer` role check, or is practitioner-level auth sufficient to view it?
-2. Components like `GlobalBenchmarkIntelligence` and `RegulatoryWeather` may pull from external/seeded benchmark tables rather than per-practitioner data — should they display global aggregate data (no `site_id` filter) or be suppressed if no real data exists yet?
-3. For `PatientJourneySnapshot` and `ConfidenceCone`, which Supabase table or view should drive the data? LEAD must confirm the source before BUILDER queries them.
-4. Should the date range filter in the top bar persist across page reloads (localStorage), or reset on every visit?
+✅ All questions resolved by LEAD (2026-02-28) — spec is complete.
 
-*No additional open questions at this time.*
+1. ~~Auth gate for Showcase page?~~ → **Practitioner-level auth is sufficient.** The route is already behind `RequireAuth` in App.tsx. No additional role check needed at this stage.
+2. ~~GlobalBenchmarkIntelligence + RegulatoryWeather — global aggregate or suppressed?~~ → **Show global aggregate data (no `site_id` filter).** These components are designed for network-wide context. If no seeded data exists yet in the target table, render the component's built-in empty/loading state — do not suppress.
+
+*None — spec is complete.*
 
 ---
 

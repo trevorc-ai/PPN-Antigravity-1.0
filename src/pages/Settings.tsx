@@ -29,7 +29,7 @@ const Settings: React.FC = () => {
 
   return (
     <PageContainer className="animate-in fade-in duration-700 pb-20">
-      <Section spacing="spacious" className="pt-4 sm:pt-0">
+      <Section spacing="spacious" className="pt-8 sm:pt-0">
 
         {/* Header Area */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">

@@ -281,23 +281,29 @@ const Analytics = () => {
 
                 {/* ROW 1: Performance Radar — full width, 3-col internal grid */}
                 <div className="print:break-inside-avoid">
-                    <GlassmorphicCard className="min-h-[520px] h-auto lg:h-[520px] relative overflow-hidden print:h-[420px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10">
-                            <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
-                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
+                    <GlassmorphicCard className="min-h-[520px] h-auto lg:h-[520px] relative overflow-hidden print:h-[420px] print:shadow-none print:border-gray-200 print:bg-white flex flex-col">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 px-6 pt-6 pb-0 z-10 shrink-0">
+                            <div>
+                                <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
+                                <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
+                            </div>
                         </div>
-                        <ClinicPerformanceRadar data={filteredData} />
+                        <div className="flex-1 min-h-0">
+                            <ClinicPerformanceRadar data={filteredData} />
+                        </div>
                     </GlassmorphicCard>
                 </div>
 
                 {/* ROW 2: Patient Galaxy — full width, large scatter + filter controls */}
                 <div className="print:break-inside-avoid">
-                    <GlassmorphicCard className="min-h-[580px] h-auto lg:h-[580px] relative overflow-hidden print:h-[480px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10" aria-hidden="true">
+                    <GlassmorphicCard className="min-h-[580px] h-auto lg:h-[580px] relative overflow-hidden print:h-[480px] print:shadow-none print:border-gray-200 print:bg-white flex flex-col">
+                        <div className="px-6 pt-6 pb-0 z-10 shrink-0" aria-hidden="true">
                             <p className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</p>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
                         </div>
-                        <PatientConstellation data={filteredData} />
+                        <div className="flex-1 min-h-0 p-2">
+                            <PatientConstellation data={filteredData} hideHeader />
+                        </div>
                     </GlassmorphicCard>
                 </div>
 

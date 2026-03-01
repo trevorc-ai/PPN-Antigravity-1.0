@@ -2,12 +2,13 @@
 id: WO-523
 title: Customer Journey Scoring + Prioritized Recommendations
 owner: PRODDY
-status: 00_INBOX
+status: 98_HOLD
 authored_by: PRODDY
 priority: P1
 created: 2026-02-28
 depends_on: WO-521, WO-522
 blocks: none
+lead_hold_note: "Blocked pending WO-521 (framework research) and WO-522 (browser audit). LEAD will move to 01_TRIAGE automatically when both are marked complete."
 ---
 
 ## PRODDY PRD

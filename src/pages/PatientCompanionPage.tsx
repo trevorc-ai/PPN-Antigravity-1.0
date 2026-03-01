@@ -69,27 +69,11 @@ export default function PatientCompanionPage() {
         <div
             className="fixed inset-0 bg-black overflow-hidden flex flex-col selection:bg-transparent"
             // Trap all keyboard events so Escape doesn't bubble to parent route handlers
-            // (WellnessJourney SlideOutPanel listens globally on document for Escape)
             onKeyDown={(e) => { e.stopPropagation(); }}
             tabIndex={-1}
         >
 
-            {/* ── Full-screen Spherecules video (all 16 on screen) ─────────────── */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <video
-                    src="/admin_uploads/spherecules.mp4"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover opacity-90 mix-blend-screen"
-                />
-            </div>
-
-            {/* Gradient — lightens near top for legibility, barely darkens at bottom */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/60 z-10 pointer-events-none" />
-
-            {/* ── Hold-to-exit lock button (top right) ─────────────────────────── */}
+            {/* ── Hold-to-exit lock button (top right, z-50 — above both containers) ── */}
             <div className="absolute top-4 right-4 z-50 flex flex-col items-center gap-1">
                 <button
                     onMouseDown={startUnlock}
@@ -120,7 +104,7 @@ export default function PatientCompanionPage() {
                 </span>
             </div>
 
-            {/* ── Feeling logged toast (mid-screen) ───────────────────────────── */}
+            {/* ── Feeling logged toast (mid-screen) ─────────────────────────────── */}
             <div className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-500 ${recentLog ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
                 }`}>
                 <div className="px-8 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl">
@@ -128,18 +112,36 @@ export default function PatientCompanionPage() {
                 </div>
             </div>
 
-            {/* ── Top prompt (lightweight — doesn't cover the spherecules) ──────── */}
-            <div className="relative z-20 pt-5 text-center pointer-events-none">
-                <p className="text-white/40 text-sm font-semibold tracking-[0.2em] uppercase">
-                    Tap to quietly log your state
-                </p>
+            {/* ── CONTAINER 1: Video (upper region, portrait-fitted, pointer-events-none) ── */}
+            {/*   flex-1 lets the video container grow to fill available space above buttons */}
+            <div
+                className="relative flex-1 overflow-hidden pointer-events-none"
+                aria-hidden="true"
+            >
+                {/* Ambient gradient overlay — legibility layer */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/60 z-10" />
+
+                {/* Top prompt — lightweight, doesn't cover spherecules */}
+                <div className="absolute top-5 left-0 right-0 text-center z-20 pointer-events-none">
+                    <p className="text-white/40 text-sm font-semibold tracking-[0.2em] uppercase">
+                        Tap to quietly log your state
+                    </p>
+                </div>
+
+                {/* Spherecules video — portrait-oriented, object-cover fills the container */}
+                <video
+                    src="/admin_uploads/spherecules.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover opacity-90 mix-blend-screen"
+                />
             </div>
 
-            {/* ── Spacer — lets the video breathe ─────────────────────────────── */}
-            <div className="flex-1" />
-
-            {/* ── 16-button grid — compact strip at the very bottom ────────────── */}
-            <div className="relative z-20 px-4 pb-5 w-full max-w-5xl mx-auto">
+            {/* ── CONTAINER 2: Button grid (bottom strip, fully visible, independently responsive) ── */}
+            {/*   shrink-0 ensures it is never compressed by the video container                       */}
+            <div className="relative z-20 shrink-0 px-4 pb-5 pt-3 w-full max-w-5xl mx-auto bg-black/30">
                 <div className="grid grid-cols-4 gap-2">
                     {FEELINGS.map((f) => (
                         <button

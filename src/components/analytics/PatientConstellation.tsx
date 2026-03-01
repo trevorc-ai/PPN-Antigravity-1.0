@@ -233,7 +233,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
     </div>
 );
 
-export default function PatientConstellation({ data }: { data?: PatientNode[] }) {
+export default function PatientConstellation({ data, hideHeader }: { data?: PatientNode[]; hideHeader?: boolean }) {
     const [selectedPatient, setSelectedPatient] = useState<PatientNode | null>(null);
     const [showGuide, setShowGuide] = useState(false);
     const [chartReady, setChartReady] = useState(false);
@@ -247,26 +247,28 @@ export default function PatientConstellation({ data }: { data?: PatientNode[] })
 
     return (
         <div className="w-full bg-[#0f1218] p-3 sm:p-6 rounded-2xl border border-slate-800 shadow-2xl relative h-[400px] sm:h-[500px] flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4 z-10 relative shrink-0">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-indigo-500/10 rounded-lg">
-                        <Search className="w-5 h-5 text-indigo-500" />
+            {/* Header — hidden when parent card already shows title (BUG-3 fix) */}
+            {!hideHeader && (
+                <div className="flex items-center justify-between mb-4 z-10 relative shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-indigo-500/10 rounded-lg">
+                            <Search className="w-5 h-5 text-indigo-500" />
+                        </div>
+                        <div title="Scatter plot visualizing patient outcomes based on treatment resistance and symptom severity">
+                            <h3 className="text-lg font-black text-slate-300 tracking-tight">Patient Galaxy Analysis</h3>
+                            <p className="text-sm text-slate-300 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
+                        </div>
                     </div>
-                    <div title="Scatter plot visualizing patient outcomes based on treatment resistance and symptom severity">
-                        <h3 className="text-lg font-black text-slate-300 tracking-tight">Patient Galaxy Analysis</h3>
-                        <p className="text-sm text-slate-300 font-medium">Clustering patient outcomes by resistance levels to identify optimal protocols.</p>
-                    </div>
-                </div>
 
-                <button
-                    onClick={() => setShowGuide(!showGuide)}
-                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-slate-300 transition-colors"
-                    title="How to read this chart"
-                >
-                    <Info className="w-5 h-5" />
-                </button>
-            </div>
+                    <button
+                        onClick={() => setShowGuide(!showGuide)}
+                        className="p-2 hover:bg-slate-800 rounded-lg text-slate-500 hover:text-slate-300 transition-colors"
+                        title="How to read this chart"
+                    >
+                        <Info className="w-5 h-5" />
+                    </button>
+                </div>
+            )}
 
             {/* Educational Guide Popover */}
             {showGuide && (

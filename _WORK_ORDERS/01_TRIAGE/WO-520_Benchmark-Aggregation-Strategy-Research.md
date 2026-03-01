@@ -2,7 +2,7 @@
 id: WO-520
 title: Benchmark Aggregation Strategy — Research Brief for INSPECTOR
 owner: INSPECTOR
-status: 00_INBOX
+status: 01_TRIAGE
 authored_by: PRODDY
 priority: P1
 created: 2026-02-28
@@ -78,10 +78,12 @@ The practitioner-owner needs to understand the aggregation strategy for combinin
 
 ### 6. Open Questions for LEAD
 
-1. Should INSPECTOR also query the live Supabase schema directly to verify whether `log_clinical_records` currently has any outcome-instrument score columns beyond `phq9_score`? Or is the migration file audit sufficient?
-2. Is `ref_benchmark_cohorts` the only seeded benchmark table that matters for this aggregation question, or should INSPECTOR also analyze `ref_benchmark_trials` and `ref_population_baselines` in its response?
+✅ All questions resolved by LEAD (2026-02-28).
 
-*No additional open questions at this time.*
+1. ~~Live schema query?~~ → **Yes** — INSPECTOR should query the live Supabase schema directly (read-only) to confirm the current columns in `log_clinical_records`, in addition to the migration file audit. Migration files may lag the live state.
+2. ~~Scope of benchmark tables in analysis?~~ → **Focus on `ref_benchmark_cohorts` as the primary table.** Mention `ref_benchmark_trials` and `ref_population_baselines` briefly for completeness but do not deeply analyze them — they are not the aggregation concern.
+
+*None — spec is complete.*
 
 ---
 

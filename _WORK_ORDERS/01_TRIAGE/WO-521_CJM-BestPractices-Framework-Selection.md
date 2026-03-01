@@ -2,7 +2,7 @@
 id: WO-521
 title: Customer Journey Best Practices + UX Scoring Framework Selection
 owner: PRODDY
-status: 00_INBOX
+status: 01_TRIAGE
 authored_by: PRODDY
 priority: P1
 created: 2026-02-28
@@ -68,10 +68,12 @@ The practitioner-owner needs a written best practices reference and a chosen UX 
 
 ### 6. Open Questions for LEAD
 
-1. Should the scoring framework weight clinical trust/safety signals more heavily than standard consumer SaaS rubrics (given PPN's practitioner user base)? PRODDY will flag this in the framework selection but defers to LEAD on weighting.
-2. Should PRODDY deliver the scoring grid in the same document as the best practices summary, or as a separate companion file?
+✅ All questions resolved by LEAD (2026-02-28).
 
-*No additional open questions at this time.*
+1. ~~Weight clinical trust/safety signals more heavily?~~ → **Yes.** PPN's user is a licensed clinical practitioner, not a consumer. Any scoring framework PRODDY selects must weight trust signals (data privacy, clinical evidence sourcing, safety-gate visibility) at least 1.5× vs. standard consumer SaaS rubrics. PRODDY should flag this weighting explicitly in the framework selection rationale.
+2. ~~Same document or separate companion file?~~ → **Same document.** Best practices summary + scoring grid in one file, named `WO-521_CJM-Framework-Research.md`. Easier to hand to PRODDY for WO-523.
+
+*None — spec is complete.*
 
 ---
 

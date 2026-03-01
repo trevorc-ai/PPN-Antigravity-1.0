@@ -153,7 +153,7 @@ const AuditLogs: React.FC = () => {
           </p>
         </div>
 
-        <div className="overflow-x-auto -mx-1 px-1">
+        <div className="overflow-x-auto -mx-2 px-2 sm:-mx-4 sm:px-4">
           <div className="flex gap-3 bg-[#0a0c10] p-1.5 rounded-2xl border border-slate-800 min-w-max">
             {['All', 'Security', 'Clinical'].map((filter) => (
               <button

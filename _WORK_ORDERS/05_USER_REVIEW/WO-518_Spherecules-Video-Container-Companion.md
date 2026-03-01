@@ -2,7 +2,7 @@
 id: WO-518
 title: Spherecules Video Container — Companion Page Re-Integration
 owner: LEAD
-status: 00_INBOX
+status: 01_TRIAGE
 authored_by: PRODDY
 priority: P1
 created: 2026-02-28
@@ -72,11 +72,13 @@ A session patient needs to see the Spherecules ambient video clearly within the 
 
 ### 6. Open Questions for LEAD
 
-1. Should the video container use a fixed height (`calc(100vh - [button-grid-height])`), a flex `flex-1` grow pattern, or a viewport-percentage approach (e.g. `h-[65vh]`)? LEAD to decide the layout strategy.
-2. Should the video container apply a black background behind the portrait video on wide (desktop) viewports where the portrait frame won't fill edge-to-edge, or let the ambient black page background show through?
-3. Should the containerized two-panel layout apply universally, or revert to full-bleed on desktop viewports ≥1024px?
+✅ All questions resolved by LEAD (2026-02-28) — spec is complete.
 
-*No additional open questions at this time.*
+1. ~~Layout strategy for video container?~~ → **Flex column layout**: video container uses `flex-1` (grows to fill available space above the button grid); button grid container has a fixed/natural height at the bottom. No fixed pixel heights — flex handles all screen sizes.
+2. ~~Black background behind portrait video on wide desktop viewports?~~ → **Yes** — the page background is already `bg-black`; no additional wrapper color needed. The portrait video will have black letterbox bars naturally on desktop without extra styling.
+3. ~~Containerized layout universal or revert to full-bleed on desktop ≥1024px?~~ → **Universal** — the two-container layout applies on all viewport sizes. No revert to `absolute inset-0` at any breakpoint.
+
+*None — spec is complete.*
 
 ---
 

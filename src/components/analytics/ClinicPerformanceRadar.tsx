@@ -68,11 +68,11 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
     return (
         <div className="w-full h-full flex flex-col p-6 print:p-0 print:bg-white">
             {/* Header Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4">
                 <div className="flex-1">
                     {/* Title removed here as it is handled by the parent card */}
                 </div>
-                <div className="flex items-center gap-2 print:hidden z-10">
+                <div className="flex items-center gap-2 print:hidden z-10 shrink-0">
                     <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
                         <button
                             onClick={() => setTimeRange('quarter')}

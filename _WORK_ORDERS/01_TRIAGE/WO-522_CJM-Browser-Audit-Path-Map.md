@@ -2,7 +2,7 @@
 id: WO-522
 title: PPN Customer Journey — Full Browser Audit & Path Map
 owner: INSPECTOR
-status: 00_INBOX
+status: 01_TRIAGE
 authored_by: PRODDY
 priority: P1
 created: 2026-02-28
@@ -93,11 +93,13 @@ INSPECTOR must open the application in the browser at `https://ppnportal.net` (o
 
 ### 6. Open Questions for LEAD
 
-1. Should INSPECTOR walk the journey as an unauthenticated visitor first and then as an authenticated practitioner, or combine both into a single pass?
-2. Should mobile viewport behavior (375px) be documented alongside desktop, or desktop only for this initial map?
-3. The `/signup` route currently redirects to `/academy` — is this intentional? INSPECTOR should flag it but LEAD confirms whether it counts as a journey gap.
+✅ All questions resolved by LEAD (2026-02-28).
 
-*No additional open questions at this time.*
+1. ~~Walk order?~~ → **Two separate passes**: unauthenticated visitor first (landing through conversion), then authenticated practitioner. Document them as two clearly labelled sections in the map.
+2. ~~Mobile viewport alongside desktop?~~ → **Desktop only** for this initial map. Mobile is a separate audit and would double the scope. Flag any obvious mobile-only issues seen in passing, but do not formally document mobile paths.
+3. ~~`/signup` redirect to `/academy` — journey gap?~~ → **Yes, flag it as a gap.** The expected signup flow should deliver a practitioner to their dashboard or onboarding, not the Academy page. INSPECTOR should document this as a broken conversion path in the journey map friction notes.
+
+*None — spec is complete.*
 
 ---
 

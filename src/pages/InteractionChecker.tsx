@@ -1,10 +1,11 @@
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../supabaseClient';
 import { useDataCache } from '../hooks/useDataCache';
+import ComboSelect, { ComboOption } from '../components/ui/ComboSelect';
 
 // WO-096: Types for live ref table data
 interface RefSubstance {
@@ -17,110 +18,6 @@ interface RefMedication {
   medication_name: string;
   medication_category: string | null;
 }
-
-// ─── Custom accessible medication dropdown ───────────────────────────────────
-// Replaces native <select>/<optgroup> whose category labels are uncontrollable
-// OS grey (WCAG fail). This renders category headers in full-contrast white.
-interface MedDropdownProps {
-  medications: RefMedication[];
-  value: string;
-  onChange: (val: string) => void;
-  disabled?: boolean;
-  placeholder?: string;
-}
-
-const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange, disabled, placeholder }) => {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  // Close on Escape — stopPropagation so it doesn't bubble to SlideOutPanel
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
-        e.stopPropagation();
-        setOpen(false);
-      }
-    };
-    document.addEventListener('keydown', handler, true);
-    return () => document.removeEventListener('keydown', handler, true);
-  }, [open]);
-
-
-
-  const displayValue = value || placeholder || 'Select Interactor...';
-
-  return (
-    <div ref={ref} className="relative">
-      {/* Trigger button */}
-      <button
-        type="button"
-        id="medication-select-trigger"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        disabled={disabled}
-        onClick={() => setOpen(o => !o)}
-        className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait text-left"
-        style={{ color: value ? '#8B9DC3' : '#4B5E7A' }}
-      >
-        <span className="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-xl text-slate-300 pointer-events-none">
-          dataset
-        </span>
-        <span className="truncate block">{displayValue}</span>
-        <span className="absolute right-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-600 pointer-events-none">
-          {open ? 'expand_less' : 'expand_more'}
-        </span>
-      </button>
-
-      {/* Dropdown panel */}
-      {open && (
-        <div className="absolute z-50 left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
-          <ul
-            role="listbox"
-            aria-label="Select medication"
-            className="max-h-72 overflow-y-auto py-2"
-          >
-            {/* Clear option */}
-            <li
-              role="option"
-              aria-selected={value === ''}
-              onClick={() => { onChange(''); setOpen(false); }}
-              className="px-4 py-2.5 text-sm text-slate-400 hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-700/50"
-            >
-              {placeholder || 'Select Interactor...'}
-            </li>
-
-            {medications.map(med => (
-              <li
-                key={med.medication_id}
-                role="option"
-                aria-selected={value === med.medication_name}
-                onClick={() => { onChange(med.medication_name); setOpen(false); }}
-                className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
-                  ? 'bg-blue-600 text-white font-semibold'
-                  : 'text-[#A8B5D1] hover:bg-slate-800'
-                  }`}
-              >
-                {med.medication_name}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-};
-// ─── End MedDropdown ─────────────────────────────────────────────────────────
 
 const InteractionChecker: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -181,6 +78,17 @@ const InteractionChecker: React.FC = () => {
     }
   }, [refData]);
 
+  // ── Derived ComboOption arrays ─────────────────────────────────────────────
+  const substanceOptions: ComboOption[] = useMemo(
+    () => substances.map((s) => ({ value: s.substance_name, label: s.substance_name })),
+    [substances]
+  );
+
+  const medicationOptions: ComboOption[] = useMemo(
+    () => medications.map((m) => ({ value: m.medication_name, label: m.medication_name })),
+    [medications]
+  );
+
   // Fetch Interaction Logic
   useEffect(() => {
     const fetchInteraction = async () => {
@@ -204,7 +112,6 @@ const InteractionChecker: React.FC = () => {
         }
 
         // Step 2: Query ref_clinical_interactions (correct table — verified 2026-02-19)
-        // Note: ref_knowledge_graph exists but has wrong schema (legacy alert rules system).
         const { data, error } = await supabase
           .from('ref_clinical_interactions')
           .select('*')
@@ -215,7 +122,6 @@ const InteractionChecker: React.FC = () => {
         if (error) throw error;
 
         if (data) {
-          // Map ref_knowledge_graph columns to UI risk model
           const risk = data.risk_level ?? 1;
           const severityLabel = data.severity_grade ?? 'Low';
 
@@ -227,21 +133,20 @@ const InteractionChecker: React.FC = () => {
             severity: severityLabel,
             description: data.clinical_description,
             mechanism: data.mechanism,
-            clinical_insight: null, // not in ref_clinical_interactions schema
+            clinical_insight: null,
             source: data.evidence_source ?? 'National Library of Medicine / PubMed',
             sourceUrl: data.source_url,
             isKnown: true
           });
 
         } else {
-          // Explicit "No Record Found" -> Nominal Logic
           setDbRule(null);
         }
 
       } catch (err: any) {
         console.error('Interaction Query Error:', err);
         setErrorState(err.message || "Database connection failed");
-        setDbRule(null); // Ensure we don't show stale data
+        setDbRule(null);
       } finally {
         setIsLoading(false);
       }
@@ -255,7 +160,6 @@ const InteractionChecker: React.FC = () => {
     if (!selectedPsychedelic || !selectedMedication) return null;
     if (isLoading) return null;
 
-    // SAFETY CATCH: If there was a DB error, return explicit ERROR object
     if (errorState) {
       return {
         id: 'ERR-SYSTEM',
@@ -265,14 +169,13 @@ const InteractionChecker: React.FC = () => {
         severity: 'SYSTEM ERROR',
         description: `CRITICAL FAILURE: Unable to verify interaction safety due to database error: ${errorState}.`,
         mechanism: 'System integrity check failed.',
-        isKnown: true, // Treat as known failure
+        isKnown: true,
         isError: true
       };
     }
 
     if (dbRule) return dbRule;
 
-    // Default "Nominal" ONLY if no error
     return {
       id: 'RULE-NOMINAL',
       substance: selectedPsychedelic,
@@ -296,7 +199,6 @@ const InteractionChecker: React.FC = () => {
   const handlePrint = () => window.print();
   const handleRequestAgent = () => addToast({ title: 'Request Logged', message: 'The clinical data team has been notified.', type: 'success' });
 
-  // Styles logic...
   const getSeverityStyles = (risk: number, isError?: boolean) => {
     if (isError) return {
       bg: 'bg-red-900/20',
@@ -373,46 +275,42 @@ const InteractionChecker: React.FC = () => {
           </div>
         </div>
 
+        {/* ── Agent Selector Grid (WO-524: Both replaced with ComboSelect) ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Input: Psychedelic */}
+
+          {/* Input: Psychedelic (Primary Agent) */}
           <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedPsychedelic ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
-            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
-            <div className="relative group">
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
-                <span className="material-symbols-outlined text-xl">biotech</span>
-              </div>
-              <select
-                value={selectedPsychedelic}
-                onChange={(e) => setSelectedPsychedelic(e.target.value)}
-                disabled={refLoading}
-                className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait" style={{ color: '#8B9DC3' }}
-              >
-                <option value="">{refLoading ? 'Loading...' : 'Select Controlled Substance...'}</option>
-                {substances.map(s => (
-                  <option key={s.substance_id} value={s.substance_name}>
-                    {s.substance_name.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
-                <span className="material-symbols-outlined">expand_more</span>
-              </div>
-            </div>
+            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1" htmlFor="combo-psychedelic">
+              Primary Agent (Psychedelic)
+            </label>
+            <ComboSelect
+              id="combo-psychedelic"
+              options={substanceOptions}
+              value={selectedPsychedelic}
+              onChange={setSelectedPsychedelic}
+              disabled={refLoading}
+              placeholder={refLoading ? 'Loading...' : 'Select Controlled Substance...'}
+              leftIcon="biotech"
+            />
             <div className="flex items-center gap-2 px-2">
               <span className="material-symbols-outlined text-sm text-slate-400">lock</span>
               <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Validated list only</span>
             </div>
           </section>
 
-          {/* Input: Medication */}
+          {/* Input: Medication (Secondary Agent) */}
           <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedMedication ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
-            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
-            <MedDropdown
-              medications={medications}
+            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1" htmlFor="combo-medication">
+              Secondary Agent (Medication/Condition)
+            </label>
+            <ComboSelect
+              id="combo-medication"
+              options={medicationOptions}
               value={selectedMedication}
               onChange={setSelectedMedication}
               disabled={refLoading}
               placeholder={refLoading ? 'Loading medications...' : medications.length === 0 ? 'No medications in database' : 'Select Interactor...'}
+              leftIcon="dataset"
             />
 
             {/* Missing Agent Workflow */}
@@ -508,7 +406,7 @@ const InteractionChecker: React.FC = () => {
                         <p className="text-sm font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
                         <p className="text-base font-mono font-black" style={{ color: '#8B9DC3' }}>{analysisResult.id} // SECURE_NODE_0x7</p>
                       </div>
-                      {/* Citation — always shown, links to source_url or PubMed search */}
+                      {/* Citation */}
                       <div className="flex items-center gap-2">
                         <a
                           href={analysisResult.sourceUrl || `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(analysisResult.source)}`}
@@ -520,7 +418,6 @@ const InteractionChecker: React.FC = () => {
                           <span className="material-symbols-outlined text-xs">open_in_new</span>
                         </a>
                       </div>
-
                     </div>
                   </div>
                 </div>
