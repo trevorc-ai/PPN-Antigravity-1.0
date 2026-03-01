@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from 'react';
 import {
-    ComposedChart, Line, ReferenceLine, ReferenceDot,
+    ComposedChart, Line, Scatter, ReferenceLine, ReferenceDot,
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer,
 } from 'recharts';
@@ -17,7 +17,7 @@ export interface VitalsSnapshot {
     temperatureF: number;
 }
 
-/** A session event to plot as an icon-pin beneath the vitals lines */
+/** A session event to plot as a dot inside the vitals chart */
 export interface SessionEventPin {
     id: string;
     /** Elapsed seconds from session start */
@@ -30,14 +30,11 @@ export interface SessionEventPin {
 interface SessionVitalsTrendChartProps {
     sessionId: string;
     substance: string;
-    /** Called when a reading crosses a clinical threshold */
     onThresholdViolation: (vital: string, value: number) => void;
-    /** Live vitals data fed from DosingSessionPhase — empty array renders empty state */
     data?: VitalsSnapshot[];
-    /** Session events (updates, doses, adverse events, rescue) fed from DosingSessionPhase */
     events?: SessionEventPin[];
-    /** Elapsed session timer string (e.g. "01:23:45") — used for X-axis label formatting */
-    sessionDuration?: number; // total seconds elapsed so far
+    /** Total elapsed seconds — drives the growing X-axis domain */
+    sessionDurationSec?: number;
 }
 
 // ── Thresholds ────────────────────────────────────────────────────────────────
@@ -48,34 +45,50 @@ const VITAL_THRESHOLDS = {
     tempHigh: 100.4,
 };
 
+// Fixed Y position for event dots (just above the bottom of the domain)
+const EVENT_DOT_Y = 56;
+// Y-axis domain — leave room at bottom for event dot row
+const Y_DOMAIN: [number, number] = [50, 170];
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/** Format elapsed seconds as "T+HH:MM" */
 function fmtElapsed(sec: number): string {
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
     return `T+${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
-// ── Event pin colour map (subset — matches LiveSessionTimeline EVENT_CONFIG keys) ──
-const PIN_COLORS: Record<string, { bg: string; border: string; text: string; emoji: string }> = {
-    DOSE: { bg: 'bg-indigo-500/80', border: 'border-indigo-400', text: 'text-white', emoji: '💊' },
-    dose_admin: { bg: 'bg-emerald-500/80', border: 'border-emerald-400', text: 'text-white', emoji: '💊' },
-    SAFETY: { bg: 'bg-red-500/80', border: 'border-red-400', text: 'text-white', emoji: '⚠' },
-    safety_event: { bg: 'bg-red-500/80', border: 'border-red-400', text: 'text-white', emoji: '⚠' },
-    rescue: { bg: 'bg-rose-600/80', border: 'border-rose-400', text: 'text-white', emoji: '🛟' },
-    'safety-and-adverse-event': { bg: 'bg-orange-500/80', border: 'border-orange-400', text: 'text-white', emoji: '⚠' },
-    'rescue-protocol': { bg: 'bg-rose-600/80', border: 'border-rose-400', text: 'text-white', emoji: '🛟' },
-    session_update: { bg: 'bg-sky-500/80', border: 'border-sky-400', text: 'text-white', emoji: '📋' },
-    UPDATE: { bg: 'bg-sky-500/80', border: 'border-sky-400', text: 'text-white', emoji: '📋' },
-    vital_check: { bg: 'bg-blue-500/80', border: 'border-blue-400', text: 'text-white', emoji: '❤' },
-    patient_observation: { bg: 'bg-amber-500/80', border: 'border-amber-400', text: 'text-white', emoji: '👁' },
-    OBSERVATION: { bg: 'bg-amber-500/80', border: 'border-amber-400', text: 'text-white', emoji: '👁' },
-    general_note: { bg: 'bg-slate-500/80', border: 'border-slate-400', text: 'text-white', emoji: '📝' },
+function generateTicks(domainMaxSec: number): number[] {
+    const candidateIntervalsMins = [5, 10, 15, 20, 30, 45, 60];
+    const targetTicks = 7;
+    const domainMins = domainMaxSec / 60;
+    const interval = candidateIntervalsMins.find(i => domainMins / i <= targetTicks) ?? 60;
+    const ticks: number[] = [];
+    for (let sec = 0; sec <= domainMaxSec; sec += interval * 60) ticks.push(sec);
+    if (ticks[ticks.length - 1] < domainMaxSec) ticks.push(domainMaxSec);
+    return ticks;
+}
+
+// ── Event pin colour map ──────────────────────────────────────────────────────
+
+const PIN_COLORS: Record<string, { fill: string; stroke: string; emoji: string; label: string }> = {
+    DOSE: { fill: '#6366f1', stroke: '#818cf8', emoji: '💊', label: 'Dose' },
+    dose_admin: { fill: '#10b981', stroke: '#34d399', emoji: '💊', label: 'Dose Admin' },
+    SAFETY: { fill: '#ef4444', stroke: '#f87171', emoji: '⚠', label: 'Safety' },
+    safety_event: { fill: '#ef4444', stroke: '#f87171', emoji: '⚠', label: 'Safety Event' },
+    'safety-and-adverse-event': { fill: '#f97316', stroke: '#fb923c', emoji: '⚠', label: 'Adverse Event' },
+    'rescue-protocol': { fill: '#f43f5e', stroke: '#fb7185', emoji: '🛟', label: 'Rescue Protocol' },
+    rescue: { fill: '#f43f5e', stroke: '#fb7185', emoji: '🛟', label: 'Rescue' },
+    session_update: { fill: '#0ea5e9', stroke: '#38bdf8', emoji: '📋', label: 'Session Update' },
+    UPDATE: { fill: '#0ea5e9', stroke: '#38bdf8', emoji: '📋', label: 'Update' },
+    vital_check: { fill: '#3b82f6', stroke: '#60a5fa', emoji: '❤', label: 'Vital Check' },
+    patient_observation: { fill: '#f59e0b', stroke: '#fbbf24', emoji: '👁', label: 'Observation' },
+    OBSERVATION: { fill: '#f59e0b', stroke: '#fbbf24', emoji: '👁', label: 'Observation' },
+    general_note: { fill: '#64748b', stroke: '#94a3b8', emoji: '📝', label: 'Note' },
 };
 
-function getPinColors(type: string) {
-    return PIN_COLORS[type] ?? { bg: 'bg-slate-600/80', border: 'border-slate-500', text: 'text-white', emoji: '·' };
+function getPinStyle(type: string) {
+    return PIN_COLORS[type] ?? { fill: '#475569', stroke: '#64748b', emoji: '·', label: type };
 }
 
 // ── Series toggle config ──────────────────────────────────────────────────────
@@ -84,20 +97,76 @@ const SERIES = [
     { key: 'hr', label: 'HR (bpm)', color: '#f43f5e' },
     { key: 'bp', label: 'BP Sys (mmHg)', color: '#0ea5e9' },
     { key: 'temp', label: 'Temp (°F)', color: '#d97706' },
-    { key: 'pins', label: 'Events', color: '#38bdf8' },
+    { key: 'events', label: 'Events', color: '#38bdf8' },
 ] as const;
 type SeriesKey = typeof SERIES[number]['key'];
 
-// ── Vitals Tooltip ────────────────────────────────────────────────────────────
+// ── Custom event dot — renders inside the chart at EVENT_DOT_Y ───────────────
 
-const VitalsTooltip = ({ active, payload, label }: any) => {
+const EventDot = (props: any) => {
+    const { cx, cy, payload } = props;
+    const p = getPinStyle(payload?.type ?? '');
+    const [hovered, setHovered] = useState(false);
+    if (!cx || !cy) return null;
+    return (
+        <g>
+            {/* Outer glow ring on hover */}
+            {hovered && (
+                <circle cx={cx} cy={cy} r={12} fill={p.fill} fillOpacity={0.2} stroke={p.stroke} strokeWidth={1} />
+            )}
+            {/* Main dot */}
+            <circle
+                cx={cx} cy={cy} r={7}
+                fill={p.fill} stroke={p.stroke} strokeWidth={1.5}
+                style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+            />
+            {/* Emoji glyph inside dot */}
+            <text
+                x={cx} y={cy + 4}
+                textAnchor="middle"
+                fontSize={8}
+                style={{ pointerEvents: 'none', userSelect: 'none' }}
+            >
+                {p.emoji}
+            </text>
+        </g>
+    );
+};
+
+// ── Combined Tooltip — handles both vitals and event dots ─────────────────────
+
+const ChartTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
+
+    // Check if this is an event dot (payload from Scatter uses `payload.payload`)
+    const eventPayload = payload.find((p: any) => p.name === 'events');
+    if (eventPayload) {
+        const ev: SessionEventPin = eventPayload.payload;
+        const p = getPinStyle(ev.type);
+        return (
+            <div className="bg-slate-800 border border-slate-600 rounded-xl p-3 shadow-xl text-sm min-w-[180px]">
+                <p className="font-bold text-white mb-1">{p.emoji} {p.label}</p>
+                <p className="text-slate-400 text-xs font-mono">{fmtElapsed(ev.elapsedSec)}</p>
+                {ev.label && ev.label !== p.label && (
+                    <p className="text-slate-300 text-xs mt-1">{ev.label}</p>
+                )}
+            </div>
+        );
+    }
+
+    // Vitals tooltip
     const hr = payload.find((p: any) => p.dataKey === 'heartRate')?.value;
     const bp = payload.find((p: any) => p.dataKey === 'bpSystolic')?.value;
     const temp = payload.find((p: any) => p.dataKey === 'temperatureF')?.value;
+    if (!hr && !bp && !temp) return null;
+
     return (
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-xl text-sm min-w-[220px]">
-            <p className="font-bold text-white mb-2 pb-1 border-b border-slate-700">{label}</p>
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-xl text-sm min-w-[200px]">
+            <p className="font-bold text-white mb-2 pb-1 border-b border-slate-700">
+                {fmtElapsed(typeof label === 'number' ? label : 0)}
+            </p>
             {hr !== undefined && (
                 <div className="flex justify-between items-center mb-1">
                     <span className="text-rose-400 font-semibold flex items-center gap-1.5">
@@ -134,39 +203,48 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     onThresholdViolation,
     data = [],
     events = [],
+    sessionDurationSec = 0,
 }) => {
-    // ── Series visibility toggles ─────────────────────────────────────────────
     const [visible, setVisible] = useState<Record<SeriesKey, boolean>>({
-        hr: true, bp: true, temp: true, pins: true,
+        hr: true, bp: true, temp: true, events: true,
     });
     const toggle = (key: SeriesKey) => setVisible(v => ({ ...v, [key]: !v[key] }));
 
-    // ── Chart data — elapsed-time X axis ──────────────────────────────────────
-    const chartData = useMemo(() => {
-        return data.map(v => ({
-            ...v,
-            timeLabel: fmtElapsed(v.elapsedSec),
-            isBpViolation: v.bpSystolic > VITAL_THRESHOLDS.bpSystolicHigh,
-            isHrViolation: v.heartRate > VITAL_THRESHOLDS.hrHigh,
-            isTempViolation: v.temperatureF > VITAL_THRESHOLDS.tempHigh,
-        }));
-    }, [data]);
+    // X-axis domain always ends at current session time (minimum 10 min)
+    const domainMaxSec = useMemo(() => {
+        const allElapsed = [
+            ...data.map(d => d.elapsedSec),
+            ...events.map(e => e.elapsedSec),
+            sessionDurationSec,
+            600,
+        ];
+        return Math.max(...allElapsed);
+    }, [data, events, sessionDurationSec]);
 
-    // ── Empty state ───────────────────────────────────────────────────────────
+    const xTicks = useMemo(() => generateTicks(domainMaxSec), [domainMaxSec]);
+
+    // Vitals line data — sorted ascending
+    const chartData = useMemo(() =>
+        [...data]
+            .sort((a, b) => a.elapsedSec - b.elapsedSec)
+            .map(v => ({
+                ...v,
+                isBpViolation: v.bpSystolic > VITAL_THRESHOLDS.bpSystolicHigh,
+                isHrViolation: v.heartRate > VITAL_THRESHOLDS.hrHigh,
+            })),
+        [data]);
+
+    // Event scatter data — fixed Y so all dots sit in a row along the bottom
+    const eventScatterData = useMemo(() =>
+        events.map(ev => ({ ...ev, y: EVENT_DOT_Y })),
+        [events]);
+
     const hasData = chartData.length > 0;
-    const hasEvents = events.length > 0;
-
-    // ── Icon-pin X-positions — map elapsedSec to % of chart width ────────────
-    // We compute bounds from data or events so pins land on the same timeline.
-    const maxElapsed = useMemo(() => {
-        const allTimes = [...data.map(d => d.elapsedSec), ...events.map(e => e.elapsedSec)];
-        return allTimes.length > 0 ? Math.max(...allTimes) : 0;
-    }, [data, events]);
 
     return (
         <div className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl flex flex-col gap-4">
 
-            {/* ── Header ──────────────────────────────────────────────────── */}
+            {/* ── Header ─────────────────────────────────────────────────── */}
             <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-3">
                     <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
@@ -180,7 +258,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                     </div>
                 </div>
 
-                {/* ── Series toggle buttons ───────────────────────────────── */}
+                {/* ── Series toggles ─────────────────────────────────────── */}
                 <div className="flex flex-wrap gap-2">
                     {SERIES.map(s => (
                         <button
@@ -189,7 +267,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                             aria-pressed={visible[s.key]}
                             aria-label={`${visible[s.key] ? 'Hide' : 'Show'} ${s.label}`}
                             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold uppercase tracking-wide transition-all ${visible[s.key]
-                                    ? 'border-opacity-60 text-white shadow-sm'
+                                    ? 'border-opacity-60 shadow-sm'
                                     : 'bg-slate-800/60 border-slate-700/40 text-slate-500'
                                 }`}
                             style={visible[s.key] ? {
@@ -208,152 +286,159 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                 </div>
             </div>
 
-            {/* ── Vitals Chart ───────────────────────────────────────────── */}
-            {hasData ? (
-                <div className="h-[300px] w-full relative">
+            {/* ── Chart ──────────────────────────────────────────────────── */}
+            <div className="h-[300px] w-full">
+                {(hasData || events.length > 0) ? (
                     <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart data={chartData} margin={{ top: 10, right: 30, bottom: 20, left: -10 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.1)" vertical={false} />
+                        <ComposedChart margin={{ top: 10, right: 20, bottom: 24, left: -10 }}>
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                stroke="rgba(148,163,184,0.07)"
+                                vertical={false}
+                            />
+
+                            {/*
+                             * Numeric X-axis — domain grows with session time.
+                             * All vitals dots and event pins sit at their exact
+                             * elapsedSec offsets. Older entries slide left as
+                             * new ones are logged to the right.
+                             */}
                             <XAxis
-                                dataKey="timeLabel"
-                                stroke="#475569"
-                                tick={{ fill: '#94a3b8', fontSize: 11 }}
-                                axisLine={false}
+                                type="number"
+                                dataKey="elapsedSec"
+                                domain={[0, domainMaxSec]}
+                                ticks={xTicks}
+                                tickFormatter={fmtElapsed}
+                                stroke="#374151"
+                                tick={{ fill: '#6b7280', fontSize: 10, fontWeight: 600 }}
+                                axisLine={{ stroke: '#374151' }}
                                 tickLine={false}
-                                dy={10}
-                                label={{ value: 'Elapsed Session Time', position: 'insideBottom', offset: -10, fill: '#475569', fontSize: 10, fontWeight: 'bold' }}
+                                dy={8}
+                                label={{
+                                    value: 'Elapsed Session Time →',
+                                    position: 'insideBottom',
+                                    offset: -14,
+                                    fill: '#4b5563',
+                                    fontSize: 9,
+                                    fontWeight: 'bold',
+                                    letterSpacing: '0.08em',
+                                }}
                             />
                             <YAxis
-                                stroke="#475569"
-                                tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                stroke="#374151"
+                                tick={{ fill: '#6b7280', fontSize: 11 }}
                                 axisLine={false}
                                 tickLine={false}
-                                dx={-10}
-                                domain={[60, 160]}
+                                dx={-8}
+                                domain={Y_DOMAIN}
                             />
-                            <Tooltip content={<VitalsTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
 
-                            {/* Threshold reference lines */}
-                            <ReferenceLine y={VITAL_THRESHOLDS.bpSystolicHigh} stroke="#f59e0b" strokeWidth={1} strokeDasharray="5 5"
-                                label={{ value: `BP Alert (${VITAL_THRESHOLDS.bpSystolicHigh})`, position: 'insideTopLeft', fill: '#f59e0b', fontSize: 10 }} />
-                            <ReferenceLine y={VITAL_THRESHOLDS.hrHigh} stroke="#f43f5e" strokeWidth={1} strokeDasharray="5 5"
-                                label={{ value: `HR Alert (${VITAL_THRESHOLDS.hrHigh})`, position: 'insideTopLeft', fill: '#f43f5e', fontSize: 10 }} />
+                            <Tooltip content={<ChartTooltip />} />
 
-                            {/* Temperature */}
+                            {/* ── Threshold reference lines ─────────────── */}
+                            <ReferenceLine
+                                y={VITAL_THRESHOLDS.bpSystolicHigh}
+                                stroke="#f59e0b" strokeWidth={1} strokeDasharray="6 4"
+                                label={{ value: `BP Alert (${VITAL_THRESHOLDS.bpSystolicHigh})`, position: 'insideTopLeft', fill: '#f59e0b', fontSize: 10 }}
+                            />
+                            <ReferenceLine
+                                y={VITAL_THRESHOLDS.hrHigh}
+                                stroke="#f43f5e" strokeWidth={1} strokeDasharray="6 4"
+                                label={{ value: `HR Alert (${VITAL_THRESHOLDS.hrHigh})`, position: 'insideTopLeft', fill: '#f43f5e', fontSize: 10 }}
+                            />
+
+                            {/* ── Vitals lines ──────────────────────────── */}
                             {visible.temp && (
-                                <Line type="monotone" dataKey="temperatureF" stroke="#d97706" strokeWidth={1.5}
-                                    strokeDasharray="3 3" dot={{ fill: '#d97706', r: 3, strokeWidth: 0 }}
-                                    activeDot={{ r: 5, fill: '#fbbf24' }} animationBegin={200} animationDuration={600} />
+                                <Line
+                                    data={chartData}
+                                    type="monotone" dataKey="temperatureF"
+                                    stroke="#d97706" strokeWidth={1.5} strokeDasharray="4 3"
+                                    dot={{ fill: '#d97706', r: 3, strokeWidth: 0 }}
+                                    activeDot={{ r: 5, fill: '#fbbf24' }}
+                                    isAnimationActive={false}
+                                />
                             )}
-                            {/* Heart Rate */}
                             {visible.hr && (
-                                <Line type="monotone" dataKey="heartRate" stroke="#f43f5e" strokeWidth={2}
+                                <Line
+                                    data={chartData}
+                                    type="monotone" dataKey="heartRate"
+                                    stroke="#f43f5e" strokeWidth={2}
                                     dot={{ fill: '#f43f5e', r: 4, strokeWidth: 0 }}
-                                    activeDot={{ r: 6, fill: '#fb7185' }} animationBegin={400} animationDuration={600} />
+                                    activeDot={{ r: 6, fill: '#fb7185' }}
+                                    isAnimationActive={false}
+                                />
                             )}
-                            {/* BP Systolic */}
                             {visible.bp && (
-                                <Line type="monotone" dataKey="bpSystolic" stroke="#0ea5e9" strokeWidth={2.5}
+                                <Line
+                                    data={chartData}
+                                    type="monotone" dataKey="bpSystolic"
+                                    stroke="#0ea5e9" strokeWidth={2.5}
                                     dot={{ fill: '#0ea5e9', r: 4, strokeWidth: 0 }}
-                                    activeDot={{ r: 6, fill: '#38bdf8' }} animationBegin={600} animationDuration={600} />
+                                    activeDot={{ r: 6, fill: '#38bdf8' }}
+                                    isAnimationActive={false}
+                                />
                             )}
 
-                            {/* Violation markers */}
+                            {/* ── Violation markers ─────────────────────── */}
                             {chartData.map((entry, i) => entry.isBpViolation && (
-                                <ReferenceDot key={`bp-viol-${i}`} x={entry.timeLabel} y={entry.bpSystolic}
+                                <ReferenceDot key={`bpv-${i}`} x={entry.elapsedSec} y={entry.bpSystolic}
                                     r={6} fill="#ef4444" stroke="#7f1d1d" strokeWidth={2}
-                                    label={{ value: 'BP ↑', position: 'top', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
+                                    label={{ value: 'BP↑', position: 'top', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
                             ))}
                             {chartData.map((entry, i) => entry.isHrViolation && (
-                                <ReferenceDot key={`hr-viol-${i}`} x={entry.timeLabel} y={entry.heartRate}
+                                <ReferenceDot key={`hrv-${i}`} x={entry.elapsedSec} y={entry.heartRate}
                                     r={6} fill="#ef4444" stroke="#7f1d1d" strokeWidth={2}
-                                    label={{ value: 'HR ↑', position: 'bottom', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
+                                    label={{ value: 'HR↑', position: 'bottom', fill: '#ef4444', fontSize: 10, fontWeight: 'bold' }} />
                             ))}
+
+                            {/*
+                             * ── Event dots — plotted inside the chart at EVENT_DOT_Y ──
+                             * All events share a fixed Y value near the bottom of the
+                             * domain, creating a visual event "row" inside the graph.
+                             * Hover reveals the event type, label, and timestamp.
+                             */}
+                            {visible.events && (
+                                <Scatter
+                                    name="events"
+                                    data={eventScatterData}
+                                    dataKey="y"
+                                    shape={<EventDot />}
+                                    isAnimationActive={false}
+                                />
+                            )}
                         </ComposedChart>
                     </ResponsiveContainer>
-                </div>
-            ) : (
-                <div className="h-[200px] flex flex-col items-center justify-center gap-3 border border-dashed border-slate-700/50 rounded-xl">
-                    <HeartPulse className="w-8 h-8 text-slate-600" />
-                    <p className="text-sm text-slate-500 font-semibold">No vitals recorded yet</p>
-                    <p className="text-xs text-slate-600">Log a Session Update with vitals or open Session Vitals form to begin plotting</p>
-                </div>
-            )}
+                ) : (
+                    <div className="h-full flex flex-col items-center justify-center gap-3 border border-dashed border-slate-700/40 rounded-xl bg-slate-900/20">
+                        <HeartPulse className="w-7 h-7 text-slate-600" />
+                        <p className="text-sm text-slate-500 font-semibold">No data recorded yet</p>
+                        <p className="text-xs text-slate-600 text-center leading-relaxed max-w-72">
+                            Log a Session Update (HR / BP) or trigger an event to start plotting
+                        </p>
+                    </div>
+                )}
+            </div>
 
-            {/* ── Icon-Pin Event Strip ────────────────────────────────────── */}
-            {(hasEvents || hasData) && visible.pins && (
-                <div
-                    className="relative h-10 border border-slate-700/30 rounded-xl bg-slate-900/40 overflow-hidden"
-                    aria-label="Session event timeline strip"
-                >
-                    {/* Label */}
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[9px] uppercase tracking-widest font-bold text-slate-600 pointer-events-none">
-                        Events
-                    </span>
-
-                    {/* Baseline axis line */}
-                    <div className="absolute left-10 right-2 top-1/2 h-px bg-slate-700/40" />
-
-                    {/* Pins */}
-                    {events.map(ev => {
-                        const pct = maxElapsed > 0 ? (ev.elapsedSec / maxElapsed) * 100 : 50;
-                        const c = getPinColors(ev.type);
-                        return (
-                            <div
-                                key={ev.id}
-                                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 group"
-                                style={{ left: `calc(2.5rem + ${pct}% * (100% - 2.5rem - 0.5rem) / 100)` }}
-                                title={`${fmtElapsed(ev.elapsedSec)} · ${ev.label ?? ev.type}`}
-                                aria-label={`Event at ${fmtElapsed(ev.elapsedSec)}: ${ev.label ?? ev.type}`}
-                            >
-                                <span
-                                    className={`flex items-center justify-center w-6 h-6 rounded-full border text-[11px] select-none cursor-default
-                                        shadow-md transition-transform group-hover:scale-125 ${c.bg} ${c.border} ${c.text}`}
-                                >
-                                    {c.emoji}
-                                </span>
-                                {/* Tooltip on hover */}
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:flex flex-col items-center pointer-events-none z-10">
-                                    <div className="bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-xs text-white whitespace-nowrap shadow-xl">
-                                        <p className="font-bold">{c.emoji} {ev.label ?? ev.type}</p>
-                                        <p className="text-slate-400">{fmtElapsed(ev.elapsedSec)}</p>
-                                    </div>
-                                    <div className="w-1.5 h-1.5 bg-slate-800 border-r border-b border-slate-600 rotate-45 -mt-0.5" />
-                                </div>
-                            </div>
-                        );
-                    })}
-
-                    {/* Empty pins state */}
-                    {events.length === 0 && (
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-slate-600 italic">
-                            No events logged yet
-                        </span>
-                    )}
-                </div>
-            )}
-
-            {/* ── Legend row ──────────────────────────────────────────────── */}
+            {/* ── Legend ──────────────────────────────────────────────────── */}
             <div className="flex flex-wrap gap-4 justify-center">
-                {SERIES.filter(s => s.key !== 'pins').map(s => (
-                    <div key={s.key} className={`flex items-center gap-1.5 transition-opacity ${visible[s.key] ? 'opacity-100' : 'opacity-30'}`}>
-                        <svg width="24" height="12">
-                            <line x1="0" y1="6" x2="24" y2="6" stroke={s.color} strokeWidth={s.key === 'bp' ? 2.5 : 2}
-                                strokeDasharray={s.key === 'temp' ? '5 3' : undefined} />
-                        </svg>
+                {SERIES.map(s => (
+                    <div key={s.key} className={`flex items-center gap-1.5 transition-opacity ${visible[s.key] ? 'opacity-100' : 'opacity-25'}`}>
+                        {s.key !== 'events' ? (
+                            <svg width="24" height="10">
+                                <line x1="0" y1="5" x2="24" y2="5"
+                                    stroke={s.color}
+                                    strokeWidth={s.key === 'bp' ? 2.5 : 2}
+                                    strokeDasharray={s.key === 'temp' ? '5 3' : undefined}
+                                />
+                            </svg>
+                        ) : (
+                            <svg width="14" height="14">
+                                <circle cx="7" cy="7" r="6" fill={`${s.color}40`} stroke={s.color} strokeWidth="1.5" />
+                            </svg>
+                        )}
                         <span className="text-xs text-slate-400 font-medium tracking-wide">{s.label}</span>
                     </div>
                 ))}
-                <div className={`flex items-center gap-1.5 transition-opacity ${visible.pins ? 'opacity-100' : 'opacity-30'}`}>
-                    <span className="text-sm">📋</span>
-                    <span className="text-xs text-slate-400 font-medium tracking-wide">Events strip</span>
-                </div>
-            </div>
-
-            <div className="text-center">
-                <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
-                    X-axis: Elapsed session time from T+00:00
-                </span>
             </div>
         </div>
     );

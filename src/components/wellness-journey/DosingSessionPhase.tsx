@@ -297,9 +297,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 bpSystolic: e.bp ? parseInt(e.bp.split('/')[0], 10) : 0,
                 temperatureF: e.tempF ?? 98.6,
             }))
-            // Sort ascending by elapsed time for correct chart line order
             .sort((a, b) => a.elapsedSec - b.elapsedSec);
     }, [updateLog]);
+
+    // WO-528: parse elapsedTime HH:MM:SS string to seconds to drive the chart x-axis domain.
+    // The chart uses this to grow the domain even when no new vitals are logged.
+    const sessionDurationSec = useMemo(() => {
+        const parts = elapsedTime.split(':').map(Number);
+        if (parts.length !== 3) return 0;
+        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    }, [elapsedTime]);
 
     const handleSaveUpdate = async () => {
         const bpStr = (updateBPSys || updateBPDia) ? `${updateBPSys || '?'}/${updateBPDia || '?'}` : '';
@@ -1137,9 +1144,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         persistent: true
                                     });
                                 }}
-                                // WO-528: live data feeds — update immediately on every user action
+                                // WO-528: live data feeds — updates immediately on every user action.
+                                // sessionDurationSec drives the x-axis domain — grows with the clock.
                                 data={vitalsChartData}
                                 events={eventLog}
+                                sessionDurationSec={sessionDurationSec}
                             />
                         )}
                         <LiveSessionTimeline
