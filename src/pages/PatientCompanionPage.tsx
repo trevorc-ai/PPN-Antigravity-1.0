@@ -47,50 +47,18 @@ export default function PatientCompanionPage() {
     const [litId, setLitId] = useState<string | null>(null);
     const [lockHoldProgress, setLockHoldProgress] = useState(0);
 
-    // Orientation-aware video
-    const videoContainerRef = useRef<HTMLDivElement>(null);
-    const [videoSize, setVideoSize] = useState({ w: 0, h: 0 });
+    // Orientation detection — updates on device rotate
     const [isPortrait, setIsPortrait] = useState(
         () => typeof window !== 'undefined'
             ? window.matchMedia('(orientation: portrait)').matches
             : true
     );
-
     useEffect(() => {
-        const measure = () => {
-            if (videoContainerRef.current) {
-                const r = videoContainerRef.current.getBoundingClientRect();
-                setVideoSize({ w: r.width, h: r.height });
-            }
-            setIsPortrait(window.matchMedia('(orientation: portrait)').matches);
-        };
-        measure();
-        window.addEventListener('resize', measure);
-        window.addEventListener('orientationchange', measure);
-        return () => {
-            window.removeEventListener('resize', measure);
-            window.removeEventListener('orientationchange', measure);
-        };
+        const mq = window.matchMedia('(orientation: portrait)');
+        const handler = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
+        mq.addEventListener('change', handler);
+        return () => mq.removeEventListener('change', handler);
     }, []);
-
-    const videoStyle: React.CSSProperties = (isPortrait && videoSize.w > 0 && videoSize.h > 0)
-        ? {
-            position: 'absolute',
-            width: `${videoSize.h}px`,
-            height: `${videoSize.w}px`,
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%) rotate(-90deg)',
-            opacity: 0.9,
-        }
-        : {
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover' as const,
-            opacity: 0.9,
-        };
 
     const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
     const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -178,61 +146,76 @@ export default function PatientCompanionPage() {
                 </div>
             </div>
 
-            {/* ══ ZONE 1 — Video (orientation-aware) ══════════════════════════════
-             *  Portrait device: landscape video rotated -90° + dims swapped to fill.
-             *  Landscape device: natural fill.
-             *  pointer-events-none: video never competes with tap targets.
+            {/* ══ CONTENT — centered portrait panel, scrollable if needed ═════════════
+             *  max-w-xs = 320px: bounded container on desktop, full-bleed on phone.
+             *  Video container self-sizes via CSS aspect-ratio — no flex-1 stretch.
              */}
-            <div
-                ref={videoContainerRef}
-                className="relative flex-1 overflow-hidden pointer-events-none"
-                aria-hidden="true"
-            >
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
-                <div className="absolute top-5 left-0 right-0 text-center z-20">
-                    <p className="text-white/20 text-xs font-medium tracking-[0.25em]">
-                        Tap to quietly log your state
-                    </p>
-                </div>
-                <video
-                    src="/admin_uploads/spherecules.mp4"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    style={videoStyle}
-                />
-            </div>
+            <div className="flex-1 overflow-y-auto flex items-start justify-center pt-16 pb-4">
+                <div className="flex flex-col w-full max-w-xs">
 
-            {/* ══ ZONE 2 — Button grid ══════════════════════════════════════════
-             *  Full-width, no max-w constraint. clamp() font scales with viewport.
-             *  Title case (labels already stored as Title Case — just no uppercase).
-             */}
-            <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-2 pb-3 pt-2">
-                <div className="grid grid-cols-4 gap-1 w-full">
-                    {FEELINGS.map((f) => {
-                        const isLit = litId === f.id;
-                        return (
-                            <button
-                                key={f.id}
-                                onClick={() => handleLogFeeling(f.id, f.label)}
-                                className={[
-                                    'backdrop-blur-md border rounded-lg',
-                                    'px-1 py-1.5',
-                                    'min-h-[36px]',
-                                    'font-semibold tracking-wide text-center leading-tight',
-                                    'shadow-sm select-none',
-                                    isLit
-                                        ? `${f.glow} transition-none scale-[1.04] shadow-lg`
-                                        : `${f.rest} transition-[background-color,border-color,box-shadow] duration-[1800ms] ease-out active:scale-95`,
-                                ].join(' ')}
-                                style={{ fontSize: 'clamp(8px, 2.2vw, 11px)' }}
-                                aria-label={`Log feeling: ${f.label}`}
-                            >
-                                {f.label}
-                            </button>
-                        );
-                    })}
+                    {/* Video zone — aspect-ratio drives height, pure CSS rotation */}
+                    <div
+                        className="relative w-full overflow-hidden rounded-t-2xl border-x border-t border-white/8"
+                        style={{ aspectRatio: isPortrait ? '9/16' : '16/9' }}
+                        aria-hidden="true"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
+                        <div className="absolute top-4 left-0 right-0 text-center z-20">
+                            <p className="text-white/20 text-[10px] tracking-[0.2em]">
+                                Tap to quietly log your state
+                            </p>
+                        </div>
+                        <video
+                            src="/admin_uploads/spherecules.mp4"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="absolute opacity-90"
+                            style={isPortrait ? {
+                                width: '177.78%',
+                                height: '56.25%',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%) rotate(-90deg)',
+                            } : {
+                                inset: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover' as const,
+                            }}
+                        />
+                    </div>
+
+                    {/* Button grid */}
+                    <div className="relative z-20 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-2 pb-3 pt-2">
+                        <div className="grid grid-cols-4 gap-1 w-full">
+                            {FEELINGS.map((f) => {
+                                const isLit = litId === f.id;
+                                return (
+                                    <button
+                                        key={f.id}
+                                        onClick={() => handleLogFeeling(f.id, f.label)}
+                                        className={[
+                                            'backdrop-blur-md border rounded-lg',
+                                            'px-1 py-1.5',
+                                            'min-h-[36px]',
+                                            'font-semibold tracking-wide text-center leading-tight',
+                                            'shadow-sm select-none',
+                                            isLit
+                                                ? `${f.glow} transition-none scale-[1.04] shadow-lg`
+                                                : `${f.rest} transition-[background-color,border-color,box-shadow] duration-[1800ms] ease-out active:scale-95`,
+                                        ].join(' ')}
+                                        style={{ fontSize: 'clamp(8px, 2.2vw, 11px)' }}
+                                        aria-label={`Log feeling: ${f.label}`}
+                                    >
+                                        {f.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
