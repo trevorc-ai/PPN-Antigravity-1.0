@@ -1088,7 +1088,34 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 )}
 
-                {/* ── Update Log ──────────────────────────────────────────────────── */}
+                {/* ── Cockpit Real Estate: always fixed between buttons and update log ── */}
+                {isLive && (
+                    <div className="space-y-6">
+                        {config.enabledFeatures.includes('session-vitals') && (
+                            <SessionVitalsTrendChart
+                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                substance={journey.session?.substance}
+                                onThresholdViolation={(vital, value) => {
+                                    addToast({
+                                        title: `[ALERT] ${vital} threshold exceeded`,
+                                        message: `${vital}: ${value} — review immediately`,
+                                        type: 'error',
+                                        persistent: true
+                                    });
+                                }}
+                                data={vitalsChartData}
+                                events={eventLog}
+                                sessionDurationSec={sessionDurationSec}
+                            />
+                        )}
+                        <LiveSessionTimeline
+                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                            active={true}
+                        />
+                    </div>
+                )}
+
+                {/* ── Update Log — grows below the fixed chart ─────────────────────── */}
                 {updateLog.length > 0 && (
                     <div className="space-y-2">
                         <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 px-1">Session Updates ({updateLog.length})</p>
@@ -1116,7 +1143,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 )}
 
-                {/* Keyboard shortcuts hint — live only */}
+                {/* Keyboard shortcuts hint */}
                 {isLive && (
                     <div className="flex items-center justify-center gap-4 px-4 py-2.5 bg-slate-900/40 border border-slate-800/50 rounded-xl">
                         <p className="text-xs font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
@@ -1126,35 +1153,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 <span className="text-xs text-slate-600">{label}</span>
                             </div>
                         ))}
-                    </div>
-                )}
-
-                {/* ── Cockpit Real Estate (live session outputs) ───────────────────── */}
-                {isLive && (
-                    <div className="space-y-6">
-                        {config.enabledFeatures.includes('session-vitals') && (
-                            <SessionVitalsTrendChart
-                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                substance={journey.session?.substance}
-                                onThresholdViolation={(vital, value) => {
-                                    addToast({
-                                        title: `[ALERT] ${vital} threshold exceeded`,
-                                        message: `${vital}: ${value} — review immediately`,
-                                        type: 'error',
-                                        persistent: true
-                                    });
-                                }}
-                                // WO-528: live data feeds — updates immediately on every user action.
-                                // sessionDurationSec drives the x-axis domain — grows with the clock.
-                                data={vitalsChartData}
-                                events={eventLog}
-                                sessionDurationSec={sessionDurationSec}
-                            />
-                        )}
-                        <LiveSessionTimeline
-                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                            active={true}
-                        />
                     </div>
                 )}
             </div>
