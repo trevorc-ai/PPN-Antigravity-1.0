@@ -1,7 +1,7 @@
 # FREEZE.md — Protected Files
 # Pre-commit hook reads this file. Any file listed here will BLOCK a commit.
 # To unfreeze: remove it from the list and commit this file first.
-# Last updated: 2026-02-26
+# Last updated: 2026-03-01
 
 # ── Governance (never touch without explicit authorization) ──
 agent.yaml
@@ -28,8 +28,8 @@ src/components/wellness-journey/SlideOutPanel.tsx
 
 
 # ── Add files here when approaching a milestone ──
-# Uncomment to protect:
-# src/pages/InteractionChecker.tsx
+# ── Safety & Surveillance (finalized 2026-03-01) ──
+src/pages/InteractionChecker.tsx
 # src/components/wellness-journey/DosingSessionPhase.tsx
 # src/components/wellness-journey/LiveSessionTimeline.tsx
 

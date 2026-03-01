@@ -37,7 +37,9 @@ import {
     createIntegrationSession,
     createBehavioralChange,
     createLongitudinalAssessment,
+    updateDosingProtocol,
 } from '../../services/clinicalLog';
+import type { DosingProtocolUpdateData } from '../../services/clinicalLog';
 
 // Form data types
 import type { ConsentData } from '../arc-of-care-forms/phase-1-preparation/ConsentForm';
@@ -282,6 +284,20 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             : onError('Session Timeline', `${failed.length} events failed to save`);
     }, [sessionId]);
 
+    // WO-534: Dosing Protocol save handler — previously wired to empty no-op.
+    // Calls updateDosingProtocol() which UPDATEs the existing stub session row
+    // with substance_id, dosage, and route_id FK.
+    const handleDosingProtocolSave = useCallback(async (data: DosingProtocolUpdateData) => {
+        if (!sessionId) {
+            // Session not yet created — silent. Auto-save fires before session stub exists.
+            return;
+        }
+        const result = await updateDosingProtocol(sessionId, data);
+        result.success
+            ? onSaved('Dosing Protocol')
+            : onError('Dosing Protocol', result.error);
+    }, [sessionId]);
+
     // ── Phase 3 handlers ─────────────────────────────────────────────────────
 
     const handlePulseCheckSave = useCallback(async (data: DailyPulseCheckData) => {
@@ -441,7 +457,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 initialData={dosingInitialData}
                 patientId={patientId}
                 sessionId={sessionId}
-                onSave={() => { }}
+                onSave={handleDosingProtocolSave}  // WO-534: was () => { } no-op
                 onComplete={onComplete}
                 onBack={onClose ?? onComplete}
                 onExit={onExit ?? onClose ?? onComplete}
