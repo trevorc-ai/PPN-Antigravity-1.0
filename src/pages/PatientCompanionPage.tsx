@@ -1,30 +1,37 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Lock, Check } from 'lucide-react';
+import { Lock } from 'lucide-react';
 
 interface PatientLogEvent {
     timestamp: string;
     feeling: string;
 }
 
-// 16 emotional states — clinical psychedelic therapy state tracking
+/**
+ * FEELINGS palette — dark-room optimised:
+ * - `rest`   : dim semi-transparent bg + muted *-300/80 text (eye-safe, readable, not blinding)
+ * - `glow`   : ~60% opacity fill — bright enough to register a tap without a harsh white flash
+ * CSS handles the slow fade-back (1.8s ease-out) automatically via the transition class below.
+ *
+ * Accessibility: *-300 on effectively-black bg gives ~5–6:1 contrast ratio (WCAG AA pass).
+ */
 const FEELINGS = [
-    { id: 'blissful', label: 'Blissful', color: 'bg-emerald-500/20 border-emerald-400/50 hover:bg-emerald-500/40 text-emerald-100', logged: 'bg-emerald-500 border-emerald-400 text-white' },
-    { id: 'peaceful', label: 'Peaceful', color: 'bg-teal-500/20 border-teal-400/50 hover:bg-teal-500/40 text-teal-100', logged: 'bg-teal-500 border-teal-400 text-white' },
-    { id: 'grounded', label: 'Grounded / Safe', color: 'bg-cyan-500/20 border-cyan-400/50 hover:bg-cyan-500/40 text-cyan-100', logged: 'bg-cyan-500 border-cyan-400 text-white' },
-    { id: 'connected', label: 'Connected', color: 'bg-sky-500/20 border-sky-400/50 hover:bg-sky-500/40 text-sky-100', logged: 'bg-sky-500 border-sky-400 text-white' },
-    { id: 'euphoric', label: 'Euphoric', color: 'bg-violet-500/20 border-violet-400/50 hover:bg-violet-500/40 text-violet-100', logged: 'bg-violet-500 border-violet-400 text-white' },
-    { id: 'drifting', label: 'Drifting / Floating', color: 'bg-indigo-500/20 border-indigo-400/50 hover:bg-indigo-500/40 text-indigo-100', logged: 'bg-indigo-500 border-indigo-400 text-white' },
-    { id: 'curious', label: 'Curious', color: 'bg-purple-500/20 border-purple-400/50 hover:bg-purple-500/40 text-purple-100', logged: 'bg-purple-500 border-purple-400 text-white' },
-    { id: 'open', label: 'Open / Surrendered', color: 'bg-fuchsia-500/20 border-fuchsia-400/50 hover:bg-fuchsia-500/40 text-fuchsia-100', logged: 'bg-fuchsia-500 border-fuchsia-400 text-white' },
-    { id: 'emotional', label: 'Emotional / Crying', color: 'bg-blue-500/20 border-blue-400/50 hover:bg-blue-500/40 text-blue-100', logged: 'bg-blue-500 border-blue-400 text-white' },
-    { id: 'confused', label: 'Confused', color: 'bg-slate-500/20 border-slate-400/50 hover:bg-slate-500/40 text-slate-100', logged: 'bg-slate-500 border-slate-400 text-white' },
-    { id: 'anxious', label: 'Anxious', color: 'bg-amber-500/20 border-amber-400/50 hover:bg-amber-500/40 text-amber-100', logged: 'bg-amber-500 border-amber-400 text-white' },
-    { id: 'overwhelmed', label: 'Overwhelmed', color: 'bg-orange-500/20 border-orange-400/50 hover:bg-orange-500/40 text-orange-100', logged: 'bg-orange-500 border-orange-400 text-white' },
-    { id: 'tense', label: 'Tense / Resistance', color: 'bg-rose-500/20 border-rose-400/50 hover:bg-rose-500/40 text-rose-100', logged: 'bg-rose-500 border-rose-400 text-white' },
-    { id: 'fearful', label: 'Fearful', color: 'bg-red-600/20 border-red-500/50 hover:bg-red-600/40 text-red-100', logged: 'bg-red-600 border-red-500 text-white' },
-    { id: 'nauseous', label: 'Nauseous', color: 'bg-yellow-700/20 border-yellow-600/50 hover:bg-yellow-700/40 text-yellow-100', logged: 'bg-yellow-600 border-yellow-500 text-white' },
-    { id: 'need_support', label: 'Need Support', color: 'bg-pink-600/30 border-pink-400/60 hover:bg-pink-600/50 text-pink-100 ring-1 ring-pink-400/40', logged: 'bg-pink-500 border-pink-400 text-white ring-2 ring-pink-300' },
+    { id: 'blissful', label: 'Blissful', rest: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300/80', glow: 'bg-emerald-500/60 border-emerald-400/70 text-emerald-200' },
+    { id: 'peaceful', label: 'Peaceful', rest: 'bg-teal-500/15 border-teal-500/30 text-teal-300/80', glow: 'bg-teal-500/60 border-teal-400/70 text-teal-200' },
+    { id: 'grounded', label: 'Grounded / Safe', rest: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300/80', glow: 'bg-cyan-500/60 border-cyan-400/70 text-cyan-200' },
+    { id: 'connected', label: 'Connected', rest: 'bg-sky-500/15 border-sky-500/30 text-sky-300/80', glow: 'bg-sky-500/60 border-sky-400/70 text-sky-200' },
+    { id: 'euphoric', label: 'Euphoric', rest: 'bg-violet-500/15 border-violet-500/30 text-violet-300/80', glow: 'bg-violet-500/60 border-violet-400/70 text-violet-200' },
+    { id: 'drifting', label: 'Drifting / Floating', rest: 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300/80', glow: 'bg-indigo-500/60 border-indigo-400/70 text-indigo-200' },
+    { id: 'curious', label: 'Curious', rest: 'bg-purple-500/15 border-purple-500/30 text-purple-300/80', glow: 'bg-purple-500/60 border-purple-400/70 text-purple-200' },
+    { id: 'open', label: 'Open / Surrendered', rest: 'bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-300/80', glow: 'bg-fuchsia-500/60 border-fuchsia-400/70 text-fuchsia-200' },
+    { id: 'emotional', label: 'Emotional / Crying', rest: 'bg-blue-500/15 border-blue-500/30 text-blue-300/80', glow: 'bg-blue-500/60 border-blue-400/70 text-blue-200' },
+    { id: 'confused', label: 'Confused', rest: 'bg-slate-500/15 border-slate-500/30 text-slate-300/80', glow: 'bg-slate-500/60 border-slate-400/70 text-slate-200' },
+    { id: 'anxious', label: 'Anxious', rest: 'bg-amber-500/15 border-amber-500/30 text-amber-300/80', glow: 'bg-amber-500/60 border-amber-400/70 text-amber-200' },
+    { id: 'overwhelmed', label: 'Overwhelmed', rest: 'bg-orange-500/15 border-orange-500/30 text-orange-300/80', glow: 'bg-orange-500/60 border-orange-400/70 text-orange-200' },
+    { id: 'tense', label: 'Tense / Resistance', rest: 'bg-rose-500/15 border-rose-500/30 text-rose-300/80', glow: 'bg-rose-500/60 border-rose-400/70 text-rose-200' },
+    { id: 'fearful', label: 'Fearful', rest: 'bg-red-600/15 border-red-600/30 text-red-300/80', glow: 'bg-red-600/60 border-red-500/70 text-red-200' },
+    { id: 'nauseous', label: 'Nauseous', rest: 'bg-yellow-700/15 border-yellow-700/30 text-yellow-300/80', glow: 'bg-yellow-600/60 border-yellow-500/70 text-yellow-200' },
+    { id: 'need_support', label: 'Need Support', rest: 'bg-pink-600/20 border-pink-500/40 text-pink-300/80 ring-1 ring-pink-500/20', glow: 'bg-pink-500/65 border-pink-400/70 text-pink-200 ring-1 ring-pink-400/50' },
 ];
 
 export default function PatientCompanionPage() {
@@ -32,29 +39,35 @@ export default function PatientCompanionPage() {
     const navigate = useNavigate();
 
     const [recentLog, setRecentLog] = useState<string | null>(null);
-    // Track which button just fired — shows ✓ LOGGED for 1.5s on that specific button
-    const [lastLoggedId, setLastLoggedId] = useState<string | null>(null);
+    /**
+     * litId: button currently in the "instant bright" phase.
+     * Set on click, cleared after 160ms. The CSS transition then handles the
+     * slow 1.8s fade-out automatically — no setTimeout dance needed for the fade.
+     */
+    const [litId, setLitId] = useState<string | null>(null);
     const [lockHoldProgress, setLockHoldProgress] = useState(0);
 
     const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
     const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
-    const loggedTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const litTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleLogFeeling = (feelingId: string, feelingLabel: string) => {
+        // Persist log
         const storageKey = `companion_logs_${sessionId}`;
-        const existingLogsStr = localStorage.getItem(storageKey);
-        const logs: PatientLogEvent[] = existingLogsStr ? JSON.parse(existingLogsStr) : [];
+        const existing = localStorage.getItem(storageKey);
+        const logs: PatientLogEvent[] = existing ? JSON.parse(existing) : [];
         logs.push({ timestamp: new Date().toISOString(), feeling: feelingId });
         localStorage.setItem(storageKey, JSON.stringify(logs));
 
-        // Flash this specific button
-        setLastLoggedId(feelingId);
-        if (loggedTimerRef.current) clearTimeout(loggedTimerRef.current);
-        loggedTimerRef.current = setTimeout(() => setLastLoggedId(null), 1500);
+        // Instant-on glow
+        if (litTimerRef.current) clearTimeout(litTimerRef.current);
+        setLitId(feelingId);
+        // After 160ms, remove lit state → CSS transition fades it out over 1.8s
+        litTimerRef.current = setTimeout(() => setLitId(null), 160);
 
-        // Mid-screen toast
+        // Soft mid-screen confirmation (dimmed, not blinding white)
         setRecentLog(feelingLabel);
-        setTimeout(() => setRecentLog(null), 2500);
+        setTimeout(() => setRecentLog(null), 2200);
     };
 
     const startUnlock = () => {
@@ -65,7 +78,7 @@ export default function PatientCompanionPage() {
         }, 150);
         holdTimerRef.current = setTimeout(() => {
             if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
-            navigate(-1); // Go back in history — preserves Wellness Journey session state
+            navigate(-1);
         }, 3000);
     };
 
@@ -78,12 +91,10 @@ export default function PatientCompanionPage() {
     return (
         <div
             className="fixed inset-0 bg-black overflow-hidden flex flex-col selection:bg-transparent"
-            // Trap all keyboard events so Escape doesn't bubble to parent route handlers
             onKeyDown={(e) => { e.stopPropagation(); }}
             tabIndex={-1}
         >
-
-            {/* ── Hold-to-exit lock button (top right, z-50 — above both containers) ── */}
+            {/* ── Hold-to-exit (top right) ─────────────────────────────────────── */}
             <div className="absolute top-4 right-4 z-50 flex flex-col items-center gap-1">
                 <button
                     onMouseDown={startUnlock}
@@ -92,101 +103,104 @@ export default function PatientCompanionPage() {
                     onTouchStart={startUnlock}
                     onTouchEnd={cancelUnlock}
                     aria-label="Hold 3 seconds to return to session"
-                    className="relative w-14 h-14 flex items-center justify-center rounded-full bg-white/10 border border-white/30 text-white/70 backdrop-blur-md hover:bg-white/20 active:bg-white/25 transition-colors group"
+                    className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white/8 border border-white/20 text-white/40 backdrop-blur-md hover:bg-white/12 transition-colors group"
                 >
-                    <Lock className="w-5 h-5 group-active:text-white transition-colors" />
+                    <Lock className="w-4 h-4 group-active:text-white/70 transition-colors" />
                     {lockHoldProgress > 0 && (
                         <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none">
                             <circle
-                                cx="28" cy="28" r="26"
+                                cx="24" cy="24" r="22"
                                 fill="none"
-                                stroke="rgba(255,255,255,0.6)"
-                                strokeWidth="2.5"
-                                strokeDasharray="163"
-                                strokeDashoffset={163 - (163 * lockHoldProgress) / 100}
+                                stroke="rgba(255,255,255,0.4)"
+                                strokeWidth="2"
+                                strokeDasharray="138"
+                                strokeDashoffset={138 - (138 * lockHoldProgress) / 100}
                                 className="transition-all duration-150 ease-linear"
                             />
                         </svg>
                     )}
                 </button>
-                <span className="text-[11px] font-bold tracking-widest text-white/50 uppercase">
-                    {lockHoldProgress > 0 ? 'Hold...' : 'Hold to Exit'}
+                <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">
+                    {lockHoldProgress > 0 ? 'Hold…' : 'Return'}
                 </span>
             </div>
 
-            {/* ── Feeling logged toast (mid-screen) ─────────────────────────────── */}
-            <div className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 transition-all duration-500 ${recentLog ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+            {/* ── Logged toast — soft, dark-room safe ──────────────────────────── */}
+            <div className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-700 ${recentLog ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                 }`}>
-                <div className="px-8 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl">
-                    <p className="text-2xl font-black tracking-widest text-white uppercase">{recentLog}</p>
+                <div className="px-7 py-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
+                    <p className="text-lg font-semibold tracking-[0.15em] text-white/60 uppercase">{recentLog}</p>
                 </div>
             </div>
 
-            {/* ── CONTAINER 1: Video (upper region, portrait-fitted, pointer-events-none) ── */}
-            {/*   flex-1 lets the video container grow to fill available space above buttons */}
+            {/* ══════════════════════════════════════════════════════════════════
+             *  ZONE 1 — Video (grows to fill all space above the button strip)
+             *  object-contain: video respects its own aspect ratio naturally.
+             *  mix-blend-screen: letterbox bars are black → invisible against bg.
+             *  pointer-events-none: nothing here competes with the button zone.
+             * ══════════════════════════════════════════════════════════════════ */}
             <div
-                className="relative flex-1 overflow-hidden pointer-events-none"
+                className="relative flex-1 overflow-hidden pointer-events-none flex items-center justify-center"
                 aria-hidden="true"
             >
-                {/* Ambient gradient overlay — legibility layer */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/60 z-10" />
+                {/* Gradient overlay — dims edges for text legibility, not obtrusive */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
 
-                {/* Top prompt — lightweight, doesn't cover spherecules */}
-                <div className="absolute top-5 left-0 right-0 text-center z-20 pointer-events-none">
-                    <p className="text-white/40 text-sm font-semibold tracking-[0.2em] uppercase">
+                {/* Prompt — dimmed, top-center */}
+                <div className="absolute top-5 left-0 right-0 text-center z-20">
+                    <p className="text-white/25 text-xs font-medium tracking-[0.25em] uppercase">
                         Tap to quietly log your state
                     </p>
                 </div>
 
-                {/* Spherecules video — portrait-oriented, object-cover fills the container */}
+                {/* Spherecules — object-contain preserves natural aspect ratio.
+                    mix-blend-screen makes any black letterbox bars vanish.      */}
                 <video
                     src="/admin_uploads/spherecules.mp4"
                     autoPlay
                     loop
                     muted
                     playsInline
-                    className="absolute inset-0 w-full h-full object-cover opacity-90 mix-blend-screen"
+                    className="w-full h-full object-contain opacity-85 mix-blend-screen"
                 />
             </div>
 
-            {/* ── CONTAINER 2: Button grid (bottom strip, fully visible, independently responsive) ── */}
-            {/*   shrink-0 ensures it is never compressed by the video container                       */}
-            <div className="relative z-20 shrink-0 px-4 pb-5 pt-3 w-full max-w-5xl mx-auto bg-black/30">
-                <div className="grid grid-cols-4 gap-2">
+            {/* ══════════════════════════════════════════════════════════════════
+             *  ZONE 2 — Button grid (structurally below video, never overlaps)
+             *  shrink-0: never compressed by the video zone.
+             *  border-t: hard visual boundary — buttons cannot bleed into video.
+             * ══════════════════════════════════════════════════════════════════ */}
+            <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-3 pb-5 pt-3">
+                <div className="grid grid-cols-4 gap-1.5 max-w-2xl mx-auto">
                     {FEELINGS.map((f) => {
-                        const isLogged = lastLoggedId === f.id;
+                        const isLit = litId === f.id;
                         return (
                             <button
                                 key={f.id}
                                 onClick={() => handleLogFeeling(f.id, f.label)}
-                                className={`
-                                    backdrop-blur-lg border rounded-xl
-                                    px-2 py-3
-                                    text-xs font-bold tracking-wide uppercase text-center
-                                    transition-all duration-200
-                                    shadow-lg
-                                    ${isLogged
-                                        ? `${f.logged} scale-105 shadow-xl`
-                                        : `${f.color} active:scale-95`
-                                    }
-                                `}
+                                /**
+                                 * Transition trick for instant-on / slow-fade-off:
+                                 * - When LIT:  `transition-none` → bg snaps to glow instantly
+                                 * - When dim:  `transition-[background-color,border-color,box-shadow]
+                                 *               duration-[1800ms] ease-out` → CSS fades it back slowly
+                                 */
+                                className={[
+                                    'backdrop-blur-md border rounded-xl',
+                                    'px-1.5 py-2.5',
+                                    'text-[10px] font-semibold tracking-wider uppercase text-center',
+                                    'shadow-sm select-none',
+                                    isLit
+                                        ? `${f.glow} transition-none scale-[1.04] shadow-lg`
+                                        : `${f.rest} transition-[background-color,border-color,box-shadow] duration-[1800ms] ease-out active:scale-95`,
+                                ].join(' ')}
                                 aria-label={`Log feeling: ${f.label}`}
-                                aria-pressed={isLogged}
                             >
-                                {isLogged ? (
-                                    <span className="flex items-center justify-center gap-1">
-                                        <Check className="w-3 h-3 flex-shrink-0" />
-                                        Logged
-                                    </span>
-                                ) : (
-                                    f.label
-                                )}
+                                {f.label}
                             </button>
                         );
                     })}
                 </div>
             </div>
-
         </div>
     );
 }
