@@ -204,35 +204,77 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
 
 /**
  * CompanionVideo — full-screen ambient video for tablet/mobile.
- * object-cover fills the flex-1 zone naturally on any screen.
- * No rotation, no aspect-ratio math — the landscape video crops
- * gracefully on portrait devices for ambient content.
+ *
+ * The landscape 16:9 video is rotated -90° to display as portrait.
+ * ResizeObserver measures the container and swaps width↔height on the
+ * video element before rotating, so the full video frame is always visible
+ * with no cropping and no letterboxing.
+ *
+ * Fallback (before first measurement): object-contain, no rotation.
  */
-const CompanionVideo: React.FC = () => (
-    <div
-        className="relative flex-1 overflow-hidden pointer-events-none"
-        aria-hidden="true"
-    >
-        {/* Subtle gradient — legibility only, not distracting */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
+const CompanionVideo: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState({ w: 0, h: 0 });
 
-        {/* Dim prompt */}
-        <div className="absolute top-5 left-0 right-0 text-center z-20">
-            <p className="text-white/20 text-xs tracking-[0.2em]">
-                Tap to quietly log your state
-            </p>
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        // Measure immediately and on every resize
+        const ro = new ResizeObserver(([entry]) => {
+            const { width, height } = entry.contentRect;
+            setSize({ w: width, h: height });
+        });
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, []);
+
+    const measured = size.w > 0 && size.h > 0;
+
+    return (
+        <div
+            ref={containerRef}
+            className="relative flex-1 overflow-hidden pointer-events-none"
+            aria-hidden="true"
+        >
+            {/* Subtle gradient — legibility only, not distracting */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
+
+            {/* Dim prompt */}
+            <div className="absolute top-5 left-0 right-0 text-center z-20">
+                <p className="text-white/20 text-xs tracking-[0.2em]">
+                    Tap to quietly log your state
+                </p>
+            </div>
+
+            <video
+                src="/admin_uploads/spherecules.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute opacity-90"
+                style={measured ? {
+                    // Swap dims before rotating so the full landscape frame fills
+                    // the portrait container after the -90° turn.
+                    // width = container height (= post-rotation visual height)
+                    // height = container width  (= post-rotation visual width)
+                    width: `${size.h}px`,
+                    height: `${size.w}px`,
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%) rotate(-90deg)',
+                    objectFit: 'contain',
+                } : {
+                    // Pre-measurement fallback
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain' as const,
+                }}
+            />
         </div>
-
-        <video
-            src="/admin_uploads/spherecules.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-contain opacity-90"
-        />
-    </div>
-);
+    );
+};
 
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, completedForms, onOpenForm, onCompletePhase }) => {
 
