@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 
@@ -46,6 +46,51 @@ export default function PatientCompanionPage() {
      */
     const [litId, setLitId] = useState<string | null>(null);
     const [lockHoldProgress, setLockHoldProgress] = useState(0);
+
+    // Orientation-aware video
+    const videoContainerRef = useRef<HTMLDivElement>(null);
+    const [videoSize, setVideoSize] = useState({ w: 0, h: 0 });
+    const [isPortrait, setIsPortrait] = useState(
+        () => typeof window !== 'undefined'
+            ? window.matchMedia('(orientation: portrait)').matches
+            : true
+    );
+
+    useEffect(() => {
+        const measure = () => {
+            if (videoContainerRef.current) {
+                const r = videoContainerRef.current.getBoundingClientRect();
+                setVideoSize({ w: r.width, h: r.height });
+            }
+            setIsPortrait(window.matchMedia('(orientation: portrait)').matches);
+        };
+        measure();
+        window.addEventListener('resize', measure);
+        window.addEventListener('orientationchange', measure);
+        return () => {
+            window.removeEventListener('resize', measure);
+            window.removeEventListener('orientationchange', measure);
+        };
+    }, []);
+
+    const videoStyle: React.CSSProperties = (isPortrait && videoSize.w > 0 && videoSize.h > 0)
+        ? {
+            position: 'absolute',
+            width: `${videoSize.h}px`,
+            height: `${videoSize.w}px`,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) rotate(-90deg)',
+            opacity: 0.9,
+        }
+        : {
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover' as const,
+            opacity: 0.9,
+        };
 
     const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
     const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -133,67 +178,55 @@ export default function PatientCompanionPage() {
                 </div>
             </div>
 
-            {/* ══════════════════════════════════════════════════════════════════
-             *  ZONE 1 — Video (grows to fill all space above the button strip)
-             *  object-contain: video respects its own aspect ratio naturally.
-             *  mix-blend-screen: letterbox bars are black → invisible against bg.
-             *  pointer-events-none: nothing here competes with the button zone.
-             * ══════════════════════════════════════════════════════════════════ */}
+            {/* ══ ZONE 1 — Video (orientation-aware) ══════════════════════════════
+             *  Portrait device: landscape video rotated -90° + dims swapped to fill.
+             *  Landscape device: natural fill.
+             *  pointer-events-none: video never competes with tap targets.
+             */}
             <div
-                className="relative flex-1 overflow-hidden pointer-events-none flex items-center justify-center"
+                ref={videoContainerRef}
+                className="relative flex-1 overflow-hidden pointer-events-none"
                 aria-hidden="true"
             >
-                {/* Gradient overlay — dims edges for text legibility, not obtrusive */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
-
-                {/* Prompt — dimmed, top-center */}
                 <div className="absolute top-5 left-0 right-0 text-center z-20">
-                    <p className="text-white/25 text-xs font-medium tracking-[0.25em] uppercase">
+                    <p className="text-white/20 text-xs font-medium tracking-[0.25em]">
                         Tap to quietly log your state
                     </p>
                 </div>
-
-                {/* Spherecules — object-contain preserves natural aspect ratio.
-                    mix-blend-screen makes any black letterbox bars vanish.      */}
                 <video
                     src="/admin_uploads/spherecules.mp4"
                     autoPlay
                     loop
                     muted
                     playsInline
-                    className="w-full h-full object-contain opacity-85 mix-blend-screen"
+                    style={videoStyle}
                 />
             </div>
 
-            {/* ══════════════════════════════════════════════════════════════════
-             *  ZONE 2 — Button grid (structurally below video, never overlaps)
-             *  shrink-0: never compressed by the video zone.
-             *  border-t: hard visual boundary — buttons cannot bleed into video.
-             * ══════════════════════════════════════════════════════════════════ */}
-            <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-3 pb-5 pt-3">
-                <div className="grid grid-cols-4 gap-1.5 max-w-2xl mx-auto">
+            {/* ══ ZONE 2 — Button grid ══════════════════════════════════════════
+             *  Full-width, no max-w constraint. clamp() font scales with viewport.
+             *  Title case (labels already stored as Title Case — just no uppercase).
+             */}
+            <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-2 pb-3 pt-2">
+                <div className="grid grid-cols-4 gap-1 w-full">
                     {FEELINGS.map((f) => {
                         const isLit = litId === f.id;
                         return (
                             <button
                                 key={f.id}
                                 onClick={() => handleLogFeeling(f.id, f.label)}
-                                /**
-                                 * Transition trick for instant-on / slow-fade-off:
-                                 * - When LIT:  `transition-none` → bg snaps to glow instantly
-                                 * - When dim:  `transition-[background-color,border-color,box-shadow]
-                                 *               duration-[1800ms] ease-out` → CSS fades it back slowly
-                                 */
                                 className={[
-                                    'backdrop-blur-md border rounded-lg sm:rounded-xl',
-                                    'px-1 py-1 sm:px-1.5 sm:py-2.5',
-                                    'min-h-[36px] sm:min-h-[44px]',
-                                    'text-[7px] sm:text-[10px] font-semibold tracking-wide uppercase text-center leading-tight',
+                                    'backdrop-blur-md border rounded-lg',
+                                    'px-1 py-1.5',
+                                    'min-h-[36px]',
+                                    'font-semibold tracking-wide text-center leading-tight',
                                     'shadow-sm select-none',
                                     isLit
                                         ? `${f.glow} transition-none scale-[1.04] shadow-lg`
                                         : `${f.rest} transition-[background-color,border-color,box-shadow] duration-[1800ms] ease-out active:scale-95`,
                                 ].join(' ')}
+                                style={{ fontSize: 'clamp(8px, 2.2vw, 11px)' }}
                                 aria-label={`Log feeling: ${f.label}`}
                             >
                                 {f.label}
