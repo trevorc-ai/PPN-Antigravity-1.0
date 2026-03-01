@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { Component, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
     Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download,
     Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
@@ -129,25 +129,76 @@ function getRegulatoryLinks(basis: string): Array<{ label: string; url: string }
     return links;
 }
 
-// Emotional states for companion overlay
+// Emotional states — dark-room safe palette (matches PatientCompanionPage)
+// rest: dim ~15% opacity bg + muted *-300/80 text (eye-safe, WCAG AA on black)
+// glow: ~60% opacity fill — bright enough to confirm tap without harshness
 const COMPANION_FEELINGS = [
-    { id: 'blissful', label: 'Blissful', color: 'bg-emerald-500/20 border-emerald-400/50 hover:bg-emerald-500/40 text-emerald-100' },
-    { id: 'peaceful', label: 'Peaceful', color: 'bg-teal-500/20 border-teal-400/50 hover:bg-teal-500/40 text-teal-100' },
-    { id: 'grounded', label: 'Grounded / Safe', color: 'bg-cyan-500/20 border-cyan-400/50 hover:bg-cyan-500/40 text-cyan-100' },
-    { id: 'connected', label: 'Connected', color: 'bg-sky-500/20 border-sky-400/50 hover:bg-sky-500/40 text-sky-100' },
-    { id: 'euphoric', label: 'Euphoric', color: 'bg-violet-500/20 border-violet-400/50 hover:bg-violet-500/40 text-violet-100' },
-    { id: 'drifting', label: 'Drifting / Floating', color: 'bg-indigo-500/20 border-indigo-400/50 hover:bg-indigo-500/40 text-indigo-100' },
-    { id: 'curious', label: 'Curious', color: 'bg-purple-500/20 border-purple-400/50 hover:bg-purple-500/40 text-purple-100' },
-    { id: 'open', label: 'Open / Surrendered', color: 'bg-fuchsia-500/20 border-fuchsia-400/50 hover:bg-fuchsia-500/40 text-fuchsia-100' },
-    { id: 'emotional', label: 'Emotional / Crying', color: 'bg-blue-500/20 border-blue-400/50 hover:bg-blue-500/40 text-blue-100' },
-    { id: 'confused', label: 'Confused', color: 'bg-slate-500/20 border-slate-400/50 hover:bg-slate-500/40 text-slate-100' },
-    { id: 'anxious', label: 'Anxious', color: 'bg-amber-500/20 border-amber-400/50 hover:bg-amber-500/40 text-amber-100' },
-    { id: 'overwhelmed', label: 'Overwhelmed', color: 'bg-orange-500/20 border-orange-400/50 hover:bg-orange-500/40 text-orange-100' },
-    { id: 'tense', label: 'Tense / Resistance', color: 'bg-rose-500/20 border-rose-400/50 hover:bg-rose-500/40 text-rose-100' },
-    { id: 'fearful', label: 'Fearful', color: 'bg-red-600/20 border-red-500/50 hover:bg-red-600/40 text-red-100' },
-    { id: 'nauseous', label: 'Nauseous', color: 'bg-yellow-700/20 border-yellow-600/50 hover:bg-yellow-700/40 text-yellow-100' },
-    { id: 'need_support', label: 'Need Support', color: 'bg-pink-600/30 border-pink-400/60 hover:bg-pink-600/50 text-pink-100 ring-1 ring-pink-400/40' },
+    { id: 'blissful', label: 'Blissful', rest: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300/80', glow: 'bg-emerald-500/60 border-emerald-400/70 text-emerald-200' },
+    { id: 'peaceful', label: 'Peaceful', rest: 'bg-teal-500/15 border-teal-500/30 text-teal-300/80', glow: 'bg-teal-500/60 border-teal-400/70 text-teal-200' },
+    { id: 'grounded', label: 'Grounded / Safe', rest: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300/80', glow: 'bg-cyan-500/60 border-cyan-400/70 text-cyan-200' },
+    { id: 'connected', label: 'Connected', rest: 'bg-sky-500/15 border-sky-500/30 text-sky-300/80', glow: 'bg-sky-500/60 border-sky-400/70 text-sky-200' },
+    { id: 'euphoric', label: 'Euphoric', rest: 'bg-violet-500/15 border-violet-500/30 text-violet-300/80', glow: 'bg-violet-500/60 border-violet-400/70 text-violet-200' },
+    { id: 'drifting', label: 'Drifting / Floating', rest: 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300/80', glow: 'bg-indigo-500/60 border-indigo-400/70 text-indigo-200' },
+    { id: 'curious', label: 'Curious', rest: 'bg-purple-500/15 border-purple-500/30 text-purple-300/80', glow: 'bg-purple-500/60 border-purple-400/70 text-purple-200' },
+    { id: 'open', label: 'Open / Surrendered', rest: 'bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-300/80', glow: 'bg-fuchsia-500/60 border-fuchsia-400/70 text-fuchsia-200' },
+    { id: 'emotional', label: 'Emotional / Crying', rest: 'bg-blue-500/15 border-blue-500/30 text-blue-300/80', glow: 'bg-blue-500/60 border-blue-400/70 text-blue-200' },
+    { id: 'confused', label: 'Confused', rest: 'bg-slate-500/15 border-slate-500/30 text-slate-300/80', glow: 'bg-slate-500/60 border-slate-400/70 text-slate-200' },
+    { id: 'anxious', label: 'Anxious', rest: 'bg-amber-500/15 border-amber-500/30 text-amber-300/80', glow: 'bg-amber-500/60 border-amber-400/70 text-amber-200' },
+    { id: 'overwhelmed', label: 'Overwhelmed', rest: 'bg-orange-500/15 border-orange-500/30 text-orange-300/80', glow: 'bg-orange-500/60 border-orange-400/70 text-orange-200' },
+    { id: 'tense', label: 'Tense / Resistance', rest: 'bg-rose-500/15 border-rose-500/30 text-rose-300/80', glow: 'bg-rose-500/60 border-rose-400/70 text-rose-200' },
+    { id: 'fearful', label: 'Fearful', rest: 'bg-red-600/15 border-red-600/30 text-red-300/80', glow: 'bg-red-600/60 border-red-500/70 text-red-200' },
+    { id: 'nauseous', label: 'Nauseous', rest: 'bg-yellow-700/15 border-yellow-700/30 text-yellow-300/80', glow: 'bg-yellow-600/60 border-yellow-500/70 text-yellow-200' },
+    { id: 'need_support', label: 'Need Support', rest: 'bg-pink-600/20 border-pink-500/40 text-pink-300/80 ring-1 ring-pink-500/20', glow: 'bg-pink-500/65 border-pink-400/70 text-pink-200 ring-1 ring-pink-400/50' },
 ];
+
+/**
+ * CompanionButtonGrid — dark-room 4×4 feeling grid with instant-on / slow-fade glow.
+ * Instant-on: litId set on click → transition-none snaps to glow.
+ * Slow fade: litId cleared after 160ms → CSS duration-[1800ms] fades back.
+ */
+const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => {
+    const [litId, setLitId] = useState<string | null>(null);
+    const litTimer = useRef<NodeJS.Timeout | null>(null);
+
+    const handleTap = (id: string) => {
+        const key = `companion_logs_${sessionId}`;
+        const existing = JSON.parse(localStorage.getItem(key) || '[]');
+        existing.push({ timestamp: new Date().toISOString(), feeling: id });
+        localStorage.setItem(key, JSON.stringify(existing));
+
+        if (litTimer.current) clearTimeout(litTimer.current);
+        setLitId(id);
+        litTimer.current = setTimeout(() => setLitId(null), 160);
+    };
+
+    return (
+        <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-3 pb-5 pt-3">
+            <div className="grid grid-cols-4 gap-1.5 max-w-2xl mx-auto">
+                {COMPANION_FEELINGS.map(f => {
+                    const isLit = litId === f.id;
+                    return (
+                        <button
+                            key={f.id}
+                            onClick={() => handleTap(f.id)}
+                            className={[
+                                'backdrop-blur-md border rounded-xl',
+                                'px-1.5 py-2.5',
+                                'text-[10px] font-semibold tracking-wider uppercase text-center',
+                                'shadow-sm select-none',
+                                isLit
+                                    ? `${f.glow} transition-none scale-[1.04] shadow-lg`
+                                    : `${f.rest} transition-[background-color,border-color,box-shadow] duration-[1800ms] ease-out active:scale-95`,
+                            ].join(' ')}
+                            aria-label={`Log feeling: ${f.label}`}
+                        >
+                            {f.label}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
 
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, completedForms, onOpenForm, onCompletePhase }) => {
 
@@ -1203,101 +1254,65 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 showCompanion && (
                     <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden selection:bg-transparent">
 
-                        {/* Close button — top-right */}
+                        {/* Close — top-right */}
                         <button
                             onClick={() => setShowCompanion(false)}
-                            className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white/70 hover:bg-white/20 hover:text-white backdrop-blur-md transition-all"
+                            className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/8 border border-white/15 text-white/35 hover:bg-white/15 hover:text-white/60 backdrop-blur-md transition-all"
                             aria-label="Return to session"
                         >
                             <X className="w-4 h-4" />
                         </button>
                         <div className="absolute top-4 right-16 z-50 flex items-center h-10">
-                            <span className="text-[11px] font-bold tracking-widest text-white/40 uppercase">Return to session</span>
+                            <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">Return to session</span>
                         </div>
 
-                        {/* ── Ambient visual — breathing gradient orb, no video file required ── */}
-                        <div className="flex-1 flex items-center justify-center p-6 pt-16 min-h-0">
-                            <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl shadow-black/80"
-                                style={{ aspectRatio: '16/9' }}>
-                                {/* CSS animated ambient companion background */}
-                                <div
-                                    className="absolute inset-0"
-                                    style={{
-                                        background: 'radial-gradient(ellipse at 50% 50%, #1e1b4b 0%, #0a0a1a 60%, #000 100%)',
-                                        animation: 'none',
-                                    }}
-                                >
-                                    {/* Breathing orb */}
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '50%', left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            width: '40%', height: '40%',
-                                            borderRadius: '50%',
-                                            background: 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(139,92,246,0.15) 50%, transparent 80%)',
-                                            animation: 'companion-breathe 6s ease-in-out infinite',
-                                            filter: 'blur(24px)',
-                                        }}
-                                        aria-hidden="true"
-                                    />
-                                    {/* Outer slow pulse ring */}
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '50%', left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            width: '60%', height: '60%',
-                                            borderRadius: '50%',
-                                            border: '1px solid rgba(99,102,241,0.12)',
-                                            animation: 'companion-breathe 6s ease-in-out infinite 1.5s',
-                                        }}
-                                        aria-hidden="true"
-                                    />
-                                    {/* Center icon */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="text-center space-y-3 opacity-50">
-                                            <div className="w-14 h-14 rounded-full border border-indigo-500/30 mx-auto flex items-center justify-center"
-                                                style={{ animation: 'companion-breathe 6s ease-in-out infinite 0.5s' }}>
-                                                <Sparkles className="w-6 h-6 text-indigo-400" />
-                                            </div>
-                                            <p className="text-white/40 text-[11px] font-semibold tracking-[0.3em] uppercase">Companion Mode</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Keyframe style injected inline — avoids global CSS dependency */}
-                                <style>{`
-                                    @keyframes companion-breathe {
-                                        0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-                                        50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.12); }
-                                    }
-                                `}</style>
+                        {/* ══ ZONE 1 — Spherecules video ══════════════════════════════
+                         *  flex-1 fills all space above the button strip.
+                         *  object-cover fills the zone; portrait video on portrait phone = perfect fill.
+                         *  pointer-events-none keeps video out of the tap target.
+                         */}
+                        <div
+                            className="relative flex-1 overflow-hidden pointer-events-none"
+                            aria-hidden="true"
+                        >
+                            {/* Soft gradient overlay for legibility */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
+
+                            {/* Prompt — very dim so it doesn't jar in a dark room */}
+                            <div className="absolute top-5 left-0 right-0 text-center z-20">
+                                <p className="text-white/20 text-xs font-medium tracking-[0.25em] uppercase">
+                                    Tap to quietly log your state
+                                </p>
                             </div>
+
+                            {/* Spherecules video — object-cover fills zone naturally */}
+                            <video
+                                src="/admin_uploads/spherecules.mp4"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="absolute inset-0 w-full h-full object-cover opacity-90"
+                            />
+
+                            {/* Keyframe for button glow animation */}
+                            <style>{`
+                                @keyframes companion-breathe {
+                                    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+                                    50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.12); }
+                                }
+                            `}</style>
                         </div>
 
-                        {/* Prompt */}
-                        <div className="text-center pb-3">
-                            <p className="text-white/40 text-sm font-semibold tracking-[0.2em] uppercase">Tap to quietly log your state</p>
-                        </div>
-
-                        {/* Button grid — solid dark block BELOW video, never overlaps */}
-                        <div className="relative z-20 w-full bg-black/80 backdrop-blur-md border-t border-white/10 px-4 py-5 flex-shrink-0">
-                            <div className="grid grid-cols-4 gap-2 max-w-5xl mx-auto">
-                                {COMPANION_FEELINGS.map(f => (
-                                    <button
-                                        key={f.id}
-                                        onClick={() => {
-                                            const key = `companion_logs_${journey.sessionId || 'demo-1'}`;
-                                            const existing = JSON.parse(localStorage.getItem(key) || '[]');
-                                            existing.push({ timestamp: new Date().toISOString(), feeling: f.id });
-                                            localStorage.setItem(key, JSON.stringify(existing));
-                                        }}
-                                        className={`${f.color} backdrop-blur-lg border rounded-xl px-2 py-3 text-xs font-bold tracking-wide uppercase text-center transition-all duration-200 active:scale-95 active:brightness-150 shadow-lg`}
-                                        aria-label={`Log feeling: ${f.label}`}
-                                    >{f.label}</button>
-                                ))}
-                            </div>
-                        </div>
+                        {/* ══ ZONE 2 — Button grid ═══════════════════════════════════
+                         *  shrink-0: never compressed by video zone.
+                         *  border-t: hard visual boundary — never overlaps video.
+                         *  Buttons: instant glow on tap → 1.8s CSS fade-out.
+                         *  Dark-room palette: *-300/80 text, ~15% opacity rest, ~60% glow.
+                         */}
+                        <CompanionButtonGrid
+                            sessionId={journey.sessionId || 'demo-1'}
+                        />
                     </div>
                 )
             }

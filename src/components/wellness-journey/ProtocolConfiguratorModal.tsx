@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useProtocol, type ProtocolArchetype } from '../../contexts/ProtocolContext';
-import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal, HelpCircle, User } from 'lucide-react';
+import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal, HelpCircle, User, ArrowLeft } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface ProtocolConfiguratorModalProps {
     onClose: () => void;
+    /** Called when the user clicks Back on Step 1 — parent reopens PatientSelectModal */
+    onBack?: () => void;
     /** Called with intake data when the practitioner clicks Save */
     onIntakeComplete?: (intake: PatientIntakeData) => void;
 }
@@ -14,6 +16,7 @@ export interface PatientIntakeData {
     age: string;
     weight: string;
     gender: string;
+    smoking: string;
 }
 
 const CONDITIONS = [
@@ -28,6 +31,7 @@ const CONDITIONS = [
 ];
 
 const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+const SMOKING_STATUSES = ['Non-smoker', 'Ex-smoker', 'Current smoker', 'Prefer not to say'];
 
 const ARCHETYPES = [
     {
@@ -114,7 +118,7 @@ const CUSTOM_DOMAINS = [
     }
 ];
 
-export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps> = ({ onClose, onIntakeComplete }) => {
+export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps> = ({ onClose, onBack, onIntakeComplete }) => {
     const { config, setConfig } = useProtocol();
     const [selectedId, setSelectedId] = useState<ProtocolArchetype>(config.protocolType);
     const [saveAsDefault, setSaveAsDefault] = useState(true);
@@ -127,6 +131,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const [age, setAge] = useState('');
     const [weight, setWeight] = useState('');
     const [gender, setGender] = useState('');
+    const [smoking, setSmoking] = useState('');
 
     const [step, setStep] = useState<1 | 2>(1);
 
@@ -136,8 +141,9 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
         age: !!age && !isNaN(parseFloat(age)) && parseFloat(age) >= 18,
         weight: !!weight && !isNaN(parseFloat(weight)) && parseFloat(weight) > 0,
         gender: !!gender,
+        smoking: !!smoking,
     };
-    const allComplete = stepDone.condition && stepDone.age && stepDone.weight && stepDone.gender;
+    const allComplete = stepDone.condition && stepDone.age && stepDone.weight && stepDone.gender && stepDone.smoking;
 
     // Ref for the Start Session button — receives focus when allComplete flips true
     const startBtnRef = useRef<HTMLButtonElement>(null);
@@ -170,11 +176,11 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const handleSave = () => {
         // Persist intake data to localStorage so WellnessJourney can restore it on remount.
         try {
-            localStorage.setItem('ppn_patient_intake', JSON.stringify({ condition, age, weight, gender }));
+            localStorage.setItem('ppn_patient_intake', JSON.stringify({ condition, age, weight, gender, smoking }));
         } catch (_) { }
         // Surface intake data to parent (WellnessJourney will store in journey.demographics)
         if (onIntakeComplete) {
-            onIntakeComplete({ condition, age, weight, gender });
+            onIntakeComplete({ condition, age, weight, gender, smoking });
         }
         onClose();
     };
@@ -191,7 +197,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             </div>
                             <div>
                                 <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">New Patient Setup</h2>
-                                <p className="text-base text-slate-400 mt-1">Complete all 4 steps, then start your session.</p>
+                                <p className="text-base text-slate-400 mt-1">Complete all 5 steps, then start your session.</p>
                             </div>
                         </div>
                         {/* Close button */}
@@ -233,14 +239,68 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             </div>
                         </div>
 
-                        {/* Steps 2 & 3 — Age + Weight (combined row) */}
+                        {/* Steps 2 & 3 — Gender + Smoking Status (combined row) */}
+                        <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.gender && stepDone.smoking ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
+                            <div className="grid grid-cols-2 gap-6">
+                                {/* Gender */}
+                                <div>
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.gender ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
+                                            {stepDone.gender ? <CheckCircle className="w-4 h-4" /> : '2'}
+                                        </div>
+                                        <label className="form-label" style={{ color: '#A8B5D1' }}>Gender</label>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {GENDERS.map(g => (
+                                            <button
+                                                key={g}
+                                                type="button"
+                                                onClick={() => setGender(g)}
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
+                                                    ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                                                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                    }`}
+                                            >
+                                                {g}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                {/* Smoking Status */}
+                                <div>
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.smoking ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
+                                            {stepDone.smoking ? <CheckCircle className="w-4 h-4" /> : '3'}
+                                        </div>
+                                        <label className="form-label" style={{ color: '#A8B5D1' }}>Smoking Status</label>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {SMOKING_STATUSES.map(s => (
+                                            <button
+                                                key={s}
+                                                type="button"
+                                                onClick={() => setSmoking(s)}
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${smoking === s
+                                                    ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                                                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                    }`}
+                                            >
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Steps 4 & 5 — Age + Weight (combined row) */}
                         <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.age && stepDone.weight ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
                             <div className="grid grid-cols-2 gap-6">
                                 {/* Age */}
                                 <div>
                                     <div className="flex items-center gap-2.5 mb-3">
                                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.age ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
-                                            {stepDone.age ? <CheckCircle className="w-4 h-4" /> : '2'}
+                                            {stepDone.age ? <CheckCircle className="w-4 h-4" /> : '4'}
                                         </div>
                                         <label htmlFor="intake-age" className="form-label" style={{ color: '#A8B5D1' }}>Age</label>
                                     </div>
@@ -259,7 +319,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                 <div>
                                     <div className="flex items-center gap-2.5 mb-3">
                                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.weight ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
-                                            {stepDone.weight ? <CheckCircle className="w-4 h-4" /> : '3'}
+                                            {stepDone.weight ? <CheckCircle className="w-4 h-4" /> : '5'}
                                         </div>
                                         <label htmlFor="intake-weight" className="form-label" style={{ color: '#A8B5D1' }}>
                                             Weight
@@ -295,31 +355,6 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             </div>
                         </div>
 
-                        {/* Step 4 — Gender */}
-                        <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.gender ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.gender ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
-                                    {stepDone.gender ? <CheckCircle className="w-4 h-4" /> : '4'}
-                                </div>
-                                <label className="form-label" style={{ color: '#A8B5D1' }}>Gender</label>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {GENDERS.map(g => (
-                                    <button
-                                        key={g}
-                                        type="button"
-                                        onClick={() => setGender(g)}
-                                        className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
-                                            ? 'bg-indigo-600 text-white border-indigo-500'
-                                            : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
-                                            }`}
-                                    >
-                                        {g}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
                     </div>
 
                     {/* Footer — Back + Start Session */}
@@ -335,7 +370,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             ref={startBtnRef}
                             onClick={handleSave}
                             disabled={!allComplete}
-                            aria-label={allComplete ? 'Start session' : 'Complete all four steps to enable'}
+                            aria-label={allComplete ? 'Start session' : 'Complete all five steps to enable'}
                             className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all duration-300 border ${allComplete
                                 ? 'bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-lg shadow-indigo-500/20 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900'
                                 : 'bg-slate-800/40 border-slate-700/40 text-slate-500 cursor-not-allowed opacity-50'
@@ -363,10 +398,10 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <p className="text-base text-slate-400 mt-1">Configure your clinical interface layout.</p>
                         </div>
                     </div>
-                    {/* Close button */}
+                    {/* X — on Step 1, goes back to PatientSelectModal (not forward into the journey) */}
                     <button
-                        onClick={onClose}
-                        aria-label="Close workspace configuration"
+                        onClick={onBack ?? onClose}
+                        aria-label="Back to patient selection"
                         className="p-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-all flex-shrink-0 ml-4"
                     >
                         <X className="w-5 h-5" />
@@ -517,8 +552,16 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className="flex justify-end items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                {/* Footer — Back + Start Session */}
+                <div className="flex justify-between items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                    <button
+                        onClick={onBack ?? onClose}
+                        aria-label="Back to patient selection"
+                        className="flex items-center gap-2 px-5 py-3 text-base font-semibold rounded-xl border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 hover:border-slate-600 transition-all active:scale-95"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back
+                    </button>
                     <button
                         onClick={handleNextStep}
                         className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg border active:scale-95 ${selectedId === 'clinical' ? 'bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-indigo-500/10' :

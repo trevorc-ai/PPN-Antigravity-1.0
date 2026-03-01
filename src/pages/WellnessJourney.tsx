@@ -189,7 +189,10 @@ const WellnessJourneyInternal: React.FC = () => {
         const resolvedSiteId = await getCurrentSiteId();
         let sessionId: string | undefined;
 
-        if (resolvedSiteId) {
+        // TEST mode: skip all DB writes — use a local-only session UUID
+        const isTestSession = patientId.startsWith('TEST-');
+
+        if (!isTestSession && resolvedSiteId) {
             const result = await createClinicalSession(patientId, resolvedSiteId);
             if (result.success && result.sessionId) {
                 sessionId = result.sessionId;
@@ -197,9 +200,13 @@ const WellnessJourneyInternal: React.FC = () => {
                 console.error('[WellnessJourney] ❌ createClinicalSession FAILED — patient will NOT persist to DB.', result.error);
                 sessionId = crypto.randomUUID();
             }
-        } else {
+        } else if (!isTestSession) {
             console.error('[WellnessJourney] ❌ No siteId resolved — session will NOT persist to DB. Check log_user_sites.');
             sessionId = crypto.randomUUID();
+        } else {
+            // TEST session — ephemeral local ID only
+            sessionId = crypto.randomUUID();
+            console.log('[WellnessJourney] 🧪 TEST session started — no DB writes will occur. Patient ID:', patientId);
         }
 
         // ── STEP 1: Load medications for existing patients from Supabase ─────────
@@ -264,11 +271,19 @@ const WellnessJourneyInternal: React.FC = () => {
         }
 
         if (isNew) {
-            addToast({
-                title: 'New Patient Created',
-                message: `Session started for ${patientId} — Phase 1: Preparation`,
-                type: 'success',
-            });
+            if (patientId.startsWith('TEST-')) {
+                addToast({
+                    title: '🧪 Practice Mode Active',
+                    message: 'No data will be saved. Explore freely.',
+                    type: 'info',
+                });
+            } else {
+                addToast({
+                    title: 'New Patient Created',
+                    message: `Session started for ${patientId} — Phase 1: Preparation`,
+                    type: 'success',
+                });
+            }
             setShowProtocolConfigurator(true);
         } else {
             const phaseLabel = targetPhase === 1 ? 'Preparation' : targetPhase === 2 ? 'Treatment' : 'Integration';
@@ -280,9 +295,18 @@ const WellnessJourneyInternal: React.FC = () => {
         }
     }, [addToast, navigate]);
 
-    // Stable callback for closing the patient modal — prevents PatientSelectModal's
-    // Escape listener from re-registering on every render (escape-key boot bug fix).
-    const handleClosePatientModal = useCallback(() => setShowPatientModal(false), []);
+    // If the user clicks Back on ProtocolConfiguratorModal Step 1, we need to
+    // reopen PatientSelectModal so they can change their patient selection.
+    // The patient ID was already set by handlePatientSelect, so we reset it
+    // to the placeholder and show the modal again.
+    const handleProtocolBack = useCallback(() => {
+        setShowProtocolConfigurator(false);
+        setShowPatientModal(true);
+    }, []);
+
+    // Stable callback for closing the patient modal — navigates to the user's
+    // previous page (whatever they were on before clicking Wellness Journey).
+    const handleClosePatientModal = useCallback(() => navigate(-1), [navigate]);
 
     // WO-113: SlideOut form panel state
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -610,6 +634,7 @@ const WellnessJourneyInternal: React.FC = () => {
                 <PatientSelectModal
                     onSelect={handlePatientSelect}
                     onClose={handleClosePatientModal}
+                    onNavigateBack={handleClosePatientModal}
                     initialView={patientModalView}
                 />
             )}
@@ -618,6 +643,7 @@ const WellnessJourneyInternal: React.FC = () => {
             {showProtocolConfigurator && (
                 <ProtocolConfiguratorModal
                     onClose={() => setShowProtocolConfigurator(false)}
+                    onBack={handleProtocolBack}
                     onIntakeComplete={(intake: PatientIntakeData) => {
                         setJourney(prev => ({
                             ...prev,
@@ -636,7 +662,7 @@ const WellnessJourneyInternal: React.FC = () => {
             {/* Onboarding Modal */}
             {showOnboarding && (
                 <ArcOfCareOnboarding
-                    onClose={() => setShowOnboarding(false)}
+                    onClose={() => navigate(-1)}
                     onGetStarted={() => { setShowOnboarding(false); setActivePhase(1); }}
                 />
             )}
@@ -705,6 +731,12 @@ const WellnessJourneyInternal: React.FC = () => {
                             <div className="flex items-center gap-3 flex-wrap">
                                 <span className="text-sm md:text-base font-black text-slate-400 uppercase tracking-widest">Patient</span>
                                 <span className="text-xl md:text-2xl font-black text-white font-mono tracking-wide">{journey.patientId}</span>
+                                {/* TEST MODE badge — amber, shown only for practice sessions */}
+                                {journey.patientId.startsWith('TEST-') && (
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-xs font-black text-amber-400 tracking-widest uppercase">
+                                        🧪 TEST MODE
+                                    </span>
+                                )}
                                 {/* Verification Pills — Age / Gender / Weight */}
                                 {[{
                                     label: journey.demographics?.age ? `${journey.demographics.age} yrs` : '— yrs',

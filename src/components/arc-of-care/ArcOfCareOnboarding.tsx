@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
+import { ArrowLeft, X } from 'lucide-react';
 
 export interface ArcOfCareOnboardingProps {
     onClose: () => void;
@@ -17,6 +17,12 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
     onGetStarted,
 }) => {
     const [dontShowAgain, setDontShowAgain] = React.useState(false);
+    const getStartedRef = useRef<HTMLButtonElement>(null);
+
+    // Auto-focus Get Started on mount so the user can press Enter immediately
+    useEffect(() => {
+        getStartedRef.current?.focus();
+    }, []);
 
     // Escape key closes
     React.useEffect(() => {
@@ -49,10 +55,18 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                 aria-labelledby="onboarding-title"
                 aria-modal="true"
             >
+                {/* ── X close — returns to last screen (dismiss only) ──────── */}
+                <button
+                    onClick={onClose}
+                    aria-label="Close"
+                    className="absolute top-3 right-3 z-10 p-2 rounded-lg text-slate-500 hover:text-[#A8B5D1] hover:bg-slate-800 transition-all"
+                >
+                    <X className="w-5 h-5" aria-hidden="true" />
+                </button>
                 {/* ── BACK BAR — unmissable on every screen size ─────────────── */}
                 <button
                     onClick={handleClose}
-                    aria-label="Go back to Dashboard"
+                    aria-label="Go back"
                     className="
                         flex items-center gap-2.5
                         w-full px-5 py-3.5
@@ -66,7 +80,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                     "
                 >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" aria-hidden="true" />
-                    Back to Dashboard
+                    Back
                 </button>
 
                 {/* ── Header ────────────────────────────────────────────────── */}
@@ -130,7 +144,7 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
 
                 {/* ── CTAs — pinned to bottom ───────────────────────────────── */}
                 <div className="flex-shrink-0 px-6 py-4 border-t border-slate-700/60 bg-slate-900 rounded-b-2xl flex flex-col sm:flex-row gap-4 items-center justify-between">
-                    <label className="flex items-center gap-2.5 cursor-pointer group select-none">
+                    <label className="flex items-center gap-2.5 cursor-pointer group select-none order-2 sm:order-1">
                         <div className="relative flex items-center justify-center flex-shrink-0">
                             <input
                                 type="checkbox"
@@ -147,12 +161,23 @@ export const ArcOfCareOnboarding: React.FC<ArcOfCareOnboardingProps> = ({
                         </span>
                     </label>
 
-                    <button
-                        onClick={handleGetStarted}
-                        className="w-full sm:w-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-black text-sm rounded-xl transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
-                    >
-                        Get Started →
-                    </button>
+                    <div className="flex items-center gap-3 order-1 sm:order-2 w-full sm:w-auto">
+                        <button
+                            onClick={handleClose}
+                            aria-label="Go back to Dashboard"
+                            className="flex items-center gap-2 px-5 py-3 text-sm font-semibold rounded-xl border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 hover:border-slate-600 transition-all active:scale-95"
+                        >
+                            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                            Back
+                        </button>
+                        <button
+                            ref={getStartedRef}
+                            onClick={handleGetStarted}
+                            className="flex-1 sm:flex-none px-8 py-3 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-black text-sm rounded-xl transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/50"
+                        >
+                            Get Started →
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

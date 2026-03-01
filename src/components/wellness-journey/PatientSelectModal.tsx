@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, X, Loader2, AlertCircle, Camera, Lock, QrCode } from 'lucide-react';
+import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, ArrowLeft, X, Loader2, AlertCircle, Camera, Lock, QrCode, FlaskConical } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import { getCurrentSiteId, generatePatientId } from '../../services/identity';
 
@@ -16,6 +16,8 @@ import { getCurrentSiteId, generatePatientId } from '../../services/identity';
 interface PatientSelectModalProps {
     onSelect: (patientId: string, isNew: boolean, phase: Phase) => void;
     onClose?: () => void;
+    /** Navigate back to the screen the user came from before entering the Wellness Journey */
+    onNavigateBack?: () => void;
     /** Phase 1 → 'choose' (New + Existing). Phase 2/3 → 'existing' (lookup only). */
     initialView?: 'choose' | 'existing';
 }
@@ -52,6 +54,11 @@ function derivePhase(sessionType: string | null): Phase {
 
 // generatePatientId() imported from ../../services/identity (WO-206 service isolation)
 
+/** Generates an ephemeral TEST patient ID — never written to the DB */
+function generateTestPatientId(): string {
+    return 'TEST-' + Date.now().toString(36).toUpperCase();
+}
+
 const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void }> =
     ({ label, active, onClick }) => {
 
@@ -69,12 +76,13 @@ const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void
         );
     }
 
-export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect, onClose, initialView = 'choose' }) => {
+export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect, onClose, onNavigateBack, initialView = 'choose' }) => {
     const [view, setView] = useState<'choose' | 'existing'>(initialView);
     const [search, setSearch] = useState('');
     const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
     const [phaseFilter, setPhaseFilter] = useState<Phase | null>(null);
     const [newId] = useState(generatePatientId);
+    const [testId] = useState(generateTestPatientId);
     const [scannerOpen, setScannerOpen] = useState(false);
 
     // Live data state
@@ -195,10 +203,10 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                 {view === 'choose' && (
                     <div className="bg-slate-900 border border-slate-700/60 rounded-2xl overflow-hidden shadow-2xl shadow-black/60">
                         <div className="px-8 pt-8 pb-6 border-b border-slate-800 relative">
-                            {onClose && (
+                            {(onNavigateBack ?? onClose) && (
                                 <button
                                     type="button"
-                                    onClick={onClose}
+                                    onClick={onNavigateBack ?? onClose}
                                     aria-label="Close patient selection"
                                     className="absolute top-0 right-0 p-2 m-3 rounded-lg text-slate-500 hover:text-[#A8B5D1] hover:bg-slate-800 transition-all"
                                 >
@@ -239,6 +247,22 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     <p className="text-sm text-slate-400 mt-0.5">Look up a patient by ID and continue their journey</p>
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-slate-500 group-hover:translate-x-1 transition-transform" />
+                            </button>
+
+                            {/* Practice Session — TEST mode, no DB writes */}
+                            <button
+                                onClick={() => onSelect(testId, true, 'Preparation')}
+                                className="w-full group flex items-center gap-5 p-5 bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 rounded-xl transition-all active:scale-[0.99] text-left"
+                            >
+                                <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center flex-shrink-0">
+                                    <FlaskConical className="w-6 h-6 text-amber-400" />
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-base font-bold text-white">Practice Session</p>
+                                    <p className="text-sm text-slate-400 mt-0.5">Explore the Wellness Journey without creating a real patient record</p>
+                                    <p className="text-xs text-amber-400 font-mono mt-2 tracking-wide">→ {testId}</p>
+                                </div>
+                                <ChevronRight className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" />
                             </button>
 
                             {/* Patient Bridge Camera Scan - Collapsible */}
@@ -297,8 +321,20 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             </div>
                         </div>
 
-                        <div className="px-6 pb-5 text-center leading-relaxed">
-                            <p className="text-sm text-slate-400 font-medium tracking-wide">
+                        {/* Footer — Back button + Phantom Shield notice */}
+                        <div className="px-6 pb-5">
+                            <div className="flex items-center justify-between mb-3">
+                                <button
+                                    type="button"
+                                    onClick={onNavigateBack ?? onClose}
+                                    aria-label="Go back"
+                                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 hover:border-slate-600 transition-all active:scale-95"
+                                >
+                                    <ArrowLeft className="w-4 h-4" />
+                                    Back
+                                </button>
+                            </div>
+                            <p className="text-sm text-slate-400 font-medium tracking-wide text-center leading-relaxed">
                                 All patient data is strictly anonymized via <a href="/privacy" className="text-indigo-400 hover:text-indigo-300 hover:underline font-bold transition-colors">Phantom Shield</a>.<br />
                                 No <span className="text-white font-bold">PHI</span> is ever stored or accessible.
                             </p>
@@ -311,21 +347,14 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                     <div className="bg-slate-900 border border-slate-700/60 rounded-2xl overflow-hidden shadow-2xl shadow-black/60">
                         {/* Header */}
                         <div className="px-6 pt-6 pb-4 border-b border-slate-800 relative">
-                            {onClose && (
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    aria-label="Close patient selection"
-                                    className="absolute top-0 right-0 p-2 m-3 rounded-lg text-slate-500 hover:text-[#A8B5D1] hover:bg-slate-800 transition-all"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
-                            )}
+                            {/* X on existing view — goes back to choose, never exits the modal */}
                             <button
+                                type="button"
                                 onClick={() => setView('choose')}
-                                className="text-xs text-slate-500 hover:text-slate-300 transition-colors mb-3 flex items-center gap-1"
+                                aria-label="Back to patient selection options"
+                                className="absolute top-0 right-0 p-2 m-3 rounded-lg text-slate-500 hover:text-[#A8B5D1] hover:bg-slate-800 transition-all"
                             >
-                                ← Back
+                                <X className="w-5 h-5" />
                             </button>
                             <div className="flex items-center justify-between">
                                 <div>
@@ -450,10 +479,21 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             ))}
                         </div>
 
-                        <div className="px-6 pb-5 pt-3 text-center border-t border-slate-800/50">
-                            <p className="text-xs text-slate-500 mb-2">
-                                {loading ? 'Fetching from database…' : `${patients.length} patient${patients.length !== 1 ? 's' : ''} on record · Live data`}
-                            </p>
+                        <div className="px-6 pb-5 pt-3 border-t border-slate-800/50">
+                            <div className="flex items-center justify-between mb-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setView('choose')}
+                                    aria-label="Back to patient selection options"
+                                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 hover:border-slate-600 transition-all active:scale-95"
+                                >
+                                    <ArrowLeft className="w-4 h-4" />
+                                    Back
+                                </button>
+                                <p className="text-xs text-slate-500 text-right">
+                                    {loading ? 'Fetching…' : `${patients.length} patient${patients.length !== 1 ? 's' : ''} on record`}
+                                </p>
+                            </div>
                             <p className="text-xs text-slate-500 flex items-center justify-center gap-1.5 font-medium">
                                 <Lock className="w-3 h-3 text-indigo-400/70" /> Secured and anonymized by <a href="/privacy" className="text-indigo-400 hover:text-indigo-300 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">Phantom Shield</a>
                             </p>
