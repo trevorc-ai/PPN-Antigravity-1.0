@@ -1,8 +1,8 @@
 ---
 id: WO-507
 slug: Mobile-UI-Overflow-Bugs
-status: 03_BUILD
-owner: BUILDER
+status: 04_QA
+owner: INSPECTOR
 priority: HIGH
 failure_count: 0
 created: 2026-02-26
@@ -114,3 +114,25 @@ The card's `overflow-hidden` should remain for border-radius — wrap only the *
 - `src/pages/InteractionChecker.tsx` (BUG-4)
 - `src/pages/AuditLogs.tsx` (BUG-5)
 - `src/pages/deep-dives/MolecularPharmacologyPage.tsx` (BUG-6)
+
+---
+
+## BUILDER IMPLEMENTATION COMPLETE
+
+**Commit:** `abc7510` — `feat: WO-507/512/518/524 — Mobile UI fixes, ComboSelect, Spherecules container`
+**Pushed:** `feature/governance-and-p0-fixes` → confirmed on remote 2026-03-01
+
+**BUG-1 (Settings):** Added `pt-safe` / top padding on mobile page container in `src/pages/Settings.tsx`
+**BUG-2 (Performance Radar):** Stacked title/subtitle and tab toggle vertically on mobile in `src/components/analytics/ClinicPerformanceRadar.tsx`
+**BUG-3 (Patient Galaxy):** Removed duplicate heading render in `src/components/analytics/PatientConstellation.tsx`
+**BUG-4 (Interaction Checker):** Replaced native select + custom MedDropdown with unified `ComboSelect` — single chevron, no truncation
+**BUG-5 (Audit Logs):** Wrapped tab bar in `overflow-x-auto` container in `src/pages/AuditLogs.tsx`
+**BUG-6 (Molecular Pharmacology):** Wrapped substance tab row in horizontal scroll container in `src/components/analytics/MolecularPharmacology.tsx`
+
+**Acceptance Criteria (self-assessed):**
+- [x] Settings page: first visible element on mobile is the section heading, no content cut off at top
+- [x] Analytics Performance Radar card: title/subtitle and tabs do not overlap on mobile — stack vertically on `< md`
+- [x] Patient Galaxy heading does not duplicate — exactly one `h2` renders
+- [x] Interaction Checker dropdown: single chevron only, label does not truncate mid-word
+- [x] Audit Logs tab bar: all three tabs fully visible and tappable on 390px width
+- [x] Molecular Pharmacology substance tabs: all tabs reachable via horizontal scroll, no clipping
