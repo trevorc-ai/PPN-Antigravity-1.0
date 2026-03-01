@@ -1254,7 +1254,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 showCompanion && (
                     <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden selection:bg-transparent">
 
-                        {/* Close — top-right */}
+                        {/* Close — absolute top-right, above everything */}
                         <button
                             onClick={() => setShowCompanion(false)}
                             className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/8 border border-white/15 text-white/35 hover:bg-white/15 hover:text-white/60 backdrop-blur-md transition-all"
@@ -1266,53 +1266,46 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">Return to session</span>
                         </div>
 
-                        {/* ══ ZONE 1 — Spherecules video ══════════════════════════════
-                         *  flex-1 fills all space above the button strip.
-                         *  object-cover fills the zone; portrait video on portrait phone = perfect fill.
-                         *  pointer-events-none keeps video out of the tap target.
-                         */}
-                        <div
-                            className="relative flex-1 overflow-hidden pointer-events-none"
-                            aria-hidden="true"
-                        >
-                            {/* Soft gradient overlay for legibility */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
+                        {/* ══ CONTENT COLUMN ═══════════════════════════════════════════
+                         *  max-w-2xl centers the portrait panel on any wider screen.
+                         *  flex-col: video fills remaining height, buttons shrink-0 below.
+                         *  On desktop: narrow portrait panel on black bg.
+                         *  On phone:  fills edge-to-edge naturally.
+                         * ════════════════════════════════════════════════════════════ */}
+                        <div className="flex flex-col w-full max-w-2xl mx-auto flex-1 min-h-0">
 
-                            {/* Prompt — very dim so it doesn't jar in a dark room */}
-                            <div className="absolute top-5 left-0 right-0 text-center z-20">
-                                <p className="text-white/20 text-xs font-medium tracking-[0.25em] uppercase">
-                                    Tap to quietly log your state
-                                </p>
+                            {/* ZONE 1 — Video: fills remaining height in the column */}
+                            <div
+                                className="relative flex-1 overflow-hidden pointer-events-none rounded-t-2xl"
+                                aria-hidden="true"
+                            >
+                                {/* Soft gradient for legibility */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
+
+                                {/* Dim prompt at top */}
+                                <div className="absolute top-5 left-0 right-0 text-center z-20">
+                                    <p className="text-white/20 text-xs font-medium tracking-[0.25em] uppercase">
+                                        Tap to quietly log your state
+                                    </p>
+                                </div>
+
+                                {/* Spherecules — portrait video, object-cover fills the portrait column */}
+                                <video
+                                    src="/admin_uploads/spherecules.mp4"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="absolute inset-0 w-full h-full object-cover opacity-90"
+                                />
                             </div>
 
-                            {/* Spherecules video — object-cover fills zone naturally */}
-                            <video
-                                src="/admin_uploads/spherecules.mp4"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="absolute inset-0 w-full h-full object-cover opacity-90"
+                            {/* ZONE 2 — Buttons: always at the bottom of the column */}
+                            <CompanionButtonGrid
+                                sessionId={journey.sessionId || 'demo-1'}
                             />
-
-                            {/* Keyframe for button glow animation */}
-                            <style>{`
-                                @keyframes companion-breathe {
-                                    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-                                    50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.12); }
-                                }
-                            `}</style>
                         </div>
 
-                        {/* ══ ZONE 2 — Button grid ═══════════════════════════════════
-                         *  shrink-0: never compressed by video zone.
-                         *  border-t: hard visual boundary — never overlaps video.
-                         *  Buttons: instant glow on tap → 1.8s CSS fade-out.
-                         *  Dark-room palette: *-300/80 text, ~15% opacity rest, ~60% glow.
-                         */}
-                        <CompanionButtonGrid
-                            sessionId={journey.sessionId || 'demo-1'}
-                        />
                     </div>
                 )
             }

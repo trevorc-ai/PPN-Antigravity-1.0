@@ -147,14 +147,28 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
     // Ref for the Start Session button — receives focus when allComplete flips true
     const startBtnRef = useRef<HTMLButtonElement>(null);
+    // Refs for the numeric inputs — used for programmatic focus progression
+    const ageInputRef = useRef<HTMLInputElement>(null);
+    const weightInputRef = useRef<HTMLInputElement>(null);
 
-    // Auto-focus the Start Session button the moment all 4 steps are complete.
-    // Keyboard/tab users can press Enter immediately — no extra tabbing through disabled UI.
+    // Auto-focus the Start Session button the moment all 5 steps are complete —
+    // but ONLY if the weight input isn't currently being typed into.
+    // When weight has focus, the onBlur handler below takes over.
     useEffect(() => {
         if (step === 2 && allComplete && startBtnRef.current) {
-            startBtnRef.current.focus();
+            if (document.activeElement !== weightInputRef.current) {
+                startBtnRef.current.focus();
+            }
         }
     }, [step, allComplete]);
+
+    // Auto-focus the Age input once condition + gender + smoking are all selected
+    // and the user hasn't entered an age yet. This saves a click before the numeric fields.
+    useEffect(() => {
+        if (step === 2 && condition && gender && smoking && !age) {
+            ageInputRef.current?.focus();
+        }
+    }, [step, condition, gender, smoking, age]);
 
     const toggleFeature = (id: string) => {
         setCustomFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
@@ -305,6 +319,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         <label htmlFor="intake-age" className="form-label" style={{ color: '#A8B5D1' }}>Age</label>
                                     </div>
                                     <input
+                                        ref={ageInputRef}
                                         id="intake-age"
                                         type="number"
                                         min="18"
@@ -312,6 +327,12 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         placeholder="e.g. 42"
                                         value={age}
                                         onChange={e => setAge(e.target.value)}
+                                        onKeyDown={e => {
+                                            if (e.key === 'Enter' && stepDone.age) {
+                                                e.preventDefault();
+                                                weightInputRef.current?.focus();
+                                            }
+                                        }}
                                         className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
                                     />
                                 </div>
@@ -335,6 +356,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                     </div>
                                     <div className="relative">
                                         <input
+                                            ref={weightInputRef}
                                             id="intake-weight"
                                             type="number"
                                             min="20"
@@ -343,6 +365,9 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                             placeholder="e.g. 68"
                                             value={weight}
                                             onChange={e => setWeight(e.target.value)}
+                                            onBlur={() => {
+                                                if (allComplete) startBtnRef.current?.focus();
+                                            }}
                                             className="w-full px-4 py-2.5 pr-10 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
                                         />
                                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">kg</span>
