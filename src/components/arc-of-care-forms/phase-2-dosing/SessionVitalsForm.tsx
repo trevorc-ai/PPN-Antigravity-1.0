@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, Activity, Droplet, Clock, Save, Plus, Trash2, CheckCircle, Wind, Thermometer, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Heart, Activity, Droplet, Clock, Plus, Trash2, Wind, Thermometer, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
 import { FormFooter } from '../shared/FormFooter';
@@ -65,8 +65,38 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     onBack
 }) => {
     const { config } = useProtocol();
-    const showQTTracker = config.enabledFeatures.includes('session-vitals');
+    const qtTrackerEnabled = config.enabledFeatures.includes('session-vitals');
     const showEKGMonitor = config.enabledFeatures.includes('ekg-monitoring');
+
+    // WO-534: QT Tracker — auto-hide unless Ibogaine is selected substance.
+    // A manual override toggle lets practitioners capture baseline readings
+    // before Ibogaine administration begins.
+    const getSelectedSubstance = useCallback((): string => {
+        try {
+            const raw = localStorage.getItem('ppn_dosing_protocol');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                // DosingProtocolForm stores substance under `substance_name` (see DosingProtocolForm.tsx:129)
+                return (parsed.substance_name ?? parsed.substance ?? parsed.primary_substance ?? '').toLowerCase();
+            }
+        } catch (_) { /* ignore parse errors */ }
+        return '';
+    }, []);
+
+    const [isIbogaine, setIsIbogaine] = useState<boolean>(() => getSelectedSubstance().includes('ibogaine'));
+    const [qtManualOverride, setQtManualOverride] = useState<boolean>(false);
+
+    // Re-check substance whenever localStorage changes (e.g. protocol updated in sibling form)
+    useEffect(() => {
+        const handleStorage = () => setIsIbogaine(getSelectedSubstance().includes('ibogaine'));
+        window.addEventListener('storage', handleStorage);
+        // Also poll once on mount in case value was set before this panel opened
+        handleStorage();
+        return () => window.removeEventListener('storage', handleStorage);
+    }, [getSelectedSubstance]);
+
+    // QT Tracker is shown when: substance is Ibogaine OR practitioner manually toggled it on
+    const showQTTracker = qtTrackerEnabled && (isIbogaine || qtManualOverride);
     // Auto-stamp recorded_at on first render
     function nowStamp(): string {
         const d = new Date();
@@ -623,18 +653,53 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             </div>
                         </div>
 
-                        {/* QT Interval Tracker — Phase 2 cardiac monitoring (WO-413 PRD B)
+                        {/* WO-534: QT Interval Tracker — auto-hidden unless Ibogaine is selected.
+                            Shows a manual override toggle when substance is NOT Ibogaine
+                            so practitioners can capture a baseline QTc before administration.
                             Confirmed defaults: Philips IntelliVue / Schiller ETM — Dr. Allen 2026-02-25
                             dangerThresholdMs=500, cautionThresholdMs=475 — Dr. Allen confirmed 2026-02-25 */}
-                        {showQTTracker && index === readings.length - 1 && (
-                            <div className="pt-4 border-t border-amber-500/15">
-                                <QTIntervalTracker
-                                    divergenceThresholdMs={50}
-                                    dangerThresholdMs={500}
-                                    cautionThresholdMs={475}
-                                    deviceALabel="Philips IntelliVue"
-                                    deviceBLabel="Schiller ETM"
-                                />
+                        {qtTrackerEnabled && index === readings.length - 1 && (
+                            <div className="pt-4 border-t border-amber-500/15 space-y-3">
+                                {/* Manual override toggle (visible only when NOT auto-showing) */}
+                                {!isIbogaine && (
+                                    <div className="flex items-center justify-between px-4 py-3 bg-amber-900/10 border border-amber-500/20 rounded-xl">
+                                        <div className="flex items-center gap-2.5">
+                                            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" aria-hidden="true" />
+                                            <div>
+                                                <p className="text-sm font-bold text-amber-300 leading-tight">QT Interval Tracker</p>
+                                                <p className="text-xs text-amber-600 mt-0.5">
+                                                    Auto-hidden — not Ibogaine protocol.
+                                                    Enable to capture baseline QTc.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setQtManualOverride(v => !v)}
+                                            aria-label={qtManualOverride ? 'Hide QT Interval Tracker' : 'Show QT Interval Tracker for baseline'}
+                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold uppercase tracking-wide transition-all ${qtManualOverride
+                                                ? 'bg-amber-600/20 border-amber-500/40 text-amber-300 hover:bg-amber-600/30'
+                                                : 'bg-slate-800/60 border-slate-600/50 text-slate-400 hover:border-amber-500/40 hover:text-amber-300'
+                                                }`}
+                                        >
+                                            {qtManualOverride
+                                                ? <><EyeOff className="w-3.5 h-3.5" aria-hidden="true" /> Hide</>
+                                                : <><Eye className="w-3.5 h-3.5" aria-hidden="true" /> Show</>
+                                            }
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* QT Tracker panel — shown when Ibogaine OR override active */}
+                                {showQTTracker && (
+                                    <QTIntervalTracker
+                                        divergenceThresholdMs={50}
+                                        dangerThresholdMs={500}
+                                        cautionThresholdMs={475}
+                                        deviceALabel="Philips IntelliVue"
+                                        deviceBLabel="Schiller ETM"
+                                    />
+                                )}
                             </div>
                         )}
 

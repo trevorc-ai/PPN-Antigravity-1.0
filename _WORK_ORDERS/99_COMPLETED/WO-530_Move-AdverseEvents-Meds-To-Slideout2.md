@@ -1,7 +1,7 @@
 ---
 id: WO-530
 title: "Move Adverse Events & Meds Container to Slideout 2"
-status: 01_TRIAGE
+status: 03_BUILD
 owner: LEAD
 created: 2026-03-01T00:54:19-08:00
 failure_count: 0

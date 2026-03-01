@@ -1,7 +1,7 @@
 ---
 id: WO-532
 title: "Google-Style Search Portal — Post-Login Home + Sidebar Placement"
-status: 01_TRIAGE
+status: 03_BUILD
 owner: LEAD
 authored_by: PRODDY
 created: 2026-03-01T01:31:00-08:00
@@ -91,7 +91,7 @@ A returning or new authenticated practitioner needs an immediate, obvious starti
 - [x] Open Questions list is 3 items (within 5 max)
 - [x] Total PRD word count is within 600 words
 - [x] No code, SQL, or schema written anywhere in this document
-- [x] Frontmatter: `owner: LEAD`, `status: 01_TRIAGE`
+- [x] Frontmatter: `owner: LEAD`, `status: 03_BUILD`
 - [x] Compatible with WO-510 archived LEAD architecture decisions
 - [x] New sidebar requirement incorporated as in-scope item
 

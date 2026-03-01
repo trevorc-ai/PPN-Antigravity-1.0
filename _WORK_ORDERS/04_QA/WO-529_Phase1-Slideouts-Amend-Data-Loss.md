@@ -1,7 +1,7 @@
 ---
 id: WO-529
 title: "Phase 1 Slideouts Not Retaining Data on Amend"
-status: 01_TRIAGE
+status: 03_BUILD
 owner: LEAD
 created: 2026-03-01T00:50:26-08:00
 failure_count: 0

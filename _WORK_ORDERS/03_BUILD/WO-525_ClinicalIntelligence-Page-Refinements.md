@@ -2,7 +2,7 @@
 id: WO-525
 title: "Clinical Intelligence Page — Full Refinement Pass"
 owner: LEAD
-status: 01_TRIAGE
+status: 03_BUILD
 authored_by: CUE
 priority: P1
 created: 2026-02-28

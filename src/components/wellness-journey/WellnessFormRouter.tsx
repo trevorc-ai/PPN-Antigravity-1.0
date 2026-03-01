@@ -407,7 +407,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
 
         case 'set-and-setting':
+            // WO-529: patientId passed so SetAndSettingForm rehydrates from the correct
+            // per-patient localStorage key (ppn_set_setting_${patientId}) on Amend.
             return <SetAndSettingForm
+                patientId={patientId}
                 onSave={handleSetAndSettingSave}
                 onComplete={onComplete}
                 onBack={() => onNavigate ? onNavigate('mental-health') : onClose?.()}

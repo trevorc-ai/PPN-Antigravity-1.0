@@ -1,7 +1,7 @@
 ---
 id: WO-534
 title: "QT Tracker Auto-Hide on Ibogaine + Manual Toggle"
-status: 01_TRIAGE
+status: 03_BUILD
 owner: LEAD
 created: 2026-03-01T03:19:17-08:00
 failure_count: 0
