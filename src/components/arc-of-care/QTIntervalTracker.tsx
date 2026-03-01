@@ -224,6 +224,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                         <input
                                             id={`qt-time-${reading.id}`}
                                             type="datetime-local"
+                                            tabIndex={-1}
                                             value={reading.recordedAt}
                                             onChange={e => updateReading(reading.id, 'recordedAt', e.target.value)}
                                             aria-label={`Reading ${index + 1} time`}

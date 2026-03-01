@@ -275,6 +275,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             <input
                                 id="consent-verification-datetime"
                                 type="datetime-local"
+                                tabIndex={-1}
                                 value={data.verification_datetime ?? ''}
                                 onChange={(e) =>
                                     setData(prev => ({

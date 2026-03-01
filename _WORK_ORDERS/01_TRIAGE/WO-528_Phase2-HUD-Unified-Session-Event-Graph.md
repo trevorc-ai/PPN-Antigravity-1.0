@@ -1,7 +1,7 @@
 ---
 id: WO-528
 title: "Phase 2 HUD: Unified Session Event Graph"
-status: 00_INBOX
+status: 01_TRIAGE
 owner: LEAD
 authored_by: PRODDY
 created: 2026-03-01T00:39:46-08:00
@@ -98,5 +98,5 @@ A licensed psychedelic therapy facilitator needs to see every recorded session e
 - [x] Open Questions list is ≤5 items
 - [x] Total PRD word count is ≤600 words
 - [x] No code, SQL, or schema written anywhere in this document
-- [x] Frontmatter updated: `owner: LEAD`, `status: 00_INBOX`
+- [x] Frontmatter updated: `owner: LEAD`, `status: 01_TRIAGE`
 - [x] Response wrapped in `==== PRODDY ====`

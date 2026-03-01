@@ -359,7 +359,32 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             }
         } catch (_) { }
         return [];
-    }, []);
+    }, [contraindicationKey]);
+
+    // ── Substance clear / change handler ─────────────────────────────────────────
+    // Pre-session: silently wipes the substance from localStorage so the practitioner
+    // can re-select without any record of the wrong click.
+    // Live session: re-opens the Dosing Protocol form — the amendment is then
+    // captured as a timestamped entry by the form's save handler.
+    const handleClearSubstance = () => {
+        if (isLive) {
+            // Post-start: open form so change is recorded as a timestamped event
+            onOpenForm('dosing-protocol');
+        } else {
+            // Pre-start: silent clear — no clinical record needed
+            try {
+                const raw = localStorage.getItem('ppn_dosing_protocol');
+                if (raw) {
+                    const protocol = JSON.parse(raw);
+                    delete protocol.substance_name;
+                    delete protocol.substance;
+                    localStorage.setItem('ppn_dosing_protocol', JSON.stringify(protocol));
+                }
+            } catch { }
+            setContraindicationKey(k => k + 1);
+            window.dispatchEvent(new Event('ppn:dosing-updated'));
+        }
+    };
 
     // ── POST-SESSION VIEW ──────────────────────────────────────────────────────────
     if (mode === 'post') {
@@ -500,13 +525,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
                 {/* ── Section Label + Progress ─────────────────────────────────────── */}
                 <div className="flex items-center justify-between px-1">
-                    <h2 className="ppn-label" style={{ color: '#34D399' }}>
+                    <h2 className="ppn-label" style={{ color: '#FBBF24' }}>
                         {isLive ? 'Session Active' : 'Session Preparation'} · {PHASE2_STEPS.length} Steps
                     </h2>
                     <div className="flex items-center gap-3">
                         <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-gradient-to-r from-emerald-700 to-emerald-400 rounded-full transition-all duration-700"
+                                className="h-full bg-gradient-to-r from-amber-700 to-amber-400 rounded-full transition-all duration-700"
                                 style={{ width: `${(PHASE2_STEPS.filter(s => s.isComplete).length / PHASE2_STEPS.length) * 100}%` }}
                                 role="progressbar"
                                 aria-valuenow={PHASE2_STEPS.filter(s => s.isComplete).length}
@@ -532,26 +557,26 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 className={[
                                     'relative flex flex-col rounded-xl transition-all duration-300 overflow-hidden',
                                     step.isComplete
-                                        ? 'bg-teal-900/20'
+                                        ? 'bg-amber-900/20'
                                         : isCurrent
-                                            ? 'bg-emerald-900/40 shadow-lg shadow-emerald-950/60'
+                                            ? 'bg-amber-950/60 shadow-lg shadow-amber-950/60'
                                             : 'bg-slate-800/20 hover:bg-slate-800/35',
                                 ].join(' ')}
                             >
                                 {/* Top accent stripe */}
                                 <div className={[
                                     'h-0.5 w-full',
-                                    step.isComplete ? 'bg-teal-600/60' : isCurrent ? 'bg-emerald-400' : 'bg-slate-700/40',
+                                    step.isComplete ? 'bg-amber-600/60' : isCurrent ? 'bg-amber-400' : 'bg-slate-700/40',
                                 ].join(' ')} aria-hidden="true" />
 
                                 <div className="flex flex-col flex-1 p-4 gap-3">
                                     {/* Step label + status badge */}
                                     <div className="flex items-center justify-between gap-1">
-                                        <span className={`text-xs md:text-sm font-bold uppercase tracking-widest ${step.isComplete ? 'text-teal-500' : isCurrent ? 'text-emerald-400' : 'text-slate-500'}`}>
+                                        <span className={`font-['Manrope',sans-serif] text-xl md:text-2xl font-extrabold tracking-tight leading-none ${step.isComplete ? 'text-amber-300/80' : isCurrent ? 'text-amber-200/90' : 'text-slate-400/80'}`}>
                                             Step {index + 1}
                                         </span>
                                         {step.isComplete ? (
-                                            <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0" aria-label="Complete" />
+                                            <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" aria-label="Complete" />
                                         ) : (
                                             <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-400">
                                                 {isStart ? 'Gate' : 'Req'}
@@ -563,13 +588,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <div className="flex items-start gap-2.5">
                                         <div className={[
                                             'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
-                                            step.isComplete ? 'bg-teal-500/15' : isCurrent ? 'bg-emerald-500/25' : 'bg-slate-700/30',
+                                            step.isComplete ? 'bg-amber-500/15' : isCurrent ? 'bg-amber-500/25' : 'bg-slate-700/30',
                                         ].join(' ')}>
-                                            <span className={`material-symbols-outlined text-[18px] ${step.isComplete ? 'text-teal-400' : isCurrent ? 'text-emerald-300' : 'text-slate-500'}`}>
+                                            <span className={`material-symbols-outlined text-[18px] ${step.isComplete ? 'text-amber-400' : isCurrent ? 'text-amber-300' : 'text-slate-500'}`}>
                                                 {step.icon}
                                             </span>
                                         </div>
-                                        <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${step.isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
+                                        <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${step.isComplete ? 'text-amber-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
                                             {step.label}
                                         </h4>
                                     </div>
@@ -590,24 +615,24 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                         const route = p.route_of_administration;
                                                         if (!name) return null;
                                                         return (
-                                                            <div className="w-full mb-2 px-3 py-2 bg-emerald-950/40 border border-emerald-700/30 rounded-xl text-center">
-                                                                <p className="text-base font-black text-emerald-200 uppercase tracking-widest leading-tight">{name}</p>
-                                                                <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-emerald-300/80">
+                                                            <div className="w-full mb-2 px-3 py-2 bg-amber-950/40 border border-amber-700/30 rounded-xl text-center">
+                                                                <p className="text-base font-black text-amber-200 uppercase tracking-widest leading-tight">{name}</p>
+                                                                <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-amber-300/80">
                                                                     {dose && <span>{dose}{unit}</span>}
-                                                                    {dose && route && <span className="text-emerald-700">·</span>}
+                                                                    {dose && route && <span className="text-amber-700">·</span>}
                                                                     {route && <span>{route}</span>}
                                                                 </div>
                                                             </div>
                                                         );
                                                     } catch { return null; }
                                                 })()}
-                                                <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-teal-400">
+                                                <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-amber-400">
                                                     <CheckCircle2 className="w-4 h-4" /> COMPLETED
                                                 </span>
                                                 {!isStart && (
                                                     <button
                                                         onClick={() => onOpenForm(step.id)}
-                                                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-teal-300 transition-all"
+                                                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-amber-300 transition-all"
                                                         aria-label={`Amend ${step.label}`}
                                                     >
                                                         <Edit3 className="w-3.5 h-3.5" aria-hidden="true" /> Amend
@@ -620,7 +645,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                 onClick={canStartSession ? () => setAndPersistMode('live') : undefined}
                                                 disabled={!canStartSession}
                                                 className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
-                                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-950/50'
+                                                    ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-950/50'
                                                     : 'bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/50'
                                                     }`}
                                                 aria-label="Start dosing session"
@@ -634,7 +659,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         ) : isCurrent ? (
                                             <button
                                                 onClick={() => onOpenForm(step.id)}
-                                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600/40 hover:bg-emerald-600/60 text-emerald-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-emerald-950/50"
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600/40 hover:bg-amber-600/60 text-amber-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-amber-950/50"
                                             >
                                                 Open
                                             </button>
@@ -665,17 +690,28 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <span className="text-white font-black text-lg uppercase tracking-[0.2em]">⚠ ABSOLUTE CONTRAINDICATION — DO NOT ADMINISTER</span>
                         </div>
                         <div className="relative p-5 space-y-4">
-                            {/* Drug pair callout: show all meds that are in the MEDICATION category flags */}
+                            {/* Drug pair callout: meds ✕ substance with functional clear button */}
                             <div className="flex items-center justify-center gap-4 flex-wrap">
                                 {patientMeds.map((med, i) => (
                                     <span key={i} className="px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl text-red-200 font-black text-base">
                                         {med}
                                     </span>
                                 ))}
-                                <span className="text-red-400 font-black text-2xl">✕</span>
-                                <span className="px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl text-red-200 font-black text-base">
-                                    {journey.session?.substance || 'Selected Substance'}
-                                </span>
+                                <span className="text-red-400 font-black text-2xl" aria-hidden="true">✕</span>
+                                {/* Substance pill with clear button */}
+                                <div className="flex items-center gap-1 px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl">
+                                    <span className="text-red-200 font-black text-base">
+                                        {journey.session?.substance || 'Selected Substance'}
+                                    </span>
+                                    <button
+                                        onClick={handleClearSubstance}
+                                        aria-label={isLive ? 'Change substance (opens form — change will be timestamped)' : 'Clear substance selection'}
+                                        title={isLive ? 'Change substance — will log a timestamped amendment' : 'Clear — re-select substance'}
+                                        className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-700/60 hover:bg-red-600 border border-red-500/60 hover:border-red-400 text-red-200 hover:text-white transition-all flex-shrink-0"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </div>
                             </div>
                             {/* Flag details — uses ContraindicationFlag.headline + .detail */}
                             <div className="space-y-2">

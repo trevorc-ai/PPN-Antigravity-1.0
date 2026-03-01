@@ -42,6 +42,7 @@ import {
 // Form data types
 import type { ConsentData } from '../arc-of-care-forms/phase-1-preparation/ConsentForm';
 import type { SetAndSettingData } from '../arc-of-care-forms/phase-1-preparation/SetAndSettingForm';
+import type { StructuredSafetyCheckData } from '../arc-of-care-forms/ongoing-safety/StructuredSafetyCheckForm';
 import type { VitalSignReading } from '../arc-of-care-forms/phase-2-dosing/SessionVitalsForm';
 import type { SessionObservationsData } from '../arc-of-care-forms/phase-2-dosing/SessionObservationsForm';
 import type { SafetyAndAdverseEventData } from '../arc-of-care-forms/phase-2-dosing/SafetyAndAdverseEventForm';
@@ -160,12 +161,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     // ── Phase 1 handlers ─────────────────────────────────────────────────────
 
-    // useCallback is REQUIRED here — ConsentForm's auto-save useEffect has `onSave`
-    // in its dependency array. Without stable reference, every WellnessFormRouter 
-    // re-render (e.g. siteId resolving) triggers a new save attempt → 50 error spam.
+    // WO-529: Persist consent data to localStorage so "Amend" pre-populates the form.
+    // Key is per-patient to prevent stale cross-patient bleed.
+    const CONSENT_STORAGE_KEY = patientId ? `ppn_consent_${patientId}` : 'ppn_consent';
+
     const handleConsentSave = useCallback(async (data: ConsentData): Promise<boolean> => {
-        // Belt-and-suspenders: if the pre-fetched siteId is still null (race
-        // condition or slow page load), try to resolve it live at save time.
+        // Persist locally first — HUD reads this key regardless of DB outcome.
+        try { localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(data)); } catch (_) { }
+
         const resolvedSiteId = siteId ?? await getCurrentSiteId();
         if (!resolvedSiteId) { onError('Consent', 'No site ID resolved'); return false; }
         const result = await createConsent(data.consent_types, resolvedSiteId);
@@ -177,9 +180,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return false;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [siteId, CONSENT_STORAGE_KEY]);
 
-    }, [siteId]);
-
+    // WO-529: Persist set-and-setting to localStorage on save.
+    // SetAndSettingForm already self-rehydrates — this handler just fires the DB write.
     const handleSetAndSettingSave = useCallback(async (data: SetAndSettingData) => {
         if (!patientId || !siteId) return;
         const result = await createBaselineAssessment({
@@ -355,22 +359,52 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     switch (formId) {
 
         // ── Phase 1: Preparation ──────────────────────────────────────────────
-        case 'consent':
+        case 'consent': {
+            // WO-529: Rehydrate previously saved consent so "Amend" pre-populates.
+            const consentKey = patientId ? `ppn_consent_${patientId}` : 'ppn_consent';
+            const consentInitial = (() => {
+                try {
+                    const raw = localStorage.getItem(consentKey);
+                    if (raw) return JSON.parse(raw) as ConsentData;
+                } catch (_) { }
+                return undefined;
+            })();
             return <ConsentForm
                 onSave={handleConsentSave}
+                initialData={consentInitial}
                 patientId={patientId}
                 onNext={onComplete}
                 onBack={onClose ?? onComplete}
                 onExit={onExit ?? onClose ?? onComplete}
             />;
+        }
 
-        case 'structured-safety':
+        case 'structured-safety': {
+            // WO-529: Rehydrate previously saved safety check so "Amend" pre-populates.
+            const safetyKey = patientId ? `ppn_structured_safety_${patientId}` : 'ppn_structured_safety';
+            const safetyInitial = (() => {
+                try {
+                    const raw = localStorage.getItem(safetyKey);
+                    if (raw) return JSON.parse(raw) as Partial<StructuredSafetyCheckData>;
+                } catch (_) { }
+                return undefined;
+            })();
+
+            // Wrap the onSave handler to also persist for Amend (WO-529)
+            const handleSafetyCheckSave = (data: StructuredSafetyCheckData) => {
+                try { localStorage.setItem(safetyKey, JSON.stringify(data)); } catch (_) { }
+                onSaved('Safety Screen');
+            };
+
             return <StructuredSafetyCheckForm
-                onSave={() => onSaved('Safety Screen')}
+                onSave={handleSafetyCheckSave}
+                initialData={safetyInitial}
                 onComplete={onComplete}
                 onBack={() => onNavigate ? onNavigate('consent') : onClose?.()}
                 onExit={onExit ?? onClose ?? onComplete}
             />;
+        }
+
 
         case 'set-and-setting':
             return <SetAndSettingForm

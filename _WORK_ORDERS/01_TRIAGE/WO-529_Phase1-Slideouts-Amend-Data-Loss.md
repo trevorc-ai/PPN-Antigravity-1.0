@@ -1,8 +1,8 @@
 ---
 id: WO-529
 title: "Phase 1 Slideouts Not Retaining Data on Amend"
-status: 00_INBOX
-owner: PENDING
+status: 01_TRIAGE
+owner: LEAD
 created: 2026-03-01T00:50:26-08:00
 failure_count: 0
 priority: NORMAL

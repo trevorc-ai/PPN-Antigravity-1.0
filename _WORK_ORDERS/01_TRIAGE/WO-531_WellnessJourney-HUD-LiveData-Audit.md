@@ -1,8 +1,8 @@
 ---
 id: WO-531
 title: "Wellness Journey HUD Live Data Connections Audit"
-status: 00_INBOX
-owner: PENDING
+status: 01_TRIAGE
+owner: LEAD
 created: 2026-03-01T00:34:45-08:00
 failure_count: 0
 priority: NORMAL

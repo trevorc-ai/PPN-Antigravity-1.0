@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, ChevronDown, ChevronUp, Edit3, CheckCircle2, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { ArrowRight, ChevronDown, ChevronUp, Edit3, CheckCircle2, AlertTriangle, Syringe, HeartPulse, ClipboardCheck, FileText, Pill } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
 import { RiskEligibilityReport } from './RiskEligibilityReport';
 import { ComplianceDocumentsPanel } from './ComplianceDocumentsPanel';
@@ -50,7 +50,218 @@ export const PHASE1_STEPS: Phase1Step[] = [
     },
 ];
 
-// ── EligibilityPanel ──────────────────────────────────────────────────────────
+// ── Phase 1 Data HUD ──────────────────────────────────────────────────────────
+// Compact read-back strip surfacing form entry values. Phase-1 indigo palette.
+// Renders as soon as at least 1 step is complete. Read-only — no form triggers.
+
+function HUDChip({
+    icon,
+    label,
+    value,
+    colorClass = 'text-indigo-300',
+    ariaLabel,
+}: {
+    icon: React.ReactNode;
+    label: string;
+    value: string | number | null | undefined;
+    colorClass?: string;
+    ariaLabel?: string;
+}) {
+    const displayValue = (value !== null && value !== undefined && value !== '') ? String(value) : '\u2014';
+    const isEmpty = displayValue === '\u2014';
+    return (
+        <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl border w-full ${isEmpty
+                ? 'bg-slate-800/30 border-slate-700/40'
+                : 'bg-indigo-950/40 border-indigo-700/40'
+                } min-w-0`}
+            aria-label={ariaLabel ?? `${label}: ${displayValue}`}
+        >
+            <span className={`flex-shrink-0 ${isEmpty ? 'text-slate-600' : 'text-indigo-400'}`} aria-hidden="true">
+                {icon}
+            </span>
+            <div className="min-w-0">
+                <p className="ppn-meta text-slate-500 font-bold uppercase tracking-widest leading-none mb-0.5">{label}</p>
+                <p className={`text-sm font-black leading-none truncate ${isEmpty ? 'text-slate-600' : colorClass}`}>
+                    {displayValue}
+                </p>
+            </div>
+        </div>
+    );
+}
+
+interface Phase1HUDProps {
+    completedFormIds: Set<string>;
+    completedCount: number;
+    totalCount: number;
+    patientId?: string;
+}
+
+const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount, totalCount, patientId = '' }) => {
+    // Read dosing protocol from localStorage (populated by DosingProtocolForm)
+    const dosingProtocol = useMemo(() => {
+        try {
+            const raw = localStorage.getItem('ppn_dosing_protocol');
+            return raw ? JSON.parse(raw) : null;
+        } catch { return null; }
+    }, [completedFormIds]);
+
+    const substance = dosingProtocol?.substance_name || dosingProtocol?.substance || null;
+    const dosageStr = dosingProtocol?.dosage_amount
+        ? `${dosingProtocol.dosage_amount}${dosingProtocol.dosage_unit || 'mg'}`
+        : null;
+
+    // Read PHQ-9 / GAD-7 from localStorage.
+    // Stored by BaselineAssessmentWizard under key ppn_wizard_baseline_${patientId}.
+    // Data shape: { mentalHealth: { phq9: number|null, gad7: number|null, ... } }
+    const mentalHealth = useMemo(() => {
+        try {
+            const raw = localStorage.getItem(`ppn_wizard_baseline_${patientId}`);
+            return raw ? JSON.parse(raw) : null;
+        } catch { return null; }
+    }, [completedFormIds, patientId]);
+
+    const phq9 = mentalHealth?.mentalHealth?.phq9 ?? null;
+    const gad7 = mentalHealth?.mentalHealth?.gad7 ?? null;
+
+    // Read consent data from localStorage.
+    // Stored by WellnessFormRouter under key ppn_consent_${patientId} (or ppn_consent fallback).
+    // Data shape: { consent_types: string[], ... } — no consent_date field.
+    const consentData = useMemo(() => {
+        try {
+            const raw = localStorage.getItem(patientId ? `ppn_consent_${patientId}` : 'ppn_consent');
+            return raw ? JSON.parse(raw) : null;
+        } catch { return null; }
+    }, [completedFormIds, patientId]);
+    // Show "Signed" if consent_types array is non-empty, or completedFormIds confirms it was completed.
+    const consentDisplay = (consentData?.consent_types?.length > 0 || completedFormIds.has('consent'))
+        ? 'Signed'
+        : null;
+
+    const setAndSetting = completedFormIds.has('set-and-setting') ? 'Complete' : null;
+
+    // Read medications from localStorage (populated by StructuredSafetyCheckForm in Phase 1)
+    // Same key used by Phase 2 so medications are consistent across all phases.
+    const patientMeds = useMemo(() => {
+        try {
+            const cached = localStorage.getItem('mock_patient_medications_names');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
+            }
+        } catch { }
+        return [];
+    }, [completedFormIds]);
+
+    return (
+        <section
+            aria-label="Phase 1 documentation summary"
+            className="relative rounded-2xl border border-indigo-700/40 bg-indigo-950/20 backdrop-blur-sm p-4 overflow-hidden animate-in fade-in duration-500"
+        >
+            {/* Header row */}
+            <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2">
+                    <ClipboardCheck className="w-4 h-4 text-indigo-400 flex-shrink-0" aria-hidden="true" />
+                    <h4 className="ppn-label text-indigo-300 uppercase tracking-widest">
+                        Preparation Summary
+                    </h4>
+                </div>
+                <span
+                    className={`ppn-meta font-bold px-2.5 py-1 rounded-full border uppercase tracking-widest flex-shrink-0 ${completedCount === totalCount
+                        ? 'bg-indigo-600/20 border-indigo-500/40 text-indigo-300'
+                        : 'bg-slate-800/50 border-slate-700/50 text-slate-400'
+                        }`}
+                    aria-label={`${completedCount} of ${totalCount} steps complete`}
+                >
+                    {completedCount}/{totalCount} steps
+                </span>
+            </div>
+
+            {/* Chips row — equal-width grid so all 6 chips spread across the full width */}
+            <div
+                className="grid grid-cols-3 sm:grid-cols-6 gap-2"
+                role="list"
+                aria-label="Documented values from preparation forms"
+            >
+                <div role="listitem">
+                    <HUDChip
+                        icon={<FileText className="w-3.5 h-3.5" />}
+                        label="Consent"
+                        value={consentDisplay}
+                        colorClass="text-teal-300"
+                        ariaLabel={`Consent: ${consentDisplay ?? 'Not yet signed'}`}
+                    />
+                </div>
+                <div role="listitem">
+                    <HUDChip
+                        icon={<HeartPulse className="w-3.5 h-3.5" />}
+                        label="PHQ-9"
+                        value={phq9 !== null ? String(phq9) : null}
+                        colorClass="text-amber-300"
+                        ariaLabel={`PHQ-9 baseline score: ${phq9 ?? 'Not yet entered'}`}
+                    />
+                </div>
+                <div role="listitem">
+                    <HUDChip
+                        icon={<HeartPulse className="w-3.5 h-3.5" />}
+                        label="GAD-7"
+                        value={gad7 !== null ? String(gad7) : null}
+                        colorClass="text-amber-300"
+                        ariaLabel={`GAD-7 baseline score: ${gad7 ?? 'Not yet entered'}`}
+                    />
+                </div>
+                <div role="listitem">
+                    <HUDChip
+                        icon={<ClipboardCheck className="w-3.5 h-3.5" />}
+                        label="Set & Setting"
+                        value={setAndSetting}
+                        colorClass="text-indigo-300"
+                        ariaLabel={`Set and Setting: ${setAndSetting ?? 'Not yet entered'}`}
+                    />
+                </div>
+                <div role="listitem">
+                    <HUDChip
+                        icon={<Syringe className="w-3.5 h-3.5" />}
+                        label="Substance"
+                        value={substance}
+                        colorClass="text-indigo-200"
+                        ariaLabel={`Substance: ${substance ?? 'Not yet entered'}`}
+                    />
+                </div>
+                <div role="listitem">
+                    <HUDChip
+                        icon={<span className="ppn-meta" aria-hidden="true">mg</span>}
+                        label="Dosage"
+                        value={dosageStr}
+                        colorClass="text-indigo-200"
+                        ariaLabel={`Dosage: ${dosageStr ?? 'Not yet entered'}`}
+                    />
+                </div>
+            </div>
+
+            {/* Medications strip — shows as soon as meds are entered in Phase 1 Safety Check */}
+            {patientMeds.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-indigo-800/30">
+                    <p className="ppn-meta text-slate-500 font-bold uppercase tracking-widest mb-1.5">Current Medications</p>
+                    <div className="flex flex-wrap gap-1.5" role="list" aria-label="Current patient medications">
+                        {patientMeds.map((med, i) => (
+                            <span
+                                key={i}
+                                role="listitem"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold"
+                            >
+                                <Pill className="w-3 h-3 text-slate-500" aria-hidden="true" />
+                                {med}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </section>
+    );
+};
+
+
 interface EligibilityPanelProps {
     steps: Phase1Step[];
     completedFormIds: Set<string>;
@@ -108,6 +319,7 @@ interface Phase1StepGuideProps {
     onStartStep: (formId: WellnessFormId) => void;
     onCompletePhase?: () => void;
     bottomStatusBar?: React.ReactNode;
+    patientId?: string;
 }
 
 export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
@@ -115,6 +327,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
     onStartStep,
     onCompletePhase,
     bottomStatusBar,
+    patientId = '',
 }) => {
     const heroRef = useRef<HTMLDivElement>(null);
     const [canProceedToPhase2, setCanProceedToPhase2] = useState(false);
@@ -199,7 +412,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
                                 {/* Step number label (H3-equiv) + status badge */}
                                 <div className="flex items-center justify-between gap-1">
-                                    <span className={`text-xs md:text-sm font-bold uppercase tracking-widest ${isComplete ? 'text-teal-500' : isCurrent ? 'text-indigo-400' : 'text-slate-500'
+                                    <span className={`font-['Manrope',sans-serif] text-xl md:text-2xl font-extrabold tracking-tight leading-none ${isComplete ? 'text-teal-300/80' : isCurrent ? 'text-indigo-200/90' : 'text-slate-400/80'
                                         }`}>
                                         Step {index + 1}
                                     </span>
@@ -279,6 +492,19 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                     );
                 })}
             </div>
+
+            {/* ── Phase 1 Data HUD (WO-527) ────────────────────────────────────
+                 Shows as soon as any step is completed. Provides a real-time
+                 read-back of key documented values from the preparation forms.
+            ────────────────────────────────────────────────────────────────── */}
+            {completedCount > 0 && (
+                <Phase1HUD
+                    completedFormIds={completedFormIds}
+                    completedCount={completedCount}
+                    totalCount={activeSteps.length}
+                    patientId={patientId}
+                />
+            )}
 
             {/* ── All complete state */}
             {allComplete && (

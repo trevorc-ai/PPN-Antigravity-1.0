@@ -467,90 +467,110 @@ const WellnessJourneyInternal: React.FC = () => {
     }, [handlePhaseChange]);
 
     // Mock data
-    const [journey, setJourney] = useState<PatientJourney>({
-        patientId: 'PT-RISK9W2P',
-        sessionDate: '2025-10-15',
-        daysPostSession: 0,
-        // Demographics start empty — populated after patient selection or intake form.
-        // Hardcoded values caused stale data to appear for every new patient (WO-406 fix).
-        demographics: undefined,
+    const [journey, setJourney] = useState<PatientJourney>(() => {
+        // Rehydrate demographics from the last intake modal save so Age/Gender/Weight
+        // survive page refreshes without re-entering the protocol configurator.
+        let savedDemographics: PatientJourney['demographics'] | undefined;
+        let savedCondition: string | undefined;
+        try {
+            const raw = localStorage.getItem('ppn_patient_intake');
+            if (raw) {
+                const intake = JSON.parse(raw);
+                savedCondition = intake.condition || undefined;
+                savedDemographics = {
+                    age: intake.age ? parseInt(intake.age, 10) : undefined,
+                    gender: intake.gender || undefined,
+                    weightKg: intake.weight ? parseFloat(intake.weight) : undefined,
+                };
+            }
+        } catch (_) { }
 
-        baseline: {
-            phq9: 22, // Severe Depression
-            gad7: 18, // Severe Anxiety
-            aceScore: 6, // High Trauma
-            expectancy: 40 // Low Expectancy
-        },
+        return {
+            patientId: 'PT-RISK9W2P',
+            sessionDate: '2025-10-15',
+            daysPostSession: 0,
+            condition: savedCondition,
+            // Demographics start empty — populated after patient selection or intake form.
+            // Hardcoded values caused stale data to appear for every new patient (WO-406 fix).
+            demographics: savedDemographics,
 
-        session: {
-            substance: 'Psilocybin',
-            dosage: '25mg (Oral)',
-            sessionNumber: 1,
-            meq30Score: null,
-            ediScore: null,
-            ceqScore: null,
-            safetyEvents: 1,
-            chemicalRescueUsed: false
-        },
-
-        integration: {
-            currentPhq9: 20,
-            pulseCheckCompliance: 0,
-            phq9Compliance: 0,
-            integrationSessionsAttended: 0,
-            integrationSessionsScheduled: 0,
-            behavioralChanges: []
-        },
-
-        benchmark: {
-            hasBaselineAssessment: true,
-            baselineAssessmentDate: '2025-10-01',
-            hasFollowUpAssessment: false,
-            followUpAssessmentDate: undefined,
-            hasDosingProtocol: true,
-            dosingProtocolDate: '2025-10-15',
-            hasSetAndSetting: true,
-            setAndSettingDate: '2025-10-14',
-            hasSafetyCheck: true,
-            safetyCheckDate: '2025-10-15',
-            hasConsent: true,
-            consentDate: '2025-10-01'
-        },
-
-        risk: {
             baseline: {
-                phq9: 22,
-                gad7: 18,
-                pcl5: 55, // Critical PTSD
-                ace: 6
+                phq9: 22, // Severe Depression
+                gad7: 18, // Severe Anxiety
+                aceScore: 6, // High Trauma
+                expectancy: 40 // Low Expectancy
             },
-            vitals: {
-                heartRate: 115, // Tachycardia
-                baselineHeartRate: 72,
-                bloodPressureSystolic: 155, // Hypertension
-                bloodPressureDiastolic: 95,
-                spo2: 94, // Hypoxia risk
-                temperature: 99.1
-            },
-            progressTrends: [
-                {
-                    metric: 'PHQ-9',
-                    values: [22, 23], // Worsening
-                    baseline: 22
-                }
-            ]
-        },
 
-        safety: {
-            events: [
-                {
-                    id: 'evt-1',
-                    date: '2025-10-01',
-                    cssrsScore: 4, // Suicidality Check
-                    actionsTaken: ['Safety Plan Created']
-                }
-            ]
-        }
+            session: {
+                substance: 'Psilocybin',
+                dosage: '25mg (Oral)',
+                sessionNumber: 1,
+                meq30Score: null,
+                ediScore: null,
+                ceqScore: null,
+                safetyEvents: 1,
+                chemicalRescueUsed: false
+            },
+
+            integration: {
+                currentPhq9: 20,
+                pulseCheckCompliance: 0,
+                phq9Compliance: 0,
+                integrationSessionsAttended: 0,
+                integrationSessionsScheduled: 0,
+                behavioralChanges: []
+            },
+
+            benchmark: {
+                hasBaselineAssessment: true,
+                baselineAssessmentDate: '2025-10-01',
+                hasFollowUpAssessment: false,
+                followUpAssessmentDate: undefined,
+                hasDosingProtocol: true,
+                dosingProtocolDate: '2025-10-15',
+                hasSetAndSetting: true,
+                setAndSettingDate: '2025-10-14',
+                hasSafetyCheck: true,
+                safetyCheckDate: '2025-10-15',
+                hasConsent: true,
+                consentDate: '2025-10-01'
+            },
+
+            risk: {
+                baseline: {
+                    phq9: 22,
+                    gad7: 18,
+                    pcl5: 55, // Critical PTSD
+                    ace: 6
+                },
+                vitals: {
+                    heartRate: 115, // Tachycardia
+                    baselineHeartRate: 72,
+                    bloodPressureSystolic: 155, // Hypertension
+                    bloodPressureDiastolic: 95,
+                    spo2: 94, // Hypoxia risk
+                    temperature: 99.1
+                },
+                progressTrends: [
+                    {
+                        metric: 'PHQ-9',
+                        values: [22, 23], // Worsening
+                        baseline: 22
+                    }
+                ]
+            },
+
+            safety: {
+                events: [
+                    {
+                        id: 'evt-1',
+                        date: '2025-10-01',
+                        cssrsScore: 4, // Suicidality Check
+                        actionsTaken: ['Safety Plan Created']
+                    }
+                ]
+            }
+        };
     });
 
     const patientCharacteristics = {
@@ -843,6 +863,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                             completedFormIds={completedForms}
                                             onStartStep={handleOpenForm}
                                             onCompletePhase={completeCurrentPhase}
+                                            patientId={journey.patientId}
                                         />
                                     )}
                                     {activePhase === 2 && (

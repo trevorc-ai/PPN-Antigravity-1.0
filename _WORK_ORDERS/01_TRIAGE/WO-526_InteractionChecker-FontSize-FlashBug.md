@@ -2,7 +2,7 @@
 id: WO-526
 title: "Interaction Checker — Search Box Font Size + Result Flash Bug"
 owner: LEAD
-status: 00_INBOX
+status: 01_TRIAGE
 authored_by: CUE
 priority: P1
 created: 2026-02-28

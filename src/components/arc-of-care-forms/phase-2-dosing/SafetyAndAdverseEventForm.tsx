@@ -501,6 +501,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                 <div className="flex gap-2">
                                     <input
                                         type="datetime-local"
+                                        tabIndex={-1}
                                         value={data.occurred_at ?? ''}
                                         onChange={e => update('occurred_at', e.target.value)}
                                         className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"
@@ -572,6 +573,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                     <div className="flex gap-2">
                                         <input
                                             type="datetime-local"
+                                            tabIndex={-1}
                                             value={data.resolved_at ?? ''}
                                             onChange={e => update('resolved_at', e.target.value)}
                                             className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-sm"

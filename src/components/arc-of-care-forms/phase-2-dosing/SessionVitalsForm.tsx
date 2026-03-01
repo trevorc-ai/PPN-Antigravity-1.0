@@ -660,9 +660,9 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <input
                                         id={`recorded-at-${index}`}
                                         type="datetime-local"
+                                        tabIndex={-1}
                                         value={reading.recorded_at ?? ''}
                                         onChange={(e) => updateReading(index, 'recorded_at', e.target.value)}
-                                        tabIndex={10 + index * 10 + 6}
                                         className="flex-1 px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                                         aria-label="Date and time of reading"
                                     />

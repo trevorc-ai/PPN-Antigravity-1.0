@@ -189,3 +189,50 @@ The `Phase1HUD` component currently receives only `{ journey, gates }`. To rende
 - [x] No code, SQL, or schema written anywhere in this document
 - [x] Frontmatter updated: `owner: LEAD`, `status: 00_INBOX`
 - [x] Response wrapped in `==== PRODDY ====`
+
+---
+
+## BUILDER Implementation Notes
+
+**Completed:** 2026-03-01
+**File modified:** `src/components/wellness-journey/PreparationPhase.tsx`
+
+### Changes Made
+
+1. **Imports** — Added `User` icon from lucide-react. Consolidated duplicate `ContraindicationResult` type import into the single `runContraindicationEngine` import line.
+
+2. **`Phase1HUDProps`** — Added `contraindicationResult?: ContraindicationResult | null` prop.
+
+3. **`HUDChip` component** — Refactored:
+   - Added `containerClass` prop override for verdict-specific chip backgrounds (Risk Level chip).
+   - Added `children` slot for tooltip wrapper.
+   - Empty state renders `"Not recorded"` (ppn-meta/text-slate-500) instead of bare `—`.
+   - Padding increased to `px-3.5 py-2.5`.
+
+4. **`getSeverityInfo()`** — Promoted from an inline arrow function inside `PreparationPhase` to a module-level named function (allows reuse in `Phase1HUD` without prop drilling the full severity objects down). Emoji fields removed (not needed in HUD).
+
+5. **`getRiskChipTokens()`** — New helper that returns `containerClass`, `iconClass`, `valueText`, `valueClass` based on `ContraindicationResult['verdict'] | null`. Handles the `null` (pre-gate) locked/dim state.
+
+6. **`Phase1HUD` render** — Full redesign:
+   - Container: `p-5 rounded-2xl border border-indigo-700/30 bg-indigo-950/15`
+   - Header pill updated: `{N}/{N} Steps` (was `gates`)
+   - Two-group layout: `flex flex-col sm:flex-row gap-4`
+   - GROUP A "PROTOCOL": Substance (Syringe icon) + Dosage (scale material icon) — stacked vertically on desktop, horizontal on mobile
+   - Vertical rule divider between groups (desktop only): `hidden sm:block w-px self-stretch bg-slate-700/40`
+   - GROUP B "PATIENT PROFILE": PHQ-9 Severity (Brain icon) + GAD-7 Severity (HeartPulse icon) + Risk Level (Shield icon) + Patient Age (User icon)
+   - PHQ-9 and GAD-7 chips wrapped in `AdvancedTooltip` showing full label + raw score when value is available.
+   - Risk Level chip uses `getRiskChipTokens()` for verdict-based tint.
+   - **Removed:** Consent chip, Set & Setting chip.
+
+7. **`PreparationPhase` call site** — `contraindicationResult` prop threaded down to `<Phase1HUD>`.
+
+8. **`PreparationPhase.phq9Info/gad7Info`** — Updated to use module-level `getSeverityInfo()` with null-safe fallback (`?? 0`) for the Baseline Clinical Profile section.
+
+### Success Metric Verification
+- ✅ Consent and Set & Setting chips removed — confirmed in code review
+- ✅ PHQ-9/GAD-7 show severity labels with severity-appropriate color from `getSeverityInfo()`
+- ✅ Risk Level chip renders in locked/dim state pre-gates; verdict-tinted post-gates
+- ✅ Patient Age reads from `journey.demographics?.age`
+- ✅ Gate logic and 4/4 STEPS counter untouched
+- ✅ All new chips are read-only (no cursor-pointer, no hover-implies-click)
+- ✅ Frontend best practices: ppn-* typography classes, minimum text-xs/text-sm, Phase 1 indigo palette

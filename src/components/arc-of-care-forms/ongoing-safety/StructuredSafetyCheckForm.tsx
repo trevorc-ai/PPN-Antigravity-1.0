@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../../../supabaseClient';
-import { CheckCircle, AlertTriangle, ChevronRight, ArrowUp, Minus, Zap, Clock, Plus, X, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { CheckCircle, AlertTriangle, ChevronRight, ArrowUp, Minus, Zap, Clock } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
 import { InteractionChecker } from '../../clinical/InteractionChecker';
+
 
 /**
  * StructuredSafetyCheckForm - Structured Safety Check
@@ -18,21 +19,12 @@ export interface StructuredSafetyCheckData {
     monitoring_date: string;
     cssrs_score: 0 | 1 | 2 | 3 | 4 | 5;
     safety_concern_ids: number[];
-    new_adverse_events: boolean;
-    medication_changes: boolean;
     action_taken_ids: number[];
     follow_up_required: boolean;
     follow_up_timeframe?: '24_hours' | '3_days' | '1_week';
-    current_medication_ids: number[];
-    ae_severity_grade?: number;
-    ae_clinical_observation?: string;
 }
 
-interface RefPickerItem {
-    id: number;
-    label: string;
-    category?: string;
-}
+
 
 interface StructuredSafetyCheckFormProps {
     onSave?: (data: StructuredSafetyCheckData) => void;
@@ -82,46 +74,13 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         monitoring_date: initialData.monitoring_date || new Date().toISOString().slice(0, 10),
         cssrs_score: initialData.cssrs_score || 0,
         safety_concern_ids: initialData.safety_concern_ids || [],
-        new_adverse_events: initialData.new_adverse_events || false,
-        medication_changes: initialData.medication_changes || false,
         action_taken_ids: initialData.action_taken_ids || [],
         follow_up_required: initialData.follow_up_required || false,
         follow_up_timeframe: initialData.follow_up_timeframe,
-        current_medication_ids: initialData.current_medication_ids || [],
-        ae_severity_grade: initialData.ae_severity_grade,
-        ae_clinical_observation: initialData.ae_clinical_observation,
     });
 
     const [isSaving, setIsSaving] = useState(false);
-    const [medicationsOptions, setMedicationsOptions] = useState<RefPickerItem[]>([]);
-    const [medDraftId, setMedDraftId] = useState<string>('');
 
-    useEffect(() => {
-        const loadMeds = async () => {
-            const { data, error } = await supabase.from('ref_medications').select('medication_id, medication_name, medication_category').order('medication_name');
-            if (error) {
-                console.error('[loadMeds] Error fetching medications:', error);
-            }
-            if (data) {
-                setMedicationsOptions(data.map((m: any) => ({ id: m.medication_id, label: m.medication_name, category: m.medication_category })));
-            }
-        };
-        loadMeds();
-    }, []);
-
-    // TEMPORARY: Persist medications to localStorage so DosingProtocolForm can read them.
-    // In production, this would be fetched from log_patient_medications or similar.
-    useEffect(() => {
-        // Persist IDs (legacy key)
-        localStorage.setItem('mock_patient_medications', JSON.stringify(data.current_medication_ids));
-        // Persist NAMES — required by contraindicationEngine (matchesAny uses string comparisons)
-        if (medicationsOptions.length > 0) {
-            const names = data.current_medication_ids
-                .map(id => medicationsOptions.find(m => m.id === id)?.label ?? '')
-                .filter(Boolean);
-            localStorage.setItem('mock_patient_medications_names', JSON.stringify(names));
-        }
-    }, [data.current_medication_ids, medicationsOptions]);
 
     const updateField = <K extends keyof StructuredSafetyCheckData>(
         field: K,
@@ -279,137 +238,8 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 </FormField>
             </div>
 
-            {/* New Events & Medication Changes */}
-            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-8">
-                {/* Adverse Events */}
-                <div>
-                    <div className="flex items-center justify-between p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
-                        <div className="flex items-center gap-2 group relative">
-                            <AlertTriangle className="w-4 h-4 text-orange-400" />
-                            <span className="font-bold text-sm text-slate-300 tracking-wider cursor-help" title="Records adverse events that occurred prior to treatment or between sessions. Used for baseline safety clearance before dosing.">PRIOR ADVERSE EVENTS ⓘ</span>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                                type="checkbox"
-                                className="sr-only peer"
-                                checked={data.new_adverse_events}
-                                onChange={(e) => updateField('new_adverse_events', e.target.checked)}
-                            />
-                            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                        </label>
-                    </div>
 
-                    {data.new_adverse_events && (
-                        <div className="space-y-4 mt-4 animate-in slide-in-from-top-2 pt-4 px-2">
-                            <FormField label="PRIMARY CLINICAL OBSERVATION">
-                                <select
-                                    value={data.ae_clinical_observation || ''}
-                                    onChange={(e) => updateField('ae_clinical_observation', e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm appearance-none"
-                                >
-                                    <option value="">Select Observation...</option>
-                                    <option value="Nausea / Vomiting">Nausea / Vomiting</option>
-                                    <option value="Hypertension">Hypertension</option>
-                                    <option value="Tachycardia">Tachycardia</option>
-                                    <option value="Severe Anxiety">Severe Anxiety</option>
-                                    <option value="Panic Attack">Panic Attack</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </FormField>
-                            <FormField label="SEVERITY (CTCAE GRADE)">
-                                <select
-                                    value={data.ae_severity_grade || ''}
-                                    onChange={(e) => updateField('ae_severity_grade', e.target.value ? parseInt(e.target.value) : undefined)}
-                                    className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all text-sm appearance-none"
-                                >
-                                    <option value="">Select Grade...</option>
-                                    <option value="1">Grade 1 - Mild (No Intervention)</option>
-                                    <option value="2">Grade 2 - Moderate (Minimal Intervention)</option>
-                                    <option value="3">Grade 3 - Severe (Significant Intervention)</option>
-                                    <option value="4">Grade 4 - Life-Threatening</option>
-                                    <option value="5">Grade 5 - Fatal</option>
-                                </select>
-                            </FormField>
-                        </div>
-                    )}
-                </div>
 
-                <div className="border-t border-slate-700/50"></div>
-
-                {/* Concomitant Medications */}
-                <div>
-                    <div className="flex items-center justify-between p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
-                        <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-slate-400 tracking-wider cursor-help" title="Pulls directly from the 'ref_medications' SQL table. Data saved here populates the patient's baseline for automatic drug interaction checks in Phase 2.">CONCOMITANT MEDICATIONS ⓘ</span>
-                        </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                                type="checkbox"
-                                className="sr-only peer"
-                                checked={data.medication_changes}
-                                onChange={(e) => updateField('medication_changes', e.target.checked)}
-                            />
-                            <div className="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                        </label>
-                    </div>
-
-                    {data.medication_changes && (
-                        <div className="mt-4 animate-in slide-in-from-top-2 pt-4 space-y-6 px-2">
-                            <div className="flex gap-2">
-                                <div className="flex-1 relative">
-                                    <select
-                                        value="" /* Always empty so selecting the same item again triggers onChange */
-                                        onChange={e => {
-                                            const val = e.target.value;
-                                            if (!val) return;
-                                            const idNum = parseInt(val);
-                                            if (!data.current_medication_ids.includes(idNum)) {
-                                                updateField('current_medication_ids', [...data.current_medication_ids, idNum]);
-                                            }
-                                        }}
-                                        className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none cursor-pointer"
-                                    >
-                                        <option value="">Select Medication to Add...</option>
-                                        {medicationsOptions.map(m => (
-                                            <option key={m.id} value={m.id}>{m.label}</option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                        <ChevronDown className="w-4 h-4 text-slate-400" aria-hidden="true" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="min-h-[60px] p-4 bg-slate-900/50 border border-slate-800/80 rounded-lg">
-                                {data.current_medication_ids.length === 0 ? (
-                                    <p className="text-sm text-slate-500 italic">No medications added.</p>
-                                ) : (
-                                    <div className="flex flex-wrap gap-2">
-                                        {data.current_medication_ids.map(id => {
-                                            const med = medicationsOptions.find(m => m.id === id);
-                                            return (
-                                                <div key={id} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-900/40 border border-blue-500/40 rounded-full text-sm text-blue-200 shadow-sm transition-all hover:bg-blue-900/60 hover:border-blue-400/50">
-                                                    <span className="font-semibold leading-none">{med?.label ?? `Medication ID ${id}`}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => updateField('current_medication_ids', data.current_medication_ids.filter(m => m !== id))}
-                                                        className="text-blue-400 hover:text-white hover:bg-blue-500/50 rounded-full p-0.5 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ml-1"
-                                                        aria-label={`Remove ${med?.label ?? 'medication'}`}
-                                                    >
-                                                        <X className="w-3.5 h-3.5" aria-hidden="true" />
-                                                    </button>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Actions Taken — ordered immediate → urgent (ref sort_order) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
                 <FormField label="Actions Taken" tooltip="Pulls from 'ref_clinical_observations' table. Aligned with standard psychiatric risk mitigation and APA guidelines. Orders by urgency.">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

@@ -115,8 +115,8 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                     : <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                             }
 
-                            <span className="text-base">
-                                <span className={`font-black mr-1 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
+                            <span className="text-lg md:text-xl font-semibold">
+                                <span className={`font-black mr-1.5 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
                                     {phaseId}
                                 </span>
                                 {cfg.label}

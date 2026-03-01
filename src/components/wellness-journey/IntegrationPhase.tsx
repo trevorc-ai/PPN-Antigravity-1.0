@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activity, Award, FileText } from 'lucide-react';
+import { TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download, Heart, Activity, FileText } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import SymptomDecayCurve from '../arc-of-care/SymptomDecayCurve';
 import PulseCheckWidget from '../arc-of-care/PulseCheckWidget';
@@ -274,126 +274,58 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey }) =
                 </div>
             </div>
 
-            {/* 2. BOTTOM ROW: 3-Column Layout for Compliance, Outcomes, and Insights */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                {/* Compliance Metrics — live via usePhase3Data */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col">
-                    <div className="flex items-center justify-between gap-3 mb-6">
-                        <div className="flex items-center gap-3">
-                            <Activity className="w-6 h-6 text-indigo-400" />
-                            <h3 className="text-xl font-bold text-[#A8B5D1]">Compliance</h3>
-                        </div>
-                        <DemoDataBadge isDemo={!phase3.hasRealComplianceData} />
+            {/* ── BOTTOM ROW: Compliance (WO-527: Key Outcomes + Smart Insight removed — static data) ── */}
+            <section aria-label="Integration compliance metrics" className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 flex flex-col">
+                <div className="flex items-center justify-between gap-3 mb-6">
+                    <div className="flex items-center gap-3">
+                        <Activity className="w-6 h-6 text-teal-400" aria-hidden="true" />
+                        <h3 className="ppn-card-title">Compliance</h3>
                     </div>
-
-                    <div className="space-y-6 flex-1">
-                        {/* Pulse Check Compliance */}
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
-                                <span>Daily Pulse</span>
-                                <span className={pulseCompliance >= 80 ? "text-emerald-400" : "text-amber-400"}>
-                                    {pulseCompliance}%
-                                </span>
-                            </div>
-                            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                                <div
-                                    className={`h-full rounded-full transition-all duration-700 ${pulseCompliance >= 80 ? "bg-emerald-500" : "bg-amber-500"}`}
-                                    style={{ width: `${pulseCompliance}%` }}
-                                />
-                            </div>
-                        </div>
-
-                        {/* PHQ-9 Compliance */}
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
-                                <span>Weekly PHQ-9</span>
-                                <span className={phq9Compliance >= 90 ? "text-emerald-400" : "text-amber-400"}>
-                                    {phq9Compliance}%
-                                </span>
-                            </div>
-                            <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                                <div
-                                    className={`h-full rounded-full transition-all duration-700 ${phq9Compliance >= 90 ? "bg-emerald-500" : "bg-amber-500"}`}
-                                    style={{ width: `${phq9Compliance}%` }}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Integration Sessions */}
-                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center mt-auto">
-                            <div className="text-3xl font-black text-indigo-400 mb-1">
-                                {intAttended}<span className="text-xl text-slate-500 font-normal">/{intScheduled}</span>
-                            </div>
-                            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest">Integration Sessions</div>
-                        </div>
-                    </div>
+                    <DemoDataBadge isDemo={!phase3.hasRealComplianceData} />
                 </div>
 
-                {/* Quality of Life Improvements */}
-                <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
-                    <div className="flex items-center gap-3 mb-6">
-                        <Award className="w-6 h-6 text-amber-400" />
-                        <h3 className="text-xl font-bold text-[#A8B5D1]">Key Outcomes</h3>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl flex items-center justify-between">
-                            <div>
-                                <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">WHOQOL-BREF</div>
-                                <div className="text-lg font-bold text-slate-300">Quality of Life</div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-2xl font-black text-emerald-400">+21%</div>
-                                <div className="text-xs text-emerald-500/70 font-bold">68 → 82</div>
-                            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1">
+                    {/* Pulse Check Compliance */}
+                    <div className="space-y-2" role="group" aria-label="Daily Pulse compliance">
+                        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
+                            <span>Daily Pulse</span>
+                            <span className={pulseCompliance >= 80 ? 'text-teal-400' : 'text-amber-400'}>
+                                {pulseCompliance}%
+                            </span>
                         </div>
-
-                        <div>
-                            <div className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Behavioral Wins</div>
-                            <div className="space-y-2">
-                                {journey.integration.behavioralChanges.map((change: string, index: number) => (
-                                    <div key={index} className="flex items-center gap-3 p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-lg">
-                                        <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                                        <span className="text-sm font-medium text-emerald-100">{change}</span>
-                                    </div>
-                                ))}
-                                {journey.integration.behavioralChanges.length === 0 && (
-                                    <div className="p-3 bg-slate-800/20 border border-slate-700/30 rounded-lg text-center">
-                                        <span className="text-sm text-slate-500 italic">No behavioral changes recorded yet.</span>
-                                    </div>
-                                )}
-                            </div>
+                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pulseCompliance} aria-valuemin={0} aria-valuemax={100} aria-label={`Daily pulse compliance: ${pulseCompliance}%`}>
+                            <div
+                                className={`h-full rounded-full transition-all duration-700 ${pulseCompliance >= 80 ? 'bg-teal-500' : 'bg-amber-500'}`}
+                                style={{ width: `${pulseCompliance}%` }}
+                            />
                         </div>
                     </div>
-                </div>
 
-                {/* AI Insights (Behavioral Correlation) */}
-                <div className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border border-indigo-500/20 rounded-2xl p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Activity className="w-32 h-32 text-indigo-400" />
+                    {/* PHQ-9 Compliance */}
+                    <div className="space-y-2" role="group" aria-label="Weekly PHQ-9 compliance">
+                        <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500">
+                            <span>Weekly PHQ-9</span>
+                            <span className={phq9Compliance >= 90 ? 'text-teal-400' : 'text-amber-400'}>
+                                {phq9Compliance}%
+                            </span>
+                        </div>
+                        <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden" role="progressbar" aria-valuenow={phq9Compliance} aria-valuemin={0} aria-valuemax={100} aria-label={`Weekly PHQ-9 compliance: ${phq9Compliance}%`}>
+                            <div
+                                className={`h-full rounded-full transition-all duration-700 ${phq9Compliance >= 90 ? 'bg-teal-500' : 'bg-amber-500'}`}
+                                style={{ width: `${phq9Compliance}%` }}
+                            />
+                        </div>
                     </div>
 
-                    <div className="relative z-10 flex flex-col h-full">
-                        <div className="flex items-center gap-3 mb-6">
-                            <span className="text-2xl">💡</span>
-                            <h3 className="text-xl font-bold text-[#A8B5D1]">Smart Insight</h3>
+                    {/* Integration Sessions counter */}
+                    <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center" role="group" aria-label={`Integration sessions attended: ${intAttended} of ${intScheduled}`}>
+                        <div className="text-3xl font-black text-teal-400 mb-1" aria-hidden="true">
+                            {intAttended}<span className="text-xl text-slate-500 font-normal">/{intScheduled}</span>
                         </div>
-
-                        <div className="text-sm font-medium text-slate-300 leading-relaxed flex-1">
-                            "Your anxiety (GAD-7) drops by <span className="text-emerald-400 font-bold">40%</span> on weeks where you log at least 3 'Nature Walks' in your journal."
-                        </div>
-
-                        <div className="mt-6 pt-4 border-t border-white/5">
-                            <div className="flex items-center gap-2 text-xs text-indigo-300 font-bold uppercase tracking-widest">
-                                <Activity className="w-3 h-3" />
-                                Correlation Found
-                            </div>
-                            <p className="text-xs text-slate-500 mt-1">Based on 26 weeks of behavioral data.</p>
-                        </div>
+                        <div className="ppn-meta text-slate-500 font-bold uppercase tracking-widest">Integration Sessions</div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             {/* Action row: Progress Summary + Discharge Summary */}
             <div className="pt-8 border-t border-slate-700/50 flex flex-col sm:flex-row items-center gap-4 justify-center">
