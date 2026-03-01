@@ -46,10 +46,51 @@ const VITAL_THRESHOLDS = {
     tempHigh: 100.4,
 };
 
-// Fixed Y position for event dots (just above the bottom of the domain)
-const EVENT_DOT_Y = 56;
-// Y-axis domain — leave room at bottom for event dot row
-const Y_DOMAIN: [number, number] = [50, 170];
+/**
+ * Clinical severity band map — Y position within the chart for each event type.
+ * Gradient: TOP (Y≈165) = most serious adverse/crisis → BOTTOM (Y≈56) = pleasant/rescue.
+ * Events are plotted as colored dots in these bands — no overlap with vitals lines.
+ *
+ * RED/Top    ── adverse events, safety crises
+ * ORANGE     ── clinical decisions during difficult moments
+ * AMBER      ── patient observations (concern)
+ * NEUTRAL    ── general notes, session updates
+ * TEAL       ── vital checks, routine monitoring
+ * BLUE       ── dose administration
+ * GREEN/Bot  ── rescue protocol, music/grounding, pleasant
+ */
+const EVENT_Y_BAND: Record<string, number> = {
+    // ── TOP — adverse / crisis (red) ──────────────────────────────────
+    'safety-and-adverse-event': 165,
+    'safety_event': 165,
+    'SAFETY': 165,
+    // ── UPPER — clinical decision (orange) ────────────────────────────
+    'clinical_decision': 150,
+    // ── UPPER-MID — patient observation (amber) ───────────────────────
+    'patient_observation': 135,
+    'OBSERVATION': 135,
+    // ── MID — general / session update (neutral) ─────────────────────
+    'general_note': 118,
+    'session_update': 108,
+    'UPDATE': 108,
+    // ── LOWER-MID — vital check (teal) ────────────────────────────────
+    'vital_check': 92,
+    // ── LOWER — dose administration (blue/emerald) ────────────────────
+    'dose_admin': 76,
+    'DOSE': 76,
+    // ── BOTTOM — rescue / music / grounding (green) ───────────────────
+    'rescue-protocol': 58,
+    'rescue': 58,
+    'music_change': 62,
+};
+
+/** Returns the Y band for a given event type, defaulting to the neutral mid-row. */
+function getEventDotY(type: string): number {
+    return EVENT_Y_BAND[type] ?? 108;
+}
+
+// Y-axis domain — expanded to 172 so top-band event dots sit above the BP/HR alert lines
+const Y_DOMAIN: [number, number] = [50, 172];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -102,7 +143,7 @@ const SERIES = [
 ] as const;
 type SeriesKey = typeof SERIES[number]['key'];
 
-// ── Custom event dot — renders inside the chart at EVENT_DOT_Y ───────────────
+// ── Custom event dot — renders inside the chart at its severity-band Y ──────
 
 const EventDot = (props: any) => {
     const { cx, cy, payload } = props;
@@ -237,7 +278,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
 
     // Event scatter data — fixed Y so all dots sit in a row along the bottom
     const eventScatterData = useMemo(() =>
-        events.map(ev => ({ ...ev, y: EVENT_DOT_Y })),
+        events.map(ev => ({ ...ev, y: getEventDotY(ev.type) })),
         [events]);
 
     const hasData = chartData.length > 0;
@@ -394,10 +435,10 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                             ))}
 
                             {/*
-                             * ── Event dots — plotted inside the chart at EVENT_DOT_Y ──
-                             * All events share a fixed Y value near the bottom of the
-                             * domain, creating a visual event "row" inside the graph.
-                             * Hover reveals the event type, label, and timestamp.
+                             * ── Event dots — plotted at their clinical severity band Y ──
+                             * Each event type maps to a fixed Y row on the severity gradient:
+                             * RED/top (Y≈165) = adverse/crisis → GREEN/bottom (Y≈58) = rescue/pleasant.
+                             * Dots are styled by type and reveal details on hover.
                              */}
                             {visible.events && (
                                 <Scatter
