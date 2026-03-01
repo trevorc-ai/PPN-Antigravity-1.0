@@ -147,7 +147,7 @@ export default function PatientCompanionPage() {
                     loop
                     muted
                     playsInline
-                    className="absolute inset-0 w-full h-full object-cover opacity-90"
+                    className="absolute inset-0 w-full h-full object-contain opacity-90"
                 />
             </div>
 
