@@ -1,20 +1,20 @@
 /**
- * SimpleSearch.tsx — Post-Login Hero (WO-510 / hero-page rebuild)
+ * SimpleSearch.tsx — Post-Login Home (WO-532)
  *
- * The first thing every authenticated user sees after login.
- * Replaces the austere "coming soon" search bar with a vibrant,
- * information-rich hero that immediately communicates value and
- * gives clear next actions without trapping the user.
+ * Google-style search portal. The first thing every authenticated user
+ * sees after login. Live client-side keyword search with inline result
+ * cards, quick-link chips, and feature launch tiles.
  *
  * Layout (top to bottom):
- *   1. Personalized greeting + status strip
- *   2. Four bold feature launch tiles (Wellness Journey, Interactions, Catalog, Analytics)
- *   3. Neural Copilot search bar (coming soon — clearly labelled)
- *   4. Receptor Binding Affinity Matrix
- *   5. Global Benchmark Intelligence
+ *   1. Personalized greeting
+ *   2. Live search bar + inline results
+ *   3. Quick-link chips
+ *   4. Four bold feature launch tiles
+ *   5. Receptor Binding Affinity Matrix
+ *   6. Global Benchmark Intelligence
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   HeartPulse,
@@ -22,16 +22,92 @@ import {
   FlaskConical,
   BarChart3,
   ArrowRight,
-  Sparkles,
-  Activity,
-  Shield,
+  Search,
+  X,
   BookOpen,
   ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 
 import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatmap';
 import GlobalBenchmarkIntelligence from '../components/analytics/GlobalBenchmarkIntelligence';
 import { useAuth } from '../contexts/AuthContext';
+
+// ─── Keyword → page map (client-side only, zero network requests) ─────────────
+
+interface SearchResult {
+  id: string;
+  page: string;
+  description: string;
+  path: string;
+  icon: React.FC<{ className?: string }>;
+  iconColor: string;
+  keywords: string[];
+}
+
+const SEARCH_INDEX: SearchResult[] = [
+  {
+    id: 'wellness-journey',
+    page: 'Wellness Journey',
+    description: 'Log preparation, dosing sessions, and integration — 3-phase clinical documentation.',
+    path: '/wellness-journey',
+    icon: HeartPulse,
+    iconColor: 'text-teal-400',
+    keywords: ['session', 'patient', 'protocol', 'preparation', 'dosing', 'integration', 'wellness', 'journey', 'arc', 'care', 'log'],
+  },
+  {
+    id: 'interactions',
+    page: 'Interaction Checker',
+    description: 'Cross-reference medications against your protocol. Flags dangerous interactions before the session.',
+    path: '/interactions',
+    icon: Zap,
+    iconColor: 'text-amber-400',
+    keywords: ['interaction', 'contraindication', 'medication', 'safety', 'serotonin', 'drug', 'mdma', 'ketamine', 'psilocybin', 'ibogaine', 'check'],
+  },
+  {
+    id: 'catalog',
+    page: 'Substance Library',
+    description: 'Monographs for psilocybin, MDMA, ketamine, ibogaine and more — receptor binding, dosing ranges, contraindications.',
+    path: '/catalog',
+    icon: FlaskConical,
+    iconColor: 'text-indigo-400',
+    keywords: ['substance', 'catalog', 'library', 'psilocybin', 'mdma', 'ketamine', 'ibogaine', 'lsd', 'receptor', 'binding', 'pharmacology', 'compound', 'monograph'],
+  },
+  {
+    id: 'analytics',
+    page: 'Clinical Analytics',
+    description: 'Benchmark your outcomes against the anonymised peer network. Spot protocol gaps before they become liabilities.',
+    path: '/analytics',
+    icon: BarChart3,
+    iconColor: 'text-violet-400',
+    keywords: ['analytics', 'report', 'benchmark', 'outcomes', 'performance', 'radar', 'galaxy', 'patient', 'network', 'intelligence', 'clinical'],
+  },
+  {
+    id: 'help',
+    page: 'Help & FAQ',
+    description: 'Guides, FAQs and platform documentation for practitioners.',
+    path: '/help',
+    icon: BookOpen,
+    iconColor: 'text-slate-400',
+    keywords: ['help', 'faq', 'guide', 'support', 'documentation', 'settings', 'onboarding'],
+  },
+  {
+    id: 'settings',
+    page: 'Settings',
+    description: 'Configure your workspace, notification preferences, and account details.',
+    path: '/settings',
+    icon: Sparkles,
+    iconColor: 'text-slate-400',
+    keywords: ['settings', 'account', 'profile', 'workspace', 'configure', 'preferences', 'customize'],
+  },
+];
+
+const QUICK_LINKS = [
+  { label: 'Interaction Checker', path: '/interactions', icon: Zap, color: 'border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400/60' },
+  { label: 'Wellness Journey', path: '/wellness-journey', icon: HeartPulse, color: 'border-teal-500/30 text-teal-400 hover:bg-teal-500/10 hover:border-teal-400/60' },
+  { label: 'Substance Library', path: '/catalog', icon: FlaskConical, color: 'border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-400/60' },
+  { label: 'Clinical Analytics', path: '/analytics', icon: BarChart3, color: 'border-violet-500/30 text-violet-400 hover:bg-violet-500/10 hover:border-violet-400/60' },
+];
 
 interface SimpleSearchProps {
   onStartTour?: () => void;
@@ -151,83 +227,218 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
+// ─── Live Search Hook ─────────────────────────────────────────────────────────
+
+function useSearch(query: string): SearchResult[] {
+  return React.useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q.length < 2) return [];
+    const tokens = q.split(/\s+/);
+    return SEARCH_INDEX.filter((result) =>
+      tokens.every((token) =>
+        result.keywords.some((kw) => kw.includes(token)) ||
+        result.page.toLowerCase().includes(token) ||
+        result.description.toLowerCase().includes(token)
+      )
+    );
+  }, [query]);
+}
+
+// ─── Main component ────────────────────────────────────────────────────────────
+
 const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [query, setQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const results = useSearch(query);
 
   const userName = user?.email?.split('@')[0] ?? '';
   const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
+
+  // Auto-focus on mount so users arriving via sidebar nav can type immediately
+  useEffect(() => {
+    const t = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(t);
+  }, []);
+
+  const clearSearch = useCallback(() => {
+    setQuery('');
+    setActiveIdx(-1);
+    inputRef.current?.focus();
+  }, []);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!results.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIdx((i) => Math.min(i + 1, results.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIdx((i) => Math.max(i - 1, -1));
+    } else if (e.key === 'Enter' && activeIdx >= 0) {
+      navigate(results[activeIdx].path);
+      setQuery('');
+    } else if (e.key === 'Escape') {
+      clearSearch();
+    }
+  }, [results, activeIdx, navigate, clearSearch]);
+
+  const showResults = isFocused && query.trim().length >= 2;
 
   return (
     <div className="min-h-screen animate-in fade-in duration-500">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        {/* ── 1. Hero greeting strip ───────────────────────────────────────── */}
-        <div className="relative rounded-3xl overflow-hidden border border-slate-800/60 bg-gradient-to-br from-slate-900/80 via-[#0d1b2a]/80 to-slate-900/60 backdrop-blur-xl shadow-2xl">
-          {/* Animated glow orbs */}
-          <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-teal-500/10 blur-[60px] rounded-full pointer-events-none" />
-
-          <div className="relative z-10 px-6 py-8 sm:px-10 sm:py-10">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-              <div>
-                {/* Status pill */}
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-                    <span className="text-xs font-black text-emerald-400 uppercase tracking-wide">System Online</span>
-                  </span>
-                  <span className="px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-black text-indigo-400 uppercase tracking-wide">
-                    Beta Access
-                  </span>
-                </div>
-
-                <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-200 mb-2">
-                  {displayName ? `Welcome, ${displayName}.` : 'Clinical Intelligence Portal'}
-                </h1>
-                <p className="text-base text-slate-400 max-w-xl leading-relaxed">
-                  Your psychedelic practice intelligence platform. Select a tool below to get started.
-                </p>
-              </div>
-
-              {/* Quick stats */}
-              <div className="flex gap-3 flex-shrink-0">
-                <div className="flex flex-col items-center justify-center px-5 py-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 text-center min-w-[80px]">
-                  <Activity className="w-4 h-4 text-teal-400 mb-1" />
-                  <p className="text-xl font-black text-slate-200">Beta</p>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Status</p>
-                </div>
-                <div className="flex flex-col items-center justify-center px-5 py-4 rounded-2xl bg-slate-800/60 border border-slate-700/50 text-center min-w-[80px]">
-                  <Shield className="w-4 h-4 text-indigo-400 mb-1" />
-                  <p className="text-xl font-black text-slate-200">Zero</p>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">PHI</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Help / tour strip */}
-            <div className="mt-6 pt-5 border-t border-slate-800/60 flex flex-wrap gap-3">
-              <button
-                onClick={() => navigate('/help')}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/60 border border-slate-700/40 hover:border-slate-600 text-slate-400 hover:text-slate-200 text-sm font-bold transition-all group"
-              >
-                <BookOpen className="w-4 h-4" />
-                Help Center
-                <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-              <button
-                onClick={() => { onStartTour?.(); }}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 hover:border-indigo-500/40 text-indigo-400 hover:text-indigo-300 text-sm font-bold transition-all group"
-              >
-                <Sparkles className="w-4 h-4" />
-                Take the Tour
-                <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-            </div>
+        {/* ── 1. Hero greeting ─────────────────────────────────────────────── */}
+        <div className="text-center space-y-3 pt-4">
+          {/* Status pill */}
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+              <span className="text-xs font-black text-emerald-400 uppercase tracking-wide">System Online</span>
+            </span>
+            <span className="px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-black text-indigo-400 uppercase tracking-wide">
+              Beta Access
+            </span>
           </div>
+          <h1 className="ppn-page-title">
+            {displayName ? `Welcome back, ${displayName}.` : 'Clinical Intelligence Portal'}
+          </h1>
+          <p className="ppn-body text-slate-400 max-w-lg mx-auto">
+            Search the platform, or select a tool below to get started.
+          </p>
         </div>
 
-        {/* ── 2. Feature tiles ─────────────────────────────────────────────── */}
+        {/* ── 2. Live Search Bar ───────────────────────────────────────────── */}
+        <div className="max-w-3xl mx-auto relative">
+          {/* Ambient glow behind search bar */}
+          <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500/5 via-violet-500/10 to-indigo-500/5 blur-2xl rounded-full pointer-events-none" />
+
+          <div className="relative">
+            {/* Search Input */}
+            <div className={`relative flex items-center transition-all duration-200 ${isFocused ? 'ring-2 ring-indigo-500/40' : ''
+              } rounded-2xl`}>
+              <Search
+                className="absolute left-5 w-5 h-5 text-slate-400 pointer-events-none flex-shrink-0 z-10"
+                aria-hidden="true"
+              />
+              <input
+                ref={inputRef}
+                id="portal-search"
+                type="text"
+                value={query}
+                onChange={(e) => { setQuery(e.target.value); setActiveIdx(-1); }}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setTimeout(() => setIsFocused(false), 150)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search substances, protocols, interactions, analytics..."
+                aria-label="Search the PPN portal"
+                aria-autocomplete="list"
+                aria-controls={showResults ? 'search-results' : undefined}
+                aria-activedescendant={activeIdx >= 0 ? `search-result-${activeIdx}` : undefined}
+                autoComplete="off"
+                className="
+                  w-full h-14
+                  bg-slate-900/80 border border-slate-700/60
+                  rounded-2xl pl-14 pr-14
+                  text-slate-200 placeholder:text-slate-500
+                  text-base font-medium
+                  backdrop-blur-xl
+                  focus:outline-none focus:border-indigo-500/60
+                  transition-all duration-200
+                "
+              />
+              {query && (
+                <button
+                  onClick={clearSearch}
+                  aria-label="Clear search"
+                  className="absolute right-4 p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-all"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Inline Result Cards */}
+            {showResults && (
+              <div
+                id="search-results"
+                role="listbox"
+                aria-label="Search results"
+                className="
+                  absolute top-full left-0 right-0 mt-2 z-50
+                  bg-slate-900/95 backdrop-blur-xl
+                  border border-slate-700/60 rounded-2xl
+                  shadow-2xl shadow-slate-950/80
+                  overflow-hidden
+                  animate-in fade-in slide-in-from-top-2 duration-150
+                "
+              >
+                {results.length === 0 ? (
+                  <div className="px-6 py-5 text-center">
+                    <p className="ppn-body text-slate-500">No results for <span className="text-slate-300 font-semibold">"{query}"</span></p>
+                    <p className="ppn-meta text-slate-600 mt-1">Try: ketamine, patient, analytics, settings</p>
+                  </div>
+                ) : (
+                  <ul className="divide-y divide-slate-800/60">
+                    {results.map((result, idx) => {
+                      const Icon = result.icon;
+                      return (
+                        <li key={result.id} id={`search-result-${idx}`} role="option" aria-selected={idx === activeIdx}>
+                          <button
+                            onClick={() => { navigate(result.path); setQuery(''); }}
+                            onMouseEnter={() => setActiveIdx(idx)}
+                            className={`
+                              w-full flex items-center gap-4 px-5 py-4 text-left
+                              transition-colors duration-100 group
+                              ${idx === activeIdx ? 'bg-indigo-500/10' : 'hover:bg-slate-800/50'}
+                            `}
+                          >
+                            <div className="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center flex-shrink-0">
+                              <Icon className={`w-4 h-4 ${result.iconColor}`} aria-hidden="true" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-black text-slate-200 leading-tight">{result.page}</p>
+                              <p className="ppn-meta text-slate-500 mt-0.5 line-clamp-1">{result.description}</p>
+                            </div>
+                            <ArrowRight className={`w-4 h-4 flex-shrink-0 transition-all ${idx === activeIdx ? 'text-indigo-400 translate-x-0' : 'text-slate-600 -translate-x-1 group-hover:translate-x-0 group-hover:text-slate-400'
+                              }`} />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                <div className="px-5 py-2.5 border-t border-slate-800/60 flex items-center gap-3">
+                  <span className="ppn-meta text-slate-600">↑↓ navigate</span>
+                  <span className="ppn-meta text-slate-600">↵ open</span>
+                  <span className="ppn-meta text-slate-600">esc clear</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Quick-link chips */}
+          {!showResults && (
+            <div className="flex flex-wrap gap-2 mt-4 justify-center">
+              {QUICK_LINKS.map(({ label, path, icon: Icon, color }) => (
+                <button
+                  key={path}
+                  onClick={() => navigate(path)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border bg-transparent text-sm font-bold transition-all duration-150 hover:scale-[1.03] active:scale-95 ${color}`}
+                >
+                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── 3. Feature tiles ─────────────────────────────────────────────── */}
         <div>
           <div className="flex items-center gap-3 mb-5">
             <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest">Clinical Tools</h2>
@@ -240,38 +451,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
           </div>
         </div>
 
-        {/* ── 3. Neural Copilot search bar (coming soon) ───────────────────── */}
-        <div className="relative">
-          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/5 via-violet-500/10 to-indigo-500/5 blur-2xl rounded-full pointer-events-none" />
-          <div className="relative flex items-center max-w-3xl mx-auto">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                disabled
-                placeholder="Neural Copilot — semantic search across substances, protocols, and outcomes (coming soon)..."
-                aria-label="Search — Neural Copilot (coming soon)"
-                className="
-                  w-full h-14
-                  bg-slate-900/60 border border-slate-700/50
-                  rounded-2xl px-6
-                  text-sm text-slate-600
-                  placeholder:text-slate-600
-                  cursor-not-allowed
-                  backdrop-blur-xl
-                  font-medium
-                  pr-32
-                "
-              />
-              <div
-                aria-hidden="true"
-                className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-slate-800/60 border border-slate-700/40 flex items-center gap-1.5"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-500/60" />
-                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Soon</span>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* ── 4. Receptor Binding Affinity Matrix ──────────────────────────── */}
         <div className="space-y-4">

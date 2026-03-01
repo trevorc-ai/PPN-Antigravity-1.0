@@ -1,8 +1,8 @@
 ---
 id: WO-532
 title: "Google-Style Search Portal — Post-Login Home + Sidebar Placement"
-status: 03_BUILD
-owner: LEAD
+status: 04_QA
+owner: INSPECTOR
 authored_by: PRODDY
 created: 2026-03-01T01:31:00-08:00
 failure_count: 0
@@ -100,3 +100,28 @@ A returning or new authenticated practitioner needs an immediate, obvious starti
 ✅ WO-532 updated in `00_INBOX`. LEAD action needed: answer 3 Open Questions, confirm sidebar file, then route to BUILD.
 
 ==== PRODDY ====
+
+---
+
+## BUILDER IMPLEMENTATION COMPLETE
+
+**Date:** 2026-03-01 | **Commit:** Pending /finalize_feature
+
+### LEAD Open Questions — Resolved
+1. `WelcomeHeroBanner.tsx` present and functional — not needed; existing greeting covers first-login moment.
+2. `onStartTour` prop already existed in `SimpleSearch` interface. No new wiring required.
+3. Sidebar file confirmed: `src/components/Sidebar.tsx` (desktop) + `src/components/MobileSidebar.tsx` (mobile). Both updated.
+
+### Files Modified
+- `src/pages/SimpleSearch.tsx` — Full search rebuild: live `useSearch()` hook, 13-keyword client-side map, inline result cards (keyboard-navigable), quick-link chips, clean centered greeting. Disabled "Neural Copilot coming soon" bar removed. Placeholder Beta/Zero PHI stat cards removed.
+- `src/components/Sidebar.tsx` — "Search" added as first nav item in Core section, above Dashboard. Icon: `search` (material symbol). Route: `/search`.
+- `src/components/MobileSidebar.tsx` — Same addition for mobile parity.
+
+### Acceptance Criteria (self-assessed)
+- [x] Rendered search bar, quick-link chips, and inline results on type — confirmed by visual QA screenshot
+- [x] "ketamine" query → Interaction Checker + Substance Library result cards appear
+- [x] Zero network requests — client-side filter only
+- [x] "Search" at position #1 in sidebar (above Dashboard) — confirmed
+- [x] "Search" active/highlighted when on `/search` — NavLink isActive styling confirmed
+- [x] Desktop + mobile sidebars both updated
+- [x] No TypeScript errors (unused imports cleaned)
