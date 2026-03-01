@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 
@@ -50,21 +50,6 @@ export default function PatientCompanionPage() {
     const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
     const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const litTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-    // Video rotation
-    const videoZoneRef = useRef<HTMLDivElement>(null);
-    const [videoSize, setVideoSize] = useState({ w: 0, h: 0 });
-    useEffect(() => {
-        const el = videoZoneRef.current;
-        if (!el) return;
-        const ro = new ResizeObserver(([entry]) => {
-            const { width, height } = entry.contentRect;
-            setVideoSize({ w: width, h: height });
-        });
-        ro.observe(el);
-        return () => ro.disconnect();
-    }, []);
-    const videoMeasured = videoSize.w > 0 && videoSize.h > 0;
 
     const handleLogFeeling = (feelingId: string, feelingLabel: string) => {
         // Persist log
@@ -149,7 +134,7 @@ export default function PatientCompanionPage() {
             </div>
 
             {/* ══ Video zone — fills remaining height above buttons ══ */}
-            <div ref={videoZoneRef} className="relative flex-1 overflow-hidden pointer-events-none" aria-hidden="true">
+            <div className="relative flex-1 overflow-hidden pointer-events-none" aria-hidden="true">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
                 <div className="absolute top-5 left-0 right-0 text-center z-20">
                     <p className="text-white/20 text-xs tracking-[0.2em]">
@@ -162,17 +147,7 @@ export default function PatientCompanionPage() {
                     loop
                     muted
                     playsInline
-                    className="absolute opacity-90"
-                    style={videoMeasured ? {
-                        width: `${videoSize.h}px`,
-                        height: `${videoSize.w}px`,
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%) rotate(-90deg)',
-                        objectFit: 'contain',
-                    } : {
-                        inset: 0, width: '100%', height: '100%', objectFit: 'contain' as const,
-                    }}
+                    className="absolute inset-0 w-full h-full object-contain opacity-90"
                 />
             </div>
 
