@@ -22,7 +22,7 @@ const PatientConstellation: React.FC = () => {
         <PageContainer className="py-8">
             <Section>
                 <div className="border-b border-slate-800 pb-6">
-                    <h1 className="text-5xl font-black tracking-tighter mb-2">Patient Constellation</h1>
+                    <h1 className="sr-only">Patient Constellation</h1>
                     <p className="text-slate-300 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">
                         This chart maps patient outcomes based on their treatment resistance and symptom severity. Each dot represents a patient, allowing you to see patterns in how different people respond to treatments.
                     </p>
