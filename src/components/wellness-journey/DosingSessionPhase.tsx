@@ -172,8 +172,8 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
     };
 
     return (
-        <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-3 pb-5 pt-3">
-            <div className="grid grid-cols-4 gap-1.5 max-w-2xl mx-auto">
+        <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-2 pb-3 pt-2 sm:px-3 sm:pb-5 sm:pt-3">
+            <div className="grid grid-cols-4 gap-1 sm:gap-1.5 max-w-2xl mx-auto">
                 {COMPANION_FEELINGS.map(f => {
                     const isLit = litId === f.id;
                     return (
@@ -181,9 +181,10 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
                             key={f.id}
                             onClick={() => handleTap(f.id)}
                             className={[
-                                'backdrop-blur-md border rounded-xl',
-                                'px-1.5 py-2.5',
-                                'text-[10px] font-semibold tracking-wider uppercase text-center',
+                                'backdrop-blur-md border rounded-lg sm:rounded-xl',
+                                'px-1 py-1 sm:px-1.5 sm:py-2.5',
+                                'min-h-[36px] sm:min-h-[44px]',
+                                'text-[7px] sm:text-[10px] font-semibold tracking-wide uppercase text-center leading-tight',
                                 'shadow-sm select-none',
                                 isLit
                                     ? `${f.glow} transition-none scale-[1.04] shadow-lg`

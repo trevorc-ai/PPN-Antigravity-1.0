@@ -185,9 +185,10 @@ export default function PatientCompanionPage() {
                                  *               duration-[1800ms] ease-out` → CSS fades it back slowly
                                  */
                                 className={[
-                                    'backdrop-blur-md border rounded-xl',
-                                    'px-1.5 py-2.5',
-                                    'text-[10px] font-semibold tracking-wider uppercase text-center',
+                                    'backdrop-blur-md border rounded-lg sm:rounded-xl',
+                                    'px-1 py-1 sm:px-1.5 sm:py-2.5',
+                                    'min-h-[36px] sm:min-h-[44px]',
+                                    'text-[7px] sm:text-[10px] font-semibold tracking-wide uppercase text-center leading-tight',
                                     'shadow-sm select-none',
                                     isLit
                                         ? `${f.glow} transition-none scale-[1.04] shadow-lg`
