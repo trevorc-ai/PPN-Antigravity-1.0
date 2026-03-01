@@ -33,6 +33,13 @@ src/pages/InteractionChecker.tsx
 # src/components/wellness-journey/DosingSessionPhase.tsx
 # src/components/wellness-journey/LiveSessionTimeline.tsx
 
+
+# ── Live Session Indicator · WO-543 (finalized 2026-03-01) ──
+src/hooks/useActiveSessions.ts
+src/components/session/SessionPillCard.tsx
+src/components/session/ActiveSessionsWidget.tsx
+src/components/TopHeader.tsx
+src/pages/Dashboard.tsx
 ## Housecleaning Standard
 Files eligible for daily archive (move OUT of project, NOT delete):
 - _WORK_ORDERS/99_COMPLETED/ — any ticket older than 7 days
