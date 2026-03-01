@@ -203,76 +203,36 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
 };
 
 /**
- * CompanionVideo — pure-CSS orientation-aware player.
- *
- * The container uses CSS aspect-ratio to derive its own height from its width.
- * No flex-1 stretching — the video is in a bounded panel, not "the background".
- *
- * Portrait mode (device upright):
- *   Container ratio = 9:16 (portrait panel)
- *   16:9 landscape video fills it via the golden rotation formula:
- *     width = 177.78% (= 16/9 × container_width = container_height)
- *     height = 56.25% (= 9/16 × container_height = container_width)
- *   After rotate(-90deg): visual W×H = container_W × container_H — exact fill, no crop.
- *
- * Landscape mode (device sideways):
- *   Container ratio = 16:9, video plays naturally with object-cover.
+ * CompanionVideo — full-screen ambient video for tablet/mobile.
+ * object-cover fills the flex-1 zone naturally on any screen.
+ * No rotation, no aspect-ratio math — the landscape video crops
+ * gracefully on portrait devices for ambient content.
  */
-const CompanionVideo: React.FC = () => {
-    const [isPortrait, setIsPortrait] = useState(
-        () => typeof window !== 'undefined'
-            ? window.matchMedia('(orientation: portrait)').matches
-            : true
-    );
+const CompanionVideo: React.FC = () => (
+    <div
+        className="relative flex-1 overflow-hidden pointer-events-none"
+        aria-hidden="true"
+    >
+        {/* Subtle gradient — legibility only, not distracting */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
 
-    useEffect(() => {
-        const mq = window.matchMedia('(orientation: portrait)');
-        const handler = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
-        mq.addEventListener('change', handler);
-        return () => mq.removeEventListener('change', handler);
-    }, []);
-
-    return (
-        <div
-            className="relative w-full overflow-hidden rounded-t-2xl border-x border-t border-white/8"
-            style={{ aspectRatio: isPortrait ? '9/16' : '16/9' }}
-            aria-hidden="true"
-        >
-            {/* Gradient for legibility */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50 z-10" />
-
-            {/* Dim prompt */}
-            <div className="absolute top-4 left-0 right-0 text-center z-20">
-                <p className="text-white/20 text-[10px] tracking-[0.2em]">
-                    Tap to quietly log your state
-                </p>
-            </div>
-
-            <video
-                src="/admin_uploads/spherecules.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="absolute opacity-90"
-                style={isPortrait ? {
-                    // Golden formula — fills 9:16 container with 16:9 video exactly:
-                    width: '177.78%',   // = (16/9) × 100% of container W = container H
-                    height: '56.25%',   // = (9/16) × 100% of container H = container W
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%) rotate(-90deg)',
-                } : {
-                    inset: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover' as const,
-                }}
-            />
+        {/* Dim prompt */}
+        <div className="absolute top-5 left-0 right-0 text-center z-20">
+            <p className="text-white/20 text-xs tracking-[0.2em]">
+                Tap to quietly log your state
+            </p>
         </div>
-    );
-};
 
+        <video
+            src="/admin_uploads/spherecules.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-90"
+        />
+    </div>
+);
 
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, completedForms, onOpenForm, onCompletePhase }) => {
 
@@ -1340,19 +1300,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">Return to session</span>
                         </div>
 
-                        {/* ══ CONTENT COLUMN ═══════════════════════════════════════
-                         *  max-w-xs centered: on desktop → clear portrait panel on
-                         *  black field. On phone → fills edge-to-edge.
-                         *  CompanionVideo self-sizes via aspect-ratio (9:16 / 16:9).
-                         *  No flex-1 on video — container height comes from the ratio.
-                         */}
-                        <div className="flex-1 overflow-y-auto flex items-start justify-center pt-16 pb-4">
-                            <div className="flex flex-col w-full max-w-xs">
-                                <CompanionVideo />
-                                <CompanionButtonGrid
-                                    sessionId={journey.sessionId || 'demo-1'}
-                                />
-                            </div>
+                        {/* Full-screen flex-col: video fills top, buttons at bottom */}
+                        <div className="flex flex-col flex-1 min-h-0 pt-14">
+                            <CompanionVideo />
+                            <CompanionButtonGrid
+                                sessionId={journey.sessionId || 'demo-1'}
+                            />
                         </div>
 
                     </div>
