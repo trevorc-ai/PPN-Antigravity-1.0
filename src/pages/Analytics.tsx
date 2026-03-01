@@ -226,7 +226,7 @@ const Analytics = () => {
                     </span>
                 </div>
                 <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
-                    <GlobalBenchmarkIntelligence />
+                    <GlobalBenchmarkIntelligence alwaysShow={true} />
                 </div>
             </Section>
 
