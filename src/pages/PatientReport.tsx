@@ -5,13 +5,139 @@ import { usePhase3Data, Phase3PulseTrendPoint } from '../hooks/usePhase3Data';
 
 // ─── Print + PWA styles ───────────────────────────────────────────────────────
 const GLOBAL_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap');
-
   .compass-root {
     font-family: 'Outfit', sans-serif;
     background: #050c1a;
     min-height: 100vh;
     color: #e2e8f0;
+  }
+
+  /* ─── Star field animation ───────────────────────────────────────────────── */
+  @keyframes star-drift {
+    0%   { transform: translateY(0px) scale(1);   opacity: 0.4; }
+    50%  { transform: translateY(-6px) scale(1.2); opacity: 0.9; }
+    100% { transform: translateY(0px) scale(1);   opacity: 0.4; }
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #e2e8f0;
+    animation: star-drift var(--dur, 6s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    pointer-events: none;
+  }
+
+  /* ─── Compass rose spin ─────────────────────────────────────────────────── */
+  @keyframes compass-slow-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .compass-rose-ring {
+    animation: compass-slow-spin 60s linear infinite;
+    transform-origin: center;
+  }
+
+  /* ─── Hero brand pill ───────────────────────────────────────────────────── */
+  .ppn-brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px 5px 8px;
+    border-radius: 9999px;
+    background: rgba(45,212,191,0.08);
+    border: 1px solid rgba(45,212,191,0.25);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #2dd4bf;
+    margin-bottom: 20px;
+  }
+  .ppn-brand-pill-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #2dd4bf;
+    box-shadow: 0 0 8px rgba(45,212,191,0.8);
+  }
+
+  /* ─── Zone header shimmer ───────────────────────────────────────────────── */
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+
+  /* ─── Custom slider — removes all browser defaults ─────────────────────── */
+  .compass-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 9999px;
+    outline: none;
+    cursor: pointer;
+    background: linear-gradient(
+      to right,
+      #2dd4bf var(--pct, 50%),
+      rgba(100,116,139,0.25) var(--pct, 50%)
+    );
+    border: none;
+  }
+  .compass-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #2dd4bf;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow: 0 0 0 3px rgba(45,212,191,0.2), 0 0 14px rgba(45,212,191,0.5);
+    transition: box-shadow 0.15s, transform 0.1s;
+  }
+  .compass-slider::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(45,212,191,0.25), 0 0 22px rgba(45,212,191,0.7);
+    transform: scale(1.1);
+  }
+  .compass-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #2dd4bf;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow: 0 0 0 3px rgba(45,212,191,0.2), 0 0 14px rgba(45,212,191,0.5);
+  }
+  .compass-slider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 9999px;
+    background: transparent;
+  }
+  .compass-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(100,116,139,0.25);
+  }
+  .compass-slider::-moz-range-progress {
+    height: 6px;
+    border-radius: 9999px;
+    background: #2dd4bf;
+  }
+
+  /* ─── Feeling pill hover ────────────────────────────────────────────────── */
+  .feeling-pill {
+    transition: opacity 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .feeling-pill:hover {
+    opacity: 1 !important;
+    transform: translateY(-1px);
+  }
+
+  /* ─── Zone card reveal ──────────────────────────────────────────────────── */
+  .zone-card-inner {
+    transition: box-shadow 0.3s;
+  }
+  .zone-card-inner:hover {
+    box-shadow: 0 0 60px rgba(45,212,191,0.07) !important;
   }
 
   @media print {
@@ -22,6 +148,11 @@ const GLOBAL_CSS = `
     .compass-card { background: #fffdf7 !important; border-color: #e8d5a3 !important; box-shadow: none !important; }
     .compass-glow { box-shadow: none !important; }
     .print-gold-border { border: 2px solid #d4a943 !important; }
+    .star, .compass-rose-ring { display: none !important; }
+  }
+
+  @media (max-width: 480px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
   }
 `;
 
@@ -53,12 +184,30 @@ const EMAGraph: React.FC<{ points: Phase3PulseTrendPoint[]; sessionDate?: string
     points, sessionDate,
 }) => {
     if (!points || points.length === 0) return (
-        <div style={{
-            height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#64748b', fontSize: 13, fontStyle: 'italic'
-        }}>
-            Log your first check-in below to begin your journey map.
-        </div>
+        <svg width="100%" viewBox="0 0 540 120" style={{ overflow: 'visible' }}>
+            <defs>
+                <linearGradient id="npGradEmpty" x1="0" x2="1" y1="0" y2="0">
+                    <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.12" />
+                    <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                </linearGradient>
+            </defs>
+            <g transform="translate(32,16)">
+                {/* Neuroplastic window glow */}
+                <rect x={0} y={0} width={492} height={76} fill="url(#npGradEmpty)" rx={4} />
+                {/* Ghost baseline */}
+                <line x1={0} y1={38} x2={492} y2={38}
+                    stroke="#2dd4bf" strokeWidth={2} strokeDasharray="6 4" opacity={0.25} />
+                {/* Label */}
+                <text x={246} y={28} textAnchor="middle" fill="#64748b" fontSize={11}>
+                    Your journey begins here
+                </text>
+                {/* Baseline axis */}
+                <line x1={0} y1={76} x2={492} y2={76} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
+            </g>
+            <text x={286} y={112} textAnchor="middle" fill="#64748b" fontSize={11}>
+                Log your first check-in below to begin your journey map.
+            </text>
+        </svg>
     );
 
     const W = 540; const H = 120;
@@ -146,26 +295,42 @@ const EMAGraph: React.FC<{ points: Phase3PulseTrendPoint[]; sessionDate?: string
 };
 
 // ─── Feeling Timeline (Wave) ──────────────────────────────────────────────────
+const GHOST_FEELINGS = ['Peaceful', 'Curious', 'Open', 'Released', 'Connected', 'Grateful'];
+
 const FeelingWave: React.FC<{ events: { label: string; eventType: string; occurredAt: string }[] }> = ({ events }) => {
-    if (!events || events.length === 0) return (
-        <div style={{ color: '#64748b', fontSize: 13, fontStyle: 'italic', textAlign: 'center', padding: '24px 0' }}>
-            Companion feeling data not available for this session.
+    const feelings = events ? events.filter(e => e.eventType === 'feeling' || e.eventType === 'companion_tap') : [];
+
+    if (!events || feelings.length === 0) return (
+        <div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center', marginBottom: 14 }}>
+                {GHOST_FEELINGS.map((label, i) => (
+                    <span key={i} className="feeling-pill" style={{
+                        padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600,
+                        background: `rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.10)`,
+                        border: `1px solid rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.30)`,
+                        color: i % 2 === 0 ? 'rgba(45,212,191,0.75)' : 'rgba(167,139,250,0.75)',
+                        opacity: 0.75, userSelect: 'none',
+                    }}>{label}</span>
+                ))}
+            </div>
+            <p style={{ fontSize: 12, color: '#64748b', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
+                Your feeling map will appear here after your session. These are example emotional landmarks from other journeys.
+            </p>
         </div>
     );
 
-    const feelings = events.filter(e => e.eventType === 'feeling' || e.eventType === 'companion_tap');
     if (feelings.length === 0) return null;
 
     return (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center' }}>
             {feelings.map((f, i) => (
-                <span key={i} style={{
-                    padding: '6px 14px',
+                <span key={i} className="feeling-pill" style={{
+                    padding: '7px 16px',
                     borderRadius: 20,
                     fontSize: 13,
                     fontWeight: 600,
                     background: `rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.12)`,
-                    border: `1px solid rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.25)`,
+                    border: `1px solid rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.28)`,
                     color: i % 2 === 0 ? C.teal : C.violet,
                 }}>
                     {f.label}
@@ -179,53 +344,71 @@ const FeelingWave: React.FC<{ events: { label: string; eventType: string; occurr
 const SliderField: React.FC<{
     label: string; emoji: string; value: number;
     onChange: (v: number) => void;
-}> = ({ label, emoji, value, onChange }) => (
-    <div style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#cbd5e1' }}>
-                {emoji} {label}
-            </span>
-            <span style={{
-                fontSize: 14, fontWeight: 900, color: C.teal,
-                minWidth: 24, textAlign: 'right',
-            }}>{value > 0 ? value : '—'}</span>
+    minLabel?: string; maxLabel?: string;
+}> = ({ label, emoji, value, onChange, minLabel = 'Low', maxLabel = 'High' }) => {
+    // Compute fill percentage for CSS custom property (1–10 scale)
+    const pct = `${((value - 1) / 9) * 100}%`;
+    return (
+        <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#e2e8f0' }}>
+                    {emoji} {label}
+                </span>
+                <span style={{
+                    fontSize: 15, fontWeight: 900, color: C.teal,
+                    minWidth: 28, textAlign: 'right',
+                }}>{value > 0 ? value : '—'}</span>
+            </div>
+            <input
+                type="range" min={1} max={10} value={value || 5}
+                onChange={e => onChange(Number(e.target.value))}
+                className="compass-slider"
+                style={{ '--pct': pct } as React.CSSProperties}
+                aria-label={label}
+                aria-valuenow={value}
+                aria-valuemin={1}
+                aria-valuemax={10}
+            />
+            <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                fontSize: 12, color: '#64748b', marginTop: 6, fontWeight: 500,
+            }}>
+                <span>{minLabel}</span><span>{maxLabel}</span>
+            </div>
         </div>
-        <input
-            type="range" min={1} max={10} value={value || 5}
-            onChange={e => onChange(Number(e.target.value))}
-            style={{ width: '100%', accentColor: C.teal, cursor: 'pointer' }}
-        />
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#475569', marginTop: 2 }}>
-            <span>Struggling</span><span>Thriving</span>
-        </div>
-    </div>
-);
+    );
+};
 
 // ─── Zone Shell ───────────────────────────────────────────────────────────────
+// WO-567: Badge is a single consistent system — teal ring, slate bg, white numeral.
+// accentColor now ONLY affects the title text (semantic domain color). Badge is always teal.
 const Zone: React.FC<{
     number: number; title: string; accentColor?: string;
     children: React.ReactNode; printClass?: string;
 }> = ({ number, title, accentColor = C.teal, children, printClass }) => (
-    <div className={`compass-card ${printClass ?? ''}`} style={{
-        background: C.card,
-        border: `1px solid ${C.border}`,
+    <div className={`compass-card zone-card-inner ${printClass ?? ''}`} style={{
+        background: 'rgba(10,20,42,0.90)',
+        border: `1px solid rgba(45,212,191,0.12)`,
         borderRadius: 20,
         padding: '28px 32px',
         marginBottom: 24,
-        backdropFilter: 'blur(20px)',
-        boxShadow: `0 0 40px rgba(45,212,191,0.06)`,
+        backdropFilter: 'blur(24px)',
+        boxShadow: `0 4px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(45,212,191,0.04)`,
     }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+            {/* Badge: always teal-ring / dark-bg / white numeral — consistent across all 5 zones */}
             <div style={{
-                width: 32, height: 32, borderRadius: 10,
-                background: `linear-gradient(135deg, ${accentColor}33, ${accentColor}11)`,
-                border: `1px solid ${accentColor}40`,
+                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                background: 'rgba(45,212,191,0.08)',
+                border: '1.5px solid rgba(45,212,191,0.35)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 13, fontWeight: 900, color: accentColor,
+                fontSize: 15, fontWeight: 900, color: '#e2e8f0',
+                boxShadow: '0 0 12px rgba(45,212,191,0.12)',
             }}>{number}</div>
+            {/* Title text color = semantic domain accent — intentional, not arbitrary */}
             <h2 style={{
-                margin: 0, fontSize: 15, fontWeight: 900, color: accentColor,
-                textTransform: 'uppercase', letterSpacing: '0.1em'
+                margin: 0, fontSize: 13, fontWeight: 800, color: accentColor,
+                textTransform: 'uppercase', letterSpacing: '0.14em', lineHeight: 1.2
             }}>{title}</h2>
         </div>
         {children}
@@ -263,14 +446,17 @@ const PatientReport: React.FC = () => {
         setSubmitting(true);
         setSubmitError(null);
         try {
-            const { error } = await supabase.from('log_daily_pulse').insert({
+            // WO-566: Blocker 0 resolved — production table is log_pulse_checks (not log_daily_pulse)
+            // patient_uuid passed as sessionId here pending full patient UUID resolver (WO-566 Phase 2)
+            const { error } = await supabase.from('log_pulse_checks').insert({
                 session_id: sessionId,
+                patient_uuid: sessionId, // TODO: resolve true patient_uuid from session row
                 mood_level: checkin.mood,
                 sleep_quality: checkin.sleep,
                 connection_level: checkin.connection,
                 anxiety_level: checkin.anxiety,
-                submitted_at: new Date().toISOString(),
-                check_in_date: new Date().toISOString().slice(0, 10),
+                check_date: new Date().toISOString().slice(0, 10),
+                completed_at: new Date().toISOString(),
             });
             if (error) throw error;
             setSubmitted(true);
@@ -327,61 +513,146 @@ const PatientReport: React.FC = () => {
         <div className="compass-root" style={{ background: C.bg, minHeight: '100vh' }}>
             <style>{GLOBAL_CSS}</style>
 
-            {/* ── Gradient header ──────────────────────────────────────────────── */}
+            {/* ── Hero header — branded ──────────────────────────────────────── */}
             <div style={{
-                background: 'linear-gradient(135deg, #0a1628 0%, #0d1f3c 50%, #091524 100%)',
-                padding: '48px 24px 40px',
+                background: 'linear-gradient(160deg, #040d1e 0%, #071528 40%, #0a1a30 70%, #060e1c 100%)',
+                padding: '56px 24px 48px',
                 textAlign: 'center',
-                borderBottom: `1px solid ${C.border}`,
+                borderBottom: `1px solid rgba(45,212,191,0.10)`,
                 position: 'relative',
                 overflow: 'hidden',
             }}>
-                {/* Ambient glow blobs */}
+                {/* ── Animated star field ── */}
+                {([
+                    { top: '12%', left: '8%', size: 2, dur: '7s', delay: '0s' },
+                    { top: '28%', left: '18%', size: 1.5, dur: '9s', delay: '1.2s' },
+                    { top: '55%', left: '5%', size: 1, dur: '11s', delay: '0.5s' },
+                    { top: '75%', left: '14%', size: 2.5, dur: '8s', delay: '3s' },
+                    { top: '10%', left: '88%', size: 2, dur: '6s', delay: '2s' },
+                    { top: '38%', left: '92%', size: 1.5, dur: '10s', delay: '0.8s' },
+                    { top: '65%', left: '85%', size: 1, dur: '7.5s', delay: '4s' },
+                    { top: '85%', left: '90%', size: 2, dur: '9s', delay: '1.5s' },
+                    { top: '20%', left: '45%', size: 1, dur: '13s', delay: '6s' },
+                    { top: '80%', left: '52%', size: 1.5, dur: '8.5s', delay: '2.5s' },
+                ] as const).map((s, i) => (
+                    <div key={i} className="star" style={{
+                        top: s.top, left: s.left,
+                        width: s.size, height: s.size,
+                        ['--dur' as string]: s.dur,
+                        ['--delay' as string]: s.delay,
+                    }} />
+                ))}
+
+                {/* ── Large ambient teal glow behind compass rose ── */}
                 <div style={{
-                    position: 'absolute', top: -60, left: '20%', width: 300, height: 300,
-                    borderRadius: '50%', background: `${C.teal}0d`, filter: 'blur(80px)', pointerEvents: 'none'
+                    position: 'absolute', top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 380, height: 380, borderRadius: '50%',
+                    background: 'radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%)',
+                    pointerEvents: 'none',
                 }} />
                 <div style={{
-                    position: 'absolute', top: -40, right: '15%', width: 200, height: 200,
-                    borderRadius: '50%', background: `${C.gold}0a`, filter: 'blur(60px)', pointerEvents: 'none'
+                    position: 'absolute', top: -80, right: '10%', width: 260, height: 260,
+                    borderRadius: '50%', background: `rgba(245,158,11,0.04)`,
+                    filter: 'blur(70px)', pointerEvents: 'none'
                 }} />
 
-                <div style={{ position: 'relative' }}>
-                    <div style={{
-                        fontSize: 12, fontWeight: 700, letterSpacing: '0.2em',
-                        textTransform: 'uppercase', color: C.teal, marginBottom: 12
-                    }}>
-                        Your Integration Compass
+                {/* ── SVG Compass Rose (slow spinning outer ring) ── */}
+                <div className="no-print" style={{
+                    position: 'absolute', top: '50%', left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 320, height: 320, opacity: 0.06, pointerEvents: 'none',
+                }}>
+                    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        className="compass-rose-ring" style={{ width: '100%', height: '100%' }}>
+                        <circle cx="100" cy="100" r="96" stroke="#2dd4bf" strokeWidth="0.75" strokeDasharray="4 8" />
+                        <circle cx="100" cy="100" r="80" stroke="#2dd4bf" strokeWidth="0.5" />
+                        {[0, 45, 90, 135, 180, 225, 270, 315].map(deg => {
+                            const rad = (deg * Math.PI) / 180;
+                            const x1 = 100 + 82 * Math.sin(rad);
+                            const y1 = 100 - 82 * Math.cos(rad);
+                            const x2 = 100 + 96 * Math.sin(rad);
+                            const y2 = 100 - 96 * Math.cos(rad);
+                            return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#2dd4bf" strokeWidth="0.75" />;
+                        })}
+                        {[0, 90, 180, 270].map(deg => {
+                            const rad = (deg * Math.PI) / 180;
+                            const tipX = 100 + 74 * Math.sin(rad);
+                            const tipY = 100 - 74 * Math.cos(rad);
+                            const lX = 100 + 8 * Math.sin(rad + Math.PI / 2);
+                            const lY = 100 - 8 * Math.cos(rad + Math.PI / 2);
+                            const rX = 100 + 8 * Math.sin(rad - Math.PI / 2);
+                            const rY = 100 - 8 * Math.cos(rad - Math.PI / 2);
+                            return <polygon key={deg} points={`${tipX},${tipY} ${lX},${lY} ${rX},${rY}`} fill="#2dd4bf" opacity="0.9" />;
+                        })}
+                        <circle cx="100" cy="100" r="5" fill="#2dd4bf" />
+                    </svg>
+                </div>
+
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    {/* PPN brand pill */}
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+                        <div className="ppn-brand-pill">
+                            <div className="ppn-brand-pill-dot" />
+                            PPN · Integration Compass
+                        </div>
                     </div>
+
+                    {/* Main wordmark */}
                     <h1 style={{
-                        fontSize: 38, fontWeight: 900, margin: '0 0 8px',
-                        background: `linear-gradient(135deg, #e2e8f0 0%, ${C.teal} 60%, ${C.gold} 100%)`,
-                        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
+                        fontSize: 44, fontWeight: 900, margin: '0 0 10px',
+                        lineHeight: 1.05,
+                        background: `linear-gradient(140deg, #e2e8f0 0%, #e2e8f0 30%, ${C.teal} 65%, ${C.gold} 100%)`,
+                        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                        letterSpacing: '-0.01em',
                     }}>
                         Your Journey
                     </h1>
-                    <p style={{ color: '#64748b', fontSize: 15, margin: 0 }}>
+
+                    {/* Sub-label */}
+                    <p style={{ color: '#64748b', fontSize: 14, margin: '0 0 20px', letterSpacing: '0.01em' }}>
                         A living record of your healing, updated by you.
                     </p>
+
+                    {/* ── Session meta strip ── */}
+                    <div style={{
+                        display: 'inline-flex', gap: 20, alignItems: 'center',
+                        padding: '8px 20px', borderRadius: 9999,
+                        background: 'rgba(45,212,191,0.05)',
+                        border: '1px solid rgba(45,212,191,0.15)',
+                    }}>
+                        <span style={{ fontSize: 12, color: '#475569', fontWeight: 600, letterSpacing: '0.06em' }}>
+                            PHASE 3 · INTEGRATION
+                        </span>
+                        <div style={{ width: 1, height: 12, background: 'rgba(45,212,191,0.2)' }} />
+                        <span style={{ fontSize: 12, color: C.teal, fontWeight: 700, letterSpacing: '0.06em' }}>
+                            HEALING IN PROGRESS
+                        </span>
+                    </div>
                 </div>
             </div>
 
             {/* ── Practitioner customization panel (no-print) ───────────────────── */}
-            <div className="no-print" style={{ maxWidth: 680, margin: '0 auto', padding: '16px 24px 0' }}>
+            <div className="no-print" style={{ maxWidth: 680, margin: '0 auto', padding: '16px 24px 0', display: 'flex', justifyContent: 'flex-end' }}>
                 <button
                     onClick={() => setShowCustomize(v => !v)}
+                    aria-label="Practitioner customization panel"
                     style={{
-                        fontSize: 12, color: '#64748b', background: 'none', border: 'none',
-                        cursor: 'pointer', textDecoration: 'underline', marginBottom: showCustomize ? 12 : 0
+                        fontSize: 13, color: showCustomize ? C.teal : '#94a3b8',
+                        background: showCustomize ? `${C.teal}10` : 'transparent',
+                        border: `1px solid ${showCustomize ? C.teal + '40' : 'rgba(45,212,191,0.2)'}`,
+                        borderRadius: 20, padding: '6px 14px',
+                        cursor: 'pointer', marginBottom: showCustomize ? 12 : 0,
+                        transition: 'all 0.2s',
                     }}>
-                    {showCustomize ? 'Hide' : 'Practitioner:'} Customize this Compass
+                    ⚙ {showCustomize ? 'Hide' : 'Customize this Compass'}
                 </button>
                 {showCustomize && (
                     <div style={{
                         background: 'rgba(13,25,48,0.7)', border: `1px solid ${C.border}`,
                         borderRadius: 16, padding: '20px 24px', marginBottom: 16
                     }}>
-                        <p style={{ fontSize: 12, color: '#64748b', marginBottom: 16 }}>
+                        <p style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>
                             Toggle zones to tailor the experience for your patient.
                         </p>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
@@ -485,9 +756,20 @@ const PatientReport: React.FC = () => {
                                 </div>
                             )}
                             {!baseline && !current && (
-                                <p style={{ fontSize: 13, color: '#475569', fontStyle: 'italic', gridColumn: '1 / -1' }}>
-                                    Baseline assessment data will appear here once your practitioner has recorded it.
-                                </p>
+                                <div style={{
+                                    gridColumn: '1 / -1',
+                                    background: `${C.violet}08`,
+                                    border: `1px solid ${C.violet}20`,
+                                    borderRadius: 14, padding: '20px 22px',
+                                    display: 'flex', alignItems: 'center', gap: 14
+                                }}>
+                                    <span style={{ fontSize: 28, opacity: 0.5 }}>✦</span>
+                                    <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
+                                        Your baseline will appear here once your practitioner has recorded
+                                        your pre-session assessment. This is where your starting point
+                                        will be marked.
+                                    </p>
+                                </div>
                             )}
                         </div>
                     </Zone>
@@ -495,7 +777,7 @@ const PatientReport: React.FC = () => {
 
                 {/* ZONE 2: The Emotional Terrain */}
                 {zones.z2 && (
-                    <Zone number={2} title="The Emotional Terrain" accentColor={C.rose}>
+                    <Zone number={2} title="The Emotional Terrain" accentColor={C.violet}>
                         <div style={{
                             background: `${C.teal}08`, border: `1px solid ${C.teal}20`,
                             borderRadius: 12, padding: '14px 18px', marginBottom: 20
@@ -504,7 +786,7 @@ const PatientReport: React.FC = () => {
                                 Every feeling you experienced during your session is within the normal range.
                             </p>
                         </div>
-                        <p style={{ fontSize: 13, color: '#64748b', marginBottom: 16, lineHeight: 1.7 }}>
+                        <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 16, lineHeight: 1.7 }}>
                             These are the emotional landmarks your Companion recorded during your journey.
                             Peaks, valleys, and everything in between, all part of the path.
                         </p>
@@ -554,10 +836,10 @@ const PatientReport: React.FC = () => {
                             border: `1px solid ${C.teal}25`, borderRadius: 16, padding: '24px 24px 20px',
                             background: `${C.teal}05`
                         }}>
-                            <p style={{ fontSize: 18, fontWeight: 700, color: '#e2e8f0', marginBottom: 4 }}>
+                            <p style={{ fontSize: 26, fontWeight: 700, color: '#f1f5f9', marginBottom: 4, lineHeight: 1.2 }}>
                                 How are you today, traveler?
                             </p>
-                            <p style={{ fontSize: 12, color: '#64748b', marginBottom: 24 }}>
+                            <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>
                                 {submitted
                                     ? 'Your check-in has been saved. Your Compass has been updated.'
                                     : 'Log today\'s check-in and watch your journey map grow.'}
@@ -566,13 +848,17 @@ const PatientReport: React.FC = () => {
                             {!submitted ? (
                                 <>
                                     <SliderField label="Mood" emoji="🌤" value={checkin.mood}
-                                        onChange={v => setCheckin(c => ({ ...c, mood: v }))} />
+                                        onChange={v => setCheckin(c => ({ ...c, mood: v }))}
+                                        minLabel="Low" maxLabel="High" />
                                     <SliderField label="Sleep quality" emoji="🌙" value={checkin.sleep}
-                                        onChange={v => setCheckin(c => ({ ...c, sleep: v }))} />
+                                        onChange={v => setCheckin(c => ({ ...c, sleep: v }))}
+                                        minLabel="Poor" maxLabel="Restful" />
                                     <SliderField label="Sense of connection" emoji="🤝" value={checkin.connection}
-                                        onChange={v => setCheckin(c => ({ ...c, connection: v }))} />
-                                    <SliderField label="Anxiety (1 = calm, 10 = anxious)" emoji="🌊" value={checkin.anxiety}
-                                        onChange={v => setCheckin(c => ({ ...c, anxiety: v }))} />
+                                        onChange={v => setCheckin(c => ({ ...c, connection: v }))}
+                                        minLabel="Isolated" maxLabel="Connected" />
+                                    <SliderField label="Anxiety" emoji="🌊" value={checkin.anxiety}
+                                        onChange={v => setCheckin(c => ({ ...c, anxiety: v }))}
+                                        minLabel="Calm" maxLabel="Anxious" />
                                     {submitError && (
                                         <p style={{ color: '#fb7185', fontSize: 13, marginBottom: 12 }}>{submitError}</p>
                                     )}
@@ -623,7 +909,7 @@ const PatientReport: React.FC = () => {
                             Thousands of people have walked a journey like yours. Here is what the global network
                             of practitioners and patients in PPN tells us about journeys similar to yours.
                         </p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+                        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
                             {[
                                 { stat: '84%', text: 'report meaningful relief by week 6' },
                                 { stat: '3.2x', text: 'more likely to sustain gains with integration sessions' },
@@ -642,7 +928,7 @@ const PatientReport: React.FC = () => {
                             marginTop: 20, background: 'rgba(255,255,255,0.03)',
                             border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '14px 18px'
                         }}>
-                            <p style={{ fontSize: 12, color: '#475569', margin: 0, lineHeight: 1.6 }}>
+                            <p style={{ fontSize: 12, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
                                 Data reflects anonymised aggregate outcomes from the PPN practitioner network and published
                                 peer-reviewed research. These are population averages and personal reflections, not medical advice.
                             </p>
@@ -674,9 +960,9 @@ const PatientReport: React.FC = () => {
                         {/* PEMS model */}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 24 }}>
                             {[
-                                { letter: 'P', label: 'Physical', desc: 'Move your body daily. Walk, stretch, swim. Your nervous system heals through motion.', color: '#34d399' },
-                                { letter: 'E', label: 'Emotional', desc: 'Let feelings surface without judgment. Journal, cry, rest. This is not weakness, it is the work.', color: C.rose },
-                                { letter: 'M', label: 'Mental', desc: 'Notice the new patterns of thought emerging. Write them down before they fade.', color: C.violet },
+                                { letter: 'P', label: 'Physical', desc: 'Move your body daily. Walk, stretch, swim. Your nervous system heals through motion.', color: C.teal },
+                                { letter: 'E', label: 'Emotional', desc: 'Let feelings surface without judgment. Journal, cry, rest. This is not weakness, it is the work.', color: C.violet },
+                                { letter: 'M', label: 'Mental', desc: 'Notice the new patterns of thought emerging. Write them down before they fade.', color: '#818cf8' },
                                 { letter: 'S', label: 'Spiritual', desc: 'Whatever connection means to you, tend to it. Nature, community, stillness, creation.', color: C.gold },
                             ].map(item => (
                                 <div key={item.letter} style={{
@@ -711,7 +997,8 @@ const PatientReport: React.FC = () => {
                         </div>
 
                         {/* Integration attendance */}
-                        {data.integrationSessionsAttended != null && (
+                        {/* Fix 1: Gate zero-count — only show when patient has attended at least 1 session */}
+                        {data.integrationSessionsAttended != null && data.integrationSessionsAttended > 0 && (
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20,
                                 background: `${C.violet}08`, border: `1px solid ${C.violet}20`,
@@ -730,39 +1017,65 @@ const PatientReport: React.FC = () => {
                     </Zone>
                 )}
 
-                {/* ── Share buttons ─────────────────────────────────────────────── */}
+                {/* ── Share buttons: practitioner = solid primary CTA; friend = intentional secondary ── */}
                 <div className="no-print" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 8 }}>
                     <button
                         onClick={sharePractitioner}
+                        aria-label="Share this Compass with your practitioner"
                         style={{
-                            padding: '16px 12px', borderRadius: 14, fontSize: 14, fontWeight: 700,
-                            background: `linear-gradient(135deg, ${C.teal}22, ${C.teal}0a)`,
-                            border: `1px solid ${C.teal}40`, color: C.teal, cursor: 'pointer',
-                            transition: 'all 0.2s', lineHeight: 1.3,
-                        }}>
+                            padding: '17px 14px', borderRadius: 14, fontSize: 14, fontWeight: 700,
+                            background: `linear-gradient(135deg, ${C.teal} 0%, #0e9f8e 100%)`,
+                            border: `1px solid rgba(45,212,191,0.4)`,
+                            color: '#050c1a', cursor: 'pointer',
+                            boxShadow: '0 4px 20px rgba(45,212,191,0.25)',
+                            transition: 'box-shadow 0.2s, opacity 0.2s', lineHeight: 1.3,
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(45,212,191,0.35)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(45,212,191,0.25)'; }}>
                         Share with Your Practitioner
                     </button>
                     <button
                         onClick={shareFriend}
+                        aria-label="Share this Compass with a friend"
                         style={{
-                            padding: '16px 12px', borderRadius: 14, fontSize: 14, fontWeight: 700,
-                            background: `linear-gradient(135deg, ${C.gold}18, ${C.gold}08)`,
-                            border: `1px solid ${C.gold}35`, color: C.gold, cursor: 'pointer',
-                            transition: 'all 0.2s', lineHeight: 1.3,
-                        }}>
+                            padding: '17px 14px', borderRadius: 14, fontSize: 14, fontWeight: 700,
+                            background: 'rgba(15,23,42,0.4)',
+                            border: `1px solid rgba(245,158,11,0.35)`,
+                            color: C.gold, cursor: 'pointer',
+                            transition: 'background 0.2s, border-color 0.2s', lineHeight: 1.3,
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245,158,11,0.06)'; e.currentTarget.style.borderColor = 'rgba(245,158,11,0.55)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.4)'; e.currentTarget.style.borderColor = 'rgba(245,158,11,0.35)'; }}
+                    >
                         Share with a Friend
                     </button>
                 </div>
 
                 {/* ── Footer ─────────────────────────────────────────────────────── */}
                 <div style={{
-                    marginTop: 40, paddingTop: 24, borderTop: `1px solid ${C.border}`,
+                    marginTop: 48, paddingTop: 24, borderTop: `1px solid rgba(45,212,191,0.08)`,
                     textAlign: 'center'
                 }}>
-                    <p style={{ fontSize: 12, color: '#334155', lineHeight: 1.6 }}>
-                        Generated by PPN Portal · Zero PHI · Patient ID: {sessionId?.slice(0, 8).toUpperCase() ?? 'PREVIEW'}
+                    {/* Brand mark */}
+                    <div style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 8,
+                        marginBottom: 12, opacity: 0.5,
+                    }}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="8" cy="8" r="7" stroke="#2dd4bf" strokeWidth="1" />
+                            <line x1="8" y1="1" x2="8" y2="15" stroke="#2dd4bf" strokeWidth="0.75" />
+                            <line x1="1" y1="8" x2="15" y2="8" stroke="#2dd4bf" strokeWidth="0.75" />
+                            <circle cx="8" cy="8" r="1.5" fill="#2dd4bf" />
+                        </svg>
+                        <span style={{
+                            fontSize: 11, fontWeight: 800, letterSpacing: '0.18em',
+                            textTransform: 'uppercase', color: '#2dd4bf'
+                        }}>PPN Portal</span>
+                    </div>
+                    <p style={{ fontSize: 11, color: '#334155', lineHeight: 1.6, margin: '0 0 4px' }}>
+                        Zero PHI · Patient ID: {sessionId?.slice(0, 8).toUpperCase() ?? 'PREVIEW'}
                     </p>
-                    <p style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>
+                    <p style={{ fontSize: 11, color: '#334155', marginTop: 4 }}>
                         Data reflects population averages and personal reflections. This is not medical advice.
                         Always consult your practitioner.
                     </p>

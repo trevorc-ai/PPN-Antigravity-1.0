@@ -76,7 +76,7 @@ export const CompassCustomizePanel: React.FC<CompassCustomizePanelProps> = ({
                 marginBottom: 20,
             }}
         >
-            <p style={{ fontSize: 12, color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 14 }}>
+            <p style={{ fontSize: 12, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 14 }}>
                 ⚙ Practitioner View — Customize This Compass
             </p>
 

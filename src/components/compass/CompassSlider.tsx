@@ -50,7 +50,7 @@ export const CompassSlider: React.FC<CompassSliderProps> = ({
             />
             <div style={{
                 display: 'flex', justifyContent: 'space-between',
-                fontSize: 12, color: '#64748b', marginTop: 6, fontWeight: 500,
+                fontSize: 12, color: '#94a3b8', marginTop: 6, fontWeight: 500,
             }}>
                 <span>{minLabel}</span>
                 <span>{maxLabel}</span>

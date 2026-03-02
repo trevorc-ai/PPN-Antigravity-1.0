@@ -236,7 +236,7 @@ export const FlightPlanChart: React.FC<FlightPlanChartProps> = ({
                             onMouseLeave={() => { setHoveredEvent(null); setTooltip(null); }}>
                             <circle cx={d.x} cy={d.y} r={hoveredEvent === i ? 8 : 5.5}
                                 fill={eventColor(d.event.eventType, accentColor)}
-                                stroke="#050c1a" strokeWidth={1.5}
+                                stroke="#0a1628" strokeWidth={1.5}
                                 filter="url(#dot-glow)"
                                 style={{ transition: 'r 0.15s' }}
                             />
@@ -289,17 +289,17 @@ export const FlightPlanChart: React.FC<FlightPlanChartProps> = ({
                         style={{ pointerEvents: 'none', overflow: 'visible' }}
                     >
                         <div style={{
-                            background: 'rgba(5,12,26,0.92)',
+                            background: 'rgba(10,22,40,0.92)',
                             border: '1px solid rgba(45,212,191,0.25)',
                             borderRadius: 8,
                             padding: '5px 10px',
-                            fontSize: 10,
-                            color: '#e2e8f0',
+                            fontSize: 12,
+                            color: '#A8B5D1',
                             lineHeight: 1.4,
                             whiteSpace: 'normal',
                         }}>
                             {tooltip.phase && (
-                                <div style={{ fontWeight: 800, color: '#2dd4bf', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }}>
+                                <div style={{ fontWeight: 800, color: '#2dd4bf', fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 2 }}>
                                     {tooltip.phase}
                                 </div>
                             )}
@@ -310,7 +310,7 @@ export const FlightPlanChart: React.FC<FlightPlanChartProps> = ({
             </svg>
 
             {/* Disclaimer */}
-            <p style={{ fontSize: 11, color: '#475569', textAlign: 'center', marginTop: 8, lineHeight: 1.5 }}>
+            <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 8 }}>
                 Curve represents population averages for this substance class. Individual timelines vary with metabolism and dose.
             </p>
         </div>

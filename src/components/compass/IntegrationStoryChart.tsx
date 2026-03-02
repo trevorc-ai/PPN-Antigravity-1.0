@@ -74,7 +74,7 @@ export const IntegrationStoryChart: React.FC<IntegrationStoryChartProps> = ({
                 display: 'flex', alignItems: 'center', gap: 14,
             }}>
                 <span style={{ fontSize: 24, opacity: 0.4 }}>📈</span>
-                <p style={{ fontSize: 13, color: '#64748b', margin: 0, lineHeight: 1.6 }}>
+                <p className="ppn-body" style={{ margin: 0 }}>
                     Your healing trajectory will appear here once your practitioner records follow-up assessments.
                 </p>
             </div>
@@ -161,7 +161,7 @@ export const IntegrationStoryChart: React.FC<IntegrationStoryChartProps> = ({
                                 onMouseLeave={() => setHoveredIdx(null)}
                             >
                                 <circle cx={x} cy={y} r={isHovered ? 6 : 4}
-                                    fill={accentColor} stroke="#050c1a" strokeWidth={1.5}
+                                    fill={accentColor} stroke="#0a1628" strokeWidth={1.5}
                                     style={{ transition: 'r 0.15s' }} />
                                 {isHovered && (
                                     <>
@@ -206,7 +206,7 @@ export const IntegrationStoryChart: React.FC<IntegrationStoryChartProps> = ({
                 </g>
             </svg>
 
-            <p style={{ fontSize: 11, color: '#475569', textAlign: 'center', marginTop: 6 }}>
+            <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 6 }}>
                 The line going down is your healing. The line is you.
             </p>
         </div>

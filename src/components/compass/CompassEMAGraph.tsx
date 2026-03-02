@@ -43,7 +43,7 @@ export const CompassEMAGraph: React.FC<CompassEMAGraphProps> = ({
                         <text x={cW * 0.75} y={12} textAnchor="middle" fill="rgba(245,158,11,0.5)" fontSize={8} fontWeight={700}>← Day 21</text>
                     </g>
                 </svg>
-                <p style={{ fontSize: 12, color: '#64748b', textAlign: 'center', marginTop: 4 }}>
+                <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 4 }}>
                     Log your first check-in below to begin your journey map.
                 </p>
             </div>
@@ -121,7 +121,7 @@ export const CompassEMAGraph: React.FC<CompassEMAGraphProps> = ({
                     {/* Data points */}
                     {points.map((p, i) => (
                         <circle key={i} cx={sx(i)} cy={sy(p.moodLevel)} r={3.5}
-                            fill={accentColor} stroke="#050c1a" strokeWidth={1.5} />
+                            fill={accentColor} stroke="#0a1628" strokeWidth={1.5} />
                     ))}
 
                     {/* X-axis */}
@@ -152,13 +152,13 @@ export const CompassEMAGraph: React.FC<CompassEMAGraphProps> = ({
                                 strokeDasharray={dash ? '4 3' : undefined}
                             />
                         </svg>
-                        <span style={{ fontSize: 10, color: 'rgba(226,232,240,0.55)', fontWeight: 600 }}>{label}</span>
+                        <span className="ppn-meta" style={{ fontWeight: 600 }}>{label}</span>
                     </div>
                 ))}
             </div>
 
             {/* Day-aware sentence */}
-            <p style={{ textAlign: 'center', fontSize: 13, color: '#94a3b8', marginTop: 10, lineHeight: 1.5 }}>
+            <p className="ppn-body" style={{ textAlign: 'center', marginTop: 10 }}>
                 You are on{' '}
                 <span style={{ color: accentColor, fontWeight: 700 }}>Day {daysPostSession}</span>
                 {' '}of your integration window.

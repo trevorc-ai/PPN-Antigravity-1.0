@@ -33,7 +33,7 @@ export const FeelingWave: React.FC<FeelingWaveProps> = ({ events }) => {
                             key={i}
                             className="feeling-pill"
                             style={{
-                                padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600,
+                                padding: '7px 16px', borderRadius: 20, fontSize: 14, fontWeight: 600,
                                 background: i % 2 === 0 ? 'rgba(45,212,191,0.10)' : 'rgba(167,139,250,0.10)',
                                 border: `1px solid ${i % 2 === 0 ? 'rgba(45,212,191,0.30)' : 'rgba(167,139,250,0.30)'}`,
                                 color: i % 2 === 0 ? 'rgba(45,212,191,0.75)' : 'rgba(167,139,250,0.75)',
@@ -45,7 +45,7 @@ export const FeelingWave: React.FC<FeelingWaveProps> = ({ events }) => {
                         </span>
                     ))}
                 </div>
-                <p style={{ fontSize: 12, color: '#64748b', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
+                <p className="ppn-meta" style={{ textAlign: 'center', margin: 0 }}>
                     Your feeling map will appear here after your session. These are example emotional landmarks from other journeys.
                 </p>
             </div>
@@ -62,7 +62,7 @@ export const FeelingWave: React.FC<FeelingWaveProps> = ({ events }) => {
                         className="feeling-pill"
                         title={`${f.label} — ${new Date(f.occurredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                         style={{
-                            padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600,
+                            padding: '7px 16px', borderRadius: 20, fontSize: 14, fontWeight: 600,
                             background: bg, border: `1px solid ${border}`, color: text,
                             cursor: 'default',
                         }}

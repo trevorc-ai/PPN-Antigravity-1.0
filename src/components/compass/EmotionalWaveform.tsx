@@ -142,7 +142,7 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
                                 <circle
                                     cx={x} cy={y} r={4}
                                     fill={isGhost ? 'rgba(100,116,139,0.5)' : color}
-                                    stroke="#050c1a" strokeWidth={1.5}
+                                    stroke="#0a1628" strokeWidth={1.5}
                                     filter="url(#wave-glow)"
                                 />
                             </g>
@@ -184,12 +184,12 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
                         style={{ pointerEvents: 'none', overflow: 'visible' }}
                     >
                         <div style={{
-                            background: 'rgba(5,12,26,0.92)',
+                            background: 'rgba(10,22,40,0.92)',
                             border: `1px solid ${getEventColor(tooltip.type)}40`,
                             borderRadius: 8,
                             padding: '4px 9px',
-                            fontSize: 10,
-                            color: '#e2e8f0',
+                            fontSize: 12,
+                            color: '#A8B5D1',
                         }}>
                             <span style={{ color: getEventColor(tooltip.type), fontWeight: 800 }}>
                                 {tooltip.label}
@@ -201,9 +201,9 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
 
             {/* Empty state message */}
             {isGhost && (
-                <p style={{ fontSize: 12, color: '#64748b', textAlign: 'center', marginTop: 6, lineHeight: 1.5 }}>
+                <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 6 }}>
                     Your emotional terrain will appear here after your session events are logged.<br />
-                    <span style={{ color: '#475569' }}>These are example peaks from other journeys.</span>
+                    <span style={{ color: '#94a3b8' }}>These are example peaks from other journeys.</span>
                 </p>
             )}
         </div>

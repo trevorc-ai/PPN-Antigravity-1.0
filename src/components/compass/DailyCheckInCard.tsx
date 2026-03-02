@@ -84,7 +84,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
                 <p style={{ fontSize: 15, fontWeight: 700, color: '#2dd4bf', margin: '0 0 4px' }}>
                     You showed up today.
                 </p>
-                <p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>
+                <p className="ppn-body" style={{ margin: 0 }}>
                     Your check-in has been recorded. See you tomorrow.
                 </p>
                 {streak >= 2 && (
@@ -107,7 +107,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
                 <p style={{ fontSize: 16, fontWeight: 800, color: '#2dd4bf', margin: '0 0 8px' }}>
                     Thank you for showing up.
                 </p>
-                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
+                <p className="ppn-body" style={{ margin: 0 }}>
                     Your check-in has been logged. Your practitioner can see your progress.
                 </p>
                 <CompassInsightLine emaPoints={emaPoints} streak={streak + 1} />
@@ -119,10 +119,10 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
                         borderRadius: 12,
                         padding: '14px 18px',
                     }}>
-                        <p style={{ fontSize: 13, fontWeight: 700, color: '#fb7185', marginBottom: 6 }}>
+                        <p className="ppn-body" style={{ fontWeight: 700, color: '#fb7185', marginBottom: 6 }}>
                             We see you, and we care.
                         </p>
-                        <p style={{ fontSize: 13, color: '#cbd5e1', margin: 0, lineHeight: 1.6 }}>
+                        <p className="ppn-body" style={{ margin: 0 }}>
                             If you need immediate support, please call or text the Fireside Project:{' '}
                             <a
                                 href="tel:6234737433"
@@ -145,7 +145,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
             borderRadius: 16,
             padding: '24px 28px',
         }}>
-            <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 20, lineHeight: 1.6 }}>
+            <p className="ppn-body" style={{ marginBottom: 20 }}>
                 A few quick questions about today. Your answers update your journey map instantly.
             </p>
 
@@ -195,7 +195,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
                 borderRadius: 12,
                 marginBottom: 20,
             }}>
-                <p style={{ fontSize: 13, color: '#e2e8f0', marginBottom: 12, lineHeight: 1.5 }}>
+                <p className="ppn-body" style={{ color: '#A8B5D1', marginBottom: 12 }}>
                     {SAFETY_QUESTION}
                 </p>
                 <div style={{ display: 'flex', gap: 12 }}>
@@ -205,7 +205,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
                             onClick={() => setSafetyFlag(val)}
                             aria-pressed={safetyFlag === val}
                             style={{
-                                padding: '8px 18px', borderRadius: 9999, fontSize: 13, fontWeight: 700,
+                                padding: '8px 18px', borderRadius: 9999, fontSize: 14, fontWeight: 700,
                                 cursor: 'pointer', transition: 'all 0.2s',
                                 background: safetyFlag === val
                                     ? (val ? 'rgba(251,113,133,0.25)' : 'rgba(45,212,191,0.15)')
@@ -223,7 +223,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
             </div>
 
             {error && (
-                <p style={{ fontSize: 12, color: '#fb7185', marginBottom: 12 }}>{error}</p>
+                <p className="ppn-meta" style={{ color: '#fb7185', marginBottom: 12 }}>{error}</p>
             )}
 
             <button

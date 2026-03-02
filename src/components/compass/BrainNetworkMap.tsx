@@ -83,11 +83,7 @@ export const BrainNetworkMap: React.FC<BrainNetworkMapProps> = ({
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 {/* ── Left: Conditioned mind ── */}
                 <div>
-                    <p style={{
-                        fontSize: 10, fontWeight: 800, color: '#64748b',
-                        textTransform: 'uppercase', letterSpacing: '0.12em',
-                        textAlign: 'center', marginBottom: 8,
-                    }}>
+                    <p className="ppn-label" style={{ textAlign: 'center', marginBottom: 8 }}>
                         The Conditioned Mind
                     </p>
                     <div style={{
@@ -122,18 +118,14 @@ export const BrainNetworkMap: React.FC<BrainNetworkMapProps> = ({
                             })}
                         </svg>
                     </div>
-                    <p style={{ fontSize: 10, color: '#64748b', textAlign: 'center', marginTop: 6 }}>
+                    <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 6 }}>
                         Repetitive thought patterns
                     </p>
                 </div>
 
                 {/* ── Right: During session ── */}
                 <div>
-                    <p style={{
-                        fontSize: 10, fontWeight: 800, textTransform: 'uppercase',
-                        letterSpacing: '0.12em', textAlign: 'center', marginBottom: 8,
-                        color: accentColor,
-                    }}>
+                    <p className="ppn-label" style={{ textAlign: 'center', marginBottom: 8, color: accentColor }}>
                         During Your Session
                     </p>
                     <div style={{
@@ -195,21 +187,18 @@ export const BrainNetworkMap: React.FC<BrainNetworkMapProps> = ({
                             })}
                         </svg>
                     </div>
-                    <p style={{ fontSize: 10, color: `${accentColor}90`, textAlign: 'center', marginTop: 6 }}>
+                    <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 6, color: `${accentColor}90` }}>
                         New connections forming
                     </p>
                 </div>
             </div>
 
             {/* Substance name above right brain */}
-            <p style={{ textAlign: 'center', marginTop: 16, fontSize: 13, lineHeight: 1.6, color: '#cbd5e1' }}>
+            <p className="ppn-body" style={{ textAlign: 'center', marginTop: 16 }}>
                 <span style={{ fontWeight: 900, color: accentColor }}>{substanceLabels[substanceCategory]}</span>
                 {' '}opened pathways that had never spoken before.
             </p>
-            <p style={{
-                textAlign: 'center', fontSize: 13, fontWeight: 700,
-                color: '#e2e8f0', marginTop: 6, lineHeight: 1.5,
-            }}>
+            <p className="ppn-body" style={{ textAlign: 'center', fontWeight: 700, color: '#A8B5D1', marginTop: 6 }}>
                 Your brain was not breaking. It was building.
             </p>
         </div>

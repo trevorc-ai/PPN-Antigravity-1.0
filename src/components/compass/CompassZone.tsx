@@ -42,20 +42,14 @@ export const CompassZone: React.FC<CompassZoneProps> = ({
                         background: 'rgba(45,212,191,0.08)',
                         border: '1.5px solid rgba(45,212,191,0.35)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 15, fontWeight: 900, color: '#e2e8f0',
-                        boxShadow: '0 0 12px rgba(45,212,191,0.12)',
+                        fontSize: 15, fontWeight: 900, color: '#A8B5D1',
+                        boxShadow: '0 0 12px rgba(45,212,191,0.12)'
                     }}
                 >
                     {number}
                 </div>
                 {/* Title — domain accent color */}
-                <h2
-                    style={{
-                        margin: 0, fontSize: 13, fontWeight: 800,
-                        color: accentColor,
-                        textTransform: 'uppercase', letterSpacing: '0.14em', lineHeight: 1.2,
-                    }}
-                >
+                <h2 className="ppn-label" style={{ margin: 0, color: accentColor, letterSpacing: '0.14em' }}>
                     {title}
                 </h2>
             </div>

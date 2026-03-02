@@ -136,7 +136,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                     onClick={toggleMode}
                     aria-label={`Switch to ${mode === 'experience' ? 'science' : 'experience'} mode`}
                     style={{
-                        fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase',
+                        fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase',
                         padding: '5px 14px', borderRadius: 9999, cursor: 'pointer',
                         background: 'rgba(45,212,191,0.08)',
                         border: '1px solid rgba(45,212,191,0.30)',
@@ -278,13 +278,13 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
 
             {/* Empty state copy */}
             {!hasLivedData && (
-                <p style={{ fontSize: 12, color: '#64748b', textAlign: 'center', marginTop: 8, lineHeight: 1.6 }}>
+                <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 8 }}>
                     Your session data will overlay here once your practitioner has logged your session events.
                 </p>
             )}
 
             {/* Substance label */}
-            <p style={{ textAlign: 'center', fontSize: 11, color: 'rgba(226,232,240,0.35)', marginTop: 4, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 4, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 {substanceCategory !== 'unknown' ? `${substanceCategory} · population average shown` : 'Predicted shape shown'}
             </p>
         </div>

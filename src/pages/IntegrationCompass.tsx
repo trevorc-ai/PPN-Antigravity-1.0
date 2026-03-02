@@ -140,6 +140,15 @@ const COMPASS_CSS = `
   .zone-card-inner { transition: box-shadow 0.3s; }
   .zone-card-inner:hover { box-shadow: 0 0 60px rgba(45,212,191,0.07) !important; }
 
+  /* ── Contrast fix: ppn-meta (#64748b) is too dark on #0a1628 navy.
+     Override to slate-400 (#94a3b8) which passes WCAG AA on this surface. */
+  .compass-root .ppn-meta {
+    color: #94a3b8;
+  }
+  .compass-root .ppn-label {
+    color: #94a3b8;
+  }
+
   @media print {
     @page { size: A4; margin: 16mm 14mm; }
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -209,7 +218,7 @@ const IntegrationCompass: React.FC = () => {
                         margin: '0 auto 16px',
                         animation: 'compass-slow-spin 1s linear infinite',
                     }} />
-                    <p style={{ color: '#64748b', fontSize: 14 }}>Preparing your Compass…</p>
+                    <p style={{ color: '#94a3b8', fontSize: 14 }}>Preparing your Compass…</p>
                 </div>
             </div>
         );
@@ -298,11 +307,7 @@ const IntegrationCompass: React.FC = () => {
                         />
                     ) : (
                         <>
-                            <h1 className="ppn-page-title" style={{
-                                margin: '0 0 10px',
-                                background: `linear-gradient(140deg, #A8B5D1 0%, #A8B5D1 30%, ${accentColor} 65%, #f59e0b 100%)`,
-                                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                            }}>
+                            <h1 className="ppn-page-title" style={{ margin: '0 0 10px' }}>
                                 Your Journey
                             </h1>
                             <p className="ppn-body" style={{ margin: '0 0 20px' }}>
@@ -314,7 +319,7 @@ const IntegrationCompass: React.FC = () => {
                                 background: `${accentColor}08`,
                                 border: `1px solid ${accentColor}25`,
                             }}>
-                                <span className="ppn-meta" style={{ color: '#64748b', letterSpacing: '0.06em' }}>
+                                <span className="ppn-meta" style={{ letterSpacing: '0.06em' }}>
                                     PHASE 3 · INTEGRATION
                                 </span>
                                 <div style={{ width: 1, height: 12, background: `${accentColor}30` }} />
@@ -334,7 +339,7 @@ const IntegrationCompass: React.FC = () => {
                     <div style={{ textAlign: 'center', margin: '16px 0' }}>
                         <a
                             href="#zone-1"
-                            style={{ fontSize: 13, color: '#64748b', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                            style={{ fontSize: 14, color: '#94a3b8', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                         >
                             See your full journey ↓
                         </a>
@@ -615,16 +620,16 @@ const IntegrationCompass: React.FC = () => {
 
                 {/* ── Footer ───────────────────────────────────────────────────────── */}
                 <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                    <p style={{ fontSize: 12, color: '#475569', margin: 0 }}>
+                    <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>
                         PPN Integration Compass · Practitioner Network Platform ·{' '}
                         <a
                             href="/"
-                            style={{ color: '#64748b', textDecoration: 'none' }}
+                            style={{ color: '#94a3b8', textDecoration: 'none' }}
                         >
                             ppnportal.com
                         </a>
                     </p>
-                    <p style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>
+                    <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>
                         In crisis? Fireside Project:{' '}
                         <a href="tel:6234737433" style={{ color: '#fb7185', fontWeight: 700 }}>
                             623-473-7433

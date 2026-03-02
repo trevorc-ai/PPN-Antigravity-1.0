@@ -55,7 +55,7 @@ export const NetworkBenchmarkBlock: React.FC<NetworkBenchmarkBlockProps> = ({
 
     return (
         <div>
-            <p style={{ fontSize: 13, color: '#64748b', marginBottom: 16, lineHeight: 1.6 }}>
+            <p className="ppn-body" style={{ marginBottom: 16 }}>
                 In{' '}
                 <span style={{ color: accentColor, fontWeight: 700 }}>{substanceName}</span>
                 {' '}for {stats.indication} tracked by PPN:
@@ -77,21 +77,17 @@ export const NetworkBenchmarkBlock: React.FC<NetworkBenchmarkBlockProps> = ({
                         <div style={{ fontSize: 30, fontWeight: 900, color: accentColor, lineHeight: 1 }}>
                             {value}
                         </div>
-                        <div style={{
-                            fontSize: 11, color: '#64748b', fontWeight: 700,
-                            textTransform: 'uppercase', letterSpacing: '0.08em',
-                            marginTop: 6, marginBottom: 4,
-                        }}>
+                        <div className="ppn-label" style={{ marginTop: 6, marginBottom: 4 }}>
                             {label}
                         </div>
-                        <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.4 }}>
+                        <div className="ppn-meta" style={{ lineHeight: 1.4 }}>
                             {sub}
                         </div>
                     </div>
                 ))}
             </div>
 
-            <p style={{ fontSize: 11, color: '#334155', textAlign: 'center', marginTop: 12, lineHeight: 1.5 }}>
+            <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 12, lineHeight: 1.5 }}>
                 Data sourced from PPN network practitioners. Not population averages — substance and indication-matched.
             </p>
         </div>

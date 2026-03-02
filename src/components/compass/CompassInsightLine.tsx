@@ -35,9 +35,9 @@ export const CompassInsightLine: React.FC<CompassInsightLineProps> = ({
     if (!insight) return null;
 
     return (
-        <p style={{
-            fontSize: 13, color: '#2dd4bf', fontStyle: 'italic',
-            textAlign: 'center', marginTop: 16, lineHeight: 1.5,
+        <p className="ppn-body" style={{
+            color: '#2dd4bf', fontStyle: 'italic',
+            textAlign: 'center', marginTop: 16,
         }}>
             ✦ {insight}
         </p>
