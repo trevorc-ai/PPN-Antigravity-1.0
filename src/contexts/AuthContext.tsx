@@ -20,6 +20,9 @@ import { clearDataCache } from '../hooks/useDataCache';
         if (type === 'invite' || type === 'signup') {
             sessionStorage.setItem('ppn_pending_invite', 'true');
         }
+        if (type === 'recovery') {
+            sessionStorage.setItem('ppn_pending_recovery', 'true');
+        }
     } catch {
         // Non-critical — fail silently
     }
@@ -68,6 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // via magic link, never sets a password, then can't log back in.
             if (session && typeof window !== 'undefined') {
                 const pendingInvite = sessionStorage.getItem('ppn_pending_invite');
+                const pendingRecovery = sessionStorage.getItem('ppn_pending_recovery');
                 const rawHash = window.location.hash;
                 const hashParams = new URLSearchParams(rawHash.replace(/^#/, ''));
                 const hashType = hashParams.get('type');
@@ -75,11 +79,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     pendingInvite === 'true' ||
                     hashType === 'invite' ||
                     hashType === 'signup';
+                const isRecoveryFlow =
+                    event === 'PASSWORD_RECOVERY' ||
+                    pendingRecovery === 'true' ||
+                    hashType === 'recovery';
 
                 if (isInviteFlow) {
                     sessionStorage.removeItem('ppn_pending_invite');
-                    // Use replace() so the back button doesn't return to the
-                    // raw invite URL (which is already consumed/expired).
+                    window.location.replace(
+                        window.location.origin + window.location.pathname + '#/reset-password'
+                    );
+                    return;
+                }
+
+                if (isRecoveryFlow) {
+                    sessionStorage.removeItem('ppn_pending_recovery');
                     window.location.replace(
                         window.location.origin + window.location.pathname + '#/reset-password'
                     );
