@@ -57,10 +57,10 @@ const PEMS_PROMPTS: Record<string, string[]> = {
 // ─── Global CSS injection ─────────────────────────────────────────────────────
 const COMPASS_CSS = `
   .compass-root {
-    font-family: 'Outfit', 'Inter', sans-serif;
-    background: #050c1a;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    background: #0a1628;
     min-height: 100vh;
-    color: #e2e8f0;
+    color: #A8B5D1;
   }
 
   @keyframes star-drift {
@@ -89,7 +89,7 @@ const COMPASS_CSS = `
     padding: 5px 14px 5px 8px; border-radius: 9999px;
     background: rgba(45,212,191,0.08);
     border: 1px solid rgba(45,212,191,0.25);
-    font-size: 11px; font-weight: 800; letter-spacing: 0.18em;
+    font-size: 12px; font-weight: 800; letter-spacing: 0.18em;
     text-transform: uppercase; color: #2dd4bf;
   }
   .ppn-brand-pill-dot {
@@ -144,7 +144,7 @@ const COMPASS_CSS = `
     @page { size: A4; margin: 16mm 14mm; }
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .no-print { display: none !important; }
-    .compass-root { background: #fdf8f0 !important; color: #1e293b !important; }
+    .compass-root { background: #f8fafc !important; color: #1e293b !important; }
     .zone-card-inner {
       background: #fffdf7 !important;
       border-color: #e8d5a3 !important;
@@ -195,8 +195,9 @@ const IntegrationCompass: React.FC = () => {
     if (session.isLoading || timeline.isLoading) {
         return (
             <div style={{
-                background: '#050c1a', minHeight: '100vh',
+                background: '#0a1628', minHeight: '100vh',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: "'Manrope', 'Inter', sans-serif",
             }}>
                 <style>{COMPASS_CSS}</style>
                 <div style={{ textAlign: 'center' }}>
@@ -229,12 +230,12 @@ const IntegrationCompass: React.FC = () => {
     ) : null;
 
     return (
-        <div className="compass-root" style={{ background: '#050c1a', minHeight: '100vh' }}>
+        <div className="compass-root" style={{ background: '#0a1628', minHeight: '100vh' }}>
             <style>{COMPASS_CSS}</style>
 
             {/* ── Hero Header ─────────────────────────────────────────────────────── */}
             <div style={{
-                background: 'linear-gradient(160deg, #040d1e 0%, #071528 40%, #0a1a30 70%, #060e1c 100%)',
+                background: 'linear-gradient(160deg, #0a1628 0%, #0d1f38 40%, #0f2444 70%, #0a1628 100%)',
                 padding: mode === 'daily' ? '32px 24px 28px' : '56px 24px 48px',
                 textAlign: 'center',
                 borderBottom: '1px solid rgba(45,212,191,0.10)',
@@ -297,15 +298,14 @@ const IntegrationCompass: React.FC = () => {
                         />
                     ) : (
                         <>
-                            <h1 style={{
-                                fontSize: 44, fontWeight: 900, margin: '0 0 10px', lineHeight: 1.05,
-                                background: `linear-gradient(140deg, #e2e8f0 0%, #e2e8f0 30%, ${accentColor} 65%, #f59e0b 100%)`,
+                            <h1 className="ppn-page-title" style={{
+                                margin: '0 0 10px',
+                                background: `linear-gradient(140deg, #A8B5D1 0%, #A8B5D1 30%, ${accentColor} 65%, #f59e0b 100%)`,
                                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                                letterSpacing: '-0.01em',
                             }}>
                                 Your Journey
                             </h1>
-                            <p style={{ color: '#64748b', fontSize: 14, margin: '0 0 20px', letterSpacing: '0.01em' }}>
+                            <p className="ppn-body" style={{ margin: '0 0 20px' }}>
                                 A living record of your healing, updated by you.
                             </p>
                             <div style={{
@@ -314,11 +314,11 @@ const IntegrationCompass: React.FC = () => {
                                 background: `${accentColor}08`,
                                 border: `1px solid ${accentColor}25`,
                             }}>
-                                <span style={{ fontSize: 12, color: '#475569', fontWeight: 600, letterSpacing: '0.06em' }}>
+                                <span className="ppn-meta" style={{ color: '#64748b', letterSpacing: '0.06em' }}>
                                     PHASE 3 · INTEGRATION
                                 </span>
                                 <div style={{ width: 1, height: 12, background: `${accentColor}30` }} />
-                                <span style={{ fontSize: 12, color: accentColor, fontWeight: 700, letterSpacing: '0.06em' }}>
+                                <span className="ppn-meta" style={{ color: accentColor, fontWeight: 700, letterSpacing: '0.06em' }}>
                                     {substanceName ? substanceName.toUpperCase() : 'HEALING IN PROGRESS'}
                                 </span>
                             </div>
@@ -381,10 +381,10 @@ const IntegrationCompass: React.FC = () => {
                         background: `linear-gradient(135deg, ${accentColor}10, rgba(245,158,11,0.08))`,
                         border: '1px solid rgba(245,158,11,0.25)', borderRadius: 16, padding: '18px 22px',
                     }}>
-                        <p style={{ fontSize: 12, fontWeight: 700, color: '#f59e0b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        <p className="ppn-label" style={{ color: '#f59e0b', marginBottom: 6 }}>
                             A message from your practitioner
                         </p>
-                        <p style={{ fontSize: 15, color: '#cbd5e1', margin: 0, lineHeight: 1.7 }}>{personalMessage}</p>
+                        <p className="ppn-body" style={{ margin: 0 }}>{personalMessage}</p>
                     </div>
                 </div>
             )}
@@ -535,15 +535,11 @@ const IntegrationCompass: React.FC = () => {
                                     border: '1px solid rgba(255,255,255,0.08)',
                                     borderRadius: 12, padding: '14px 16px',
                                 }}>
-                                    <div style={{
-                                        fontSize: 11, fontWeight: 800, color: '#64748b',
-                                        textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 10,
-                                    }}>
+                                    <div className="ppn-label" style={{ marginBottom: 10 }}>
                                         {domain}
                                     </div>
                                     {prompts.map((prompt, i) => (
-                                        <p key={i} style={{
-                                            fontSize: 13, color: '#94a3b8', lineHeight: 1.6,
+                                        <p key={i} className="ppn-body" style={{
                                             margin: i === 0 ? '0 0 8px' : '0',
                                         }}>
                                             — {prompt}
@@ -574,10 +570,10 @@ const IntegrationCompass: React.FC = () => {
                             border: '1px solid rgba(245,158,11,0.25)',
                             borderRadius: 16, padding: '18px 22px', marginTop: 8,
                         }}>
-                            <p style={{ fontSize: 12, fontWeight: 700, color: '#f59e0b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                            <p className="ppn-label" style={{ color: '#f59e0b', marginBottom: 6 }}>
                                 A message from your practitioner
                             </p>
-                            <p style={{ fontSize: 15, color: '#cbd5e1', margin: 0, lineHeight: 1.7 }}>
+                            <p className="ppn-body" style={{ margin: 0 }}>
                                 {personalMessage}
                             </p>
                         </div>
@@ -605,7 +601,7 @@ const IntegrationCompass: React.FC = () => {
                                 }
                             }}
                             style={{
-                                padding: '10px 22px', borderRadius: 9999, fontSize: 13, fontWeight: 700,
+                                padding: '10px 22px', borderRadius: 9999, fontSize: 14, fontWeight: 700,
                                 background: 'rgba(45,212,191,0.08)',
                                 border: '1px solid rgba(45,212,191,0.25)',
                                 color: '#2dd4bf', cursor: 'pointer',
@@ -619,16 +615,16 @@ const IntegrationCompass: React.FC = () => {
 
                 {/* ── Footer ───────────────────────────────────────────────────────── */}
                 <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                    <p style={{ fontSize: 11, color: '#1e293b', margin: 0 }}>
+                    <p style={{ fontSize: 12, color: '#475569', margin: 0 }}>
                         PPN Integration Compass · Practitioner Network Platform ·{' '}
                         <a
                             href="/"
-                            style={{ color: '#334155', textDecoration: 'none' }}
+                            style={{ color: '#64748b', textDecoration: 'none' }}
                         >
                             ppnportal.com
                         </a>
                     </p>
-                    <p style={{ fontSize: 11, color: '#1e293b', marginTop: 4 }}>
+                    <p style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>
                         In crisis? Fireside Project:{' '}
                         <a href="tel:6234737433" style={{ color: '#fb7185', fontWeight: 700 }}>
                             623-473-7433
