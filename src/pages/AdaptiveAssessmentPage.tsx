@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AssessmentForm from '../components/arc-of-care/AssessmentForm';
 import { MEQ30_SHORT_CONFIG } from '../config/meq30-short.config';
 import { EDI_BRIEF_CONFIG } from '../config/edi-brief.config';
 import { CEQ_BRIEF_CONFIG } from '../config/ceq-brief.config';
 import { MEQ30_CONFIG } from '../config/meq30.config';
-import { CheckCircle, ArrowLeft, AlertTriangle, TrendingUp, Sparkles } from 'lucide-react';
+import { CheckCircle, ArrowLeft, AlertTriangle, TrendingUp, Sparkles, CheckSquare, Square, X } from 'lucide-react';
 
 /**
  * Adaptive Post-Session Assessment
@@ -21,8 +21,17 @@ import { CheckCircle, ArrowLeft, AlertTriangle, TrendingUp, Sparkles } from 'luc
  * - Baseline PHQ-9 > 20 (research/insurance requirement)
  */
 
-type AssessmentPhase = 'quick' | 'expanded' | 'complete';
-type CurrentAssessment = 'meq' | 'edi' | 'ceq' | 'none';
+// WO-549: Assessment registry — each entry has a stable id, display name, and config key.
+// Adding a new assessment means adding one entry here; no code changes needed elsewhere.
+const ASSESSMENT_REGISTRY = [
+    { id: 'meq', label: 'Quick Experience Check', sublabel: 'MEQ-Brief · ~2 min', required: true },
+    { id: 'edi', label: 'Ego Dissolution Check', sublabel: 'EDI-Brief · ~1 min', required: false },
+    { id: 'ceq', label: 'Challenge Check', sublabel: 'CEQ-Brief · ~1 min', required: false },
+] as const;
+
+type AssessmentId = typeof ASSESSMENT_REGISTRY[number]['id'];
+type AssessmentPhase = 'selector' | 'quick' | 'expanded' | 'complete';
+type CurrentAssessment = AssessmentId | 'none';
 
 interface AssessmentScores {
     meq_brief?: number;
@@ -39,55 +48,36 @@ interface AdaptiveAssessmentPageProps {
 
 const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onComplete, showBackButton = true, onClose }) => {
     const navigate = useNavigate();
-    const [phase, setPhase] = useState<AssessmentPhase>('quick');
-    const [currentAssessment, setCurrentAssessment] = useState<CurrentAssessment>('meq');
+
+    // WO-549: Selector modal — defaults all assessments selected
+    const [phase, setPhase] = useState<AssessmentPhase>('selector');
+    const [selectedIds, setSelectedIds] = useState<Set<AssessmentId>>(
+        new Set(ASSESSMENT_REGISTRY.map(a => a.id))
+    );
+    const [currentAssessment, setCurrentAssessment] = useState<CurrentAssessment>('none');
     const [scores, setScores] = useState<AssessmentScores>({});
     const [needsExpansion, setNeedsExpansion] = useState(false);
     const [expansionReason, setExpansionReason] = useState('');
 
-    // WO-558: baselinePhq9 removed — was hardcoded to 21 (dummy data).
-    // The Predicted Journey stat block using this value has been removed from the
-    // completion screen below. Real PHQ-9 data lives in log_longitudinal_assessments.
+    // Ordered list of assessments the practitioner chose to include
+    const selectedAssessments = useMemo(
+        () => ASSESSMENT_REGISTRY.filter(a => selectedIds.has(a.id)).map(a => a.id),
+        [selectedIds]
+    );
 
-    const handleQuickMEQComplete = (responses: Record<string, number>, score: number) => {
-        console.log('MEQ-Brief complete:', score);
-        setScores(prev => ({ ...prev, meq_brief: score }));
-
-        // Check if expansion needed
-        if (score < 40) {
-            setNeedsExpansion(true);
-            setExpansionReason('Your MEQ score correlates with a less intense mystical experience. We\'d like to gather more detail to better support your integration.');
-            setPhase('expanded');
+    // Helper: advance to the next selected assessment after current one completes or is skipped
+    const advanceToNext = (after: AssessmentId, finalScores: AssessmentScores) => {
+        const idx = selectedAssessments.indexOf(after);
+        const next = selectedAssessments[idx + 1];
+        if (next) {
+            setCurrentAssessment(next);
         } else {
-            // Continue to EDI
-            setCurrentAssessment('edi');
-        }
-    };
-
-    const handleEDIComplete = (responses: Record<string, number>, score: number) => {
-        console.log('EDI-Brief complete:', score);
-        setScores(prev => ({ ...prev, edi_brief: score }));
-        setCurrentAssessment('ceq');
-    };
-
-    const handleCEQComplete = (responses: Record<string, number>, score: number) => {
-        console.log('CEQ-Brief complete:', score);
-        const updatedScores = { ...scores, ceq_brief: score };
-        setScores(updatedScores);
-
-        // Check if expansion needed
-        if (score > 60) {
-            setNeedsExpansion(true);
-            setExpansionReason('Your responses indicate you experienced significant challenges. We\'d like to understand this better to provide appropriate integration support.');
-            setPhase('expanded');
-            setCurrentAssessment('ceq'); // Will show full CEQ
-        } else {
-            // All done! Call onComplete if provided
+            // All done
             if (onComplete) {
                 onComplete({
-                    meq: updatedScores.meq_full || updatedScores.meq_brief || 0,
-                    edi: updatedScores.edi_brief || 0,
-                    ceq: score
+                    meq: finalScores.meq_full ?? finalScores.meq_brief ?? 0,
+                    edi: finalScores.edi_brief ?? 0,
+                    ceq: finalScores.ceq_brief ?? 0,
                 });
             }
             setPhase('complete');
@@ -95,22 +85,53 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
         }
     };
 
+    // WO-558: baselinePhq9 removed — was hardcoded to 21 (dummy data).
+    // The Predicted Journey stat block using this value has been removed from the
+    // completion screen below. Real PHQ-9 data lives in log_longitudinal_assessments.
+
+    const handleQuickMEQComplete = (responses: Record<string, number>, score: number) => {
+        console.log('MEQ-Brief complete:', score);
+        const updated = { ...scores, meq_brief: score };
+        setScores(updated);
+
+        // Check if expansion needed
+        if (score < 40) {
+            setNeedsExpansion(true);
+            setExpansionReason('Your MEQ score correlates with a less intense mystical experience. We\'d like to gather more detail to better support your integration.');
+            setPhase('expanded');
+        } else {
+            advanceToNext('meq', updated);
+        }
+    };
+
+    const handleEDIComplete = (responses: Record<string, number>, score: number) => {
+        console.log('EDI-Brief complete:', score);
+        const updated = { ...scores, edi_brief: score };
+        setScores(updated);
+        advanceToNext('edi', updated);
+    };
+
+    const handleCEQComplete = (responses: Record<string, number>, score: number) => {
+        console.log('CEQ-Brief complete:', score);
+        const updated = { ...scores, ceq_brief: score };
+        setScores(updated);
+
+        // Check if expansion needed
+        if (score > 60) {
+            setNeedsExpansion(true);
+            setExpansionReason('Your responses indicate you experienced significant challenges. We\'d like to understand this better to provide appropriate integration support.');
+            setPhase('expanded');
+            setCurrentAssessment('ceq');
+        } else {
+            advanceToNext('ceq', updated);
+        }
+    };
+
     const handleFullMEQComplete = (responses: Record<string, number>, score: number) => {
         console.log('MEQ-Full complete:', score);
-        const updatedScores = { ...scores, meq_full: score };
-        setScores(updatedScores);
-
-        // Call onComplete if provided
-        if (onComplete) {
-            onComplete({
-                meq: score,
-                edi: updatedScores.edi_brief || 0,
-                ceq: updatedScores.ceq_brief || 0
-            });
-        }
-
-        setPhase('complete');
-        setCurrentAssessment('none');
+        const updated = { ...scores, meq_full: score };
+        setScores(updated);
+        advanceToNext('meq', updated);
     };
 
     const getSeverityInfo = (meqScore: number) => {
@@ -140,13 +161,101 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
         };
     };
 
+    // ── SELECTOR MODAL (WO-549) ────────────────────────────────────────────────
+    if (phase === 'selector') {
+        const toggleAssessment = (id: AssessmentId) => {
+            const item = ASSESSMENT_REGISTRY.find(a => a.id === id)!;
+            if (item.required) return; // MEQ is always required
+            setSelectedIds(prev => {
+                const next = new Set(prev);
+                next.has(id) ? next.delete(id) : next.add(id);
+                return next;
+            });
+        };
+
+        const startFlow = () => {
+            // Always start with MEQ if selected, otherwise first selected
+            const first = selectedAssessments[0] ?? 'meq';
+            setCurrentAssessment(first);
+            setPhase('quick');
+        };
+
+        return (
+            <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8">
+                <div className="max-w-2xl mx-auto space-y-6">
+                    {showBackButton && (
+                        <button
+                            onClick={() => onClose ? onClose() : navigate(-1)}
+                            className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 rounded-lg text-base transition-all"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            Back
+                        </button>
+                    )}
+
+                    <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8">
+                        <h2 className="text-2xl font-black text-slate-200 mb-1">Post-Session Assessments</h2>
+                        <p className="text-slate-400 text-sm mb-6">Select the assessments to include for this session. Quick Experience Check is always required.</p>
+
+                        <div className="space-y-3 mb-8">
+                            {ASSESSMENT_REGISTRY.map(a => {
+                                const isSelected = selectedIds.has(a.id);
+                                return (
+                                    <button
+                                        key={a.id}
+                                        onClick={() => toggleAssessment(a.id)}
+                                        disabled={a.required}
+                                        className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${isSelected
+                                                ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
+                                                : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                            } ${a.required ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
+                                        aria-pressed={isSelected}
+                                    >
+                                        <span className={`text-xl ${isSelected ? 'text-indigo-400' : 'text-slate-600'}`}>
+                                            {isSelected ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
+                                        </span>
+                                        <div className="flex-1">
+                                            <p className="font-bold text-base">{a.label}</p>
+                                            <p className={`text-xs mt-0.5 ${isSelected ? 'text-indigo-400/70' : 'text-slate-600'}`}>{a.sublabel}</p>
+                                        </div>
+                                        {a.required && (
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-500/60 border border-indigo-500/20 px-2 py-0.5 rounded">Required</span>
+                                        )}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <button
+                            onClick={startFlow}
+                            className="w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-black text-lg rounded-xl shadow-lg shadow-indigo-900/40 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                        >
+                            Begin {selectedAssessments.length} Assessment{selectedAssessments.length !== 1 ? 's' : ''}
+                        </button>
+
+                        {onClose && (
+                            <button
+                                onClick={onClose}
+                                className="w-full mt-3 py-2 text-slate-500 hover:text-slate-300 text-sm transition-colors"
+                            >
+                                <X className="w-3.5 h-3.5 inline mr-1.5" />
+                                Cancel — return to session closeout
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     // Completion screen
     if (phase === 'complete') {
         const finalMEQScore = scores.meq_full || scores.meq_brief || 0;
         const severityInfo = getSeverityInfo(finalMEQScore);
 
         return (
-            <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8">
+            // WO-549: overflow-hidden removes the spurious scrollbar on the completion screen
+            <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8 overflow-hidden">
                 <div className="max-w-4xl mx-auto space-y-6">
                     {/* Success Header */}
                     <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/20 rounded-2xl p-8 text-center">
@@ -291,6 +400,9 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
         );
     }
 
+    // Progress bar: based on selectedAssessments order
+    const selectedIdx = currentAssessment !== 'none' ? selectedAssessments.indexOf(currentAssessment) : 0;
+
     // Quick Mode assessments
     return (
         <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8">
@@ -313,13 +425,21 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                     <div className="flex items-center justify-between text-base mb-2">
                         <span className="text-slate-300">Quick Assessment Progress</span>
                         <span className="text-emerald-400 font-bold">
-                            {currentAssessment === 'meq' ? '1' : currentAssessment === 'edi' ? '2' : '3'} of 3
+                            {selectedIdx + 1} of {selectedAssessments.length}
                         </span>
                     </div>
                     <div className="flex gap-2">
-                        <div className={`h-2 flex-1 rounded-full ${currentAssessment === 'meq' ? 'bg-emerald-400' : 'bg-emerald-400/30'}`} />
-                        <div className={`h-2 flex-1 rounded-full ${currentAssessment === 'edi' ? 'bg-emerald-400' : currentAssessment === 'ceq' ? 'bg-emerald-400/30' : 'bg-slate-700'}`} />
-                        <div className={`h-2 flex-1 rounded-full ${currentAssessment === 'ceq' ? 'bg-emerald-400' : 'bg-slate-700'}`} />
+                        {selectedAssessments.map((id, i) => (
+                            <div
+                                key={id}
+                                className={`h-2 flex-1 rounded-full transition-all duration-300 ${i < selectedIdx
+                                        ? 'bg-emerald-400'
+                                        : i === selectedIdx
+                                            ? 'bg-indigo-400'
+                                            : 'bg-slate-700'
+                                    }`}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>
@@ -329,6 +449,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                 <AssessmentForm
                     config={MEQ30_SHORT_CONFIG}
                     onComplete={handleQuickMEQComplete}
+                    onSkip={() => advanceToNext('meq', scores)}
                 />
             )}
 
@@ -336,6 +457,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                 <AssessmentForm
                     config={EDI_BRIEF_CONFIG}
                     onComplete={handleEDIComplete}
+                    onSkip={() => advanceToNext('edi', scores)}
                 />
             )}
 
@@ -343,6 +465,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                 <AssessmentForm
                     config={CEQ_BRIEF_CONFIG}
                     onComplete={handleCEQComplete}
+                    onSkip={() => advanceToNext('ceq', scores)}
                 />
             )}
         </div>
