@@ -17,6 +17,8 @@ build_order: 3
 
 The post-session assessment flow (triggered after End Session) has eight UX defects spanning scroll behavior, navigation, dummy data, button layouts, and a missing assessment selector. These do not require schema changes — all fixes are front-end component level.
 
+**Note (2026-03-01 live testing):** The Challenge Check (Ego Dissolution) assessment has the same exact layout and navigation issues as Quick Experience Check — too large, requires scrolling, Previous button permanently grayed. All fixes in this ticket apply to BOTH assessments and any other multi-step assessment in the flow.
+
 ### Architecture Decisions
 
 1. **Assessment selector modal (Defect #18 — highest complexity item):** When the practitioner clicks "Begin Post-Session Assessments" on the Phase 2 HUD, show a **pre-assessment modal** before any assessment form loads. The modal presents a checklist of available assessments:
@@ -61,7 +63,11 @@ The post-session assessment flow (triggered after End Session) has eight UX defe
 - [ ] Every assessment step has a functional "Previous / Back" button that restores prior state without data loss
 - [ ] Ego Dissolution "Previous" button is not grayed — activates after first question is answered
 - [ ] "Exit Without Saving" / "Skip" option exists on every assessment with a confirmation dialog
-- [ ] Tapping/tabbing into an off-screen input auto-scrolls that input into view (smooth scroll)
+- [ ] Tapping/tabbing into an off-screen input auto-scrolls that input into view (smooth scroll) — applies to Quick Experience Check AND Challenge Check
+- [ ] Quick Experience Check fits on a single viewport without scrolling on 1024×768 (compacted layout — 5 questions, no excess whitespace)
+- [ ] Challenge Check fits on a single viewport without scrolling on 1024×768 (compacted layout — 3 questions, no excess whitespace)
+- [ ] Previous / Back button works on Quick Experience Check (not grayed)
+- [ ] Previous / Back button works on Challenge Check (not grayed)
 - [ ] Assessment complete screen has no visible scrollbar (`overflow: hidden` confirmed)
 - [ ] Statistics block either shows real calculated data OR shows a clearly labeled placeholder — no unlabeled dummy numbers
 - [ ] Emotional Experience emotion buttons render as a horizontal row on ≥768px screens
