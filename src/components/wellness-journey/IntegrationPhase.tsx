@@ -121,48 +121,68 @@ const IntegrationCard: React.FC<{
     description: string;
     status: 'pending' | 'completed' | 'archived';
     onOpen?: () => void;
-}> = ({ stepNum, icon, title, description, status, onOpen }) => {
+    /** WO-550 AC: Read-only summary strip shown beneath completed cards.
+     *  text-sm minimum (≥14px). Clicking re-opens the form for amendment. */
+    summary?: string;
+}> = ({ stepNum, icon, title, description, status, onOpen, summary }) => {
     const isArchived = status === 'archived';
     const isCompleted = status === 'completed';
 
     return (
-        <div className={`relative rounded-2xl border overflow-hidden transition-all duration-300
-            ${isArchived ? 'border-slate-700/30 bg-slate-900/20 opacity-50' : 'border-teal-500/20 bg-teal-950/10 hover:border-teal-500/40'}
-        `}>
-            {/* Top accent stripe */}
-            <div className={`h-1 w-full ${isArchived ? 'bg-slate-700' : isCompleted ? 'bg-teal-500' : 'bg-teal-900/60'}`} />
-            <div className="p-5 flex items-start gap-4">
-                <div className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center border
-                    ${isArchived ? 'border-slate-700 bg-slate-800/30 text-slate-600' : isCompleted ? 'border-teal-500/50 bg-teal-900/30 text-teal-400' : 'border-teal-700/40 bg-teal-950/40 text-teal-500'}
-                `}>
-                    {isCompleted ? <CheckCircle className="w-4 h-4" /> : icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="ppn-meta text-slate-600 font-bold">Step {stepNum}</span>
-                        {isCompleted && <span className="ppn-meta text-teal-500 font-black uppercase tracking-widest">Completed</span>}
+        <div className="flex flex-col">
+            <div className={`relative rounded-2xl border overflow-hidden transition-all duration-300
+                ${isArchived ? 'border-slate-700/30 bg-slate-900/20 opacity-50' : 'border-teal-500/20 bg-teal-950/10 hover:border-teal-500/40'}
+            `}>
+                {/* Top accent stripe */}
+                <div className={`h-1 w-full ${isArchived ? 'bg-slate-700' : isCompleted ? 'bg-teal-500' : 'bg-teal-900/60'}`} />
+                <div className="p-5 flex items-start gap-4">
+                    <div className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center border
+                        ${isArchived ? 'border-slate-700 bg-slate-800/30 text-slate-600' : isCompleted ? 'border-teal-500/50 bg-teal-900/30 text-teal-400' : 'border-teal-700/40 bg-teal-950/40 text-teal-500'}
+                    `}>
+                        {isCompleted ? <CheckCircle className="w-4 h-4" /> : icon}
                     </div>
-                    <h4 className="ppn-label text-slate-300 mb-1">{title}</h4>
-                    <p className="ppn-meta text-slate-500">{description}</p>
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="ppn-meta text-slate-600 font-bold">Step {stepNum}</span>
+                            {isCompleted && <span className="ppn-meta text-teal-500 font-black uppercase tracking-widest">Completed</span>}
+                        </div>
+                        <h4 className="ppn-label text-slate-300 mb-1">{title}</h4>
+                        <p className="ppn-meta text-slate-500">{description}</p>
+                    </div>
+                    {!isArchived && (
+                        <button
+                            onClick={onOpen}
+                            className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all
+                                ${isCompleted
+                                    ? 'border-teal-700/40 bg-teal-950/20 text-teal-500 hover:border-teal-500/60'
+                                    : 'border-teal-600/50 bg-teal-900/30 text-teal-300 hover:bg-teal-900/50'
+                                }`}
+                            aria-label={isCompleted ? `Amend ${title}` : `Open ${title}`}
+                        >
+                            {isCompleted ? 'Amend' : 'Open'}
+                            <ChevronRight className="w-3 h-3" />
+                        </button>
+                    )}
                 </div>
-                {!isArchived && (
-                    <button
-                        onClick={onOpen}
-                        className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all
-                            ${isCompleted
-                                ? 'border-teal-700/40 bg-teal-950/20 text-teal-500 hover:border-teal-500/60'
-                                : 'border-teal-600/50 bg-teal-900/30 text-teal-300 hover:bg-teal-900/50'
-                            }`}
-                        aria-label={isCompleted ? `Amend ${title}` : `Open ${title}`}
-                    >
-                        {isCompleted ? 'Amend' : 'Open'}
-                        <ChevronRight className="w-3 h-3" />
-                    </button>
-                )}
             </div>
+
+            {/* WO-550 AC: Summary strip — visible only when completed + summary available.
+                text-sm (14px) minimum per INSPECTOR requirement. Clickable to re-open form. */}
+            {isCompleted && summary && (
+                <button
+                    onClick={onOpen}
+                    className="mt-1.5 w-full text-left px-4 py-2.5 rounded-xl bg-teal-950/40 border border-teal-500/15 hover:border-teal-500/30 hover:bg-teal-950/60 transition-all group"
+                    aria-label={`View summary for ${title} — click to amend`}
+                >
+                    <p className="text-sm text-teal-300/80 group-hover:text-teal-200 transition-colors leading-snug">
+                        <span className="font-bold text-teal-400 mr-1.5">↳</span>{summary}
+                    </p>
+                </button>
+            )}
         </div>
     );
 };
+
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
@@ -223,6 +243,34 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
 
     // ── Safety events (mock — real wiring blocked on Session_ID FK resolution) ──
     const safetyEvents = journey.session?.adverseEvents ?? [];
+
+    // ── WO-550 AC: Summary strings for completed integration step cards ──────────
+    // Shown as clickable strip beneath each card when the form has been saved.
+    // text-sm enforced in IntegrationCard component.
+    const integrationSessionSummary = completedForms.has('structured-integration')
+        ? 'Integration session documented · Click to view or amend'
+        : undefined;
+
+    const longitudinalSummary = completedForms.has('longitudinal-assessment')
+        ? (() => {
+            const phq = phase3.currentPhq9;
+            const parts: string[] = [];
+            if (phq != null) parts.push(`PHQ-9: ${phq}`);
+            parts.push('Assessment recorded · Click to amend');
+            return parts.join(' · ');
+        })()
+        : undefined;
+
+    const behavioralSummary = completedForms.has('behavioral-tracker')
+        ? 'Behavioral changes recorded · Click to view or amend'
+        : undefined;
+
+    const meq30Summary = completedForms.has('meq30')
+        ? (() => {
+            const meq = phase3.phase2Assessment?.meq;
+            return meq != null ? `MEQ-30 score: ${meq} · Click to amend` : 'MEQ-30 recorded · Click to amend';
+        })()
+        : undefined;
 
     // ── Pulse chart averages ────────────────────────────────────────────────────
     const avgConnection = activePulseTrend.length > 0
@@ -388,6 +436,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                             description="Document your clinical integration conversation with the patient."
                             status={completedForms.has('structured-integration') ? 'completed' : 'pending'}
                             onOpen={onOpenForm ? () => onOpenForm('structured-integration') : undefined}
+                            summary={integrationSessionSummary}
                         />
                         <IntegrationCard
                             stepNum={4}
@@ -396,6 +445,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                             description="Re-assess symptom scores. This powers all outcome visualizations below."
                             status={completedForms.has('longitudinal-assessment') ? 'completed' : 'pending'}
                             onOpen={onOpenForm ? () => onOpenForm('longitudinal-assessment') : undefined}
+                            summary={longitudinalSummary}
                         />
                         <IntegrationCard
                             stepNum={5}
@@ -404,6 +454,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                             description="Track habit formation and behavioral shifts since the session."
                             status={completedForms.has('behavioral-tracker') ? 'completed' : 'pending'}
                             onOpen={onOpenForm ? () => onOpenForm('behavioral-tracker') : undefined}
+                            summary={behavioralSummary}
                         />
                         {/* MEQ-30 card — only if not completed in Phase 2 */}
                         {!phase3.phase2Assessment && (
@@ -414,6 +465,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                                 description="Document the depth and quality of the session experience (24–48 hrs post-session ideal)."
                                 status={completedForms.has('meq30') ? 'completed' : 'pending'}
                                 onOpen={onOpenForm ? () => onOpenForm('meq30') : undefined}
+                                summary={meq30Summary}
                             />
                         )}
                     </div>

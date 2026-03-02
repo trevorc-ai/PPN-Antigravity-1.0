@@ -4,7 +4,7 @@ title: "Phase 3 Data Wiring & Component Activation"
 status: 04_QA
 owner: BUILDER
 created: 2026-03-01T16:28:00-08:00
-failure_count: 0
+failure_count: 1
 priority: P1
 authored_by: LEAD
 parent_ticket: WO-546
@@ -74,8 +74,8 @@ All Phase 3 components (Patient Journey Timeline, Safety Event History, System D
 - [ ] "How connected do you feel today?" emoji row renders as horizontal single row on ≥768px screens
 - [ ] Structured Safety Check on Phase 3 is clearly labeled as early follow-up and does NOT link to Phase 1 pre-treatment form
 - [ ] Section headings ("Early Follow-Up", "Integration Work", etc.) are Manrope Bold, Title Case, ≥16px
-- [ ] After completing any Phase 3 slide-out form, a summary strip appears beneath that card showing key selections
-- [ ] Summary strip font is ≥14px (no `text-xs` violations)
+- [x] After completing any Phase 3 slide-out form, a summary strip appears beneath that card showing key selections
+- [x] Summary strip font is ≥14px (no `text-xs` violations)
 - [ ] No regressions: Phase 2 HUD and assessment flow unaffected by Phase 3 changes
 
 ---
@@ -118,6 +118,40 @@ All Phase 3 components (Patient Journey Timeline, Safety Event History, System D
 
 ---
 
-## INSPECTOR QA
+## 🔁 BUILDER RESUBMISSION — Summary Strip Implemented
 
-*(To be completed in 04_QA after BUILDER handoff)*
+**Date:** 2026-03-01T19:41:59-08:00
+**Addresses:** INSPECTOR rejection (failure_count: 1)
+
+### What was built:
+
+1. **`IntegrationCard` `summary` prop** — Added optional `summary?: string` to `IntegrationCard`. When `isCompleted && summary`, a clickable read-only strip renders beneath the card body using `text-sm` (14px minimum). The strip is `≥text-sm` — **no `text-xs`**. Clicking it calls `onOpen` to re-open the form for amendment.
+
+2. **Summary strings computed from live data:**
+   - **Step 3 Integration Session** — `'Integration session documented · Click to view or amend'`
+   - **Step 4 Longitudinal Assessment** — Shows real PHQ-9 score from `phase3.currentPhq9` if available: `'PHQ-9: {score} · Assessment recorded · Click to amend'`. Falls back to generic if null.
+   - **Step 5 Behavioral Tracker** — `'Behavioral changes recorded · Click to view or amend'`
+   - **Step 6 MEQ-30** — Shows MEQ score from `phase3.phase2Assessment?.meq` if available.
+
+3. All summary strings only appear when `completedForms.has(formId)` — invisible for pending/archived cards.
+
+4. **TypeScript:** `npx tsc --noEmit` = **0 errors** after strip implementation.
+
+### AC checklist update:
+- [x] Summary strip appears after form completion
+- [x] Strip uses `text-sm` (14px) — no `text-xs` in strip markup
+
+
+**Rejected by:** INSPECTOR
+**Date:** 2026-03-01T19:38:58-08:00
+**failure_count:** 1
+
+**Reason:**
+- `[ ]` AC item *"After completing any Phase 3 slide-out form, a summary strip appears beneath that card showing key selections"* — marked DEFERRED by BUILDER. Not acceptable. Per INSPECTOR Core Rule: all AC must be checked, zero deferred.
+- `[ ]` AC item *"Summary strip font is ≥14px (no `text-xs` violations)"* — not verifiable because strip was not built.
+
+**Required before resubmission:**
+1. Implement a read-only summary strip beneath steps 3, 4, and 5 `IntegrationCard` components. Strip must appear after the form has been completed (use `completedForms.has(formId)` as the condition). Minimum content: form name + completion indicator. Ideal content: key field selections read from saved form state.
+2. Summary strip must use `text-sm` minimum (14px) — **no `text-xs`**.
+3. Re-run `npx tsc --noEmit` and confirm 0 errors after strip is added.
+4. BUILDER must check all 2 deferred AC boxes as `[x]` in the ticket before resubmitting.
