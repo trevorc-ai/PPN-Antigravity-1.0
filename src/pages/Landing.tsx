@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import {
   Loader2,
@@ -50,6 +50,14 @@ const Landing: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scrollY, setScrollY] = useState(0);
+  const frankensteinRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: frankProgress } = useScroll({
+    target: frankensteinRef,
+    offset: ['start end', 'end start'],
+  });
+  // Two-speed parallax: glow moves at half the rate of the card
+  const cardParallaxY = useTransform(frankProgress, [0, 1], [60, -60]);
+  const glowParallaxY = useTransform(frankProgress, [0, 1], [30, -30]);
   const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
 
   useEffect(() => {
@@ -430,8 +438,8 @@ const Landing: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION: Unified Clinical Operations - NEW */}
-      <section className="py-24 px-6 relative z-10" >
+      {/* SECTION: Unified Clinical Operations */}
+      <section ref={frankensteinRef} className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div className="space-y-32 pb-16 lg:pb-[30vh]">
             <div className="space-y-8">
@@ -485,8 +493,8 @@ const Landing: React.FC = () => {
               </div>
             </motion.div>
           </div>
-          <div className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
-            <div className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
+          <motion.div style={{ y: cardParallaxY }} className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
+            <motion.div style={{ y: glowParallaxY }} className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
             <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 overflow-hidden group shadow-2xl">
 
 
@@ -626,17 +634,18 @@ const Landing: React.FC = () => {
                   </div>
                 </div>
               </div>
-
             </div>
-          </div>
+
+          </motion.div>
         </div>
       </section>
+
 
       {/* SECTION: Alliance Wall */}
       <AllianceWall />
 
       {/* SECTION: How It Works */}
-      <section className="py-32 px-6 relative z-10" >
+      <section className="py-32 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="mb-16 space-y-4 text-left">
             <p className="text-sm font-black text-primary uppercase tracking-[0.4em]">Simple Process</p>
@@ -702,10 +711,10 @@ const Landing: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* SECTION: Product Showcase - See What's Inside */}
-      <section className="py-32 px-6 relative z-10" >
+      < section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto space-y-36">
           {/* Section Header */}
           <div className="space-y-4 text-left">
@@ -865,12 +874,12 @@ const Landing: React.FC = () => {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section >
 
 
 
       {/* SECTION: Mission & Stats */}
-      <section className="py-32 px-6 relative z-10" >
+      < section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
@@ -920,10 +929,10 @@ const Landing: React.FC = () => {
 
           </div>
         </div>
-      </section>
+      </section >
 
       {/* SECTION: Bento Box Features - BENTO GRID */}
-      <section className="py-32 px-6 relative z-10" >
+      < section className="py-32 px-6 relative z-10" >
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="space-y-4 text-left">
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-[1.5]">
@@ -1033,12 +1042,12 @@ const Landing: React.FC = () => {
             </BentoCard>
           </BentoGrid>
         </div>
-      </section>
+      </section >
 
       {/* SECTION: Committed to Veteran Care */}
-      <section className="py-32 px-6 relative z-10 border-y border-indigo-900/30 bg-gradient-to-b from-indigo-950/20 to-transparent overflow-hidden">
+      < section className="py-32 px-6 relative z-10 border-y border-indigo-900/30 bg-gradient-to-b from-indigo-950/20 to-transparent overflow-hidden" >
         {/* Subtle patriotic/honor background glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
+        < div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
 
         <div className="max-w-5xl mx-auto relative z-10">
           <div className="space-y-8 text-left">
@@ -1080,10 +1089,10 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* SECTION: About PPN */}
-      <section className="py-32 px-6 border-b border-slate-900/50 relative z-10" >
+      < section className="py-32 px-6 border-b border-slate-900/50 relative z-10" >
         <div className="max-w-4xl mx-auto text-left space-y-8">
           <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight">
             About <span className="text-gradient-primary inline-block pb-1">PPN</span>
@@ -1097,7 +1106,7 @@ const Landing: React.FC = () => {
             </p>
           </div>
         </div>
-      </section>
+      </section >
       <footer className="py-32 px-6 bg-[#05070a] border-t border-slate-900 relative z-10">
         <div className="max-w-7xl mx-auto space-y-20">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -1158,7 +1167,7 @@ const Landing: React.FC = () => {
         isOpen={isWaitlistModalOpen}
         onClose={() => setIsWaitlistModalOpen(false)}
       />
-    </div>
+    </div >
   );
 };
 
