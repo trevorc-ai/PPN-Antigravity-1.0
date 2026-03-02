@@ -64,6 +64,7 @@ const RiskMatrixPage = lazy(() => import('./pages/deep-dives/RiskMatrixPage'));
 const SafetySurveillancePage = lazy(() => import('./pages/deep-dives/SafetySurveillancePage'));
 const PatientFlowPage = lazy(() => import('./pages/deep-dives/PatientFlowPage'));
 const WorkflowChaosPage = lazy(() => import('./pages/deep-dives/WorkflowChaosPage'));
+const PatientReport = lazy(() => import('./pages/PatientReport'));
 
 // ── Tier 5: Dev/Showcase (low priority) ──────────────────────────────────────
 const ArcOfCareDemo = lazy(() => import('./pages/ArcOfCareDemo'));
@@ -285,6 +286,7 @@ const AppContent: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/academy" element={<Academy />} />
           <Route path="/partner-demo" element={<PartnerDemoHub />} />
+          <Route path="/patient-report" element={<PatientReport />} />
 
           {/* Deep Dives (Public Marketing Pages) */}
           <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
