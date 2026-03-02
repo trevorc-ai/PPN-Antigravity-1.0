@@ -256,24 +256,51 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         } catch { return 0; }
     }, [SESSION_START_KEY]);
 
+    // WO-559: Ref flag set true when practitioner taps "Additional Dose" during a live session.
+    // handleDosingUpdated reads this to emit additional_dose instead of dose_admin.
+    const isLiveRedoseRef = useRef(false);
+
     // Re-evaluate contraindications + stamp DOSE event pin when dosing protocol saved
     useEffect(() => {
         const bump = () => setContraindicationKey(k => k + 1);
         const handleStorage = (e: StorageEvent) => {
             if (e.key === 'ppn_dosing_protocol' || e.key === 'mock_patient_medications_names') bump();
         };
-        // When dosing protocol is saved while live, push a dose_admin event pin
+        // When dosing protocol is saved while live, push the appropriate event pin.
+        // If isLiveRedoseRef is set the save originated from the Additional Dose button —
+        // emit additional_dose (amber/orange). Otherwise it is the initial dose_admin (emerald).
         const handleDosingUpdated = () => {
             bump();
+            const isRedose = isLiveRedoseRef.current;
+            isLiveRedoseRef.current = false; // clear flag regardless
             setEventLog(prev => [
                 ...prev,
                 {
                     id: `dose-${Date.now()}`,
                     elapsedSec: getElapsedSec(),
-                    type: 'dose_admin',
-                    label: 'Dose Admin',
+                    type: isRedose ? 'additional_dose' : 'dose_admin',
+                    label: isRedose ? 'Additional Dose' : 'Dose Admin',
                 } satisfies SessionEventPin,
             ]);
+            // WO-559: persist additional_dose to log_session_timeline_events
+            if (isRedose) {
+                const UUID_RE_D = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                const sid = (journey.sessionId ?? journey.session?.sessionId) as string | undefined;
+                if (sid && UUID_RE_D.test(sid)) {
+                    // Compute elapsed HH:MM:SS at the moment of the event (no stale closure)
+                    const elSec = getElapsedSec();
+                    const eH = Math.floor(elSec / 3600).toString().padStart(2, '0');
+                    const eM = Math.floor((elSec % 3600) / 60).toString().padStart(2, '0');
+                    const eS = Math.floor(elSec % 60).toString().padStart(2, '0');
+                    const elStr = `${eH}:${eM}:${eS}`;
+                    createTimelineEvent({
+                        session_id: sid,
+                        event_timestamp: new Date().toISOString(),
+                        event_type: 'clinical_decision',
+                        metadata: { event_description: `Additional Dose administered at T+${elStr}` },
+                    }).catch(e => console.warn('[WO-559] Additional Dose timeline write failed:', e));
+                }
+            }
         };
         window.addEventListener('storage', handleStorage);
         window.addEventListener('ppn:dosing-updated', handleDosingUpdated);
@@ -282,7 +309,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             window.removeEventListener('ppn:dosing-updated', handleDosingUpdated);
         };
         // getElapsedSec is stable (useCallback), safe to include
-    }, [getElapsedSec]);
+    }, [getElapsedSec, journey]);
 
     // Mirror every LiveSessionTimeline quick-action onto the chart as an event pin
     useEffect(() => {
@@ -466,6 +493,21 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
 
+    // WO-559 Issue B — Vitals pre-population helper.
+    // Called when the Session Update panel opens. Finds the most recent log entry
+    // that has at least one vital recorded and pre-fills the form fields.
+    // If no prior entry exists, fields remain blank (true first entry behavior).
+    const prefillVitalsFromLastEntry = useCallback((log: SessionUpdateEntry[]) => {
+        const lastWithVitals = log.find(e => e.hr || e.bp);
+        if (!lastWithVitals) return;
+        if (lastWithVitals.hr) setUpdateHR(lastWithVitals.hr);
+        if (lastWithVitals.bp) {
+            const parts = lastWithVitals.bp.split('/');
+            if (parts[0] && parts[0] !== '?') setUpdateBPSys(parts[0]);
+            if (parts[1] && parts[1] !== '?') setUpdateBPDia(parts[1]);
+        }
+    }, []);
+
     // WO-528: derive VitalsSnapshot[] from updateLog entries that contain HR or BP data.
     // Each entry is mapped to an elapsed-time X value so the chart uses a consistent timeline.
     const vitalsChartData: VitalsSnapshot[] = useMemo(() => {
@@ -564,6 +606,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         setShowUpdatePanel(false);
         addToast({ title: 'Session Update Saved', message: `Logged at T+${elapsedTime}`, type: 'success' });
     };
+
+    // WO-559 Issue B: Pre-populate vitals each time the update panel is opened.
+    // Runs only when showUpdatePanel transitions from false → true.
+    const prevShowUpdatePanel = useRef(false);
+    useEffect(() => {
+        if (showUpdatePanel && !prevShowUpdatePanel.current) {
+            prefillVitalsFromLastEntry(updateLog);
+        }
+        prevShowUpdatePanel.current = showUpdatePanel;
+    }, [showUpdatePanel, updateLog, prefillVitalsFromLastEntry]);
 
     // ── Contraindication checker — MUST stay above early returns (Rules of Hooks) ──
     // GUARD: Only run after the practitioner has actually completed the Dosing Protocol form.
@@ -1241,13 +1293,25 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 </div>
 
-                {/* ── Three Action Buttons ────────────────────────────────────────── */}
-                <div className="grid grid-cols-3 gap-3">
+                {/* ── Action Buttons ────────────────────────────────────────────── */}
+                <div className="grid grid-cols-2 gap-3">
                     <button onClick={isLive ? () => setShowUpdatePanel(p => !p) : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? (showUpdatePanel ? 'bg-emerald-600/30 border-emerald-400/60 text-emerald-100' : 'bg-gradient-to-br from-emerald-900/60 to-teal-900/40 hover:from-emerald-800/70 border-emerald-500/40 hover:border-emerald-400/60 text-emerald-100') : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'} shadow-lg`}
                         aria-label="Log session update">
                         <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
                         <span>Session Update</span>
+                    </button>
+                    {/* WO-559: Additional Dose — reuses the existing Dosing Protocol slideout.
+                        Sets isLiveRedoseRef before opening so the ppn:dosing-updated handler
+                        knows to emit additional_dose (orange) instead of dose_admin (emerald). */}
+                    <button onClick={isLive ? () => {
+                        isLiveRedoseRef.current = true;
+                        onOpenForm('dosing-protocol');
+                    } : undefined} disabled={!isLive}
+                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-orange-900/60 to-amber-900/40 hover:from-orange-800/70 border-orange-500/40 hover:border-orange-400/60 text-orange-100 shadow-lg shadow-orange-950/30' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
+                        aria-label="Log additional dose">
+                        <Pill className={`w-5 h-5 ${isLive ? 'text-orange-300' : 'text-slate-600'}`} />
+                        <span>Additional Dose</span>
                     </button>
                     <button onClick={isLive ? async () => {
                         const elapsedNow = getElapsedSec();

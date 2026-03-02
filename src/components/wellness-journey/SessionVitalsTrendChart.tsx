@@ -80,7 +80,9 @@ const EVENT_Y_BAND: Record<string, number> = {
     'UPDATE': 107,
     // ── ROW 7 (Y=94) — vital check (blue) ──────────────────────────
     'vital_check': 94,
-    // ── ROW 8 (Y=81) — dose administration (emerald) ─────────────────
+    // ── ROW 8a (Y=87) — additional dose / re-dose (orange) ──────────
+    'additional_dose': 87,
+    // ── ROW 8b (Y=81) — initial dose administration (emerald) ────────
     'dose_admin': 81,
     'DOSE': 81,
     'INTERVENTION': 81,
@@ -126,6 +128,8 @@ const PIN_COLORS: Record<string, { fill: string; stroke: string; emoji: string; 
     // ── Dose ───────────────────────────────────────────────────────────────────────
     DOSE: { fill: '#6366f1', stroke: '#818cf8', emoji: '💊', label: 'Dose' },
     dose_admin: { fill: '#10b981', stroke: '#34d399', emoji: '💊', label: 'Dose Admin' },
+    // ── Additional / supplemental dose (amber-orange) ─────────────────────────────
+    additional_dose: { fill: '#f97316', stroke: '#fb923c', emoji: '➕', label: 'Additional Dose' },
     // ── Safety / Adverse ─────────────────────────────────────────────────────
     SAFETY: { fill: '#ef4444', stroke: '#f87171', emoji: '⚠', label: 'Safety' },
     safety_event: { fill: '#ef4444', stroke: '#f87171', emoji: '⚠', label: 'Safety Event' },

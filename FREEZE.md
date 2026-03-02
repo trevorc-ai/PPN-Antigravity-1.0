@@ -20,7 +20,6 @@ src/pages/ResetPassword.tsx
 src/pages/MyProtocols.tsx
 
 # ── Wellness Journey (pilot path — do not touch) ──
-src/components/wellness-journey/LiveSessionTimeline.tsx
 src/components/wellness-journey/WellnessFormRouter.tsx
 src/components/wellness-journey/SlideOutPanel.tsx
 

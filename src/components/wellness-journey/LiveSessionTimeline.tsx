@@ -20,6 +20,8 @@ interface LiveSessionTimelineProps {
 export const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string, symbol: string, label: string }> = {
     DOSE: { icon: <Pill className="w-4 h-4" />, color: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30', symbol: '●', label: '[DOSE]' },
     dose_admin: { icon: <Pill className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '●', label: '[DOSE]' },
+    // WO-559: Additional / supplemental dose — orange to match chart pin (distinct from initial dose_admin)
+    additional_dose: { icon: <Pill className="w-4 h-4" />, color: 'text-orange-400 bg-orange-500/20 border-orange-500/30', symbol: '➕', label: '[ADD DOSE]' },
     vital_check: { icon: <Activity className="w-4 h-4" />, color: 'text-blue-400 bg-blue-500/20 border-blue-500/30', symbol: '○', label: '[VITALS]' },
     patient_observation: { icon: <Activity className="w-4 h-4" />, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30', symbol: '○', label: '[OBSERVATION]' },
     music_change: { icon: <Diamond className="w-4 h-4 text-violet-400 fill-violet-400" />, color: 'text-violet-400 bg-violet-500/20 border-violet-500/30', symbol: '◆', label: '[MUSIC]' },
