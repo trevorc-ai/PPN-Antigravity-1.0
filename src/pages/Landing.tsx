@@ -489,17 +489,82 @@ const Landing: React.FC = () => {
             <div className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
             <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 overflow-hidden group shadow-2xl">
 
-              {/* Complex Connectivity Grid */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40 mix-blend-screen mask-image:radial-gradient(ellipse_at_center,black,transparent)" />
 
-              {/* Dynamic Connection Beams */}
-              <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
-              <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
+              {/* Grid texture */}
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40" />
 
-              <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[300px]">
+              <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[350px]">
+
+                {/* ── SVG Connection Layer ──────────────────────────────── */}
+                {/* ViewBox 0 0 400 350 maps to the flex layout inside this div:
+                    Input row centers: y≈40  (Vitals x=59, Protocols x=200, Outcomes x=341)
+                    Brain center:      x=200, y=176
+                    Output top:        x=200, y=248                                        */}
+                <svg
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  viewBox="0 0 400 350"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    {/* Path IDs used both for track lines and animateMotion */}
+                    <path id="ppn-vb" d="M 59 78 C 59 125 200 118 200 120" />
+                    <path id="ppn-pb" d="M 200 66 L 200 120" />
+                    <path id="ppn-ob" d="M 341 78 C 341 125 200 118 200 120" />
+                    <path id="ppn-bd" d="M 200 232 L 200 250" />
+                    {/* Glow filters per channel */}
+                    <filter id="glow-em" x="-150%" y="-150%" width="400%" height="400%">
+                      <feGaussianBlur stdDeviation="2.5" result="b" />
+                      <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                    <filter id="glow-in" x="-150%" y="-150%" width="400%" height="400%">
+                      <feGaussianBlur stdDeviation="2.5" result="b" />
+                      <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                    <filter id="glow-pu" x="-150%" y="-150%" width="400%" height="400%">
+                      <feGaussianBlur stdDeviation="2.5" result="b" />
+                      <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                  </defs>
+
+                  {/* Static dashed track lines */}
+                  <use href="#ppn-vb" fill="none" stroke="rgba(52,211,153,0.20)" strokeWidth="1.5" strokeDasharray="5 5" />
+                  <use href="#ppn-pb" fill="none" stroke="rgba(99,102,241,0.20)" strokeWidth="1.5" strokeDasharray="5 5" />
+                  <use href="#ppn-ob" fill="none" stroke="rgba(168,85,247,0.20)" strokeWidth="1.5" strokeDasharray="5 5" />
+                  <use href="#ppn-bd" fill="none" stroke="rgba(165,180,252,0.35)" strokeWidth="2" strokeDasharray="4 3" />
+
+                  {/* Vitals → Brain (emerald) — two staggered dots */}
+                  <circle r="3.5" fill="#34d399" filter="url(#glow-em)">
+                    <animateMotion dur="2s" repeatCount="indefinite" begin="0s"><mpath href="#ppn-vb" /></animateMotion>
+                  </circle>
+                  <circle r="2.5" fill="#34d399" filter="url(#glow-em)" opacity="0.6">
+                    <animateMotion dur="2s" repeatCount="indefinite" begin="0.8s"><mpath href="#ppn-vb" /></animateMotion>
+                  </circle>
+
+                  {/* Protocols → Brain (indigo) */}
+                  <circle r="3.5" fill="#818cf8" filter="url(#glow-in)">
+                    <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s"><mpath href="#ppn-pb" /></animateMotion>
+                  </circle>
+                  <circle r="2.5" fill="#818cf8" filter="url(#glow-in)" opacity="0.6">
+                    <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s"><mpath href="#ppn-pb" /></animateMotion>
+                  </circle>
+
+                  {/* Outcomes → Brain (purple) */}
+                  <circle r="3.5" fill="#c084fc" filter="url(#glow-pu)">
+                    <animateMotion dur="2.2s" repeatCount="indefinite" begin="0.6s"><mpath href="#ppn-ob" /></animateMotion>
+                  </circle>
+                  <circle r="2.5" fill="#c084fc" filter="url(#glow-pu)" opacity="0.6">
+                    <animateMotion dur="2.2s" repeatCount="indefinite" begin="1.5s"><mpath href="#ppn-ob" /></animateMotion>
+                  </circle>
+
+                  {/* Brain → Unified Record (white/indigo) */}
+                  <circle r="4" fill="#a5b4fc">
+                    <animateMotion dur="1s" repeatCount="indefinite" begin="0s"><mpath href="#ppn-bd" /></animateMotion>
+                  </circle>
+                </svg>
 
                 {/* Incoming Data Nodes */}
-                <div className="w-full grid grid-cols-3 gap-2 sm:gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
+                <div className="w-full grid grid-cols-3 gap-2 sm:gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] relative z-10">
                   <div className="px-2 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-2 sm:gap-3 shadow-xl backdrop-blur-xl">
                     <span className="material-symbols-outlined text-emerald-400 text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">vital_signs</span>
                     <span className="text-[9px] sm:text-[10px] font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Vitals</span>
@@ -524,7 +589,7 @@ const Landing: React.FC = () => {
                 </div>
 
                 {/* Final Output Node */}
-                <div className="w-full max-w-sm bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-4 sm:p-6 flex items-center justify-between mt-4 group-hover:translate-y-2 group-hover:bg-indigo-900/30 group-hover:border-indigo-500/50 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_0_40px_rgba(99,102,241,0.1)] backdrop-blur-xl">
+                <div className="w-full max-w-sm bg-indigo-900/20 border border-indigo-500/30 rounded-2xl p-4 sm:p-6 flex items-center justify-between mt-4 group-hover:translate-y-2 group-hover:bg-indigo-900/30 group-hover:border-indigo-500/50 transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[0_0_40px_rgba(99,102,241,0.1)] backdrop-blur-xl relative z-10">
                   <div className="flex flex-col gap-1">
                     <span className="text-indigo-100 font-black tracking-tighter text-lg sm:text-xl">Unified Record</span>
                     <AdvancedTooltip
@@ -544,7 +609,7 @@ const Landing: React.FC = () => {
                                 Structural Protection
                               </h5>
                               <p className="text-xs text-slate-400 leading-relaxed font-normal">
-                                By using hashed Subject IDs, year-only dates (HIPAA Safe Harbor), and structured clinical inputs only—with no free-text narratives—PPN ensures you cannot produce records you do not have.
+                                By using hashed Subject IDs, year-only dates (HIPAA Safe Harbor), and structured clinical inputs only, with no free-text narratives, PPN ensures you cannot produce records you do not have.
                               </p>
                             </div>
                           </div>
@@ -561,6 +626,7 @@ const Landing: React.FC = () => {
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
