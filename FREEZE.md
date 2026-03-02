@@ -27,7 +27,6 @@ src/components/wellness-journey/SlideOutPanel.tsx
 
 
 # ── Add files here when approaching a milestone ──
-src/components/wellness-journey/DosingSessionPhase.tsx
 
 # ── Safety & Surveillance (finalized 2026-03-01) ──
 src/pages/InteractionChecker.tsx

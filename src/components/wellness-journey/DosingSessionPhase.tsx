@@ -378,6 +378,9 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
     // Post-session assessment state — WO-547: restored from localStorage on mount
     // so navigating away and returning preserves completed state.
+    // WO-557 Fix A: assessmentKey may resolve as 'demo' initially if sessionId isn't
+    // hydrated yet. useEffect re-reads whenever the key stabilises to the real UUID,
+    // preventing the stale-key bug that caused the ✅ badge to stay blank on return.
     const assessmentKey = `ppn_phase2_assessment_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
     // WO-548: Collapsed accordion to access session chart/ledger from post-session view
@@ -391,21 +394,48 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             return raw ? JSON.parse(raw) : null;
         } catch { return null; }
     });
+    // WO-557: Re-read from localStorage whenever assessmentKey settles to the real UUID.
+    // This covers the case where the component mounts with key='demo', data is written
+    // under the real UUID key, then the component remounts — the lazy useState initialiser
+    // runs only once so it misses the update. useEffect catches the drift.
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem(assessmentKey);
+            if (raw) {
+                setAssessmentCompleted(true);
+                setAssessmentScores(JSON.parse(raw));
+            } else {
+                // Don't reset to false if already true from in-session completion
+                setAssessmentCompleted(prev => prev || false);
+            }
+        } catch { /* non-critical */ }
+    }, [assessmentKey]);
 
-    // WO-547: Derive safety event status from session event log
-    // Activates the "Review Safety Events" row when ≥1 rescue or adverse event exists
+    // WO-547 / WO-557: Derive safety event status from companion logs + live event log.
+    // WO-557 Fix B: expanded check covers all distress feelings (not just need_support)
+    // and catches safety_event type from both companion dispatch (WO-556) and Phase 2
+    // direct form submissions. Auto-completes vacuously when zero events logged.
+    const DISTRESS_FEELINGS = new Set([
+        'need_support', 'anxious', 'overwhelmed', 'fearful', 'tense', 'nauseous'
+    ]);
     const hasSafetyEvents = useMemo(() => {
+        // 1. Check companion_logs localStorage for any distress feeling
         try {
             const sessionKey = journey.session?.sessionId ?? journey.sessionId ?? 'demo';
             const key = `companion_logs_${sessionKey}`;
             const raw = localStorage.getItem(key);
             if (raw) {
                 const logs: Array<{ timestamp: string; feeling: string }> = JSON.parse(raw);
-                return logs.some(l => l.feeling === 'need_support');
+                if (logs.some(l => DISTRESS_FEELINGS.has(l.feeling))) return true;
             }
         } catch { /* non-critical */ }
-        // Also check eventLog for rescue/adverse pins added during live session
-        return eventLog.some(e => e.type === 'rescue-protocol' || e.type === 'safety-and-adverse-event');
+        // 2. Check live eventLog for safety_event pins (covers both companion dispatch
+        //    via WO-556 CustomEvent and Phase 2's safety-and-adverse-event form)
+        return eventLog.some(e =>
+            e.type === 'safety_event' ||
+            e.type === 'safety-and-adverse-event' ||
+            e.type === 'rescue-protocol'
+        );
     }, [eventLog, journey]);
 
     // Live Vitals (mock)

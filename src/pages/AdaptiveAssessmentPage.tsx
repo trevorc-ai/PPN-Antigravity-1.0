@@ -45,8 +45,9 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
     const [needsExpansion, setNeedsExpansion] = useState(false);
     const [expansionReason, setExpansionReason] = useState('');
 
-    // Mock baseline data (in real app, fetch from context/props)
-    const baselinePhq9 = 21;
+    // WO-558: baselinePhq9 removed — was hardcoded to 21 (dummy data).
+    // The Predicted Journey stat block using this value has been removed from the
+    // completion screen below. Real PHQ-9 data lives in log_longitudinal_assessments.
 
     const handleQuickMEQComplete = (responses: Record<string, number>, score: number) => {
         console.log('MEQ-Brief complete:', score);
@@ -143,8 +144,6 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
     if (phase === 'complete') {
         const finalMEQScore = scores.meq_full || scores.meq_brief || 0;
         const severityInfo = getSeverityInfo(finalMEQScore);
-        const totalImprovement = baselinePhq9 - 5; // Predicted outcome
-        const remissionProbability = finalMEQScore >= 60 ? 87 : finalMEQScore >= 40 ? 72 : 58;
 
         return (
             <div className="w-full h-full bg-[#0a1628] p-4 sm:p-6 lg:p-8">
@@ -179,26 +178,26 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                             </p>
                         </div>
 
-                        {/* Correlation to Baseline */}
+                        {/* MEQ Score detail */}
                         <div className="mt-8 pt-8 border-t border-slate-700/50">
                             <h3 className="text-slate-300 text-base font-bold mb-4 text-center">
-                                Your Predicted Journey
+                                Assessment Scores
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-base">
                                 <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-300 mb-2">Baseline Depression</p>
-                                    <p className="text-3xl font-black text-red-400">{baselinePhq9}</p>
-                                    <p className="text-slate-500 text-sm mt-1">PHQ-9 (Severe)</p>
+                                    <p className="text-slate-300 mb-2">MEQ Score</p>
+                                    <p className="text-3xl font-black text-emerald-400">{finalMEQScore}</p>
+                                    <p className="text-slate-500 text-sm mt-1">Mystical Experience</p>
                                 </div>
                                 <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-300 mb-2">Expected Improvement</p>
-                                    <p className="text-3xl font-black text-emerald-400">-{totalImprovement}</p>
-                                    <p className="text-slate-500 text-sm mt-1">Points at 6 months</p>
+                                    <p className="text-slate-300 mb-2">EDI Score</p>
+                                    <p className="text-3xl font-black text-blue-400">{scores.edi_brief ?? '—'}</p>
+                                    <p className="text-slate-500 text-sm mt-1">Emotional Depth</p>
                                 </div>
                                 <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-300 mb-2">Remission Likelihood</p>
-                                    <p className="text-3xl font-black text-blue-400">{remissionProbability}%</p>
-                                    <p className="text-slate-500 text-sm mt-1">Based on 2,847 patients</p>
+                                    <p className="text-slate-300 mb-2">CEQ Score</p>
+                                    <p className="text-3xl font-black text-amber-400">{scores.ceq_brief ?? '—'}</p>
+                                    <p className="text-slate-500 text-sm mt-1">Challenging Experience</p>
                                 </div>
                             </div>
                         </div>
