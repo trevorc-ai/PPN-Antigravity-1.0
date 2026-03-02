@@ -219,7 +219,8 @@ const WellnessJourneyInternal: React.FC = () => {
                 const { data: intakeData } = await supabase
                     .from('log_patient_intake')
                     .select('medications_text, medication_ids')
-                    .eq('patient_link_code', patientId)
+                    // SCHEMA FIX: patient_link_code → patient_link_code_hash (per schema convention)
+                    .eq('patient_link_code_hash', patientId)
                     .order('created_at', { ascending: false })
                     .limit(1)
                     .maybeSingle();
@@ -907,17 +908,23 @@ const WellnessJourneyInternal: React.FC = () => {
                                     {activePhase === 3 && (
                                         <Phase2ErrorBoundary onReset={() => setActivePhase(3)}>
                                             <>
-                                                <IntegrationPhase journey={journey} />
+                                                <IntegrationPhase
+                                                    journey={journey}
+                                                    onOpenForm={handleOpenForm}
+                                                    completedForms={completedForms}
+                                                />
                                                 {/* Phase 3 — Early Follow-up (0–72 hrs) */}
                                                 <div className="mt-8">
-                                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Early Follow-up · 0–72 hrs</p>
+                                                    <p className="text-base font-bold font-manrope text-slate-300 mb-3 px-1">Early Follow-Up · 0–72 hrs</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                         {config.enabledFeatures.includes('structured-safety') && (
+                                                            /* WO-550 Defect #26: Phase 3 label + description is
+                                                               distinct from Phase 1 pre-treatment safety check */
                                                             <WorkflowActionCard
                                                                 phase={3}
                                                                 status="active"
-                                                                title="Structured Safety Check"
-                                                                description="Assess post-session risk and physical stability."
+                                                                title="Early Follow-Up Safety Check · Day 1–3"
+                                                                description="Confirm post-session patient stability and safety. This is not the pre-treatment Phase 1 screen."
                                                                 icon={<Shield className="w-5 h-5 text-emerald-400" />}
                                                                 onClick={() => handleOpenForm('structured-safety')}
                                                             />
@@ -936,7 +943,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                                 </div>
                                                 {/* Phase 3 — Integration Work (days to weeks) */}
                                                 <div className="mt-8">
-                                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-1">Integration Work · Days to Weeks</p>
+                                                    <p className="text-base font-bold font-manrope text-slate-300 mb-3 px-1">Integration Work · Days to Weeks</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                         {config.enabledFeatures.includes('structured-integration') && (
                                                             <WorkflowActionCard
@@ -975,11 +982,11 @@ const WellnessJourneyInternal: React.FC = () => {
                                     )}
                                 </div>
 
-                                {/* Bottom Status Bar — hidden during Phase 1 early stages.
-                     Showing mock PHQ/Risk data before any forms are complete
-                     confuses clinicians about patient state.
-                     Show once at least 3 Phase 1 forms are done (real data available). */}
-                                {(activePhase !== 1 || completedForms.size >= 3) && (
+                                {/* Bottom Status Bar — hidden during Phase 1 early stages and Phase 2.
+                     During Phase 2, the session is active and PHQ-9/MEQ numbers are
+                     meaningless — the practitioner is focused on real-time events.
+                     WO-547: Hidden for Phase 2. Show for Phase 1 (≥3 forms) and Phase 3. */}
+                                {activePhase !== 2 && (activePhase !== 1 || completedForms.size >= 3) && (
                                     <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
                                         <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-700/50">
 

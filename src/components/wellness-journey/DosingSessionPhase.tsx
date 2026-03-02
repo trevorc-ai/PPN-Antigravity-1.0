@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
-    Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download,
+    Activity, Sparkles, CheckCircle, ChevronRight, ChevronUp, ChevronDown, X, Info, Clock, Download,
     Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
     CheckCircle2, Edit3, AlertCircle, Pill, ShieldAlert, ClipboardList, Save
 } from 'lucide-react';
@@ -13,7 +13,7 @@ import { LiveSessionTimeline } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
-import { createSessionVital } from '../../services/clinicalLog';
+import { createSessionVital, createTimelineEvent } from '../../services/clinicalLog';
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -376,10 +376,37 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [mode, onOpenForm]);
 
-    // Post-session assessment state
+    // Post-session assessment state — WO-547: restored from localStorage on mount
+    // so navigating away and returning preserves completed state.
+    const assessmentKey = `ppn_phase2_assessment_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
-    const [assessmentCompleted, setAssessmentCompleted] = useState(false);
-    const [assessmentScores, setAssessmentScores] = useState<{ meq: number; edi: number; ceq: number } | null>(null);
+    // WO-548: Collapsed accordion to access session chart/ledger from post-session view
+    const [showPostSessionTimeline, setShowPostSessionTimeline] = useState(false);
+    const [assessmentCompleted, setAssessmentCompleted] = useState<boolean>(() => {
+        try { return !!localStorage.getItem(assessmentKey); } catch { return false; }
+    });
+    const [assessmentScores, setAssessmentScores] = useState<{ meq: number; edi: number; ceq: number } | null>(() => {
+        try {
+            const raw = localStorage.getItem(assessmentKey);
+            return raw ? JSON.parse(raw) : null;
+        } catch { return null; }
+    });
+
+    // WO-547: Derive safety event status from session event log
+    // Activates the "Review Safety Events" row when ≥1 rescue or adverse event exists
+    const hasSafetyEvents = useMemo(() => {
+        try {
+            const sessionKey = journey.session?.sessionId ?? journey.sessionId ?? 'demo';
+            const key = `companion_logs_${sessionKey}`;
+            const raw = localStorage.getItem(key);
+            if (raw) {
+                const logs: Array<{ timestamp: string; feeling: string }> = JSON.parse(raw);
+                return logs.some(l => l.feeling === 'need_support');
+            }
+        } catch { /* non-critical */ }
+        // Also check eventLog for rescue/adverse pins added during live session
+        return eventLog.some(e => e.type === 'rescue-protocol' || e.type === 'safety-and-adverse-event');
+    }, [eventLog, journey]);
 
     // Live Vitals (mock)
     const [liveVitals] = useState({ hr: 82, bp: '125/82', spo2: 98, hrv: 45 });
@@ -463,11 +490,34 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             } satisfies SessionEventPin,
         ]);
 
-        // Emit to log_clinical_vitals table seamlessly
-        if ((updateHR || updateBPSys || updateBPDia) && journey.session?.sessionNumber) {
+        // WO-547: Persist session update event pin to log_session_timeline_events
+        // Guard: only write when journey.sessionId is a real UUID (not 'demo' / legacy numeric IDs)
+        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        const resolvedSessionId = journey.sessionId ?? journey.session?.sessionId;
+        if (resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
+            try {
+                await createTimelineEvent({
+                    session_id: resolvedSessionId,
+                    event_timestamp: new Date().toISOString(),
+                    event_type: 'clinical_decision',
+                    performed_by: undefined,
+                    metadata: {
+                        event_description: updateAffect
+                            ? `Session Update (T+${elapsedTime}): ${updateAffect}${updateResponsiveness ? ` · ${updateResponsiveness}` : ''
+                            }${updateComfort ? ` · ${updateComfort}` : ''}`
+                            : `Session Update at T+${elapsedTime}`,
+                    },
+                });
+            } catch (err) {
+                console.warn('[WO-547] Session Update — timeline event write failed (non-critical):', err);
+            }
+        }
+
+        // Emit vitals to log_session_vitals table
+        if ((updateHR || updateBPSys || updateBPDia) && resolvedSessionId && UUID_RE.test(resolvedSessionId ?? '')) {
             try {
                 await createSessionVital({
-                    session_id: journey.session.sessionNumber.toString(),
+                    session_id: resolvedSessionId,
                     heart_rate: updateHR ? parseInt(updateHR, 10) : undefined,
                     bp_systolic: updateBPSys ? parseInt(updateBPSys, 10) : undefined,
                     bp_diastolic: updateBPDia ? parseInt(updateBPDia, 10) : undefined,
@@ -569,6 +619,42 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     if (mode === 'post') {
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-500">
+
+                {/* WO-548: Collapsible accordion — session chart + ledger during closeout */}
+                <div className="bg-slate-900/40 border border-slate-700/40 rounded-2xl overflow-hidden">
+                    <button
+                        onClick={() => setShowPostSessionTimeline(v => !v)}
+                        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-slate-800/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                        aria-expanded={showPostSessionTimeline}
+                        aria-controls="post-session-timeline-panel"
+                    >
+                        <div className="flex items-center gap-2.5">
+                            <Activity className="w-4 h-4 text-amber-400" aria-hidden="true" />
+                            <span className="text-sm font-black text-slate-400 uppercase tracking-widest">View Session Timeline &amp; Ledger</span>
+                        </div>
+                        {showPostSessionTimeline
+                            ? <ChevronUp className="w-4 h-4 text-slate-500" />
+                            : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                    </button>
+                    {showPostSessionTimeline && (
+                        <div id="post-session-timeline-panel" className="px-5 pb-5 pt-2 space-y-5 border-t border-slate-700/40 animate-in slide-in-from-top-2 duration-200">
+                            {config.enabledFeatures.includes('session-vitals') && (
+                                <SessionVitalsTrendChart
+                                    sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                    substance={journey.session?.substance}
+                                    onThresholdViolation={() => { }}
+                                    data={vitalsChartData}
+                                    events={eventLog}
+                                    sessionDurationSec={sessionDurationSec}
+                                />
+                            )}
+                            <LiveSessionTimeline
+                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                active={false}
+                            />
+                        </div>
+                    )}
+                </div>
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
                     <div className="flex items-start justify-between mb-8">
                         <div>
@@ -615,14 +701,28 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             {assessmentCompleted && <span className="text-xs font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded border border-emerald-500/20">COMPLETED</span>}
                         </button>
 
-                        <div className="p-5 bg-slate-800/40 border border-slate-700 rounded-2xl flex items-center justify-between opacity-50 cursor-not-allowed">
+                        <div className={`p-5 rounded-2xl flex items-center justify-between transition-all ${hasSafetyEvents
+                            ? 'bg-amber-900/10 border border-amber-700/40 cursor-pointer hover:border-amber-500/50'
+                            : 'bg-slate-800/40 border border-slate-700 opacity-50 cursor-not-allowed'
+                            }`}>
                             <div className="flex items-center gap-4">
-                                <div className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center">
-                                    <div className="w-2 h-2 rounded-full bg-slate-600" />
+                                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${hasSafetyEvents ? 'border-amber-500 bg-amber-500/10' : 'border-slate-600'
+                                    }`}>
+                                    {hasSafetyEvents
+                                        ? <CheckSquare className="w-5 h-5 text-amber-400" />
+                                        : <div className="w-2 h-2 rounded-full bg-slate-600" />}
                                 </div>
-                                <span className="text-slate-400 font-bold">Review Safety Events (0)</span>
+                                <span className={`font-bold ${hasSafetyEvents ? 'text-amber-300' : 'text-slate-400'
+                                    }`}>
+                                    Review Safety Events {hasSafetyEvents ? '' : '(0)'}
+                                </span>
                             </div>
-                            <span className="text-xs text-slate-600 font-bold border border-slate-700 px-2 py-1 rounded">NO EVENTS</span>
+                            <span className={`text-xs font-bold border px-2 py-1 rounded ${hasSafetyEvents
+                                ? 'text-amber-400 border-amber-700/40 bg-amber-500/10'
+                                : 'text-slate-600 border-slate-700'
+                                }`}>
+                                {hasSafetyEvents ? 'REVIEW' : 'NO EVENTS'}
+                            </span>
                         </div>
                     </div>
 
@@ -662,6 +762,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     onComplete={(scores) => {
                                         setAssessmentScores(scores);
                                         setAssessmentCompleted(true);
+                                        // WO-545: persist so Phase 3 Session Snapshot can read across render boundary
+                                        try {
+                                            const sessionKey = journey.session?.sessionId ?? journey.sessionId ?? 'demo';
+                                            localStorage.setItem(
+                                                `ppn_phase2_assessment_${sessionKey}`,
+                                                JSON.stringify(scores)
+                                            );
+                                        } catch { /* quota exceeded — non-critical */ }
                                     }}
                                     onClose={() => setShowAssessmentModal(false)}
                                 />
@@ -1111,14 +1219,26 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
                         <span>Session Update</span>
                     </button>
-                    <button onClick={isLive ? () => {
+                    <button onClick={isLive ? async () => {
+                        const elapsedNow = getElapsedSec();
                         // WO-528: stamp rescue event pin on the chart immediately
                         setEventLog(prev => [...prev, {
                             id: `rescue-${Date.now()}`,
-                            elapsedSec: getElapsedSec(),
+                            elapsedSec: elapsedNow,
                             type: 'rescue-protocol',
                             label: 'Rescue Protocol',
                         } satisfies SessionEventPin]);
+                        // WO-547: persist rescue protocol activation to log_session_timeline_events
+                        const UUID_RE2 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                        const sid = journey.sessionId ?? journey.session?.sessionId;
+                        if (sid && UUID_RE2.test(sid)) {
+                            createTimelineEvent({
+                                session_id: sid,
+                                event_timestamp: new Date().toISOString(),
+                                event_type: 'safety_event',
+                                metadata: { event_description: `Rescue Protocol initiated at T+${elapsedTime}` },
+                            }).catch(e => console.warn('[WO-547] Rescue timeline write failed:', e));
+                        }
                         onOpenForm('rescue-protocol');
                     } : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-purple-900/60 to-fuchsia-900/40 hover:from-purple-800/70 border-purple-500/40 hover:border-purple-400/60 text-purple-100 shadow-lg shadow-purple-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
@@ -1126,14 +1246,26 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         <span className={`material-symbols-outlined text-[20px] ${isLive ? 'text-purple-300' : 'text-slate-600'}`}>emergency</span>
                         <span>Rescue Protocol</span>
                     </button>
-                    <button onClick={isLive ? () => {
+                    <button onClick={isLive ? async () => {
+                        const elapsedNow2 = getElapsedSec();
                         // WO-528: stamp adverse event pin on the chart immediately
                         setEventLog(prev => [...prev, {
                             id: `adverse-${Date.now()}`,
-                            elapsedSec: getElapsedSec(),
+                            elapsedSec: elapsedNow2,
                             type: 'safety-and-adverse-event',
                             label: 'Adverse Event',
                         } satisfies SessionEventPin]);
+                        // WO-547: persist adverse event activation to log_session_timeline_events
+                        const UUID_RE3 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                        const sid2 = journey.sessionId ?? journey.session?.sessionId;
+                        if (sid2 && UUID_RE3.test(sid2)) {
+                            createTimelineEvent({
+                                session_id: sid2,
+                                event_timestamp: new Date().toISOString(),
+                                event_type: 'safety_event',
+                                metadata: { event_description: `Adverse Event logged at T+${elapsedTime}` },
+                            }).catch(e => console.warn('[WO-547] Adverse Event timeline write failed:', e));
+                        }
                         onOpenForm('safety-and-adverse-event');
                     } : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-red-900/60 to-rose-900/40 hover:from-red-800/70 border-red-500/40 hover:border-red-400/60 text-red-100 shadow-lg shadow-red-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
@@ -1205,7 +1337,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note — optional</label>
                             <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
-                            <p className="text-xs text-slate-600 mt-1 italic">Session-local only — exported with session summary. Not logged to the database.</p>
+                            <p className="text-xs text-slate-600 mt-1 italic">Note is stored locally for session reference. Affect, responsiveness, and vitals are persisted to the clinical record.</p>
                         </div>
                         <button onClick={handleSaveUpdate}
                             className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
@@ -1217,6 +1349,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 {/* ── Cockpit Real Estate: always fixed between buttons and update log ── */}
                 {isLive && (
                     <div className="space-y-6">
+                        {/* WO-548 Defect #11 — Known Behavior:
+                            When all event type toggles are on, session update markers can overlap vital sign
+                            data points due to data density. This is expected at high-frequency logging rates.
+                            If the graph library supports z-index series layering, vital signs should surface
+                            above session update markers. Enhancement deferred — not a blocker. */}
                         {config.enabledFeatures.includes('session-vitals') && (
                             <SessionVitalsTrendChart
                                 sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}

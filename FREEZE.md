@@ -20,7 +20,6 @@ src/pages/ResetPassword.tsx
 src/pages/MyProtocols.tsx
 
 # ── Wellness Journey (pilot path — do not touch) ──
-src/components/wellness-journey/DosingSessionPhase.tsx
 src/components/wellness-journey/LiveSessionTimeline.tsx
 src/components/wellness-journey/WellnessFormRouter.tsx
 src/components/wellness-journey/SlideOutPanel.tsx
@@ -28,6 +27,8 @@ src/components/wellness-journey/SlideOutPanel.tsx
 
 
 # ── Add files here when approaching a milestone ──
+src/components/wellness-journey/DosingSessionPhase.tsx
+
 # ── Safety & Surveillance (finalized 2026-03-01) ──
 src/pages/InteractionChecker.tsx
 # src/components/wellness-journey/DosingSessionPhase.tsx
