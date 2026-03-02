@@ -31,7 +31,7 @@ const DURATION_OPTIONS = [
     { label: '90 min', value: 90 },
 ];
 
-// WO-214: Numeric IDs are interim — will align to ref_session_focus_areas PKs once seeded (offset 101+)
+// WO-214: Numeric IDs are interim, will align to ref_session_focus_areas PKs once seeded (offset 101+)
 const FOCUS_AREA_ITEMS: RefPickerItem[] = [
     { id: 101, label: 'Processing Dosing Experience' },
     { id: 102, label: 'Relationship Insights' },
@@ -43,7 +43,7 @@ const FOCUS_AREA_ITEMS: RefPickerItem[] = [
     { id: 108, label: 'Somatic Awareness' },
 ];
 
-// WO-214: Numeric IDs are interim — will align to ref_homework_assignments PKs once seeded (offset 201+)
+// WO-214: Numeric IDs are interim, will align to ref_homework_assignments PKs once seeded (offset 201+)
 const HOMEWORK_ITEMS: RefPickerItem[] = [
     { id: 201, label: 'Daily Journaling (10 min/day)' },
     { id: 202, label: 'Meditation Practice (10 min/day)' },
@@ -112,24 +112,24 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
         session_duration_minutes: 45,
         attendance_status: 'attended',
         cancellation_reason_id: null,
-        focus_area_ids: [],   // number[] — RefPicker (WO-214)
+        focus_area_ids: [],   // number[], RefPicker (WO-214)
         insight_integration_score: 0,
         emotional_processing_score: 0,
         behavioral_application_score: 0,
         engagement_level_score: 0,
-        homework_ids: [],     // number[] — RefPicker (WO-214)
+        homework_ids: [],     // number[], RefPicker (WO-214)
         next_session_date: nextWeek,
     });
 
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-    // WO-214: RefPicker handles toggle internally — onChange provides full number[] directly
+    // WO-214: RefPicker handles toggle internally, onChange provides full number[] directly
 
     const handleSave = useCallback(async () => {
         setSaveStatus('saving');
         try {
             // WO-213: Routed through clinicalLog service layer (not direct Supabase)
-            // ARCH NOTE: session_notes JSON blob removed — violates no-free-text rule.
+            // ARCH NOTE: session_notes JSON blob removed, violates no-free-text rule.
             // TODO (WO-214): Replace focus_areas string[] and homework_assigned string[]
             //   with session_focus_ids integer[] and homework_assigned_ids integer[]
             //   once RefPicker component provides FK IDs from ref_ tables.
@@ -168,7 +168,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                 </div>
                 <div>
                     <h3 className="text-lg font-black text-slate-300">Integration Session</h3>
-                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3 — Structured Record</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3, Structured Record</p>
                 </div>
             </div>
 
@@ -252,7 +252,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                     ))}
                 </div>
 
-                {/* Cancellation Reason — only shown if not attended */}
+                {/* Cancellation Reason, only shown if not attended */}
                 {!isAttended && (
                     <div className="mt-3 relative">
                         <label htmlFor="cancel-reason" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
@@ -276,10 +276,10 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                 )}
             </div>
 
-            {/* Focus Areas — only if attended */}
+            {/* Focus Areas, only if attended */}
             {isAttended && (
                 <>
-                    {/* Focus Areas — RefPicker WO-214 */}
+                    {/* Focus Areas, RefPicker WO-214 */}
                     <RefPicker
                         items={FOCUS_AREA_ITEMS}
                         selected={form.focus_area_ids}
@@ -288,7 +288,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                         multi={true}
                     />
 
-                    {/* Homework — RefPicker WO-214 */}
+                    {/* Homework, RefPicker WO-214 */}
                     <RefPicker
                         items={HOMEWORK_ITEMS}
                         selected={form.homework_ids}

@@ -9,9 +9,9 @@ interface PatientLogEvent {
 }
 
 /**
- * FEELINGS palette — dark-room optimised:
+ * FEELINGS palette, dark-room optimised:
  * - `rest`   : dim semi-transparent bg + muted *-300/80 text (eye-safe, readable, not blinding)
- * - `glow`   : ~60% opacity fill — bright enough to register a tap without a harsh white flash
+ * - `glow`   : ~60% opacity fill, bright enough to register a tap without a harsh white flash
  * CSS handles the slow fade-back (1.8s ease-out) automatically via the transition class below.
  *
  * Accessibility: *-300 on effectively-black bg gives ~5–6:1 contrast ratio (WCAG AA pass).
@@ -43,7 +43,7 @@ export default function PatientCompanionPage() {
     /**
      * litId: button currently in the "instant bright" phase.
      * Set on click, cleared after 160ms. The CSS transition then handles the
-     * slow 1.8s fade-out automatically — no setTimeout dance needed for the fade.
+     * slow 1.8s fade-out automatically, no setTimeout dance needed for the fade.
      */
     const [litId, setLitId] = useState<string | null>(null);
     const [lockHoldProgress, setLockHoldProgress] = useState(0);
@@ -61,7 +61,7 @@ export default function PatientCompanionPage() {
         localStorage.setItem(storageKey, JSON.stringify(logs));
 
         // WO-556: Dispatch ppn:session-event so DosingSessionPhase chart listener
-        // picks up this companion tap as an event pin — same window, no BroadcastChannel needed.
+        // picks up this companion tap as an event pin, same window, no BroadcastChannel needed.
         // Negative / distress feelings map to safety_event, all others to patient_observation.
         const SAFETY_FEELINGS = new Set(['anxious', 'overwhelmed', 'fearful', 'tense', 'nauseous', 'need_support']);
         const eventType = SAFETY_FEELINGS.has(feelingId) ? 'safety_event' : 'patient_observation';
@@ -83,7 +83,7 @@ export default function PatientCompanionPage() {
                 performed_by: undefined,
                 metadata: { event_description: eventDescription },
             }).catch(err => {
-                // Non-critical — companion taps still appear on the chart via CustomEvent
+                // Non-critical, companion taps still appear on the chart via CustomEvent
                 console.warn('[WO-556] Companion event write failed (non-critical):', err);
             });
         }
@@ -154,7 +154,7 @@ export default function PatientCompanionPage() {
                 </span>
             </div>
 
-            {/* ── Logged toast — soft, dark-room safe ──────────────────────────── */}
+            {/* ── Logged toast, soft, dark-room safe ──────────────────────────── */}
             <div className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none transition-all duration-700 ${recentLog ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
                 }`}>
                 <div className="px-7 py-3 bg-black/60 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl">
@@ -162,7 +162,7 @@ export default function PatientCompanionPage() {
                 </div>
             </div>
 
-            {/* ══ Video zone — fills remaining height above buttons ══ */}
+            {/* ══ Video zone, fills remaining height above buttons ══ */}
             <div className="relative flex-1 overflow-hidden pointer-events-none" aria-hidden="true">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
                 <div className="absolute top-5 left-0 right-0 text-center z-20">

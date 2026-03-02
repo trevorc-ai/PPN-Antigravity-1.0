@@ -31,7 +31,7 @@ const InteractionChecker: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
 
-  // ── WO-526: Flash bug fix — clear stale result immediately on selection change
+  // ── WO-526: Flash bug fix, clear stale result immediately on selection change
   // Without this, the previous dbRule shows for ~300ms (debounce delay) before
   // the new query fires, causing a flash of wrong results.
   const handlePsychedelicChange = (val: string) => {
@@ -128,7 +128,7 @@ const InteractionChecker: React.FC = () => {
           return;
         }
 
-        // Step 2: Query ref_clinical_interactions (correct table — verified 2026-02-19)
+        // Step 2: Query ref_clinical_interactions (correct table, verified 2026-02-19)
         const { data, error } = await supabase
           .from('ref_clinical_interactions')
           .select('*')
@@ -349,7 +349,7 @@ const InteractionChecker: React.FC = () => {
 
             {/* Missing Agent Workflow */}
             <div className="px-2">
-              {/* a11y: blue-300 (#93c5fd) achieves ~4.8:1 on dark card bg — WCAG AA pass */}
+              {/* a11y: blue-300 (#93c5fd) achieves ~4.8:1 on dark card bg, WCAG AA pass */}
               <a
                 href="mailto:support@ppnportal.net?subject=Database%20Update%20Request&body=Please%20add%20the%20following%20agent%20to%20the%20institutional%20database%3A%0A%0AAgent%20Name%3A%20%0AAgent%20Class%3A%20%0AReference%20Source%3A%20"
                 className="text-sm font-bold text-[#93c5fd] hover:text-[#bfdbfe] uppercase tracking-widest transition-colors flex items-center gap-2 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#93c5fd]"

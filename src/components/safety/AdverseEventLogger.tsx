@@ -17,7 +17,7 @@ interface AdverseEventData {
     response_notes_id: number | null;
 }
 
-// Structured event types — no free text (PHI-safe)
+// Structured event types, no free text (PHI-safe)
 const EVENT_TYPES = [
     { id: 1, label: 'Nausea / Vomiting' },
     { id: 2, label: 'Anxiety / Panic' },
@@ -80,9 +80,9 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
             //   - ref table for response_notes_id
             // This insert is disabled until migration 076 creates log_adverse_events
             // and the supporting ref_ tables are defined and seeded.
-            // INSPECTOR — 2026-02-25
+            // INSPECTOR, 2026-02-25
             console.warn('[AdverseEventLogger] Save blocked: log_adverse_events table not yet created. See WO-420 Item 076.');
-            setSaveStatus('saved'); // UI feedback only — no DB write
+            setSaveStatus('saved'); // UI feedback only, no DB write
             onSave?.(form);
             setTimeout(() => setSaveStatus('idle'), 3000);
         } catch {
@@ -102,7 +102,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                 </div>
                 <div>
                     <h3 className="text-lg font-black text-slate-300">Adverse Event Log</h3>
-                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 2 — Session Safety Documentation</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 2, Session Safety Documentation</p>
                 </div>
             </div>
 
@@ -214,7 +214,7 @@ export const AdverseEventLogger: React.FC<AdverseEventLoggerProps> = ({
                 <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl">
                     <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                     <div>
-                        <p className="text-sm font-bold text-red-400">Severe Event — Supervisor Notification Required</p>
+                        <p className="text-sm font-bold text-red-400">Severe Event, Supervisor Notification Required</p>
                         <p className="text-sm text-red-300/70 mt-1">Document supervisor acknowledgment separately in the Red Alert panel.</p>
                     </div>
                 </div>

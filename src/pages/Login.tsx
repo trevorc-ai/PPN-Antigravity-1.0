@@ -78,7 +78,7 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#05070a] flex items-center justify-center p-4 relative overflow-hidden">
 
-      {/* Background orbs — deeper, matching Pricing dark base */}
+      {/* Background orbs, deeper, matching Pricing dark base */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-indigo-900/15 rounded-full blur-[140px] opacity-50" />
         <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-indigo-900/10 rounded-full blur-[140px] opacity-35" />
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
           <span className="text-sm font-bold uppercase tracking-widest">Back to Home</span>
         </button>
 
-        {/* Logo / Branding — Pricing style */}
+        {/* Logo / Branding, Pricing style */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center gap-4 mb-5">
             <div className="w-14 h-14 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-900/30">
@@ -121,7 +121,7 @@ const Login: React.FC = () => {
           </p>
         </div>
 
-        {/* Card — Pricing aesthetic: rounded-[2.5rem], glow ring */}
+        {/* Card, Pricing aesthetic: rounded-[2.5rem], glow ring */}
         <div className="relative">
           {/* Indigo glow ring */}
           <div className="absolute -inset-0.5 bg-indigo-500/10 blur-md opacity-60 rounded-[2.5rem]" />
@@ -188,7 +188,7 @@ const Login: React.FC = () => {
                 )}
               </button>
 
-              {/* Forgot password — below Sign In, clean tab order */}
+              {/* Forgot password, below Sign In, clean tab order */}
               <div className="flex justify-center">
                 <button
                   type="button"
@@ -220,7 +220,7 @@ const Login: React.FC = () => {
         </div>
       </div >
 
-      {/* Password Reset Modal — upgraded to match new card style */}
+      {/* Password Reset Modal, upgraded to match new card style */}
       {
         showResetModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">

@@ -1,14 +1,14 @@
 /**
- * WelcomeHeroBanner.tsx — WO-507
+ * WelcomeHeroBanner.tsx, WO-507
  *
  * First-login welcome moment rendered at the top of Dashboard.tsx.
  * Shown only when `localStorage.getItem('ppn_has_seen_welcome')` is falsy.
- * Removed from DOM (not hidden) on dismiss — no re-render flicker.
+ * Removed from DOM (not hidden) on dismiss, no re-render flicker.
  *
  * Props:
- *   onStartTour  — dismisses banner immediately, then fires tour
- *   onDismiss    — dismisses banner without launching tour
- *   userName     — email prefix, already stripped by Dashboard
+ *   onStartTour , dismisses banner immediately, then fires tour
+ *   onDismiss   , dismisses banner without launching tour
+ *   userName    , email prefix, already stripped by Dashboard
  */
 
 import React from 'react';
@@ -38,7 +38,7 @@ const WelcomeHeroBanner: React.FC<WelcomeHeroBannerProps> = ({
             role="banner"
             aria-label="Welcome banner"
         >
-            {/* Ambient glow — decorative, pointer-events off */}
+            {/* Ambient glow, decorative, pointer-events off */}
             <div
                 className="absolute -top-12 -right-12 w-72 h-72 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none"
                 aria-hidden="true"
@@ -48,7 +48,7 @@ const WelcomeHeroBanner: React.FC<WelcomeHeroBannerProps> = ({
                 aria-hidden="true"
             />
 
-            {/* Dismiss button — top-right, icon + sr text for accessibility */}
+            {/* Dismiss button, top-right, icon + sr text for accessibility */}
             <button
                 onClick={onDismiss}
                 aria-label="Dismiss welcome banner"
@@ -67,7 +67,7 @@ const WelcomeHeroBanner: React.FC<WelcomeHeroBannerProps> = ({
             {/* Content */}
             <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-8">
 
-                {/* Left — text block */}
+                {/* Left, text block */}
                 <div className="flex-1 min-w-0">
                     {/* Eyebrow label */}
                     <div className="flex items-center gap-2 mb-3">
@@ -91,7 +91,7 @@ const WelcomeHeroBanner: React.FC<WelcomeHeroBannerProps> = ({
                     </p>
                 </div>
 
-                {/* Right — CTAs */}
+                {/* Right, CTAs */}
                 <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3 flex-shrink-0">
                     {/* Primary: Start Tour */}
                     <button
@@ -138,7 +138,7 @@ const WelcomeHeroBanner: React.FC<WelcomeHeroBannerProps> = ({
                 </div>
             </div>
 
-            {/* Dismiss link — below CTA block on mobile, subtle */}
+            {/* Dismiss link, below CTA block on mobile, subtle */}
             <div className="relative z-10 mt-5 flex items-center gap-1">
                 <button
                     onClick={onDismiss}

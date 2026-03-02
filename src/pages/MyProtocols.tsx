@@ -111,7 +111,7 @@ export const MyProtocols = () => {
 
                 const formattedData: Protocol[] = (sessionResult.data ?? []).map((record: any) => ({
                     id: record.id,
-                    // patient_link_code dropped in migration 079 — use UUID prefix as reference
+                    // patient_link_code dropped in migration 079, use UUID prefix as reference
                     patient_ref: record.id
                         ? `SID-${record.id.substring(0, 8).toUpperCase()}`
                         : '—',
@@ -120,7 +120,7 @@ export const MyProtocols = () => {
                     submitted_at: record.created_at ?? null,
                     session_type_id: record.session_type_id ?? null,
                     status: SESSION_TYPE_LABELS[record.session_type_id as number] ?? 'In Progress',
-                    // New columns — display '—' when not yet recorded
+                    // New columns, display '—' when not yet recorded
                     indication_name: indicationMap[record.indication_id] ?? '—',
                     sex_label: sexMap[record.patient_sex_id] ?? '—',
                     patient_age: record.patient_age_years != null ? `${record.patient_age_years}` : '—',
@@ -299,7 +299,7 @@ export const MyProtocols = () => {
                                             onClick={() => navigate(`/protocol/${p.id}`)}
                                             className="hover:bg-primary/5 transition-colors group cursor-pointer"
                                         >
-                                            {/* Patient Reference — shows PT-XXXXXXXXXX */}
+                                            {/* Patient Reference, shows PT-XXXXXXXXXX */}
                                             <td className="pl-6 pr-4 py-5">
                                                 <div className="flex flex-col">
                                                     <span

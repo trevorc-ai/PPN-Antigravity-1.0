@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CompassOutcomePoint } from '../../hooks/useCompassOutcomes';
 
-// Static population trajectory (reference band — PHQ-9 average improvement)
+// Static population trajectory (reference band, PHQ-9 average improvement)
 const POP_TRAJECTORY: [number, number][] = [
     [0, 14], [7, 13.5], [14, 12.5], [30, 11], [60, 9], [90, 8], [120, 7], [180, 6],
 ];
@@ -87,7 +87,7 @@ export const IntegrationStoryChart: React.FC<IntegrationStoryChartProps> = ({
                 viewBox={`0 0 ${W} ${H}`}
                 width="100%"
                 style={{ overflow: 'visible' }}
-                aria-label="Integration story chart — PHQ-9 scores over time"
+                aria-label="Integration story chart, PHQ-9 scores over time"
                 role="img"
             >
                 <defs>

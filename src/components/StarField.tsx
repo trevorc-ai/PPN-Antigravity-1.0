@@ -8,15 +8,15 @@ interface Star {
 }
 
 /**
- * Organic starfield — 220 stars at truly random positions.
- * Uses a seeded LCG PRNG (deterministic — same pattern every render).
+ * Organic starfield, 220 stars at truly random positions.
+ * Uses a seeded LCG PRNG (deterministic, same pattern every render).
  * Gamma-curved brightness so most stars are dim, a few are bright (real sky).
- * Stars are static — no synchronized breathing or bobbing.
+ * Stars are static, no synchronized breathing or bobbing.
  * Only very subtle parallax scroll shift applied to the whole field.
  */
 const StarField: React.FC<{ scrollY?: number }> = ({ scrollY = 0 }) => {
     const stars = useMemo<Star[]>(() => {
-        // LCG seeded PRNG — deterministic, reproducible pattern
+        // LCG seeded PRNG, deterministic, reproducible pattern
         let seed = 2718281;
         const rand = () => {
             seed = (seed * 1664525 + 1013904223) & 0xffffffff;
@@ -41,7 +41,7 @@ const StarField: React.FC<{ scrollY?: number }> = ({ scrollY = 0 }) => {
             {/* Base sky */}
             <div className="absolute inset-0 bg-[#07101e]" />
 
-            {/* Subtle depth glow — slight brightness at upper-center, fades to edges */}
+            {/* Subtle depth glow, slight brightness at upper-center, fades to edges */}
             <div
                 className="absolute inset-0"
                 style={{
@@ -50,12 +50,12 @@ const StarField: React.FC<{ scrollY?: number }> = ({ scrollY = 0 }) => {
                 }}
             />
 
-            {/* Stars — SVG with SMIL per-element animation for natural individual twinkle */}
+            {/* Stars, SVG with SMIL per-element animation for natural individual twinkle */}
             <svg
                 className="absolute inset-0 w-full h-full"
                 xmlns="http://www.w3.org/2000/svg"
                 style={{
-                    // Ultra-slow parallax: 1px per 50px scroll — nearly imperceptible
+                    // Ultra-slow parallax: 1px per 50px scroll, nearly imperceptible
                     transform: `translateY(${scrollY * 0.005}px)`,
                 }}
             >
@@ -67,7 +67,7 @@ const StarField: React.FC<{ scrollY?: number }> = ({ scrollY = 0 }) => {
                         r={star.size}
                         fill="white"
                     >
-                        {/* SVG SMIL animation — per-star relative opacity, no shared keyframe */}
+                        {/* SVG SMIL animation, per-star relative opacity, no shared keyframe */}
                         <animate
                             attributeName="opacity"
                             values={`${star.opacity.toFixed(3)};${(star.opacity * 0.12).toFixed(3)};${star.opacity.toFixed(3)}`}

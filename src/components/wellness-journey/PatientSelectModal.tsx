@@ -4,7 +4,7 @@ import { supabase } from '../../supabaseClient';
 import { getCurrentSiteId, generatePatientId } from '../../services/identity';
 
 /**
- * PatientSelectModal — WO-118 Live DB Integration
+ * PatientSelectModal, WO-118 Live DB Integration
  *
  * Fetches real patient records from log_clinical_records filtered by the
  * practitioner's current site_id (from log_user_sites via getCurrentSiteId).
@@ -54,7 +54,7 @@ function derivePhase(sessionType: string | null): Phase {
 
 // generatePatientId() imported from ../../services/identity (WO-206 service isolation)
 
-/** Generates an ephemeral TEST patient ID — never written to the DB */
+/** Generates an ephemeral TEST patient ID, never written to the DB */
 function generateTestPatientId(): string {
     return 'TEST-' + Date.now().toString(36).toUpperCase();
 }
@@ -123,7 +123,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
             } else if (practitionerId) {
                 // Fallback: filter by the logged-in practitioner directly
                 query = query.eq('practitioner_id', practitionerId);
-                console.warn('[PatientSelectModal] No site_id — using practitioner_id fallback filter. Check log_user_sites for this user.');
+                console.warn('[PatientSelectModal] No site_id, using practitioner_id fallback filter. Check log_user_sites for this user.');
             }
 
             const { data, error: qErr } = await query;
@@ -249,7 +249,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 <ChevronRight className="w-5 h-5 text-slate-500 group-hover:translate-x-1 transition-transform" />
                             </button>
 
-                            {/* Practice Session — TEST mode, no DB writes */}
+                            {/* Practice Session, TEST mode, no DB writes */}
                             <button
                                 onClick={() => onSelect(testId, true, 'Preparation')}
                                 className="w-full group flex items-center gap-5 p-5 bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 rounded-xl transition-all active:scale-[0.99] text-left"
@@ -321,7 +321,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             </div>
                         </div>
 
-                        {/* Footer — Back button + Phantom Shield notice */}
+                        {/* Footer, Back button + Phantom Shield notice */}
                         <div className="px-6 pb-5">
                             <div className="flex items-center justify-between mb-3">
                                 <button
@@ -347,7 +347,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                     <div className="bg-slate-900 border border-slate-700/60 rounded-2xl overflow-hidden shadow-2xl shadow-black/60">
                         {/* Header */}
                         <div className="px-6 pt-6 pb-4 border-b border-slate-800 relative">
-                            {/* X on existing view — goes back to choose, never exits the modal */}
+                            {/* X on existing view, goes back to choose, never exits the modal */}
                             <button
                                 type="button"
                                 onClick={() => setView('choose')}
@@ -373,7 +373,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                         <div className="px-6 pt-4 space-y-3">
                             <div className="relative">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                                {/* UI-ONLY: client-side patient ID filter — search term is never persisted to Supabase */}
+                                {/* UI-ONLY: client-side patient ID filter, search term is never persisted to Supabase */}
                                 <input
                                     type="text"
                                     placeholder="Search patient ID…"

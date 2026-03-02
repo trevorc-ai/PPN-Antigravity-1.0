@@ -247,7 +247,7 @@ export default function PatientConstellation({ data, hideHeader }: { data?: Pati
 
     return (
         <div className="w-full bg-[#0f1218] p-3 sm:p-6 rounded-2xl border border-slate-800 shadow-2xl relative h-[400px] sm:h-[500px] flex flex-col">
-            {/* Header — hidden when parent card already shows title (BUG-3 fix) */}
+            {/* Header, hidden when parent card already shows title (BUG-3 fix) */}
             {!hideHeader && (
                 <div className="flex items-center justify-between mb-4 z-10 relative shrink-0">
                     <div className="flex items-center gap-3">

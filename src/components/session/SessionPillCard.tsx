@@ -114,7 +114,7 @@ const SessionPillCard: React.FC<SessionPillCardProps> = ({
         );
     }
 
-    // Dashboard card variant — larger, more detail
+    // Dashboard card variant, larger, more detail
     return (
         <button
             onClick={handleClick}

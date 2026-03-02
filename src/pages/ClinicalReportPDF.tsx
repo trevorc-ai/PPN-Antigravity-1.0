@@ -193,7 +193,7 @@ const PageShell: React.FC<{ children: React.ReactNode; pageNum: number; total: n
                 </div>
                 <div>
                     <div style={{ fontSize: '11px', fontWeight: 900, color: '#1e3a5f', letterSpacing: '0.08em', textTransform: 'uppercase' }}>PPN Portal</div>
-                    <div style={{ fontSize: '9px', color: '#64748b', letterSpacing: '0.04em' }}>Clinical Outcomes Report — CONFIDENTIAL</div>
+                    <div style={{ fontSize: '9px', color: '#64748b', letterSpacing: '0.04em' }}>Clinical Outcomes Report, CONFIDENTIAL</div>
                 </div>
             </div>
             <div style={{ textAlign: 'right', fontSize: '9px', color: '#94a3b8' }}>
@@ -232,7 +232,7 @@ const ClinicalReportPDF: React.FC = () => {
     const sessionId = searchParams.get('sessionId') ?? undefined;
 
     // usePhase3Data needs both sessionId and patientId; patientId is derived from session context.
-    // For the PDF page, pass sessionId for both — the hook uses patientId only for baseline PHQ-9.
+    // For the PDF page, pass sessionId for both, the hook uses patientId only for baseline PHQ-9.
     // The session row already supplies all other fields via sessionId.
     const data = usePhase3Data(sessionId, sessionId);
 
@@ -269,7 +269,7 @@ const ClinicalReportPDF: React.FC = () => {
                 <div>
                     <h1 style={{ color: '#8BA5D3', fontSize: '22px', fontWeight: 900, margin: 0 }}>Clinical Outcomes Report</h1>
                     <p style={{ color: '#8B9DC3', fontSize: '13px', margin: '4px 0 0' }}>
-                        {sessionId ? `Session ${sessionId.slice(0, 8).toUpperCase()}` : 'Preview — No session ID provided'}
+                        {sessionId ? `Session ${sessionId.slice(0, 8).toUpperCase()}` : 'Preview, No session ID provided'}
                         {!data.hasRealDecayData && !data.hasRealVitalsData && ' · Demo data shown where real data is unavailable'}
                     </p>
                 </div>
@@ -287,7 +287,7 @@ const ClinicalReportPDF: React.FC = () => {
             <div style={{ maxWidth: '210mm', margin: '0 auto' }}>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 1 — COVER + EXECUTIVE SUMMARY
+                    PAGE 1, COVER + EXECUTIVE SUMMARY
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={1} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <div style={{ background: 'linear-gradient(135deg,#1e3a5f 0%,#1e40af 60%,#1d4ed8 100%)', borderRadius: '12px', padding: '28px 32px', marginBottom: '24px', color: 'white', position: 'relative', overflow: 'hidden' }}>
@@ -339,7 +339,7 @@ const ClinicalReportPDF: React.FC = () => {
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 2 — BASELINE CLINICAL PROFILE
+                    PAGE 2, BASELINE CLINICAL PROFILE
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={2} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle>Baseline Clinical Profile</SectionTitle>
@@ -399,7 +399,7 @@ const ClinicalReportPDF: React.FC = () => {
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 3 — PHQ-9 SYMPTOM TRAJECTORY
+                    PAGE 3, PHQ-9 SYMPTOM TRAJECTORY
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={3} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle>PHQ-9 Symptom Trajectory</SectionTitle>
@@ -411,7 +411,7 @@ const ClinicalReportPDF: React.FC = () => {
                     <div style={{ backgroundColor: '#f8fafc', borderRadius: '8px', padding: '12px', border: '1px solid #e2e8f0', marginBottom: '12px' }}>
                         {data.hasRealDecayData && data.decayPoints && data.decayPoints.length > 0
                             ? <PHQ9Chart points={data.decayPoints} baseline={data.baselinePhq9} />
-                            : <AwaitingData label="PHQ-9 trajectory — chart available in live view once longitudinal assessments are recorded" />}
+                            : <AwaitingData label="PHQ-9 trajectory, chart available in live view once longitudinal assessments are recorded" />}
                     </div>
 
                     <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', justifyContent: 'center' }}>
@@ -436,7 +436,7 @@ const ClinicalReportPDF: React.FC = () => {
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 4 — DOSING SESSION RECORD
+                    PAGE 4, DOSING SESSION RECORD
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={4} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle>Dosing Session Vitals Record</SectionTitle>
@@ -448,7 +448,7 @@ const ClinicalReportPDF: React.FC = () => {
                     <div style={{ backgroundColor: '#f8fafc', borderRadius: '8px', padding: '12px', border: '1px solid #e2e8f0', marginBottom: '10px' }}>
                         {data.hasRealVitalsData && data.vitalsData && data.vitalsData.length > 0
                             ? <VitalsChart vitals={data.vitalsData} />
-                            : <AwaitingData label="Vitals chart — chart available in live view once heart rate and blood pressure readings are logged" />}
+                            : <AwaitingData label="Vitals chart, chart available in live view once heart rate and blood pressure readings are logged" />}
                     </div>
 
                     <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '20px' }}>
@@ -503,13 +503,13 @@ const ClinicalReportPDF: React.FC = () => {
                         </table>
                     ) : (
                         <div style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#94a3b8', fontSize: '10px', fontStyle: 'italic' }}>
-                            Awaiting data — no session events have been logged for this session yet.
+                            Awaiting data, no session events have been logged for this session yet.
                         </div>
                     )}
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 5 — EXPERIENCE QUALITY (MEQ-30 / CEQ / EDI)
+                    PAGE 5, EXPERIENCE QUALITY (MEQ-30 / CEQ / EDI)
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={5} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle accent="#8b5cf6">Experience Quality Assessment</SectionTitle>
@@ -517,28 +517,28 @@ const ClinicalReportPDF: React.FC = () => {
                         Mystical experience, ego dissolution, and emotional breakthrough scores logged post-session.
                     </p>
 
-                    {/* MEQ-30 placeholder — real data integration in WO-554+ scope */}
-                    <SectionTitle accent="#8b5cf6">MEQ-30 — Mystical Experience Questionnaire</SectionTitle>
+                    {/* MEQ-30 placeholder, real data integration in WO-554+ scope */}
+                    <SectionTitle accent="#8b5cf6">MEQ-30, Mystical Experience Questionnaire</SectionTitle>
                     <div style={{ backgroundColor: '#faf5ff', border: '1px solid #ddd6fe', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-                        <AwaitingData label="MEQ-30 score — available in live view once post-session assessment is completed" />
+                        <AwaitingData label="MEQ-30 score, available in live view once post-session assessment is completed" />
                         <p style={{ fontSize: '9px', color: '#7c3aed', marginTop: '8px', textAlign: 'center' }}>
                             Complete the "Quick Experience Check" assessment after each dosing session to populate this chart.
                         </p>
                     </div>
 
-                    <SectionTitle accent="#6366f1">CEQ — Challenging Experience Questionnaire</SectionTitle>
+                    <SectionTitle accent="#6366f1">CEQ, Challenging Experience Questionnaire</SectionTitle>
                     <div style={{ backgroundColor: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-                        <AwaitingData label="CEQ score — available in live view once post-session assessment is completed" />
+                        <AwaitingData label="CEQ score, available in live view once post-session assessment is completed" />
                     </div>
 
-                    <SectionTitle accent="#ec4899">EDI — Emotional Breakthrough Index</SectionTitle>
+                    <SectionTitle accent="#ec4899">EDI, Emotional Breakthrough Index</SectionTitle>
                     <div style={{ backgroundColor: '#fdf2f8', border: '1px solid #f5d0fe', borderRadius: '8px', padding: '16px' }}>
-                        <AwaitingData label="EDI score — available in live view once post-session assessment is completed" />
+                        <AwaitingData label="EDI score, available in live view once post-session assessment is completed" />
                     </div>
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 6 — INTEGRATION + SAFETY
+                    PAGE 6, INTEGRATION + SAFETY
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={6} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle>Integration Phase Summary</SectionTitle>
@@ -551,7 +551,7 @@ const ClinicalReportPDF: React.FC = () => {
 
                     {(data.integrationSessionsAttended == null || data.integrationSessionsAttended === 0) && (
                         <div style={{ padding: '12px 16px', backgroundColor: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '8px', marginBottom: '20px', color: '#94a3b8', fontSize: '10px', fontStyle: 'italic' }}>
-                            Awaiting data — integration sessions will appear here as they are logged in the platform.
+                            Awaiting data, integration sessions will appear here as they are logged in the platform.
                         </div>
                     )}
 
@@ -611,18 +611,18 @@ const ClinicalReportPDF: React.FC = () => {
                         </table>
                     ) : (
                         <div style={{ padding: '12px 16px', backgroundColor: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '8px', color: '#94a3b8', fontSize: '10px', fontStyle: 'italic' }}>
-                            Awaiting data — daily pulse check-ins will populate this table.
+                            Awaiting data, daily pulse check-ins will populate this table.
                         </div>
                     )}
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 7 — NETWORK BENCHMARKING + CERTIFICATION
+                    PAGE 7, NETWORK BENCHMARKING + CERTIFICATION
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={7} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle accent="#3b82f6">Network Benchmarking</SectionTitle>
                     <p style={{ fontSize: '9px', color: '#94a3b8', margin: '-8px 0 12px', fontStyle: 'italic' }}>
-                        Reference Cohort (N=14k published data) — benchmark bands are static aggregate data from peer-reviewed psychedelic therapy outcome studies.
+                        Reference Cohort (N=14k published data), benchmark bands are static aggregate data from peer-reviewed psychedelic therapy outcome studies.
                     </p>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '20px', marginBottom: '20px', alignItems: 'start' }}>

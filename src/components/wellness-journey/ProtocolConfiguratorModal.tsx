@@ -5,7 +5,7 @@ import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface ProtocolConfiguratorModalProps {
     onClose: () => void;
-    /** Called when the user clicks Back on Step 1 — parent reopens PatientSelectModal */
+    /** Called when the user clicks Back on Step 1, parent reopens PatientSelectModal */
     onBack?: () => void;
     /** Called with intake data when the practitioner clicks Save */
     onIntakeComplete?: (intake: PatientIntakeData) => void;
@@ -135,7 +135,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
     const [step, setStep] = useState<1 | 2>(1);
 
-    // ── Completion state (used in step 2) — hoisted to top level for hooks compliance ──
+    // ── Completion state (used in step 2), hoisted to top level for hooks compliance ──
     const stepDone = {
         condition: !!condition,
         age: !!age && !isNaN(parseFloat(age)) && parseFloat(age) >= 18,
@@ -145,9 +145,9 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     };
     const allComplete = stepDone.condition && stepDone.age && stepDone.weight && stepDone.gender && stepDone.smoking;
 
-    // Ref for the Start Session button — receives focus when allComplete flips true
+    // Ref for the Start Session button, receives focus when allComplete flips true
     const startBtnRef = useRef<HTMLButtonElement>(null);
-    // Refs for the numeric inputs — used for programmatic focus progression
+    // Refs for the numeric inputs, used for programmatic focus progression
     const ageInputRef = useRef<HTMLInputElement>(null);
     const weightInputRef = useRef<HTMLInputElement>(null);
 
@@ -226,7 +226,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
                     <div className="p-5 space-y-2.5 overflow-y-auto custom-scrollbar" style={{ maxHeight: 'calc(100dvh - 180px)' }}>
 
-                        {/* Step 1 — Condition */}
+                        {/* Step 1, Condition */}
                         <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.condition ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
                             <div className="flex items-center gap-3 mb-3">
                                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.condition ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
@@ -253,7 +253,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             </div>
                         </div>
 
-                        {/* Steps 2 & 3 — Gender + Smoking Status (combined row) */}
+                        {/* Steps 2 & 3, Gender + Smoking Status (combined row) */}
                         <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.gender && stepDone.smoking ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
                             <div className="grid grid-cols-2 gap-6">
                                 {/* Gender */}
@@ -307,7 +307,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             </div>
                         </div>
 
-                        {/* Steps 4 & 5 — Age + Weight (combined row) */}
+                        {/* Steps 4 & 5, Age + Weight (combined row) */}
                         <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.age && stepDone.weight ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
                             <div className="grid grid-cols-2 gap-6">
                                 {/* Age */}
@@ -372,7 +372,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         />
                                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">kg</span>
                                     </div>
-                                    {/* Live lbs equivalent — prevents lbs/kg entry error */}
+                                    {/* Live lbs equivalent, prevents lbs/kg entry error */}
                                     {stepDone.weight && (
                                         <p className="mt-1.5 text-xs text-slate-500">≈ {(parseFloat(weight) * 2.205).toFixed(1)} lbs</p>
                                     )}
@@ -382,7 +382,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
                     </div>
 
-                    {/* Footer — Back + Start Session */}
+                    {/* Footer, Back + Start Session */}
                     <div className="flex justify-between items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
                         <button
                             onClick={handleBack}
@@ -423,7 +423,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <p className="text-base text-slate-400 mt-1">Configure your clinical interface layout.</p>
                         </div>
                     </div>
-                    {/* X — on Step 1, goes back to PatientSelectModal (not forward into the journey) */}
+                    {/* X, on Step 1, goes back to PatientSelectModal (not forward into the journey) */}
                     <button
                         onClick={onBack ?? onClose}
                         aria-label="Back to patient selection"
@@ -443,7 +443,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <p className="text-base text-indigo-200 font-medium tracking-wide">Choose Your Workspace</p>
                             <p className="text-base text-indigo-300/80 mt-1.5 leading-relaxed">
                                 Select the tools you actually use to keep your interface clean and fast.
-                                <strong className="text-indigo-200 font-medium"> Please don't over-select "just in case"</strong> — you can change these settings at any time!
+                                <strong className="text-indigo-200 font-medium"> Please don't over-select "just in case"</strong>, you can change these settings at any time!
                             </p>
                         </div>
                     </div>
@@ -577,7 +577,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     </div>
                 </div>
 
-                {/* Footer — Back + Start Session */}
+                {/* Footer, Back + Start Session */}
                 <div className="flex justify-between items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
                     <button
                         onClick={onBack ?? onClose}

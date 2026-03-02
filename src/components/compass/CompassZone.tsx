@@ -48,7 +48,7 @@ export const CompassZone: React.FC<CompassZoneProps> = ({
                 >
                     {number}
                 </div>
-                {/* Title — domain accent color */}
+                {/* Title, domain accent color */}
                 <h2 className="ppn-label" style={{ margin: 0, color: accentColor, letterSpacing: '0.14em' }}>
                     {title}
                 </h2>

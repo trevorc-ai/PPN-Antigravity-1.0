@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, useLocation, Navigate, Outlet } fr
 
 // ─────────────────────────────────────────────────────────────────────────────
 // WO-513: Route-Based Code Splitting
-// ALL page imports are now lazy — each route loads its own JS chunk on demand.
+// ALL page imports are now lazy, each route loads its own JS chunk on demand.
 // The landing page (~80-150KB) no longer drags down the entire app (~2-4MB).
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -107,7 +107,7 @@ import HelpFAQ from './pages/HelpFAQ';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page Loading Fallback
-// Matches the app's dark theme — no jarring white flash between route changes.
+// Matches the app's dark theme, no jarring white flash between route changes.
 // ─────────────────────────────────────────────────────────────────────────────
 const PageLoader: React.FC = () => (
   <div className="flex h-screen w-full items-center justify-center bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
@@ -187,7 +187,7 @@ const ProtectedLayout: React.FC<{
 };
 
 /**
- * RequireAuth — Session Gate
+ * RequireAuth, Session Gate
  *
  * Sits between the Router and ProtectedLayout. Checks the Supabase session:
  *   - loading  → show a subtle spinner (prevents flash redirect on cold page load)
@@ -259,7 +259,7 @@ const AppContent: React.FC = () => {
         Single <Suspense> boundary wraps all routes.
         PageLoader provides a dark-themed fallback so there is no white flash
         between route transitions. AuthProvider, ToastProvider, and ThemeProvider
-        remain outside Suspense — they must initialize synchronously.
+        remain outside Suspense, they must initialize synchronously.
       */}
       <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -287,7 +287,7 @@ const AppContent: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/academy" element={<Academy />} />
           <Route path="/partner-demo" element={<PartnerDemoHub />} />
-          {/* WO-570: IntegrationCompass replaces PatientReport — route preserved */}
+          {/* WO-570: IntegrationCompass replaces PatientReport, route preserved */}
           <Route path="/patient-report" element={<IntegrationCompass />} />
 
           {/* Deep Dives (Public Marketing Pages) */}
@@ -300,7 +300,7 @@ const AppContent: React.FC = () => {
           <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
           <Route path="/deep-dives/risk-matrix" element={<RiskMatrixPage />} />
 
-          {/* Protected Routes — RequireAuth gates all children behind a valid session */}
+          {/* Protected Routes, RequireAuth gates all children behind a valid session */}
           <Route element={<RequireAuth />}>
             <Route element={
               <ProtectedLayout

@@ -12,7 +12,7 @@ export interface VitalsSnapshot {
     id: string;
     /** Elapsed seconds from session start (T+0) */
     elapsedSec: number;
-    /** undefined when not recorded — Recharts skips undefined as a gap */
+    /** undefined when not recorded, Recharts skips undefined as a gap */
     heartRate?: number;
     bpSystolic?: number;
     temperatureF?: number;
@@ -34,7 +34,7 @@ interface SessionVitalsTrendChartProps {
     onThresholdViolation: (vital: string, value: number) => void;
     data?: VitalsSnapshot[];
     events?: SessionEventPin[];
-    /** Total elapsed seconds — drives the growing X-axis domain */
+    /** Total elapsed seconds, drives the growing X-axis domain */
     sessionDurationSec?: number;
 }
 
@@ -47,7 +47,7 @@ const VITAL_THRESHOLDS = {
 };
 
 /**
- * Clinical severity band map — 10 evenly-spaced Y rows across domain [45, 175].
+ * Clinical severity band map, 10 evenly-spaced Y rows across domain [45, 175].
  * Each band is ~13 units apart, clearly readable as distinct horizontal rows.
  *
  * RED/TOP   Y=172  adverse / safety crisis
@@ -62,33 +62,33 @@ const VITAL_THRESHOLDS = {
  * GREEN/BOT Y=55   rescue / consent / close
  */
 const EVENT_Y_BAND: Record<string, number> = {
-    // ── ROW 1 (TOP, Y=172) — adverse / crisis (red) ────────────────────
+    // ── ROW 1 (TOP, Y=172), adverse / crisis (red) ────────────────────
     'safety-and-adverse-event': 172,
     'safety_event': 172,
     'SAFETY': 172,
-    // ── ROW 2 (Y=159) — clinical decision (orange) ───────────────────
+    // ── ROW 2 (Y=159), clinical decision (orange) ───────────────────
     'clinical_decision': 159,
-    // ── ROW 3 (Y=146) — peak experience (fuchsia) ───────────────────
+    // ── ROW 3 (Y=146), peak experience (fuchsia) ───────────────────
     'PEAK': 146,
-    // ── ROW 4 (Y=133) — patient observation (amber) ──────────────────
+    // ── ROW 4 (Y=133), patient observation (amber) ──────────────────
     'patient_observation': 133,
     'OBSERVATION': 133,
-    // ── ROW 5 (Y=120) — general note (slate/neutral) ─────────────────
+    // ── ROW 5 (Y=120), general note (slate/neutral) ─────────────────
     'general_note': 120,
-    // ── ROW 6 (Y=107) — session update (sky) ──────────────────────
+    // ── ROW 6 (Y=107), session update (sky) ──────────────────────
     'session_update': 107,
     'UPDATE': 107,
-    // ── ROW 7 (Y=94) — vital check (blue) ──────────────────────────
+    // ── ROW 7 (Y=94), vital check (blue) ──────────────────────────
     'vital_check': 94,
-    // ── ROW 8a (Y=87) — additional dose / re-dose (orange) ──────────
+    // ── ROW 8a (Y=87), additional dose / re-dose (orange) ──────────
     'additional_dose': 87,
-    // ── ROW 8b (Y=81) — initial dose administration (emerald) ────────
+    // ── ROW 8b (Y=81), initial dose administration (emerald) ────────
     'dose_admin': 81,
     'DOSE': 81,
     'INTERVENTION': 81,
-    // ── ROW 9 (Y=68) — music / grounding (violet) ───────────────────
+    // ── ROW 9 (Y=68), music / grounding (violet) ───────────────────
     'music_change': 68,
-    // ── ROW 10 (BOTTOM, Y=55) — rescue / consent / close (green) ────────
+    // ── ROW 10 (BOTTOM, Y=55), rescue / consent / close (green) ────────
     'rescue-protocol': 55,
     'rescue': 55,
     'CLOSE': 55,
@@ -100,7 +100,7 @@ function getEventDotY(type: string): number {
     return EVENT_Y_BAND[type] ?? 120;
 }
 
-// Y-axis domain — 10 evenly-spaced bands across [45, 175]
+// Y-axis domain, 10 evenly-spaced bands across [45, 175]
 const Y_DOMAIN: [number, number] = [45, 175];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -172,7 +172,7 @@ const SERIES = [
 ] as const;
 type SeriesKey = typeof SERIES[number]['key'];
 
-// ── Custom event dot — renders inside the chart at its severity-band Y ──────
+// ── Custom event dot, renders inside the chart at its severity-band Y ──────
 // onHover/onHoverEnd lifted to chart level so tooltip can be rendered as a
 // DOM overlay (Recharts Tooltip is unreliable for Scatter in ComposedChart).
 
@@ -221,7 +221,7 @@ const EventDot: React.FC<EventDotProps> = ({ cx, cy, payload, onHover, onHoverEn
     );
 };
 
-// ── Combined Tooltip — handles both vitals and event dots ─────────────────────
+// ── Combined Tooltip, handles both vitals and event dots ─────────────────────
 
 const ChartTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
@@ -296,7 +296,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     });
     const toggle = (key: SeriesKey) => setVisible(v => ({ ...v, [key]: !v[key] }));
 
-    // Hovered event dot — lifted state for the custom tooltip overlay
+    // Hovered event dot, lifted state for the custom tooltip overlay
     const [hoveredEvent, setHoveredEvent] = useState<{
         ev: SessionEventPin; cx: number; cy: number;
     } | null>(null);
@@ -314,7 +314,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
 
     const xTicks = useMemo(() => generateTicks(domainMaxSec), [domainMaxSec]);
 
-    // Vitals line data — sorted ascending
+    // Vitals line data, sorted ascending
     const chartData = useMemo(() =>
         [...data]
             .sort((a, b) => a.elapsedSec - b.elapsedSec)
@@ -325,7 +325,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
             })),
         [data]);
 
-    // Event scatter data — fixed Y so all dots sit in a row along the bottom
+    // Event scatter data, fixed Y so all dots sit in a row along the bottom
     const eventScatterData = useMemo(() =>
         events.map(ev => ({ ...ev, y: getEventDotY(ev.type) })),
         [events]);
@@ -390,7 +390,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                             />
 
                             {/*
-                             * Numeric X-axis — domain grows with session time.
+                             * Numeric X-axis, domain grows with session time.
                              * All vitals dots and event pins sit at their exact
                              * elapsedSec offsets. Older entries slide left as
                              * new ones are logged to the right.
@@ -485,7 +485,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                             ))}
 
                             {/*
-                             * ── Event dots — plotted at their clinical severity band Y ──
+                             * ── Event dots, plotted at their clinical severity band Y ──
                              * Each event type maps to a fixed Y row on the severity gradient:
                              * RED/top (Y≈165) = adverse/crisis → GREEN/bottom (Y≈58) = rescue/pleasant.
                              * Dots are styled by type and reveal details on hover.
@@ -518,7 +518,7 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
                 )}
 
                 {/* ── Event dot hover tooltip overlay ────────────────────────────────
-                 *  Sibling of the ternary — always present in the relative wrapper div.
+                 *  Sibling of the ternary, always present in the relative wrapper div.
                  *  Positioned using cx/cy pixel coords from the hovered EventDot.
                  */}
                 {hoveredEvent && (() => {

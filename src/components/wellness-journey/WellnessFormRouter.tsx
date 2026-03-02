@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useToast } from '../../contexts/ToastContext';
 
-// All arc-of-care forms — in clinical sequence
+// All arc-of-care forms, in clinical sequence
 import {
     // Phase 1: Preparation
     ConsentForm,
@@ -15,16 +15,16 @@ import {
     SessionObservationsForm,
     SafetyAndAdverseEventForm,
     RescueProtocolForm,
-    // Phase 3: Integration — Early Follow-up
+    // Phase 3: Integration, Early Follow-up
     DailyPulseCheckForm,
     MEQ30QuestionnaireForm,
-    // Phase 3: Integration — Integration Work
+    // Phase 3: Integration, Integration Work
     StructuredIntegrationSessionForm,
     BehavioralChangeTrackerForm,
     LongitudinalAssessmentForm,
 } from '../arc-of-care-forms';
 
-// WO-206: canonical imports — arcOfCareApi barrel bypassed
+// WO-206: canonical imports, arcOfCareApi barrel bypassed
 import { getCurrentSiteId } from '../../services/identity';
 import {
     createConsent,
@@ -57,22 +57,22 @@ import type { LongitudinalAssessmentData } from '../arc-of-care-forms/phase-3-in
 import type { MEQ30Data } from '../arc-of-care-forms/phase-1-preparation/MEQ30QuestionnaireForm';
 
 /**
- * WellnessFormRouter — WO-118 (Live DB Wiring)
+ * WellnessFormRouter, WO-118 (Live DB Wiring)
  *
  * Maps a formId to the correct form component with a real Supabase API handler.
  * All mock console.log handlers have been replaced with live DB writes.
  *
- * Phase 1 — Preparation:
+ * Phase 1, Preparation:
  *   consent → structured-safety → set-and-setting → mental-health
  *
- * Phase 2 — Dosing Session:
+ * Phase 2, Dosing Session:
  *   dosing-protocol → session-timeline → session-vitals → session-observations
  *   → safety-and-adverse-event → rescue-protocol
  *
- * Phase 3 — Integration (Early, 0–72 hrs):
+ * Phase 3, Integration (Early, 0–72 hrs):
  *   daily-pulse → meq30 (provider-discretion)
  *
- * Phase 3 — Integration (Longitudinal):
+ * Phase 3, Integration (Longitudinal):
  *   structured-integration → behavioral-tracker → longitudinal-assessment
  */
 
@@ -89,10 +89,10 @@ export type WellnessFormId =
     | 'session-observations'
     | 'safety-and-adverse-event'
     | 'rescue-protocol'
-    // Phase 3 — Early follow-up
+    // Phase 3, Early follow-up
     | 'daily-pulse'
     | 'meq30'
-    // Phase 3 — Integration work
+    // Phase 3, Integration work
     | 'structured-integration'
     | 'behavioral-tracker'
     | 'longitudinal-assessment';
@@ -100,7 +100,7 @@ export type WellnessFormId =
 interface WellnessFormRouterProps {
     formId: WellnessFormId;
     patientId?: string;
-    sessionId?: string;  // UUID — log_clinical_records.id
+    sessionId?: string;  // UUID, log_clinical_records.id
     siteId?: string;     // Resolved by parent (WellnessJourney) at page load
     onComplete?: () => void;  // Advance to next form / mark complete
     onNavigate?: (formId: WellnessFormId) => void; // Open a sibling form
@@ -168,7 +168,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     const CONSENT_STORAGE_KEY = patientId ? `ppn_consent_${patientId}` : 'ppn_consent';
 
     const handleConsentSave = useCallback(async (data: ConsentData): Promise<boolean> => {
-        // Persist locally first — HUD reads this key regardless of DB outcome.
+        // Persist locally first, HUD reads this key regardless of DB outcome.
         try { localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(data)); } catch (_) { }
 
         const resolvedSiteId = siteId ?? await getCurrentSiteId();
@@ -185,14 +185,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     }, [siteId, CONSENT_STORAGE_KEY]);
 
     // WO-529: Persist set-and-setting to localStorage on save.
-    // SetAndSettingForm already self-rehydrates — this handler just fires the DB write.
+    // SetAndSettingForm already self-rehydrates, this handler just fires the DB write.
     const handleSetAndSettingSave = useCallback(async (data: SetAndSettingData) => {
         if (!patientId || !siteId) return;
         const result = await createBaselineAssessment({
             patient_id: patientId,
             site_id: siteId,
             expectancy_scale: data.treatment_expectancy,
-            // observations[] included in form data; no dedicated DB column yet — same behaviour as before
+            // observations[] included in form data; no dedicated DB column yet, same behaviour as before
         });
         result.success ? onSaved('Set & Setting') : onError('Set & Setting', result.error);
     }, [patientId, siteId]);
@@ -204,10 +204,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         if (readings.length > 0) {
             try {
                 localStorage.setItem('ppn_latest_vitals', JSON.stringify(readings[readings.length - 1]));
-            } catch (_) { /* quota exceeded — non-critical */ }
+            } catch (_) { /* quota exceeded, non-critical */ }
         }
 
-        if (!sessionId) return; // silent — auto-save fires before session is created
+        if (!sessionId) return; // silent, auto-save fires before session is created
 
         try {
             const promises = readings.map(r => createSessionVital({
@@ -228,7 +228,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             if (failed.length === 0) {
                 onSaved('Session Vitals');
             } else {
-                // Log to console only — DB may not be migrated yet. Don't block the UI.
+                // Log to console only, DB may not be migrated yet. Don't block the UI.
                 console.warn('[WellnessFormRouter] Some vitals failed to save to DB:', failed.length, 'readings.');
             }
         } catch (err) {
@@ -244,7 +244,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     const handleSafetyEventSave = useCallback(async (data: SafetyAndAdverseEventData) => {
         if (!sessionId) return; // silent
-        // Pass event_type display label — clinicalLog.ts maps it to safety_event_type_id FK
+        // Pass event_type display label, clinicalLog.ts maps it to safety_event_type_id FK
         // via SAFETY_EVENT_TYPE_ID lookup table (WO-420 Item 1, migration 071b)
         const result = await createSessionEvent({
             session_id: sessionId,
@@ -256,7 +256,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     }, [sessionId]);
 
     const handleRescueProtocolSave = useCallback(async (data: RescueProtocolData) => {
-        if (!sessionId) return; // silent — Rescue form auto-saves immediately, session may not exist yet
+        if (!sessionId) return; // silent, Rescue form auto-saves immediately, session may not exist yet
         // 'rescue' maps to safety_event_type_id = 13 (OTHER) via SAFETY_EVENT_TYPE_ID in clinicalLog.ts
         const result = await createSessionEvent({
             session_id: sessionId,
@@ -284,12 +284,12 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             : onError('Session Timeline', `${failed.length} events failed to save`);
     }, [sessionId]);
 
-    // WO-534: Dosing Protocol save handler — previously wired to empty no-op.
+    // WO-534: Dosing Protocol save handler, previously wired to empty no-op.
     // Calls updateDosingProtocol() which UPDATEs the existing stub session row
     // with substance_id, dosage, and route_id FK.
     const handleDosingProtocolSave = useCallback(async (data: DosingProtocolUpdateData) => {
         if (!sessionId) {
-            // Session not yet created — silent. Auto-save fires before session stub exists.
+            // Session not yet created, silent. Auto-save fires before session stub exists.
             return;
         }
         const result = await updateDosingProtocol(sessionId, data);
@@ -479,14 +479,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         case 'rescue-protocol':
             return <RescueProtocolForm onSave={handleRescueProtocolSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
-        // ── Phase 3: Integration — Early Follow-up ───────────────────────────
+        // ── Phase 3: Integration, Early Follow-up ───────────────────────────
         case 'daily-pulse':
             return <DailyPulseCheckForm onSave={handlePulseCheckSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'meq30':
             return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
-        // ── Phase 3: Integration — Integration Work ──────────────────────────
+        // ── Phase 3: Integration, Integration Work ──────────────────────────
         case 'structured-integration':
             return <StructuredIntegrationSessionForm onSave={handleIntegrationSessionSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 

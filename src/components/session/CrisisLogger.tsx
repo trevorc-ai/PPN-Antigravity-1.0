@@ -113,7 +113,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
             triggerHaptic('medium');
             onEventLogged?.(eventType);
 
-            // Write to DB — never block the practitioner if it fails
+            // Write to DB, never block the practitioner if it fails
             // Architecture: look up integer FK from ref_crisis_event_types before insert.
             // No free-text strings, no patient_id (PHI). Session ID only.
             try {
@@ -124,7 +124,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                     .eq('event_code', eventType)
                     .single();
 
-                // Derive severity_grade_id from ref tier — FK → ref_severity_grade (migration 075)
+                // Derive severity_grade_id from ref tier, FK → ref_severity_grade (migration 075)
                 // severity_tier 3 = Grade 3 Severe (id=3), 2 = Grade 2 Moderate (id=2), else Grade 1 Mild (id=1)
                 const severityGradeId: number =
                     refRow?.severity_tier === 3 ? 3 :
@@ -134,15 +134,15 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                     session_id: sessionId,                       // UUID FK → log_clinical_records ✅
                     crisis_event_type_id: refRow?.id ?? null,   // INTEGER FK → ref_crisis_event_types ✅
                     severity_grade_id: severityGradeId,         // INTEGER FK → ref_severity_grade ✅ migration 075
-                    // alert_severity TEXT deprecated migration 075 — do not write
+                    // alert_severity TEXT deprecated migration 075, do not write
                     alert_triggered_at: loggedAt.toISOString(),
                     trigger_value: { seconds_since_ingestion: seconds },
                     is_acknowledged: false,
                     is_resolved: false,
-                    // patient_id: nullable per migration 066 — CrisisLogger has session context only
+                    // patient_id: nullable per migration 066, CrisisLogger has session context only
                 });
             } catch {
-                // Silently continue — local state is the source of truth during crisis
+                // Silently continue, local state is the source of truth during crisis
             }
         },
         [sessionId, practitionerId, doseAdministeredAt, onEventLogged]
@@ -186,7 +186,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                     </div>
                     <div>
                         <h3 className="text-sm font-black text-amber-400 uppercase tracking-widest">Crisis Logger</h3>
-                        <p className="text-sm text-amber-600">Hold button to log — auto-timestamped</p>
+                        <p className="text-sm text-amber-600">Hold button to log, auto-timestamped</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -231,7 +231,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
                 })}
             </div>
 
-            {/* Dose Administered — full width, primary action */}
+            {/* Dose Administered, full width, primary action */}
             <div className="px-4 pb-4">
                 <button
                     onMouseDown={() => handleLongPressStart('DOSE_ADMINISTERED')}
@@ -280,7 +280,7 @@ export const CrisisLogger: React.FC<CrisisLoggerProps> = ({
             {/* Disclaimer */}
             <div className="px-4 py-3 border-t border-slate-800">
                 <p className="text-sm text-slate-600 italic text-center">
-                    Documentation tool only — not medical advice. Hold any button to log.
+                    Documentation tool only, not medical advice. Hold any button to log.
                 </p>
             </div>
         </div>

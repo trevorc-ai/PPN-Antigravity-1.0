@@ -68,7 +68,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     const qtTrackerEnabled = config.enabledFeatures.includes('session-vitals');
     const showEKGMonitor = config.enabledFeatures.includes('ekg-monitoring');
 
-    // WO-534: QT Tracker — auto-hide unless Ibogaine is selected substance.
+    // WO-534: QT Tracker, auto-hide unless Ibogaine is selected substance.
     // A manual override toggle lets practitioners capture baseline readings
     // before Ibogaine administration begins.
     const getSelectedSubstance = useCallback((): string => {
@@ -116,7 +116,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
             const cached = localStorage.getItem('ppn_latest_vitals');
             if (cached) {
                 const parsed = JSON.parse(cached) as VitalSignReading;
-                // Merge cached values over defaults — keep the ID fresh
+                // Merge cached values over defaults, keep the ID fresh
                 baseline = {
                     ...baseline,
                     heart_rate: parsed.heart_rate ?? baseline.heart_rate,
@@ -128,7 +128,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                     temperature: parsed.temperature ?? baseline.temperature,
                 };
             }
-        } catch (_) { /* malformed cache — use defaults */ }
+        } catch (_) { /* malformed cache, use defaults */ }
 
         return [{ ...baseline, recorded_at: baseline.recorded_at || nowStamp() }];
     });
@@ -514,7 +514,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </div>
                                     {reading.respiratory_rate !== undefined && getVitalStatus('rr', reading.respiratory_rate) !== 'normal' && (
                                         <p className={`text-sm ${getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? '⚠️ Critical — respiratory depression risk' : '⚠️ Outside normal range'}
+                                            {getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? '⚠️ Critical, respiratory depression risk' : '⚠️ Outside normal range'}
                                         </p>
                                     )}
                                 </div>
@@ -544,7 +544,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </div>
                                     {reading.temperature !== undefined && getVitalStatus('temp', reading.temperature) !== 'normal' && (
                                         <p className={`text-sm ${getVitalStatus('temp', reading.temperature) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {getVitalStatus('temp', reading.temperature) === 'critical' ? '⚠️ Critical — hyperthermia risk' : '⚠️ Mild fever'}
+                                            {getVitalStatus('temp', reading.temperature) === 'critical' ? '⚠️ Critical, hyperthermia risk' : '⚠️ Mild fever'}
                                         </p>
                                     )}
                                 </div>
@@ -565,14 +565,14 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="0">0 — None (dry skin)</option>
-                                        <option value="1">1 — Mild (slight moisture)</option>
-                                        <option value="2">2 — Moderate (visible sweating)</option>
-                                        <option value="3">3 — Severe (profuse sweating)</option>
+                                        <option value="0">0, None (dry skin)</option>
+                                        <option value="1">1, Mild (slight moisture)</option>
+                                        <option value="2">2, Moderate (visible sweating)</option>
+                                        <option value="3">3, Severe (profuse sweating)</option>
                                     </select>
                                     {reading.diaphoresis_score !== undefined && getDiaphoresisStatus(reading.diaphoresis_score) !== 'normal' && (
                                         <p className={`text-sm ${getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? '⚠️ Severe — check temp & hydration' : '⚠️ Monitor closely'}
+                                            {getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? '⚠️ Severe, check temp & hydration' : '⚠️ Monitor closely'}
                                         </p>
                                     )}
                                 </div>
@@ -593,20 +593,20 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="alert">Alert (A) — Fully awake</option>
-                                        <option value="verbal">Verbal (V) — Responds to voice</option>
-                                        <option value="pain">Pain (P) — Responds to pain only</option>
-                                        <option value="unresponsive">Unresponsive (U) — No response</option>
+                                        <option value="alert">Alert (A), Fully awake</option>
+                                        <option value="verbal">Verbal (V), Responds to voice</option>
+                                        <option value="pain">Pain (P), Responds to pain only</option>
+                                        <option value="unresponsive">Unresponsive (U), No response</option>
                                     </select>
                                     {reading.level_of_consciousness && getLOCStatus(reading.level_of_consciousness) !== 'normal' && (
                                         <p className={`text-sm ${getLOCStatus(reading.level_of_consciousness) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {reading.level_of_consciousness === 'unresponsive' ? '🚨 EMERGENCY — initiate rescue protocol' :
-                                                reading.level_of_consciousness === 'pain' ? '⚠️ Critical — over-sedation' :
-                                                    '⚠️ Monitor — reduced responsiveness'}
+                                            {reading.level_of_consciousness === 'unresponsive' ? '🚨 EMERGENCY, initiate rescue protocol' :
+                                                reading.level_of_consciousness === 'pain' ? '⚠️ Critical, over-sedation' :
+                                                    '⚠️ Monitor, reduced responsiveness'}
                                         </p>
                                     )}
                                 </div>
-                                {/* Neurological Observations — WO-413 GAP-2 (Dr. Allen FRD 2026-02-25)
+                                {/* Neurological Observations, WO-413 GAP-2 (Dr. Allen FRD 2026-02-25)
                                     Display-only this sprint. clonus + saccadic = ibogaine safety flags.
                                     diaphoresis is already persisted above (0-3 scale). */}
                                 <div className="col-span-full pt-3 border-t border-slate-700/30">
@@ -622,7 +622,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 id={`clonus-${reading.id}`}
                                                 type="checkbox"
                                                 className="w-5 h-5 rounded border-slate-600 bg-slate-900 checked:bg-amber-600 checked:border-amber-500 focus:ring-2 focus:ring-amber-500/40 transition-all cursor-pointer"
-                                                aria-label="Clonus observed — muscle reflex activity"
+                                                aria-label="Clonus observed, muscle reflex activity"
                                             />
                                             <span className="ppn-body text-slate-300 group-hover:text-slate-100 transition-colors">
                                                 Clonus
@@ -639,7 +639,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 id={`saccadic-${reading.id}`}
                                                 type="checkbox"
                                                 className="w-5 h-5 rounded border-slate-600 bg-slate-900 checked:bg-amber-600 checked:border-amber-500 focus:ring-2 focus:ring-amber-500/40 transition-all cursor-pointer"
-                                                aria-label="Saccadic eye movements observed — rapid involuntary eye movement"
+                                                aria-label="Saccadic eye movements observed, rapid involuntary eye movement"
                                             />
                                             <span className="ppn-body text-slate-300 group-hover:text-slate-100 transition-colors">
                                                 Saccadic Eye Movements
@@ -653,11 +653,11 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             </div>
                         </div>
 
-                        {/* WO-534: QT Interval Tracker — auto-hidden unless Ibogaine is selected.
+                        {/* WO-534: QT Interval Tracker, auto-hidden unless Ibogaine is selected.
                             Shows a manual override toggle when substance is NOT Ibogaine
                             so practitioners can capture a baseline QTc before administration.
-                            Confirmed defaults: Philips IntelliVue / Schiller ETM — Dr. Allen 2026-02-25
-                            dangerThresholdMs=500, cautionThresholdMs=475 — Dr. Allen confirmed 2026-02-25 */}
+                            Confirmed defaults: Philips IntelliVue / Schiller ETM, Dr. Allen 2026-02-25
+                            dangerThresholdMs=500, cautionThresholdMs=475, Dr. Allen confirmed 2026-02-25 */}
                         {qtTrackerEnabled && index === readings.length - 1 && (
                             <div className="pt-4 border-t border-amber-500/15 space-y-3">
                                 {/* Manual override toggle (visible only when NOT auto-showing) */}
@@ -668,7 +668,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             <div>
                                                 <p className="text-sm font-bold text-amber-300 leading-tight">QT Interval Tracker</p>
                                                 <p className="text-xs text-amber-600 mt-0.5">
-                                                    Auto-hidden — not Ibogaine protocol.
+                                                    Auto-hidden, not Ibogaine protocol.
                                                     Enable to capture baseline QTc.
                                                 </p>
                                             </div>
@@ -690,7 +690,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </div>
                                 )}
 
-                                {/* QT Tracker panel — shown when Ibogaine OR override active */}
+                                {/* QT Tracker panel, shown when Ibogaine OR override active */}
                                 {showQTTracker && (
                                     <QTIntervalTracker
                                         divergenceThresholdMs={50}
@@ -703,7 +703,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             </div>
                         )}
 
-                        {/* EKG Monitoring Panel — WO-413 MT-1 Level 1
+                        {/* EKG Monitoring Panel, WO-413 MT-1 Level 1
                             Shown on last reading block only. Receives HR from this reading for Bazett QTc.
                             Gated behind 'ekg-monitoring' feature flag. Display-only this sprint. */}
                         {showEKGMonitor && index === readings.length - 1 && (
@@ -742,7 +742,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </div>
                             </div>
 
-                            {/* Add Another Reading — inline, auto-saves current */}
+                            {/* Add Another Reading, inline, auto-saves current */}
                             <button
                                 onClick={addReading}
                                 tabIndex={10 + index * 10 + 8}

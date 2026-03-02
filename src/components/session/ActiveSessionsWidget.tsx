@@ -34,7 +34,7 @@ const ActiveSessionsWidget: React.FC<ActiveSessionsWidgetProps> = ({ isAuthentic
         );
     }
 
-    // Empty state — quiet, no noise
+    // Empty state, quiet, no noise
     if (sessions.length === 0) {
         return (
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
@@ -87,7 +87,7 @@ const ActiveSessionsWidget: React.FC<ActiveSessionsWidgetProps> = ({ isAuthentic
                 </span>
             </div>
 
-            {/* Session cards — dashboard variant (larger) */}
+            {/* Session cards, dashboard variant (larger) */}
             <div className="space-y-3" role="list" aria-label="Active dosing sessions">
                 {sessions.map((session) => (
                     <div key={session.id} role="listitem">

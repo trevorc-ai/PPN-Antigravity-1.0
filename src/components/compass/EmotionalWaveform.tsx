@@ -59,7 +59,7 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
     const toX = (m: number) => (m / totalMin) * cW;
     const toY = (intensity: number) => cH - (intensity / 10) * cH;
 
-    // Build waveform peaks — each event is a gaussian curve
+    // Build waveform peaks, each event is a gaussian curve
     const SVG_PTS = 280;
     const waveY = Array<number>(SVG_PTS).fill(cH); // baseline
 

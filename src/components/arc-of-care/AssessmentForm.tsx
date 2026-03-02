@@ -181,7 +181,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
     };
 
     const handleComplete = () => {
-        // Always allow completion — assessment is optional, partial saves are valid
+        // Always allow completion, assessment is optional, partial saves are valid
         onComplete(responses, currentScore);
     };
 
@@ -189,7 +189,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
     const canGoNext = currentPage < totalPages - 1;
     const canGoPrevious = currentPage > 0;
 
-    // WO-549: Skip/exit handler — confirm before discarding in-progress session
+    // WO-549: Skip/exit handler, confirm before discarding in-progress session
     const handleSkip = () => {
         if (Object.keys(responses).length === 0 || window.confirm(
             'Exit without saving? Your progress on this assessment will not be recorded.'

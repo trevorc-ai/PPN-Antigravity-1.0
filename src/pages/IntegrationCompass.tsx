@@ -8,26 +8,26 @@ import { useCompassEMA } from '../hooks/useCompassEMA';
 import { useCompassOutcomes } from '../hooks/useCompassOutcomes';
 import { useCompassMode } from '../hooks/useCompassMode';
 
-// ─── Group A — Wonder Layer ────────────────────────────────────────────────────
+// ─── Group A, Wonder Layer ────────────────────────────────────────────────────
 import { CompassSpiderGraph } from '../components/compass/CompassSpiderGraph';
 import { FlightPlanChart } from '../components/compass/FlightPlanChart';
 import { BrainNetworkMap } from '../components/compass/BrainNetworkMap';
 import { EmotionalWaveform } from '../components/compass/EmotionalWaveform';
 
-// ─── Group B — Integration Layer ──────────────────────────────────────────────
+// ─── Group B, Integration Layer ──────────────────────────────────────────────
 import { CompassEMAGraph } from '../components/compass/CompassEMAGraph';
 import { CompassZone } from '../components/compass/CompassZone';
 import { FeelingWave } from '../components/compass/FeelingWave';
 
-// ─── Group C — Daily Ritual Layer ─────────────────────────────────────────────
+// ─── Group C, Daily Ritual Layer ─────────────────────────────────────────────
 import { DailyCheckInCard } from '../components/compass/DailyCheckInCard';
 import { DayAwarenessHeader } from '../components/compass/DayAwarenessHeader';
 
-// ─── Group D — Clinical Intelligence ──────────────────────────────────────────
+// ─── Group D, Clinical Intelligence ──────────────────────────────────────────
 import { IntegrationStoryChart } from '../components/compass/IntegrationStoryChart';
 import { NetworkBenchmarkBlock } from '../components/compass/NetworkBenchmarkBlock';
 
-// ─── Group E — Practitioner Gate ──────────────────────────────────────────────
+// ─── Group E, Practitioner Gate ──────────────────────────────────────────────
 import {
     CompassCustomizePanel,
     loadZones,
@@ -408,7 +408,7 @@ const IntegrationCompass: React.FC = () => {
                         <p className="ppn-body" style={{ color: '#94a3b8', marginBottom: 20 }}>
                             Two shapes. The predicted shows what{' '}
                             <span style={{ color: accentColor, fontWeight: 600 }}>{substanceName ?? 'psychedelic therapy'}</span>
-                            {' '}typically does to perception, emotion, and consciousness. Your shape shows what it actually did — to you.
+                            {' '}typically does to perception, emotion, and consciousness. Your shape shows what it actually did, to you.
                             The space between is your personal story.
                         </p>
 
@@ -547,7 +547,7 @@ const IntegrationCompass: React.FC = () => {
                                         <p key={i} className="ppn-body" style={{
                                             margin: i === 0 ? '0 0 8px' : '0',
                                         }}>
-                                            — {prompt}
+                                           , {prompt}
                                         </p>
                                     ))}
                                 </div>

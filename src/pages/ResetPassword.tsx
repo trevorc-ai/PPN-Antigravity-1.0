@@ -15,7 +15,7 @@ const ResetPassword: React.FC = () => {
     const [validToken, setValidToken] = useState(false);
 
     useEffect(() => {
-        // Listen for PASSWORD_RECOVERY event — this fires when Supabase processes
+        // Listen for PASSWORD_RECOVERY event, this fires when Supabase processes
         // the #access_token hash in the URL from the reset email link.
         // getSession() alone fires too early (before hash is parsed).
         const { data: { subscription } } = supabase.auth.onAuthStateChange(

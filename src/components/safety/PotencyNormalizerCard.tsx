@@ -115,8 +115,8 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
     // Collapsed summary
     const collapsedSummary = selectedStrain
-        ? `${selectedStrain.strain_name} — ${potencyCoeff}x — ${getPotencyLabel(potencyCoeff)}`
-        : 'No batch selected — click to calculate safe dose';
+        ? `${selectedStrain.strain_name}, ${potencyCoeff}x, ${getPotencyLabel(potencyCoeff)}`
+        : 'No batch selected, click to calculate safe dose';
 
     return (
         <section
@@ -135,7 +135,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                     </div>
                     <div className="text-left">
                         <p className="text-sm font-bold text-slate-300">Potency Normalizer</p>
-                        <p className="text-sm text-slate-500">{expanded ? 'Harm reduction calculator — not medical advice' : collapsedSummary}</p>
+                        <p className="text-sm text-slate-500">{expanded ? 'Harm reduction calculator, not medical advice' : collapsedSummary}</p>
                     </div>
                 </div>
                 {expanded ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
@@ -146,7 +146,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
                     {/* Step 1: Batch */}
                     <div>
-                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Step 1 — Select or Create Batch</p>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Step 1, Select or Create Batch</p>
                         <div className="flex gap-2">
                             <div className="relative flex-1">
                                 <select
@@ -158,7 +158,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                                     <option value="">Select strain...</option>
                                     {STRAIN_DATABASE.map((s) => (
                                         <option key={s.strain_id} value={s.strain_id}>
-                                            {s.strain_name} ({s.substance_type}) — {s.default_potency_coefficient}x
+                                            {s.strain_name} ({s.substance_type}), {s.default_potency_coefficient}x
                                         </option>
                                     ))}
                                 </select>
@@ -181,7 +181,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                     {/* Step 2: Potency Coefficient */}
                     <div>
                         <label htmlFor="potency-coeff" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
-                            Step 2 — Potency Coefficient
+                            Step 2, Potency Coefficient
                         </label>
                         <AdvancedTooltip
                             content="1.0 = Standard potency. 2.0 = Twice as strong. Auto-filled from strain database. Edit to override with your own test results."
@@ -204,7 +204,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                                         {getPotencyLabel(potencyCoeff)}
                                     </span>
                                     {isCustomCoeff && (
-                                        <p className="text-sm text-amber-400 mt-0.5">⚠ Custom value — not from database</p>
+                                        <p className="text-sm text-amber-400 mt-0.5">⚠ Custom value, not from database</p>
                                     )}
                                     {!isCustomCoeff && selectedStrain && (
                                         <p className="text-sm text-slate-500 mt-0.5">Auto-filled from strain database. Edit to override.</p>
@@ -216,7 +216,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
                     {/* Step 3: Reagent Upload (Optional) */}
                     <div>
-                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Step 3 — Reagent Test (Optional)</p>
+                        <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Step 3, Reagent Test (Optional)</p>
                         {uploadedFile ? (
                             <div className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
                                 <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
@@ -236,7 +236,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                             >
                                 <Upload className="w-5 h-5 text-slate-500" />
                                 <span className="text-sm text-slate-400">Drag and drop or click to upload test image</span>
-                                <span className="text-xs text-slate-600">Encrypted — Not shared — Optional</span>
+                                <span className="text-xs text-slate-600">Encrypted, Not shared, Optional</span>
                                 <input type="file" accept="image/*" className="sr-only" onChange={handleFileInput} />
                             </label>
                         )}
@@ -352,7 +352,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
 
                     {/* Legal Disclaimer */}
                     <p className="text-sm text-slate-500 italic text-center">
-                        ⚠️ Harm reduction tool only — not medical advice. Psilocybin remains a Schedule I substance under federal law.
+                        ⚠️ Harm reduction tool only, not medical advice. Psilocybin remains a Schedule I substance under federal law.
                     </p>
                 </div>
             )}

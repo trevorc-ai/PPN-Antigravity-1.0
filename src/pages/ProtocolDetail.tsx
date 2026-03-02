@@ -515,7 +515,7 @@ const ProtocolDetail: React.FC = () => {
                 <div className="py-12 text-center space-y-3 bg-slate-900/20 rounded-3xl border border-slate-800/50">
                   <span className="material-symbols-outlined text-4xl text-slate-700">bar_chart</span>
                   <p className="text-slate-600 font-black uppercase tracking-widest text-xs">
-                    {baseline ? 'Baseline recorded — no follow-up assessments yet' : 'No PHQ-9 assessments on record'}
+                    {baseline ? 'Baseline recorded, no follow-up assessments yet' : 'No PHQ-9 assessments on record'}
                   </p>
                   {baseline && (
                     <p className="text-slate-500 text-sm">

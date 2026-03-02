@@ -70,7 +70,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
         }
     }, [sessionId, patientUuid, values, safetyFlag, today, onSubmitted]);
 
-    // Already submitted today — show confirmation
+    // Already submitted today, show confirmation
     if (alreadyToday && !submitted) {
         return (
             <div style={{
@@ -186,7 +186,7 @@ export const DailyCheckInCard: React.FC<DailyCheckInCardProps> = ({
                 maxLabel="At ease"
             />
 
-            {/* Safety gate — always last */}
+            {/* Safety gate, always last */}
             <div style={{
                 marginTop: 4,
                 padding: '14px 18px',

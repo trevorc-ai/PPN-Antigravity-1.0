@@ -164,7 +164,7 @@ const EXPORT_PACKAGES: ExportPackage[] = [
         id: 'clinical-pdf',
         type: 'clinical-pdf',
         title: 'Clinical Outcomes PDF',
-        subtitle: 'Full Visual Report — Print Ready',
+        subtitle: 'Full Visual Report, Print Ready',
         description: '7-page visual report with inline charts: PHQ-9 trajectory, session vitals graph, event log, integration summary, and network benchmarking. Opens in a print preview.',
         icon: BarChart2,
         accentColor: 'text-teal-400',
@@ -177,7 +177,7 @@ const EXPORT_PACKAGES: ExportPackage[] = [
             'Baseline Clinical Profile (Page 2)',
             'PHQ-9 Symptom Trajectory chart (Page 3)',
             'Dosing Session vitals chart + event log (Page 4)',
-            'Experience Quality — MEQ-30, CEQ, EDI (Page 5)',
+            'Experience Quality, MEQ-30, CEQ, EDI (Page 5)',
             'Integration + Safety events table (Page 6)',
             'Network Benchmarking + Certification (Page 7)',
         ],
@@ -257,7 +257,7 @@ const SessionExportCenter: React.FC = () => {
                         </div>
                         <h1 className="text-4xl font-black tracking-tight text-[#A8B5D1]">Export Clinical Record</h1>
                         <p className="text-lg text-slate-400 mt-2 max-w-xl">
-                            Download a complete, structured record of this patient's treatment series — formatted for legal defense, insurance billing, or research contribution.
+                            Download a complete, structured record of this patient's treatment series, formatted for legal defense, insurance billing, or research contribution.
                         </p>
                     </div>
 
@@ -289,7 +289,7 @@ const SessionExportCenter: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-slate-500" />
                             <span className="text-sm text-slate-400">
-                                Treatment Period: <span className="text-[#A8B5D1] font-bold">Jul 14, 2025 — Jan 18, 2026</span>
+                                Treatment Period: <span className="text-[#A8B5D1] font-bold">Jul 14, 2025, Jan 18, 2026</span>
                             </span>
                         </div>
                     </div>

@@ -21,7 +21,7 @@ import { CheckCircle, ArrowLeft, AlertTriangle, TrendingUp, Sparkles, CheckSquar
  * - Baseline PHQ-9 > 20 (research/insurance requirement)
  */
 
-// WO-549: Assessment registry — each entry has a stable id, display name, and config key.
+// WO-549: Assessment registry, each entry has a stable id, display name, and config key.
 // Adding a new assessment means adding one entry here; no code changes needed elsewhere.
 const ASSESSMENT_REGISTRY = [
     { id: 'meq', label: 'Quick Experience Check', sublabel: 'MEQ-Brief · ~2 min', required: true },
@@ -49,7 +49,7 @@ interface AdaptiveAssessmentPageProps {
 const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onComplete, showBackButton = true, onClose }) => {
     const navigate = useNavigate();
 
-    // WO-549: Selector modal — defaults all assessments selected
+    // WO-549: Selector modal, defaults all assessments selected
     const [phase, setPhase] = useState<AssessmentPhase>('selector');
     const [selectedIds, setSelectedIds] = useState<Set<AssessmentId>>(
         new Set(ASSESSMENT_REGISTRY.map(a => a.id))
@@ -85,7 +85,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
         }
     };
 
-    // WO-558: baselinePhq9 removed — was hardcoded to 21 (dummy data).
+    // WO-558: baselinePhq9 removed, was hardcoded to 21 (dummy data).
     // The Predicted Journey stat block using this value has been removed from the
     // completion screen below. Real PHQ-9 data lives in log_longitudinal_assessments.
 
@@ -239,7 +239,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                                 className="w-full mt-3 py-2 text-slate-500 hover:text-slate-300 text-sm transition-colors"
                             >
                                 <X className="w-3.5 h-3.5 inline mr-1.5" />
-                                Cancel — return to session closeout
+                                Cancel, return to session closeout
                             </button>
                         )}
                     </div>

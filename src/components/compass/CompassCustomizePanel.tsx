@@ -7,11 +7,11 @@ export interface ZoneVisibility {
 const DEFAULT_ZONES: ZoneVisibility = { z1: true, z2: true, z3: true, z4: true, z5: true };
 
 const ZONE_LABELS: Record<keyof ZoneVisibility, string> = {
-    z1: 'Zone 1 — Your Experience Map',
-    z2: 'Zone 2 — Your Session Journey',
-    z3: 'Zone 3 — Neuroplastic Window',
-    z4: 'Zone 4 — You Are Not Alone',
-    z5: 'Zone 5 — Your Path Forward',
+    z1: 'Zone 1, Your Experience Map',
+    z2: 'Zone 2, Your Session Journey',
+    z3: 'Zone 3, Neuroplastic Window',
+    z4: 'Zone 4, You Are Not Alone',
+    z5: 'Zone 5, Your Path Forward',
 };
 
 function storageKey(sessionId: string) {
@@ -77,7 +77,7 @@ export const CompassCustomizePanel: React.FC<CompassCustomizePanelProps> = ({
             }}
         >
             <p style={{ fontSize: 12, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 14 }}>
-                ⚙ Practitioner View — Customize This Compass
+                ⚙ Practitioner View, Customize This Compass
             </p>
 
             {/* Zone toggles */}

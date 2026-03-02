@@ -1,13 +1,13 @@
 /**
- * FeedbackCard.tsx — WO-511
+ * FeedbackCard.tsx, WO-511
  *
  * Instant floating feedback card. Triggered from the TopHeader comment icon.
  * Anchors below the trigger button. Dismisses on outside click.
  *
  * Props:
- *   isOpen        — controlled open state
- *   onClose       — called to close the card
- *   triggerRef    — ref to the trigger button for focus-return on close
+ *   isOpen       , controlled open state
+ *   onClose      , called to close the card
+ *   triggerRef   , ref to the trigger button for focus-return on close
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -105,9 +105,9 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ isOpen, onClose, triggerRef
             setSent(true);
             setTimeout(() => handleClose(), 1800);
         } catch (err: any) {
-            // Graceful degradation — table may not exist yet during migration window
+            // Graceful degradation, table may not exist yet during migration window
             console.warn('[FeedbackCard] Insert failed (table may be pending migration):', err?.message);
-            // Still show success to user — feedback was attempted
+            // Still show success to user, feedback was attempted
             setSent(true);
             setTimeout(() => handleClose(), 1800);
         } finally {

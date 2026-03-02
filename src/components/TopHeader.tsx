@@ -63,7 +63,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
 
-  // Live session pills — polls every 30s, zero cost when no sessions are active
+  // Live session pills, polls every 30s, zero cost when no sessions are active
   const { sessions: activeSessions } = useActiveSessions(isAuthenticated);
 
   const isLanding = location.pathname === '/';
@@ -253,7 +253,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   </div>
                 </div>
 
-                {/* Feedback — Hidden on mobile, visible via dropdown */}
+                {/* Feedback, Hidden on mobile, visible via dropdown */}
                 <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
                   <button
                     ref={feedbackTriggerRef}

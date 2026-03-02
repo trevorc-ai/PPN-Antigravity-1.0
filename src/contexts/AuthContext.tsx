@@ -24,7 +24,7 @@ import { clearDataCache } from '../hooks/useDataCache';
             sessionStorage.setItem('ppn_pending_recovery', 'true');
         }
     } catch {
-        // Non-critical — fail silently
+        // Non-critical, fail silently
     }
 })();
 

@@ -110,7 +110,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
 
     // Derive lived values from timeline events
     const livedRaw = mapEventsToAxes(timelineEvents);
-    // Fall back to null per axis when no event mapped — blank axes rendered at 0
+    // Fall back to null per axis when no event mapped, blank axes rendered at 0
     const lived: (number | null)[] = livedRaw.map(v => (v === null || v === (null as any) ? null : v));
     const hasLivedData = timelineEvents.length > 0;
 
@@ -123,7 +123,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
         ? shapeToPath(lived.map(v => v ?? 0), cx, cy, maxR)
         : null;
 
-    // Gap fill path (union area between predicted and lived — gold tint)
+    // Gap fill path (union area between predicted and lived, gold tint)
     const toggleMode = useCallback(() => {
         setMode(m => m === 'experience' ? 'science' : 'experience');
     }, []);

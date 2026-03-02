@@ -50,7 +50,7 @@ const PHASE_LABELS: Record<string, string> = {
 };
 
 const PHASE_TIPS: Record<string, string> = {
-    onset: 'Physical sensations are common here — not a sign of danger.',
+    onset: 'Physical sensations are common here, not a sign of danger.',
     peak: 'The deepest part of your journey. Surrender, don\'t steer.',
     integration: 'The experience begins to integrate. New perspectives emerge.',
     afterglow: 'A time of clarity, gratitude, and gentle re-entry.',

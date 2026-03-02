@@ -9,7 +9,7 @@ import { downloadReport } from '../../services/reportGenerator';
 
 // ─── Phase 1 Data HUD ───────────────────────────────────────────────────────
 // Compact read-back strip surfacing form entry values. Phase-1 indigo palette.
-// Read-only — no interactive elements, no form triggers.
+// Read-only, no interactive elements, no form triggers.
 
 interface GateEntry {
     isComplete: boolean;
@@ -194,7 +194,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ journey, gates, contraindicationR
             {/* ── Two-group chip layout ── */}
             <div className="flex flex-col sm:flex-row gap-4">
 
-                {/* GROUP A — PROTOCOL */}
+                {/* GROUP A, PROTOCOL */}
                 <div className="flex flex-col gap-2" style={{ flex: '0 0 auto', minWidth: 0 }}>
                     <p className="ppn-meta text-slate-600 font-bold uppercase tracking-widest leading-none">
                         Protocol
@@ -241,7 +241,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ journey, gates, contraindicationR
                     aria-hidden="true"
                 />
 
-                {/* GROUP B — PATIENT PROFILE */}
+                {/* GROUP B, PATIENT PROFILE */}
                 <div className="flex flex-col gap-2 min-w-0 flex-1">
                     <p className="ppn-meta text-slate-600 font-bold uppercase tracking-widest leading-none">
                         Patient Profile
@@ -343,7 +343,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ journey, gates, contraindicationR
 interface PreparationPhaseProps {
     journey: any;
     onOpenForm: (formId: WellnessFormId) => void;
-    /** Medication list from baseline observations — normalized lowercase strings */
+    /** Medication list from baseline observations, normalized lowercase strings */
     medications?: string[];
     onProceedToPhase2?: () => void;
 }
@@ -352,7 +352,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
     const [overrideJustification, setOverrideJustification] = useState('');
     const [canProceedToPhase2, setCanProceedToPhase2] = useState(false);
 
-    // Gate Status Logic (Derived from journey data) — must be before useMemo
+    // Gate Status Logic (Derived from journey data), must be before useMemo
     const gates = {
         consent: {
             isComplete: journey.benchmark?.hasConsent,
@@ -450,7 +450,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                 </div>
             </div>
 
-            {/* 2. BASELINE METRICS (full-width — Forecast panel removed per WO-527) */}
+            {/* 2. BASELINE METRICS (full-width, Forecast panel removed per WO-527) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-center gap-3 mb-4">
                     <Brain className="w-6 h-6 text-slate-400" />
@@ -488,7 +488,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
             {/* ── PHASE 1 HUD STRIP (WO-527) ─────────────────────────────────────────
                  Compact read-back of all four gate form entries.
                  Renders only once at least one gate is complete.
-                 Phase-1 color: indigo. Read-only — no interactive elements.
+                 Phase-1 color: indigo. Read-only, no interactive elements.
             ──────────────────────────────────────────────────────────────────────── */}
             {Object.values(gates).some(g => g.isComplete) && (
                 <Phase1HUD
@@ -498,7 +498,7 @@ export const PreparationPhase: React.FC<PreparationPhaseProps> = ({ journey, onO
                 />
             )}
 
-            {/* RISK ELIGIBILITY REPORT — renders only after all 4 gates complete */}
+            {/* RISK ELIGIBILITY REPORT, renders only after all 4 gates complete */}
             {allGatesPassed && contraindicationResult && (
                 <div className="space-y-6">
                     <RiskEligibilityReport

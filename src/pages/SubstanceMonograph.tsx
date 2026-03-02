@@ -42,7 +42,7 @@ const RECEPTOR_DESCRIPTIONS: Record<string, { role: string; clinicalNote: string
   '5-HT1A': { role: 'Serotonin 1A Receptor', clinicalNote: 'Modulates anxiety and mood. Partial agonism associated with anxiolytic effects during sessions.' },
   '5-HT2C': { role: 'Serotonin 2C Receptor', clinicalNote: 'Influences appetite and impulsivity. Agonism linked to serotonin syndrome risk in SSRI combinations.' },
   'D2': { role: 'Dopamine D2 Receptor', clinicalNote: 'Modulates reward and psychosis risk. Relevance varies significantly by compound class.' },
-  'D1': { role: 'Dopamine D1 Receptor', clinicalNote: 'Unique to ergolines like LSD. D1 agonism contributes to the energetic, stimulating, and analytical character of the LSD experience — absent in tryptamines.' },
+  'D1': { role: 'Dopamine D1 Receptor', clinicalNote: 'Unique to ergolines like LSD. D1 agonism contributes to the energetic, stimulating, and analytical character of the LSD experience, absent in tryptamines.' },
   'SERT': { role: 'Serotonin Transporter', clinicalNote: 'Blocks serotonin reuptake. High affinity raises serotonin syndrome risk with concurrent SSRIs/SNRIs.' },
   'DAT': { role: 'Dopamine Transporter', clinicalNote: "MDMA's second major transporter target. DAT reversal releases presynaptic dopamine, contributing to euphoria and stimulant effects. Explains abuse potential and cardiovascular strain." },
   'NMDA': { role: 'NMDA Glutamate Receptor', clinicalNote: 'Antagonism produces dissociative states. Relevant for ketamine and PCP-class compounds.' },
@@ -106,7 +106,7 @@ const AccordionPanel: React.FC<AccordionPanelProps> = ({
         {/* Left accent bar */}
         <div className="w-1 flex-shrink-0 rounded-l-2xl transition-all duration-200" style={{ backgroundColor: isOpen ? accentColor : 'transparent' }} />
         <div className="flex-1">
-          {/* Header — tap anywhere to toggle */}
+          {/* Header, tap anywhere to toggle */}
           <button
             onClick={onToggle}
             className="w-full flex items-center justify-between gap-4 px-5 py-5 text-left"
@@ -190,7 +190,7 @@ const SubstanceMonograph: React.FC = () => {
     return buildRadarData(sub.kiProfile);
   }, [sub]);
 
-  // Active receptor state — defaults to first spoke (5-HT2A), updates on hover
+  // Active receptor state, defaults to first spoke (5-HT2A), updates on hover
   const [activeReceptor, setActiveReceptor] = useState<typeof radarData[0] | null>(null);
   // Reset to first spoke whenever substance changes
   useEffect(() => {
@@ -340,20 +340,20 @@ const SubstanceMonograph: React.FC = () => {
               <div className="p-4 bg-emerald-950/30 border border-emerald-700/30 rounded-xl flex items-start gap-3">
                 <span className="text-emerald-400 text-xl mt-0.5">✓</span>
                 <div className="space-y-1">
-                  <p className="text-base font-semibold text-emerald-400">FDA Approved — REMS Program Required</p>
+                  <p className="text-base font-semibold text-emerald-400">FDA Approved, REMS Program Required</p>
                   <p className="text-sm text-emerald-500/70">Administered under direct clinical observation only. 2-hour post-dose monitoring mandatory (Spravato® label).</p>
                 </div>
               </div>
             )}
             {isAyahuasca && (
               <div className="p-4 bg-amber-950/20 border border-amber-700/20 rounded-xl">
-                <p className="text-sm font-semibold text-amber-400 mb-1">Combination Brew — Component Note</p>
+                <p className="text-sm font-semibold text-amber-400 mb-1">Combination Brew, Component Note</p>
                 <p className="text-sm text-amber-500/70 leading-relaxed">Active components: DMT + β-carbolines (Harmine, Harmaline, THH). Values below describe the DMT component. β-carbolines enable oral bioavailability via MAO-A inhibition.</p>
               </div>
             )}
           </div>
 
-          {/* RIGHT: Receptor Affinity Radar — stationary info panel */}
+          {/* RIGHT: Receptor Affinity Radar, stationary info panel */}
           <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-[#0a1220] to-[#060a12] opacity-50 pointer-events-none rounded-2xl" />
             <div className="relative z-10">
@@ -439,7 +439,7 @@ const SubstanceMonograph: React.FC = () => {
                       </RadarChart>
                     </ResponsiveContainer>
 
-                    {/* Spoke line — SVG overlay, always on top */}
+                    {/* Spoke line, SVG overlay, always on top */}
                     {chartDims.width > 0 && displayReceptor && (() => {
                       const cx = chartDims.width / 2;
                       const cy = chartDims.height / 2;
@@ -468,7 +468,7 @@ const SubstanceMonograph: React.FC = () => {
                     })()}
                   </div>
 
-                  {/* Stationary info panel — always visible, updates on hover */}
+                  {/* Stationary info panel, always visible, updates on hover */}
                   {displayReceptor && (() => {
                     const ki = displayReceptor.ki;
                     const subject = displayReceptor.subject;
@@ -666,7 +666,7 @@ const SubstanceMonograph: React.FC = () => {
                   <span className="text-sm font-mono font-bold text-slate-400">{(sub.efficacy * 100).toFixed(0)}%</span>
                 </div>
               )}
-              <p className="text-sm text-slate-500 italic">Aggregated network baseline — site-specific data activates when your clinic begins tracking this compound.</p>
+              <p className="text-sm text-slate-500 italic">Aggregated network baseline, site-specific data activates when your clinic begins tracking this compound.</p>
             </div>
           </AccordionPanel>
         )}
@@ -703,7 +703,7 @@ const SubstanceMonograph: React.FC = () => {
         {/* 6. Neural Synthesis (AI) */}
         <AccordionPanel
           id="ai" icon="auto_awesome" title="Neural Synthesis"
-          teaser="Live research grounding via Gemini — recent clinical trials and regulatory updates"
+          teaser="Live research grounding via Gemini, recent clinical trials and regulatory updates"
           isOpen={openPanel === 'ai'}
           onToggle={() => togglePanel('ai')}
           accentColor="#6366f1"

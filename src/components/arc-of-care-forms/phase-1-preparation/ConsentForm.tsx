@@ -4,17 +4,17 @@ import { FormField } from '../shared/FormField';
 import { FormFooter } from '../shared/FormFooter';
 
 /**
- * ConsentForm — Informed Consent Documentation
+ * ConsentForm, Informed Consent Documentation
  *
  * UX flow (per WO-118 spec):
  *   1. Checkbox is always visible first.
  *   2. Checking the box auto-stamps the Verification DateTime and reveals the
  *      consent type selector.
- *   3. Button clicks NEVER trigger a DB write — they only update local state.
+ *   3. Button clicks NEVER trigger a DB write, they only update local state.
  *   4. A single explicit "Save Consent" button fires onSave exactly once,
  *      guarded by hasSavedRef so double-clicks and re-renders are harmless.
  *
- * No useEffect auto-save — that pattern caused one DB round-trip per button
+ * No useEffect auto-save, that pattern caused one DB round-trip per button
  * click and buried the form in error toasts.
  */
 
@@ -98,7 +98,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
         if (!checked) hasSavedRef.current = false;
     };
 
-    // ── Explicit save handler — called ONLY by the Save button ────────────────
+    // ── Explicit save handler, called ONLY by the Save button ────────────────
     // async so we await the DB round-trip before updating UI state.
     // hasSavedRef resets on failure so the clinician can retry.
     const handleSave = async () => {
@@ -111,7 +111,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
         try {
             const result = await onSave(data);
             if (result === false) {
-                // Router signalled failure — allow retry
+                // Router signalled failure, allow retry
                 hasSavedRef.current = false;
             } else {
                 setLastSaved(new Date());
@@ -123,7 +123,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
         }
     };
 
-    // Consent types are optional — only the checkbox + timestamp are mandatory
+    // Consent types are optional, only the checkbox + timestamp are mandatory
     const canSave =
         data.consent_obtained &&
         !!data.verification_datetime;
@@ -147,7 +147,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
     return (
         <div className="max-w-3xl mx-auto space-y-6">
 
-            {/* Auto-save indicator — compact, doesn't duplicate the panel title */}
+            {/* Auto-save indicator, compact, doesn't duplicate the panel title */}
             {(isSaving || lastSaved) && (
                 <div className="flex justify-end">
                     {isSaving && (
@@ -167,7 +167,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
 
             {/* ── Patient Anonymous ID Banner ──────────────────────────────── */}
             {/* This is the most important identity disclosure on the page.     */}
-            {/* Displayed inline — NOT as a toast — so clinicians always see it  */}
+            {/* Displayed inline, NOT as a toast, so clinicians always see it  */}
             {patientId && (
                 <div className="relative overflow-hidden rounded-2xl border-2 border-emerald-500/40 bg-emerald-500/5 p-5">
                     {/* Subtle glow accent */}
@@ -176,7 +176,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                     <div className="flex items-center gap-4">
                         <div className="flex-1 min-w-0">
                             <p className="text-xs md:text-sm font-black text-emerald-400 uppercase tracking-widest mb-1">
-                                Anonymous Patient ID — System Generated
+                                Anonymous Patient ID, System Generated
                             </p>
                             <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-3">
                                 A unique random hash has been created for this patient. <strong className="text-[#A8B5D1]">No name, date of birth, or identifying information is stored.</strong> All clinical records are linked to this ID only.
@@ -257,7 +257,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             </p>
                             <p className="text-xs text-slate-500 mt-1.5">
                                 Your paper or digital consent form is stored in your own records.
-                                PPN Portal logs the acknowledgment and timestamp only — it is not a document storage system.
+                                PPN Portal logs the acknowledgment and timestamp only, it is not a document storage system.
                             </p>
                         </div>
                     </label>
@@ -334,7 +334,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                             <div className="flex items-center gap-3 p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
                                 <CheckCircle className="w-5 h-5 text-emerald-400" />
                                 <p className="text-emerald-400 font-semibold text-sm">
-                                    Consent documented and saved — advancing...
+                                    Consent documented and saved, advancing...
                                 </p>
                             </div>
                         )}

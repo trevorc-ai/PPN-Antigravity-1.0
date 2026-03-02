@@ -222,7 +222,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     <button
                                         type="submit"
                                         disabled={status === 'loading' || !form.firstName.trim() || !form.email.trim() || !form.practitionerType}
-                                        className="w-full py-4 mt-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-indigo-900/30 flex items-center justify-center gap-2"
+                                        className="w-full py-4 mt-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-indigo-900/30 flex items-center justify-center gap-2"
                                     >
                                         {status === 'loading' ? (
                                             <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>

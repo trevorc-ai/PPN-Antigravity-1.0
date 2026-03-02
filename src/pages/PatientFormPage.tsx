@@ -4,15 +4,15 @@ import { ArrowLeft, Share2, Tablet, CheckCircle, Copy, QrCode } from 'lucide-rea
 import { MEQ30QuestionnaireForm } from '../components/arc-of-care-forms';
 
 /**
- * PatientFormPage — Standalone patient-facing form mode
+ * PatientFormPage, Standalone patient-facing form mode
  *
  * Reached via: "Send to Patient" on the MEQ-30 prompt in PatientSelectModal
  * URL:  /patient-form/meq30?patient=PT-XXXXXXXXXX
  *
  * Two modes:
- *   1. "Fill Out Here"   — Default. Patient fills the form directly on this screen
- *                         Clean, minimal UI — no clinical chrome, just the form.
- *   2. "Share Form"      — Shows a shareable link + QR code stub the provider
+ *   1. "Fill Out Here"  , Default. Patient fills the form directly on this screen
+ *                         Clean, minimal UI, no clinical chrome, just the form.
+ *   2. "Share Form"     , Shows a shareable link + QR code stub the provider
  *                         can hand off or copy to send to the patient remotely.
  *
  * TODO: Wire the share link to a real tokenised URL once auth is live.
@@ -26,7 +26,7 @@ export default function PatientFormPage() {
     const [mode, setMode] = useState<'fill' | 'share' | 'done'>('fill');
     const [copied, setCopied] = useState(false);
 
-    // Stub share URL — replace with real token URL post-auth
+    // Stub share URL, replace with real token URL post-auth
     const shareUrl = `${window.location.origin}/#/patient-form/meq30?patient=${patientId}&token=STUB`;
 
     const handleCopy = () => {
@@ -37,7 +37,7 @@ export default function PatientFormPage() {
     };
 
     const handleFormSave = (formName: string) => {
-        // Form saved — non-identifying log (no patientId in output)
+        // Form saved, non-identifying log (no patientId in output)
         console.log(`[PatientFormPage] Form submitted: ${formName}`);
         setMode('done');
     };
@@ -143,7 +143,7 @@ export default function PatientFormPage() {
                                 <div className="flex flex-col items-center gap-2 text-slate-400">
                                     <QrCode className="w-16 h-16 text-slate-300" />
                                     <p className="text-xs text-slate-500 text-center px-4">
-                                        QR generation pending — token auth required
+                                        QR generation pending, token auth required
                                     </p>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@ export default function PatientFormPage() {
                             onClick={() => navigate(-1)}
                             className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-all"
                         >
-                            Done — Return to Provider View
+                            Done, Return to Provider View
                         </button>
                     </div>
                 )}

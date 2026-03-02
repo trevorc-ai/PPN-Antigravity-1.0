@@ -113,7 +113,7 @@ const PanelEmptyState: React.FC<{ message: string }> = ({ message }) => (
     </div>
 );
 
-/** Teal Phase 3 Action Card — matches Phase 1 anatomy */
+/** Teal Phase 3 Action Card, matches Phase 1 anatomy */
 const IntegrationCard: React.FC<{
     stepNum: number;
     icon: React.ReactNode;
@@ -166,13 +166,13 @@ const IntegrationCard: React.FC<{
                 </div>
             </div>
 
-            {/* WO-550 AC: Summary strip — visible only when completed + summary available.
+            {/* WO-550 AC: Summary strip, visible only when completed + summary available.
                 text-sm (14px) minimum per INSPECTOR requirement. Clickable to re-open form. */}
             {isCompleted && summary && (
                 <button
                     onClick={onOpen}
                     className="mt-1.5 w-full text-left px-4 py-2.5 rounded-xl bg-teal-950/40 border border-teal-500/15 hover:border-teal-500/30 hover:bg-teal-950/60 transition-all group"
-                    aria-label={`View summary for ${title} — click to amend`}
+                    aria-label={`View summary for ${title}, click to amend`}
                 >
                     <p className="text-sm text-teal-300/80 group-hover:text-teal-200 transition-colors leading-snug">
                         <span className="font-bold text-teal-400 mr-1.5">↳</span>{summary}
@@ -200,7 +200,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
         ? new Date(journey.sessionDate)
         : (() => { const d = new Date(); d.setDate(d.getDate() - 7); return d; })();
 
-    // Days since session — drives time-gating
+    // Days since session, drives time-gating
     const daysPostSession = Math.floor(
         (Date.now() - sessionDateForBadge.getTime()) / 86_400_000
     );
@@ -241,7 +241,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
         return [];
     }, [decayPoints]);
 
-    // ── Safety events (mock — real wiring blocked on Session_ID FK resolution) ──
+    // ── Safety events (mock, real wiring blocked on Session_ID FK resolution) ──
     const safetyEvents = journey.session?.adverseEvents ?? [];
 
     // ── WO-550 AC: Summary strings for completed integration step cards ──────────
@@ -394,7 +394,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                     </div>
                 </div>
 
-                {/* Time Horizon A — Day 0–3 */}
+                {/* Time Horizon A, Day 0–3 */}
                 <div className="mb-6">
                     <div className={`flex items-center gap-2 mb-3 ${daysPostSession > 3 ? 'opacity-50' : ''}`}>
                         <div className="h-px flex-1 bg-slate-700/50" />
@@ -414,14 +414,14 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                         <IntegrationCard
                             stepNum={2}
                             icon={<Heart className="w-4 h-4" />}
-                            title="Daily Pulse — First Check-In"
+                            title="Daily Pulse, First Check-In"
                             description="Log the patient's first mood and sleep reading post-session."
                             status={daysPostSession > 3 ? 'archived' : 'pending'}
                         />
                     </div>
                 </div>
 
-                {/* Time Horizon B — Days to Weeks */}
+                {/* Time Horizon B, Days to Weeks */}
                 <div>
                     <div className="flex items-center gap-2 mb-3">
                         <div className="h-px flex-1 bg-slate-700/50" />
@@ -456,7 +456,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                             onOpen={onOpenForm ? () => onOpenForm('behavioral-tracker') : undefined}
                             summary={behavioralSummary}
                         />
-                        {/* MEQ-30 card — only if not completed in Phase 2 */}
+                        {/* MEQ-30 card, only if not completed in Phase 2 */}
                         {!phase3.phase2Assessment && (
                             <IntegrationCard
                                 stepNum={6}
@@ -495,7 +495,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 )}
             </div>
 
-            {/* 5 ── Declining Trend Alert (conditional — only if triggered) ── */}
+            {/* 5 ── Declining Trend Alert (conditional, only if triggered) ── */}
             {riskFlags.length > 0 && <ProgressRiskFlags flags={riskFlags} />}
 
             {/* 6 ── Safety Event History (collapsible) ─────────────────────── */}
@@ -681,7 +681,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                                 </>
                             )}
 
-                            {/* Daily Pulse Check Widget — BUG FIX: use real patientId + sessionId */}
+                            {/* Daily Pulse Check Widget, BUG FIX: use real patientId + sessionId */}
                             <div className="pt-4 border-t border-slate-800">
                                 <p className="text-base font-bold font-manrope text-slate-300 mb-3">Today's Check-In</p>
                                 <PulseCheckWidget
@@ -714,7 +714,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 {pulseCompliance < 60 && (
                     <div className="mb-5 px-4 py-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-start gap-2">
                         <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" aria-hidden="true" />
-                        <p className="ppn-meta text-amber-300">Low check-in compliance — consider proactive outreach to this patient.</p>
+                        <p className="ppn-meta text-amber-300">Low check-in compliance, consider proactive outreach to this patient.</p>
                     </div>
                 )}
 

@@ -219,7 +219,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
         </nav>
 
-        {/* WO-570: 2-Click Compass Demo Button — dev only */}
+        {/* WO-570: 2-Click Compass Demo Button, dev only */}
         {isDemoVisible && (
           <div className="px-4 pb-5">
             <button

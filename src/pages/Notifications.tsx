@@ -108,7 +108,7 @@ const Notifications: React.FC = () => {
         message: "Downloading Secure Protocol v2.4..."
       });
     } else if (notif.type === 'warning') {
-      navigate('/wellness-journey'); // /clinicians removed — redirected to active patient management
+      navigate('/wellness-journey'); // /clinicians removed, redirected to active patient management
     } else if (notif.type === 'training') {
       window.open('https://training.nih.gov', '_blank');
     }

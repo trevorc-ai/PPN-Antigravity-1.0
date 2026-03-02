@@ -60,7 +60,7 @@ export const FeelingWave: React.FC<FeelingWaveProps> = ({ events }) => {
                     <span
                         key={i}
                         className="feeling-pill"
-                        title={`${f.label} — ${new Date(f.occurredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                        title={`${f.label}, ${new Date(f.occurredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                         style={{
                             padding: '7px 16px', borderRadius: 20, fontSize: 14, fontWeight: 600,
                             background: bg, border: `1px solid ${border}`, color: text,

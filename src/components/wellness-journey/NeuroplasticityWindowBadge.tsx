@@ -1,17 +1,17 @@
 /**
- * NeuroplasticityWindowBadge — WO-241 P1.5
+ * NeuroplasticityWindowBadge, WO-241 P1.5
  *
  * Displays the remaining days in the post-session neuroplasticity window
  * (the ~21-day period of heightened synaptic plasticity following psychedelic dosing).
  *
- * Clinical basis: Castrén & Hen (2013), Ly et al. (2018) — psilocybin and MDMA
+ * Clinical basis: Castrén & Hen (2013), Ly et al. (2018), psilocybin and MDMA
  * promote structural and functional neuroplasticity, making the integration period
  * immediately post-session critical for therapeutic consolidation.
  *
  * Color logic (days remaining):
  *  > 14  → emerald  "Prime window open"
- *  7–14  → amber    "Mid-window — prioritise integration"
- *  1–6   → red      "Window closing — urgent integration support"
+ *  7–14  → amber    "Mid-window, prioritise integration"
+ *  1–6   → red      "Window closing, urgent integration support"
  *  0     → slate    "Window closed"
  */
 
@@ -54,7 +54,7 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
         };
         if (remaining > 14) return {
             label: `${remaining} days remaining`,
-            sublabel: 'Neuroplasticity window — prime period',
+            sublabel: 'Neuroplasticity window, prime period',
             barColor: 'bg-emerald-500',
             textColor: 'text-emerald-300',
             borderColor: 'border-emerald-700/40',
@@ -64,7 +64,7 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
         };
         if (remaining >= 7) return {
             label: `${remaining} days remaining`,
-            sublabel: 'Mid-window — prioritise integration',
+            sublabel: 'Mid-window, prioritise integration',
             barColor: 'bg-amber-500',
             textColor: 'text-amber-300',
             borderColor: 'border-amber-700/40',
@@ -74,7 +74,7 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
         };
         return {
             label: `${remaining} day${remaining === 1 ? '' : 's'} remaining`,
-            sublabel: 'Window closing — urgent integration support',
+            sublabel: 'Window closing, urgent integration support',
             barColor: 'bg-red-500',
             textColor: 'text-red-300',
             borderColor: 'border-red-700/50',

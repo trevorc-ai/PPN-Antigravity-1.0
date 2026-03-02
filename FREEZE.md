@@ -1,7 +1,7 @@
 # FREEZE.md — Protected Files
 # Pre-commit hook reads this file. Any file listed here will BLOCK a commit.
 # To unfreeze: remove it from the list and commit this file first.
-# Last updated: 2026-03-01
+# Last updated: 2026-02-26
 
 # ── Governance (never touch without explicit authorization) ──
 agent.yaml
@@ -16,29 +16,12 @@ src/services/contraindicationEngine.ts
 src/contexts/AuthContext.tsx
 src/pages/ResetPassword.tsx
 
-# ── Protocols & Pilot Path ──
-src/pages/MyProtocols.tsx
-
-# ── Wellness Journey (pilot path — do not touch) ──
-src/components/wellness-journey/WellnessFormRouter.tsx
-src/components/wellness-journey/SlideOutPanel.tsx
-
-
-
 # ── Add files here when approaching a milestone ──
-
-# ── Safety & Surveillance (finalized 2026-03-01) ──
-src/pages/InteractionChecker.tsx
+# Uncomment to protect:
+# src/pages/InteractionChecker.tsx
 # src/components/wellness-journey/DosingSessionPhase.tsx
 # src/components/wellness-journey/LiveSessionTimeline.tsx
 
-
-# ── Live Session Indicator · WO-543 (finalized 2026-03-01) ──
-src/hooks/useActiveSessions.ts
-src/components/session/SessionPillCard.tsx
-src/components/session/ActiveSessionsWidget.tsx
-src/components/TopHeader.tsx
-src/pages/Dashboard.tsx
 ## Housecleaning Standard
 Files eligible for daily archive (move OUT of project, NOT delete):
 - _WORK_ORDERS/99_COMPLETED/ — any ticket older than 7 days

@@ -17,7 +17,7 @@ const MolecularPharmacologyPage = () => {
                 <div className="border-b border-slate-800 pb-6 mb-8">
                     <h1 className="text-5xl font-black tracking-tighter mb-2">Molecular Pharmacology</h1>
                     <p className="text-slate-300 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">
-                        How each compound interacts with the brain's receptor systems — from molecular binding affinity to clinical pharmacology.
+                        How each compound interacts with the brain's receptor systems, from molecular binding affinity to clinical pharmacology.
                     </p>
                 </div>
 

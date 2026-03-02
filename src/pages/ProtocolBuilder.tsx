@@ -144,7 +144,7 @@ export const ProtocolBuilder = () => {
 
   const handleSubmit = async () => {
     if (!isFormComplete()) {
-      // The inline missing-fields panel already guides the user — just scroll up
+      // The inline missing-fields panel already guides the user, just scroll up
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -167,7 +167,7 @@ export const ProtocolBuilder = () => {
           session_date: new Date().toISOString().split('T')[0],
           submitted_at: new Date().toISOString(),
           is_submitted: true,
-          // FK overrides — write integer IDs instead of (or alongside) text strings
+          // FK overrides, write integer IDs instead of (or alongside) text strings
           patient_smoking_status_id: SMOKING_STATUS_ID[formData.smoking_status] ?? null, // FK → ref_smoking_status ✅ migration 069
           session_type: 'preparation',    // CHECK constraint: preparation | dosing | integration | complete
           session_type_id: 1,             // FK → ref_session_types(PREPARATION) ✅ migration 067
@@ -178,7 +178,7 @@ export const ProtocolBuilder = () => {
 
     if (error) {
       console.error('Submission error:', error);
-      // Surface error without alert — log is sufficient; UI will remain on form
+      // Surface error without alert, log is sufficient; UI will remain on form
       return;
     }
 

@@ -24,14 +24,14 @@ const VALUE_PROPS = [
         color: 'text-indigo-400',
         bg: 'bg-indigo-500/10',
         title: 'Priority Access',
-        body: 'First in line when the pilot opens — targeted early spring 2026.',
+        body: 'First in line when the pilot opens, targeted early spring 2026.',
     },
     {
         icon: Diamond,
         color: 'text-purple-400',
         bg: 'bg-purple-500/10',
         title: 'Founding Pricing',
-        body: 'Locked rate for founding practitioners — communicated at pilot launch.',
+        body: 'Locked rate for founding practitioners, communicated at pilot launch.',
     },
     {
         icon: LineChart,
@@ -45,9 +45,10 @@ const VALUE_PROPS = [
         color: 'text-sky-400',
         bg: 'bg-sky-500/10',
         title: 'Clinical-Grade Infrastructure',
-        body: 'Built for psychedelic-assisted therapy — documentation, analytics, safety.',
+        body: 'Built for psychedelic-assisted therapy, documentation, analytics, safety.',
     },
 ];
+
 
 export const Waitlist: FC = () => {
     const navigate = useNavigate();
@@ -80,7 +81,7 @@ export const Waitlist: FC = () => {
 
     return (
         <div className="min-h-screen bg-[#070b14] relative overflow-x-hidden flex flex-col font-sans text-slate-300 selection:bg-indigo-500/30">
-            <title>Join the Waitlist — PPN Research Portal</title>
+            <title>Join the Waitlist, PPN Research Portal</title>
 
             {/* Rich background treatment */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -119,16 +120,16 @@ export const Waitlist: FC = () => {
                 </button>
             </nav>
 
-            {/* Main — two-column split layout */}
+            {/* Main, two-column split layout */}
             <main className="flex-1 relative z-10 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full">
 
-                {/* ── LEFT COLUMN — Copy & Value Props ─────────────────── */}
+                {/* ── LEFT COLUMN, Copy & Value Props ─────────────────── */}
                 <div className="flex-1 flex flex-col justify-center px-10 xl:px-20 py-16 lg:py-24 max-w-2xl mx-auto lg:mx-0 lg:max-w-none">
 
                     {/* Eyebrow */}
                     <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 mb-8 self-start">
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-                        <span className="text-xs font-black uppercase tracking-widest text-indigo-400">Limited Beta — Founding Cohort</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-indigo-400">Limited Beta, Founding Cohort</span>
                     </div>
 
                     <h1 className="text-4xl xl:text-5xl 2xl:text-6xl font-black tracking-tight text-slate-100 mb-6 leading-[1.1]">
@@ -139,7 +140,7 @@ export const Waitlist: FC = () => {
                     </h1>
 
                     <p className="text-lg xl:text-xl text-slate-400 font-medium leading-relaxed mb-14 max-w-lg">
-                        Join the founding cohort of practitioners helping shape the platform — documentation, analytics, drug safety, and more.
+                        Join the founding cohort of practitioners helping shape the platform, documentation, analytics, drug safety, and more.
                     </p>
 
                     {/* Value props grid */}
@@ -172,7 +173,7 @@ export const Waitlist: FC = () => {
                     </div>
                 </div>
 
-                {/* ── RIGHT COLUMN — Form ───────────────────────────────── */}
+                {/* ── RIGHT COLUMN, Form ───────────────────────────────── */}
                 <div className="w-full lg:w-[520px] xl:w-[580px] flex-shrink-0 flex items-center justify-center px-8 py-16 lg:py-24 bg-white/[0.015] lg:border-l border-white/5">
                     <div className="w-full max-w-md">
 
@@ -225,7 +226,7 @@ export const Waitlist: FC = () => {
                             <>
                                 <div className="mb-8">
                                     <h2 className="text-2xl font-black text-slate-100 mb-1">Request Founding Access</h2>
-                                    <p className="text-sm text-slate-500 font-medium">No payment required — early access only.</p>
+                                    <p className="text-sm text-slate-500 font-medium">No payment required. Early access only.</p>
                                 </div>
 
                                 {status === 'error' && (
@@ -301,7 +302,7 @@ export const Waitlist: FC = () => {
                                     <button
                                         type="submit"
                                         disabled={status === 'loading' || !isSubmittable}
-                                        className="w-full py-4 mt-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-indigo-900/30 flex items-center justify-center gap-2"
+                                        className="w-full py-4 mt-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-indigo-900/30 flex items-center justify-center gap-2"
                                     >
                                         {status === 'loading' ? (
                                             <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>

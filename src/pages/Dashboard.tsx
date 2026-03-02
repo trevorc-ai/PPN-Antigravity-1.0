@@ -219,7 +219,7 @@ export default function Dashboard() {
             </h1>
           </div>
 
-          {/* Top-right — informational, not a nav trap on mobile */}
+          {/* Top-right, informational, not a nav trap on mobile */}
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => navigate('/analytics')}
@@ -241,7 +241,7 @@ export default function Dashboard() {
 
         {/* ACTIVE SESSIONS COMMAND CENTER ─────────────────────────────────
              WO-543: Live session indicator.
-             Shown only when sessions are running — zero noise when idle.
+             Shown only when sessions are running, zero noise when idle.
              Dr. Allen's room-management view for 3-4 simultaneous patients.
         ──────────────────────────────────────────────────────────────── */}
         <Section spacing="tight">
@@ -292,7 +292,7 @@ export default function Dashboard() {
           </div>
         </Section>
 
-        {/* SUGGESTED NEXT STEPS — contextual, below data */}
+        {/* SUGGESTED NEXT STEPS, contextual, below data */}
         <Section spacing="tight">
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle className="w-5 h-5 text-indigo-400" />
@@ -307,14 +307,14 @@ export default function Dashboard() {
         </Section>
 
 
-        {/* QUICK ACTIONS — always-on color, not hover-only */}
+        {/* QUICK ACTIONS, always-on color, not hover-only */}
         <Section spacing="tight">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
 
-            {/* Log Protocol — indigo */}
+            {/* Log Protocol, indigo */}
             <button
               id="quick-action-log-protocol"
               data-tour="wellness-journey"
@@ -335,7 +335,7 @@ export default function Dashboard() {
               </div>
             </button>
 
-            {/* Analytics — blue */}
+            {/* Analytics, blue */}
             <button
               id="quick-action-analytics"
               onClick={() => navigate('/analytics')}
@@ -355,7 +355,7 @@ export default function Dashboard() {
               </div>
             </button>
 
-            {/* Interactions — amber */}
+            {/* Interactions, amber */}
             <button
               id="quick-action-interactions"
               data-tour="interaction-checker"
@@ -376,7 +376,7 @@ export default function Dashboard() {
               </div>
             </button>
 
-            {/* Export Data — emerald */}
+            {/* Export Data, emerald */}
             <button
               id="quick-action-export"
               onClick={() => navigate('/data-export')}
@@ -396,7 +396,7 @@ export default function Dashboard() {
               </div>
             </button>
 
-            {/* Benchmarks — purple */}
+            {/* Benchmarks, purple */}
             <button
               id="quick-action-benchmarks"
               onClick={() => navigate('/deep-dives/clinic-performance')}
@@ -419,7 +419,7 @@ export default function Dashboard() {
           </div>
         </Section>
 
-        {/* NETWORK ACTIVITY — coming once live Supabase data is connected */}
+        {/* NETWORK ACTIVITY, coming once live Supabase data is connected */}
         <Section spacing="tight">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Network Activity</h2>

@@ -37,7 +37,7 @@ export class Phase2ErrorBoundary extends React.Component<EBProps, EBState> {
         if (this.state.hasError) {
             return (
                 <div className="rounded-2xl border border-red-800/50 bg-red-950/20 p-8 text-center space-y-4">
-                    <p className="text-lg font-black text-red-300">Session view error — the session data was preserved.</p>
+                    <p className="text-lg font-black text-red-300">Session view error, the session data was preserved.</p>
                     <p className="text-sm text-slate-400 font-mono">{this.state.error}</p>
                     <button
                         onClick={this.handleReset}
@@ -101,17 +101,17 @@ const SOURCE_LINKS: Array<{ pattern: RegExp; label: string; url: string }> = [
     },
     {
         pattern: /Kroenke.*2001/i,
-        label: 'Kroenke & Spitzer (2001) — PHQ-9',
+        label: 'Kroenke & Spitzer (2001), PHQ-9',
         url: 'https://pubmed.ncbi.nlm.nih.gov/11556941/',
     },
     {
         pattern: /Spitzer.*2006/i,
-        label: 'Spitzer et al. (2006) — GAD-7',
+        label: 'Spitzer et al. (2006), GAD-7',
         url: 'https://pubmed.ncbi.nlm.nih.gov/16717171/',
     },
     {
         pattern: /Weathers.*2013/i,
-        label: 'Weathers et al. (2013) — PCL-5 / CAPS-5',
+        label: 'Weathers et al. (2013), PCL-5 / CAPS-5',
         url: 'https://www.ptsd.va.gov/professional/assessment/adult-sr/ptsd-checklist.asp',
     },
 ];
@@ -129,9 +129,9 @@ function getRegulatoryLinks(basis: string): Array<{ label: string; url: string }
     return links;
 }
 
-// Emotional states — dark-room safe palette (matches PatientCompanionPage)
+// Emotional states, dark-room safe palette (matches PatientCompanionPage)
 // rest: dim ~15% opacity bg + muted *-300/80 text (eye-safe, WCAG AA on black)
-// glow: ~60% opacity fill — bright enough to confirm tap without harshness
+// glow: ~60% opacity fill, bright enough to confirm tap without harshness
 const COMPANION_FEELINGS = [
     { id: 'blissful', label: 'Blissful', rest: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300/80', glow: 'bg-emerald-500/60 border-emerald-400/70 text-emerald-200' },
     { id: 'peaceful', label: 'Peaceful', rest: 'bg-teal-500/15 border-teal-500/30 text-teal-300/80', glow: 'bg-teal-500/60 border-teal-400/70 text-teal-200' },
@@ -152,7 +152,7 @@ const COMPANION_FEELINGS = [
 ];
 
 /**
- * CompanionButtonGrid — dark-room 4×4 feeling grid with instant-on / slow-fade glow.
+ * CompanionButtonGrid, dark-room 4×4 feeling grid with instant-on / slow-fade glow.
  * Instant-on: litId set on click → transition-none snaps to glow.
  * Slow fade: litId cleared after 160ms → CSS duration-[1800ms] fades back.
  */
@@ -203,7 +203,7 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
 };
 
 /**
- * CompanionVideo — full-screen ambient video for tablet/mobile.
+ * CompanionVideo, full-screen ambient video for tablet/mobile.
  *
  * The landscape 16:9 video is rotated -90° to display as portrait.
  * ResizeObserver measures the container and swaps width↔height on the
@@ -340,7 +340,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         try {
             localStorage.setItem(SESSION_KEY, nextMode);
             if (nextMode === 'live') {
-                // Only write start time once — don't overwrite if already set
+                // Only write start time once, don't overwrite if already set
                 if (!localStorage.getItem(SESSION_START_KEY)) {
                     localStorage.setItem(SESSION_START_KEY, String(Date.now()));
                 }
@@ -350,7 +350,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         } catch { /* quota exceeded */ }
     };
 
-    // Timer — calculated from wall-clock start time so it survives rerenders
+    // Timer, calculated from wall-clock start time so it survives rerenders
     const [elapsedTime, setElapsedTime] = useState('00:00:00');
     useEffect(() => {
         if (mode !== 'live') {
@@ -403,7 +403,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [mode, onOpenForm]);
 
-    // Post-session assessment state — WO-547: restored from localStorage on mount
+    // Post-session assessment state, WO-547: restored from localStorage on mount
     // so navigating away and returning preserves completed state.
     // WO-557 Fix A: assessmentKey may resolve as 'demo' initially if sessionId isn't
     // hydrated yet. useEffect re-reads whenever the key stabilises to the real UUID,
@@ -423,7 +423,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     });
     // WO-557: Re-read from localStorage whenever assessmentKey settles to the real UUID.
     // This covers the case where the component mounts with key='demo', data is written
-    // under the real UUID key, then the component remounts — the lazy useState initialiser
+    // under the real UUID key, then the component remounts, the lazy useState initialiser
     // runs only once so it misses the update. useEffect catches the drift.
     useEffect(() => {
         try {
@@ -477,7 +477,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     const [updateHR, setUpdateHR] = useState('');
     const [updateBPSys, setUpdateBPSys] = useState('');
     const [updateBPDia, setUpdateBPDia] = useState('');
-    // Companion overlay — open/close without affecting session timer
+    // Companion overlay, open/close without affecting session timer
     const [showCompanion, setShowCompanion] = useState(false);
     interface SessionUpdateEntry {
         timestamp: string;
@@ -493,7 +493,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
 
-    // WO-559 Issue B — Vitals pre-population helper.
+    // WO-559 Issue B, Vitals pre-population helper.
     // Called when the Session Update panel opens. Finds the most recent log entry
     // that has at least one vital recorded and pre-fills the form fields.
     // If no prior entry exists, fields remain blank (true first entry behavior).
@@ -516,11 +516,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             .map((e, i) => ({
                 id: `upd-${i}`,
                 elapsedSec: e.elapsedSec ?? 0,
-                // Use undefined for unrecorded fields — Recharts treats undefined as a gap,
+                // Use undefined for unrecorded fields, Recharts treats undefined as a gap,
                 // so no line is drawn toward zero when a field was not entered.
                 heartRate: e.hr ? parseInt(e.hr, 10) : undefined,
                 bpSystolic: e.bp ? parseInt(e.bp.split('/')[0], 10) : undefined,
-                temperatureF: e.tempF ?? undefined, // no default — only plot when explicitly recorded
+                temperatureF: e.tempF ?? undefined, // no default, only plot when explicitly recorded
             }))
             .sort((a, b) => a.elapsedSec - b.elapsedSec);
     }, [updateLog]);
@@ -551,7 +551,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         setUpdateLog(prev => [entry, ...prev]);
 
         // WO-528: push a SESSION_UPDATE event pin for the chart overlay strip
-        // regardless of whether vitals were entered — qualitative updates still appear
+        // regardless of whether vitals were entered, qualitative updates still appear
         setEventLog(prev => [
             ...prev,
             {
@@ -581,7 +581,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     },
                 });
             } catch (err) {
-                console.warn('[WO-547] Session Update — timeline event write failed (non-critical):', err);
+                console.warn('[WO-547] Session Update, timeline event write failed (non-critical):', err);
             }
         }
 
@@ -617,7 +617,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         prevShowUpdatePanel.current = showUpdatePanel;
     }, [showUpdatePanel, updateLog, prefillVitalsFromLastEntry]);
 
-    // ── Contraindication checker — MUST stay above early returns (Rules of Hooks) ──
+    // ── Contraindication checker, MUST stay above early returns (Rules of Hooks) ──
     // GUARD: Only run after the practitioner has actually completed the Dosing Protocol form.
     // Without this, stale localStorage from a previous session would trigger warnings
     // before the user has entered anything in the current session.
@@ -638,7 +638,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             }
             // Medications: use same source + same fallback as patientMeds display below.
             // The isDosingProtocolComplete guard (line 315) already prevents phantom
-            // warnings from stale localStorage — the fallback is safe here.
+            // warnings from stale localStorage, the fallback is safe here.
             let medications: string[] = [];
             try {
                 const cachedMeds = localStorage.getItem('mock_patient_medications_names');
@@ -660,7 +660,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDosingProtocolComplete, contraindicationKey, journey]);
 
-    // Current meds list for display — MUST stay above early returns (Rules of Hooks)
+    // Current meds list for display, MUST stay above early returns (Rules of Hooks)
     const patientMeds = useMemo(() => {
         try {
             const cached = localStorage.getItem('mock_patient_medications_names');
@@ -675,14 +675,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // ── Substance clear / change handler ─────────────────────────────────────────
     // Pre-session: silently wipes the substance from localStorage so the practitioner
     // can re-select without any record of the wrong click.
-    // Live session: re-opens the Dosing Protocol form — the amendment is then
+    // Live session: re-opens the Dosing Protocol form, the amendment is then
     // captured as a timestamped entry by the form's save handler.
     const handleClearSubstance = () => {
         if (isLive) {
             // Post-start: open form so change is recorded as a timestamped event
             onOpenForm('dosing-protocol');
         } else {
-            // Pre-start: silent clear — no clinical record needed
+            // Pre-start: silent clear, no clinical record needed
             try {
                 const raw = localStorage.getItem('ppn_dosing_protocol');
                 if (raw) {
@@ -702,7 +702,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-500">
 
-                {/* WO-548: Collapsible accordion — session chart + ledger during closeout */}
+                {/* WO-548: Collapsible accordion, session chart + ledger during closeout */}
                 <div className="bg-slate-900/40 border border-slate-700/40 rounded-2xl overflow-hidden">
                     <button
                         onClick={() => setShowPostSessionTimeline(v => !v)}
@@ -851,7 +851,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                 `ppn_phase2_assessment_${sessionKey}`,
                                                 JSON.stringify(scores)
                                             );
-                                        } catch { /* quota exceeded — non-critical */ }
+                                        } catch { /* quota exceeded, non-critical */ }
                                     }}
                                     onClose={() => setShowAssessmentModal(false)}
                                 />
@@ -972,7 +972,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <div className="mt-auto pt-2">
                                         {step.isComplete ? (
                                             <div className="flex flex-col items-center gap-1 mt-2">
-                                                {/* Dosage HUD — only for dosing-protocol step */}
+                                                {/* Dosage HUD, only for dosing-protocol step */}
                                                 {step.id === 'dosing-protocol' && (() => {
                                                     try {
                                                         const raw = localStorage.getItem('ppn_dosing_protocol');
@@ -1049,14 +1049,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
                 {/* ── Contraindication Alert ─────────────────────────────────────── */}
                 {contraindicationResults && contraindicationResults.absoluteFlags.length > 0 ? (
-                    /* ══ ABSOLUTE CONTRAINDICATION — Full-width emergency alert ══ */
+                    /* ══ ABSOLUTE CONTRAINDICATION, Full-width emergency alert ══ */
                     <div className="relative rounded-2xl overflow-hidden border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.35)] animate-pulse-border">
                         {/* Pulsing background glow */}
                         <div className="absolute inset-0 bg-gradient-to-br from-red-950/80 via-red-900/60 to-red-950/80 pointer-events-none" />
                         {/* Animated top stripe */}
                         <div className="relative bg-red-600 px-5 py-3 flex items-center gap-3">
                             <AlertTriangle className="w-6 h-6 text-white flex-shrink-0 animate-bounce" />
-                            <span className="text-white font-black text-lg uppercase tracking-[0.2em]">⚠ ABSOLUTE CONTRAINDICATION — DO NOT ADMINISTER</span>
+                            <span className="text-white font-black text-lg uppercase tracking-[0.2em]">⚠ ABSOLUTE CONTRAINDICATION, DO NOT ADMINISTER</span>
                         </div>
                         <div className="relative p-5 space-y-4">
                             {/* Drug pair callout: meds ✕ substance with functional clear button */}
@@ -1074,15 +1074,15 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     </span>
                                     <button
                                         onClick={handleClearSubstance}
-                                        aria-label={isLive ? 'Change substance (opens form — change will be timestamped)' : 'Clear substance selection'}
-                                        title={isLive ? 'Change substance — will log a timestamped amendment' : 'Clear — re-select substance'}
+                                        aria-label={isLive ? 'Change substance (opens form, change will be timestamped)' : 'Clear substance selection'}
+                                        title={isLive ? 'Change substance, will log a timestamped amendment' : 'Clear, re-select substance'}
                                         className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-700/60 hover:bg-red-600 border border-red-500/60 hover:border-red-400 text-red-200 hover:text-white transition-all flex-shrink-0"
                                     >
                                         <X className="w-3 h-3" />
                                     </button>
                                 </div>
                             </div>
-                            {/* Flag details — uses ContraindicationFlag.headline + .detail */}
+                            {/* Flag details, uses ContraindicationFlag.headline + .detail */}
                             <div className="space-y-2">
                                 {contraindicationResults.absoluteFlags.map((flag: any, i: number) => {
                                     const sourceLinks = flag.regulatoryBasis ? getRegulatoryLinks(flag.regulatoryBasis) : [];
@@ -1131,11 +1131,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                     </div>
                 ) : contraindicationResults && contraindicationResults.relativeFlags.length > 0 ? (
-                    /* ══ RELATIVE CONTRAINDICATION — Amber warning ══ */
+                    /* ══ RELATIVE CONTRAINDICATION, Amber warning ══ */
                     <div className="rounded-2xl border-2 border-amber-500/70 bg-gradient-to-br from-amber-950/60 to-amber-900/40 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
                         <div className="bg-amber-600/90 px-5 py-3 flex items-center gap-3 rounded-t-xl">
                             <AlertCircle className="w-5 h-5 text-white flex-shrink-0" />
-                            <span className="text-white font-black text-base uppercase tracking-[0.15em]">⚠ RELATIVE CONTRAINDICATION — Proceed with Caution</span>
+                            <span className="text-white font-black text-base uppercase tracking-[0.15em]">⚠ RELATIVE CONTRAINDICATION, Proceed with Caution</span>
                         </div>
                         <div className="p-5 space-y-3">
                             {contraindicationResults.relativeFlags.map((flag: any, i: number) => {
@@ -1181,7 +1181,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                     </div>
                 ) : (
-                    /* ══ ALL CLEAR or no substance yet — compact strip ══ */
+                    /* ══ ALL CLEAR or no substance yet, compact strip ══ */
                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
                         <div className="flex-1 min-w-0">
                             <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
@@ -1201,14 +1201,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             ) : (
                                 <span className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/40 border border-emerald-600/40 text-emerald-300 text-sm font-black uppercase tracking-wider">
                                     <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                                    ALL CLEAR — No Contraindications
+                                    ALL CLEAR, No Contraindications
                                 </span>
                             )}
                         </div>
                     </div>
                 )}
 
-                {/* ── Session HUD (sticky when live) — shows timer + most recent vitals ── */}
+                {/* ── Session HUD (sticky when live), shows timer + most recent vitals ── */}
                 <div className={`rounded-2xl border transition-all duration-500 ${isLive ? 'sticky top-2 z-30 bg-[#061115]/95 border-emerald-900/40 shadow-lg shadow-emerald-950/30 backdrop-blur-xl'
                     : 'bg-slate-900/30 border-slate-800/40 opacity-50 select-none'
                     }`}>
@@ -1301,7 +1301,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
                         <span>Session Update</span>
                     </button>
-                    {/* WO-559: Additional Dose — reuses the existing Dosing Protocol slideout.
+                    {/* WO-559: Additional Dose, reuses the existing Dosing Protocol slideout.
                         Sets isLiveRedoseRef before opening so the ppn:dosing-updated handler
                         knows to emit additional_dose (orange) instead of dose_admin (emerald). */}
                     <button onClick={isLive ? () => {
@@ -1412,23 +1412,23 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                         <div className="grid grid-cols-3 gap-3">
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm) — optional</label>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm), optional</label>
                                 <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic — optional</label>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic, optional</label>
                                 <input type="number" placeholder="e.g. 120" value={updateBPSys} onChange={e => setUpdateBPSys(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic — optional</label>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic, optional</label>
                                 <input type="number" placeholder="e.g. 80" value={updateBPDia} onChange={e => setUpdateBPDia(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note — optional</label>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note, optional</label>
                             <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
                             <p className="text-xs text-slate-600 mt-1 italic">Note is stored locally for session reference. Affect, responsiveness, and vitals are persisted to the clinical record.</p>
@@ -1443,11 +1443,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 {/* ── Cockpit Real Estate: always fixed between buttons and update log ── */}
                 {isLive && (
                     <div className="space-y-6">
-                        {/* WO-548 Defect #11 — Known Behavior:
+                        {/* WO-548 Defect #11, Known Behavior:
                             When all event type toggles are on, session update markers can overlap vital sign
                             data points due to data density. This is expected at high-frequency logging rates.
                             If the graph library supports z-index series layering, vital signs should surface
-                            above session update markers. Enhancement deferred — not a blocker. */}
+                            above session update markers. Enhancement deferred, not a blocker. */}
                         {config.enabledFeatures.includes('session-vitals') && (
                             <SessionVitalsTrendChart
                                 sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
@@ -1455,7 +1455,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 onThresholdViolation={(vital, value) => {
                                     addToast({
                                         title: `[ALERT] ${vital} threshold exceeded`,
-                                        message: `${vital}: ${value} — review immediately`,
+                                        message: `${vital}: ${value}, review immediately`,
                                         type: 'error',
                                         persistent: true
                                     });
@@ -1472,7 +1472,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 )}
 
-                {/* ── Update Log — grows below the fixed chart ─────────────────────── */}
+                {/* ── Update Log, grows below the fixed chart ─────────────────────── */}
                 {updateLog.length > 0 && (
                     <div className="space-y-2">
                         <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 px-1">Session Updates ({updateLog.length})</p>
@@ -1519,7 +1519,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 showCompanion && (
                     <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden selection:bg-transparent">
 
-                        {/* Close — absolute top-right, above everything */}
+                        {/* Close, absolute top-right, above everything */}
                         <button
                             onClick={() => setShowCompanion(false)}
                             className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/8 border border-white/15 text-white/35 hover:bg-white/15 hover:text-white/60 backdrop-blur-md transition-all"

@@ -1,5 +1,5 @@
 /**
- * SimpleSearch.tsx — Post-Login Home (WO-532)
+ * SimpleSearch.tsx, Post-Login Home (WO-532)
  *
  * Google-style search portal. The first thing every authenticated user
  * sees after login. Live client-side keyword search with inline result
@@ -49,7 +49,7 @@ const SEARCH_INDEX: SearchResult[] = [
   {
     id: 'wellness-journey',
     page: 'Wellness Journey',
-    description: 'Log preparation, dosing sessions, and integration — 3-phase clinical documentation.',
+    description: 'Log preparation, dosing sessions, and integration, 3-phase clinical documentation.',
     path: '/wellness-journey',
     icon: HeartPulse,
     iconColor: 'text-teal-400',
@@ -67,7 +67,7 @@ const SEARCH_INDEX: SearchResult[] = [
   {
     id: 'catalog',
     page: 'Substance Library',
-    description: 'Monographs for psilocybin, MDMA, ketamine, ibogaine and more — receptor binding, dosing ranges, contraindications.',
+    description: 'Monographs for psilocybin, MDMA, ketamine, ibogaine and more, receptor binding, dosing ranges, contraindications.',
     path: '/catalog',
     icon: FlaskConical,
     iconColor: 'text-indigo-400',
@@ -120,7 +120,7 @@ const FEATURE_TILES = [
     id: 'wellness-journey',
     label: 'Wellness Journey',
     tagline: 'Full 3-phase patient arc',
-    description: 'Log preparation, dosing sessions, and integration — structured clinical documentation from first intake to follow-up.',
+    description: 'Log preparation, dosing sessions, and integration, structured clinical documentation from first intake to follow-up.',
     path: '/wellness-journey',
     icon: HeartPulse,
     gradient: 'from-teal-500/20 via-teal-600/10 to-transparent',
@@ -150,7 +150,7 @@ const FEATURE_TILES = [
     id: 'substance-catalog',
     label: 'Substance Library',
     tagline: 'Clinical pharmacology data',
-    description: 'Monographs for psilocybin, MDMA, ketamine, ibogaine, and more — with receptor binding, dosing ranges, and contraindication profiles.',
+    description: 'Monographs for psilocybin, MDMA, ketamine, ibogaine, and more, with receptor binding, dosing ranges, and contraindication profiles.',
     path: '/catalog',
     icon: FlaskConical,
     gradient: 'from-indigo-500/20 via-indigo-600/10 to-transparent',

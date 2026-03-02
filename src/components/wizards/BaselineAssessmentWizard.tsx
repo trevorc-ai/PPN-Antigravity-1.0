@@ -70,7 +70,7 @@ const MOTIVATION_OPTIONS = ['Low', 'Moderate', 'High', 'Very High'];
 const SUPPORT_OPTIONS = ['None identified', 'Minimal', 'Moderate', 'Strong'];
 const EXPERIENCE_OPTIONS = ['None', 'Minimal (1-2 times)', 'Some (3-5 times)', 'Experienced (6+)'];
 
-/** Styled number input for physiological readings (HRV, BP) — numeric keypad on tablet */
+/** Styled number input for physiological readings (HRV, BP), numeric keypad on tablet */
 function PhysioInput({
     id, label, value, onChange, placeholder,
 }: {
@@ -335,12 +335,12 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
                 <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
                     Baseline Physiology
-                    <AdvancedTooltip content="Optional pre-session physiological readings. Heart Rate Variability (HRV in ms) reflects autonomic nervous system state — higher values indicate parasympathetic dominance and readiness. Systolic and diastolic blood pressure document baseline cardiovascular status. These measurements are not required to save." tier="standard">
+                    <AdvancedTooltip content="Optional pre-session physiological readings. Heart Rate Variability (HRV in ms) reflects autonomic nervous system state, higher values indicate parasympathetic dominance and readiness. Systolic and diastolic blood pressure document baseline cardiovascular status. These measurements are not required to save." tier="standard">
                         <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About baseline physiology" />
                     </AdvancedTooltip>
                     <span className="text-slate-600 font-normal text-sm ml-0.5">optional</span>
                 </h3>
-                {/* Number inputs — tablet opens numeric keypad, no scroll, precise entry */}
+                {/* Number inputs, tablet opens numeric keypad, no scroll, precise entry */}
                 <div className="grid grid-cols-3 gap-3">
                     <PhysioInput id="hrv" label="HRV (ms)" value={data.physiology.hrv_ms} onChange={(v) => updateData('physiology', { hrv_ms: v })} placeholder="e.g. 55" />
                     <PhysioInput id="bp-sys" label="Systolic" value={data.physiology.bp_systolic} onChange={(v) => updateData('physiology', { bp_systolic: v })} placeholder="e.g. 120" />
@@ -398,11 +398,11 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                     aria-label="Adverse event severity grade"
                                 >
                                     <option value="">Select Grade...</option>
-                                    <option value="1">Grade 1 — Mild (No Intervention)</option>
-                                    <option value="2">Grade 2 — Moderate (Minimal Intervention)</option>
-                                    <option value="3">Grade 3 — Severe (Significant Intervention)</option>
-                                    <option value="4">Grade 4 — Life-Threatening</option>
-                                    <option value="5">Grade 5 — Fatal</option>
+                                    <option value="1">Grade 1, Mild (No Intervention)</option>
+                                    <option value="2">Grade 2, Moderate (Minimal Intervention)</option>
+                                    <option value="3">Grade 3, Severe (Significant Intervention)</option>
+                                    <option value="4">Grade 4, Life-Threatening</option>
+                                    <option value="5">Grade 5, Fatal</option>
                                 </select>
                             </div>
                         </div>

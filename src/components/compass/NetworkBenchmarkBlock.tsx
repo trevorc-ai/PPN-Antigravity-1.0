@@ -88,7 +88,7 @@ export const NetworkBenchmarkBlock: React.FC<NetworkBenchmarkBlockProps> = ({
             </div>
 
             <p className="ppn-meta" style={{ textAlign: 'center', marginTop: 12, lineHeight: 1.5 }}>
-                Data sourced from PPN network practitioners. Not population averages — substance and indication-matched.
+                Data sourced from PPN network practitioners. Not population averages, substance and indication-matched.
             </p>
         </div>
     );

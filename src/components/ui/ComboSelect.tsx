@@ -1,5 +1,5 @@
 /**
- * ComboSelect — Shared reusable combobox for InteractionChecker (WO-524)
+ * ComboSelect, Shared reusable combobox for InteractionChecker (WO-524)
  *
  * Features:
  *  - Type-to-filter with case-insensitive substring match (WAI-ARIA standard)

@@ -1,5 +1,5 @@
 /**
- * RefPicker.tsx — WO-214
+ * RefPicker.tsx, WO-214
  *
  * Universal ref_ table multi-select component.
  * Auto-selects one of 3 rendering modes based on item count:
@@ -24,7 +24,7 @@ export interface RefPickerItem {
 export interface RefPickerProps {
     items: RefPickerItem[];
     selected: number[];                    // selected IDs (FK integers)
-    onChange: (ids: number[]) => void;     // always returns number[] — never strings
+    onChange: (ids: number[]) => void;     // always returns number[], never strings
     multi?: boolean;                       // default: true
     label: string;                         // aria-label + visible section label
     maxItems?: number;                     // cardinality guard
@@ -67,7 +67,7 @@ const ChipGrid: React.FC<ChipGridProps> = ({ items, selected, onToggle, label, a
                         }
                     `}
                 >
-                    {/* Selection indicator — never color-only */}
+                    {/* Selection indicator, never color-only */}
                     <span className={`
                         flex-shrink-0 w-4 h-4 rounded flex items-center justify-center border
                         ${isSelected
@@ -98,7 +98,7 @@ interface GroupedCollapsibleProps {
 const GroupedCollapsible: React.FC<GroupedCollapsibleProps> = ({
     items, selected, onToggle, label, atMax, recentlyUsed,
 }) => {
-    // Use string[] instead of Set<string> — avoids 'untyped function call' lint on Set<T> generic
+    // Use string[] instead of Set<string>, avoids 'untyped function call' lint on Set<T> generic
     const [openGroups, setOpenGroups] = useState<string[]>(['__recent__']);
 
     const toggleGroup = (cat: string) =>

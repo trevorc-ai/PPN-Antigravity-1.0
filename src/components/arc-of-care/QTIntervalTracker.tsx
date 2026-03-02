@@ -4,7 +4,7 @@ import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 // ─── Device Preset List ──────────────────────────────────────────────────────
 // 12 clinical ECG devices known to be used in psychedelic-assisted therapy
-// settings. Dr. Allen reply pending (WO-413 — TODO: update defaults on reply).
+// settings. Dr. Allen reply pending (WO-413, TODO: update defaults on reply).
 export const QT_DEVICE_PRESETS = [
     'GE MAC 5500',
     'GE MAC 7',
@@ -53,21 +53,21 @@ interface QTIntervalTrackerProps {
     deviceBLabel?: string;
     /**
      * Delta threshold (ms) for flagging [STATUS: DIVERGENCE].
-     * Default: 50ms — confirmed by Dr. Allen 2026-02-25.
+     * Default: 50ms, confirmed by Dr. Allen 2026-02-25.
      */
     divergenceThresholdMs?: number;
     /**
      * Absolute QTc danger threshold (ms). Any single-device reading ≥ this value
-     * triggers [STATUS: DANGER — QTc ≥ 500ms]. Default: 500ms — Dr. Allen confirmed.
+     * triggers [STATUS: DANGER, QTc ≥ 500ms]. Default: 500ms, Dr. Allen confirmed.
      */
     dangerThresholdMs?: number;
     /**
      * Absolute QTc caution threshold (ms). Readings in [cautionThresholdMs, dangerThresholdMs)
-     * trigger [STATUS: CAUTION — Approaching 500ms]. Default: 475ms.
+     * trigger [STATUS: CAUTION, Approaching 500ms]. Default: 475ms.
      * Implements Dr. Allen's "approaching 500ms" directive (2026-02-25).
      */
     cautionThresholdMs?: number;
-    /** Called whenever readings change — parent can persist or display summary. */
+    /** Called whenever readings change, parent can persist or display summary. */
     onReadingsChange?: (readings: QTReading[]) => void;
 }
 
@@ -101,8 +101,8 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
     deviceALabel = 'Philips IntelliVue',
     deviceBLabel = 'Schiller ETM',
     divergenceThresholdMs = 50,   // ✅ Confirmed by Dr. Allen 2026-02-25
-    dangerThresholdMs = 500,      // ✅ Confirmed by Dr. Allen 2026-02-25 — hERG channel block risk
-    cautionThresholdMs = 475,     // ✅ "Approaching 500ms" — Dr. Allen 2026-02-25
+    dangerThresholdMs = 500,      // ✅ Confirmed by Dr. Allen 2026-02-25, hERG channel block risk
+    cautionThresholdMs = 475,     // ✅ "Approaching 500ms", Dr. Allen 2026-02-25
     onReadingsChange,
 }) => {
     const [readings, setReadings] = useState<QTReading[]>([makeEmptyReading()]);
@@ -214,7 +214,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 : 'border-slate-700/40 bg-slate-800/20'
                                 }`}
                             role="row"
-                            aria-label={`QT Reading ${index + 1}${isDivergent ? ' — DIVERGENCE' : ''}`}
+                            aria-label={`QT Reading ${index + 1}${isDivergent ? ', DIVERGENCE' : ''}`}
                         >
                             <div className="grid grid-cols-[1fr_1fr_1fr_80px_80px_36px] gap-2 items-center p-3">
 
@@ -253,7 +253,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                         value={reading.deviceAValue}
                                         onChange={e => updateReading(reading.id, 'deviceAValue', e.target.value)}
                                         placeholder="420"
-                                        aria-label={`${deviceALabel} QT reading in milliseconds — 5ms increments`}
+                                        aria-label={`${deviceALabel} QT reading in milliseconds, 5ms increments`}
                                         className={`${inputCls} ${aIsDanger ? 'border-red-500/70 bg-red-950/20' : aIsCaution ? 'border-amber-500/70 bg-amber-950/20' : ''}`}
                                     />
                                     <select
@@ -281,7 +281,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                         value={reading.deviceBValue}
                                         onChange={e => updateReading(reading.id, 'deviceBValue', e.target.value)}
                                         placeholder="415"
-                                        aria-label={`${deviceBLabel} QT reading in milliseconds — 5ms increments`}
+                                        aria-label={`${deviceBLabel} QT reading in milliseconds, 5ms increments`}
                                         className={`${inputCls} ${bIsDanger ? 'border-red-500/70 bg-red-950/20' : bIsCaution ? 'border-amber-500/70 bg-amber-950/20' : ''}`}
                                     />
                                     <select
@@ -297,7 +297,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                     </select>
                                 </div>
 
-                                {/* Delta — auto-calculated */}
+                                {/* Delta, auto-calculated */}
                                 <div className="flex flex-col items-center justify-center gap-1 min-h-[52px]">
                                     {delta !== null ? (
                                         <span
@@ -368,7 +368,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 </div>
                             </div>
 
-                            {/* ── Absolute QTc DANGER banner (≥ 500ms) — patient safety critical ── */}
+                            {/* ── Absolute QTc DANGER banner (≥ 500ms), patient safety critical ── */}
                             {anyDanger && (
                                 <div
                                     className="flex items-center gap-2 px-4 py-2.5 bg-red-600/20 border-t border-red-500/60 rounded-b-xl"
@@ -378,7 +378,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 >
                                     <AlertTriangle className="w-4 h-4 text-red-300 flex-shrink-0" aria-hidden="true" />
                                     <span className="text-sm font-black text-red-200 uppercase tracking-wide">
-                                        [STATUS: DANGER — QTc ≥ {dangerThresholdMs}ms]
+                                        [STATUS: DANGER, QTc ≥ {dangerThresholdMs}ms]
                                     </span>
                                     <span className="ppn-meta text-red-300 ml-1">
                                         {aIsDanger && `${deviceALabel}: ${aVal}ms`}{aIsDanger && bIsDanger && ' · '}{bIsDanger && `${deviceBLabel}: ${bVal}ms`}.
@@ -387,7 +387,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 </div>
                             )}
 
-                            {/* ── Absolute QTc CAUTION banner (475–499ms) — approaching danger ── */}
+                            {/* ── Absolute QTc CAUTION banner (475–499ms), approaching danger ── */}
                             {anyCaution && (
                                 <div
                                     className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 border-t border-amber-500/30 rounded-b-xl"
@@ -396,14 +396,14 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 >
                                     <AlertTriangle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" aria-hidden="true" />
                                     <span className="ppn-meta text-amber-300 font-semibold">
-                                        [STATUS: CAUTION — Approaching {dangerThresholdMs}ms]
+                                        [STATUS: CAUTION, Approaching {dangerThresholdMs}ms]
                                         {aIsCaution && ` ${deviceALabel}: ${aVal}ms`}{aIsCaution && bIsCaution && ' ·'}{bIsCaution && ` ${deviceBLabel}: ${bVal}ms`}.
                                         Monitor closely. Increase reading frequency.
                                     </span>
                                 </div>
                             )}
 
-                            {/* ── Divergence banner — inter-device delta ── */}
+                            {/* ── Divergence banner, inter-device delta ── */}
                             {isDivergent && (
                                 <div
                                     className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-t border-red-500/30 rounded-b-xl"
@@ -412,7 +412,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                 >
                                     <AlertTriangle className="w-3.5 h-3.5 text-red-400 flex-shrink-0" aria-hidden="true" />
                                     <span className="ppn-meta text-red-300 font-semibold">
-                                        [STATUS: DIVERGENCE] — Δ{delta}ms ≥ {divergenceThresholdMs}ms threshold. Verify leads and methodology before clinical decision.
+                                        [STATUS: DIVERGENCE], Δ{delta}ms ≥ {divergenceThresholdMs}ms threshold. Verify leads and methodology before clinical decision.
                                     </span>
                                 </div>
                             )}
@@ -421,7 +421,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                 })}
             </div>
 
-            {/* ── Footer — Add Reading ── */}
+            {/* ── Footer, Add Reading ── */}
             <div className="flex items-center gap-3 px-5 py-4 border-t border-slate-800/60 bg-slate-900/30">
                 <button
                     type="button"
@@ -434,7 +434,7 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                 </button>
                 <span className="ppn-meta text-slate-500 ml-1">
                     {readings.length} reading{readings.length !== 1 ? 's' : ''} this session
-                    &nbsp;·&nbsp; Display only — DB persist after INSPECTOR migration
+                    &nbsp;·&nbsp; Display only, DB persist after INSPECTOR migration
                 </span>
             </div>
         </div>

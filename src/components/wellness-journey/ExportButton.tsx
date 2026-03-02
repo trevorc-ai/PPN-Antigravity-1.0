@@ -3,7 +3,7 @@ import { Download, FileText, Shield, FlaskConical, Loader2, CheckCircle } from '
 import { downloadReport, generateReport, PatientReportData, ReportType } from '../../services/reportGenerator';
 
 /**
- * ExportButton — One-Click Audit Report Export
+ * ExportButton, One-Click Audit Report Export
  * WO-077: Exportable Audit Reports
  *
  * Wires directly to reportGenerator.ts to produce real downloadable text reports.
@@ -105,7 +105,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
 };
 
 /**
- * ExportButtonGroup — All three report types in one row
+ * ExportButtonGroup, All three report types in one row
  * Drop this anywhere a patient context is available.
  */
 interface ExportButtonGroupProps {

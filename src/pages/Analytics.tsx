@@ -152,10 +152,10 @@ const Analytics = () => {
                 </Section>
             )}
 
-            {/* ── KPI RIBBON + SAFETY PERFORMANCE — Unified section ─────────── */}
+            {/* ── KPI RIBBON + SAFETY PERFORMANCE, Unified section ─────────── */}
             <Section spacing="tight" className="space-y-0">
 
-                {/* KPI CARDS — 4-up horizontal grid */}
+                {/* KPI CARDS, 4-up horizontal grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2 mb-0">
                     {kpiStats.map((stat, i) => (
                         <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
@@ -171,7 +171,7 @@ const Analytics = () => {
                     ))}
                 </div>
 
-                {/* SAFETY PERFORMANCE — Full-width integrated panel */}
+                {/* SAFETY PERFORMANCE, Full-width integrated panel */}
                 <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6 print:bg-white print:border-gray-200 print:shadow-none">
                     {/* Section header inside the panel */}
                     <div className="flex items-center justify-between mb-5">
@@ -181,7 +181,7 @@ const Analytics = () => {
                         </div>
                         {!benchmark && !benchmarkLoading && (
                             <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-indigo-500/10 border-indigo-500/30 text-indigo-400 uppercase tracking-widest">
-                                Preview — sample data
+                                Preview, sample data
                             </span>
                         )}
                     </div>
@@ -202,7 +202,7 @@ const Analytics = () => {
                             status={benchmark.status}
                         />
                     ) : (
-                        /* No data yet — show sample / preview state */
+                        /* No data yet, show sample / preview state */
                         <SafetyBenchmark />
                     )}
                 </div>
@@ -215,7 +215,7 @@ const Analytics = () => {
                 </div>
             </Section>
 
-            {/* FILTER CONTROLS — positioned above charts, hide on print */}
+            {/* FILTER CONTROLS, positioned above charts, hide on print */}
             <Section spacing="tight" className="print:hidden">
                 <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-[#0a0c12]/80 border border-slate-800/80 p-3 rounded-2xl backdrop-blur-xl shadow-2xl">
                     <div className="flex items-center gap-2 px-2">
@@ -257,7 +257,7 @@ const Analytics = () => {
             {/* ── COMPONENT GRID ──────────────────────────────────────────────── */}
             <Section spacing="default" className="space-y-8 print:space-y-8">
 
-                {/* ROW 1: Performance Radar — full width, 3-col internal grid */}
+                {/* ROW 1: Performance Radar, full width, 3-col internal grid */}
                 <div className="print:break-inside-avoid">
                     <GlassmorphicCard className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '520px' }}>
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 px-6 pt-6 pb-0 z-10 shrink-0">
@@ -272,7 +272,7 @@ const Analytics = () => {
                     </GlassmorphicCard>
                 </div>
 
-                {/* ROW 2: Patient Galaxy — full width, large scatter + filter controls */}
+                {/* ROW 2: Patient Galaxy, full width, large scatter + filter controls */}
                 <div className="print:break-inside-avoid">
                     <GlassmorphicCard className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '620px' }}>
                         <div className="px-6 pt-6 pb-0 z-10 shrink-0" aria-hidden="true">
@@ -287,7 +287,7 @@ const Analytics = () => {
 
             </Section>
 
-            {/* ── GLOBAL BENCHMARK INTELLIGENCE — Placed below practitioner analytics ─── */}
+            {/* ── GLOBAL BENCHMARK INTELLIGENCE, Placed below practitioner analytics ─── */}
             <Section spacing="tight" className="print:break-inside-avoid">
                 {/* PRODDY recommendation: GBI belongs below practitioner-specific analytics
                     to reduce cognitive overload. The practitioner's own data comes first. */}
@@ -305,13 +305,13 @@ const Analytics = () => {
                 </div>
             </Section>
 
-            {/* ── EXPORT REPORT — Bottom of page, prominently placed ─────────── */}
+            {/* ── EXPORT REPORT, Bottom of page, prominently placed ─────────── */}
             <Section spacing="tight" className="print:hidden">
                 <div className="bg-[#0a0c12]/80 border border-slate-800/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
                         <h3 className="text-base font-black" style={{ color: '#A8B5D1' }}>Export Clinical Intelligence Report</h3>
                         <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>
-                            Generate a PDF report of all current analytics — safety metrics, performance benchmarks, and network comparisons.
+                            Generate a PDF report of all current analytics, safety metrics, performance benchmarks, and network comparisons.
                         </p>
                     </div>
                     <button

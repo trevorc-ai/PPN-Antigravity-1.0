@@ -15,7 +15,7 @@ const NODES = [
     { id: 'V1', x: 50, y: 82, label: 'V1', desc: 'Visual processing' },
 ];
 
-// Conditioned (baseline) connections — loops & rigid patterns
+// Conditioned (baseline) connections, loops & rigid patterns
 const BASELINE_EDGES = [
     ['mPFC', 'PCC'],
     ['PCC', 'AMY'],
@@ -27,7 +27,7 @@ const BASELINE_EDGES = [
     ['TPR', 'mPFC'],
 ];
 
-// New connections formed during session — cross-wiring explosion
+// New connections formed during session, cross-wiring explosion
 const SESSION_EDGES: [string, string][] = [
     ['V1', 'mPFC'],
     ['V1', 'AMY'],
@@ -93,7 +93,7 @@ export const BrainNetworkMap: React.FC<BrainNetworkMapProps> = ({
                         padding: 8,
                     }}>
                         <svg viewBox={`0 0 ${W} ${H}`} width="100%" aria-label="Conditioned mind brain network" role="img">
-                            {/* Baseline edges — rigid, loops */}
+                            {/* Baseline edges, rigid, loops */}
                             {BASELINE_EDGES.map(([a, b], i) => {
                                 const p1 = getNodePos(a, W, H);
                                 const p2 = getNodePos(b, W, H);
@@ -135,7 +135,7 @@ export const BrainNetworkMap: React.FC<BrainNetworkMapProps> = ({
                         padding: 8,
                         boxShadow: `0 0 24px ${accentColor}10`,
                     }}>
-                        <svg viewBox={`0 0 ${W} ${H}`} width="100%" aria-label="Brain during psychedelic session — new connections forming" role="img">
+                        <svg viewBox={`0 0 ${W} ${H}`} width="100%" aria-label="Brain during psychedelic session, new connections forming" role="img">
                             <defs>
                                 <filter id="brain-glow">
                                     <feGaussianBlur stdDeviation="2" result="blur" />
@@ -157,7 +157,7 @@ export const BrainNetworkMap: React.FC<BrainNetworkMapProps> = ({
                                 );
                             })}
 
-                            {/* New session edges — glowing cross-wiring */}
+                            {/* New session edges, glowing cross-wiring */}
                             {SESSION_EDGES.map(([a, b], i) => {
                                 const p1 = getNodePos(a, W, H);
                                 const p2 = getNodePos(b, W, H);
@@ -175,7 +175,7 @@ export const BrainNetworkMap: React.FC<BrainNetworkMapProps> = ({
                                 );
                             })}
 
-                            {/* Nodes — glowing */}
+                            {/* Nodes, glowing */}
                             {NODES.map(node => {
                                 const { x, y } = getNodePos(node.id, W, H);
                                 return (

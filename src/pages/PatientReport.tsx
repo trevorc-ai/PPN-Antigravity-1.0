@@ -66,7 +66,7 @@ const GLOBAL_CSS = `
     100% { background-position: 400px 0; }
   }
 
-  /* ─── Custom slider — removes all browser defaults ─────────────────────── */
+  /* ─── Custom slider, removes all browser defaults ─────────────────────── */
   .compass-slider {
     -webkit-appearance: none;
     appearance: none;
@@ -380,7 +380,7 @@ const SliderField: React.FC<{
 };
 
 // ─── Zone Shell ───────────────────────────────────────────────────────────────
-// WO-567: Badge is a single consistent system — teal ring, slate bg, white numeral.
+// WO-567: Badge is a single consistent system, teal ring, slate bg, white numeral.
 // accentColor now ONLY affects the title text (semantic domain color). Badge is always teal.
 const Zone: React.FC<{
     number: number; title: string; accentColor?: string;
@@ -396,7 +396,7 @@ const Zone: React.FC<{
         boxShadow: `0 4px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(45,212,191,0.04)`,
     }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
-            {/* Badge: always teal-ring / dark-bg / white numeral — consistent across all 5 zones */}
+            {/* Badge: always teal-ring / dark-bg / white numeral, consistent across all 5 zones */}
             <div style={{
                 width: 36, height: 36, borderRadius: 10, flexShrink: 0,
                 background: 'rgba(45,212,191,0.08)',
@@ -405,7 +405,7 @@ const Zone: React.FC<{
                 fontSize: 15, fontWeight: 900, color: '#e2e8f0',
                 boxShadow: '0 0 12px rgba(45,212,191,0.12)',
             }}>{number}</div>
-            {/* Title text color = semantic domain accent — intentional, not arbitrary */}
+            {/* Title text color = semantic domain accent, intentional, not arbitrary */}
             <h2 style={{
                 margin: 0, fontSize: 13, fontWeight: 800, color: accentColor,
                 textTransform: 'uppercase', letterSpacing: '0.14em', lineHeight: 1.2
@@ -446,7 +446,7 @@ const PatientReport: React.FC = () => {
         setSubmitting(true);
         setSubmitError(null);
         try {
-            // WO-566: Blocker 0 resolved — production table is log_pulse_checks (not log_daily_pulse)
+            // WO-566: Blocker 0 resolved, production table is log_pulse_checks (not log_daily_pulse)
             // patient_uuid passed as sessionId here pending full patient UUID resolver (WO-566 Phase 2)
             const { error } = await supabase.from('log_pulse_checks').insert({
                 session_id: sessionId,
@@ -513,7 +513,7 @@ const PatientReport: React.FC = () => {
         <div className="compass-root" style={{ background: C.bg, minHeight: '100vh' }}>
             <style>{GLOBAL_CSS}</style>
 
-            {/* ── Hero header — branded ──────────────────────────────────────── */}
+            {/* ── Hero header, branded ──────────────────────────────────────── */}
             <div style={{
                 background: 'linear-gradient(160deg, #040d1e 0%, #071528 40%, #0a1a30 70%, #060e1c 100%)',
                 padding: '56px 24px 48px',
@@ -941,7 +941,7 @@ const PatientReport: React.FC = () => {
                                 Need support right now?
                             </p>
                             <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>
-                                Fireside Project — Psychedelic Peer Support Line:{' '}
+                                Fireside Project, Psychedelic Peer Support Line:{' '}
                                 <a href="tel:6232636264" style={{ color: C.teal, fontWeight: 700 }}>623-473-7433</a>
                                 {' '}(available 24/7)
                             </p>
@@ -997,7 +997,7 @@ const PatientReport: React.FC = () => {
                         </div>
 
                         {/* Integration attendance */}
-                        {/* Fix 1: Gate zero-count — only show when patient has attended at least 1 session */}
+                        {/* Fix 1: Gate zero-count, only show when patient has attended at least 1 session */}
                         {data.integrationSessionsAttended != null && data.integrationSessionsAttended > 0 && (
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20,

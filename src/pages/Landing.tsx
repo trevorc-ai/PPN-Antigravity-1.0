@@ -130,7 +130,7 @@ const Landing: React.FC = () => {
 
       <StarField scrollY={scrollY} />
 
-      {/* SECTION: Hero — top padding accounts for sticky nav height */}
+      {/* SECTION: Hero, top padding accounts for sticky nav height */}
       <div className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 px-6 overflow-hidden z-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto px-6 relative z-10">
@@ -402,10 +402,10 @@ const Landing: React.FC = () => {
             <div className="flex flex-col items-center gap-4 w-full max-w-2xl relative z-10">
               <div className="flex items-center gap-3 px-6 py-4 bg-slate-900/60 border border-slate-700 rounded-2xl">
                 <span className="size-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
-                <p className="text-sm font-bold text-slate-300">Join the waitlist for founding practitioner access — <button onClick={() => setIsWaitlistModalOpen(true)} className="text-primary hover:text-blue-400 underline underline-offset-2">Join Waitlist</button></p>
+                <p className="text-sm font-bold text-slate-300">Join the waitlist for founding practitioner access, <button onClick={() => setIsWaitlistModalOpen(true)} className="text-primary hover:text-blue-400 underline underline-offset-2">Join Waitlist</button></p>
               </div>
               <p className="text-xs text-slate-600 font-medium italic max-w-md">
-                As our alliance grows, participating cities will be listed here — updated from the verified registry.
+                As our alliance grows, participating cities will be listed here, updated from the verified registry.
               </p>
             </div>
           </div>
@@ -647,7 +647,7 @@ const Landing: React.FC = () => {
                   <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl" />
                 </div>
 
-                {/* Connector Line — after circle so space-y-4 doesn't push the circle down */}
+                {/* Connector Line, after circle so space-y-4 doesn't push the circle down */}
                 {i < 3 && (
                   <div className="hidden lg:block absolute left-1/2 top-8 h-0.5 w-full bg-gradient-to-r from-primary/50 via-primary/30 to-transparent -z-10" style={{ transform: 'translateX(2rem)' }} />
                 )}

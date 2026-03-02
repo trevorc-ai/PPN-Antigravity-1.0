@@ -153,8 +153,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const selectedSubstance = substances.find(s => s.substance_id === data.substance_id);
     const substanceName = selectedSubstance?.substance_name ?? '';
 
-    // Run local contraindication engine — instant, no DB required
-    // IMPORTANT: substanceName must be lowercased — engine rules use lowercase string matching.
+    // Run local contraindication engine, instant, no DB required
+    // IMPORTANT: substanceName must be lowercased, engine rules use lowercase string matching.
     // DB substance_name values are title-case (e.g. 'MDMA', 'Psilocybin') and will miss rules without this.
     const contraindicationResult = substanceName
         ? runContraindicationEngine({
@@ -197,7 +197,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                         <div key={flag.id} className="flex gap-3 p-4 bg-amber-950/60 border border-amber-500/50 rounded-xl">
                             <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
                             <div className="space-y-1">
-                                <p className="text-sm font-bold text-amber-300 uppercase tracking-wide">CAUTION — Relative Contraindication</p>
+                                <p className="text-sm font-bold text-amber-300 uppercase tracking-wide">CAUTION, Relative Contraindication</p>
                                 <p className="text-sm font-semibold text-amber-200">{flag.headline}</p>
                                 <p className="text-xs text-amber-300/80">{flag.detail}</p>
                                 <p className="text-xs text-amber-400/60 mt-1">{flag.regulatoryBasis}</p>
@@ -207,7 +207,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                 </div>
             )}
 
-            {/* ── Network Intelligence (WO-343) — renders after warnings with 300ms fade ── */}
+            {/* ── Network Intelligence (WO-343), renders after warnings with 300ms fade ── */}
             {hasContraindications && contraindicationResult && (
                 <NetworkIntelligenceCard
                     activeWarnings={[

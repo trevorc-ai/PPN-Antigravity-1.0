@@ -45,15 +45,15 @@ import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components
 
 interface PatientJourney {
     patientId: string;
-    /** UUID — maps to log_clinical_records.id for the active session */
+    /** UUID, maps to log_clinical_records.id for the active session */
     sessionId?: string;
-    /** Non-PII clinical characteristics — used for quick verification at session start */
+    /** Non-PII clinical characteristics, used for quick verification at session start */
     demographics?: {
         age?: number;        // e.g. 34
-        gender?: string;     // 'M' | 'F' | 'NB' | 'X' — set by provider
+        gender?: string;     // 'M' | 'F' | 'NB' | 'X', set by provider
         weightKg?: number;   // for dosage calculation
     };
-    /** Condition being treated — drives assessment form pre-selection */
+    /** Condition being treated, drives assessment form pre-selection */
     condition?: string;
     sessionDate: string;
     daysPostSession: number;
@@ -136,7 +136,7 @@ const WellnessJourneyInternal: React.FC = () => {
     // Phase navigation state
     const [activePhase, setActivePhase] = useState<1 | 2 | 3>(1);
 
-    // Completed phases — persisted to localStorage
+    // Completed phases, persisted to localStorage
     const [completedPhases, setCompletedPhases] = useState<number[]>(() => {
         try {
             const stored = localStorage.getItem(PHASE_STORAGE_KEY);
@@ -154,7 +154,7 @@ const WellnessJourneyInternal: React.FC = () => {
     // Onboarding state
     const [showOnboarding, setShowOnboarding] = useState(false);
 
-    // Patient selection gate — blocks until provider chooses new or existing patient
+    // Patient selection gate, blocks until provider chooses new or existing patient
     const [showPatientModal, setShowPatientModal] = useState(true);
     // Controls which view the modal opens to: 'choose' (Phase 1) or 'existing' (Phase 2/3)
     const [patientModalView, setPatientModalView] = useState<'choose' | 'existing'>('choose');
@@ -189,7 +189,7 @@ const WellnessJourneyInternal: React.FC = () => {
         const resolvedSiteId = await getCurrentSiteId();
         let sessionId: string | undefined;
 
-        // TEST mode: skip all DB writes — use a local-only session UUID
+        // TEST mode: skip all DB writes, use a local-only session UUID
         const isTestSession = patientId.startsWith('TEST-');
 
         if (!isTestSession && resolvedSiteId) {
@@ -197,16 +197,16 @@ const WellnessJourneyInternal: React.FC = () => {
             if (result.success && result.sessionId) {
                 sessionId = result.sessionId;
             } else {
-                console.error('[WellnessJourney] ❌ createClinicalSession FAILED — patient will NOT persist to DB.', result.error);
+                console.error('[WellnessJourney] ❌ createClinicalSession FAILED, patient will NOT persist to DB.', result.error);
                 sessionId = crypto.randomUUID();
             }
         } else if (!isTestSession) {
-            console.error('[WellnessJourney] ❌ No siteId resolved — session will NOT persist to DB. Check log_user_sites.');
+            console.error('[WellnessJourney] ❌ No siteId resolved, session will NOT persist to DB. Check log_user_sites.');
             sessionId = crypto.randomUUID();
         } else {
-            // TEST session — ephemeral local ID only
+            // TEST session, ephemeral local ID only
             sessionId = crypto.randomUUID();
-            console.log('[WellnessJourney] 🧪 TEST session started — no DB writes will occur. Patient ID:', patientId);
+            console.log('[WellnessJourney] 🧪 TEST session started, no DB writes will occur. Patient ID:', patientId);
         }
 
         // ── STEP 1: Load medications for existing patients from Supabase ─────────
@@ -241,10 +241,10 @@ const WellnessJourneyInternal: React.FC = () => {
                         console.log('[WellnessJourney] Patient medications resolved from IDs:', names);
                     }
                 } else {
-                    console.log('[WellnessJourney] No medication data found for patient — medication list will be empty.');
+                    console.log('[WellnessJourney] No medication data found for patient, medication list will be empty.');
                 }
             } catch (err) {
-                console.warn('[WellnessJourney] Could not load patient medications — engine will use empty list.', err);
+                console.warn('[WellnessJourney] Could not load patient medications, engine will use empty list.', err);
             }
         }
 
@@ -281,7 +281,7 @@ const WellnessJourneyInternal: React.FC = () => {
             } else {
                 addToast({
                     title: 'New Patient Created',
-                    message: `Session started for ${patientId} — Phase 1: Preparation`,
+                    message: `Session started for ${patientId}, Phase 1: Preparation`,
                     type: 'success',
                 });
             }
@@ -290,7 +290,7 @@ const WellnessJourneyInternal: React.FC = () => {
             const phaseLabel = targetPhase === 1 ? 'Preparation' : targetPhase === 2 ? 'Treatment' : 'Integration';
             addToast({
                 title: 'Patient Loaded',
-                message: `${patientId} — continuing Phase ${targetPhase}: ${phaseLabel}`,
+                message: `${patientId}, continuing Phase ${targetPhase}: ${phaseLabel}`,
                 type: 'info',
             });
         }
@@ -305,7 +305,7 @@ const WellnessJourneyInternal: React.FC = () => {
         setShowPatientModal(true);
     }, []);
 
-    // Stable callback for closing the patient modal — navigates to the user's
+    // Stable callback for closing the patient modal, navigates to the user's
     // previous page (whatever they were on before clicking Wellness Journey).
     const handleClosePatientModal = useCallback(() => navigate(-1), [navigate]);
 
@@ -318,7 +318,7 @@ const WellnessJourneyInternal: React.FC = () => {
     // ── Phase 1 guided flow: tracks which forms have been saved ──────────────
     const [completedForms, setCompletedForms] = useState<Set<string>>(() => new Set());
 
-    // ── Clinician site ID — resolved ONCE at page load, passed to all forms ──
+    // ── Clinician site ID, resolved ONCE at page load, passed to all forms ──
     // Resolving here prevents the race condition where a form mounts and the
     // user clicks Save before the internal async fetch completes.
     const [clinicianSiteId, setClinicianSiteId] = useState<string | undefined>(undefined);
@@ -360,7 +360,7 @@ const WellnessJourneyInternal: React.FC = () => {
         'safety-and-adverse-event': 'Document any adverse events or safety concerns that arose.',
         'rescue-protocol': 'Record any rescue interventions administered during the session.',
         'daily-pulse': 'Brief daily check-in on mood, sleep, and integration progress.',
-        'meq30': 'Mystical Experience Questionnaire — 30-item retrospective assessment.',
+        'meq30': 'Mystical Experience Questionnaire, 30-item retrospective assessment.',
         'structured-integration': 'Document integration session themes, insights, and action steps.',
         'behavioral-tracker': 'Track behavioral changes and habit formation since last session.',
         'longitudinal-assessment': 'Longitudinal outcome assessment for ongoing progress monitoring.',
@@ -379,7 +379,7 @@ const WellnessJourneyInternal: React.FC = () => {
         let isLastPhase1Form = false;
 
         if (formId && activePhase === 1) {
-            // Use functional form to avoid stale `completedForms` closure — this
+            // Use functional form to avoid stale `completedForms` closure, this
             // is the root cause of the WO-354 "button stays illuminated" bug.
             // When the form's onComplete fires after an async save, the captured
             // `completedForms` Set might not yet include the just-saved formId.
@@ -393,7 +393,7 @@ const WellnessJourneyInternal: React.FC = () => {
                     nextId = next ? next.id : null;
                 }
 
-                // If no next step — all Phase 1 forms saved, complete the phase
+                // If no next step, all Phase 1 forms saved, complete the phase
                 if (!nextId && !exit) {
                     isLastPhase1Form = true;
                 } else if (!nextId && exit) {
@@ -515,13 +515,13 @@ const WellnessJourneyInternal: React.FC = () => {
             sessionDate: '2025-10-15',
             daysPostSession: 0,
             condition: savedCondition,
-            // Demographics start empty — populated after patient selection or intake form.
+            // Demographics start empty, populated after patient selection or intake form.
             // Hardcoded values caused stale data to appear for every new patient (WO-406 fix).
             demographics: savedDemographics,
 
             // WO-558: All baseline/session/risk values start null/empty.
             // These are populated by real form submissions (Phase 1 baseline assessments,
-            // Phase 2 dosing protocol, etc.) — no dummy data.
+            // Phase 2 dosing protocol, etc.), no dummy data.
             baseline: {
                 phq9: 0,
                 gad7: 0,
@@ -588,7 +588,7 @@ const WellnessJourneyInternal: React.FC = () => {
         };
     });
 
-    // WO-558: patientCharacteristics removed — was hardcoded dummy data, never displayed from real source.
+    // WO-558: patientCharacteristics removed, was hardcoded dummy data, never displayed from real source.
 
     // WO-558: totalImprovement only meaningful when baseline was actually recorded.
     // Show null (→ 'Not recorded') when baseline PHQ-9 is 0 (unset).
@@ -699,9 +699,9 @@ const WellnessJourneyInternal: React.FC = () => {
                 <div className="px-1">
                     <h1 className="ppn-page-title">Wellness Journey</h1>
                     <p className="ppn-body mt-1" style={{ color: '#8B9DC3' }}>
-                        {activePhase === 1 && 'Phase 1 — Preparation: Complete all baseline assessments before the dosing session.'}
-                        {activePhase === 2 && 'Phase 2 — Dosing Session: Live documentation during the active session.'}
-                        {activePhase === 3 && 'Phase 3 — Integration: Post-session monitoring and outcome tracking.'}
+                        {activePhase === 1 && 'Phase 1, Preparation: Complete all baseline assessments before the dosing session.'}
+                        {activePhase === 2 && 'Phase 2, Dosing Session: Live documentation during the active session.'}
+                        {activePhase === 3 && 'Phase 3, Integration: Post-session monitoring and outcome tracking.'}
                     </p>
                 </div>
 
@@ -715,17 +715,17 @@ const WellnessJourneyInternal: React.FC = () => {
                             if (activePhase === 3) setShowTour3(true);
                         }} />
                         <div>
-                            {/* Patient ID — large + mono for quick visual verification */}
+                            {/* Patient ID, large + mono for quick visual verification */}
                             <div className="flex items-center gap-3 flex-wrap">
                                 <span className="text-sm md:text-base font-black text-slate-400 uppercase tracking-widest">Patient</span>
                                 <span className="text-xl md:text-2xl font-black text-white font-mono tracking-wide">{journey.patientId}</span>
-                                {/* TEST MODE badge — amber, shown only for practice sessions */}
+                                {/* TEST MODE badge, amber, shown only for practice sessions */}
                                 {journey.patientId.startsWith('TEST-') && (
                                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-xs font-black text-amber-400 tracking-widest uppercase">
                                         🧪 TEST MODE
                                     </span>
                                 )}
-                                {/* Verification Pills — Age / Gender / Weight */}
+                                {/* Verification Pills, Age / Gender / Weight */}
                                 {[{
                                     label: journey.demographics?.age ? `${journey.demographics.age} yrs` : '— yrs',
                                     title: 'Age'
@@ -745,14 +745,14 @@ const WellnessJourneyInternal: React.FC = () => {
                                         <span className="text-white font-bold">{label}</span>
                                     </span>
                                 ))}
-                                {/* Condition pill — shows what's being treated */}
+                                {/* Condition pill, shows what's being treated */}
                                 {journey.condition && (
                                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-[13px] md:text-sm font-semibold shadow-sm">
                                         <span className="text-indigo-400 font-normal">Treating</span>
                                         <span className="text-indigo-200 font-bold">{journey.condition}</span>
                                     </span>
                                 )}
-                                {/* Change Patient — context-aware: Phase 1 → choose, Phase 2/3 → lookup */}
+                                {/* Change Patient, context-aware: Phase 1 → choose, Phase 2/3 → lookup */}
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -791,7 +791,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                 )}
                             </div>
                             <p className="text-sm md:text-base mt-0.5" style={{ color: '#8B9DC3' }}>
-                                {activePhase === 1 && 'Pre-treatment preparation — complete baseline assessments before session'}
+                                {activePhase === 1 && 'Pre-treatment preparation, complete baseline assessments before session'}
                                 {activePhase === 2 && `Dosing session in progress · ${journey.sessionDate} · Session #${journey.session.sessionNumber}`}
                                 {activePhase === 3 && `Integration phase · ${journey.daysPostSession} days post-session · Monitoring recovery`}
                             </p>
@@ -800,8 +800,8 @@ const WellnessJourneyInternal: React.FC = () => {
 
                     {/* Right: Phase-aware primary action + export */}
                     <div className="flex items-center gap-3 flex-shrink-0">
-                        {/* Phase 1: no competing CTA — Phase1StepGuide is the navigator */}
-                        {/* Phase 1 & 2: no competing CTA — phase navigators handle it */}
+                        {/* Phase 1: no competing CTA, Phase1StepGuide is the navigator */}
+                        {/* Phase 1 & 2: no competing CTA, phase navigators handle it */}
 
                         {activePhase === 3 && config.enabledFeatures.includes('daily-pulse') && (
                             <button
@@ -813,11 +813,11 @@ const WellnessJourneyInternal: React.FC = () => {
                                 Daily Pulse
                             </button>
                         )}
-                        {/* MEQ-30 — always available, provider-discretion instrument */}
+                        {/* MEQ-30, always available, provider-discretion instrument */}
                         {config.enabledFeatures.includes('meq30') && (
                             <AdvancedTooltip
                                 content="The Mystical Experience Questionnaire (30-item) is typically administered 24–48 hours post-session while the experience is still fresh. It measures depth of mystical experience across 4 subscales. Higher scores (≥60/100) correlate with sustained therapeutic benefit at 6-month follow-up."
-                                title="MEQ-30 — Provider Discretion"
+                                title="MEQ-30, Provider Discretion"
                                 type="info"
                                 tier="detailed"
                                 side="bottom"
@@ -826,7 +826,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                 <button
                                     onClick={() => handleOpenForm('meq30')}
                                     className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
-                                    title="MEQ-30 available at any phase — timing per protocol"
+                                    title="MEQ-30 available at any phase, timing per protocol"
                                 >
                                     <span className="material-symbols-outlined text-base">quiz</span>
                                     MEQ-30
@@ -836,7 +836,7 @@ const WellnessJourneyInternal: React.FC = () => {
                     </div>
                 </div>
 
-                {/* ── Phase Panel — one glowing border per phase ───────────────── */}
+                {/* ── Phase Panel, one glowing border per phase ───────────────── */}
                 {/*
                   Phase 1 = red   · Phase 2 = amber   · Phase 3 = emerald
                   Everything inside shares the same color family so the phase
@@ -863,21 +863,21 @@ const WellnessJourneyInternal: React.FC = () => {
 
                     return (
                         <div>
-                            {/* Phase tabs — sit ABOVE the content border, not inside it */}
+                            {/* Phase tabs, sit ABOVE the content border, not inside it */}
                             <PhaseIndicator
                                 currentPhase={activePhase}
                                 completedPhases={completedPhases}
                                 onPhaseChange={handlePhaseChange}
                             />
-                            {/* Phase content — border on left/right/bottom only, active tab connects at top */}
+                            {/* Phase content, border on left/right/bottom only, active tab connects at top */}
                             <div
                                 className={`rounded-b-2xl border-2 ${phasePalette.border} ${phasePalette.bg} p-4 sm:p-6 space-y-6`}
                                 style={{ boxShadow: phasePalette.shadow }}
                             >
-                                {/* Phase Content — WO-113: Each phase has CTA buttons to open forms */}
+                                {/* Phase Content, WO-113: Each phase has CTA buttons to open forms */}
                                 <div className="animate-in fade-in duration-300 space-y-6">
                                     {activePhase === 1 && (
-                                        // Phase1StepGuide is the SOLE navigator — no competing cards.
+                                        // Phase1StepGuide is the SOLE navigator, no competing cards.
                                         // The hero card shows exactly one next action with a large white CTA.
                                         <Phase1StepGuide
                                             completedFormIds={completedForms}
@@ -900,7 +900,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                                     onOpenForm={handleOpenForm}
                                                     completedForms={completedForms}
                                                 />
-                                                {/* Phase 3 — Early Follow-up (0–72 hrs) */}
+                                                {/* Phase 3, Early Follow-up (0–72 hrs) */}
                                                 <div className="mt-8">
                                                     <p className="text-base font-bold font-manrope text-slate-300 mb-3 px-1">Early Follow-Up · 0–72 hrs</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -928,7 +928,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                                         )}
                                                     </div>
                                                 </div>
-                                                {/* Phase 3 — Integration Work (days to weeks) */}
+                                                {/* Phase 3, Integration Work (days to weeks) */}
                                                 <div className="mt-8">
                                                     <p className="text-base font-bold font-manrope text-slate-300 mb-3 px-1">Integration Work · Days to Weeks</p>
                                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -969,15 +969,15 @@ const WellnessJourneyInternal: React.FC = () => {
                                     )}
                                 </div>
 
-                                {/* Bottom Status Bar — hidden during Phase 1 early stages and Phase 2.
+                                {/* Bottom Status Bar, hidden during Phase 1 early stages and Phase 2.
                      During Phase 2, the session is active and PHQ-9/MEQ numbers are
-                     meaningless — the practitioner is focused on real-time events.
+                     meaningless, the practitioner is focused on real-time events.
                      WO-547: Hidden for Phase 2. Show for Phase 1 (≥3 forms) and Phase 3. */}
                                 {activePhase !== 2 && (activePhase !== 1 || completedForms.size >= 3) && (
                                     <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
                                         <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-700/50">
 
-                                            {/* Total Improvement — WO-558: only renders real data */}
+                                            {/* Total Improvement, WO-558: only renders real data */}
                                             <div className="px-6 py-5">
                                                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
                                                 {totalImprovement !== null ? (
@@ -1014,7 +1014,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                                 )}
                                             </div>
 
-                                            {/* Risk Level — wired to live riskDetection data */}
+                                            {/* Risk Level, wired to live riskDetection data */}
                                             <div className="px-6 py-5">
                                                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
                                                 <div className="flex items-center gap-2.5">

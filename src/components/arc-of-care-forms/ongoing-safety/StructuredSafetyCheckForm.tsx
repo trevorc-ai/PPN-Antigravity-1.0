@@ -30,11 +30,11 @@ interface StructuredSafetyCheckFormProps {
     onSave?: (data: StructuredSafetyCheckData) => void;
     initialData?: Partial<StructuredSafetyCheckData>;
     patientId?: string;
-    /** Save & Continue — advances to the next Phase 1 step */
+    /** Save & Continue, advances to the next Phase 1 step */
     onComplete?: () => void;
-    /** Back — close panel without saving */
+    /** Back, close panel without saving */
     onBack?: () => void;
-    /** Save & Exit — save then close panel */
+    /** Save & Exit, save then close panel */
     onExit?: () => void;
 }
 
@@ -197,7 +197,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                 </FormField>
             </div>
 
-            {/* Safety Concerns — ordered critical → high → moderate (ref sort_order) */}
+            {/* Safety Concerns, ordered critical → high → moderate (ref sort_order) */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
                 <FormField label="Safety Concerns" tooltip="Pulls from the 'ref_clinical_observations' table (category: 'clinical_flag'). These align with standard DSM-5 risk parameters for psychiatric decompensation. Orders by clinical priority.">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -302,7 +302,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50'
                                 }`}
                         >
-                            No — Continue standard monitoring
+                            No, Continue standard monitoring
                         </button>
                     </div>
                 </FormField>

@@ -52,7 +52,7 @@ export const PHASE1_STEPS: Phase1Step[] = [
 
 // ── Phase 1 Data HUD ──────────────────────────────────────────────────────────
 // Compact read-back strip surfacing form entry values. Phase-1 indigo palette.
-// Renders as soon as at least 1 step is complete. Read-only — no form triggers.
+// Renders as soon as at least 1 step is complete. Read-only, no form triggers.
 
 function HUDChip({
     icon,
@@ -126,7 +126,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
 
     // Read consent data from localStorage.
     // Stored by WellnessFormRouter under key ppn_consent_${patientId} (or ppn_consent fallback).
-    // Data shape: { consent_types: string[], ... } — no consent_date field.
+    // Data shape: { consent_types: string[], ... }, no consent_date field.
     const consentData = useMemo(() => {
         try {
             const raw = localStorage.getItem(patientId ? `ppn_consent_${patientId}` : 'ppn_consent');
@@ -177,7 +177,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
                 </span>
             </div>
 
-            {/* Chips row — equal-width grid so all 6 chips spread across the full width */}
+            {/* Chips row, equal-width grid so all 6 chips spread across the full width */}
             <div
                 className="grid grid-cols-3 sm:grid-cols-6 gap-2"
                 role="list"
@@ -239,7 +239,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
                 </div>
             </div>
 
-            {/* Medications strip — shows as soon as meds are entered in Phase 1 Safety Check */}
+            {/* Medications strip, shows as soon as meds are entered in Phase 1 Safety Check */}
             {patientMeds.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-indigo-800/30">
                     <p className="ppn-meta text-slate-500 font-bold uppercase tracking-widest mb-1.5">Current Medications</p>
@@ -275,7 +275,7 @@ export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, compl
 
     // WO-558: Read real patient data from localStorage instead of hardcoded mock values.
     // ppn_wizard_baseline_${patientId} is written by MentalHealthScreeningForm on save.
-    // Fallback to 0 when no real data exists — the engine will not flag a ghost patient.
+    // Fallback to 0 when no real data exists, the engine will not flag a ghost patient.
     const mentalHealthData = useMemo(() => {
         try {
             // Try known patientId keys first, then the generic fallback
@@ -398,13 +398,13 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
             {/* ── 4-Step card grid ──────────────────────────────────────────────
                 Font sizing follows site standard:
-                  Step label (H3-equiv): text-sm font-bold uppercase  — 14px
-                  Card title:            text-base font-black          — 16px
-                  Description:           text-sm                       — 14px
-                  Button text:           text-sm font-semibold+        — 14px
-                  Badge / metadata:      text-xs                       — 12px (acceptable for tags)
+                  Step label (H3-equiv): text-sm font-bold uppercase , 14px
+                  Card title:            text-base font-black         , 16px
+                  Description:           text-sm                      , 14px
+                  Button text:           text-sm font-semibold+       , 14px
+                  Badge / metadata:      text-xs                      , 12px (acceptable for tags)
 
-                Design: no individual card borders — background fills only.
+                Design: no individual card borders, background fills only.
                 Active = indigo fill · Completed = teal tint · Upcoming = slate/dimmed
             ──────────────────────────────────────────────────────────────────── */}
             <div className={`grid grid-cols-1 sm:grid-cols-${Math.min(activeSteps.length, 4)} gap-2`}>
@@ -448,7 +448,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                     ) : null}
                                 </div>
 
-                                {/* Icon + title — primary content */}
+                                {/* Icon + title, primary content */}
                                 <div className="flex items-start gap-2.5">
                                     <div className={[
                                         'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
@@ -459,21 +459,21 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                             {step.icon}
                                         </span>
                                     </div>
-                                    {/* H3: card title — minimum text-sm */}
+                                    {/* H3: card title, minimum text-sm */}
                                     <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
                                         }`}>
                                         {step.label}
                                     </h4>
                                 </div>
 
-                                {/* Description — only on the active step for space; text-sm */}
+                                {/* Description, only on the active step for space; text-sm */}
                                 {isCurrent && (
                                     <p className="text-sm md:text-base leading-relaxed text-indigo-300/70">
                                         {step.description}
                                     </p>
                                 )}
 
-                                {/* CTA buttons — text-sm minimum */}
+                                {/* CTA buttons, text-sm minimum */}
                                 <div className="mt-auto pt-2">
                                     {isComplete ? (
                                         <div className="flex flex-col items-center gap-1 mt-2">
