@@ -220,7 +220,7 @@ export default function Dashboard() {
           </div>
 
           {/* Top-right — informational, not a nav trap on mobile */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => navigate('/analytics')}
               className="flex items-center gap-3 px-5 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-indigo-500/40 text-slate-300 font-bold rounded-2xl transition-all text-sm whitespace-nowrap"

@@ -97,7 +97,7 @@ const Analytics = () => {
             <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 print:hidden">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
+                        <h1 className="text-3xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
                             Clinical Intelligence
                         </h1>
                     </div>
@@ -106,7 +106,7 @@ const Analytics = () => {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4">
                     <button
                         onClick={analytics.refetch}
                         disabled={analytics.loading}

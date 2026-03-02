@@ -83,7 +83,7 @@ export const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
             {/* Actions Menu */}
             {isOpen && (
                 <div
-                    className="fixed bottom-24 right-6 z-50 bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden
+                    className="fixed bottom-36 sm:bottom-24 right-6 z-50 bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden
                      md:w-72 w-[calc(100vw-3rem)]"
                     role="menu"
                     aria-label="Quick actions"
@@ -109,7 +109,7 @@ export const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
             {/* FAB Button */}
             <button
                 onClick={toggleMenu}
-                className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-blue-500 hover:bg-blue-600 
+                className="fixed bottom-20 sm:bottom-6 right-6 z-50 w-14 h-14 bg-blue-500 hover:bg-blue-600 
                    rounded-full shadow-2xl shadow-blue-500/30 flex items-center justify-center
                    transition-all duration-200 hover:scale-110 active:scale-95
                    focus:outline-none focus:ring-4 focus:ring-blue-500/50"
