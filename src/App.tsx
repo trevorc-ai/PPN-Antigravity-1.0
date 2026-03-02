@@ -65,6 +65,7 @@ const SafetySurveillancePage = lazy(() => import('./pages/deep-dives/SafetySurve
 const PatientFlowPage = lazy(() => import('./pages/deep-dives/PatientFlowPage'));
 const WorkflowChaosPage = lazy(() => import('./pages/deep-dives/WorkflowChaosPage'));
 const PatientReport = lazy(() => import('./pages/PatientReport'));
+const IntegrationCompass = lazy(() => import('./pages/IntegrationCompass'));
 
 // ── Tier 5: Dev/Showcase (low priority) ──────────────────────────────────────
 const ArcOfCareDemo = lazy(() => import('./pages/ArcOfCareDemo'));
@@ -286,7 +287,8 @@ const AppContent: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/academy" element={<Academy />} />
           <Route path="/partner-demo" element={<PartnerDemoHub />} />
-          <Route path="/patient-report" element={<PatientReport />} />
+          {/* WO-570: IntegrationCompass replaces PatientReport — route preserved */}
+          <Route path="/patient-report" element={<IntegrationCompass />} />
 
           {/* Deep Dives (Public Marketing Pages) */}
           <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />

@@ -31,12 +31,52 @@ import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatm
 import RegulatoryWeather from '../components/analytics/RegulatoryWeather';
 import InsightFeedPanel from '../components/analytics/InsightFeedPanel';
 
+// ── WO-570: Integration Compass Components ───────────────────────────────────
+import { CompassSpiderGraph } from '../components/compass/CompassSpiderGraph';
+import { FlightPlanChart } from '../components/compass/FlightPlanChart';
+import { BrainNetworkMap } from '../components/compass/BrainNetworkMap';
+import { EmotionalWaveform } from '../components/compass/EmotionalWaveform';
+import { CompassEMAGraph } from '../components/compass/CompassEMAGraph';
+import { CompassZone } from '../components/compass/CompassZone';
+import { FeelingWave } from '../components/compass/FeelingWave';
+import { DailyCheckInCard } from '../components/compass/DailyCheckInCard';
+import { DayAwarenessHeader } from '../components/compass/DayAwarenessHeader';
+import { CompassInsightLine } from '../components/compass/CompassInsightLine';
+import { IntegrationStoryChart } from '../components/compass/IntegrationStoryChart';
+import { NetworkBenchmarkBlock } from '../components/compass/NetworkBenchmarkBlock';
+
+// Compass mock data
+const MOCK_TIMELINE = [
+    { id: '1', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 30 * 60000).toISOString(), eventType: 'feeling', label: 'Anxiety', minutesFromStart: 30, intensity: 4, displayMinutes: '30m', intensityLabel: 'Low' },
+    { id: '2', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 90 * 60000).toISOString(), eventType: 'mystical', label: 'Awe', minutesFromStart: 90, intensity: 10, displayMinutes: '90m', intensityLabel: 'Peak' },
+    { id: '3', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 150 * 60000).toISOString(), eventType: 'insight', label: 'Insight', minutesFromStart: 150, intensity: 9, displayMinutes: '150m', intensityLabel: 'High' },
+    { id: '4', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 210 * 60000).toISOString(), eventType: 'feeling', label: 'Gratitude', minutesFromStart: 210, intensity: 8, displayMinutes: '210m', intensityLabel: 'High' },
+];
+
+const MOCK_EMA = [
+    { date: '2026-02-21', dayLabel: 'Day 1', dayNumber: 1, moodLevel: 5, sleepQuality: 4, anxietyLevel: 7, connectionLevel: 5 },
+    { date: '2026-02-23', dayLabel: 'Day 3', dayNumber: 3, moodLevel: 6, sleepQuality: 5, anxietyLevel: 6, connectionLevel: 6 },
+    { date: '2026-02-25', dayLabel: 'Day 5', dayNumber: 5, moodLevel: 7, sleepQuality: 6, anxietyLevel: 5, connectionLevel: 7 },
+    { date: '2026-02-27', dayLabel: 'Day 7', dayNumber: 7, moodLevel: 7, sleepQuality: 7, anxietyLevel: 4, connectionLevel: 7 },
+    { date: '2026-03-01', dayLabel: 'Day 9', dayNumber: 9, moodLevel: 8, sleepQuality: 7, anxietyLevel: 3, connectionLevel: 8 },
+    { date: '2026-03-02', dayLabel: 'Day 10', dayNumber: 10, moodLevel: 8, sleepQuality: 8, anxietyLevel: 3, connectionLevel: 8 },
+];
+
+const MOCK_OUTCOMES = [
+    { daysPostSession: 0, phq9Score: 18, gad7Score: 14, phq2Score: 3, gad2Score: 3 },
+    { daysPostSession: 7, phq9Score: 13, gad7Score: 9, phq2Score: 2, gad2Score: 2 },
+    { daysPostSession: 10, phq9Score: 11, gad7Score: 8, phq2Score: 2, gad2Score: 1 },
+];
+
+
+
 const ComponentShowcase: React.FC = () => {
     // Mock data
     const mockSessionId = 'test-session-123';
     const mockSessionStartTime = new Date(Date.now() - 3600000); // 1 hour ago
 
     return (
+
         <PageContainer className="!max-w-7xl space-y-12 pb-20 pt-8">
             {/* READ-ONLY WARNING BANNER */}
             <div className="bg-amber-500/20 border-2 border-amber-500/50 rounded-xl px-6 py-3 -mt-4">
@@ -370,6 +410,104 @@ const ComponentShowcase: React.FC = () => {
                     <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
                         <GlobalBenchmarkIntelligence />
                     </div>
+                </div>
+            </Section>
+
+            {/* ── WO-570: Integration Compass Components ──────────────────────────────── */}
+            <Section spacing="default">
+                <h2 className="text-3xl font-black text-slate-300 mb-2 flex items-center gap-3">
+                    <span className="px-3 py-1 rounded-lg text-sm font-bold" style={{ background: 'rgba(45,212,191,0.15)', color: '#2dd4bf' }}>
+                        WO-570
+                    </span>
+                    Integration Compass Components
+                </h2>
+                <p className="text-slate-500 mb-8">All 12 new compass components shown with mock data.</p>
+
+                {/* Group A: Wonder Layer */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 className="text-lg font-black text-teal-400 mb-6 uppercase tracking-widest" style={{ fontSize: 12 }}>A1 · CompassSpiderGraph</h3>
+                    <CompassSpiderGraph
+                        substanceCategory="psilocybin"
+                        accentColor="#2dd4bf"
+                        timelineEvents={MOCK_TIMELINE}
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 className="text-lg font-black text-teal-400 mb-6" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em' }}>A2 · FlightPlanChart</h3>
+                    <FlightPlanChart
+                        substanceCategory="psilocybin"
+                        accentColor="#2dd4bf"
+                        timelineEvents={MOCK_TIMELINE}
+                        sessionStartTime={new Date(Date.now() - 9 * 3600000).toISOString()}
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>A3 · BrainNetworkMap</h3>
+                    <BrainNetworkMap substanceCategory="psilocybin" accentColor="#2dd4bf" />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>A4 · EmotionalWaveform</h3>
+                    <EmotionalWaveform timelineEvents={MOCK_TIMELINE} sessionDurationMinutes={360} />
+                </div>
+
+                {/* Group B: Integration Layer */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>B1 · CompassEMAGraph</h3>
+                    <CompassEMAGraph
+                        points={MOCK_EMA}
+                        sessionDate={new Date(Date.now() - 10 * 86400000).toISOString()}
+                        daysPostSession={10}
+                        accentColor="#2dd4bf"
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>B2 · CompassZone</h3>
+                    <CompassZone number={1} title="Your Experience Map" accentColor="#2dd4bf">
+                        <p style={{ color: '#64748b', fontSize: 14 }}>Zone content renders here. Number badge and title are auto-styled.</p>
+                    </CompassZone>
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>B3 · FeelingWave</h3>
+                    <FeelingWave events={MOCK_TIMELINE} />
+                </div>
+
+                {/* Group C: Daily Ritual */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>C2 · DayAwarenessHeader &amp; C3 · CompassInsightLine</h3>
+                    <DayAwarenessHeader daysPostSession={10} accentColor="#2dd4bf" substanceName="Psilocybin" />
+                    <CompassInsightLine emaPoints={MOCK_EMA} streak={3} />
+                </div>
+
+                {/* Group D: Clinical Intelligence */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>D1 · IntegrationStoryChart</h3>
+                    <IntegrationStoryChart
+                        points={MOCK_OUTCOMES}
+                        baselinePhq9={18}
+                        sessionDate={new Date(Date.now() - 10 * 86400000).toISOString()}
+                        accentColor="#2dd4bf"
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>D2 · NetworkBenchmarkBlock</h3>
+                    <NetworkBenchmarkBlock substanceCategory="psilocybin" accentColor="#2dd4bf" />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>C1 · DailyCheckInCard (mock — DB writes disabled for showcase)</h3>
+                    <p style={{ fontSize: 12, color: '#475569', marginBottom: 12 }}>Note: this will attempt to write to Supabase. Only QA structure here, not submission.</p>
+                    <DailyCheckInCard
+                        sessionId="showcase-mock-session"
+                        patientUuid={null}
+                        emaPoints={MOCK_EMA}
+                        streak={3}
+                    />
                 </div>
             </Section>
 
