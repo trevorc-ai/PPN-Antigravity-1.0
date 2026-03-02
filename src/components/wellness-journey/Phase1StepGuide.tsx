@@ -273,25 +273,48 @@ interface EligibilityPanelProps {
 export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, completedFormIds, onStartStep, onCompletePhase, onValidityChange }) => {
     const { addToast } = useToast();
 
-    // Generate risk report based on mock patient data.
-    // In production, this would use live clinical records.
-    const mockIntakeData: IntakeScreeningData = {
-        patientId: 'PT-RISK9W2P',
+    // WO-558: Read real patient data from localStorage instead of hardcoded mock values.
+    // ppn_wizard_baseline_${patientId} is written by MentalHealthScreeningForm on save.
+    // Fallback to 0 when no real data exists — the engine will not flag a ghost patient.
+    const mentalHealthData = useMemo(() => {
+        try {
+            // Try known patientId keys first, then the generic fallback
+            for (const suffix of ['', 'PT-RISK9W2P']) {
+                const raw = localStorage.getItem(`ppn_wizard_baseline_${suffix}`);
+                if (raw) return JSON.parse(raw)?.mentalHealth ?? null;
+            }
+        } catch { }
+        return null;
+    }, [completedFormIds]);
+
+    const storedMeds = useMemo(() => {
+        try {
+            const cached = localStorage.getItem('mock_patient_medications_names');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
+            }
+        } catch { }
+        return [];
+    }, [completedFormIds]);
+
+    const realIntakeData: IntakeScreeningData = {
+        patientId: 'PT-ACTIVE',
         sessionSubstance: 'psilocybin',
-        medications: ['Sertraline (tapering)', 'Lisinopril'], // Relative: SSRI
-        psychiatricHistory: ['Anxiety', 'Depression'],
+        medications: storedMeds,
+        psychiatricHistory: [],
         familyHistory: [],
         cssrsScore: 0,
-        lastSystolicBP: 125,
+        lastSystolicBP: 0,
         isPregnant: false,
-        ageYears: 34,
-        phq9Score: 22,
-        gad7Score: 18,
-        pcl5Score: 35,
-        bmi: 24.5
+        ageYears: 0,
+        phq9Score: mentalHealthData?.phq9 ?? 0,
+        gad7Score: mentalHealthData?.gad7 ?? 0,
+        pcl5Score: mentalHealthData?.pcl5 ?? 0,
+        bmi: 0,
     };
 
-    const result = runContraindicationEngine(mockIntakeData);
+    const result = runContraindicationEngine(realIntakeData);
 
     const handleExport = () => {
         exportRiskReportToPDF(result);

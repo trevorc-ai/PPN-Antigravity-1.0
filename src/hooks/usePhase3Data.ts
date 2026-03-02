@@ -92,18 +92,21 @@ export function usePhase3Data(
     });
 
     useEffect(() => {
-        // If no identifiers provided, immediately fall back to mock
+        // WO-558: No real session — null signals "no data" to consumer components.
+        // Panels gate on hasRealDecayData/hasRealPulseData and show empty states.
+        // MOCK_DECAY_POINTS and MOCK_PULSE_TREND are kept for DemoDataBadge panels
+        // that are explicitly labelled as illustrative, but PHQ-9 numbers must be null.
         if (!sessionId || !patientId) {
             setState(prev => ({
                 ...prev,
-                decayPoints: MOCK_DECAY_POINTS,
-                baselinePhq9: 22,
-                currentPhq9: 20,
+                decayPoints: null,
+                baselinePhq9: null,
+                currentPhq9: null,
                 pulseCheckCompliance: 0,
                 phq9Compliance: 0,
                 integrationSessionsAttended: 0,
                 integrationSessionsScheduled: 0,
-                pulseTrend: MOCK_PULSE_TREND,
+                pulseTrend: null,
                 hasRealDecayData: false,
                 hasRealPulseData: false,
                 hasRealComplianceData: false,
@@ -141,13 +144,14 @@ export function usePhase3Data(
                     .limit(1)
                     .single();
 
-                const baselinePhq9: number = (!baselineErr && baselineRow?.phq9_score != null)
+                // WO-558: null instead of 22 — empty state shown when no baseline recorded
+                const baselinePhq9: number | null = (!baselineErr && baselineRow?.phq9_score != null)
                     ? baselineRow.phq9_score
-                    : 22; // mock fallback
+                    : null;
 
                 const currentPhq9 = hasRealDecayData && decayPoints.length > 0
                     ? decayPoints[decayPoints.length - 1].phq9
-                    : 20;
+                    : null;
 
                 // ── 3. Pulse check compliance ──────────────────────────────────────────
                 // Get the session start date to compute days elapsed
@@ -258,20 +262,20 @@ export function usePhase3Data(
                 console.error('[usePhase3Data] Query failed — using mock fallback:', err?.message);
                 if (!cancelled) {
                     setState({
-                        decayPoints: MOCK_DECAY_POINTS,
-                        baselinePhq9: 22,
-                        currentPhq9: 20,
+                        decayPoints: null,
+                        baselinePhq9: null,
+                        currentPhq9: null,
                         pulseCheckCompliance: 0,
                         phq9Compliance: 0,
                         integrationSessionsAttended: 0,
                         integrationSessionsScheduled: 0,
-                        pulseTrend: MOCK_PULSE_TREND,
+                        pulseTrend: null,
                         hasRealDecayData: false,
                         hasRealPulseData: false,
                         hasRealComplianceData: false,
                         hasRealIntegrationData: false,
                         isLoading: false,
-                        error: 'Live data unavailable — showing demo data.',
+                        error: 'Live data unavailable.',
                     });
                 }
             }

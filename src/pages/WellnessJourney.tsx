@@ -519,26 +519,29 @@ const WellnessJourneyInternal: React.FC = () => {
             // Hardcoded values caused stale data to appear for every new patient (WO-406 fix).
             demographics: savedDemographics,
 
+            // WO-558: All baseline/session/risk values start null/empty.
+            // These are populated by real form submissions (Phase 1 baseline assessments,
+            // Phase 2 dosing protocol, etc.) — no dummy data.
             baseline: {
-                phq9: 22, // Severe Depression
-                gad7: 18, // Severe Anxiety
-                aceScore: 6, // High Trauma
-                expectancy: 40 // Low Expectancy
+                phq9: 0,
+                gad7: 0,
+                aceScore: 0,
+                expectancy: 0
             },
 
             session: {
-                substance: 'Psilocybin',
-                dosage: '25mg (Oral)',
+                substance: null,
+                dosage: null,
                 sessionNumber: 1,
                 meq30Score: null,
                 ediScore: null,
                 ceqScore: null,
-                safetyEvents: 1,
+                safetyEvents: 0,
                 chemicalRescueUsed: false
             },
 
             integration: {
-                currentPhq9: 20,
+                currentPhq9: 0,
                 pulseCheckCompliance: 0,
                 phq9Compliance: 0,
                 integrationSessionsAttended: 0,
@@ -547,69 +550,53 @@ const WellnessJourneyInternal: React.FC = () => {
             },
 
             benchmark: {
-                hasBaselineAssessment: true,
-                baselineAssessmentDate: '2025-10-01',
+                hasBaselineAssessment: false,
+                baselineAssessmentDate: undefined,
                 hasFollowUpAssessment: false,
                 followUpAssessmentDate: undefined,
-                hasDosingProtocol: true,
-                dosingProtocolDate: '2025-10-15',
-                hasSetAndSetting: true,
-                setAndSettingDate: '2025-10-14',
-                hasSafetyCheck: true,
-                safetyCheckDate: '2025-10-15',
-                hasConsent: true,
-                consentDate: '2025-10-01'
+                hasDosingProtocol: false,
+                dosingProtocolDate: undefined,
+                hasSetAndSetting: false,
+                setAndSettingDate: undefined,
+                hasSafetyCheck: false,
+                safetyCheckDate: undefined,
+                hasConsent: false,
+                consentDate: undefined
             },
 
             risk: {
                 baseline: {
-                    phq9: 22,
-                    gad7: 18,
-                    pcl5: 55, // Critical PTSD
-                    ace: 6
+                    phq9: 0,
+                    gad7: 0,
+                    pcl5: 0,
+                    ace: 0
                 },
                 vitals: {
-                    heartRate: 115, // Tachycardia
-                    baselineHeartRate: 72,
-                    bloodPressureSystolic: 155, // Hypertension
-                    bloodPressureDiastolic: 95,
-                    spo2: 94, // Hypoxia risk
-                    temperature: 99.1
+                    heartRate: 0,
+                    baselineHeartRate: 0,
+                    bloodPressureSystolic: 0,
+                    bloodPressureDiastolic: 0,
+                    spo2: 0,
+                    temperature: 0
                 },
-                progressTrends: [
-                    {
-                        metric: 'PHQ-9',
-                        values: [22, 23], // Worsening
-                        baseline: 22
-                    }
-                ]
+                progressTrends: []
             },
 
             safety: {
-                events: [
-                    {
-                        id: 'evt-1',
-                        date: '2025-10-01',
-                        cssrsScore: 4, // Suicidality Check
-                        actionsTaken: ['Safety Plan Created']
-                    }
-                ]
+                events: []
             }
         };
     });
 
-    const patientCharacteristics = {
-        gender: 'Male',
-        age: 34,
-        weight: '78kg',
-        ethnicity: 'Caucasian',
-        medications: ['Sertraline (tapering)', 'Lisinopril'],
-        treatment: 'TRD (Treatment Resistant Depression)'
-    };
+    // WO-558: patientCharacteristics removed — was hardcoded dummy data, never displayed from real source.
 
-    // Calculate metrics for status bar
-    const totalImprovement = journey.baseline.phq9 - journey.integration.currentPhq9;
-    const isRemission = journey.integration.currentPhq9 < 5;
+    // WO-558: totalImprovement only meaningful when baseline was actually recorded.
+    // Show null (→ 'Not recorded') when baseline PHQ-9 is 0 (unset).
+    const hasBaselinePHQ9 = journey.baseline.phq9 > 0;
+    const totalImprovement = hasBaselinePHQ9
+        ? journey.baseline.phq9 - journey.integration.currentPhq9
+        : null;
+    const isRemission = (journey.integration.currentPhq9 > 0) && journey.integration.currentPhq9 < 5;
 
     // Benchmark readiness
     const { result, nextSteps, isLoading } = useBenchmarkReadiness(journey.benchmark);
@@ -990,21 +977,27 @@ const WellnessJourneyInternal: React.FC = () => {
                                     <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
                                         <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-700/50">
 
-                                            {/* Total Improvement */}
+                                            {/* Total Improvement — WO-558: only renders real data */}
                                             <div className="px-6 py-5">
                                                 <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
-                                                <div className="flex items-baseline gap-2">
-                                                    <span className="text-3xl font-black text-emerald-400">-{totalImprovement}</span>
-                                                    <span className="text-sm" style={{ color: '#8B9DC3' }}>pts (PHQ-9)</span>
-                                                </div>
-                                                <div className="flex items-center gap-2 mt-1.5 text-xs">
-                                                    <span className="text-red-400">Baseline: {journey.baseline.phq9}</span>
-                                                    <span className="text-slate-600">→</span>
-                                                    <span className="text-emerald-400">Today: {journey.integration.currentPhq9}</span>
-                                                </div>
-                                                <p className="text-emerald-400 text-xs font-bold mt-2 uppercase tracking-widest">
-                                                    {isRemission ? '✓ Remission' : '↗ Improving'}
-                                                </p>
+                                                {totalImprovement !== null ? (
+                                                    <>
+                                                        <div className="flex items-baseline gap-2">
+                                                            <span className="text-3xl font-black text-emerald-400">{totalImprovement > 0 ? `-${totalImprovement}` : `+${Math.abs(totalImprovement)}`}</span>
+                                                            <span className="text-sm" style={{ color: '#8B9DC3' }}>pts (PHQ-9)</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2 mt-1.5 text-xs">
+                                                            <span className="text-red-400">Baseline: {journey.baseline.phq9}</span>
+                                                            <span className="text-slate-600">→</span>
+                                                            <span className="text-emerald-400">Today: {journey.integration.currentPhq9}</span>
+                                                        </div>
+                                                        <p className="text-emerald-400 text-xs font-bold mt-2 uppercase tracking-widest">
+                                                            {isRemission ? '✓ Remission' : '↗ Improving'}
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <p className="text-slate-500 text-sm font-semibold mt-1">Complete a Longitudinal Assessment to see improvement data.</p>
+                                                )}
                                             </div>
 
                                             {/* MEQ-30 Correlation */}
