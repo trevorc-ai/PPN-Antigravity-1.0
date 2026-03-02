@@ -25,7 +25,8 @@ export const CEQ_BRIEF_CONFIG: AssessmentConfig = {
     name: 'Challenge Check',
     shortName: 'CEQ-Brief',
     description: 'A few questions about any difficult moments during your session.',
-    questionsPerPage: 3,
+    // WO-549: 1 question per page — Previous button activates after question 1.
+    questionsPerPage: 1,
     scoring: {
         method: 'sum',
         normalize: { from: 15, to: 100 }
