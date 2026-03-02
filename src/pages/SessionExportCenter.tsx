@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import {
     Download, FileText, Shield, FlaskConical, ClipboardList,
     ChevronRight, CheckCircle, Loader2, AlertCircle, Calendar,
-    Activity, Heart, Brain, TrendingDown, Package, Eye,
-    Lock, Zap, BarChart3, Clock, User
+    Activity, Heart, Brain, TrendingDown, Package,
+    Lock, Zap, BarChart3, Clock, User, BarChart2
 } from 'lucide-react';
 import { downloadReport, PatientReportData, ReportType } from '../services/reportGenerator';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
@@ -52,7 +52,7 @@ const MOCK_SESSIONS = [
 
 interface ExportPackage {
     id: string;
-    type: ReportType | 'full-bundle' | 'raw-csv';
+    type: ReportType | 'full-bundle' | 'raw-csv' | 'clinical-pdf';
     title: string;
     subtitle: string;
     description: string;
@@ -160,6 +160,30 @@ const EXPORT_PACKAGES: ExportPackage[] = [
         format: 'zip',
         formatLabel: 'ZIP',
     },
+    {
+        id: 'clinical-pdf',
+        type: 'clinical-pdf',
+        title: 'Clinical Outcomes PDF',
+        subtitle: 'Full Visual Report — Print Ready',
+        description: '7-page visual report with inline charts: PHQ-9 trajectory, session vitals graph, event log, integration summary, and network benchmarking. Opens in a print preview.',
+        icon: BarChart2,
+        accentColor: 'text-teal-400',
+        bgColor: 'bg-teal-500/10',
+        borderColor: 'border-teal-500/30',
+        textColor: 'text-teal-400',
+        badge: 'PDF PREVIEW',
+        includes: [
+            'Cover + Executive Summary (Page 1)',
+            'Baseline Clinical Profile (Page 2)',
+            'PHQ-9 Symptom Trajectory chart (Page 3)',
+            'Dosing Session vitals chart + event log (Page 4)',
+            'Experience Quality — MEQ-30, CEQ, EDI (Page 5)',
+            'Integration + Safety events table (Page 6)',
+            'Network Benchmarking + Certification (Page 7)',
+        ],
+        format: 'pdf',
+        formatLabel: 'PDF',
+    },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -172,8 +196,18 @@ const SessionExportCenter: React.FC = () => {
 
     const handleExport = async (pkg: ExportPackage) => {
         if (downloading) return;
-        setDownloading(pkg.id);
 
+        // WO-553: Clinical PDF opens the print-preview page in a new tab
+        if (pkg.type === 'clinical-pdf') {
+            const sessionParam = selectedSession !== 'all' ? selectedSession : '';
+            const url = sessionParam
+                ? `/clinical-report-pdf?sessionId=${sessionParam}`
+                : '/clinical-report-pdf';
+            window.open(url, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        setDownloading(pkg.id);
         await new Promise(r => setTimeout(r, 1200));
 
         if (pkg.type === 'audit' || pkg.type === 'insurance' || pkg.type === 'research') {

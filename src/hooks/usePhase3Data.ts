@@ -16,6 +16,22 @@ export interface Phase3PulseTrendPoint {
     date: string;
 }
 
+// WO-553: Vitals point for PDF report inline SVG chart
+export interface Phase3VitalsPoint {
+    elapsedMin: number; // minutes from session start
+    hr: number | null;
+    bp_s: number | null;
+    bp_d: number | null;
+    recordedAt: string;
+}
+
+// WO-553: Timeline event for PDF event log table
+export interface Phase3TimelineEvent {
+    occurredAt: string;
+    eventType: string;
+    label: string;
+}
+
 export interface Phase3Data {
     // PHQ-9 trajectory for Symptom Decay chart
     decayPoints: Phase3DecayPoint[] | null;
@@ -32,6 +48,12 @@ export interface Phase3Data {
 
     // 7-day pulse trend
     pulseTrend: Phase3PulseTrendPoint[] | null;
+
+    // WO-553: Vitals + timeline for PDF report
+    vitalsData: Phase3VitalsPoint[] | null;
+    timelineEvents: Phase3TimelineEvent[] | null;
+    hasRealVitalsData: boolean;
+    hasRealTimelineData: boolean;
 
     // Whether any panel is running on real data (false = demo data)
     hasRealDecayData: boolean;
@@ -83,6 +105,10 @@ export function usePhase3Data(
         integrationSessionsAttended: null,
         integrationSessionsScheduled: null,
         pulseTrend: null,
+        vitalsData: null,
+        timelineEvents: null,
+        hasRealVitalsData: false,
+        hasRealTimelineData: false,
         hasRealDecayData: false,
         hasRealPulseData: false,
         hasRealComplianceData: false,
@@ -107,6 +133,10 @@ export function usePhase3Data(
                 integrationSessionsAttended: 0,
                 integrationSessionsScheduled: 0,
                 pulseTrend: null,
+                vitalsData: null,
+                timelineEvents: null,
+                hasRealVitalsData: false,
+                hasRealTimelineData: false,
                 hasRealDecayData: false,
                 hasRealPulseData: false,
                 hasRealComplianceData: false,
@@ -239,6 +269,51 @@ export function usePhase3Data(
                     });
                 }
 
+                // ── 6. WO-553: Session vitals for PDF inline SVG chart ─────────────────
+                const { data: vitalsRows, error: vitalsErr } = await supabase
+                    .from('log_session_vitals')
+                    .select('recorded_at, heart_rate, systolic_bp, diastolic_bp')
+                    .eq('session_id', sessionId)
+                    .order('recorded_at', { ascending: true });
+
+                let vitalsData: Phase3VitalsPoint[] | null = null;
+                let hasRealVitalsData = false;
+
+                if (!vitalsErr && vitalsRows && vitalsRows.length > 0) {
+                    hasRealVitalsData = true;
+                    const sessionStartMs = vitalsRows[0]?.recorded_at
+                        ? new Date(vitalsRows[0].recorded_at).getTime()
+                        : 0;
+                    vitalsData = vitalsRows.map(r => ({
+                        elapsedMin: Math.round(
+                            (new Date(r.recorded_at).getTime() - sessionStartMs) / 60_000
+                        ),
+                        hr: r.heart_rate ?? null,
+                        bp_s: r.systolic_bp ?? null,
+                        bp_d: r.diastolic_bp ?? null,
+                        recordedAt: r.recorded_at,
+                    }));
+                }
+
+                // ── 7. WO-553: Timeline events for PDF event log table ─────────────────
+                const { data: tlRows, error: tlErr } = await supabase
+                    .from('log_session_timeline_events')
+                    .select('occurred_at, event_type, label')
+                    .eq('session_id', sessionId)
+                    .order('occurred_at', { ascending: true });
+
+                let timelineEvents: Phase3TimelineEvent[] | null = null;
+                let hasRealTimelineData = false;
+
+                if (!tlErr && tlRows && tlRows.length > 0) {
+                    hasRealTimelineData = true;
+                    timelineEvents = tlRows.map(r => ({
+                        occurredAt: r.occurred_at,
+                        eventType: r.event_type ?? 'unknown',
+                        label: r.label ?? r.event_type ?? 'Event',
+                    }));
+                }
+
                 if (!cancelled) {
                     setState({
                         decayPoints,
@@ -249,6 +324,10 @@ export function usePhase3Data(
                         integrationSessionsAttended,
                         integrationSessionsScheduled,
                         pulseTrend,
+                        vitalsData,
+                        timelineEvents,
+                        hasRealVitalsData,
+                        hasRealTimelineData,
                         hasRealDecayData: !!hasRealDecayData,
                         hasRealPulseData,
                         hasRealComplianceData,
@@ -270,6 +349,10 @@ export function usePhase3Data(
                         integrationSessionsAttended: 0,
                         integrationSessionsScheduled: 0,
                         pulseTrend: null,
+                        vitalsData: null,
+                        timelineEvents: null,
+                        hasRealVitalsData: false,
+                        hasRealTimelineData: false,
                         hasRealDecayData: false,
                         hasRealPulseData: false,
                         hasRealComplianceData: false,
