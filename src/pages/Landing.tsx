@@ -147,7 +147,7 @@ const Landing: React.FC = () => {
             >
               <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-xs sm:text-sm font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
                 <span className="material-symbols-outlined text-lg">grid_view</span>
-                Augmented Intelligence
+                Augmented Intelligence for Psychedelic Therapy
               </div>
               <h1 className="text-4xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-300 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
                 Elevate your practice.
