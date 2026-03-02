@@ -234,13 +234,13 @@ const Login: React.FC = () => {
                     setError(null);
                     setResetSuccess(false);
                   }}
-                  className="absolute top-6 right-6 p-2 hover:bg-slate-800/60 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
+                  className="absolute top-6 right-6 p-2 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-slate-200 transition-all"
                 >
                   <span className="material-symbols-outlined">close</span>
                 </button>
 
                 <h2 className="text-3xl font-black tracking-tighter text-slate-300 mb-1">Reset Password</h2>
-                <p className="text-sm text-slate-500 font-medium mb-8 uppercase tracking-widest">
+                <p className="text-sm text-slate-400 font-medium mb-8 uppercase tracking-widest">
                   We'll send a secure link to your email.
                 </p>
 
@@ -272,7 +272,7 @@ const Login: React.FC = () => {
                         type="email"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
-                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                         placeholder="your@email.com"
                         required
                         disabled={resetLoading}
