@@ -25,3 +25,7 @@ dist-ssr
 
 # macOS custom folder icon files (contain carriage return in filename)
 Icon?
+
+# Practitioner-uploaded media files — large binary assets, not source code
+public/admin_uploads/
+public/uploads/
