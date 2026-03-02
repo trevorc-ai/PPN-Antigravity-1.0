@@ -169,16 +169,7 @@ const Login: React.FC = () => {
                   required
                   disabled={loading}
                 />
-                {/* Forgot password — below field, right-aligned */}
-                <div className="flex justify-end mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowResetModal(true)}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
+
               </div>
 
               {/* Submit */}
@@ -197,6 +188,16 @@ const Login: React.FC = () => {
                 )}
               </button>
 
+              {/* Forgot password — below Sign In, clean tab order */}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowResetModal(true)}
+                  className="text-xs text-slate-500 hover:text-indigo-400 font-bold transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
 
 
               {/* Sign Up */}
