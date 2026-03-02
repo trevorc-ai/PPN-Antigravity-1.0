@@ -203,7 +203,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
         return (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
-                <div className="w-full max-w-2xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="w-full max-w-2xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ maxHeight: '100dvh' }}>
                     <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
@@ -224,7 +224,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                         </button>
                     </div>
 
-                    <div className="p-5 space-y-2.5 overflow-y-auto max-h-[85vh] custom-scrollbar">
+                    <div className="p-5 space-y-2.5 overflow-y-auto custom-scrollbar" style={{ maxHeight: 'calc(100dvh - 180px)' }}>
 
                         {/* Step 1 — Condition */}
                         <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.condition ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
@@ -411,7 +411,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
-            <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col max-h-[90dvh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ maxHeight: '100dvh' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                     <div className="flex items-center gap-4">
@@ -434,7 +434,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                 </div>
 
                 {/* Body */}
-                <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[85vh] custom-scrollbar">
+                <div className="p-6 md:p-8 space-y-8 overflow-y-auto custom-scrollbar" style={{ maxHeight: 'calc(100dvh - 180px)' }}>
 
                     {/* Educational Callout */}
                     <div className="flex items-start gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
