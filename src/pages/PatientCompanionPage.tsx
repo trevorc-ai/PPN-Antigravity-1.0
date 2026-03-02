@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react';
+import { createTimelineEvent } from '../services/clinicalLog';
 
 interface PatientLogEvent {
     timestamp: string;
@@ -52,12 +53,40 @@ export default function PatientCompanionPage() {
     const litTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleLogFeeling = (feelingId: string, feelingLabel: string) => {
-        // Persist log
+        // Persist log to localStorage (companion readback key)
         const storageKey = `companion_logs_${sessionId}`;
         const existing = localStorage.getItem(storageKey);
         const logs: PatientLogEvent[] = existing ? JSON.parse(existing) : [];
         logs.push({ timestamp: new Date().toISOString(), feeling: feelingId });
         localStorage.setItem(storageKey, JSON.stringify(logs));
+
+        // WO-556: Dispatch ppn:session-event so DosingSessionPhase chart listener
+        // picks up this companion tap as an event pin — same window, no BroadcastChannel needed.
+        // Negative / distress feelings map to safety_event, all others to patient_observation.
+        const SAFETY_FEELINGS = new Set(['anxious', 'overwhelmed', 'fearful', 'tense', 'nauseous', 'need_support']);
+        const eventType = SAFETY_FEELINGS.has(feelingId) ? 'safety_event' : 'patient_observation';
+        const eventDescription = `Companion: ${feelingLabel}`;
+        const eventTimestamp = new Date().toISOString();
+
+        window.dispatchEvent(new CustomEvent('ppn:session-event', {
+            detail: { type: eventType, label: eventDescription, timestamp: eventTimestamp }
+        }));
+
+        // WO-556: Persist to log_session_timeline_events.
+        // UUID guard: only write when sessionId is a real UUID (not undefined / legacy IDs).
+        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (sessionId && UUID_RE.test(sessionId)) {
+            createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: eventTimestamp,
+                event_type: eventType as any,
+                performed_by: undefined,
+                metadata: { event_description: eventDescription },
+            }).catch(err => {
+                // Non-critical — companion taps still appear on the chart via CustomEvent
+                console.warn('[WO-556] Companion event write failed (non-critical):', err);
+            });
+        }
 
         // Instant-on glow
         if (litTimerRef.current) clearTimeout(litTimerRef.current);
