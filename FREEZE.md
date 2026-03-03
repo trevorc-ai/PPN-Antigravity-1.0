@@ -1,7 +1,7 @@
 # FREEZE.md — Protected Files
 # Pre-commit hook reads this file. Any file listed here will BLOCK a commit.
 # To unfreeze: remove it from the list and commit this file first.
-# Last updated: 2026-02-26
+# Last updated: 2026-03-03
 
 # ── Governance (never touch without explicit authorization) ──
 agent.yaml
@@ -16,11 +16,33 @@ src/services/contraindicationEngine.ts
 src/contexts/AuthContext.tsx
 src/pages/ResetPassword.tsx
 
-# ── Add files here when approaching a milestone ──
-# Uncomment to protect:
-# src/pages/InteractionChecker.tsx
-# src/components/wellness-journey/DosingSessionPhase.tsx
-# src/components/wellness-journey/LiveSessionTimeline.tsx
+# ── Wellness Journey (frozen post-sprint WO-524/525/526/527/529) ──
+src/components/wellness-journey/BehavioralChangeTracker.tsx
+src/components/wellness-journey/CompletenessWidget.tsx
+src/components/wellness-journey/ComplianceDocumentsPanel.tsx
+src/components/wellness-journey/DeltaChart.tsx
+src/components/wellness-journey/DemoDataBadge.tsx
+src/components/wellness-journey/DosingSessionPhase.tsx
+src/components/wellness-journey/ExportButton.tsx
+src/components/wellness-journey/FeedbackToast.tsx
+src/components/wellness-journey/IntegrationPhase.tsx
+src/components/wellness-journey/LiveSessionTimeline.tsx
+src/components/wellness-journey/NeuroplasticityWindowBadge.tsx
+src/components/wellness-journey/PatientOutcomePanel.tsx
+src/components/wellness-journey/PatientProgressSummary.tsx
+src/components/wellness-journey/PatientSelectModal.tsx
+src/components/wellness-journey/Phase1StepGuide.tsx
+src/components/wellness-journey/PhaseIndicator.tsx
+src/components/wellness-journey/PreparationPhase.tsx
+src/components/wellness-journey/ProtocolConfiguratorModal.tsx
+src/components/wellness-journey/QuickActionsMenu.tsx
+src/components/wellness-journey/RiskEligibilityReport.tsx
+src/components/wellness-journey/SessionVitalsTrendChart.tsx
+src/components/wellness-journey/SlideOutPanel.tsx
+src/components/wellness-journey/StructuredIntegrationSession.tsx
+src/components/wellness-journey/WellnessFormRouter.tsx
+src/components/wellness-journey/WorkflowCards.tsx
+src/components/wellness-journey/index.ts
 
 ## Housecleaning Standard
 Files eligible for daily archive (move OUT of project, NOT delete):
