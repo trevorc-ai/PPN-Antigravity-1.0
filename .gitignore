@@ -25,3 +25,8 @@ dist-ssr
 
 # macOS custom folder icon files (contain carriage return in filename)
 Icon?
+
+# Environment files with secrets (never commit)
+.env.staging
+.env.production
+.env.local

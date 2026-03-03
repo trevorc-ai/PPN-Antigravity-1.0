@@ -28,10 +28,14 @@ import { clearDataCache } from '../hooks/useDataCache';
     }
 })();
 
+type UserRole = 'admin' | 'partner' | 'user' | null;
+
 interface AuthContextType {
     user: User | null;
     session: Session | null;
     loading: boolean;
+    userRole: UserRole;
+    isPartner: boolean;
     signOut: () => Promise<void>;
 }
 
@@ -41,12 +45,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
+    const [userRole, setUserRole] = useState<UserRole>(null);
 
     useEffect(() => {
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setUser(session?.user ?? null);
+            setUserRole((session?.user?.app_metadata?.role as UserRole) ?? null);
             setLoading(false);
         });
 
@@ -56,6 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
+            // Role is in the JWT app_metadata — no extra DB fetch needed
+            setUserRole((session?.user?.app_metadata?.role as UserRole) ?? null);
             setLoading(false);
 
             // ── Invite / signup link interception ───────────────────────────
@@ -138,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, userRole, isPartner: userRole === 'partner', signOut }}>
             {children}
         </AuthContext.Provider>
     );

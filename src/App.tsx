@@ -254,6 +254,17 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
+      {/* Staging environment banner — only renders when VITE_APP_ENV=staging */}
+      {import.meta.env.VITE_APP_ENV === 'staging' && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999,
+          background: '#f59e0b', color: '#000', textAlign: 'center',
+          fontSize: '11px', fontWeight: 900, padding: '4px 0',
+          letterSpacing: '0.1em', textTransform: 'uppercase'
+        }}>
+          ⚠️ Staging Environment — Test Data Only — Not for Clinical Use
+        </div>
+      )}
       <ScrollToTop />
       {/*
         Single <Suspense> boundary wraps all routes.
