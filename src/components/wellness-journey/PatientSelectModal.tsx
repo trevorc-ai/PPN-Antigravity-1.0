@@ -189,7 +189,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#060d1a]/90 backdrop-blur-md">
-            <div className="w-full max-w-2xl mx-4">
+            <div className="w-full max-w-2xl mx-4 overflow-y-auto max-h-[90vh]">
 
                 {/* ── Choose View ───────────────────────────────────────────── */}
                 {view === 'choose' && (
