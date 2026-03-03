@@ -20,11 +20,15 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
+// WO-523: Replaced teal (#2dd4bf) with PPN brand blue across all brand/identity
+// contexts. Semantic domain colors (gold, violet, rose) retained as correct.
 const C = {
     bg: '#050c1a',
     card: 'rgba(10,20,42,0.90)',
-    border: 'rgba(45,212,191,0.12)',
-    teal: '#2dd4bf',
+    border: 'rgba(96,165,250,0.12)',   // blue-400 tint
+    blue: '#60a5fa',                   // PPN brand blue-400
+    blueDeep: '#1e40af',               // PPN brand blue-800
+    indigo: '#818cf8',                 // indigo-400 — slider/form accents
     gold: '#f59e0b',
     violet: '#a78bfa',
     rose: '#fb7185',
@@ -79,68 +83,13 @@ const GLOBAL_CSS = `
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #2dd4bf;
+    color: #60a5fa;
   }
   .ppn-brand-pill-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: #2dd4bf;
+    background: #60a5fa;
     box-shadow: 0 0 8px rgba(45,212,191,0.8);
-  }
-
-  /* ─── Custom slider ─────────────────────────────────────────────────────── */
-  .compass-slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 6px;
-    border-radius: 9999px;
-    outline: none;
-    cursor: pointer;
-    border: none;
-    background: linear-gradient(
-      to right,
-      #2dd4bf var(--pct, 50%),
-      rgba(100,116,139,0.25) var(--pct, 50%)
-    );
-  }
-  .compass-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: #2dd4bf;
-    cursor: pointer;
-    border: 2px solid rgba(255,255,255,0.15);
-    box-shadow: 0 0 0 3px rgba(45,212,191,0.2), 0 0 14px rgba(45,212,191,0.5);
-    transition: box-shadow 0.15s, transform 0.1s;
-  }
-  .compass-slider::-webkit-slider-thumb:hover {
-    box-shadow: 0 0 0 6px rgba(45,212,191,0.25), 0 0 22px rgba(45,212,191,0.7);
-    transform: scale(1.1);
-  }
-  .compass-slider::-moz-range-thumb {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    background: #2dd4bf;
-    cursor: pointer;
-    border: 2px solid rgba(255,255,255,0.15);
-    box-shadow: 0 0 0 3px rgba(45,212,191,0.2), 0 0 14px rgba(45,212,191,0.5);
-  }
-  .compass-slider::-webkit-slider-runnable-track {
-    height: 6px;
-    border-radius: 9999px;
-    background: transparent;
-  }
-  .compass-slider::-moz-range-track {
-    height: 6px;
-    border-radius: 9999px;
-    background: rgba(100,116,139,0.25);
-  }
-  .compass-slider::-moz-range-progress {
-    height: 6px;
-    border-radius: 9999px;
-    background: #2dd4bf;
   }
 
   /* ─── Feeling pill hover ────────────────────────────────────────────────── */
@@ -157,7 +106,7 @@ const GLOBAL_CSS = `
     transition: box-shadow 0.3s;
   }
   .zone-card:hover {
-    box-shadow: 0 0 60px rgba(45,212,191,0.07) !important;
+    box-shadow: 0 0 60px rgba(96,165,250,0.07) !important;
   }
 
   @media print {
@@ -200,34 +149,46 @@ const SliderField: React.FC<{
         <div style={{ marginBottom: 22 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#cbd5e1' }}>{label}</span>
-                <span style={{ fontSize: 13, fontWeight: 800, color: C.teal }}>{value}</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: C.indigo }}>{value}</span>
             </div>
+            {/* WO-523: Use ppn-range class from index.css — matches Phase 1 slideout sliders exactly */}
             <input
                 type="range" min={1} max={10} step={1}
                 value={value}
                 readOnly={readOnly}
                 onChange={e => !readOnly && onChange(Number(e.target.value))}
-                className="compass-slider"
-                style={{ '--pct': `${pct}%` } as React.CSSProperties}
+                className="ppn-range"
+                style={{
+                    width: '100%',
+                    background: `linear-gradient(to right, #818cf8 ${pct}%, rgba(100,116,139,0.25) ${pct}%)`,
+                } as React.CSSProperties}
                 aria-label={label}
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
-                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>{cfg.low}</span>
-                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>{cfg.high}</span>
+                <span style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>{cfg.low}</span>
+                <span style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>{cfg.high}</span>
             </div>
         </div>
     );
 };
 
+// ─── Color → RGBA helper (avoids TS literal comparison errors) ───────────────
+const COLOR_RGBA: Record<string, string> = {
+    '#a78bfa': '167,139,250',  // violet
+    '#f59e0b': '245,158,11',   // gold
+    '#fb7185': '251,113,133',  // rose
+    '#60a5fa': '96,165,250',   // blue (default)
+};
+const toRgba = (hex: string) => COLOR_RGBA[hex] ?? '96,165,250';
+
 // ─── Zone Shell ───────────────────────────────────────────────────────────────
-// WO-567: Badge = teal ring + dark bg + white numeral across ALL zones.
-// accentColor drives TITLE TEXT ONLY — not the badge.
+// WO-523: Badge ring uses domain accentColor. Title = Title Case, #A8B5D1, no uppercase.
 const Zone: React.FC<{
     number: number;
     title: string;
     accentColor?: string;
     children: React.ReactNode;
-}> = ({ number, title, accentColor = C.teal, children }) => (
+}> = ({ number, title, accentColor = C.blue, children }) => (
     <div className="zone-card" style={{
         background: C.card,
         border: `1px solid ${C.border}`,
@@ -235,22 +196,21 @@ const Zone: React.FC<{
         padding: '28px 32px',
         marginBottom: 24,
         backdropFilter: 'blur(24px)',
-        boxShadow: '0 4px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(45,212,191,0.04)',
+        boxShadow: '0 4px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(96,165,250,0.04)',
     }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
-            {/* Badge: always teal‑ring / dark‑bg / white numeral */}
+            {/* WO-523: Badge uses domain accentColor ring */}
             <div style={{
                 width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                background: 'rgba(45,212,191,0.08)',
-                border: '1.5px solid rgba(45,212,191,0.35)',
+                background: `rgba(${toRgba(accentColor)},0.08)`,
+                border: `1.5px solid rgba(${toRgba(accentColor)},0.35)`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 15, fontWeight: 900, color: '#e2e8f0',
-                boxShadow: '0 0 12px rgba(45,212,191,0.12)',
             }}>{number}</div>
-            {/* Title uses semantic domain color */}
+            {/* WO-523: Title — Title Case, pale blue site color, no uppercase */}
             <h2 style={{
-                margin: 0, fontSize: 13, fontWeight: 800, color: accentColor,
-                textTransform: 'uppercase', letterSpacing: '0.14em', lineHeight: 1.2,
+                margin: 0, fontSize: 15, fontWeight: 800, color: '#A8B5D1',
+                lineHeight: 1.2,
             }}>{title}</h2>
         </div>
         {children}
@@ -263,8 +223,9 @@ const Accordion: React.FC<{
     defaultOpen?: boolean;
     accentColor?: string;
     children: React.ReactNode;
-}> = ({ label, defaultOpen = false, accentColor = '#2dd4bf', children }) => {
+}> = ({ label, defaultOpen = false, accentColor = C.blue, children }) => {
     const [open, setOpen] = React.useState(defaultOpen);
+    const rgba = toRgba(accentColor);
     return (
         <div style={{ marginBottom: 16 }}>
             <button
@@ -274,8 +235,8 @@ const Accordion: React.FC<{
                 style={{
                     width: '100%', display: 'flex', justifyContent: 'space-between',
                     alignItems: 'center', padding: '10px 14px', borderRadius: 10,
-                    background: `rgba(${accentColor === '#2dd4bf' ? '45,212,191' : accentColor === '#a78bfa' ? '167,139,250' : accentColor === '#f59e0b' ? '245,158,11' : '251,113,133'},0.06)`,
-                    border: `1px solid rgba(${accentColor === '#2dd4bf' ? '45,212,191' : accentColor === '#a78bfa' ? '167,139,250' : accentColor === '#f59e0b' ? '245,158,11' : '251,113,133'},0.18)`,
+                    background: `rgba(${rgba},0.06)`,
+                    border: `1px solid rgba(${rgba},0.18)`,
                     cursor: 'pointer', transition: 'background 0.2s',
                 }}
             >
@@ -333,7 +294,7 @@ const FeelingWave: React.FC<{
                     padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600,
                     background: `rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.12)`,
                     border: `1px solid rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.28)`,
-                    color: i % 2 === 0 ? C.teal : C.violet,
+                    color: i % 2 === 0 ? C.blue : C.violet,
                 }}>{f.label}</span>
             ))}
         </div>
@@ -470,7 +431,7 @@ const PatientReport: React.FC = () => {
                     filter: 'blur(70px)', pointerEvents: 'none',
                 }} />
 
-                {/* SVG Compass Rose — slow-spinning, opaque watermark */}
+                {/* SVG Compass Rose — WO-523: blue stroke */}
                 <div className="no-print" style={{
                     position: 'absolute', top: '50%', left: '50%',
                     transform: 'translate(-50%, -50%)',
@@ -478,41 +439,41 @@ const PatientReport: React.FC = () => {
                 }}>
                     <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"
                         className="compass-rose-ring" style={{ width: '100%', height: '100%' }}>
-                        <circle cx="100" cy="100" r="96" stroke="#2dd4bf" strokeWidth="0.75" strokeDasharray="4 8" />
-                        <circle cx="100" cy="100" r="80" stroke="#2dd4bf" strokeWidth="0.5" />
+                        <circle cx="100" cy="100" r="96" stroke={C.blue} strokeWidth="0.75" strokeDasharray="4 8" />
+                        <circle cx="100" cy="100" r="80" stroke={C.blue} strokeWidth="0.5" />
                         {[0, 45, 90, 135, 180, 225, 270, 315].map(deg => {
                             const rad = (deg * Math.PI) / 180;
                             const x1 = 100 + 82 * Math.sin(rad); const y1 = 100 - 82 * Math.cos(rad);
                             const x2 = 100 + 96 * Math.sin(rad); const y2 = 100 - 96 * Math.cos(rad);
-                            return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#2dd4bf" strokeWidth="0.75" />;
+                            return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke={C.blue} strokeWidth="0.75" />;
                         })}
                         {[0, 90, 180, 270].map(deg => {
                             const rad = (deg * Math.PI) / 180;
                             const tipX = 100 + 74 * Math.sin(rad); const tipY = 100 - 74 * Math.cos(rad);
                             const lX = 100 + 8 * Math.sin(rad + Math.PI / 2); const lY = 100 - 8 * Math.cos(rad + Math.PI / 2);
                             const rX = 100 + 8 * Math.sin(rad - Math.PI / 2); const rY = 100 - 8 * Math.cos(rad - Math.PI / 2);
-                            return <polygon key={deg} points={`${tipX},${tipY} ${lX},${lY} ${rX},${rY}`} fill="#2dd4bf" opacity="0.9" />;
+                            return <polygon key={deg} points={`${tipX},${tipY} ${lX},${lY} ${rX},${rY}`} fill={C.blue} opacity="0.9" />;
                         })}
-                        <circle cx="100" cy="100" r="5" fill="#2dd4bf" />
+                        <circle cx="100" cy="100" r="5" fill={C.blue} />
                     </svg>
                 </div>
 
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    {/* Brand pill */}
+                    {/* Brand pill — WO-523: blue accent */}
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-                        <div className="ppn-brand-pill">
-                            <div className="ppn-brand-pill-dot" />
+                        <div className="ppn-brand-pill" style={{ color: C.blue, background: 'rgba(96,165,250,0.08)', borderColor: 'rgba(96,165,250,0.25)' }}>
+                            <div className="ppn-brand-pill-dot" style={{ background: C.blue, boxShadow: '0 0 8px rgba(96,165,250,0.8)' }} />
                             PPN · Integration Compass
                         </div>
                     </div>
 
+                    {/* WO-522: "Journey" gets PPN brand blue gradient; "Your" stays solid slate-200 */}
                     <h1 style={{
                         fontSize: 44, fontWeight: 900, margin: '0 0 10px', lineHeight: 1.05,
-                        background: `linear-gradient(140deg, #e2e8f0 0%, #e2e8f0 30%, ${C.teal} 65%, ${C.gold} 100%)`,
-                        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                         letterSpacing: '-0.01em',
                     }}>
-                        Your Journey
+                        <span style={{ color: '#e2e8f0' }}>Your </span>
+                        <span className="text-gradient-primary">Journey</span>
                     </h1>
 
                     <p style={{ color: C.muted, fontSize: 14, margin: '0 0 20px', letterSpacing: '0.01em' }}>
@@ -530,7 +491,7 @@ const PatientReport: React.FC = () => {
                             PHASE 3 · INTEGRATION
                         </span>
                         <div style={{ width: 1, height: 12, background: 'rgba(45,212,191,0.2)' }} />
-                        <span style={{ fontSize: 12, color: C.teal, fontWeight: 700, letterSpacing: '0.06em' }}>
+                        <span style={{ fontSize: 12, color: C.blue, fontWeight: 700, letterSpacing: '0.06em' }}>
                             HEALING IN PROGRESS
                         </span>
                     </div>
@@ -563,11 +524,11 @@ const PatientReport: React.FC = () => {
                         {data.phq9Change != null && (
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: 16,
-                                background: `${C.teal}08`, border: `1px solid ${C.teal}20`,
+                                background: `${C.blue}08`, border: `1px solid ${C.blue}20`,
                                 borderRadius: 14, padding: '16px 20px', marginBottom: 16,
                             }}>
                                 <div style={{ textAlign: 'center', minWidth: 52 }}>
-                                    <div style={{ fontSize: 28, fontWeight: 900, color: C.teal }}>
+                                    <div style={{ fontSize: 28, fontWeight: 900, color: C.blue }}>
                                         {data.phq9Change > 0 ? `+${data.phq9Change}` : data.phq9Change}
                                     </div>
                                     <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: '0.08em' }}>PHQ-9</div>
@@ -609,7 +570,7 @@ const PatientReport: React.FC = () => {
                         {/* Context text — collapsible */}
                         <Accordion label="What These Feelings Mean" accentColor={C.violet}>
                             <div style={{
-                                background: `${C.teal}08`, border: `1px solid ${C.teal}20`,
+                                background: `${C.blue}08`, border: `1px solid ${C.blue}20`,
                                 borderRadius: 12, padding: '14px 18px',
                             }}>
                                 <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
@@ -623,7 +584,7 @@ const PatientReport: React.FC = () => {
 
                 {/* ── ZONE 3: The Neuroplastic Window ──────────────────────────── */}
                 {zones.z3 && (
-                    <Zone number={3} title="The Neuroplastic Window" accentColor={C.teal}>
+                    <Zone number={3} title="The Neuroplastic Window" accentColor={C.blue}>
                         <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 24, lineHeight: 1.75 }}>
                             {submitted
                                 ? 'Check-in recorded. Thank you for showing up for yourself today.'
@@ -637,20 +598,22 @@ const PatientReport: React.FC = () => {
                                 <SliderField label="Connection" fieldKey="connection" value={connection} onChange={setConnection} />
                                 <SliderField label="Anxiety Level" fieldKey="anxiety" value={anxiety} onChange={setAnxiety} />
 
+                                {/* WO-523: CTA uses indigo gradient — Phase 1 brand color */}
                                 <button
+                                    type="button"
                                     onClick={handleSubmit}
                                     className="no-print"
                                     style={{
                                         width: '100%', marginTop: 8, padding: '16px',
                                         borderRadius: 14, fontSize: 14, fontWeight: 700,
-                                        background: `linear-gradient(135deg, ${C.teal} 0%, #0e9f8e 100%)`,
-                                        border: 'none', color: '#050c1a', cursor: 'pointer',
-                                        boxShadow: '0 4px 20px rgba(45,212,191,0.25)',
+                                        background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                                        border: 'none', color: '#ffffff', cursor: 'pointer',
+                                        boxShadow: '0 4px 20px rgba(99,102,241,0.3)',
                                         transition: 'box-shadow 0.2s',
                                         letterSpacing: '0.04em',
                                     }}
-                                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 28px rgba(45,212,191,0.4)'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(45,212,191,0.25)'; }}
+                                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 28px rgba(99,102,241,0.5)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(99,102,241,0.3)'; }}
                                 >
                                     Record Today's Check-In
                                 </button>
@@ -663,10 +626,10 @@ const PatientReport: React.FC = () => {
                                 <SliderField label="Anxiety Level" fieldKey="anxiety" value={anxiety} onChange={() => { }} readOnly />
                                 <div style={{
                                     marginTop: 16, padding: '12px 16px', borderRadius: 12,
-                                    background: `${C.teal}08`, border: `1px solid ${C.teal}20`,
+                                    background: `${C.blue}08`, border: `1px solid ${C.blue}20`,
                                     display: 'flex', gap: 10, alignItems: 'center',
                                 }}>
-                                    <span style={{ fontSize: 18, color: C.teal }}>✓</span>
+                                    <span style={{ fontSize: 18, color: C.blue }}>✓</span>
                                     <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Check-in saved.</p>
                                 </div>
                             </>
@@ -736,7 +699,7 @@ const PatientReport: React.FC = () => {
                             display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 16,
                         }}>
                             {[
-                                { letter: 'P', label: 'Physical', desc: 'Move your body daily. Walk, stretch, swim. Your nervous system heals through motion.', color: C.teal },
+                                { letter: 'P', label: 'Physical', desc: 'Move your body daily. Walk, stretch, swim. Your nervous system heals through motion.', color: C.blue },
                                 { letter: 'E', label: 'Emotional', desc: 'Let feelings surface without judgment. Journal, cry, rest. This is not weakness, it is the work.', color: C.violet },
                                 { letter: 'M', label: 'Mental', desc: 'Notice the new patterns of thought emerging. Write them down before they fade.', color: '#818cf8' },
                                 { letter: 'S', label: 'Spiritual', desc: 'Whatever connection means to you, tend to it. Nature, community, stillness, creation.', color: C.gold },
@@ -807,7 +770,7 @@ const PatientReport: React.FC = () => {
                         aria-label="Share this Compass with your practitioner"
                         style={{
                             padding: '17px 14px', borderRadius: 14, fontSize: 14, fontWeight: 700,
-                            background: `linear-gradient(135deg, ${C.teal} 0%, #0e9f8e 100%)`,
+                            background: `linear-gradient(135deg, ${C.blue} 0%, #4f46e5 100%)`,
                             border: `1px solid rgba(45,212,191,0.4)`,
                             color: '#050c1a', cursor: 'pointer',
                             boxShadow: '0 4px 20px rgba(45,212,191,0.25)',
@@ -843,12 +806,12 @@ const PatientReport: React.FC = () => {
                 }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12, opacity: 0.5 }}>
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="8" cy="8" r="7" stroke="#2dd4bf" strokeWidth="1" />
-                            <line x1="8" y1="1" x2="8" y2="15" stroke="#2dd4bf" strokeWidth="0.75" />
-                            <line x1="1" y1="8" x2="15" y2="8" stroke="#2dd4bf" strokeWidth="0.75" />
-                            <circle cx="8" cy="8" r="1.5" fill="#2dd4bf" />
+                            <circle cx="8" cy="8" r="7" stroke={C.blue} strokeWidth="1" />
+                            <line x1="8" y1="1" x2="8" y2="15" stroke={C.blue} strokeWidth="0.75" />
+                            <line x1="1" y1="8" x2="15" y2="8" stroke={C.blue} strokeWidth="0.75" />
+                            <circle cx="8" cy="8" r="1.5" fill={C.blue} />
                         </svg>
-                        <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#2dd4bf' }}>
+                        <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.blue }}>
                             PPN Portal
                         </span>
                     </div>
