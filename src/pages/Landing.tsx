@@ -192,13 +192,6 @@ const Landing: React.FC = () => {
                 >
                   Join the Waitlist
                 </button>
-
-                <button
-                  onClick={() => navigate('/partner-demo')}
-                  className="flex-1 px-6 py-4 bg-transparent border-2 border-slate-600 hover:border-slate-500 text-slate-300 text-base font-semibold rounded-xl transition-all hover:bg-slate-900/50 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] active:scale-95"
-                >
-                  Watch Demo (2 min)
-                </button>
               </div>
 
               {/* Trust Indicators + Sign In link */}

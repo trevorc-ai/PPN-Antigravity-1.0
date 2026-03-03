@@ -276,24 +276,7 @@ export default function Dashboard() {
             <p className="ppn-meta text-slate-500 mt-1">{formatCurrentDate()}</p>
           </div>
 
-          {/* Top-right — informational, not a nav trap on mobile */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/analytics')}
-              className="flex items-center gap-3 px-5 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-indigo-500/40 text-slate-300 font-bold rounded-2xl transition-all text-sm whitespace-nowrap"
-            >
-              <BarChart3 className="w-4 h-4 text-indigo-400" />
-              Network Report
-            </button>
-            <button
-              data-tour="wellness-journey"
-              onClick={() => navigate('/wellness-journey')}
-              className="flex items-center gap-2 px-5 py-3 bg-indigo-600/15 hover:bg-indigo-600/25 border border-indigo-500/30 hover:border-indigo-500/60 text-indigo-300 font-bold rounded-2xl transition-all text-sm whitespace-nowrap"
-            >
-              <Plus className="w-4 h-4" />
-              Log Session
-            </button>
-          </div>
+
         </Section>
 
         {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}
