@@ -76,14 +76,14 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
                     <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
                         <button
                             onClick={() => setTimeRange('quarter')}
-                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'quarter' ? 'bg-indigo-600 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                            className={`px-4 py-2 min-h-[44px] rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'quarter' ? 'bg-indigo-600 text-slate-200 shadow-lg' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
                                 }`}
                         >
                             Q1 2026
                         </button>
                         <button
                             onClick={() => setTimeRange('year')}
-                            className={`px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'year' ? 'bg-indigo-600 text-slate-300 shadow-lg' : 'text-slate-500 hover:text-slate-300'
+                            className={`px-4 py-2 min-h-[44px] rounded-md text-xs font-bold uppercase tracking-wider transition-all ${timeRange === 'year' ? 'bg-indigo-600 text-slate-200 shadow-lg' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
                                 }`}
                         >
                             Last 12 Mo
