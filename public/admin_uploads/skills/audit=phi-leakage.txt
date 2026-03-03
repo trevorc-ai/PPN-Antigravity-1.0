@@ -1,0 +1,12 @@
+name: "audit_phi_leakage"
+    description: "Performs a strict forensic scan of the codebase to ensure no Personally Identifiable Information (PII) or Patient Health Information (PHI) variables have been introduced."
+    tools: 
+      - "grep_search"
+    instructions: |
+      PURPOSE: Enforce the PPN "No PHI" Zero-Knowledge architecture mandate.
+      TRIGGER: Run this skill before moving any ticket to the 04_QA or 99_DONE folders.
+      STEPS:
+      1. Use `grep_search` to scan the recently modified `.tsx` and `.ts` files.
+      2. Search for forbidden variable names and strings: 'patientName', 'dob', 'ssn', 'email', 'phone', 'address'.
+      3. IF FOUND: Immediately halt the workflow. Reject the ticket back to 03_BUILD, increment the `failure_count`, and log the exact file and line number of the breach.
+      4. IF CLEAN: Append "✅ PHI Audit Passed" to the ticket.

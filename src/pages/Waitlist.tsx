@@ -51,16 +51,17 @@ const VALUE_PROPS = [
 
 export const Waitlist: FC = () => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ firstName: '', email: '', practitionerType: '' });
+    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', practitionerType: '' });
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!form.firstName.trim() || !form.email.trim() || !form.practitionerType) return;
+        if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim() || !form.practitionerType) return;
         setStatus('loading');
         try {
             const { error } = await supabase.from('log_waitlist').insert({
                 first_name: form.firstName.trim(),
+                last_name: form.lastName.trim(),
                 email: form.email.trim().toLowerCase(),
                 practitioner_type: form.practitionerType,
                 source: 'ppn_portal_main',
@@ -76,7 +77,7 @@ export const Waitlist: FC = () => {
         }
     };
 
-    const isSubmittable = form.firstName.trim() && form.email.trim() && form.practitionerType;
+    const isSubmittable = form.firstName.trim() && form.lastName.trim() && form.email.trim() && form.practitionerType;
 
     return (
         <div className="min-h-screen bg-[#070b14] relative overflow-x-hidden flex flex-col font-sans text-slate-300 selection:bg-indigo-500/30">
@@ -251,6 +252,22 @@ export const Waitlist: FC = () => {
                                             placeholder="Your first name"
                                             value={form.firstName}
                                             onChange={(e) => setForm(f => ({ ...f, firstName: e.target.value }))}
+                                            className="w-full px-5 py-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium text-base"
+                                        />
+                                    </div>
+
+                                    {/* Last Name */}
+                                    <div>
+                                        <label htmlFor="last-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                            Last Name
+                                        </label>
+                                        <input
+                                            id="last-name"
+                                            type="text"
+                                            required
+                                            placeholder="Your last name"
+                                            value={form.lastName}
+                                            onChange={(e) => setForm(f => ({ ...f, lastName: e.target.value }))}
                                             className="w-full px-5 py-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium text-base"
                                         />
                                     </div>

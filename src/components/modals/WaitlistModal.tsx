@@ -21,7 +21,7 @@ interface WaitlistModalProps {
 
 export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ firstName: '', email: '', practitionerType: '' });
+    const [form, setForm] = useState({ firstName: '', lastName: '', email: '', practitionerType: '' });
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle');
 
     // Prevent background scrolling when modal is open
@@ -33,7 +33,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
             // Reset form when closed
             setTimeout(() => {
                 setStatus('idle');
-                setForm({ firstName: '', email: '', practitionerType: '', challenge: '' });
+                setForm({ firstName: '', lastName: '', email: '', practitionerType: '' });
             }, 300);
         }
         return () => { document.body.style.overflow = 'auto'; };
@@ -41,11 +41,12 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!form.firstName.trim() || !form.email.trim() || !form.practitionerType) return;
+        if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim() || !form.practitionerType) return;
         setStatus('loading');
         try {
             const { error: sbError } = await supabase.from('log_waitlist').insert({
                 first_name: form.firstName.trim(),
+                last_name: form.lastName.trim(),
                 email: form.email.trim().toLowerCase(),
                 practitioner_type: form.practitionerType,
                 source: 'ppn_portal_main',
@@ -187,6 +188,19 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <div>
+                                        <label htmlFor="modal-last-name" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
+                                        <input
+                                            id="modal-last-name"
+                                            type="text"
+                                            required
+                                            placeholder="Your last name"
+                                            value={form.lastName}
+                                            onChange={(e) => setForm(f => ({ ...f, lastName: e.target.value }))}
+                                            className="w-full px-4 py-3 bg-[#080c14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
+                                        />
+                                    </div>
+
+                                    <div>
                                         <label htmlFor="modal-email" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
                                         <input
                                             id="modal-email"
@@ -221,7 +235,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
 
                                     <button
                                         type="submit"
-                                        disabled={status === 'loading' || !form.firstName.trim() || !form.email.trim() || !form.practitionerType}
+                                        disabled={status === 'loading' || !form.firstName.trim() || !form.lastName.trim() || !form.email.trim() || !form.practitionerType}
                                         className="w-full py-4 mt-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl shadow-indigo-900/30 flex items-center justify-center gap-2"
                                     >
                                         {status === 'loading' ? (

@@ -13,7 +13,8 @@ import { LiveSessionTimeline } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
-import { createSessionVital } from '../../services/clinicalLog';
+import { createSessionVital, createTimelineEvent } from '../../services/clinicalLog';
+import { supabase } from '../../supabaseClient';
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -189,8 +190,27 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 if (!localStorage.getItem(SESSION_START_KEY)) {
                     localStorage.setItem(SESSION_START_KEY, String(Date.now()));
                 }
+                // WO-524: Write session_started_at to DB — authoritative timer source for TopHeader chips
+                const sid = journey.sessionId ?? journey.session?.sessionId;
+                const UUID_RE_MODE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                if (sid && UUID_RE_MODE.test(sid)) {
+                    supabase.from('log_clinical_records')
+                        .update({ session_started_at: new Date().toISOString() })
+                        .eq('id', sid)
+                        .then(({ error }) => { if (error) console.warn('[Session] Failed to write session_started_at:', error); });
+                }
             } else if (nextMode === 'pre') {
                 localStorage.removeItem(SESSION_START_KEY);
+            } else if (nextMode === 'post') {
+                // WO-524: Write session_ended_at to DB — chips disappear when session is closed out
+                const sid = journey.sessionId ?? journey.session?.sessionId;
+                const UUID_RE_MODE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                if (sid && UUID_RE_MODE.test(sid)) {
+                    supabase.from('log_clinical_records')
+                        .update({ session_ended_at: new Date().toISOString() })
+                        .eq('id', sid)
+                        .then(({ error }) => { if (error) console.warn('[Session] Failed to write session_ended_at:', error); });
+                }
             }
         } catch { /* quota exceeded */ }
     };
@@ -296,6 +316,31 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 });
             } catch (err) {
                 console.warn('[Session Update] Failed to sync clinical vital:', err);
+            }
+        }
+
+        // BUG-529-05: Persist observation fields to timeline ledger
+        const UUID_RE_DSP = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        const realSessionId = journey.sessionId ?? journey.session?.sessionId;
+        if (realSessionId && UUID_RE_DSP.test(realSessionId)) {
+            const obsParts: string[] = [];
+            if (updateAffect) obsParts.push(`Affect: ${updateAffect}`);
+            if (updateResponsiveness) obsParts.push(`Resp: ${updateResponsiveness}`);
+            if (updateComfort) obsParts.push(`Comfort: ${updateComfort}`);
+            if (updateNote.trim()) obsParts.push(updateNote.trim());
+            if (obsParts.length > 0) {
+                try {
+                    const { data: { user: obsUser } } = await supabase.auth.getUser();
+                    await createTimelineEvent({
+                        session_id: realSessionId,
+                        event_timestamp: new Date().toISOString(),
+                        event_type: 'patient_observation',
+                        performed_by: obsUser?.id ?? undefined,
+                        metadata: { event_description: obsParts.join(' · ') },
+                    });
+                } catch (err) {
+                    console.warn('[Session Update] Failed to write observation timeline event:', err);
+                }
             }
         }
 
@@ -972,7 +1017,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note — optional</label>
                             <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
-                            <p className="text-xs text-slate-600 mt-1 italic">Session-local only — exported with session summary. Not logged to the database.</p>
+                            <p className="text-xs text-slate-600 mt-1 italic">Observation fields are saved to the session timeline. Vitals are logged to the clinical record.</p>
                         </div>
                         <button onClick={handleSaveUpdate}
                             className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
@@ -1135,11 +1180,28 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 {COMPANION_FEELINGS.map(f => (
                                     <button
                                         key={f.id}
-                                        onClick={() => {
+                                        onClick={async () => {
+                                            // Keep localStorage write for same-tab display
                                             const key = `companion_logs_${journey.sessionId || 'demo-1'}`;
                                             const existing = JSON.parse(localStorage.getItem(key) || '[]');
                                             existing.push({ timestamp: new Date().toISOString(), feeling: f.id });
                                             localStorage.setItem(key, JSON.stringify(existing));
+                                            // BUG-529-06: Also persist to timeline ledger
+                                            const UUID_RE_COMP = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                                            const sid = journey.sessionId;
+                                            if (sid && UUID_RE_COMP.test(sid)) {
+                                                try {
+                                                    await createTimelineEvent({
+                                                        session_id: sid,
+                                                        event_timestamp: new Date().toISOString(),
+                                                        event_type: 'patient_observation',
+                                                        performed_by: undefined, // companion = patient interface
+                                                        metadata: { event_description: `Patient reported: ${f.label}` },
+                                                    });
+                                                } catch (err) {
+                                                    console.warn('[Companion] Failed to write feeling to timeline:', err);
+                                                }
+                                            }
                                         }}
                                         className={`${f.color} backdrop-blur-lg border rounded-xl px-2 py-3 text-xs font-bold tracking-wide uppercase text-center transition-all duration-200 active:scale-95 active:brightness-150 shadow-lg`}
                                         aria-label={`Log feeling: ${f.label}`}

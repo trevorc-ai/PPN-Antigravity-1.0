@@ -416,7 +416,8 @@ const InteractionChecker: React.FC = () => {
                 value={selectedPsychedelic}
                 onChange={(e) => setSelectedPsychedelic(e.target.value)}
                 disabled={refLoading}
-                className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait" style={{ color: '#8B9DC3' }}
+                className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary focus:outline-none appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait"
+                style={{ color: '#8B9DC3', WebkitAppearance: 'none' }}
               >
                 <option value="">{refLoading ? 'Loading...' : 'Select Controlled Substance...'}</option>
                 {substances.map(s => (
@@ -431,7 +432,7 @@ const InteractionChecker: React.FC = () => {
             </div>
             <div className="flex items-center gap-2 px-2">
               <span className="material-symbols-outlined text-sm text-slate-400">lock</span>
-              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Validated Protocol List Only</span>
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Validated List Only</span>
             </div>
           </section>
 

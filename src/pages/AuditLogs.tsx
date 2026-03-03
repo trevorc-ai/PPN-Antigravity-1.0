@@ -153,7 +153,7 @@ const AuditLogs: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex gap-1 bg-[#0a0c10] p-1.5 rounded-2xl border border-slate-800 overflow-x-auto shrink-0">
+        <div className="flex gap-1 bg-[#0a0c10] p-1.5 rounded-2xl border border-slate-800 overflow-x-auto w-full sm:w-auto">
           {['All', 'Security', 'Clinical'].map((filter) => (
             <button
               key={filter}

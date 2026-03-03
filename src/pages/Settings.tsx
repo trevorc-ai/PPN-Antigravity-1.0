@@ -1,13 +1,72 @@
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import { useToast } from '../contexts/ToastContext'; // WO-109
+import { supabase } from '../supabaseClient';
 
 const Settings: React.FC = () => {
   const { addToast } = useToast();
   const navigate = useNavigate();
+
+  // WO-527: Site Team Enrollment state
+  interface SiteTeamMember { user_id: string; role: string; is_active: boolean; }
+  const [siteTeam, setSiteTeam] = useState<SiteTeamMember[]>([]);
+  const [enrollEmail, setEnrollEmail] = useState('');
+  const [enrollRole, setEnrollRole] = useState('clinician');
+  const [enrollLoading, setEnrollLoading] = useState(false);
+
+  const fetchTeam = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data: mySite } = await supabase.from('log_user_sites')
+      .select('site_id').eq('user_id', user.id).eq('is_active', true).maybeSingle();
+    if (!mySite) return;
+    const { data: team } = await supabase.from('log_user_sites')
+      .select('user_id, role, is_active').eq('site_id', mySite.site_id);
+    setSiteTeam(team ?? []);
+  }, []);
+
+  useEffect(() => { fetchTeam(); }, [fetchTeam]);
+
+  const handleEnroll = async () => {
+    if (!enrollEmail.trim()) return;
+    setEnrollLoading(true);
+    try {
+      const { data: profile, error: pErr } = await supabase
+        .from('log_user_profiles').select('user_id')
+        .eq('email', enrollEmail.trim()).maybeSingle();
+      if (pErr || !profile) {
+        addToast({ title: 'User not found', message: `No PPN account found for ${enrollEmail}`, type: 'error' });
+        return;
+      }
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: mySite } = await supabase.from('log_user_sites')
+        .select('site_id').eq('user_id', user!.id).eq('is_active', true).maybeSingle();
+      if (!mySite) {
+        addToast({ title: 'No site found', message: 'You must be enrolled at a site to enroll others.', type: 'error' });
+        return;
+      }
+      const { error: iErr } = await supabase.from('log_user_sites').insert([{
+        user_id: profile.user_id, site_id: mySite.site_id, role: enrollRole, is_active: true,
+      }]);
+      if (iErr) throw iErr;
+      addToast({ title: 'Enrolled', message: `${enrollEmail} added as ${enrollRole}.`, type: 'success' });
+      setEnrollEmail('');
+      fetchTeam();
+    } catch (err: any) {
+      addToast({ title: 'Enrollment failed', message: err?.message ?? String(err), type: 'error' });
+    } finally {
+      setEnrollLoading(false);
+    }
+  };
+
+  const deactivateMember = async (userId: string) => {
+    await supabase.from('log_user_sites').update({ is_active: false }).eq('user_id', userId);
+    setSiteTeam(prev => prev.map(m => m.user_id === userId ? { ...m, is_active: false } : m));
+    addToast({ title: 'Deactivated', message: 'Practitioner removed from site team.', type: 'info' });
+  };
 
   const handleMFA = () => {
     addToast({
@@ -28,7 +87,7 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <PageContainer className="animate-in fade-in duration-700 pb-20">
+    <PageContainer className="animate-in fade-in duration-700 pb-20 pt-4 sm:pt-0">
       <Section spacing="spacious">
 
         {/* Header Area */}
@@ -111,45 +170,29 @@ const Settings: React.FC = () => {
             <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
           </div>
 
-          <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl divide-y divide-slate-800/40">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Anonymize - LOCKED ON */}
-            <div className="p-8 flex items-center justify-between gap-6">
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold" style={{ color: '#8B9DC3' }}>Anonymize Patient Data in Exports</h3>
-                  <span className="material-symbols-outlined text-sm text-clinical-green">lock</span>
-                </div>
-                <p className="text-sm text-slate-400 max-w-md font-medium leading-relaxed">
-                  PII (Personally Identifiable Information) is automatically scrubbed from all research datasets.
-                  <span className="block text-clinical-green mt-1 font-bold text-xs">ENFORCED BY INSTITUTIONAL POLICY</span>
-                </p>
+            <div className="bg-[#111418]/60 border border-slate-800 rounded-2xl p-6 space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-base" style={{ color: '#53d22d' }}>lock</span>
+                <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: '#8B9DC3' }}>Anonymize Patient Data in Exports</h3>
               </div>
-              {/* Static Locked Switch */}
-              <div className="relative w-14 h-8 rounded-full bg-clinical-green/20 shadow-[0_0_12px_rgba(83,210,45,0.2)] opacity-80 cursor-not-allowed">
-                <div className="absolute top-1 left-7 size-6 bg-clinical-green rounded-full shadow-md flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[14px] text-black font-bold">lock</span>
-                </div>
-              </div>
+              <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                PII (Personally Identifiable Information) is automatically scrubbed from all research datasets.
+              </p>
+              <span className="inline-block text-xs font-black uppercase tracking-widest" style={{ color: '#53d22d' }}>Enforced by institutional policy</span>
             </div>
 
             {/* HIPAA - LOCKED ON */}
-            <div className="p-8 flex items-center justify-between gap-6">
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-slate-300">
-                  <h3 className="text-base font-bold">HIPAA Compliance Logging</h3>
-                  <span className="material-symbols-outlined text-sm text-clinical-green">lock</span>
-                </div>
-                <p className="text-sm text-slate-400 max-w-md font-medium leading-relaxed">
-                  All data access events are cryptographically signed and logged for audit trails.
-                  <span className="block text-clinical-green mt-1 font-bold text-xs">ACTIVE & MONITORING</span>
-                </p>
+            <div className="bg-[#111418]/60 border border-slate-800 rounded-2xl p-6 space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-base" style={{ color: '#53d22d' }}>lock</span>
+                <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: '#8B9DC3' }}>HIPAA Compliance Logging</h3>
               </div>
-              {/* Static Locked Switch */}
-              <div className="relative w-14 h-8 rounded-full bg-clinical-green/20 shadow-[0_0_12px_rgba(83,210,45,0.2)] opacity-80 cursor-not-allowed">
-                <div className="absolute top-1 left-7 size-6 bg-clinical-green rounded-full shadow-md flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[14px] text-black font-bold">lock</span>
-                </div>
-              </div>
+              <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                All data access events are cryptographically signed and logged for audit trails.
+              </p>
+              <span className="inline-block text-xs font-black uppercase tracking-widest" style={{ color: '#53d22d' }}>Active &amp; monitoring</span>
             </div>
           </div>
         </div>
@@ -289,6 +332,79 @@ const Settings: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* ── Site Team Enrollment (WO-527) ──────────────────────────────── */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2.5 ml-1">
+            <span className="material-symbols-outlined text-slate-300 text-xl">group_add</span>
+            <h2 className="text-sm font-black uppercase tracking-widest whitespace-nowrap" style={{ color: '#A8B5D1' }}>Site Team</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
+          </div>
+
+          <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] overflow-hidden shadow-2xl divide-y divide-slate-800/40">
+
+            {/* Current enrolled team */}
+            <div className="p-8 space-y-3">
+              <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Enrolled Practitioners</p>
+              {siteTeam.length === 0 ? (
+                <p className="text-sm text-slate-600 italic">No practitioners enrolled yet. Use the form below to add your team.</p>
+              ) : (
+                siteTeam.map(member => (
+                  <div key={member.user_id} className="flex items-center justify-between px-5 py-4 bg-slate-900/40 border border-slate-800/60 rounded-2xl">
+                    <div className="space-y-0.5">
+                      <p className="text-sm font-bold" style={{ color: '#8B9DC3' }}>{member.user_id.slice(0, 8)}…</p>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">
+                        {member.role} · {member.is_active ? <span className="text-emerald-500">Active</span> : <span className="text-slate-600">Inactive</span>}
+                      </p>
+                    </div>
+                    {member.is_active && (
+                      <button
+                        onClick={() => deactivateMember(member.user_id)}
+                        className="text-xs font-black text-red-400 hover:text-red-300 uppercase tracking-widest transition-colors"
+                      >
+                        Deactivate
+                      </button>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Enroll new practitioner */}
+            <div className="p-8 space-y-4">
+              <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Enroll Practitioner</p>
+              <p className="text-sm text-slate-500">The practitioner must already have a PPN account. Enrollment grants access to all active sessions at your site.</p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  placeholder="practitioner@clinic.com"
+                  value={enrollEmail}
+                  onChange={e => setEnrollEmail(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleEnroll()}
+                  className="flex-1 px-4 py-3 bg-slate-900/60 border border-slate-800 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 transition-colors"
+                />
+                <select
+                  value={enrollRole}
+                  onChange={e => setEnrollRole(e.target.value)}
+                  className="px-4 py-3 bg-slate-900/60 border border-slate-800 rounded-xl text-slate-200 text-sm focus:outline-none transition-colors"
+                >
+                  <option value="clinician">Clinician (Assisting)</option>
+                  <option value="site_admin">Site Admin (Lead)</option>
+                  <option value="analyst">Analyst (Observer)</option>
+                </select>
+                <button
+                  onClick={handleEnroll}
+                  disabled={!enrollEmail.trim() || enrollLoading}
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-sm rounded-xl uppercase tracking-widest transition-all shadow-xl active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  {enrollLoading ? 'Enrolling…' : 'Enroll'}
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </Section>
     </PageContainer>
   );

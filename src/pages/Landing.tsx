@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import {
   Loader2,
@@ -50,6 +50,13 @@ const Landing: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scrollY, setScrollY] = useState(0);
+  const frankensteinRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: frankProgress } = useScroll({
+    target: frankensteinRef,
+    offset: ['start end', 'end start'],
+  });
+  const cardParallaxY = useTransform(frankProgress, [0, 1], [60, -60]);
+  const glowParallaxY = useTransform(frankProgress, [0, 1], [30, -30]);
   const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
 
   useEffect(() => {
@@ -147,7 +154,7 @@ const Landing: React.FC = () => {
             >
               <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-xs sm:text-sm font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
                 <span className="material-symbols-outlined text-lg">grid_view</span>
-                Augmented Intelligence
+                Augmented Intelligence for Psychedelic Therapy
               </div>
               <h1 className="text-4xl leading-tight sm:text-6xl lg:text-7xl font-black tracking-tighter text-slate-300 relative z-10 mt-4 mb-2 drop-shadow-md break-words">
                 Elevate your practice.
@@ -188,14 +195,13 @@ const Landing: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigate('/waitlist')}
-                  className="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/90 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
+                  className="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
                   Join the Waitlist
                 </button>
-
                 <button
                   onClick={() => navigate('/partner-demo')}
-                  className="flex-1 px-6 py-4 bg-transparent border-2 border-slate-600 hover:border-slate-500 text-slate-300 text-base font-semibold rounded-xl transition-all hover:bg-slate-900/50 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] active:scale-95"
+                  className="flex-1 px-8 py-4 bg-transparent hover:bg-slate-800 text-slate-300 text-base font-black rounded-xl uppercase tracking-wide transition-all border border-slate-700 hover:border-slate-500 active:scale-95"
                 >
                   Watch Demo (2 min)
                 </button>
@@ -457,7 +463,7 @@ const Landing: React.FC = () => {
       </section>
 
       {/* SECTION: Unified Clinical Operations - NEW */}
-      <section className="py-24 px-6 relative z-10" >
+      <section ref={frankensteinRef} className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div className="space-y-32 pb-16 lg:pb-[30vh]">
             <div className="space-y-8">
@@ -511,8 +517,8 @@ const Landing: React.FC = () => {
               </div>
             </motion.div>
           </div>
-          <div className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
-            <div className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
+          <motion.div style={{ y: cardParallaxY }} className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
+            <motion.div style={{ y: glowParallaxY }} className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
             <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 overflow-hidden group shadow-2xl">
 
               {/* Complex Connectivity Grid */}
@@ -588,7 +594,7 @@ const Landing: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

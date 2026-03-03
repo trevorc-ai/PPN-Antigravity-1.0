@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { Loader2, AlertCircle, Activity, ShieldCheck, Info } from 'lucide-react';
@@ -17,7 +17,11 @@ const Login: React.FC = () => {
     .replace(/-/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase()) || 'your page';
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => {
+    // BUG-518-12: Pre-populate email from localStorage on return visits.
+    // Practitioner B2B context only — not patient PHI.
+    return localStorage.getItem('ppn_last_email') || '';
+  });
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +44,8 @@ const Login: React.FC = () => {
       if (error) throw error;
 
       if (data.session) {
+        // BUG-518-12: Persist email for pre-population on next visit.
+        localStorage.setItem('ppn_last_email', email);
         navigate(from, { replace: true });
       }
 
@@ -199,13 +205,14 @@ const Login: React.FC = () => {
 
 
 
-              {/* Sign Up */}
+              {/* Invitation-only notice — replaces dead Sign Up link (BUG-518-03) */}
               <div className="text-center pt-2 border-t border-slate-800/60">
                 <p className="text-sm text-slate-500 font-medium">
-                  Don't have an account?{' '}
-                  <Link to="/academy" className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors">
-                    Sign Up
-                  </Link>
+                  PPN Portal is{' '}
+                  <span className="text-slate-400 font-bold">invitation-only.</span>
+                </p>
+                <p className="text-xs text-slate-600 font-medium mt-1">
+                  Access is granted by your PPN administrator via email invitation.
                 </p>
               </div>
             </form>
