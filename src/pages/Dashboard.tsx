@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Activity, AlertTriangle, TrendingUp, Users,
-  Map, Zap, BrainCircuit, ArrowRight, Plus, ShieldCheck, Clock,
+  Map, ArrowRight, Plus, Clock,
   CheckCircle, BarChart3, Target
 } from 'lucide-react';
-
 
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import SafetyRiskMatrix from '../components/analytics/SafetyRiskMatrix';
 import { usePractitionerProtocols } from '../hooks/usePractitionerProtocols';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../supabaseClient';
+import GuidedTour from '../components/GuidedTour';
 
 // --- COMPONENT: CLINIC PERFORMANCE CARD (PRIMARY) ---
 interface ClinicPerformanceCardProps {
@@ -172,9 +174,64 @@ const MetricPill: React.FC<MetricPillProps> = ({ icon: Icon, label, value, color
   </div>
 );
 
+// ── Personalized greeting helpers ────────────────────────────────────────────
+function getTimeOfDayGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function formatCurrentDate(): string {
+  return new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { protocols, loading: protocolsLoading, refetch, lastFetchedAt } = usePractitionerProtocols();
+
+  // ── Auto-tour on first login ───────────────────────────────────────────────
+  const [showTour, setShowTour] = useState(false);
+  const tourTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const toured = user.user_metadata?.onboarding_toured === true;
+    if (!toured) {
+      tourTimerRef.current = setTimeout(() => setShowTour(true), 1500);
+    }
+    return () => {
+      if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
+    };
+  }, [user]);
+
+  const handleTourComplete = async () => {
+    setShowTour(false);
+    await supabase.auth.updateUser({ data: { onboarding_toured: true } });
+  };
+
+  // ── Personalized display name ──────────────────────────────────────────────
+  const [displayName, setDisplayName] = useState<string>('');
+
+  useEffect(() => {
+    if (!user) return;
+    // Instant fallback from email while profile loads
+    const emailPrefix = user.email?.split('@')[0] ?? 'there';
+    setDisplayName(emailPrefix);
+
+    (async () => {
+      const { data } = await supabase
+        .from('clinician_profiles')
+        .select('display_name, full_name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (data?.display_name) setDisplayName(data.display_name);
+      else if (data?.full_name) setDisplayName(data.full_name.split(' ')[0]);
+    })();
+  }, [user]);
+
+  const hasProtocols = protocols.length > 0;
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] overflow-hidden text-slate-300">
@@ -213,9 +270,10 @@ export default function Dashboard() {
                 {protocolsLoading ? '...' : '↻ Refresh'}
               </button>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter mt-4" style={{ color: '#A8B5D1' }}>
-              Dashboard
+            <h1 className="ppn-page-title mt-4" style={{ color: '#A8B5D1' }}>
+              {displayName ? `${getTimeOfDayGreeting()}, ${displayName}.` : getTimeOfDayGreeting() + '.'}
             </h1>
+            <p className="ppn-meta text-slate-500 mt-1">{formatCurrentDate()}</p>
           </div>
 
           {/* Top-right — informational, not a nav trap on mobile */}
@@ -247,18 +305,18 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <ClinicPerformanceCard
               title="Protocols Logged"
-              value={protocols.length > 0 ? String(protocols.length) : '23'}
-              change={protocols.length > 0 ? '+12%' : '+12%'}
-              comparison={protocols.length > 0 ? 'Network avg: 18' : 'Network avg: 18'}
+              value={hasProtocols ? String(protocols.length) : '--'}
+              change={hasProtocols ? '+12%' : 'No data yet'}
+              comparison={hasProtocols ? 'Network avg: 18' : 'Log your first session to start tracking'}
               icon={BarChart3}
               color="bg-indigo-500"
             />
             <ClinicPerformanceCard
               title="Benchmark Score"
-              value={protocols.length > 0 ? '71%' : '71%'}
-              change={protocols.length > 0 ? '+3%' : '+3%'}
-              comparison={protocols.length > 0 ? 'Network avg: 68%' : 'Network avg: 68%'}
-              percentile={protocols.length > 0 ? '62nd percentile' : '62nd percentile'}
+              value={hasProtocols ? '71%' : '--'}
+              change={hasProtocols ? '+3%' : 'No data yet'}
+              comparison={hasProtocols ? 'Network avg: 68%' : 'Log your first session to start tracking'}
+              percentile={hasProtocols ? '62nd percentile' : undefined}
               icon={Target}
               color="bg-emerald-500"
             />
@@ -273,9 +331,9 @@ export default function Dashboard() {
             />
             <ClinicPerformanceCard
               title="Avg Session Time"
-              value={protocols.length > 0 ? '4.2 hrs' : '4.2 hrs'}
-              change={protocols.length > 0 ? '+0.3' : '+0.3'}
-              comparison={protocols.length > 0 ? 'Network avg: 4.0 hrs' : 'Network avg: 4.0 hrs'}
+              value={hasProtocols ? '4.2 hrs' : '--'}
+              change={hasProtocols ? '+0.3' : 'No data yet'}
+              comparison={hasProtocols ? 'Network avg: 4.0 hrs' : 'Log your first session to start tracking'}
               icon={Clock}
               color="bg-blue-500"
             />
@@ -422,7 +480,10 @@ export default function Dashboard() {
           </div>
         </Section>
 
-      </PageContainer >
+      </PageContainer>
+
+      {/* Auto-tour overlay — renders outside PageContainer to occupy fixed position */}
+      {showTour && <GuidedTour onComplete={handleTourComplete} />}
     </div>
   );
 }

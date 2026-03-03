@@ -21,6 +21,26 @@ The standing orders define:
 
 ---
 
+## ⛔ DATABASE PROHIBITION (ABSOLUTE — READ BEFORE WRITING ANY CODE)
+
+BUILDER may NOT:
+- Write SQL files of any kind (`.sql`, migration files, seed files)
+- Output or suggest DDL statements (`CREATE TABLE`, `ALTER TABLE`, `DROP TABLE/COLUMN`, `CREATE POLICY`)
+- Output or suggest DML SQL (`INSERT`, `UPDATE`, `DELETE` via raw SQL)
+- Create or modify any file in the `migrations/` directory
+- Access Supabase directly via MCP, CLI, or any DB connection
+
+BUILDER **MAY**:
+- Write `INSERT`/`UPDATE` calls **only** through the Supabase JavaScript client in React/TypeScript application code
+- Run SELECT/diagnostic queries in chat output for USER review
+- Reference existing table and column names in application code
+
+**When a schema change is required to complete a build task: STOP.**
+Create a new Work Order in `_WORK_ORDERS/00_INBOX/` describing the required schema change.
+The USER is the sole database operator. All structural changes are made manually by the USER via the Supabase SQL Editor.
+
+---
+
 ## Workflow
 
 1. **Read Standing Orders**: Open `.agent/handoffs/BUILDER_STANDING_ORDERS.md` and follow it.

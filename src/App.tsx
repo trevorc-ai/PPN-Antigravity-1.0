@@ -22,6 +22,7 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Academy = lazy(() => import('./pages/Academy'));
 const PartnerDemoHub = lazy(() => import('./pages/PartnerDemoHub'));
+const PatientReport = lazy(() => import('./pages/PatientReport'));
 
 // ── Tier 2: Post-Auth Entry Points ───────────────────────────────────────────
 const SimpleSearch = lazy(() => import('./pages/SimpleSearch'));
@@ -285,6 +286,8 @@ const AppContent: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/academy" element={<Academy />} />
           <Route path="/partner-demo" element={<PartnerDemoHub />} />
+          {/* Patient-facing shareable report — no auth required */}
+          <Route path="/patient-report" element={<PatientReport />} />
 
           {/* Deep Dives (Public Marketing Pages) */}
           <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />

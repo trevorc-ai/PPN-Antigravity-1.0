@@ -21,3 +21,23 @@ src/pages/ResetPassword.tsx
 # src/pages/InteractionChecker.tsx
 # src/components/wellness-journey/DosingSessionPhase.tsx
 # src/components/wellness-journey/LiveSessionTimeline.tsx
+
+## Housecleaning Standard
+Files eligible for daily archive (move OUT of project, NOT delete):
+- _WORK_ORDERS/99_COMPLETED/ — any ticket older than 7 days
+- docs/ — any .md file not referenced in 7 days
+- public/admin_uploads/ — any file not referenced by src/ code
+- migrations/ — any SQL file prefixed 999_ (test/seed files)
+
+Files NEVER eligible for housecleaning (active):
+- src/ — all source code
+- migrations/ (except 999_ prefix)
+- _WORK_ORDERS/00_INBOX through 05_USER_REVIEW/
+- FREEZE.md, agent.yaml, GLOBAL_CONSTITUTION.md
+
+## Milestone Freeze Protocol
+When a page or component is declared "demo-ready":
+1. Add its file path to the protected list above
+2. No agent ticket may modify that file until YOU manually remove it from this list
+3. INSPECTOR rejects any ticket touching a frozen file — no exceptions
+

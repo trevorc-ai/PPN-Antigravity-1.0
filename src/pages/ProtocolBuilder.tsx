@@ -267,9 +267,9 @@ export const ProtocolBuilder = () => {
             <span className="font-medium">Back to Protocols</span>
           </button>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <h1 className="text-3xl font-bold text-[#f8fafc]">Protocol Builder</h1>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center gap-4">
               {/* Progress Indicator */}
               <div className="flex items-center gap-3">
                 <div className="text-right">

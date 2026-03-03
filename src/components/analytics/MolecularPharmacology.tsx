@@ -91,7 +91,7 @@ export default function MolecularPharmacology() {
     return (
         <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-8 h-full overflow-y-auto custom-scrollbar">
             {/* Header & Tabs */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex flex-col items-start gap-4">
                 <div title="Visualizing receptor binding potential ($K_i$ affinity) across target sites">
                     <h2 className="text-xl font-black text-slate-300 tracking-tighter flex items-center gap-2">
                         <Dna className="text-indigo-500" />
@@ -101,7 +101,7 @@ export default function MolecularPharmacology() {
                         Receptor Binding Potential (Standardized $K_i$ Affinity).
                     </p>
                 </div>
-                <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto no-scrollbar shrink-0 max-w-full">
+                <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto w-full">
                     {Object.keys(MOLECULES).map((key) => (
                         <button
                             key={key}

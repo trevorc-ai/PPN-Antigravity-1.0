@@ -15,16 +15,25 @@ const ResetPassword: React.FC = () => {
     const [validToken, setValidToken] = useState(false);
 
     useEffect(() => {
-        // Check if we have a valid recovery token
-        const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                setValidToken(true);
-            } else {
-                setError('Invalid or expired recovery link. Please request a new one.');
+        // Listen for PASSWORD_RECOVERY event, this fires when Supabase processes
+        // the #access_token hash in the URL from the reset email link.
+        // getSession() alone fires too early (before hash is parsed).
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (event, session) => {
+                if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+                    setValidToken(true);
+                } else if (!session) {
+                    setError('Invalid or expired recovery link. Please request a new one.');
+                }
             }
-        };
-        checkSession();
+        );
+
+        // Also check existing session (handles page refresh after token already parsed)
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) setValidToken(true);
+        });
+
+        return () => subscription.unsubscribe();
     }, []);
 
     const validatePassword = (pwd: string): string | null => {

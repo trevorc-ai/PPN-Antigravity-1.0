@@ -1,0 +1,803 @@
+================================================================================
+PPN PORTAL — DATABASE STATE REVIEW
+Third-Party Secondary Review Document
+================================================================================
+Prepared by:   INSPECTOR (AI Database Compliance Auditor)
+Session date:  2026-02-28
+Time range:    ~10:30 PST — 12:47 PST
+Branch:        feature/governance-and-p0-fixes
+Git HEAD:      500cb73
+Migration:     079_zero_free_text_remediation.sql (applied live, committed to repo)
+Database:      Supabase (PostgreSQL 15), project: ppnportal
+Schema:        public (all clinical tables)
+
+PURPOSE OF THIS DOCUMENT
+--------------------------------------------------------------------------------
+This document provides a complete, human-readable record of all schema changes
+applied to the PPN Portal database on 2026-02-28, the current state of every
+log_ and ref_ table, all RLS policies, foreign key relationships, and CHECK
+constraints. It is intended for external (third-party) secondary review,
+confirmation, and validation of the session's outcomes.
+
+GOVERNANCE CONTEXT
+--------------------------------------------------------------------------------
+Zero Free-Text Golden Rule:
+  Every log_ table may ONLY contain:
+    - Foreign Keys (uuid or integer ending in _id) pointing to ref_ tables
+    - Numbers (integer, numeric, float) for quantifiable measurements
+    - Timestamps (timestamp, date)
+    - Cryptographic hashes, machine identifiers, and Stripe external IDs
+    - CHECK-constrained enum varchar columns (limited finite value sets)
+  Free-text (TEXT/VARCHAR) practitioner narrative inputs are STRICTLY PROHIBITED
+  in all log_ tables to eliminate PII/PHI liability.
+
+Additive Database Policy:
+  - Columns and tables are only ADDED, never modified in place
+  - Drops are only permitted when a FK replacement column exists and is verified
+    to be populated (zero-orphan pre-flight confirmed before every DROP)
+  - Row Level Security (RLS) is mandatory on all public schema tables
+
+================================================================================
+SECTION 1 — CHANGES MADE THIS SESSION
+================================================================================
+
+1.1 TABLE DELETIONS
+--------------------------------------------------------------------------------
+Table:  log_chain_of_custody
+Reason: USER decision — Batch Tracking functionality removed from scope entirely.
+        All 8+ columns in this table were text violations (PHI/PII risk).
+        Relevant migration (074_add_destruction_witness_id_fk.sql) is now moot.
+Action: DROP TABLE log_chain_of_custody CASCADE
+
+1.2 NEW REFERENCE TABLES CREATED (7 tables)
+--------------------------------------------------------------------------------
+All new ref_ tables share the same pattern:
+  - BIGINT primary key (GENERATED ALWAYS AS IDENTITY)
+  - Unique code column for machine reference
+  - Label column for UI display
+  - is_active BOOLEAN (soft-delete pattern)
+  - created_at TIMESTAMPTZ
+  - RLS: SELECT policy for authenticated users (is_active = TRUE only)
+
+TABLE: ref_clinical_phenotypes
+  PK:     clinical_phenotype_id BIGINT
+  Unique: phenotype_code TEXT
+  Cols:   phenotype_name TEXT, icd10_category TEXT, is_active BOOLEAN, created_at
+  RLS:    SELECT authenticated WHERE is_active = TRUE
+  Seeds:  TRD, MDD, PTSD, AUD, SUD, OCD, GAD, EXIST (EOL), EAT, CHRONIC, OTHER
+  FK from: log_clinical_records.clinical_phenotype_id
+
+TABLE: ref_contraindication_verdicts
+  PK:     verdict_id BIGINT
+  Unique: verdict_code TEXT
+  Cols:   verdict_label TEXT, ui_color_hex TEXT, is_active BOOLEAN, created_at
+  RLS:    SELECT authenticated WHERE is_active = TRUE
+  Seeds:  CLEAR (#10b981), PROCEED_WITH_CAUTION (#f59e0b), DO_NOT_PROCEED (#ef4444)
+  FK from: log_clinical_records.contraindication_verdict_id
+
+TABLE: ref_alert_types
+  PK:     alert_type_id BIGINT
+  Unique: alert_code TEXT
+  Cols:   alert_label TEXT, alert_category TEXT, is_active BOOLEAN, created_at
+  CHECK:  alert_category IN ('clinical_score','vital_sign','compliance','safety_event')
+  RLS:    SELECT authenticated WHERE is_active = TRUE
+  Seeds:  12 alert types across 4 categories (clinical scores, vitals, compliance, safety)
+  FK from: log_red_alerts.alert_type_id
+
+TABLE: ref_data_sources
+  PK:     data_source_id BIGINT
+  Unique: source_code TEXT
+  Cols:   source_label TEXT, is_active BOOLEAN, created_at
+  RLS:    SELECT authenticated WHERE is_active = TRUE
+  Seeds:  manual, wearable, pulse_oximeter, bp_cuff, ekg_monitor, continuous_cuff, other
+  FK from: log_session_vitals.data_source_id
+
+TABLE: ref_psychospiritual_history_types
+  PK:     psychospiritual_history_id BIGINT
+  Unique: history_code TEXT
+  Cols:   history_label TEXT, sort_order INTEGER, is_active BOOLEAN, created_at
+  RLS:    SELECT authenticated WHERE is_active = TRUE
+  Seeds:  9 history types (NONE through PLANT_MEDICINE, OTHER)
+  FK from: log_baseline_assessments.psychospiritual_history_id
+
+TABLE: ref_practitioner_types
+  PK:     practitioner_type_id BIGINT
+  Unique: type_code TEXT
+  Cols:   type_label TEXT, requires_license BOOLEAN, is_active BOOLEAN, created_at
+  RLS:    SELECT authenticated WHERE is_active = TRUE
+  Seeds:  MD, DO, NP, PA, PHD_PSYCH, LCSW, LPC, LMFT, FACILITATOR, RESEARCHER, OTHER
+  Note:   Waitlist was simplified to email-only; practitioner_type_id not wired to log_waitlist
+
+TABLE: ref_rejection_reasons
+  PK:     rejection_reason_id BIGINT
+  Unique: reason_code TEXT
+  Cols:   reason_label TEXT, is_active BOOLEAN, created_at
+  RLS:    SELECT authenticated WHERE is_active = TRUE
+  Seeds:  ALREADY_EXISTS, TOO_SPECIFIC, OUT_OF_SCOPE, INSUFFICIENT_EV, DUPLICATE,
+          PENDING_REVIEW
+  FK from: log_feature_requests.rejection_reason_id
+
+1.3 FK COLUMNS ADDED TO log_ TABLES (Block C)
+--------------------------------------------------------------------------------
+log_clinical_records:
+  + assessment_scale_id     INTEGER  FK → ref_assessment_scales(assessment_scale_id)
+  + clinical_phenotype_id   BIGINT   FK → ref_clinical_phenotypes(clinical_phenotype_id)
+  + contraindication_verdict_id BIGINT FK → ref_contraindication_verdicts(verdict_id)
+  + patient_sex_id          BIGINT   (FK to ref_sex — unlinked; ref_sex not yet on live DB)
+  + weight_range_id         BIGINT   FK → ref_weight_ranges(id)
+  + concomitant_med_ids     BIGINT[] (array; ref_medications exists live)
+  + patient_age_years       INTEGER  CHECK (18–120)
+
+log_outcomes:
+  + assessment_scale_id     INTEGER  FK → ref_assessment_scales(assessment_scale_id)
+  + outcome_date            DATE     (replaced TEXT 'date' column — type correction)
+
+log_session_vitals:
+  + data_source_id          BIGINT   FK → ref_data_sources(data_source_id)
+
+log_session_timeline_events:
+  + FK constraint wired on existing event_type_id INTEGER
+    CONSTRAINT fk_timeline_events_event_type_id
+    REFERENCES ref_flow_event_types(id) ON DELETE SET NULL
+
+log_baseline_assessments:
+  + psychospiritual_history_id BIGINT FK → ref_psychospiritual_history_types
+
+log_red_alerts:
+  + alert_type_id           BIGINT   FK → ref_alert_types(alert_type_id)
+
+log_feature_requests:
+  + rejection_reason_id     BIGINT   FK → ref_rejection_reasons(rejection_reason_id)
+
+1.4 TEXT/VARCHAR COLUMNS DROPPED (Block E)
+--------------------------------------------------------------------------------
+log_waitlist:             first_name, practitioner_type, source
+                          (table stripped to: id, created_at, email only)
+                          User decision: waitlist only needs email capture.
+
+log_clinical_records:     session_type, dosage_route, contraindication_override_reason,
+                          contraindication_verdict, clinical_phenotype, outcome_measure,
+                          safety_event_category, patient_link_code, session_notes,
+                          batch_number, patient_sex, patient_weight_range,
+                          concomitant_meds, patient_age
+
+log_feature_requests:     rejection_reason
+log_patient_flow_events:  notes, source_table
+log_red_alerts:           alert_type, patient_id, alert_severity, alert_message,
+                          response_notes
+log_session_timeline_events: event_type
+log_session_vitals:       source
+log_safety_events:        severity_grade_id (was TEXT, replaced by severity_grade_id_fk BIGINT),
+                          resolution_status_id (was TEXT, replaced by resolution_status_id_fk BIGINT),
+                          event_type
+log_consent:              type, timestamp
+log_behavioral_changes:   change_type, change_description, patient_id
+log_baseline_assessments: patient_id, psycho_spiritual_history
+log_integration_sessions: patient_id, cancellation_reason, session_notes
+log_longitudinal_assessments: patient_id
+log_pulse_checks:         patient_id
+log_outcomes:             date (TEXT), type, interpretation
+log_protocols:            substance (replaced by substance_id FK),
+                          indication (replaced by indication_id FK), notes
+log_patient_site_links:   transfer_reason
+log_vocabulary_requests:  proposed_category (redundant with target_ref_table)
+
+1.5 RLS POLICIES REBUILT (patient_id → patient_uuid)
+--------------------------------------------------------------------------------
+5 tables had RLS policies that referenced the now-dropped patient_id column.
+Policies were explicitly dropped first, then recreated referencing patient_uuid.
+
+Tables affected:
+  log_behavioral_changes
+  log_integration_sessions
+  log_longitudinal_assessments
+  log_pulse_checks
+  log_red_alerts
+
+Old policy pattern (DROPPED):
+  (patient_id)::text IN (
+    SELECT log_baseline_assessments.patient_id
+    FROM log_baseline_assessments
+    WHERE site_id IN (
+      SELECT site_id FROM log_user_sites WHERE user_id = auth.uid()
+    )
+  )
+
+New policy pattern (RECREATED):
+  patient_uuid IN (
+    SELECT patient_uuid FROM log_baseline_assessments
+    WHERE site_id IN (
+      SELECT site_id FROM log_user_sites WHERE user_id = auth.uid()
+    )
+  )
+
+Each table received 2 policies: INSERT (WITH CHECK) + SELECT (USING)
+Total: 10 policies rebuilt.
+
+1.6 AUDIT TRAIL COLUMNS ADDED (Block G)
+--------------------------------------------------------------------------------
+created_at added (with DEFAULT NOW()) to:
+  log_behavioral_changes, log_corrections, log_longitudinal_assessments,
+  log_pulse_checks, log_safety_events, log_user_sites
+
+created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL added to:
+  log_clinical_records, log_baseline_assessments, log_behavioral_changes,
+  log_consent, log_corrections, log_dose_events, log_integration_sessions,
+  log_interventions, log_longitudinal_assessments, log_outcomes, log_protocols,
+  log_pulse_checks, log_red_alerts, log_safety_events,
+  log_session_timeline_events, log_session_vitals,
+  log_feature_requests, log_vocabulary_requests
+
+Tables with both columns pre-existing (no action needed):
+  log_feature_flags, log_patient_flow_events
+
+Tables intentionally excluded from created_by (system/junction/financial):
+  log_system_events, log_usage_metrics, log_subscriptions,
+  log_user_subscriptions, log_baseline_observations, log_session_observations,
+  log_safety_event_observations, log_user_sites, log_patient_site_links,
+  log_user_profiles, log_user_saved_views, log_sites, log_feature_flags
+
+1.7 CHECK CONSTRAINTS ADDED (Blocks D, H)
+--------------------------------------------------------------------------------
+log_feature_requests:
+  chk_feature_requests_request_type:
+    request_type IN ('observation','cancellation_reason','other')
+  chk_feature_requests_category:
+    category IS NULL OR category IN ('baseline','session','integration','safety')
+  chk_feature_requests_status:
+    status IN ('pending','approved','rejected')
+
+log_dose_events:
+  chk_dose_events_patient_id_format:
+    patient_id ~ '^[A-Z0-9]{4,20}$'
+
+log_outcomes:
+  chk_outcomes_score:
+    score IS NULL OR (score >= 0 AND score <= 160)
+    [160 covers all scales: PHQ-9 max 27, PCL-5 max 80, MEQ-30 max 150]
+
+log_clinical_records:
+  patient_age_years CHECK: BETWEEN 18 AND 120
+
+log_protocols:
+  chk_protocols_status:
+    status IN ('draft','active','paused','completed','archived')
+
+log_interventions:
+  chk_interventions_status:
+    status IN ('active','monitoring','resolved','discontinued')
+
+log_sites:
+  chk_sites_site_type:
+    site_type IN ('clinic','research','hospital','telehealth','retreat_center','other')
+    [Live values confirmed: 'research' (1 row), 'clinic' (1 row)]
+
+log_safety_events:
+  chk_safety_events_causality_code:
+    causality_code IN ('certain','probable','possible','unlikely','conditional',
+                       'unclassifiable')  [WHO causality assessment scale]
+
+log_system_events:
+  chk_system_events_event_status:
+    event_status IN ('captured','processed','failed','archived')
+    [Live value confirmed: 'captured' (93 rows)]
+
+================================================================================
+SECTION 2 — CURRENT STATE OF ALL log_ TABLES
+================================================================================
+Format: TABLE NAME / Primary Key / Notable Columns / FKs / RLS / CHECK constraints
+
+NOTE: Columns confirmed live via information_schema queries during this session.
+      "confirmed" = verified against live Supabase database.
+
+TABLE: log_clinical_records
+  PK:          id UUID
+  Timestamps:  created_at TIMESTAMPTZ (NOT NULL), updated_at
+  Audit:       practitioner_id UUID FK → auth.users (NOT NULL)
+               created_by UUID FK → auth.users (added this session)
+  FK columns:  session_type_id INTEGER FK → ref_session_types
+               route_id BIGINT FK → (ref table)
+               dosage_unit_id INTEGER FK → ref_dosage_units
+               frequency_id INTEGER FK → ref_frequencies
+               justification_code_id BIGINT FK → (ref table)
+               assessment_scale_id INTEGER FK → ref_assessment_scales [NEW]
+               clinical_phenotype_id BIGINT FK → ref_clinical_phenotypes [NEW]
+               contraindication_verdict_id BIGINT FK → ref_contraindication_verdicts [NEW]
+               patient_sex_id BIGINT (ref_sex not yet live — unlinked FK)
+               weight_range_id BIGINT FK → ref_weight_ranges(id)
+               concomitant_med_ids BIGINT[] (array)
+  Numeric:     dosage_mg, meq30_score (0-100), ceq_score (0-100), edi_score (0-100)
+               patient_age_years INTEGER CHECK (18–120)
+  Arrays:      concomitant_med_ids BIGINT[]
+  CHECK:       ceq_score (0-100), edi_score (0-100), meq30_score (0-100),
+               patient_age_years (18-120)
+  RLS:         Site-based access via log_user_sites
+  DROPPED:     session_type, dosage_route, contraindication_override_reason,
+               contraindication_verdict, clinical_phenotype, outcome_measure,
+               safety_event_category, patient_link_code, session_notes,
+               batch_number, patient_sex, patient_weight_range,
+               concomitant_meds, patient_age
+
+TABLE: log_baseline_assessments
+  PK:          baseline_assessment_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL), assessment_date DATE (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK columns:  site_id (site-based access anchor), patient_uuid UUID [NEW]
+               psychospiritual_history_id BIGINT FK → ref_psychospiritual_history_types [NEW]
+  Scores:      phq9_score (0-27), gad7_score (0-21), pcl5_score (0-80)
+               ace_score (0-10), expectancy_scale (1-100)
+  RLS:         SELECT/INSERT: site_id IN (user's sites via log_user_sites)
+  DROPPED:     patient_id (VARCHAR), psycho_spiritual_history (TEXT)
+
+TABLE: log_behavioral_changes
+  PK:          behavioral_change_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (DEFAULT NOW()) [NEW], change_date DATE (NOT NULL)
+               is_positive BOOLEAN (NOT NULL), created_by UUID FK → auth.users [NEW]
+  FK columns:  patient_uuid UUID (new patient anchor)
+               change_type_ids BIGINT[] (array FK → ref_behavioral_change_types)
+  Enums:       change_category VARCHAR CHECK ('relationship','substance_use','exercise',
+                 'work','hobby','self_care')
+               impact_on_wellbeing VARCHAR CHECK (5-value scale)
+               related_to_dosing VARCHAR CHECK (3-value scale)
+  Numeric:     confidence_sustaining INTEGER CHECK (1-5)
+  RLS:         SELECT/INSERT: patient_uuid IN (site-scoped patient_uuids) [REBUILT]
+  DROPPED:     patient_id (VARCHAR), change_type (VARCHAR), change_description (TEXT)
+
+TABLE: log_consent
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK columns:  consent_type_id INTEGER FK → ref_consent_types
+  DROPPED:     type TEXT, timestamp TEXT
+
+TABLE: log_corrections
+  PK:          correction_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (DEFAULT NOW()) [NEW]
+               created_by UUID FK → auth.users [NEW — CRITICAL: correcting clinician]
+  Required:    source_table TEXT (NOT NULL), source_row_id (NOT NULL)
+               field_name TEXT (NOT NULL), new_value_json JSONB (NOT NULL)
+               correction_type TEXT (NOT NULL), correction_reason TEXT (NOT NULL)
+  CHECK:       correction_type IN ('data_entry_error','late_entry','amendment','withdrawal')
+               correction_reason: length BETWEEN 10 AND 500 chars
+  RLS:         Not confirmed — review recommended
+
+TABLE: log_dose_events
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL), administered_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  Required:    session_id UUID (NOT NULL), substance_id UUID (NOT NULL)
+               dose_mg NUMERIC (NOT NULL, > 0), weight_kg NUMERIC (NOT NULL, > 0)
+               event_type VARCHAR (NOT NULL), substance_type VARCHAR (NOT NULL)
+  Identifiers: patient_id VARCHAR CHECK ('^[A-Z0-9]{4,20}$') [NOT PII — subject code]
+  CHECK:       dose_mg > 0, weight_kg > 0
+               event_type IN ('initial','booster','rescue')
+               substance_type IN ('HCl','TPA')
+               patient_id ~ '^[A-Z0-9]{4,20}$' [NEW — format guard]
+  RLS:         Not confirmed — review recommended
+
+TABLE: log_feature_flags
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL), updated_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users (pre-existing)
+  Cols:        flag_name TEXT (NOT NULL), description TEXT, enabled BOOLEAN
+  NOTE:        Already had both audit columns — no changes needed.
+
+TABLE: log_feature_requests
+  PK:          request_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ
+               created_by UUID FK → auth.users [NEW]
+  FK:          rejection_reason_id BIGINT FK → ref_rejection_reasons [NEW]
+  Enums:       request_type VARCHAR CHECK ('observation','cancellation_reason','other')
+               category VARCHAR CHECK (NULL OR 'baseline','session','integration','safety')
+               status VARCHAR CHECK ('pending','approved','rejected')
+  Free-text:   requested_text TEXT (NOT NULL) [INTENTIONAL — intake queue]
+  DROPPED:     rejection_reason TEXT
+
+TABLE: log_integration_sessions
+  PK:          integration_session_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ, session_date DATE (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK columns:  patient_uuid UUID (anchor after patient_id drop)
+               homework_assigned_ids BIGINT[] CHECK (cardinality <= 10)
+               therapist_observation_ids BIGINT[] CHECK (cardinality <= 10)
+               session_focus_ids BIGINT[] CHECK (cardinality <= 10)
+               cancellation_reason_id BIGINT FK → ref_cancellation_reasons
+  Ratings:     behavioral_application_rating (1-5), emotional_processing_rating (1-5)
+               engagement_level_rating (1-5), insight_integration_rating (1-5)
+  RLS:         SELECT/INSERT: patient_uuid IN (site-scoped patient_uuids) [REBUILT]
+  DROPPED:     patient_id (VARCHAR), cancellation_reason (TEXT), session_notes (TEXT)
+
+TABLE: log_interventions
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  Enums:       status TEXT CHECK ('active','monitoring','resolved','discontinued') [NEW]
+  RLS:         Not confirmed — review recommended
+
+TABLE: log_longitudinal_assessments
+  PK:          longitudinal_assessment_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (DEFAULT NOW()) [NEW], assessment_date DATE (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK columns:  patient_uuid UUID (anchor after patient_id drop)
+  Scores:      cssrs_score (0-5), gad7_score (0-21), phq9_score (0-27)
+               psqi_score (0-21), whoqol_score (0-100)
+  RLS:         SELECT/INSERT: patient_uuid IN (site-scoped patient_uuids) [REBUILT]
+  DROPPED:     patient_id (VARCHAR)
+
+TABLE: log_outcomes
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK:          record_id BIGINT FK → (clinical record)
+               assessment_scale_id INTEGER FK → ref_assessment_scales [NEW]
+  Numeric:     score INTEGER CHECK (0-160) [NEW constraint]
+  Date:        outcome_date DATE [NEW — replaced TEXT 'date' column; type corrected]
+  DROPPED:     outcome_measure (TEXT — already absent from live DB),
+               date (TEXT — type error), type (TEXT), interpretation (TEXT)
+
+TABLE: log_patient_flow_events
+  PK:          id UUID (NOT NULL)
+  Audit:       event_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users (pre-existing)
+  Required:    site_id UUID (NOT NULL), patient_link_code_hash TEXT (NOT NULL)
+               event_type_id UUID (NOT NULL)
+  Hash:        patient_link_code_hash TEXT CHECK (SHA-256 regex '^[0-9a-f]{64}$')
+  NOTE:        Already had created_by — no audit changes needed.
+  DROPPED:     notes TEXT, source_table TEXT
+
+TABLE: log_patient_site_links
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL), updated_at TIMESTAMPTZ (NOT NULL)
+  Required:    patient_link_code TEXT (NOT NULL), site_id UUID (NOT NULL)
+  DROPPED:     transfer_reason TEXT
+
+TABLE: log_protocols
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL), updated_at
+               created_by UUID FK → auth.users [NEW]
+  Required:    name TEXT (NOT NULL), substance TEXT (NOT NULL) [NOTE: still has substance TEXT!]
+  FK:          substance_id BIGINT FK → ref_medications (confirmed live) [existence confirmed]
+               indication_id BIGINT FK → (confirmed live)
+  Enums:       status TEXT CHECK ('draft','active','paused','completed','archived') [NEW]
+  ⚠️  NOTE:   substance TEXT column still has NOT NULL constraint from original schema.
+               The DROP was executed but substance is listed in NOT NULL constraints.
+               Recommend verifying this column is fully absent post-session.
+  DROPPED:     substance (TEXT), indication (TEXT), notes (TEXT)
+
+TABLE: log_pulse_checks
+  PK:          pulse_check_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (DEFAULT NOW()) [NEW], check_date DATE (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK:          patient_uuid UUID (anchor after patient_id drop)
+  Ratings:     mood_level (1-5), anxiety_level (1-5), connection_level (1-5)
+               sleep_quality (1-5)
+  RLS:         SELECT/INSERT: patient_uuid IN (site-scoped patient_uuids) [REBUILT]
+  DROPPED:     patient_id (VARCHAR)
+
+TABLE: log_red_alerts
+  PK:          red_alert_id BIGINT (NOT NULL)
+  Audit:       alert_triggered_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK:          patient_uuid UUID (anchor after patient_id drop)
+               severity_grade_id BIGINT FK → (ref_severity_grades)
+               alert_type_id BIGINT FK → ref_alert_types [NEW]
+  RLS:         SELECT/INSERT: patient_uuid IN (site-scoped patient_uuids) [REBUILT]
+  DROPPED:     alert_severity (VARCHAR — replaced by severity_grade_id FK)
+               alert_type (VARCHAR — replaced by alert_type_id FK)
+               alert_message (TEXT), response_notes (TEXT)
+               patient_id (VARCHAR)
+
+TABLE: log_safety_event_observations
+  PK:          id UUID (NOT NULL)
+  FK:          safety_event_id TEXT (FK to log_safety_events.ae_id — TEXT PK)
+  NOTE:        Junction table between safety events and observations.
+               TEXT FK is architecture consequence of TEXT PK on log_safety_events.
+
+TABLE: log_safety_events
+  PK:          ae_id TEXT (NOT NULL)
+  ⚠️  NOTE:   TEXT primary key is a known architectural limitation.
+               Cannot change PK type without full table rebuild. Flagged for future sprint.
+  Audit:       created_at TIMESTAMPTZ (DEFAULT NOW()) [NEW]
+               created_by UUID FK → auth.users [NEW — CRITICAL]
+  FK:          severity_grade_id_fk BIGINT FK → (severity grades ref table)
+               resolution_status_id_fk BIGINT FK → (resolution status ref table)
+               safety_event_type_id (FK → ref_safety_event_types)
+  Numeric:     ctcae_grade INTEGER CHECK (1-5) [CTCAE grading scale]
+  Identifiers: event_id TEXT, exposure_id TEXT (external identifiers)
+  URL:         report_pdf_url TEXT (machine-generated — keeper)
+  Enum:        causality_code TEXT CHECK ('certain','probable','possible','unlikely',
+                 'conditional','unclassifiable') [WHO scale — NEW]
+  DROPPED:     severity_grade_id (TEXT — was wrong type; fk version is BIGINT)
+               resolution_status_id (TEXT — was wrong type; fk version is BIGINT)
+               event_type (VARCHAR)
+
+TABLE: log_session_observations
+  PK:          id UUID (NOT NULL)
+  NOTE:        Junction table. No clinical data columns.
+
+TABLE: log_session_timeline_events
+  PK:          timeline_event_id BIGINT (NOT NULL)
+  Audit:       event_timestamp TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK:          event_type_id INTEGER FK → ref_flow_event_types(id) [CONSTRAINT WIRED]
+  Constraint:  fk_timeline_events_event_type_id (NEW — wired this session)
+  DROPPED:     event_type (VARCHAR — replaced by event_type_id FK)
+
+TABLE: log_session_vitals
+  PK:          session_vital_id BIGINT (NOT NULL)
+  Audit:       recorded_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  FK:          data_source_id BIGINT FK → ref_data_sources [NEW]
+  Vitals:      heart_rate INTEGER CHECK (40-200)
+               bp_systolic INTEGER CHECK (60-250)
+               bp_diastolic INTEGER CHECK (40-150)
+               oxygen_saturation INTEGER CHECK (70-100)
+               respiratory_rate INTEGER CHECK (0-60)
+               temperature NUMERIC CHECK (85.0-115.0 °F)
+               diaphoresis_score INTEGER CHECK (0-3)
+  Enum:        level_of_consciousness VARCHAR CHECK ('alert','verbal','pain','unresponsive')
+               [AVPU scale — KEEPER]
+  Identifier:  device_id VARCHAR [hardware serial — KEEPER]
+  DROPPED:     source (VARCHAR — replaced by data_source_id FK)
+
+TABLE: log_sites
+  PK:          site_id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL)
+  Cols:        site_name TEXT (NOT NULL), region TEXT, site_type TEXT
+  Enum:        site_type TEXT CHECK ('clinic','research','hospital','telehealth',
+                 'retreat_center','other') [NEW]
+               [Live values: 'research' (1), 'clinic' (1)]
+  NOTE:        created_by not added (site records are created by admin, site_id anchors identity)
+
+TABLE: log_subscriptions
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL), updated_at TIMESTAMPTZ (NOT NULL)
+  Required:    site_id UUID (NOT NULL), tier TEXT (NOT NULL), status TEXT (NOT NULL)
+  Stripe:      stripe_customer_id, stripe_price_id, stripe_subscription_id
+  CHECK:       tier IN ('solo','clinic','network','research','custom')
+               status IN ('active','trialing','past_due','canceled','incomplete')
+  NOTE:        Financial/Stripe table — no created_by required.
+
+TABLE: log_system_events
+  PK:          event_id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL)
+  Required:    event_type TEXT (NOT NULL)
+  Enum:        event_status TEXT CHECK ('captured','processed','failed','archived') [NEW]
+               [Live value: 'captured' (93 rows)]
+  Hash:        ledger_hash TEXT (cryptographic audit hash — keeper)
+
+TABLE: log_usage_metrics
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL)
+  Required:    site_id UUID (NOT NULL), metric_type TEXT (NOT NULL), count INTEGER (NOT NULL)
+               period_start TIMESTAMPTZ (NOT NULL), period_end TIMESTAMPTZ (NOT NULL)
+  CHECK:       metric_type IN ('records_created','users_active','api_calls','exports','storage_mb')
+  NOTE:        System-generated aggregates — no created_by required.
+
+TABLE: log_user_profiles
+  PK:          id UUID (NOT NULL)
+  Required:    user_id UUID (NOT NULL) FK → auth.users
+  NOTE:        user_id serves the same function as created_by.
+
+TABLE: log_user_saved_views
+  PK:          id UUID (NOT NULL)
+  Required:    user_id UUID (NOT NULL), view_name TEXT (NOT NULL)
+               deep_dive_page TEXT (NOT NULL), filter_state JSONB (NOT NULL)
+
+TABLE: log_user_sites
+  PK:          Composite (user_id UUID, site_id UUID)
+  Audit:       created_at TIMESTAMPTZ (DEFAULT NOW()) [NEW]
+  Required:    user_id UUID (NOT NULL), site_id UUID (NOT NULL), role TEXT (NOT NULL)
+  CHECK:       role IN ('network_admin','site_admin','clinician','analyst','auditor')
+
+TABLE: log_user_subscriptions
+  PK:          id UUID (NOT NULL)
+  Required:    user_id UUID (NOT NULL), stripe_customer_id TEXT (NOT NULL)
+               stripe_subscription_id TEXT (NOT NULL), tier TEXT (NOT NULL), status TEXT (NOT NULL)
+  CHECK:       status IN ('active','trialing','past_due','canceled','incomplete',
+                          'incomplete_expired','unpaid')
+               tier IN ('solo','clinic','enterprise')
+
+TABLE: log_vocabulary_requests
+  PK:          request_id BIGINT (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ (NOT NULL)
+               created_by UUID FK → auth.users [NEW]
+  Required:    target_ref_table TEXT (NOT NULL), proposed_label TEXT (NOT NULL)
+               status TEXT (NOT NULL)
+  Free-text:   advisory_notes TEXT (admin review notes — intentional keeper)
+               clinical_rationale TEXT (workflow requirement — intentional keeper)
+  CHECK:       status IN ('pending','under_review','approved','rejected')
+  NOTE:        target_ref_table encodes the category — proposed_category was redundant.
+  DROPPED:     proposed_category TEXT
+
+TABLE: log_waitlist
+  PK:          id UUID (NOT NULL)
+  Audit:       created_at TIMESTAMPTZ
+  Cols:        email TEXT (NOT NULL)
+  NOTE:        Stripped to 3 columns by USER decision. Only email capture needed.
+  DROPPED:     first_name, practitioner_type, practitioner_type_id, source
+
+================================================================================
+SECTION 3 — REFERENCE TABLE INVENTORY (Pre-existing + New)
+================================================================================
+28 ref_ tables exist on the live database. All have RLS enabled.
+
+TABLES CONFIRMED LIVE (pre-existing before this session):
+  ref_assessment_scales         ref_dosage_units
+  ref_age_ranges                ref_emergency_contacts
+  ref_audit_instruments         ref_flow_event_types
+  ref_behavioral_change_types   ref_frequencies
+  ref_cancellation_reasons      ref_homework_types
+  ref_consent_types             ref_integration_focus_areas
+  ref_contraindication_types    ref_medications (ref_medications CONFIRMED LIVE)
+  ref_safety_event_types        ref_session_observations
+  ref_session_types             ref_severity_grades
+  ref_weight_ranges (CONFIRMED LIVE, PK = id BIGINT)
+                                ref_routes
+
+TABLES WITHOUT live existence (exist in migration files only):
+  ref_sex (migration file has it, NOT on live DB)
+  ref_sm_risk_categories
+  ref_sm_risk_types
+
+NEW TABLES CREATED THIS SESSION (7):
+  ref_clinical_phenotypes           ref_psychospiritual_history_types
+  ref_contraindication_verdicts     ref_practitioner_types
+  ref_alert_types                   ref_rejection_reasons
+  ref_data_sources
+
+================================================================================
+SECTION 4 — OUTSTANDING ITEMS & KNOWN GAPS
+================================================================================
+
+ITEM 1: ref_sex table does not exist on live database
+  Impact: log_clinical_records.patient_sex_id BIGINT is unlinked (no FK constraint)
+  Action needed: Create ref_sex table (seeds: Male, Female, Non-binary, Other,
+                 Prefer not to say) and wire FK constraint
+  Priority: HIGH
+
+ITEM 2: log_protocols.substance NOT NULL constraint
+  The original CREATE TABLE had substance TEXT NOT NULL.
+  This session dropped the substance column. Verify the column is fully absent
+  by running: SELECT column_name FROM information_schema.columns
+              WHERE table_name = 'log_protocols' AND column_name = 'substance';
+  Expected: 0 rows. If the column still exists, the DROP failed silently.
+
+ITEM 3: log_safety_events TEXT primary key (ae_id)
+  A TEXT primary key is an architectural anti-pattern in this schema.
+  All other tables use UUID or BIGINT PKs.
+  Impact: log_safety_event_observations.safety_event_id is also TEXT (FK consequence).
+  Action: Full table rebuild (new BIGINT PK, migration with data transfer).
+  Priority: MEDIUM — schedule for future sprint.
+
+ITEM 4: Tables not yet on live database (migrations written but not executed):
+  log_meq30          (MEQ-30 psychedelic experience questionnaire)
+  log_sm_sessions    (Shadow market logging)
+  log_sm_risk_reports (Shadow market risk reporting)
+  Impact: Any migratins referencing these tables are moot until executed.
+
+ITEM 5: log_clinical_records.patient_sex_id (unlinked until ref_sex created)
+  As of this session, patient_sex_id is a BIGINT column with no FK constraint.
+  Any application code should treat this column as nullable pending ref_sex creation.
+
+ITEM 6: migration 074_add_destruction_witness_id_fk.sql is now moot
+  This migration added a FK column to log_chain_of_custody.
+  That table has been deleted. This migration file should be archived/marked RETIRED.
+
+================================================================================
+SECTION 5 — VERIFICATION QUERIES FOR THIRD-PARTY REVIEWER
+================================================================================
+Run these queries against the live Supabase database to confirm the stated state:
+
+-- 5.1 Confirm log_chain_of_custody was dropped
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public' AND table_name = 'log_chain_of_custody';
+-- Expected: 0 rows
+
+-- 5.2 Confirm all 7 new ref_ tables exist
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_name IN ('ref_clinical_phenotypes','ref_contraindication_verdicts',
+      'ref_alert_types','ref_data_sources','ref_psychospiritual_history_types',
+      'ref_practitioner_types','ref_rejection_reasons')
+ORDER BY table_name;
+-- Expected: 7 rows
+
+-- 5.3 Confirm all FK columns were added to log_clinical_records
+SELECT column_name, data_type FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'log_clinical_records'
+  AND column_name IN ('assessment_scale_id','clinical_phenotype_id',
+      'contraindication_verdict_id','patient_sex_id','weight_range_id',
+      'concomitant_med_ids','patient_age_years')
+ORDER BY column_name;
+-- Expected: 7 rows
+
+-- 5.4 Confirm audit trail (created_by) on all clinical tables
+SELECT table_name,
+    MAX(CASE WHEN column_name = 'created_at' THEN 'YES' END) AS has_created_at,
+    MAX(CASE WHEN column_name = 'created_by' THEN 'YES' END) AS has_created_by
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name IN ('log_clinical_records','log_baseline_assessments',
+      'log_behavioral_changes','log_consent','log_corrections','log_dose_events',
+      'log_integration_sessions','log_interventions','log_longitudinal_assessments',
+      'log_outcomes','log_protocols','log_pulse_checks','log_red_alerts',
+      'log_safety_events','log_session_timeline_events','log_session_vitals',
+      'log_feature_requests','log_vocabulary_requests')
+  AND column_name IN ('created_at','created_by')
+GROUP BY table_name ORDER BY table_name;
+-- Expected: 18 rows, all showing YES for both columns
+
+-- 5.5 Confirm log_waitlist stripped to 3 columns
+SELECT column_name FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'log_waitlist'
+ORDER BY ordinal_position;
+-- Expected: id, created_at, email (3 columns only)
+
+-- 5.6 Confirm RLS policies rebuilt with patient_uuid
+SELECT tablename, policyname FROM pg_policies
+WHERE schemaname = 'public'
+  AND tablename IN ('log_behavioral_changes','log_integration_sessions',
+      'log_longitudinal_assessments','log_pulse_checks','log_red_alerts')
+ORDER BY tablename, policyname;
+-- Expected: 10 rows (2 policies per table)
+
+-- 5.7 Confirm no remaining unguarded TEXT violations in log_ tables
+SELECT table_name, column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name LIKE 'log_%'
+  AND data_type IN ('text','character varying')
+ORDER BY table_name, column_name;
+-- Review each result against the keeper list in Section 2.
+-- All remaining TEXT/VARCHAR columns must be either:
+--   (a) CHECK-constrained enums
+--   (b) External identifiers (Stripe IDs, URLs, hardware serials, hashes)
+--   (c) Intentional free-text intake fields (requested_text, advisory_notes,
+--       clinical_rationale, proposed_label)
+--   (d) Required display names (site_name, flag_name, view_name)
+
+-- 5.8 Confirm outcome_date is a DATE column (not TEXT)
+SELECT column_name, data_type FROM information_schema.columns
+WHERE table_schema = 'public' AND table_name = 'log_outcomes'
+  AND column_name = 'outcome_date';
+-- Expected: outcome_date | date
+
+-- 5.9 Confirm CHECK constraints exist
+SELECT tc.table_name, tc.constraint_name
+FROM information_schema.table_constraints tc
+WHERE tc.table_schema = 'public'
+  AND tc.constraint_type = 'CHECK'
+  AND tc.constraint_name IN (
+      'chk_feature_requests_request_type','chk_feature_requests_category',
+      'chk_feature_requests_status','chk_dose_events_patient_id_format',
+      'chk_outcomes_score','chk_protocols_status','chk_interventions_status',
+      'chk_sites_site_type','chk_safety_events_causality_code',
+      'chk_system_events_event_status')
+ORDER BY tc.table_name;
+-- Expected: 10 rows
+
+================================================================================
+SECTION 6 — GIT AUDIT TRAIL
+================================================================================
+Branch:  feature/governance-and-p0-fixes
+Remote:  https://github.com/trevorc-ai/PPN-Antigravity-1.0.git
+
+Commits from this session:
+  500cb73  chore(db): add migration 079 — Zero Free-Text Golden Rule remediation
+           audit record (already applied to live DB 2026-02-28)
+  2d6f1d3  fix(protocols): MyProtocols.tsx updates from audit session
+  1c7a305  chore(db): Zero Free-Text audit — remaining work order moves to HOLD
+  7968886  chore(db): Zero Free-Text audit Phases 1-5 — work order files
+
+Migration file: migrations/079_zero_free_text_remediation.sql
+  - 563 lines
+  - Fully idempotent (IF NOT EXISTS / IF EXISTS throughout)
+  - All 7 blocks documented: ref_ tables, FK columns, text drops,
+    RLS rebuilds, audit trail, outcome date fix, CHECK constraints
+
+================================================================================
+END OF DOCUMENT
+Prepared: 2026-02-28 12:47 PST
+Reviewer: Third-party database architect / clinical data compliance specialist
+================================================================================
