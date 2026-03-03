@@ -28,7 +28,7 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <PageContainer className="animate-in fade-in duration-700 pb-20">
+    <PageContainer className="animate-in fade-in duration-700 pb-20 pt-4 sm:pt-0">
       <Section spacing="spacious">
 
         {/* Header Area */}
