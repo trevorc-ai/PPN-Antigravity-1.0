@@ -257,6 +257,48 @@ const Zone: React.FC<{
     </div>
 );
 
+// ─── Accordion ───────────────────────────────────────────────────────────────
+const Accordion: React.FC<{
+    label: string;
+    defaultOpen?: boolean;
+    accentColor?: string;
+    children: React.ReactNode;
+}> = ({ label, defaultOpen = false, accentColor = '#2dd4bf', children }) => {
+    const [open, setOpen] = React.useState(defaultOpen);
+    return (
+        <div style={{ marginBottom: 16 }}>
+            <button
+                type="button"
+                onClick={() => setOpen(o => !o)}
+                aria-expanded={open}
+                style={{
+                    width: '100%', display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'center', padding: '10px 14px', borderRadius: 10,
+                    background: `rgba(${accentColor === '#2dd4bf' ? '45,212,191' : accentColor === '#a78bfa' ? '167,139,250' : accentColor === '#f59e0b' ? '245,158,11' : '251,113,133'},0.06)`,
+                    border: `1px solid rgba(${accentColor === '#2dd4bf' ? '45,212,191' : accentColor === '#a78bfa' ? '167,139,250' : accentColor === '#f59e0b' ? '245,158,11' : '251,113,133'},0.18)`,
+                    cursor: 'pointer', transition: 'background 0.2s',
+                }}
+            >
+                <span style={{ fontSize: 12, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span aria-hidden="true" style={{ fontSize: 14, fontWeight: 900, lineHeight: 1, width: 14, textAlign: 'center', flexShrink: 0 }}>{open ? '−' : '+'}</span>
+                    {label}
+                </span>
+                <svg
+                    width="14" height="14" viewBox="0 0 14 14" fill="none"
+                    style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s', flexShrink: 0 }}
+                >
+                    <path d="M2 5l5 5 5-5" stroke={accentColor} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+            </button>
+            {open && (
+                <div style={{ marginTop: 10 }}>
+                    {children}
+                </div>
+            )}
+        </div>
+    );
+};
+
 // ─── Feeling Wave ─────────────────────────────────────────────────────────────
 const FeelingWave: React.FC<{
     events: { label: string; eventType: string; occurredAt: string }[];
@@ -517,17 +559,12 @@ const PatientReport: React.FC = () => {
                 {/* ── ZONE 1: The Start of the Path ────────────────────────────── */}
                 {zones.z1 && (
                     <Zone number={1} title="The Start of the Path" accentColor={C.violet}>
-                        <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 20, lineHeight: 1.75 }}>
-                            Every journey begins with a baseline. Before your session, you were here.
-                            This is your starting point - not a judgment, but a map coordinate.
-                        </p>
-
-                        {/* PHQ-9 change stat */}
+                        {/* PHQ-9 change stat — always visible */}
                         {data.phq9Change != null && (
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: 16,
                                 background: `${C.teal}08`, border: `1px solid ${C.teal}20`,
-                                borderRadius: 14, padding: '16px 20px', marginBottom: 20,
+                                borderRadius: 14, padding: '16px 20px', marginBottom: 16,
                             }}>
                                 <div style={{ textAlign: 'center', minWidth: 52 }}>
                                     <div style={{ fontSize: 28, fontWeight: 900, color: C.teal }}>
@@ -545,30 +582,42 @@ const PatientReport: React.FC = () => {
                             </div>
                         )}
 
-                        <div style={{
-                            background: `${C.violet}08`, border: `1px solid ${C.violet}20`,
-                            borderRadius: 12, padding: '14px 18px',
-                        }}>
-                            <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
-                                "The wound is the place where the light enters you." - Rumi
+                        {/* Reflection text — collapsible */}
+                        <Accordion label="About Your Baseline" accentColor={C.violet}>
+                            <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 16, lineHeight: 1.75 }}>
+                                Every journey begins with a baseline. Before your session, you were here.
+                                This is your starting point - not a judgment, but a map coordinate.
                             </p>
-                        </div>
+                            <div style={{
+                                background: `${C.violet}08`, border: `1px solid ${C.violet}20`,
+                                borderRadius: 12, padding: '14px 18px',
+                            }}>
+                                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
+                                    "The wound is the place where the light enters you." - Rumi
+                                </p>
+                            </div>
+                        </Accordion>
                     </Zone>
                 )}
 
                 {/* ── ZONE 2: The Emotional Terrain ────────────────────────────── */}
                 {zones.z2 && (
                     <Zone number={2} title="The Emotional Terrain" accentColor={C.violet}>
-                        <div style={{
-                            background: `${C.teal}08`, border: `1px solid ${C.teal}20`,
-                            borderRadius: 12, padding: '14px 18px', marginBottom: 20,
-                        }}>
-                            <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
-                                These feelings arose during your session. They are not symptoms - they are signals.
-                                Each one was part of your journey.
-                            </p>
-                        </div>
+                        {/* Feeling pills — always visible */}
                         <FeelingWave events={data.sessionEvents ?? []} />
+
+                        {/* Context text — collapsible */}
+                        <Accordion label="What These Feelings Mean" accentColor={C.violet}>
+                            <div style={{
+                                background: `${C.teal}08`, border: `1px solid ${C.teal}20`,
+                                borderRadius: 12, padding: '14px 18px',
+                            }}>
+                                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
+                                    These feelings arose during your session. They are not symptoms - they are signals.
+                                    Each one was part of your journey.
+                                </p>
+                            </div>
+                        </Accordion>
                     </Zone>
                 )}
 
@@ -628,39 +677,9 @@ const PatientReport: React.FC = () => {
                 {/* ── ZONE 4: Safety — only rendered if flagged ────────────────── */}
                 {zones.z4 && (
                     <Zone number={4} title="Safety & Support" accentColor={C.rose}>
-                        {data.safetyNote && (
-                            <div style={{
-                                marginTop: 0, padding: '14px 18px',
-                                background: `${C.rose}08`, border: `1px solid ${C.rose}20`, borderRadius: 12,
-                                marginBottom: 16,
-                            }}>
-                                <p style={{ fontSize: 13, fontWeight: 700, color: C.rose, margin: '0 0 4px' }}>
-                                    A note from your practitioner
-                                </p>
-                                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
-                                    {data.safetyNote}
-                                </p>
-                            </div>
-                        )}
-                        {data.redFlags && data.redFlags.length > 0 && (
-                            <div>
-                                <p style={{ fontSize: 13, fontWeight: 700, color: C.rose, marginBottom: 10 }}>
-                                    Areas to monitor
-                                </p>
-                                {data.redFlags.map((flag, i) => (
-                                    <div key={i} style={{
-                                        display: 'flex', gap: 10, marginBottom: 8,
-                                        padding: '10px 14px', borderRadius: 10,
-                                        background: `${C.rose}06`, border: `1px solid ${C.rose}15`,
-                                    }}>
-                                        <span style={{ color: C.rose, fontSize: 14 }}>⚠</span>
-                                        <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>{flag}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        {/* 988 crisis line — always visible */}
                         <div style={{
-                            marginTop: 16, padding: '14px 18px',
+                            marginBottom: 12, padding: '14px 18px',
                             background: `${C.rose}06`, border: `1px solid ${C.rose}15`, borderRadius: 12,
                         }}>
                             <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
@@ -669,19 +688,52 @@ const PatientReport: React.FC = () => {
                                 (call or text 988) or go to your nearest emergency room.
                             </p>
                         </div>
+
+                        {/* Practitioner note + red flags — collapsible */}
+                        {(data.safetyNote || (data.redFlags && data.redFlags.length > 0)) && (
+                            <Accordion label="Practitioner Notes & Areas to Monitor" defaultOpen={true} accentColor={C.rose}>
+                                {data.safetyNote && (
+                                    <div style={{
+                                        padding: '14px 18px',
+                                        background: `${C.rose}08`, border: `1px solid ${C.rose}20`, borderRadius: 12,
+                                        marginBottom: 12,
+                                    }}>
+                                        <p style={{ fontSize: 13, fontWeight: 700, color: C.rose, margin: '0 0 4px' }}>
+                                            A note from your practitioner
+                                        </p>
+                                        <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
+                                            {data.safetyNote}
+                                        </p>
+                                    </div>
+                                )}
+                                {data.redFlags && data.redFlags.length > 0 && (
+                                    <div>
+                                        <p style={{ fontSize: 13, fontWeight: 700, color: C.rose, marginBottom: 10 }}>
+                                            Areas to monitor
+                                        </p>
+                                        {data.redFlags.map((flag, i) => (
+                                            <div key={i} style={{
+                                                display: 'flex', gap: 10, marginBottom: 8,
+                                                padding: '10px 14px', borderRadius: 10,
+                                                background: `${C.rose}06`, border: `1px solid ${C.rose}15`,
+                                            }}>
+                                                <span style={{ color: C.rose, fontSize: 14 }}>⚠</span>
+                                                <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>{flag}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </Accordion>
+                        )}
                     </Zone>
                 )}
 
                 {/* ── ZONE 5: What Comes Next ───────────────────────────────────── */}
                 {zones.z5 && (
                     <Zone number={5} title="What Comes Next" accentColor={C.gold}>
-                        <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 20, lineHeight: 1.75 }}>
-                            Integration is where the real healing happens. Here is your roadmap for the weeks ahead.
-                        </p>
-
-                        {/* PEMS model */}
+                        {/* PEMS model — always visible */}
                         <div className="stat-grid" style={{
-                            display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 24,
+                            display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 16,
                         }}>
                             {[
                                 { letter: 'P', label: 'Physical', desc: 'Move your body daily. Walk, stretch, swim. Your nervous system heals through motion.', color: C.teal },
@@ -702,25 +754,32 @@ const PatientReport: React.FC = () => {
                             ))}
                         </div>
 
-                        {/* Journaling prompts */}
-                        <div style={{ border: `1px solid ${C.border}`, borderRadius: 14, padding: '18px 20px', marginBottom: 20 }}>
-                            <p style={{
-                                fontSize: 13, fontWeight: 700, color: C.teal, marginBottom: 14,
-                                textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 14px',
-                            }}>Integration Journal Prompts</p>
-                            {[
-                                'What from your session is still asking for your attention?',
-                                'What has shifted in how you see yourself or your story?',
-                                'What is one small, concrete thing you can do today to honor what you experienced?',
-                            ].map((prompt, i) => (
-                                <div key={i} style={{ display: 'flex', gap: 12, marginBottom: i < 2 ? 14 : 0 }}>
-                                    <span style={{ fontSize: 16, flexShrink: 0, color: C.gold }}>✦</span>
-                                    <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>{prompt}</p>
-                                </div>
-                            ))}
-                        </div>
+                        {/* Journaling prompts — collapsible */}
+                        <Accordion label="Integration Journal Prompts" accentColor={C.gold}>
+                            <div style={{ border: `1px solid ${C.border}`, borderRadius: 14, padding: '18px 20px' }}>
+                                {[
+                                    'What from your session is still asking for your attention?',
+                                    'What has shifted in how you see yourself or your story?',
+                                    'What is one small, concrete thing you can do today to honor what you experienced?',
+                                ].map((prompt, i) => (
+                                    <div key={i} style={{ display: 'flex', gap: 12, marginBottom: i < 2 ? 14 : 0 }}>
+                                        <span style={{ fontSize: 16, flexShrink: 0, color: C.gold }}>✦</span>
+                                        <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>{prompt}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </Accordion>
 
-                        {/* Integration attendance */}
+                        {/* Integration roadmap context — collapsible */}
+                        <Accordion label="Your Integration Roadmap" accentColor={C.gold}>
+                            <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 0, lineHeight: 1.75 }}>
+                                Integration is where the real healing happens. The weeks following your session are the most important.
+                                The PEMS framework above tracks Physical, Emotional, Mental, and Spiritual dimensions of recovery.
+                                Move daily, journal often, and stay connected with your practitioner.
+                            </p>
+                        </Accordion>
+
+                        {/* Integration attendance — always visible */}
                         {data.integrationSessionsAttended != null && data.integrationSessionsAttended > 0 && (
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20,
