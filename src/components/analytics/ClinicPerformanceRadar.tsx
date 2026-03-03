@@ -68,7 +68,7 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
     return (
         <div className="w-full h-full flex flex-col p-6 print:p-0 print:bg-white">
             {/* Header Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 mt-12 md:mt-0">
                 <div className="flex-1">
                     {/* Title removed here as it is handled by the parent card */}
                 </div>

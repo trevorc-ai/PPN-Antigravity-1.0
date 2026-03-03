@@ -282,7 +282,7 @@ const Analytics = () => {
                 {/* ROW 1: Performance Radar — full width, 3-col internal grid */}
                 <div className="print:break-inside-avoid">
                     <GlassmorphicCard className="min-h-[520px] h-auto lg:h-[520px] relative overflow-hidden print:h-[420px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10">
+                        <div className="absolute top-6 left-6 z-10 bg-[#0a0c12]/80 backdrop-blur-sm rounded-xl pr-3 pb-1">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
                         </div>
@@ -293,7 +293,7 @@ const Analytics = () => {
                 {/* ROW 2: Patient Galaxy — full width, large scatter + filter controls */}
                 <div className="print:break-inside-avoid">
                     <GlassmorphicCard className="min-h-[580px] h-auto lg:h-[580px] relative overflow-hidden print:h-[480px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10">
+                        <div className="absolute top-6 left-6 z-10 bg-[#0a0c12]/80 backdrop-blur-sm rounded-xl pr-3 pb-1">
                             <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</h3>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
                         </div>
