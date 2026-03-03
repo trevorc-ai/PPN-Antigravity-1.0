@@ -411,7 +411,7 @@ export async function createTimelineEvent(data: TimelineEventData) {
                 event_type: resolvedEventType,               // NOT NULL CHECK ✅ — migration 066 DEFAULT 'other'
                 event_type_id: data.event_type_id ?? null,  // INTEGER FK → ref_flow_event_types (optional)
                 performed_by: data.performed_by ?? null,     // UUID FK → auth.users
-                // metadata: intentionally omitted — no free-text JSON blobs in log tables
+                metadata: data.metadata ?? null,             // BUG-529-02: JSONB structured shorthand — NOT PHI
             }])
             .select()
             .single();

@@ -223,3 +223,30 @@ A beta practitioner needs to navigate the portal reliably — logging sessions, 
 - [x] No code, SQL, or schema written anywhere in this document
 - [x] Frontmatter updated: `owner: LEAD`, `status: 00_INBOX`
 - [x] Response wrapped in `==== PRODDY ====`
+
+---
+
+## ✅ LEAD Triage Decision — 2026-03-03
+
+**WO-518 is split into two tracks:**
+
+### WO-518A — P0 Auth Hotfixes (Sprint 1A — Ready to begin immediately)
+Ships first, independent of all other WOs.
+- BUG-518-01: Sign-out on "Back to Portal"
+- BUG-518-02: Broken password reset
+- BUG-518-03: Broken first-time sign-up
+- BUG-518-05: Desktop activation email not arriving
+
+**INSPECTOR Pre-Build Gate:** Review Supabase Auth config (broken sign-up flow root cause) before any code is written.
+
+### WO-518B — P1/P2 Nav & UX Polish (Sprint 6 — Deferred)
+- All remaining items from the punchlist
+- Ships after multi-practitioner track is complete
+
+## ✅ USER Decisions — All Open Questions Resolved
+
+- **Q1 — Back button behavior:** Routes to last page visited (standard browser back)
+- **Q2 — Password reset email:** Believed fixed (Anon key env var corrected). Recommend one more testing round before closing.
+- **Q3 — Log Protocol quick action:** Always routes to patient selector first (new or existing patient)
+- **Q4 — Dashboard quick link scroll:** Scroll to top
+- **Q5 — localStorage email pre-fill:** Approved for practitioner B2B context (not patient PHI)

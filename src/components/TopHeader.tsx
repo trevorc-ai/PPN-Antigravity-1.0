@@ -1,6 +1,6 @@
 
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import InstantConnectModal from './modals/InstantConnectModal';
 import FeedbackCard from './FeedbackCard';
@@ -48,6 +48,24 @@ const NavIconButton: React.FC<{
   </div>
 );
 
+// WO-524: Ticking elapsed timer — 1s interval, no DB poll
+const ElapsedTimer: React.FC<{ startedAt: string }> = ({ startedAt }) => {
+  const [elapsed, setElapsed] = useState('');
+  useEffect(() => {
+    const tick = () => {
+      const diff = Date.now() - new Date(startedAt).getTime();
+      const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+      const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+      const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+      setElapsed(`${h}:${m}:${s}`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+  return <span className="font-mono">{elapsed}</span>;
+};
+
 const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTour, isAuthenticated = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,6 +78,40 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const [isInstantConnectOpen, setIsInstantConnectOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
+
+  // WO-524: Active session timer chips
+  interface ActiveChip { sessionId: string; subjectId: string; startedAt: string; }
+  const [activeChips, setActiveChips] = useState<ActiveChip[]>([]);
+
+  const fetchActiveChips = useCallback(async () => {
+    if (!isAuthenticated) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: mySite } = await supabase
+        .from('log_user_sites').select('site_id')
+        .eq('user_id', user.id).eq('is_active', true).single();
+      if (!mySite) return;
+      const { data: sessions } = await supabase
+        .from('log_clinical_records')
+        .select('id, patient_link_code, session_started_at')
+        .eq('site_id', mySite.site_id)
+        .eq('session_date', new Date().toISOString().split('T')[0])
+        .not('session_started_at', 'is', null)
+        .is('session_ended_at', null);
+      setActiveChips((sessions ?? []).map((s: any) => ({
+        sessionId: s.id,
+        subjectId: String(s.patient_link_code ?? s.id).slice(0, 6).toUpperCase(),
+        startedAt: s.session_started_at,
+      })));
+    } catch (err) { console.warn('[TopHeader] fetchActiveChips:', err); }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchActiveChips();
+    const interval = setInterval(fetchActiveChips, 60000);
+    return () => clearInterval(interval);
+  }, [fetchActiveChips]);
 
   const isLanding = location.pathname === '/';
 
@@ -230,6 +282,33 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           {isAuthenticated ? (
             <>
 
+
+              {/* WO-524: Active session timer chips — desktop only, 60s poll */}
+              {activeChips.length > 0 && (
+                <div className="hidden lg:flex items-center gap-2 mr-2">
+                  {activeChips.slice(0, 3).map(chip => (
+                    <button
+                      key={chip.sessionId}
+                      onClick={() => navigate(`/wellness-journey?session=${chip.sessionId}`)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-400/60 hover:bg-emerald-500/20 rounded-xl transition-all text-xs font-bold text-emerald-300 active:scale-95"
+                      aria-label={`Active session ${chip.subjectId} — navigate to session`}
+                    >
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <span className="font-mono tracking-wider">{chip.subjectId}</span>
+                      <span className="text-emerald-600">·</span>
+                      <ElapsedTimer startedAt={chip.startedAt} />
+                    </button>
+                  ))}
+                  {activeChips.length > 3 && (
+                    <span className="px-2 py-1 bg-slate-800/60 border border-slate-700/50 rounded-lg text-xs text-slate-400 font-bold">
+                      +{activeChips.length - 3}
+                    </span>
+                  )}
+                </div>
+              )}
 
               <div className="flex items-center gap-3">
                 {/* Tour - Hidden on mobile */}

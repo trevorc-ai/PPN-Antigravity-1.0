@@ -1,4 +1,5 @@
 import React, { FC, useMemo, useState, useEffect, useRef } from 'react';
+import { getSessionVitals } from '../../services/clinicalLog';
 import {
     ComposedChart, Line, ReferenceLine, ReferenceDot,
     XAxis, YAxis, CartesianGrid, Tooltip,
@@ -95,36 +96,49 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({ sess
 
     const hasFiredRef = useRef(false);
 
-    // Simulate real-time data loading
+    // BUG-529-01: Fetch real vitals; fall back to mock when no DB rows exist yet
+    const UUID_RE_CHART = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    const fetchVitals = async () => {
+        if (!sessionId || !UUID_RE_CHART.test(sessionId)) return;
+        const result = await getSessionVitals(sessionId);
+        if (result.success && result.data && result.data.length > 0) {
+            const mapped: VitalsSnapshot[] = result.data.map((row: any) => ({
+                id: row.id,
+                recordedAt: new Date(row.recorded_at),
+                heartRate: row.heart_rate ?? 0,
+                bpSystolic: row.bp_systolic ?? 0,
+                temperatureF: row.temperature ? (row.temperature * 9 / 5 + 32) : 98.6,
+            }));
+            setData(mapped);
+            mapped.forEach(v => {
+                if (v.bpSystolic > VITAL_THRESHOLDS.bpSystolicHigh) onThresholdViolation('BP Systolic', v.bpSystolic);
+                if (v.heartRate > VITAL_THRESHOLDS.hrHigh) onThresholdViolation('Heart Rate', v.heartRate);
+            });
+        } else if (!hasFiredRef.current) {
+            // No real vitals yet — show mock data so chart is never blank
+            const baseTime = new Date();
+            baseTime.setHours(9, 0, 0, 0);
+            const mockVitals: VitalsSnapshot[] = [
+                { id: 'v1', recordedAt: new Date(baseTime.getTime() + 0 * 60000), heartRate: 72, bpSystolic: 118, temperatureF: 98.6 },
+                { id: 'v2', recordedAt: new Date(baseTime.getTime() + 60 * 60000), heartRate: 85, bpSystolic: 125, temperatureF: 98.8 },
+                { id: 'v3', recordedAt: new Date(baseTime.getTime() + 120 * 60000), heartRate: 115, bpSystolic: 135, temperatureF: 99.1 },
+                { id: 'v4', recordedAt: new Date(baseTime.getTime() + 165 * 60000), heartRate: 132, bpSystolic: 145, temperatureF: 99.8 },
+                { id: 'v5', recordedAt: new Date(baseTime.getTime() + 240 * 60000), heartRate: 95, bpSystolic: 128, temperatureF: 99.2 },
+            ];
+            setData(mockVitals);
+            mockVitals.forEach(v => {
+                if (v.bpSystolic > VITAL_THRESHOLDS.bpSystolicHigh) onThresholdViolation('BP Systolic', v.bpSystolic);
+                if (v.heartRate > VITAL_THRESHOLDS.hrHigh) onThresholdViolation('Heart Rate', v.heartRate);
+            });
+            hasFiredRef.current = true;
+        }
+    };
+
     useEffect(() => {
-        if (hasFiredRef.current) return;
-
-        // Base starting time
-        const baseTime = new Date();
-        baseTime.setHours(9, 0, 0, 0);
-
-        const mockVitals: VitalsSnapshot[] = [
-            { id: 'v1', recordedAt: new Date(baseTime.getTime() + 0 * 60000), heartRate: 72, bpSystolic: 118, temperatureF: 98.6 },
-            { id: 'v2', recordedAt: new Date(baseTime.getTime() + 60 * 60000), heartRate: 85, bpSystolic: 125, temperatureF: 98.8 },
-            { id: 'v3', recordedAt: new Date(baseTime.getTime() + 120 * 60000), heartRate: 115, bpSystolic: 135, temperatureF: 99.1 },
-            { id: 'v4', recordedAt: new Date(baseTime.getTime() + 165 * 60000), heartRate: 132, bpSystolic: 145, temperatureF: 99.8 }, // Violation!
-            { id: 'v5', recordedAt: new Date(baseTime.getTime() + 240 * 60000), heartRate: 95, bpSystolic: 128, temperatureF: 99.2 },
-        ];
-
-        setData(mockVitals);
-
-        // Fire toasts for violations in mock data
-        mockVitals.forEach(v => {
-            if (v.bpSystolic > VITAL_THRESHOLDS.bpSystolicHigh) {
-                onThresholdViolation('BP Systolic', v.bpSystolic);
-            }
-            if (v.heartRate > VITAL_THRESHOLDS.hrHigh) {
-                onThresholdViolation('Heart Rate', v.heartRate);
-            }
-        });
-
-        hasFiredRef.current = true;
-
+        fetchVitals();
+        const interval = setInterval(fetchVitals, 30000);
+        return () => clearInterval(interval);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionId]);
 

@@ -1,0 +1,13 @@
+name: "verify_build_integrity"
+    description: "Runs a compiler check to ensure the React application will not crash or show a white screen to the user."
+    tools: 
+      - "run_command"
+      - "read_terminal"
+    instructions: |
+      PURPOSE: Prevent the user (who does not read code) from encountering broken builds or syntax errors.
+      TRIGGER: Run this skill immediately after any code modifications are made.
+      STEPS:
+      1. Use `run_command` to execute `npm run build` (or `npx tsc` for strict type-checking).
+      2. Use `read_terminal` to analyze the output.
+      3. IF ERRORS EXIST: Do not ask the user for help. You must either fix the syntax error yourself or move the ticket back to 03_BUILD with a log of the terminal error.
+      4. IF SUCCESS: Append "✅ Build Integrity Verified" to the ticket.

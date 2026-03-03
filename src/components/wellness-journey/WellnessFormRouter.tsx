@@ -38,6 +38,7 @@ import {
     createBehavioralChange,
     createLongitudinalAssessment,
 } from '../../services/clinicalLog';
+import { supabase } from '../../supabaseClient';
 
 // Form data types
 import type { ConsentData } from '../arc-of-care-forms/phase-1-preparation/ConsentForm';
@@ -238,37 +239,63 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     const handleSafetyEventSave = useCallback(async (data: SafetyAndAdverseEventData) => {
         if (!sessionId) return; // silent
-        // Pass event_type display label — clinicalLog.ts maps it to safety_event_type_id FK
-        // via SAFETY_EVENT_TYPE_ID lookup table (WO-420 Item 1, migration 071b)
         const result = await createSessionEvent({
             session_id: sessionId,
-            event_type: data.event_type ?? 'Other', // SAFETY_EVENT_TYPE_ID lookup fallback = 13 (OTHER)
+            event_type: data.event_type ?? 'Other',
             severity_grade_id: data.severity_grade?.toString(),
             is_resolved: data.resolved,
         });
-        result.success ? onSaved('Safety & Adverse Event') : onError('Safety & Adverse Event', result.error);
+        if (result.success) {
+            // BUG-529-03: Write ledger entry so event appears in LiveSessionTimeline
+            const { data: { user: safetyUser } } = await supabase.auth.getUser();
+            await createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type: 'safety_event',
+                performed_by: safetyUser?.id ?? undefined,
+                metadata: { event_description: `Adverse event logged: ${data.event_type ?? 'Other'}${data.severity_grade ? ` (Grade ${data.severity_grade})` : ''}` },
+            });
+            onSaved('Safety & Adverse Event');
+        } else {
+            onError('Safety & Adverse Event', result.error);
+        }
     }, [sessionId]);
 
     const handleRescueProtocolSave = useCallback(async (data: RescueProtocolData) => {
-        if (!sessionId) return; // silent — Rescue form auto-saves immediately, session may not exist yet
-        // 'rescue' maps to safety_event_type_id = 13 (OTHER) via SAFETY_EVENT_TYPE_ID in clinicalLog.ts
+        if (!sessionId) return; // silent
         const result = await createSessionEvent({
             session_id: sessionId,
             event_type: 'rescue',
-            intervention_type_id: data.intervention_type ? undefined : undefined,
+            intervention_type_id: data.intervention_type ? parseInt(data.intervention_type, 10) : undefined, // BUG-529-04: fix dead-code branch
         });
-        result.success ? onSaved('Rescue Protocol') : onError('Rescue Protocol', result.error);
+        if (result.success) {
+            // BUG-529-04: Write ledger entry so rescue appears in LiveSessionTimeline
+            const { data: { user: rescueUser } } = await supabase.auth.getUser();
+            await createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type: 'clinical_decision',
+                performed_by: rescueUser?.id ?? undefined,
+                metadata: { event_description: `Rescue protocol activated${data.intervention_type ? `: ${data.intervention_type}` : ''}` },
+            });
+            onSaved('Rescue Protocol');
+        } else {
+            onError('Rescue Protocol', result.error);
+        }
     }, [sessionId]);
 
     const handleTimelineSave = useCallback(async (events: TimelineEvent[]) => {
         if (!sessionId) return; // silent
         const validEvents = events.filter(e => e.event_type && e.event_timestamp);
         if (validEvents.length === 0) return;
+        // WO-525: Resolve authenticated user UUID once before the map loop
+        const { data: { user: tlUser } } = await supabase.auth.getUser();
+        const resolvedUid = tlUser?.id ?? undefined;
         const promises = validEvents.map(e => createTimelineEvent({
             session_id: sessionId,
             event_timestamp: e.event_timestamp,
             event_type: e.event_type,
-            performed_by: e.performed_by,
+            performed_by: resolvedUid,
             metadata: { ...e.metadata, event_description: e.event_description },
         }));
         const results = await Promise.all(promises);

@@ -222,7 +222,7 @@ export default function Dashboard() {
 
     (async () => {
       const { data } = await supabase
-        .from('clinician_profiles')
+        .from('log_user_profiles')
         .select('display_name, full_name')
         .eq('user_id', user.id)
         .maybeSingle();

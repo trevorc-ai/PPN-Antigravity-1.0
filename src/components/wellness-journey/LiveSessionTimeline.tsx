@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
 import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock, Mic, Music, AlertTriangle, Send } from 'lucide-react';
 import { getTimelineEvents, createTimelineEvent } from '../../services/clinicalLog';
+import { supabase } from '../../supabaseClient';
 
 export interface TimelineEvent {
     id: string;
@@ -48,6 +49,14 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
     const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [draftNote, setDraftNote] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uid, setUid] = useState<string | null>(null);
+
+    // WO-525: Resolve authenticated user UUID once on mount
+    useEffect(() => {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUid(user?.id ?? null);
+        });
+    }, []);
 
     const handleAddNote = async (e?: React.FormEvent, presetType?: string, presetDesc?: string) => {
         if (e) e.preventDefault();
@@ -61,8 +70,8 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         const eventData = {
             session_id: sessionId,
             event_timestamp: new Date().toISOString(),
-            event_type: type,
-            performed_by: 'Current Clinician',
+            event_type: type as 'dose_admin' | 'vital_check' | 'patient_observation' | 'music_change' | 'clinical_decision' | 'safety_event' | 'touch_consent' | 'other',
+            performed_by: uid ?? undefined,
             metadata: { event_description: description }
         };
 
@@ -108,15 +117,25 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
     useEffect(() => {
         fetchLocalEvents();
 
-        if (!active) return;
+        if (!active || !sessionId || !UUID_RE.test(sessionId)) return;
 
-        // Fetch periodically or subscribe
-        const interval = setInterval(() => {
-            fetchLocalEvents();
-        }, 30000);
+        // WO-525: Realtime subscription — replaces 30s poll for collaborative multi-practitioner use
+        const channel = supabase
+            .channel(`timeline-${sessionId}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'log_session_timeline_events',
+                    filter: `session_id=eq.${sessionId}`,
+                },
+                () => { fetchLocalEvents(); }
+            )
+            .subscribe();
 
-        return () => clearInterval(interval);
-    }, [fetchLocalEvents, active]);
+        return () => { supabase.removeChannel(channel); };
+    }, [fetchLocalEvents, active, sessionId]);
 
     const handleExportLog = () => {
         const lines = [
