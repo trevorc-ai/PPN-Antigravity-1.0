@@ -1,5 +1,5 @@
 /**
- * CrisisLoggerTour — WO-084
+ * CrisisLoggerTour, WO-084
  * 5-step mini guided tour for Crisis Logger.
  * Tone: calm, direct, confidence-building. Max 90 seconds.
  * Entry: first time user opens Crisis Logger → modal prompt.
@@ -168,7 +168,7 @@ export const CrisisLoggerTour: React.FC<CrisisLoggerTourProps> = ({ onClose }) =
                     <div className="flex items-center gap-2">
                         <Shield className="w-4 h-4 text-red-400" aria-hidden="true" />
                         <span className="text-xs font-black text-red-400 uppercase tracking-widest">
-                            Crisis Logger Tour — {step + 1}/{STEPS.length}
+                            Crisis Logger Tour, {step + 1}/{STEPS.length}
                         </span>
                     </div>
                     <button

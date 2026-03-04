@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { X, QrCode, Smartphone, ArrowRight, ShieldCheck } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { X, QrCode, Smartphone, ArrowRight, ShieldCheck, Compass } from 'lucide-react';
 import { AdvancedTooltip } from './ui/AdvancedTooltip';
 
 interface SidebarProps {
@@ -27,6 +27,7 @@ const navSections: NavSection[] = [
   {
     title: 'Core',
     items: [
+      { label: 'Search', icon: 'search', path: '/search' },
       { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
       { label: 'Analytics', icon: 'insights', path: '/analytics' },
       { label: 'My Protocols', icon: 'assignment', path: '/protocols' },
@@ -71,7 +72,11 @@ const navSections: NavSection[] = [
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
   const [mobileModalState, setMobileModalState] = React.useState<{ isOpen: boolean; feature: string; title: string; }>({ isOpen: false, feature: '', title: '' });
+
+  const DEMO_SESSION_ID = import.meta.env.VITE_DEMO_SESSION_ID ?? '00000000-0570-de00-0000-000000000000';
+  const isDemoVisible = import.meta.env.MODE !== 'production';
 
   return (
     <>
@@ -214,6 +219,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           </div>
         </nav>
 
+        {/* WO-570: 2-Click Compass Demo Button, dev only */}
+        {isDemoVisible && (
+          <div className="px-4 pb-5">
+            <button
+              onClick={() => {
+                onClose();
+                navigate(`/patient-report?sessionId=${DEMO_SESSION_ID}&demo=1`);
+              }}
+              aria-label="Open Integration Compass demo"
+              className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border border-teal-500/30 bg-teal-500/08 text-teal-400 text-sm font-bold tracking-wide hover:bg-teal-500/15 transition-all"
+              style={{ background: 'rgba(45,212,191,0.06)' }}
+            >
+              <Compass className="w-4 h-4" />
+              Compass Demo
+            </button>
+          </div>
+        )}
 
       </aside>
 
@@ -236,18 +258,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {/* Left QR Panel */}
             <div className="md:w-5/12 p-8 bg-gradient-to-br from-indigo-950/80 to-slate-900 flex flex-col items-center justify-center border-r border-slate-800">
               <div className="w-full aspect-square bg-white rounded-2xl p-3 shadow-xl mb-6 relative group overflow-hidden">
-                {/* Fallback generated QR code since npm is locked */}
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://ppnportal.net/auth/magic?token=sim_${Date.now()}`}
                   alt="Magic Login QR Code"
                   className="w-full h-full object-contain rounded-xl"
                 />
-
-                {/* Scan Overlay */}
                 <div className="absolute inset-0 bg-indigo-500/10 pointer-events-none" />
                 <div className="absolute top-0 left-0 w-full h-1 bg-indigo-400/80 shadow-[0_0_15px_rgba(99,102,241,1)] blur-[1px] animate-[scan_2s_ease-in-out_infinite]" />
               </div>
-
               <div className="flex items-center gap-2 text-indigo-300 font-bold bg-indigo-500/10 px-4 py-2 rounded-full border border-indigo-500/20 w-fit">
                 <QrCode className="w-4 h-4" />
                 <span className="text-sm tracking-wide">Scan with camera</span>
@@ -259,15 +277,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               <div className="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center mb-6 border border-indigo-500/30">
                 <Smartphone className="w-6 h-6" />
               </div>
-
-              <h2 className="text-2xl font-black text-white mb-2 tracking-tight">
-                Send to Phone
-              </h2>
-
+              <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Send to Phone</h2>
               <p className="text-slate-400 text-sm leading-relaxed mb-8">
-                The {mobileModalState.title} tool is specifically optimized for a mobile-first interface. Scanning this secure code will instantly beam your current session context to your device.
+                The {mobileModalState.title} tool is specifically optimized for a mobile-first interface.
               </p>
-
               <div className="space-y-4 mb-8">
                 {[
                   "Open your smartphone's native camera app.",
@@ -282,7 +295,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   </div>
                 ))}
               </div>
-
               <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 mt-auto">
                 <ShieldCheck className="w-8 h-8 text-emerald-400 shrink-0" />
                 <div>
@@ -291,7 +303,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       )}

@@ -9,7 +9,7 @@ import {
 interface NarrativeViewerProps {
     narrative: GeneratedNarrative;
     className?: string;
-    /** Called by "Save & Close" — closes the SlideOut panel and advances to next step */
+    /** Called by "Save & Close", closes the SlideOut panel and advances to next step */
     onClose?: () => void;
 }
 
@@ -97,7 +97,7 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
 
             {/* Footer Actions */}
             <div className="flex items-center gap-3 px-6 py-4 border-t border-slate-700/50 bg-slate-900/40 flex-wrap">
-                {/* Back — scrolls back up (just closes expanded for now; future could go back a step) */}
+                {/* Back, scrolls back up (just closes expanded for now; future could go back a step) */}
                 {onClose && (
                     <button
                         onClick={() => setExpanded(true)}
@@ -129,7 +129,7 @@ export const NarrativeViewer: React.FC<NarrativeViewerProps> = ({ narrative, cla
                     Download .txt
                 </button>
 
-                {/* Save & Close — pre-illuminated emerald */}
+                {/* Save & Close, pre-illuminated emerald */}
                 {onClose && (
                     <button
                         onClick={handleSaveAndClose}

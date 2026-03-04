@@ -209,7 +209,7 @@ const SearchPortal: React.FC = () => {
     if (!searchVal.trim()) return;
     // If no API key is configured, show a polite offline message and skip the call
     if (!GEMINI_API_KEY) {
-      setAiAnalysis('AI synthesis is offline — configure VITE_GEMINI_API_KEY to enable Neural Copilot.');
+      setAiAnalysis('AI synthesis is offline, configure VITE_GEMINI_API_KEY to enable Neural Copilot.');
       return;
     }
     setIsAiLoading(true);
@@ -224,7 +224,7 @@ const SearchPortal: React.FC = () => {
       setGroundingChunks(response.candidates?.[0]?.groundingMetadata?.groundingChunks || []);
     } catch (err) {
       console.error('[SearchPortal] AI synthesis error:', err);
-      setAiAnalysis('Synthesis unavailable — check your network connection or API key.');
+      setAiAnalysis('Synthesis unavailable, check your network connection or API key.');
     } finally {
       setIsAiLoading(false);
     }
@@ -367,7 +367,7 @@ const SearchPortal: React.FC = () => {
             })}
           </div>
 
-          {/* Inline efficacy filter — only when Patients/Safety active */}
+          {/* Inline efficacy filter, only when Patients/Safety active */}
           {(activeCategory === 'Patients' || activeCategory === 'Safety') && (
             <div className="flex flex-wrap justify-center gap-2 animate-in fade-in duration-200" role="group" aria-label="Efficacy filter">
               <span className="text-[12px] font-bold text-slate-500 self-center">Min efficacy:</span>
@@ -440,7 +440,7 @@ const SearchPortal: React.FC = () => {
               </div>
             )}
 
-            {/* Results grid — always full cards */}
+            {/* Results grid, always full cards */}
             {totalVisible > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {showSubstances && substanceResults.map((sub, i) => (

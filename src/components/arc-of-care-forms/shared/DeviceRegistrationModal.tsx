@@ -128,7 +128,7 @@ export const DeviceRegistrationModal: React.FC<DeviceRegistrationModalProps> = (
                         </select>
                     </FormField>
 
-                    {/* Device Model — PERSISTED external identifier (hardware model name, not clinical narrative).
+                    {/* Device Model, PERSISTED external identifier (hardware model name, not clinical narrative).
                         Architecture Constitution §2 exception: structured external reference, maxLength=100 enforced. */}
                     <FormField label="Device Model" required>
                         <input
@@ -141,7 +141,7 @@ export const DeviceRegistrationModal: React.FC<DeviceRegistrationModalProps> = (
                         />
                     </FormField>
 
-                    {/* Serial Number — PERSISTED external identifier (manufacturer serial, not clinical narrative).
+                    {/* Serial Number, PERSISTED external identifier (manufacturer serial, not clinical narrative).
                         Architecture Constitution §2 exception: structured hardware reference, maxLength=100 enforced. */}
                     <FormField label="Serial Number" required>
                         <input
@@ -154,7 +154,7 @@ export const DeviceRegistrationModal: React.FC<DeviceRegistrationModalProps> = (
                         />
                     </FormField>
 
-                    {/* Firmware Version — PERSISTED external identifier (software version string, not clinical narrative).
+                    {/* Firmware Version, PERSISTED external identifier (software version string, not clinical narrative).
                         Architecture Constitution §2 exception: structured hardware reference, maxLength=50 enforced. */}
                     <FormField label="Firmware Version" tooltip="Optional - for troubleshooting purposes">
                         <input

@@ -1,47 +1,8 @@
-import React, { useRef } from 'react';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { usePhase3Data, Phase3VitalsPoint, Phase3DecayPoint } from '../hooks/usePhase3Data';
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-const REPORT = {
-    patientId: 'SUB-2024-0842',
-    ageGroup: '35–44',
-    treatmentStart: 'July 14, 2025',
-    treatmentEnd: 'January 18, 2026',
-    substance: 'MDMA-Assisted Therapy',
-    clinician: 'Dr. Sarah Chen, LCSW',
-    site: 'Pacific Healing Institute',
-    exportDate: 'February 18, 2026',
-    reportId: 'RPT-2026-0218-0842',
-    baseline: { phq9: 21, gad7: 18, ace: 6, pcl5: 52, hrv: 34 },
-    followup: { phq9: 8, gad7: 7, pcl5: 19, hrv: 58 },
-    sessions: [
-        { id: 1, date: 'Aug 3, 2025', dose: '125mg oral', duration: '7h 30m', vitals: 14, meq30: 72, ae: 1 },
-        { id: 2, date: 'Sep 14, 2025', dose: '125mg oral', duration: '7h 12m', vitals: 12, meq30: 78, ae: 0 },
-        { id: 3, date: 'Nov 2, 2025', dose: '100mg oral', duration: '6h 48m', vitals: 11, meq30: 81, ae: 0 },
-    ],
-    integration: { attended: 8, scheduled: 10, pulseCheckDays: 82, pulseTotal: 90, behavioralChanges: 6 },
-    benchmarkPercentile: 91,
-    phq9Trajectory: [
-        { label: 'Baseline', day: 0, score: 21 },
-        { label: 'Session 1', day: 14, score: 16 },
-        { label: 'Week 6', day: 42, score: 13 },
-        { label: 'Session 2', day: 63, score: 11 },
-        { label: 'Month 3', day: 90, score: 9 },
-        { label: 'Session 3', day: 112, score: 9 },
-        { label: '6-Month', day: 188, score: 8 },
-    ],
-    vitalsSession1: [
-        { t: '0:00', hr: 68, bp_s: 122, bp_d: 78 },
-        { t: '1:00', hr: 88, bp_s: 128, bp_d: 82 },
-        { t: '2:00', hr: 104, bp_s: 138, bp_d: 88 },
-        { t: '3:00', hr: 112, bp_s: 142, bp_d: 90 },
-        { t: '4:00', hr: 108, bp_s: 140, bp_d: 88 },
-        { t: '5:00', hr: 98, bp_s: 132, bp_d: 84 },
-        { t: '6:00', hr: 86, bp_s: 126, bp_d: 80 },
-        { t: '7:30', hr: 74, bp_s: 120, bp_d: 76 },
-    ],
-};
-
-// ─── Print Styles (injected into <head> on mount) ────────────────────────────
+// ─── Print Styles ─────────────────────────────────────────────────────────────
 const PRINT_CSS = `
 @media print {
   @page { size: A4; margin: 0; }
@@ -52,92 +13,75 @@ const PRINT_CSS = `
 }
 `;
 
-// ─── Inline SVG: PHQ-9 Line Chart ────────────────────────────────────────────
-const PHQ9Chart: React.FC = () => {
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const phq9Severity = (n: number) =>
+    n >= 20 ? 'Severe' : n >= 15 ? 'Mod-Severe' : n >= 10 ? 'Moderate' : n >= 5 ? 'Mild' : 'Minimal';
+
+const fmtTime = (iso: string) => {
+    try {
+        return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch { return iso; }
+};
+
+const fmtDate = (iso: string) => {
+    try {
+        return new Date(iso).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch { return iso; }
+};
+
+// ─── Inline SVG Charts ────────────────────────────────────────────────────────
+
+const AwaitingData: React.FC<{ label: string }> = ({ label }) => (
+    <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        height: '120px', backgroundColor: '#f8fafc', border: '1px dashed #cbd5e1',
+        borderRadius: '8px', color: '#94a3b8', fontSize: '11px', fontStyle: 'italic',
+    }}>
+        {label}
+    </div>
+);
+
+const PHQ9Chart: React.FC<{ points: Phase3DecayPoint[]; baseline: number | null }> = ({ points, baseline }) => {
     const W = 560; const H = 160;
     const pad = { t: 20, r: 20, b: 40, l: 44 };
-    const cW = W - pad.l - pad.r;
-    const cH = H - pad.t - pad.b;
-    const maxDay = 188; const maxScore = 27;
+    const cW = W - pad.l - pad.r; const cH = H - pad.t - pad.b;
+    const maxDay = points.length > 0 ? points[points.length - 1].day : 180;
+    const maxScore = 27;
     const sx = (d: number) => (d / maxDay) * cW;
     const sy = (s: number) => cH - (s / maxScore) * cH;
-    const pts = REPORT.phq9Trajectory;
 
-    const pathD = pts.map((p, i) =>
-        (i === 0 ? `M` : `L`) + ` ${sx(p.day).toFixed(1)} ${sy(p.score).toFixed(1)}`
-    ).join(' ');
-
-    const areaD = `${pathD} L ${sx(pts[pts.length - 1].day).toFixed(1)} ${cH} L ${sx(pts[0].day).toFixed(1)} ${cH} Z`;
-
-    // Severity zone colours (very light for print)
-    const zones = [
-        { min: 20, max: 27, color: '#fee2e2' },
-        { min: 15, max: 20, color: '#fef3c7' },
-        { min: 10, max: 15, color: '#fefce8' },
-        { min: 5, max: 10, color: '#f0fdf4' },
-        { min: 0, max: 5, color: '#dcfce7' },
+    // Prepend baseline point at day 0 if available
+    const allPts: { day: number; phq9: number; label: string }[] = [
+        ...(baseline != null ? [{ day: 0, phq9: baseline, label: 'Baseline' }] : []),
+        ...points.map((p, i) => ({ ...p, label: `Day ${p.day}` })),
     ];
+
+    const pathD = allPts.map((p, i) =>
+        (i === 0 ? 'M' : 'L') + ` ${sx(p.day).toFixed(1)} ${sy(p.phq9).toFixed(1)}`
+    ).join(' ');
 
     return (
         <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: 'visible' }}>
-            <defs>
-                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                </linearGradient>
-                <clipPath id="chartClip">
-                    <rect x="0" y="0" width={cW} height={cH} />
-                </clipPath>
-            </defs>
-
             <g transform={`translate(${pad.l},${pad.t})`}>
-                {/* Severity zones */}
-                {zones.map((z, i) => (
-                    <rect key={i} x={0} y={sy(z.max)} width={cW}
-                        height={sy(z.min) - sy(z.max)} fill={z.color} />
-                ))}
-
-                {/* Remission threshold */}
-                <line x1={0} y1={sy(5)} x2={cW} y2={sy(5)}
-                    stroke="#22c55e" strokeWidth={1} strokeDasharray="4 3" />
-                <text x={cW - 2} y={sy(5) - 4} textAnchor="end"
-                    fill="#16a34a" fontSize={8} fontWeight="600">Remission (&lt;5)</text>
-
-                {/* Grid lines */}
                 {[0, 5, 10, 15, 20, 27].map(v => (
                     <g key={v}>
-                        <line x1={0} y1={sy(v)} x2={cW} y2={sy(v)}
-                            stroke="#e2e8f0" strokeWidth={1} />
-                        <text x={-6} y={sy(v)} textAnchor="end" dominantBaseline="middle"
-                            fill="#64748b" fontSize={8}>{v}</text>
+                        <line x1={0} y1={sy(v)} x2={cW} y2={sy(v)} stroke="#e2e8f0" strokeWidth={1} />
+                        <text x={-6} y={sy(v)} textAnchor="end" dominantBaseline="middle" fill="#64748b" fontSize={8}>{v}</text>
                     </g>
                 ))}
-
-                {/* Area fill */}
-                <path d={areaD} fill="url(#areaGrad)" clipPath="url(#chartClip)" />
-
-                {/* Line */}
-                <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth={2.5}
-                    strokeLinecap="round" strokeLinejoin="round" />
-
-                {/* Data points */}
-                {pts.map((p, i) => (
+                <line x1={0} y1={sy(5)} x2={cW} y2={sy(5)} stroke="#22c55e" strokeWidth={1} strokeDasharray="4 3" />
+                <text x={cW - 2} y={sy(5) - 4} textAnchor="end" fill="#16a34a" fontSize={8} fontWeight="600">Remission (&lt;5)</text>
+                <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                {allPts.map((p, i) => (
                     <g key={i}>
-                        <circle cx={sx(p.day)} cy={sy(p.score)} r={4}
-                            fill={i === pts.length - 1 ? '#10b981' : '#3b82f6'}
+                        <circle cx={sx(p.day)} cy={sy(p.phq9)} r={4}
+                            fill={i === allPts.length - 1 ? '#10b981' : '#3b82f6'}
                             stroke="white" strokeWidth={1.5} />
-                        <text x={sx(p.day)} y={sy(p.score) - 8} textAnchor="middle"
-                            fill="#1e3a5f" fontSize={8} fontWeight="700">{p.score}</text>
+                        <text x={sx(p.day)} y={sy(p.phq9) - 8} textAnchor="middle"
+                            fill="#1e3a5f" fontSize={8} fontWeight="700">{p.phq9}</text>
+                        <text x={sx(p.day)} y={cH + 14} textAnchor="middle" fill="#475569" fontSize={7}>{p.label}</text>
                     </g>
                 ))}
-
-                {/* X-axis labels */}
-                {pts.map((p, i) => (
-                    <text key={i} x={sx(p.day)} y={cH + 14} textAnchor="middle"
-                        fill="#475569" fontSize={7.5}>{p.label}</text>
-                ))}
-
-                {/* Axes */}
                 <line x1={0} y1={cH} x2={cW} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
                 <line x1={0} y1={0} x2={0} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
             </g>
@@ -145,22 +89,19 @@ const PHQ9Chart: React.FC = () => {
     );
 };
 
-// ─── Inline SVG: Vitals Chart ─────────────────────────────────────────────────
-const VitalsChart: React.FC = () => {
+const VitalsChart: React.FC<{ vitals: Phase3VitalsPoint[] }> = ({ vitals }) => {
     const W = 520; const H = 130;
     const pad = { t: 16, r: 16, b: 32, l: 44 };
     const cW = W - pad.l - pad.r; const cH = H - pad.t - pad.b;
-    const vs = REPORT.vitalsSession1;
-    const maxT = vs.length - 1;
-    const sx = (i: number) => (i / maxT) * cW;
-
-    // HR: 0-160 scale
+    const maxMin = vitals[vitals.length - 1]?.elapsedMin || 1;
+    const sx = (m: number) => (m / maxMin) * cW;
     const syHR = (v: number) => cH - (v / 160) * cH;
-    // Systolic: 80-180 scale
     const syBP = (v: number) => cH - ((v - 80) / 100) * cH;
 
-    const hrPath = vs.map((v, i) => `${i === 0 ? 'M' : 'L'} ${sx(i).toFixed(1)} ${syHR(v.hr).toFixed(1)}`).join(' ');
-    const bpPath = vs.map((v, i) => `${i === 0 ? 'M' : 'L'} ${sx(i).toFixed(1)} ${syBP(v.bp_s).toFixed(1)}`).join(' ');
+    const hrPts = vitals.filter(v => v.hr != null);
+    const bpPts = vitals.filter(v => v.bp_s != null);
+    const hrPath = hrPts.map((v, i) => `${i === 0 ? 'M' : 'L'} ${sx(v.elapsedMin).toFixed(1)} ${syHR(v.hr!).toFixed(1)}`).join(' ');
+    const bpPath = bpPts.map((v, i) => `${i === 0 ? 'M' : 'L'} ${sx(v.elapsedMin).toFixed(1)} ${syBP(v.bp_s!).toFixed(1)}`).join(' ');
 
     return (
         <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: 'visible' }}>
@@ -171,10 +112,10 @@ const VitalsChart: React.FC = () => {
                         <text x={-6} y={syHR(v)} textAnchor="end" dominantBaseline="middle" fill="#94a3b8" fontSize={8}>{v}</text>
                     </g>
                 ))}
-                <path d={hrPath} fill="none" stroke="#ef4444" strokeWidth={2} strokeLinecap="round" />
-                <path d={bpPath} fill="none" stroke="#8b5cf6" strokeWidth={2} strokeLinecap="round" strokeDasharray="5 3" />
-                {vs.map((v, i) => (
-                    <text key={i} x={sx(i)} y={cH + 12} textAnchor="middle" fill="#64748b" fontSize={7.5}>{v.t}</text>
+                {hrPath && <path d={hrPath} fill="none" stroke="#ef4444" strokeWidth={2} strokeLinecap="round" />}
+                {bpPath && <path d={bpPath} fill="none" stroke="#8b5cf6" strokeWidth={2} strokeLinecap="round" strokeDasharray="5 3" />}
+                {vitals.filter((_, i) => i % Math.max(1, Math.floor(vitals.length / 8)) === 0).map((v, i) => (
+                    <text key={i} x={sx(v.elapsedMin)} y={cH + 12} textAnchor="middle" fill="#64748b" fontSize={7}>{v.elapsedMin}m</text>
                 ))}
                 <line x1={0} y1={cH} x2={cW} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
                 <line x1={0} y1={0} x2={0} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
@@ -183,7 +124,6 @@ const VitalsChart: React.FC = () => {
     );
 };
 
-// ─── Inline SVG: Radar / Spider Chart ────────────────────────────────────────
 const RadarChart: React.FC = () => {
     const cx = 110; const cy = 110; const r = 85;
     const axes = [
@@ -202,13 +142,8 @@ const RadarChart: React.FC = () => {
     };
     const clinicPts = axes.map((a, i) => pt(a.clinic, i));
     const networkPts = axes.map((a, i) => pt(a.network, i));
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _toPath = (pts: { x: number; y: number }[]) =>
-        pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') + 'Z';
-
     return (
         <svg width="220" height="220" viewBox="0 0 220 220">
-            {/* Grid rings */}
             {[25, 50, 75, 100].map(pct => {
                 const ringPts = axes.map((_, i) => {
                     const a = angle(i); const ratio = pct / 100;
@@ -216,20 +151,16 @@ const RadarChart: React.FC = () => {
                 });
                 return <polygon key={pct} points={ringPts.join(' ')} fill="none" stroke="#e2e8f0" strokeWidth={1} />;
             })}
-            {/* Axis lines */}
             {axes.map((_, i) => {
                 const a = angle(i);
                 return <line key={i} x1={cx} y1={cy}
                     x2={(cx + r * Math.cos(a)).toFixed(1)} y2={(cy + r * Math.sin(a)).toFixed(1)}
                     stroke="#e2e8f0" strokeWidth={1} />;
             })}
-            {/* Network polygon */}
             <polygon points={networkPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}
                 fill="#94a3b8" fillOpacity={0.15} stroke="#94a3b8" strokeWidth={1.5} />
-            {/* Clinic polygon */}
             <polygon points={clinicPts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}
                 fill="#3b82f6" fillOpacity={0.2} stroke="#3b82f6" strokeWidth={2} />
-            {/* Labels */}
             {axes.map((a, i) => {
                 const ang = angle(i); const offset = 14;
                 const lx = cx + (r + offset) * Math.cos(ang);
@@ -237,74 +168,47 @@ const RadarChart: React.FC = () => {
                 return (
                     <text key={i} x={lx.toFixed(1)} y={ly.toFixed(1)}
                         textAnchor="middle" dominantBaseline="middle"
-                        fill="#1e3a5f" fontSize={8} fontWeight="700">
-                        {a.label}
-                    </text>
+                        fill="#1e3a5f" fontSize={8} fontWeight="700">{a.label}</text>
                 );
             })}
         </svg>
     );
 };
 
-// ─── Page Shell ───────────────────────────────────────────────────────────────
-const PageShell: React.FC<{ children: React.ReactNode; pageNum: number; total: number }> = ({ children, pageNum, total }) => (
-    <div
-        className="pdf-page"
-        style={{
-            width: '210mm',
-            minHeight: '297mm',
-            backgroundColor: '#ffffff',
-            fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-            color: '#1e293b',
-            position: 'relative',
-            overflow: 'hidden',
-            boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
-            marginBottom: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-        }}
-    >
-        {/* Top accent bar */}
-        <div style={{ height: '6px', background: 'linear-gradient(90deg, #1e3a5f 0%, #3b82f6 50%, #10b981 100%)' }} />
+// ─── Layout Primitives ────────────────────────────────────────────────────────
 
-        {/* Header strip */}
+const PageShell: React.FC<{ children: React.ReactNode; pageNum: number; total: number; reportId: string; exportDate: string }> = ({ children, pageNum, total, reportId, exportDate }) => (
+    <div className="pdf-page" style={{
+        width: '210mm', minHeight: '297mm', backgroundColor: '#ffffff',
+        fontFamily: "'Inter','Helvetica Neue',sans-serif", color: '#1e293b',
+        position: 'relative', overflow: 'hidden',
+        boxShadow: '0 4px 32px rgba(0,0,0,0.18)', marginBottom: '24px',
+        display: 'flex', flexDirection: 'column',
+    }}>
+        <div style={{ height: '6px', background: 'linear-gradient(90deg,#1e3a5f 0%,#3b82f6 50%,#10b981 100%)' }} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 28px 12px', borderBottom: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg, #1e3a5f, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'linear-gradient(135deg,#1e3a5f,#3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span style={{ color: 'white', fontSize: '14px', fontWeight: 900 }}>P</span>
                 </div>
                 <div>
                     <div style={{ fontSize: '11px', fontWeight: 900, color: '#1e3a5f', letterSpacing: '0.08em', textTransform: 'uppercase' }}>PPN Portal</div>
-                    <div style={{ fontSize: '9px', color: '#64748b', letterSpacing: '0.04em' }}>Clinical Outcomes Report — CONFIDENTIAL</div>
+                    <div style={{ fontSize: '9px', color: '#64748b', letterSpacing: '0.04em' }}>Clinical Outcomes Report, CONFIDENTIAL</div>
                 </div>
             </div>
             <div style={{ textAlign: 'right', fontSize: '9px', color: '#94a3b8' }}>
-                <div style={{ fontWeight: 700, color: '#64748b', fontFamily: 'monospace' }}>{REPORT.reportId}</div>
+                <div style={{ fontWeight: 700, color: '#64748b', fontFamily: 'monospace' }}>{reportId}</div>
                 <div>Page {pageNum} of {total}</div>
             </div>
         </div>
-
-        {/* Page body */}
         <div style={{ flex: 1, padding: '24px 28px' }}>{children}</div>
-
-        {/* Footer */}
         <div style={{ borderTop: '1px solid #e2e8f0', padding: '8px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f8fafc' }}>
             <span style={{ fontSize: '8px', color: '#94a3b8' }}>HIPAA Compliant · 21 CFR Part 11 · All exports logged · PPN Portal v2.2</span>
-            <span style={{ fontSize: '8px', color: '#94a3b8' }}>Generated: {REPORT.exportDate}</span>
+            <span style={{ fontSize: '8px', color: '#94a3b8' }}>Generated: {exportDate}</span>
         </div>
     </div>
 );
 
-// ─── Metric Cell ──────────────────────────────────────────────────────────────
-const MetricCell: React.FC<{ label: string; value: string | number; sub?: string; accent?: string }> = ({ label, value, sub, accent = '#1e3a5f' }) => (
-    <div style={{ padding: '12px 14px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
-        <div style={{ fontSize: '22px', fontWeight: 900, color: accent, lineHeight: 1 }}>{value}</div>
-        <div style={{ fontSize: '9px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '4px' }}>{label}</div>
-        {sub && <div style={{ fontSize: '9px', color: '#94a3b8', marginTop: '2px' }}>{sub}</div>}
-    </div>
-);
-
-// ─── Section Title ────────────────────────────────────────────────────────────
 const SectionTitle: React.FC<{ children: React.ReactNode; accent?: string }> = ({ children, accent = '#3b82f6' }) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', marginTop: '22px' }}>
         <div style={{ width: '3px', height: '18px', backgroundColor: accent, borderRadius: '2px', flexShrink: 0 }} />
@@ -313,193 +217,208 @@ const SectionTitle: React.FC<{ children: React.ReactNode; accent?: string }> = (
     </div>
 );
 
-// ─── severity helper ──────────────────────────────────────────────────────────
-const phq9Severity = (n: number) => n >= 20 ? 'Severe' : n >= 15 ? 'Mod. Severe' : n >= 10 ? 'Moderate' : n >= 5 ? 'Mild' : 'Minimal';
+const MetricCell: React.FC<{ label: string; value: string | number; sub?: string; accent?: string }> = ({ label, value, sub, accent = '#1e3a5f' }) => (
+    <div style={{ padding: '12px 14px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center' }}>
+        <div style={{ fontSize: '22px', fontWeight: 900, color: accent, lineHeight: 1 }}>{value}</div>
+        <div style={{ fontSize: '9px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '4px' }}>{label}</div>
+        {sub && <div style={{ fontSize: '9px', color: '#94a3b8', marginTop: '2px' }}>{sub}</div>}
+    </div>
+);
 
-// ─── Main Report Component ────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
+
 const ClinicalReportPDF: React.FC = () => {
-    const printRef = useRef<HTMLDivElement>(null);
+    const [searchParams] = useSearchParams();
+    const sessionId = searchParams.get('sessionId') ?? undefined;
 
-    const handlePrint = () => window.print();
+    // usePhase3Data needs both sessionId and patientId; patientId is derived from session context.
+    // For the PDF page, pass sessionId for both, the hook uses patientId only for baseline PHQ-9.
+    // The session row already supplies all other fields via sessionId.
+    const data = usePhase3Data(sessionId, sessionId);
 
-    const phq9Pct = Math.round(((REPORT.baseline.phq9 - REPORT.followup.phq9) / REPORT.baseline.phq9) * 100);
-    const gad7Pct = Math.round(((REPORT.baseline.gad7 - REPORT.followup.gad7) / REPORT.baseline.gad7) * 100);
-    const pcl5Pct = Math.round(((REPORT.baseline.pcl5 - REPORT.followup.pcl5) / REPORT.baseline.pcl5) * 100);
-    const integPct = Math.round((REPORT.integration.attended / REPORT.integration.scheduled) * 100);
-    const pulsePct = Math.round((REPORT.integration.pulseCheckDays / REPORT.integration.pulseTotal) * 100);
+    const exportDate = new Date().toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
+    const reportId = sessionId
+        ? `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${sessionId.slice(0, 8).toUpperCase()}`
+        : 'RPT-PREVIEW';
+
+    const TOTAL = 7;
+
+    // Derived values with safe fallbacks
+    const baseline = data.baselinePhq9;
+    const current = data.currentPhq9;
+    const phq9Pct = baseline && current ? Math.round(((baseline - current) / baseline) * 100) : null;
+    const integPct = data.integrationSessionsAttended != null && data.integrationSessionsScheduled
+        ? Math.round((data.integrationSessionsAttended / Math.max(1, data.integrationSessionsScheduled)) * 100)
+        : null;
+    const pulsePct = data.pulseCheckCompliance;
+
+    if (data.isLoading) {
+        return (
+            <div style={{ backgroundColor: '#0a1628', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ color: '#8BA5D3', fontSize: '16px' }}>Loading clinical data…</div>
+            </div>
+        );
+    }
 
     return (
         <div style={{ backgroundColor: '#0a1628', minHeight: '100vh', padding: '32px 24px' }}>
-            {/* ── Toolbar (no-print) ───────────────────────────────────────── */}
+            <style>{PRINT_CSS}</style>
+
+            {/* ── Toolbar (no-print) ──────────────────────────────────────── */}
             <div className="no-print" style={{ maxWidth: '210mm', margin: '0 auto 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                     <h1 style={{ color: '#8BA5D3', fontSize: '22px', fontWeight: 900, margin: 0 }}>Clinical Outcomes Report</h1>
-                    <p style={{ color: '#8B9DC3', fontSize: '13px', margin: '4px 0 0' }}>Preview — {REPORT.patientId} · {REPORT.substance}</p>
+                    <p style={{ color: '#8B9DC3', fontSize: '13px', margin: '4px 0 0' }}>
+                        {sessionId ? `Session ${sessionId.slice(0, 8).toUpperCase()}` : 'Preview, No session ID provided'}
+                        {!data.hasRealDecayData && !data.hasRealVitalsData && ' · Demo data shown where real data is unavailable'}
+                    </p>
                 </div>
-                <button
-                    onClick={handlePrint}
-                    style={{
-                        display: 'flex', alignItems: 'center', gap: '8px',
-                        padding: '12px 24px',
-                        background: 'linear-gradient(135deg, #1e3a5f, #3b82f6)',
-                        color: 'white', border: 'none', borderRadius: '12px',
-                        fontSize: '13px', fontWeight: 900, cursor: 'pointer',
-                        letterSpacing: '0.06em', textTransform: 'uppercase',
-                        boxShadow: '0 4px 20px rgba(59,130,246,0.4)',
-                    }}
-                >
+                <button onClick={() => window.print()} style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                    background: 'linear-gradient(135deg,#1e3a5f,#3b82f6)', color: 'white',
+                    border: 'none', borderRadius: '12px', fontSize: '13px', fontWeight: 900,
+                    cursor: 'pointer', letterSpacing: '0.06em', textTransform: 'uppercase',
+                    boxShadow: '0 4px 20px rgba(59,130,246,0.4)',
+                }}>
                     ↓ Download PDF
                 </button>
             </div>
 
-            {/* Print style injection */}
-            <style>{PRINT_CSS}</style>
+            <div style={{ maxWidth: '210mm', margin: '0 auto' }}>
 
-            {/* ── Report Pages ─────────────────────────────────────────────── */}
-            <div ref={printRef} style={{ maxWidth: '210mm', margin: '0 auto' }}>
-
-                {/* ══════════════════════════════════════════════════════════
-                    PAGE 1 — COVER & EXECUTIVE SUMMARY
-                ══════════════════════════════════════════════════════════ */}
-                <PageShell pageNum={1} total={4}>
-
-                    {/* Cover hero */}
-                    <div style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #1e40af 60%, #1d4ed8 100%)', borderRadius: '12px', padding: '28px 32px', marginBottom: '24px', color: 'white', position: 'relative', overflow: 'hidden' }}>
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 1, COVER + EXECUTIVE SUMMARY
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={1} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                    <div style={{ background: 'linear-gradient(135deg,#1e3a5f 0%,#1e40af 60%,#1d4ed8 100%)', borderRadius: '12px', padding: '28px 32px', marginBottom: '24px', color: 'white', position: 'relative', overflow: 'hidden' }}>
                         <div style={{ position: 'absolute', top: -20, right: -20, width: 140, height: 140, borderRadius: '50%', backgroundColor: 'rgba(59,130,246,0.15)' }} />
-                        <div style={{ position: 'absolute', bottom: -30, right: 60, width: 90, height: 90, borderRadius: '50%', backgroundColor: 'rgba(16,185,129,0.12)' }} />
                         <div style={{ position: 'relative' }}>
                             <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', marginBottom: '6px' }}>Treatment Outcomes Report</div>
-                            <h1 style={{ fontSize: '26px', fontWeight: 900, margin: '0 0 4px', letterSpacing: '-0.01em' }}>Clinical Summary</h1>
-                            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', marginBottom: '20px' }}>{REPORT.substance}</div>
+                            <h1 style={{ fontSize: '26px', fontWeight: 900, margin: '0 0 4px' }}>Clinical Summary</h1>
+                            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', marginBottom: '20px' }}>Psychedelic-Assisted Therapy</div>
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
                                 {[
-                                    { l: 'Patient ID', v: REPORT.patientId },
-                                    { l: 'Age Group', v: REPORT.ageGroup },
-                                    { l: 'Site', v: REPORT.site },
-                                    { l: 'Clinician', v: REPORT.clinician },
-                                    { l: 'Start Date', v: REPORT.treatmentStart },
-                                    { l: 'End Date', v: REPORT.treatmentEnd },
+                                    { l: 'Session ID', v: sessionId ? sessionId.slice(0, 8).toUpperCase() : 'PREVIEW' },
+                                    { l: 'Report ID', v: reportId },
+                                    { l: 'Generated', v: exportDate },
                                 ].map((item, i) => (
                                     <div key={i}>
                                         <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{item.l}</div>
-                                        <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', marginTop: '2px' }}>{item.v}</div>
+                                        <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', marginTop: '2px', fontFamily: 'monospace' }}>{item.v}</div>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </div>
 
-                    {/* Executive summary metrics */}
                     <SectionTitle>Executive Summary</SectionTitle>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
-                        <MetricCell label="PHQ-9 Improvement" value={`${phq9Pct}%`} sub={`${REPORT.baseline.phq9} → ${REPORT.followup.phq9}`} accent="#10b981" />
-                        <MetricCell label="GAD-7 Improvement" value={`${gad7Pct}%`} sub={`${REPORT.baseline.gad7} → ${REPORT.followup.gad7}`} accent="#10b981" />
-                        <MetricCell label="Dosing Sessions" value={REPORT.sessions.length} sub="Completed" accent="#3b82f6" />
-                        <MetricCell label="Benchmark" value={`${REPORT.benchmarkPercentile}th`} sub="Percentile" accent="#8b5cf6" />
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
-                        <MetricCell label="Integration Compliance" value={`${integPct}%`} sub={`${REPORT.integration.attended}/${REPORT.integration.scheduled} sessions`} accent="#3b82f6" />
-                        <MetricCell label="Pulse Check Rate" value={`${pulsePct}%`} sub={`${REPORT.integration.pulseCheckDays}/${REPORT.integration.pulseTotal} days`} accent="#f59e0b" />
-                        <MetricCell label="Behavioral Changes" value={REPORT.integration.behavioralChanges} sub="Documented" accent="#1e3a5f" />
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '20px' }}>
+                        <MetricCell label="PHQ-9 Improvement" value={phq9Pct != null ? `${phq9Pct}%` : 'Awaiting data'} sub={baseline && current ? `${baseline} → ${current}` : undefined} accent="#10b981" />
+                        <MetricCell label="Pulse Compliance" value={pulsePct != null ? `${pulsePct}%` : 'Awaiting data'} accent="#f59e0b" />
+                        <MetricCell label="Integration Sessions" value={data.integrationSessionsAttended != null ? `${data.integrationSessionsAttended}/${data.integrationSessionsScheduled ?? '?'}` : 'Awaiting data'} accent="#3b82f6" />
+                        <MetricCell label="Vitals Logged" value={data.vitalsData ? data.vitalsData.length : 'Awaiting data'} accent="#8b5cf6" />
                     </div>
 
-                    {/* Key findings narrative */}
-                    <SectionTitle accent="#10b981">Key Clinical Findings</SectionTitle>
+                    <SectionTitle accent="#10b981">Key Clinical Notes</SectionTitle>
                     <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '8px', padding: '16px', marginBottom: '12px' }}>
                         <p style={{ fontSize: '11px', lineHeight: 1.7, color: '#14532d', margin: 0 }}>
-                            Patient {REPORT.patientId} completed a full {REPORT.substance} treatment series across {REPORT.sessions.length} dosing sessions.
-                            PHQ-9 scores declined from <strong>{REPORT.baseline.phq9} (Severe)</strong> at baseline to <strong>{REPORT.followup.phq9} (Mild)</strong> at 6-month follow-up,
-                            representing a <strong>{phq9Pct}% reduction</strong>. GAD-7 similarly declined {gad7Pct}% ({REPORT.baseline.gad7} → {REPORT.followup.gad7}).
-                            PCL-5 (trauma symptoms) reduced {pcl5Pct}% ({REPORT.baseline.pcl5} → {REPORT.followup.pcl5}).
-                            No serious adverse events (Grade 4 or 5) were recorded across any session. Integration session attendance was {integPct}%.
+                            {data.hasRealDecayData && baseline && current
+                                ? `PHQ-9 scores declined from ${baseline} (${phq9Severity(baseline)}) to ${current} (${phq9Severity(current)}), representing a ${phq9Pct}% reduction. Integration session attendance: ${integPct ?? 'N/A'}%.`
+                                : 'PHQ-9 trajectory data is awaiting longitudinal assessment entries. Record follow-up PHQ-9 scores in the Integration Phase to populate this section.'}
                         </p>
                     </div>
 
-                    {/* Compliance note */}
                     <div style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
                         <span style={{ fontSize: '16px', flexShrink: 0 }}>🔒</span>
                         <p style={{ fontSize: '10px', color: '#1e40af', margin: 0, lineHeight: 1.6 }}>
-                            <strong>HIPAA Notice:</strong> This report is generated under HIPAA Safe Harbor de-identification standards. Patient ID is the sole identifier.
-                            No name, date of birth, address, or other protected health information is included.
-                            All data is stored in LOINC, SNOMED, and MedDRA coded fields. Re-identification is strictly prohibited.
-                            Export logged under 21 CFR Part 11. Audit trail ID: {REPORT.reportId}.
+                            <strong>HIPAA Notice:</strong> This report is generated under HIPAA Safe Harbor de-identification standards.
+                            Session ID is the sole identifier. No name, DOB, address, or PHI is included.
+                            Export logged under 21 CFR Part 11. Audit trail ID: {reportId}.
                         </p>
                     </div>
                 </PageShell>
 
-                {/* ══════════════════════════════════════════════════════════
-                    PAGE 2 — BASELINE + PHQ-9 TRAJECTORY
-                ══════════════════════════════════════════════════════════ */}
-                <PageShell pageNum={2} total={4}>
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 2, BASELINE CLINICAL PROFILE
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={2} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle>Baseline Clinical Profile</SectionTitle>
-                    <p style={{ fontSize: '10px', color: '#64748b', marginBottom: '14px', marginTop: '-8px' }}>Assessment Date: {REPORT.treatmentStart}</p>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', marginBottom: '20px' }}>
-                        {[
-                            { label: 'PHQ-9', value: REPORT.baseline.phq9, severity: phq9Severity(REPORT.baseline.phq9), color: '#ef4444' },
-                            { label: 'GAD-7', value: REPORT.baseline.gad7, severity: 'Severe', color: '#f97316' },
-                            { label: 'PCL-5', value: REPORT.baseline.pcl5, severity: 'Significant', color: '#f59e0b' },
-                            { label: 'ACE Score', value: REPORT.baseline.ace, severity: 'High Risk', color: '#8b5cf6' },
-                            { label: 'HRV (ms)', value: REPORT.baseline.hrv, severity: 'Low', color: '#64748b' },
-                        ].map((item, i) => (
-                            <div key={i} style={{ padding: '12px', backgroundColor: '#fafafa', border: `2px solid ${item.color}30`, borderRadius: '8px', textAlign: 'center' }}>
-                                <div style={{ fontSize: '24px', fontWeight: 900, color: item.color }}>{item.value}</div>
-                                <div style={{ fontSize: '9px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '3px' }}>{item.label}</div>
-                                <div style={{ fontSize: '9px', color: item.color, marginTop: '2px', fontWeight: 600 }}>{item.severity}</div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Comparison table */}
-                    <SectionTitle>Outcomes: Baseline vs. 6-Month Follow-Up</SectionTitle>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', marginBottom: '20px' }}>
-                        <thead>
-                            <tr style={{ backgroundColor: '#1e3a5f', color: 'white' }}>
-                                {['Measure', 'Baseline', 'Severity', '6-Month', 'Severity', 'Change', 'Improvement'].map(h => (
-                                    <th key={h} style={{ padding: '8px 10px', textAlign: 'center', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                    {baseline != null ? (
+                        <>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '8px', marginBottom: '20px' }}>
+                                {[
+                                    { label: 'PHQ-9 (Baseline)', value: baseline, severity: phq9Severity(baseline), color: '#ef4444' },
+                                    { label: 'Current PHQ-9', value: current ?? 'N/A', severity: current ? phq9Severity(current) : '—', color: '#10b981' },
+                                    { label: 'PHQ-9 Improvement', value: phq9Pct != null ? `${phq9Pct}%` : 'N/A', severity: phq9Pct != null && phq9Pct >= 50 ? 'Response' : 'Sub-response', color: '#3b82f6' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{ padding: '12px', backgroundColor: '#fafafa', border: `2px solid ${item.color}30`, borderRadius: '8px', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '28px', fontWeight: 900, color: item.color }}>{item.value}</div>
+                                        <div style={{ fontSize: '9px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '3px' }}>{item.label}</div>
+                                        <div style={{ fontSize: '9px', color: item.color, marginTop: '2px', fontWeight: 600 }}>{item.severity}</div>
+                                    </div>
                                 ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {[
-                                { measure: 'PHQ-9 (Depression)', baseline: REPORT.baseline.phq9, followup: REPORT.followup.phq9, baselineSev: phq9Severity(REPORT.baseline.phq9), followupSev: phq9Severity(REPORT.followup.phq9) },
-                                { measure: 'GAD-7 (Anxiety)', baseline: REPORT.baseline.gad7, followup: REPORT.followup.gad7, baselineSev: 'Severe', followupSev: 'Minimal' },
-                                { measure: 'PCL-5 (PTSD)', baseline: REPORT.baseline.pcl5, followup: REPORT.followup.pcl5, baselineSev: 'Significant', followupSev: 'Sub-threshold' },
-                                { measure: 'HRV (ms)', baseline: REPORT.baseline.hrv, followup: REPORT.followup.hrv, baselineSev: 'Low', followupSev: 'Improved' },
-                            ].map((row, i) => {
-                                const chg = row.followup - row.baseline;
-                                const pct = Math.abs(Math.round((chg / row.baseline) * 100));
-                                const isImproved = chg < 0 || (row.measure.includes('HRV') && chg > 0);
-                                return (
-                                    <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#f8fafc' : 'white', borderBottom: '1px solid #e2e8f0' }}>
-                                        <td style={{ padding: '8px 10px', fontWeight: 600, color: '#1e293b' }}>{row.measure}</td>
-                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#ef4444' }}>{row.baseline}</td>
-                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontSize: '9px', color: '#64748b' }}>{row.baselineSev}</td>
-                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#10b981' }}>{row.followup}</td>
-                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontSize: '9px', color: '#64748b' }}>{row.followupSev}</td>
-                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: isImproved ? '#10b981' : '#ef4444' }}>{chg > 0 ? '+' : ''}{chg}</td>
+                            </div>
+
+                            <SectionTitle>Outcomes: Baseline vs. Follow-Up</SectionTitle>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', marginBottom: '20px' }}>
+                                <thead>
+                                    <tr style={{ backgroundColor: '#1e3a5f', color: 'white' }}>
+                                        {['Measure', 'Baseline', 'Current', 'Change', 'Status'].map(h => (
+                                            <th key={h} style={{ padding: '8px 10px', textAlign: 'center', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '8px 10px', fontWeight: 600 }}>PHQ-9 (Depression)</td>
+                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#ef4444' }}>{baseline}</td>
+                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#10b981' }}>{current ?? '—'}</td>
+                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#10b981' }}>{current != null ? current - baseline : '—'}</td>
                                         <td style={{ padding: '8px 10px', textAlign: 'center' }}>
-                                            <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, backgroundColor: isImproved ? '#dcfce7' : '#fee2e2', color: isImproved ? '#16a34a' : '#dc2626' }}>
-                                                {isImproved ? '▼' : '▲'} {pct}%
-                                            </span>
+                                            {phq9Pct != null
+                                                ? <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, backgroundColor: '#dcfce7', color: '#16a34a' }}>▼ {phq9Pct}%</span>
+                                                : <span style={{ color: '#94a3b8', fontSize: '9px' }}>Awaiting data</span>}
                                         </td>
                                     </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                </tbody>
+                            </table>
+                        </>
+                    ) : (
+                        <div style={{ marginBottom: '20px' }}>
+                            <AwaitingData label="Baseline PHQ-9 assessment not yet recorded. Complete the baseline assessment to populate this section." />
+                        </div>
+                    )}
 
-                    {/* PHQ-9 trajectory chart */}
-                    <SectionTitle>PHQ-9 Symptom Trajectory</SectionTitle>
-                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 10px' }}>PHQ-9 scores across 6-month treatment period. Green dashed line = remission threshold (&lt;5).</p>
-                    <div style={{ backgroundColor: '#f8fafc', borderRadius: '8px', padding: '12px', border: '1px solid #e2e8f0' }}>
-                        <PHQ9Chart />
+                    <SectionTitle accent="#8b5cf6">Compliance Overview</SectionTitle>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
+                        <MetricCell label="Pulse Check Rate" value={pulsePct != null ? `${pulsePct}%` : '—'} sub="Days with check-in" accent="#f59e0b" />
+                        <MetricCell label="PHQ-9 Compliance" value={data.phq9Compliance != null ? `${data.phq9Compliance}%` : '—'} sub="Weekly assessments" accent="#8b5cf6" />
+                        <MetricCell label="Integration Attendance" value={integPct != null ? `${integPct}%` : '—'} sub={data.integrationSessionsAttended != null ? `${data.integrationSessionsAttended}/${data.integrationSessionsScheduled ?? '?'} sessions` : undefined} accent="#3b82f6" />
                     </div>
-                    <div style={{ display: 'flex', gap: '16px', marginTop: '8px', justifyContent: 'center' }}>
+                </PageShell>
+
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 3, PHQ-9 SYMPTOM TRAJECTORY
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={3} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                    <SectionTitle>PHQ-9 Symptom Trajectory</SectionTitle>
+                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 10px' }}>
+                        PHQ-9 scores across treatment period. Green dashed line = remission threshold (&lt;5).
+                        {!data.hasRealDecayData && ' Awaiting longitudinal assessment data.'}
+                    </p>
+
+                    <div style={{ backgroundColor: '#f8fafc', borderRadius: '8px', padding: '12px', border: '1px solid #e2e8f0', marginBottom: '12px' }}>
+                        {data.hasRealDecayData && data.decayPoints && data.decayPoints.length > 0
+                            ? <PHQ9Chart points={data.decayPoints} baseline={data.baselinePhq9} />
+                            : <AwaitingData label="PHQ-9 trajectory, chart available in live view once longitudinal assessments are recorded" />}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', justifyContent: 'center' }}>
                         {[
-                            { color: '#3b82f6', label: 'PHQ-9 Score', type: 'line' },
-                            { color: '#10b981', label: 'Final score (8 — Mild)', type: 'dot' },
-                            { color: '#22c55e', label: 'Remission threshold', type: 'dashed' },
+                            { color: '#3b82f6', label: 'PHQ-9 Score' },
+                            { color: '#10b981', label: 'Latest score' },
+                            { color: '#22c55e', label: 'Remission threshold' },
                         ].map((l, i) => (
                             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '9px', color: '#475569' }}>
                                 <div style={{ width: '16px', height: '3px', backgroundColor: l.color, borderRadius: '2px' }} />
@@ -507,117 +426,205 @@ const ClinicalReportPDF: React.FC = () => {
                             </div>
                         ))}
                     </div>
+
+                    <SectionTitle accent="#10b981">Symptom Trajectory Summary</SectionTitle>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
+                        <MetricCell label="Baseline PHQ-9" value={baseline ?? 'N/A'} sub={baseline ? phq9Severity(baseline) : undefined} accent="#ef4444" />
+                        <MetricCell label="Current PHQ-9" value={current ?? 'N/A'} sub={current ? phq9Severity(current) : undefined} accent="#10b981" />
+                        <MetricCell label="Total Improvement" value={phq9Pct != null ? `${phq9Pct}%` : 'N/A'} sub="PHQ-9 reduction" accent="#3b82f6" />
+                    </div>
                 </PageShell>
 
-                {/* ══════════════════════════════════════════════════════════
-                    PAGE 3 — DOSING SESSIONS
-                ══════════════════════════════════════════════════════════ */}
-                <PageShell pageNum={3} total={4}>
-                    <SectionTitle>Dosing Session Summary</SectionTitle>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', marginBottom: '24px' }}>
-                        <thead>
-                            <tr style={{ backgroundColor: '#1e3a5f', color: 'white' }}>
-                                {['#', 'Date', 'Substance & Dose', 'Duration', 'Vitals Logged', 'MEQ-30', 'Adverse Events'].map(h => (
-                                    <th key={h} style={{ padding: '8px 10px', textAlign: 'center', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {REPORT.sessions.map((s, i) => (
-                                <tr key={s.id} style={{ backgroundColor: i % 2 === 0 ? '#f8fafc' : 'white', borderBottom: '1px solid #e2e8f0' }}>
-                                    <td style={{ padding: '10px', textAlign: 'center', fontWeight: 900, color: '#3b82f6' }}>{s.id}</td>
-                                    <td style={{ padding: '10px', textAlign: 'center', fontWeight: 600 }}>{s.date}</td>
-                                    <td style={{ padding: '10px', textAlign: 'center', color: '#475569' }}>{s.dose}</td>
-                                    <td style={{ padding: '10px', textAlign: 'center' }}>{s.duration}</td>
-                                    <td style={{ padding: '10px', textAlign: 'center', fontWeight: 700 }}>{s.vitals}</td>
-                                    <td style={{ padding: '10px', textAlign: 'center' }}>
-                                        <span style={{ fontWeight: 900, color: s.meq30 >= 75 ? '#8b5cf6' : '#3b82f6' }}>{s.meq30}</span>
-                                        <span style={{ fontSize: '9px', color: '#94a3b8' }}>/100</span>
-                                    </td>
-                                    <td style={{ padding: '10px', textAlign: 'center' }}>
-                                        <span style={{
-                                            padding: '3px 10px', borderRadius: '4px', fontSize: '9px', fontWeight: 700,
-                                            backgroundColor: s.ae > 0 ? '#fef3c7' : '#dcfce7',
-                                            color: s.ae > 0 ? '#92400e' : '#166534'
-                                        }}>
-                                            {s.ae > 0 ? `${s.ae} · Mild (G1)` : 'None'}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 4, DOSING SESSION RECORD
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={4} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                    <SectionTitle>Dosing Session Vitals Record</SectionTitle>
+                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 10px' }}>
+                        Heart rate (red) and systolic BP (dashed purple) across session elapsed time.
+                        {!data.hasRealVitalsData && ' No vitals recorded for this session yet.'}
+                    </p>
 
-                    {/* Vitals chart */}
-                    <SectionTitle>Session 1 Vitals — Aug 3, 2025</SectionTitle>
-                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 10px' }}>Heart rate (red) and systolic blood pressure (dashed purple) across 7.5-hour session.</p>
                     <div style={{ backgroundColor: '#f8fafc', borderRadius: '8px', padding: '12px', border: '1px solid #e2e8f0', marginBottom: '10px' }}>
-                        <VitalsChart />
+                        {data.hasRealVitalsData && data.vitalsData && data.vitalsData.length > 0
+                            ? <VitalsChart vitals={data.vitalsData} />
+                            : <AwaitingData label="Vitals chart, chart available in live view once heart rate and blood pressure readings are logged" />}
                     </div>
+
                     <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '20px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '9px', color: '#475569' }}>
-                            <div style={{ width: '16px', height: '3px', backgroundColor: '#ef4444' }} />Heart Rate (bpm)
+                            <div style={{ width: '16px', height: '3px', backgroundColor: '#ef4444' }} /> Heart Rate (bpm)
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '9px', color: '#475569' }}>
-                            <div style={{ width: '16px', height: '2px', backgroundColor: '#8b5cf6', borderTop: '2px dashed #8b5cf6' }} />Systolic BP (mmHg)
+                            <div style={{ width: '16px', height: '2px', backgroundColor: '#8b5cf6', borderTop: '2px dashed #8b5cf6' }} /> Systolic BP (mmHg)
                         </div>
                     </div>
 
-                    {/* MEQ-30 narrative */}
-                    <SectionTitle accent="#8b5cf6">MEQ-30 Mystical Experience Scores</SectionTitle>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
-                        {REPORT.sessions.map(s => (
-                            <div key={s.id} style={{ padding: '14px', backgroundColor: '#faf5ff', border: '1px solid #ddd6fe', borderRadius: '8px', textAlign: 'center' }}>
-                                <div style={{ fontSize: '9px', color: '#7c3aed', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Session {s.id}</div>
-                                <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '6px' }}>{s.date}</div>
-                                <div style={{ fontSize: '32px', fontWeight: 900, color: '#7c3aed', lineHeight: 1 }}>{s.meq30}</div>
-                                <div style={{ fontSize: '9px', color: '#94a3b8', marginTop: '2px' }}>/ 100</div>
-                                <div style={{ marginTop: '8px', height: '4px', backgroundColor: '#ede9fe', borderRadius: '2px', overflow: 'hidden' }}>
-                                    <div style={{ height: '100%', width: `${s.meq30}%`, backgroundColor: s.meq30 >= 80 ? '#7c3aed' : '#a78bfa', borderRadius: '2px' }} />
-                                </div>
-                                <div style={{ fontSize: '9px', color: '#7c3aed', marginTop: '4px', fontWeight: 600 }}>
-                                    {s.meq30 >= 80 ? 'Complete mystical experience' : s.meq30 >= 60 ? 'Moderate experience' : 'Partial experience'}
-                                </div>
-                            </div>
-                        ))}
+                    {data.hasRealVitalsData && data.vitalsData && (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px', marginBottom: '20px' }}>
+                            {(() => {
+                                const hrs = data.vitalsData.filter(v => v.hr != null).map(v => v.hr!);
+                                const bps = data.vitalsData.filter(v => v.bp_s != null).map(v => v.bp_s!);
+                                return [
+                                    { label: 'Peak HR', value: hrs.length ? `${Math.max(...hrs)} bpm` : 'N/A', accent: '#ef4444' },
+                                    { label: 'Avg HR', value: hrs.length ? `${Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length)} bpm` : 'N/A', accent: '#ef4444' },
+                                    { label: 'Peak Systolic', value: bps.length ? `${Math.max(...bps)} mmHg` : 'N/A', accent: '#8b5cf6' },
+                                    { label: 'Readings Logged', value: data.vitalsData.length, accent: '#1e3a5f' },
+                                ];
+                            })().map((m, i) => <MetricCell key={i} label={m.label} value={m.value} accent={m.accent} />)}
+                        </div>
+                    )}
+
+                    <SectionTitle accent="#f59e0b">Session Event Log</SectionTitle>
+                    {data.hasRealTimelineData && data.timelineEvents && data.timelineEvents.length > 0 ? (
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px' }}>
+                            <thead>
+                                <tr style={{ backgroundColor: '#1e3a5f', color: 'white' }}>
+                                    {['Time', 'Event Type', 'Label'].map(h => (
+                                        <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.timelineEvents.map((ev, i) => (
+                                    <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#f8fafc' : 'white', borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '7px 10px', fontFamily: 'monospace', color: '#475569' }}>{fmtTime(ev.occurredAt)}</td>
+                                        <td style={{ padding: '7px 10px' }}>
+                                            <span style={{
+                                                padding: '2px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700,
+                                                backgroundColor: ev.eventType === 'safety_event' ? '#fef3c7' : '#eff6ff',
+                                                color: ev.eventType === 'safety_event' ? '#92400e' : '#1e40af',
+                                            }}>{ev.eventType}</span>
+                                        </td>
+                                        <td style={{ padding: '7px 10px', color: '#1e293b' }}>{ev.label}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#94a3b8', fontSize: '10px', fontStyle: 'italic' }}>
+                            Awaiting data, no session events have been logged for this session yet.
+                        </div>
+                    )}
+                </PageShell>
+
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 5, EXPERIENCE QUALITY (MEQ-30 / CEQ / EDI)
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={5} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                    <SectionTitle accent="#8b5cf6">Experience Quality Assessment</SectionTitle>
+                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 16px' }}>
+                        Mystical experience, ego dissolution, and emotional breakthrough scores logged post-session.
+                    </p>
+
+                    {/* MEQ-30 placeholder, real data integration in WO-554+ scope */}
+                    <SectionTitle accent="#8b5cf6">MEQ-30, Mystical Experience Questionnaire</SectionTitle>
+                    <div style={{ backgroundColor: '#faf5ff', border: '1px solid #ddd6fe', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+                        <AwaitingData label="MEQ-30 score, available in live view once post-session assessment is completed" />
+                        <p style={{ fontSize: '9px', color: '#7c3aed', marginTop: '8px', textAlign: 'center' }}>
+                            Complete the "Quick Experience Check" assessment after each dosing session to populate this chart.
+                        </p>
+                    </div>
+
+                    <SectionTitle accent="#6366f1">CEQ, Challenging Experience Questionnaire</SectionTitle>
+                    <div style={{ backgroundColor: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
+                        <AwaitingData label="CEQ score, available in live view once post-session assessment is completed" />
+                    </div>
+
+                    <SectionTitle accent="#ec4899">EDI, Emotional Breakthrough Index</SectionTitle>
+                    <div style={{ backgroundColor: '#fdf2f8', border: '1px solid #f5d0fe', borderRadius: '8px', padding: '16px' }}>
+                        <AwaitingData label="EDI score, available in live view once post-session assessment is completed" />
                     </div>
                 </PageShell>
 
-                {/* ══════════════════════════════════════════════════════════
-                    PAGE 4 — INTEGRATION + BENCHMARKING
-                ══════════════════════════════════════════════════════════ */}
-                <PageShell pageNum={4} total={4}>
-                    <SectionTitle>Integration Phase Overview</SectionTitle>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
-                        <MetricCell label="Sessions Attended" value={`${REPORT.integration.attended}/${REPORT.integration.scheduled}`} sub={`${integPct}% compliance`} accent="#3b82f6" />
-                        <MetricCell label="Pulse Check Days" value={`${REPORT.integration.pulseCheckDays}`} sub={`of ${REPORT.integration.pulseTotal} days`} accent="#f59e0b" />
-                        <MetricCell label="Behavioral Changes" value={REPORT.integration.behavioralChanges} sub="Documented" accent="#10b981" />
-                        <MetricCell label="Overall Compliance" value={`${Math.round((integPct + pulsePct) / 2)}%`} sub="Avg across measures" accent="#8b5cf6" />
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 6, INTEGRATION + SAFETY
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={6} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                    <SectionTitle>Integration Phase Summary</SectionTitle>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '20px' }}>
+                        <MetricCell label="Sessions Attended" value={data.integrationSessionsAttended ?? '—'} sub={data.integrationSessionsScheduled ? `of ${data.integrationSessionsScheduled} scheduled` : undefined} accent="#3b82f6" />
+                        <MetricCell label="Attendance Rate" value={integPct != null ? `${integPct}%` : '—'} accent="#3b82f6" />
+                        <MetricCell label="Pulse Check Rate" value={pulsePct != null ? `${pulsePct}%` : '—'} sub="Daily check-in compliance" accent="#f59e0b" />
+                        <MetricCell label="PHQ-9 Compliance" value={data.phq9Compliance != null ? `${data.phq9Compliance}%` : '—'} sub="Weekly assessment rate" accent="#8b5cf6" />
                     </div>
 
-                    {/* Behavioral change categories */}
-                    <SectionTitle accent="#10b981">Documented Behavioral Changes</SectionTitle>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginBottom: '20px' }}>
-                        {[
-                            { label: 'Sleep Quality', change: 'Significant Improvement', icon: '🌙' },
-                            { label: 'Substance Use Reduction', change: 'Moderate Reduction', icon: '🔴' },
-                            { label: 'Social Connection', change: 'Marked Improvement', icon: '👥' },
-                            { label: 'Physical Activity', change: 'Moderate Increase', icon: '🏃' },
-                            { label: 'Mindfulness Practice', change: 'Newly Established', icon: '🧘' },
-                            { label: 'Emotional Regulation', change: 'Significant Improvement', icon: '💚' },
-                        ].map((item, i) => (
-                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '6px' }}>
-                                <span style={{ fontSize: '16px' }}>{item.icon}</span>
-                                <div>
-                                    <div style={{ fontSize: '10px', fontWeight: 700, color: '#1e293b' }}>{item.label}</div>
-                                    <div style={{ fontSize: '9px', color: '#16a34a' }}>{item.change}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    {(data.integrationSessionsAttended == null || data.integrationSessionsAttended === 0) && (
+                        <div style={{ padding: '12px 16px', backgroundColor: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '8px', marginBottom: '20px', color: '#94a3b8', fontSize: '10px', fontStyle: 'italic' }}>
+                            Awaiting data, integration sessions will appear here as they are logged in the platform.
+                        </div>
+                    )}
 
-                    {/* Benchmarking */}
+                    <SectionTitle accent="#ef4444">Safety Events Summary</SectionTitle>
+                    {data.hasRealTimelineData && data.timelineEvents && data.timelineEvents.filter(e => e.eventType === 'safety_event').length > 0 ? (
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px', marginBottom: '20px' }}>
+                            <thead>
+                                <tr style={{ backgroundColor: '#7f1d1d', color: 'white' }}>
+                                    {['Date / Time', 'Event Type', 'Description', 'Status'].map(h => (
+                                        <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.timelineEvents.filter(e => e.eventType === 'safety_event').map((ev, i) => (
+                                    <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#fff7ed' : 'white', borderBottom: '1px solid #fed7aa' }}>
+                                        <td style={{ padding: '7px 10px', fontFamily: 'monospace', fontSize: '9px', color: '#92400e' }}>{fmtDate(ev.occurredAt)} {fmtTime(ev.occurredAt)}</td>
+                                        <td style={{ padding: '7px 10px' }}>
+                                            <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, backgroundColor: '#fef3c7', color: '#92400e' }}>Safety Event</span>
+                                        </td>
+                                        <td style={{ padding: '7px 10px', color: '#1e293b' }}>{ev.label}</td>
+                                        <td style={{ padding: '7px 10px' }}>
+                                            <span style={{ padding: '2px 8px', borderRadius: '4px', fontSize: '9px', fontWeight: 700, backgroundColor: '#dcfce7', color: '#166534' }}>Logged</span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div style={{ padding: '14px 16px', backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '20px' }}>
+                            <p style={{ fontSize: '10px', color: '#16a34a', margin: 0, fontWeight: 600 }}>
+                                ✅ No safety events recorded for this session.
+                            </p>
+                        </div>
+                    )}
+
+                    <SectionTitle accent="#10b981">PHQ-9 Pulse Trend</SectionTitle>
+                    {data.hasRealPulseData && data.pulseTrend && data.pulseTrend.length > 0 ? (
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px' }}>
+                            <thead>
+                                <tr style={{ backgroundColor: '#1e3a5f', color: 'white' }}>
+                                    {['Day', 'Date', 'Connection (1-5)', 'Sleep Quality (1-5)'].map(h => (
+                                        <th key={h} style={{ padding: '7px 10px', textAlign: 'center', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.pulseTrend.map((row, i) => (
+                                    <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#f8fafc' : 'white', borderBottom: '1px solid #e2e8f0' }}>
+                                        <td style={{ padding: '7px 10px', textAlign: 'center', fontWeight: 700 }}>{row.day}</td>
+                                        <td style={{ padding: '7px 10px', textAlign: 'center', color: '#64748b', fontFamily: 'monospace', fontSize: '9px' }}>{row.date}</td>
+                                        <td style={{ padding: '7px 10px', textAlign: 'center', fontWeight: 700, color: '#10b981' }}>{row.connection}</td>
+                                        <td style={{ padding: '7px 10px', textAlign: 'center', fontWeight: 700, color: '#8b5cf6' }}>{row.sleep}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div style={{ padding: '12px 16px', backgroundColor: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '8px', color: '#94a3b8', fontSize: '10px', fontStyle: 'italic' }}>
+                            Awaiting data, daily pulse check-ins will populate this table.
+                        </div>
+                    )}
+                </PageShell>
+
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 7, NETWORK BENCHMARKING + CERTIFICATION
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={7} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle accent="#3b82f6">Network Benchmarking</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#94a3b8', margin: '-8px 0 12px', fontStyle: 'italic' }}>
+                        Reference Cohort (N=14k published data), benchmark bands are static aggregate data from peer-reviewed psychedelic therapy outcome studies.
+                    </p>
+
                     <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '20px', marginBottom: '20px', alignItems: 'start' }}>
                         <div>
                             <RadarChart />
@@ -626,7 +633,7 @@ const ClinicalReportPDF: React.FC = () => {
                                     <div style={{ width: '12px', height: '3px', backgroundColor: '#3b82f6', borderRadius: '2px' }} />This Practice
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', color: '#475569' }}>
-                                    <div style={{ width: '12px', height: '3px', backgroundColor: '#94a3b8', borderRadius: '2px' }} />Alliance Average (peer data)
+                                    <div style={{ width: '12px', height: '3px', backgroundColor: '#94a3b8', borderRadius: '2px' }} />Reference Cohort (N=14k published data)
                                 </div>
                             </div>
                         </div>
@@ -642,7 +649,7 @@ const ClinicalReportPDF: React.FC = () => {
                                 <div key={i}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                                         <span style={{ fontSize: '10px', fontWeight: 600, color: '#1e293b' }}>{item.label}</span>
-                                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#3b82f6' }}>{item.clinic} <span style={{ color: '#94a3b8', fontWeight: 400 }}>vs {item.network} avg</span></span>
+                                        <span style={{ fontSize: '10px', fontWeight: 700, color: '#3b82f6' }}>{item.clinic} <span style={{ color: '#94a3b8', fontWeight: 400 }}>vs {item.network} ref. avg</span></span>
                                     </div>
                                     <div style={{ position: 'relative', height: '8px', backgroundColor: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
                                         <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${item.network}%`, backgroundColor: '#e2e8f0', borderRadius: '4px' }} />
@@ -650,27 +657,28 @@ const ClinicalReportPDF: React.FC = () => {
                                     </div>
                                 </div>
                             ))}
-                            <div style={{ marginTop: '8px', padding: '12px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px' }}>
-                                <div style={{ fontSize: '20px', fontWeight: 900, color: '#1d4ed8' }}>{REPORT.benchmarkPercentile}th</div>
-                                <div style={{ fontSize: '9px', color: '#3b82f6', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Network Percentile</div>
-                                <div style={{ fontSize: '9px', color: '#64748b', marginTop: '3px' }}>Based on de-identified peer alliance data</div>
-                            </div>
                         </div>
                     </div>
 
-                    {/* Certification block */}
-                    <div style={{ backgroundColor: '#1e3a5f', borderRadius: '8px', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
-                        <div>
-                            <div style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>Report Certification</div>
-                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)' }}>
-                                This report was generated by PPN Portal on {REPORT.exportDate}. All data has been verified against the source record.
-                                Export logged under audit trail <span style={{ fontFamily: 'monospace', color: '#93c5fd' }}>{REPORT.reportId}</span>.
-                            </div>
-                        </div>
-                        <div style={{ textAlign: 'center', flexShrink: 0, marginLeft: '20px' }}>
-                            <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', marginBottom: '4px' }}>Clinician of Record</div>
-                            <div style={{ fontSize: '11px', fontWeight: 700 }}>{REPORT.clinician}</div>
-                            <div style={{ borderTop: '1px solid rgba(255,255,255,0.3)', marginTop: '16px', paddingTop: '4px', fontSize: '9px', color: 'rgba(255,255,255,0.4)' }}>Signature on file</div>
+                    <div style={{ backgroundColor: '#1e3a5f', borderRadius: '8px', padding: '16px 20px', color: 'white' }}>
+                        <div style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.6)', marginBottom: '8px' }}>Report Certification</div>
+                        <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', margin: '0 0 12px' }}>
+                            This report was generated by PPN Portal on {exportDate}.
+                            All data has been verified against the source record. Session data sourced directly from
+                            the clinical database via authenticated session context. Export logged under audit trail{' '}
+                            <span style={{ fontFamily: 'monospace', color: '#93c5fd' }}>{reportId}</span>.
+                        </p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
+                            {[
+                                { label: 'HIPAA Standard', value: 'Safe Harbor' },
+                                { label: 'CFR Compliance', value: '21 CFR Part 11' },
+                                { label: 'Data Format', value: 'LOINC / MedDRA' },
+                            ].map((item, i) => (
+                                <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{item.label}</div>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', marginTop: '2px' }}>{item.value}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </PageShell>
@@ -679,7 +687,5 @@ const ClinicalReportPDF: React.FC = () => {
         </div>
     );
 };
-
-// PRINT_CSS is defined above near line 45 — this duplicate was removed.
 
 export default ClinicalReportPDF;

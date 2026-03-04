@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
 /**
- * PPNLogo — Psilocybin Molecule Viewer
+ * PPNLogo, Psilocybin Molecule Viewer
  *
  * SKILL: molecular-visualization
  * Renders the psilocybin molecule (CID 10624) using 3Dmol.js with:
@@ -31,7 +31,7 @@ const sizeMap = {
     xl: { width: 320, height: 320 },
 };
 
-// Psilocybin SDF/MOL data — PubChem CID 10624, public domain
+// Psilocybin SDF/MOL data, PubChem CID 10624, public domain
 // This encodes the 3D atomic positions from the PubChem conformer
 const PSILOCYBIN_SDF = `
   Mrv2211 02190926023D
@@ -119,7 +119,7 @@ export const PPNLogo: React.FC<PPNLogoProps> = ({
         // Using SDF-style addModel for maximum compatibility
         viewer.addModel(PSILOCYBIN_SDF, 'sdf');
 
-        // Ball and stick — CPK colors with brand accent on the phosphate
+        // Ball and stick, CPK colors with brand accent on the phosphate
         viewer.setStyle({}, {
             stick: {
                 radius: 0.12,
@@ -131,7 +131,7 @@ export const PPNLogo: React.FC<PPNLogoProps> = ({
             }
         });
 
-        // Phosphate group highlight — primary blue
+        // Phosphate group highlight, primary blue
         viewer.setStyle(
             { elem: 'P' },
             {
@@ -140,7 +140,7 @@ export const PPNLogo: React.FC<PPNLogoProps> = ({
             }
         );
 
-        // Nitrogen atoms — clinical green accent
+        // Nitrogen atoms, clinical green accent
         viewer.setStyle(
             { elem: 'N' },
             {

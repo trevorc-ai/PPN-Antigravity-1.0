@@ -28,7 +28,9 @@ export const MEQ30_SHORT_CONFIG: AssessmentConfig = {
     name: 'Quick Experience Check',
     shortName: 'MEQ-Brief',
     description: 'A brief check-in about your session experience. This will only take 2 minutes.',
-    questionsPerPage: 5,
+    // WO-549: 1 question per page — makes Previous/Next buttons meaningful.
+    // With questionsPerPage:5 and 5 questions there was only 1 page, permanently disabling Previous.
+    questionsPerPage: 1,
     scoring: {
         method: 'sum',
         normalize: { from: 20, to: 100 }

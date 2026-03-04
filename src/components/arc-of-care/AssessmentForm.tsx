@@ -45,13 +45,16 @@ interface AssessmentFormProps {
     onComplete: (responses: Record<string, number>, score: number) => void;
     onSave?: (responses: Record<string, number>) => void;
     initialResponses?: Record<string, number>;
+    /** WO-549: Called when practitioner chooses to skip/exit without saving */
+    onSkip?: () => void;
 }
 
 const AssessmentForm: React.FC<AssessmentFormProps> = ({
     config,
     onComplete,
     onSave,
-    initialResponses = {}
+    initialResponses = {},
+    onSkip,
 }) => {
     const [responses, setResponses] = useState<Record<string, number>>(initialResponses);
     const [currentPage, setCurrentPage] = useState(0);
@@ -133,6 +136,17 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [currentQuestions, responses]);
 
+    // WO-549: Auto-scroll active question block into view when currentPage changes.
+    // Ensures off-screen inputs are always visible after Previous/Next navigation.
+    useEffect(() => {
+        const firstQ = document.getElementById(`question-${config.questions[startIdx]?.id}`);
+        if (firstQ) {
+            firstQ.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [currentPage]);
+
     // AUTO-ADVANCE: Move to next page if all questions on current page are answered
     useEffect(() => {
         // Find if all current questions have a response
@@ -167,13 +181,22 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
     };
 
     const handleComplete = () => {
-        // Always allow completion — assessment is optional, partial saves are valid
+        // Always allow completion, assessment is optional, partial saves are valid
         onComplete(responses, currentScore);
     };
 
     const isComplete = answeredCount === config.questions.length;
     const canGoNext = currentPage < totalPages - 1;
     const canGoPrevious = currentPage > 0;
+
+    // WO-549: Skip/exit handler, confirm before discarding in-progress session
+    const handleSkip = () => {
+        if (Object.keys(responses).length === 0 || window.confirm(
+            'Exit without saving? Your progress on this assessment will not be recorded.'
+        )) {
+            onSkip?.();
+        }
+    };
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -236,6 +259,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                     return (
                         <div
                             key={question.id}
+                            id={`question-${question.id}`}
                             className={`bg-slate-900/60 backdrop-blur-xl border rounded-2xl p-8 transition-all ${isAnswered
                                 ? 'border-indigo-500/50 bg-indigo-500/5'
                                 : 'border-slate-700/50'
@@ -344,10 +368,19 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                         Previous
                     </button>
 
-                    <div className="text-center">
+                    <div className="flex flex-col items-center gap-1">
                         <p className="text-slate-300 text-sm">
                             Page {currentPage + 1} of {totalPages}
                         </p>
+                        {/* WO-549: Skip/Exit without saving */}
+                        {onSkip && (
+                            <button
+                                onClick={handleSkip}
+                                className="text-xs text-slate-500 hover:text-slate-300 underline underline-offset-2 transition-colors"
+                            >
+                                Skip this assessment
+                            </button>
+                        )}
                     </div>
 
                     {canGoNext ? (

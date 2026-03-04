@@ -35,7 +35,7 @@ const FAQS = [
     },
     {
         q: 'How much will it cost?',
-        a: "Waitlist members will receive founding member pricing — substantially below the regular enrollment fee. We'll share exact pricing before launch.",
+        a: "Waitlist members will receive founding member pricing, substantially below the regular enrollment fee. We'll share exact pricing before launch.",
     },
     {
         q: 'Will this include CEU credits?',
@@ -43,7 +43,7 @@ const FAQS = [
     },
     {
         q: 'Do I need a PPN Portal account to enroll?',
-        a: 'No — the waitlist is open to all practitioners, regardless of whether you use the PPN Research Portal.',
+        a: 'No, the waitlist is open to all practitioners, regardless of whether you use the PPN Research Portal.',
     },
 ];
 
@@ -77,7 +77,7 @@ export const Academy: FC = () => {
     return (
         <>
             {/* SEO */}
-            <title>PPN Practitioner Academy — Psychedelic Therapy Documentation Training</title>
+            <title>PPN Practitioner Academy, Psychedelic Therapy Documentation Training</title>
 
             <div className="min-h-screen" style={{ background: '#0a1628', fontFamily: 'Inter, sans-serif' }}>
 
@@ -113,7 +113,7 @@ export const Academy: FC = () => {
                         textTransform: 'uppercase', padding: '4px 14px', borderRadius: 100, marginBottom: 24,
                     }}>
                         <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#f0a500', display: 'inline-block' }} />
-                        Coming Soon — Phase 2
+                        Coming Soon, Phase 2
                     </div>
 
                     <h1 style={{
@@ -126,7 +126,7 @@ export const Academy: FC = () => {
 
                     <p style={{ fontSize: 17, color: '#6b7a8d', lineHeight: 1.65, maxWidth: 560, margin: '0 auto 36px' }}>
                         The first practitioner training built around real-world evidence, zero-PHI documentation,
-                        and audit-ready clinical records. Launching soon — join the waitlist.
+                        and audit-ready clinical records. Launching soon, join the waitlist.
                     </p>
 
                     <a href="#waitlist" style={{
@@ -135,7 +135,7 @@ export const Academy: FC = () => {
                         padding: '15px 40px', borderRadius: 12, textDecoration: 'none',
                         boxShadow: '0 8px 32px rgba(56,139,253,0.3)',
                     }}>
-                        Join the Waitlist — It's Free
+                        Join the Waitlist, It's Free
                     </a>
                 </section>
 
@@ -200,7 +200,7 @@ export const Academy: FC = () => {
                         <div style={{ fontSize: 18, fontWeight: 800, color: '#9fb0be', marginBottom: 16 }}>Built by PPN Research Portal</div>
                         <p style={{ fontSize: 14, color: '#6b7a8d', lineHeight: 1.7, maxWidth: 500, margin: '0 auto' }}>
                             This curriculum is grounded in direct Voice of Customer research with practitioners across
-                            Oregon, Colorado, and Hawaii — not theory. Every module addresses a documented pain point
+                            Oregon, Colorado, and Hawaii, not theory. Every module addresses a documented pain point
                             from real clinical sessions. The Zero-PHI architecture that protects practitioners in the
                             portal powers the documentation standard taught here.
                         </p>

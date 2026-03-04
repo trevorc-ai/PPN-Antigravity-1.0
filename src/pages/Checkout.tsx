@@ -136,7 +136,7 @@ export const Checkout: FC = () => {
                         ))}
                     </div>
 
-                    {/* Billing toggle — pill style */}
+                    {/* Billing toggle, pill style */}
                     <div
                         className="inline-flex items-center rounded-full p-1"
                         style={{ border: '1px solid rgba(56,139,253,0.25)', background: 'rgba(10,22,40,0.8)' }}
@@ -220,7 +220,7 @@ export const Checkout: FC = () => {
                                         className="w-full py-2 text-center text-xs font-black uppercase tracking-widest"
                                         style={{ background: 'linear-gradient(90deg, #b07800 0%, #f0a500 50%, #b07800 100%)', color: '#0a1628' }}
                                     >
-                                        ⭐ Research Partner — Alliance Member
+                                        ⭐ Research Partner, Alliance Member
                                     </div>
                                 )}
 
@@ -377,7 +377,7 @@ export const Checkout: FC = () => {
                     >
                         {loading
                             ? 'Processing...'
-                            : `Start 14-Day Free Trial — ${(SUBSCRIPTION_TIERS[selectedTier] as any).planName ?? SUBSCRIPTION_TIERS[selectedTier].name}`
+                            : `Start 14-Day Free Trial, ${(SUBSCRIPTION_TIERS[selectedTier] as any).planName ?? SUBSCRIPTION_TIERS[selectedTier].name}`
                         }
                     </button>
                     <p className="text-sm mt-3" style={{ color: '#6b7a8d' }}>

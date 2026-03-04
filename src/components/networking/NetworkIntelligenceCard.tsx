@@ -11,7 +11,7 @@ interface NetworkIntelligenceCardProps {
     networkBaseUrl?: string;
 }
 
-// ─── Static lookup map (demo data — WO-343 AC-2) ─────────────────────────────
+// ─── Static lookup map (demo data, WO-343 AC-2) ─────────────────────────────
 // Keys are lowercased substrings matched against a warning's id or headline.
 // Production: replace with a live query against the opt-in practitioner table.
 const NETWORK_COUNTS: Record<string, number> = {
@@ -49,7 +49,7 @@ const NetworkIntelligenceCard: React.FC<NetworkIntelligenceCardProps> = ({
 }) => {
     const [visible, setVisible] = useState(false);
 
-    // Fade-in with 300ms delay after mounting — WO-343 AC-3
+    // Fade-in with 300ms delay after mounting, WO-343 AC-3
     useEffect(() => {
         if (activeWarnings.length > 0) {
             const timer = setTimeout(() => setVisible(true), 300);
@@ -59,7 +59,7 @@ const NetworkIntelligenceCard: React.FC<NetworkIntelligenceCardProps> = ({
         }
     }, [activeWarnings.length]);
 
-    // Render nothing if no active warnings — WO-343 AC-1 & AC-3
+    // Render nothing if no active warnings, WO-343 AC-1 & AC-3
     if (activeWarnings.length === 0) return null;
 
     const { count, slug } = resolveCount(activeWarnings);
@@ -68,13 +68,13 @@ const NetworkIntelligenceCard: React.FC<NetworkIntelligenceCardProps> = ({
     return (
         <div
             role="complementary"
-            aria-label="Network Intelligence — practitioner experience with this contraindication"
+            aria-label="Network Intelligence, practitioner experience with this contraindication"
             className={`
                 transition-all duration-500
                 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'}
             `}
         >
-            {/* ── Card shell — amber/gold tint to distinguish from the red warning above ── */}
+            {/* ── Card shell, amber/gold tint to distinguish from the red warning above ── */}
             <div className="
                 flex flex-col gap-4
                 p-5 rounded-xl
@@ -89,7 +89,7 @@ const NetworkIntelligenceCard: React.FC<NetworkIntelligenceCardProps> = ({
                         rounded-lg bg-amber-500/10 border border-amber-500/20
                         flex items-center justify-center
                     ">
-                        {/* Lucide Users icon covers the "people/network" semantic — WO-343 AC-3 */}
+                        {/* Lucide Users icon covers the "people/network" semantic, WO-343 AC-3 */}
                         <Users
                             className="w-5 h-5 text-amber-400"
                             aria-hidden="true"
@@ -116,7 +116,7 @@ const NetworkIntelligenceCard: React.FC<NetworkIntelligenceCardProps> = ({
                     href={profilesUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`View practitioners with experience managing ${slug} contraindication — opens in new tab`}
+                    aria-label={`View practitioners with experience managing ${slug} contraindication, opens in new tab`}
                     className="
                         inline-flex items-center gap-2 self-start
                         px-4 py-2.5 rounded-lg
@@ -132,7 +132,7 @@ const NetworkIntelligenceCard: React.FC<NetworkIntelligenceCardProps> = ({
                     <span aria-hidden="true">→</span>
                 </a>
 
-                {/* ── Opt-in footnote — WO-343 AC-2 & accessibility rules ── */}
+                {/* ── Opt-in footnote, WO-343 AC-2 & accessibility rules ── */}
                 <p className="ppn-meta text-slate-500 flex items-center gap-1.5">
                     {/* Star symbol keeps semantic meaning from text alone, not from color alone */}
                     <span aria-hidden="true">⚝</span>

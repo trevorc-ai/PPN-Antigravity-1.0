@@ -72,7 +72,7 @@ const TermsOfService: React.FC = () => {
                         (45 CFR §164.514(b)) before entry. PPN is not liable for PHI submitted in violation of this obligation.
                     </p>
                     <p>
-                        PPN's platform enforces de-identification through structured, coded inputs — but technical controls
+                        PPN's platform enforces de-identification through structured, coded inputs, but technical controls
                         do not substitute for your professional obligation to de-identify data before submission.
                     </p>
                 </Section>

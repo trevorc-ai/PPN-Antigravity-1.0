@@ -79,7 +79,7 @@ const RECEPTOR_DESCRIPTIONS: Record<string, { role: string; clinicalNote: string
     '5-HT1A': { role: 'Serotonin 1A Receptor', clinicalNote: 'Modulates anxiety and mood. Partial agonism associated with anxiolytic effects during sessions.' },
     '5-HT2C': { role: 'Serotonin 2C Receptor', clinicalNote: 'Influences appetite and impulsivity. Agonism linked to serotonin syndrome risk in SSRI combinations.' },
     'D2': { role: 'Dopamine D2 Receptor', clinicalNote: 'Modulates reward and psychosis risk. Relevance varies significantly by compound class.' },
-    'D1': { role: 'Dopamine D1 Receptor', clinicalNote: 'Unique to ergolines like LSD. D1 agonism contributes to the energetic, stimulating, analytical character of the LSD experience — absent in tryptamines.' },
+    'D1': { role: 'Dopamine D1 Receptor', clinicalNote: 'Unique to ergolines like LSD. D1 agonism contributes to the energetic, stimulating, analytical character of the LSD experience, absent in tryptamines.' },
     'SERT': { role: 'Serotonin Transporter', clinicalNote: 'Blocks serotonin reuptake. High affinity raises serotonin syndrome risk with concurrent SSRIs/SNRIs.' },
     'DAT': { role: 'Dopamine Transporter', clinicalNote: "MDMA's second major transporter target. DAT reversal releases presynaptic dopamine, contributing to euphoria and stimulant effects." },
     'NMDA': { role: 'NMDA Glutamate Receptor', clinicalNote: 'Antagonism produces dissociative states. Relevant for ketamine and PCP-class compounds.' },
@@ -196,7 +196,7 @@ const ReceptorBindingHeatmap: React.FC = () => {
                         </div>
                         <h3 className="text-lg font-black text-slate-300 tracking-tight">Receptor Binding Affinity Matrix</h3>
                     </div>
-                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest ml-1">pKi Heatmap — All 10 Compounds × 8 Receptor Systems</p>
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest ml-1">pKi Heatmap, All 10 Compounds × 8 Receptor Systems</p>
                 </div>
 
                 {/* Info tooltip */}
@@ -274,7 +274,7 @@ const ReceptorBindingHeatmap: React.FC = () => {
             {/* ── Matrix Grid ── */}
             <div
                 className="relative z-10 overflow-x-auto"
-                aria-label="Receptor binding affinity matrix — all compounds"
+                aria-label="Receptor binding affinity matrix, all compounds"
                 role="table"
             >
                 {/* Column count: 1 label col + N substance cols */}
@@ -333,7 +333,7 @@ const ReceptorBindingHeatmap: React.FC = () => {
                                                     ? { boxShadow: `0 0 12px ${meta.glowColor}30` }
                                                     : {}
                                             }
-                                            aria-label={`${sub.name} — ${receptor.label}: ${displayPki === '—' ? 'No data' : `pKi ${displayPki}`}`}
+                                            aria-label={`${sub.name}, ${receptor.label}: ${displayPki === '—' ? 'No data' : `pKi ${displayPki}`}`}
                                         >
                                             <span className={`text-sm font-black leading-none ${meta.textColor}`}>
                                                 {displayPki}
@@ -388,7 +388,7 @@ const ReceptorBindingHeatmap: React.FC = () => {
                                                 ) : (
                                                     <div className="flex justify-between items-center">
                                                         <span className="text-xs text-slate-500 uppercase tracking-wider">Binding</span>
-                                                        <span className="text-sm font-bold text-slate-600">≥10,000 nM — No sig. binding</span>
+                                                        <span className="text-sm font-bold text-slate-600">≥10,000 nM, No sig. binding</span>
                                                     </div>
                                                 )}
 

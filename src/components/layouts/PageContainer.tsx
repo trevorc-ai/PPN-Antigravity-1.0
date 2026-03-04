@@ -21,13 +21,13 @@ export const PageContainer = ({
     };
 
     const paddingClasses = {
-        compact: 'px-4 sm:px-6',
-        default: 'px-6 sm:px-8 xl:px-10',
-        spacious: 'px-8 sm:px-12 xl:px-16'
+        compact: 'px-3 sm:px-6',
+        default: 'px-4 sm:px-8 xl:px-10',
+        spacious: 'px-4 sm:px-12 xl:px-16'
     };
 
     return (
-        <div className={`${widthClasses[width]} ${paddingClasses[padding]} mx-auto ${className}`}>
+        <div className={`${widthClasses[width]} ${paddingClasses[padding]} mx-auto overflow-x-hidden ${className}`}>
             {children}
         </div>
     );

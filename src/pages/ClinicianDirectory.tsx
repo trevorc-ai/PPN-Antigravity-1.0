@@ -227,11 +227,11 @@ const ClinicianDirectory: React.FC = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       // COMPLIANCE: Only user_id is stored. Free-text fields (name, email, role) removed per
-      // data governance policy — log tables store reference IDs only, no direct text.
+      // data governance policy, log tables store reference IDs only, no direct text.
       // TODO: Create ref_feature_request_types table and store request_type_id FK instead.
       await supabase.from('log_feature_requests').insert({
         user_id: user?.id ?? null,
-        // request_type, category, status, requested_text removed — all free text, no ref FK exists
+        // request_type, category, status, requested_text removed, all free text, no ref FK exists
       });
       setListingSubmitted(true);
     } catch (err) {
@@ -351,7 +351,7 @@ const ClinicianDirectory: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-12">
             {loading ? (
-              // Loading skeleton — 8 ghost cards
+              // Loading skeleton, 8 ghost cards
               Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5 animate-pulse flex flex-col gap-4">
                   <div className="flex items-start gap-4">

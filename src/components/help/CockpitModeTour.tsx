@@ -1,9 +1,9 @@
 /**
- * CockpitModeTour — WO-084
+ * CockpitModeTour, WO-084
  * 6-step mini guided tour for Cockpit Mode.
  * Tone: professional, efficient, empowering. "You're in control."
  * Entry: first time user activates Cockpit Mode → modal prompt.
- * CRITICAL: tooltips must NOT obscure vitals panel — positioned to side/bottom.
+ * CRITICAL: tooltips must NOT obscure vitals panel, positioned to side/bottom.
  */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronRight, ChevronLeft, X, Gauge } from 'lucide-react';
@@ -26,21 +26,21 @@ const STEPS: TourStep[] = [
         action: 'Observe',
     },
     {
-        title: 'Patient vitals — left panel',
+        title: 'Patient vitals, left panel',
         target: '[data-tour="cockpit-vitals"]',
         tooltip: 'Heart rate, blood pressure, SpO2. Updates when you log a new reading.',
         action: 'Observe',
         preferSide: true,
     },
     {
-        title: 'Session timeline — center',
+        title: 'Session timeline, center',
         target: '[data-tour="cockpit-timeline"]',
         tooltip: 'Every event logged in this session appears here, in order. Scroll to review.',
         action: 'Scroll',
         preferSide: true,
     },
     {
-        title: 'Protocol — right panel',
+        title: 'Protocol, right panel',
         target: '[data-tour="cockpit-protocol"]',
         tooltip: 'Your dosing protocol and elapsed time. The next scheduled check is highlighted.',
         action: 'Observe',
@@ -159,10 +159,10 @@ export const CockpitModeTour: React.FC<CockpitModeTourProps> = ({ onClose }) => 
             aria-modal="true"
             aria-label="Cockpit Mode guided tour"
         >
-            {/* Lighter backdrop — don't obscure session data */}
+            {/* Lighter backdrop, don't obscure session data */}
             <div className="absolute inset-0 bg-black/30 pointer-events-auto" />
 
-            {/* Target highlight — amber for cockpit */}
+            {/* Target highlight, amber for cockpit */}
             {targetRect && (
                 <div
                     className="absolute border-2 border-amber-400 rounded-xl pointer-events-none z-[9999]"
@@ -188,7 +188,7 @@ export const CockpitModeTour: React.FC<CockpitModeTourProps> = ({ onClose }) => 
                     <div className="flex items-center gap-2">
                         <Gauge className="w-4 h-4 text-amber-400" aria-hidden="true" />
                         <span className="text-xs font-black text-amber-400 uppercase tracking-widest">
-                            Cockpit Tour — {step + 1}/{STEPS.length}
+                            Cockpit Tour, {step + 1}/{STEPS.length}
                         </span>
                     </div>
                     <button

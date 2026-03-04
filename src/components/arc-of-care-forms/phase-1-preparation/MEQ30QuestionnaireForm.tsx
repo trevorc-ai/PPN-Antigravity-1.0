@@ -10,7 +10,7 @@ import { FormFooter } from '../shared/FormFooter';
  * Features:
  *   - Sticky header progress bar
  *   - Auto-save on every answer (debounced)
- *   - "Save & Done" footer after the last question — the ONLY exit for long-form flows
+ *   - "Save & Done" footer after the last question, the ONLY exit for long-form flows
  *   - onComplete closes the SlideOutPanel without extra scrolling
  */
 
@@ -20,7 +20,7 @@ export interface MEQ30Data {
 
 interface MEQ30QuestionnaireFormProps {
     onSave?: (data: MEQ30Data) => void;
-    /** Called after explicit Save & Done — closes the SlideOutPanel */
+    /** Called after explicit Save & Done, closes the SlideOutPanel */
     onComplete?: () => void;
     initialData?: MEQ30Data;
     patientId?: string;

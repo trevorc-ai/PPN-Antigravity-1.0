@@ -8,9 +8,9 @@ const PrivacyPolicy: React.FC = () => {
         <div className="min-h-screen bg-[#07101e] text-slate-300">
             {/* Nav */}
             <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#07101e]/90 backdrop-blur-md border-b border-slate-800/60">
-                <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-slate-400 hover:text-[#A8B5D1] transition-colors text-sm font-bold">
+                <button onClick={() => navigate('/landing')} className="flex items-center gap-2 text-slate-400 hover:text-[#A8B5D1] transition-colors text-sm font-bold">
                     <span className="material-symbols-outlined text-base">arrow_back</span>
-                    Back to Dashboard
+                    Back to Portal
                 </button>
                 <p className="text-sm font-black text-[#A8B5D1] tracking-[0.15em] uppercase">PPN Portal</p>
             </header>
@@ -49,7 +49,7 @@ const PrivacyPolicy: React.FC = () => {
                     </SubSection>
                     <SubSection title="Clinical Protocol Data (De-identified Only)">
                         <p>You may submit protocol and outcome data. Per our platform design and data agreement,
-                            <strong> all data entered must be fully de-identified</strong> — no patient names, dates of birth,
+                            <strong> all data entered must be fully de-identified</strong>, no patient names, dates of birth,
                             MRN numbers, geographic data smaller than state, or any other HIPAA Safe Harbor identifiers.
                             We do not accept, store, or process PHI.</p>
                     </SubSection>
@@ -72,7 +72,7 @@ const PrivacyPolicy: React.FC = () => {
                         <li>No free-text notes containing identifiable information are accepted</li>
                     </ul>
                     <p className="text-slate-400">
-                        Our system enforces these constraints at the form and API level — structured inputs only,
+                        Our system enforces these constraints at the form and API level, structured inputs only,
                         coded selections stored as foreign key IDs, not free text.
                     </p>
                 </Section>
@@ -95,7 +95,7 @@ const PrivacyPolicy: React.FC = () => {
                     <ul className="list-disc list-inside space-y-2 text-slate-400 pl-2">
                         <li>All data encrypted in transit (TLS 1.3) and at rest (AES-256)</li>
                         <li>Row-Level Security (RLS) enforced at the database level</li>
-                        <li>Role-based access control — practitioners can only access their own clinic's data</li>
+                        <li>Role-based access control, practitioners can only access their own clinic's data</li>
                         <li>HIPAA-compliant cloud infrastructure (SOC 2 compliant provider)</li>
                         <li>Audit logs maintained for all data access events</li>
                     </ul>
@@ -112,9 +112,9 @@ const PrivacyPolicy: React.FC = () => {
 
                 <Section title="7. Third-Party Services">
                     <ul className="list-disc list-inside space-y-2 text-slate-400 pl-2">
-                        <li><strong className="text-slate-300">Supabase</strong> — Database and authentication infrastructure (SOC 2 Type II compliant)</li>
-                        <li><strong className="text-slate-300">Stripe</strong> — Payment processing (PCI DSS Level 1 compliant; we never see your card number)</li>
-                        <li><strong className="text-slate-300">Vercel</strong> — Application hosting (SOC 2 compliant)</li>
+                        <li><strong className="text-slate-300">Supabase</strong>, Database and authentication infrastructure (SOC 2 Type II compliant)</li>
+                        <li><strong className="text-slate-300">Stripe</strong>, Payment processing (PCI DSS Level 1 compliant; we never see your card number)</li>
+                        <li><strong className="text-slate-300">Vercel</strong>, Application hosting (SOC 2 compliant)</li>
                     </ul>
                 </Section>
 

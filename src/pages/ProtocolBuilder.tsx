@@ -144,7 +144,7 @@ export const ProtocolBuilder = () => {
 
   const handleSubmit = async () => {
     if (!isFormComplete()) {
-      // The inline missing-fields panel already guides the user — just scroll up
+      // The inline missing-fields panel already guides the user, just scroll up
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -167,7 +167,7 @@ export const ProtocolBuilder = () => {
           session_date: new Date().toISOString().split('T')[0],
           submitted_at: new Date().toISOString(),
           is_submitted: true,
-          // FK overrides — write integer IDs instead of (or alongside) text strings
+          // FK overrides, write integer IDs instead of (or alongside) text strings
           patient_smoking_status_id: SMOKING_STATUS_ID[formData.smoking_status] ?? null, // FK → ref_smoking_status ✅ migration 069
           session_type: 'preparation',    // CHECK constraint: preparation | dosing | integration | complete
           session_type_id: 1,             // FK → ref_session_types(PREPARATION) ✅ migration 067
@@ -178,7 +178,7 @@ export const ProtocolBuilder = () => {
 
     if (error) {
       console.error('Submission error:', error);
-      // Surface error without alert — log is sufficient; UI will remain on form
+      // Surface error without alert, log is sufficient; UI will remain on form
       return;
     }
 
@@ -267,9 +267,9 @@ export const ProtocolBuilder = () => {
             <span className="font-medium">Back to Protocols</span>
           </button>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-[#f8fafc]">Protocol Builder</h1>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-6">
               {/* Progress Indicator */}
               <div className="flex items-center gap-3">
                 <div className="text-right">

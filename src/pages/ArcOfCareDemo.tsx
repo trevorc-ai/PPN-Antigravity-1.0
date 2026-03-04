@@ -93,7 +93,7 @@ const ArcOfCareDemo: React.FC = () => {
                 {/* Header */}
                 <div className="text-center space-y-2 pb-2">
                     <h1 className="text-4xl font-black text-[#A8B5D1] tracking-tight">
-                        Wellness Journey — Phase 1
+                        Wellness Journey, Phase 1
                     </h1>
                     <p className="text-sm text-slate-500">
                         Protocol Builder: Baseline Assessment &amp; Augmented Intelligence
@@ -249,7 +249,7 @@ const ArcOfCareDemo: React.FC = () => {
                 {/* ── 2. Set & Setting Analysis accordion ── */}
                 <AccordionSection
                     title="Set &amp; Setting Analysis"
-                    subtitle="Live visualizations — updates as you adjust scores above"
+                    subtitle="Live visualizations, updates as you adjust scores above"
                     defaultOpen={true}
                 >
                     <div className="pt-2">
@@ -262,7 +262,7 @@ const ArcOfCareDemo: React.FC = () => {
                     </div>
                 </AccordionSection>
 
-                {/* ── 3. AI Prediction — only after submit ── */}
+                {/* ── 3. AI Prediction, only after submit ── */}
                 {prediction && (
                     <AccordionSection
                         title="🧠 Augmented Intelligence Prediction"

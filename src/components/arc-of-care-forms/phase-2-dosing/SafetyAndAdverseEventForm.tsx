@@ -7,7 +7,7 @@ import { NowButton, RelativeTimeDisplay } from '../shared/NowButton';
 import { FormFooter } from '../shared/FormFooter';
 
 /**
- * SafetyAndAdverseEventForm — Phase 2: Dosing Session
+ * SafetyAndAdverseEventForm, Phase 2: Dosing Session
  *
  * Section 1: Time-series safety observation log
  *   - Select observation buttons → hit "Log Entry" → stamped snapshot appended to log
@@ -31,7 +31,7 @@ export interface ObservationLogEntry {
 export interface SafetyAndAdverseEventData {
     observation_log: ObservationLogEntry[];
 
-    // Adverse Event — only populated when an event occurs
+    // Adverse Event, only populated when an event occurs
     event_type?: string;
     severity_grade?: number;
     meddra_code?: string;
@@ -105,11 +105,11 @@ const INTERVENTION_TYPES = [
 ];
 
 const SEVERITY_GRADES = [
-    { value: 1, label: 'Grade 1 — Mild' },
-    { value: 2, label: 'Grade 2 — Moderate' },
-    { value: 3, label: 'Grade 3 — Severe' },
-    { value: 4, label: 'Grade 4 — Life-Threatening' },
-    { value: 5, label: 'Grade 5 — Fatal' },
+    { value: 1, label: 'Grade 1, Mild' },
+    { value: 2, label: 'Grade 2, Moderate' },
+    { value: 3, label: 'Grade 3, Severe' },
+    { value: 4, label: 'Grade 4, Life-Threatening' },
+    { value: 5, label: 'Grade 5, Fatal' },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -210,7 +210,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
             observation_log: [...prev.observation_log, entry],
         }));
         setEntryNote('');
-        // Don't clear activeObs — clinician likely wants to adjust and log again
+        // Don't clear activeObs, clinician likely wants to adjust and log again
     };
 
     const removeEntry = (id: string) => {
@@ -447,7 +447,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                         Log Adverse Event
                     </span>
                     <span className="text-xs text-slate-500">
-                        {showEventReport ? '▲ Collapse' : '▼ Expand — only if an adverse event occurred'}
+                        {showEventReport ? '▲ Collapse' : '▼ Expand, only if an adverse event occurred'}
                     </span>
                 </button>
 
@@ -485,7 +485,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                 </select>
                             </FormField>
 
-                            <FormField label="MedDRA Code" tooltip="Optional — enter if known">
+                            <FormField label="MedDRA Code" tooltip="Optional, enter if known">
                                 {/* PERSISTED external identifier (MedDRA numeric taxonomy code, e.g. 10047700).
                                     Architecture Constitution §2 exception: standardized medical coding system, not free-text narrative. */}
                                 <input
@@ -501,6 +501,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                 <div className="flex gap-2">
                                     <input
                                         type="datetime-local"
+                                        tabIndex={-1}
                                         value={data.occurred_at ?? ''}
                                         onChange={e => update('occurred_at', e.target.value)}
                                         className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-sm"
@@ -572,6 +573,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                     <div className="flex gap-2">
                                         <input
                                             type="datetime-local"
+                                            tabIndex={-1}
                                             value={data.resolved_at ?? ''}
                                             onChange={e => update('resolved_at', e.target.value)}
                                             className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-sm"

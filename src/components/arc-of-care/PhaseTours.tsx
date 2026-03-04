@@ -1,5 +1,5 @@
 /**
- * PhaseTours.tsx — Driver.js-style Element-Spotlight Tour
+ * PhaseTours.tsx, Driver.js-style Element-Spotlight Tour
  *
  * DESIGNER SPEC (WO-111 / WO-066):
  * - Each step highlights the *specific element* it describes using a box-shadow
@@ -9,7 +9,7 @@
  * - The popover card anchors near the target (4-direction, collision-detected).
  * - Falls back to a centered modal on mobile or when element not found.
  * - Smooth scroll brings off-screen targets into view before highlighting.
- * - Zero new dependencies — all vanilla React.
+ * - Zero new dependencies, all vanilla React.
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -188,7 +188,7 @@ const PhaseTour: React.FC<PhaseTourProps> = ({
 
     const findAndPosition = useCallback(() => {
         if (!step.selector) {
-            // Intro/outro slide — no spotlight
+            // Intro/outro slide, no spotlight
             setTargetRect(null);
             setPopoverPos(null);
             return;
@@ -280,7 +280,7 @@ const PhaseTour: React.FC<PhaseTourProps> = ({
                 height: targetRect.height + PAD * 2,
                 borderRadius: 12,
                 boxShadow: [
-                    // The mask — lighter so page context remains visible
+                    // The mask, lighter so page context remains visible
                     `0 0 0 9999px rgba(0,0,0,0.45)`,
                     // Bright blue border ring
                     `0 0 0 3px rgba(59,130,246,0.95)`,
@@ -362,7 +362,7 @@ const PhaseTour: React.FC<PhaseTourProps> = ({
                     <div className="flex items-center gap-2">
                         <Compass className={`w-4 h-4 ${colors.text} flex-shrink-0`} />
                         <span className={`text-xs font-black uppercase tracking-widest ${colors.text}`}>
-                            Phase {phase} Tour — Step {currentStep + 1}/{steps.length}
+                            Phase {phase} Tour, Step {currentStep + 1}/{steps.length}
                         </span>
                     </div>
                     <button

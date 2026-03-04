@@ -3,9 +3,9 @@ import { supabase } from '../../supabaseClient';
 
 interface DosageCalculatorProps {
     sessionId: string;
-    /** Synthetic Subject_ID (e.g. "XK7P2M") — never a real patient name */
+    /** Synthetic Subject_ID (e.g. "XK7P2M"), never a real patient name */
     patientId: string;
-    /** Patient body weight in kg — used for mg/kg calculation */
+    /** Patient body weight in kg, used for mg/kg calculation */
     patientWeightKg: number;
     onConfirm?: () => void;
 }
@@ -27,7 +27,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
     const [selectedSubstanceId, setSelectedSubstanceId] = useState<number | null>(null);
     const [weightGrams, setWeightGrams] = useState<string>('');
     const [potencyModifier, setPotencyModifier] = useState<number>(1.0);
-    // GAP-3: Substance type selector — HCl (100% active) vs TPA (~80% active ibogaine)
+    // GAP-3: Substance type selector, HCl (100% active) vs TPA (~80% active ibogaine)
     // Migration 077: substance_type column confirmed live in log_dose_events (2026-02-25)
     const [substanceType, setSubstanceType] = useState<'HCl' | 'TPA'>('HCl');
     const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
     const selectedSubstance = substances.find(s => s.id === selectedSubstanceId);
     const weight = parseFloat(weightGrams) || 0;
     const effectiveDoseMg = weight * 1000 * potencyModifier * (selectedSubstance?.default_potency_factor || 1);
-    // GAP-3: Estimated active ibogaine — TPA is ~80% ibogaine by weight (Dr. Allen FRD 2026-02-25)
+    // GAP-3: Estimated active ibogaine, TPA is ~80% ibogaine by weight (Dr. Allen FRD 2026-02-25)
     const TPA_IBOGAINE_FRACTION = 0.80;
     const estimatedActiveIbogaineMg = substanceType === 'TPA'
         ? effectiveDoseMg * TPA_IBOGAINE_FRACTION
@@ -102,9 +102,9 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
                 .from('log_dose_events')
                 .insert({
                     session_id: sessionId,
-                    patient_id: patientId,          // synthetic Subject_ID — never PII
+                    patient_id: patientId,          // synthetic Subject_ID, never PII
                     substance_id: selectedSubstanceId,
-                    substance_type: substanceType,  // GAP-3: 'HCl' | 'TPA' — migration 077 live
+                    substance_type: substanceType,  // GAP-3: 'HCl' | 'TPA', migration 077 live
                     dose_mg: effectiveDoseMg,
                     weight_kg: patientWeightKg,
                     dose_mg_per_kg: effectiveDoseMg / patientWeightKg,
@@ -116,7 +116,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
 
             if (insertError) throw insertError;
 
-            // Reset form on success — substanceType kept sticky (likely same form for session)
+            // Reset form on success, substanceType kept sticky (likely same form for session)
             setSelectedSubstanceId(null);
             setWeightGrams('');
             setPotencyModifier(1.0);
@@ -180,7 +180,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
                 </select>
             </div>
 
-            {/* Substance Type Toggle — HCl vs TPA (GAP-3, Dr. Allen FRD 2026-02-25) */}
+            {/* Substance Type Toggle, HCl vs TPA (GAP-3, Dr. Allen FRD 2026-02-25) */}
             <div style={{ marginBottom: '20px' }}>
                 <label
                     style={{
@@ -199,7 +199,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
                         type="button"
                         onClick={() => setSubstanceType('HCl')}
                         aria-pressed={substanceType === 'HCl'}
-                        aria-label="Ibogaine HCl — 100% active ibogaine"
+                        aria-label="Ibogaine HCl, 100% active ibogaine"
                         style={{
                             flex: 1,
                             minHeight: '64px',
@@ -223,7 +223,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
                         type="button"
                         onClick={() => setSubstanceType('TPA')}
                         aria-pressed={substanceType === 'TPA'}
-                        aria-label="Total Plant Alkaloid — approximately 80% active ibogaine"
+                        aria-label="Total Plant Alkaloid, approximately 80% active ibogaine"
                         style={{
                             flex: 1,
                             minHeight: '64px',
@@ -326,7 +326,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
                 </div>
             </div>
 
-            {/* Dose Summary — Administered + Active Ibogaine (GAP-3) */}
+            {/* Dose Summary, Administered + Active Ibogaine (GAP-3) */}
             <div style={{
                 backgroundColor: '#0f172a',
                 borderRadius: '8px',
@@ -365,7 +365,7 @@ export const DosageCalculator: React.FC<DosageCalculatorProps> = ({
                     </div>
                 </div>
 
-                {/* Active Ibogaine Row — derived, highlighted */}
+                {/* Active Ibogaine Row, derived, highlighted */}
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
