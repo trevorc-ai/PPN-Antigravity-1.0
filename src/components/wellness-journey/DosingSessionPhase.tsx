@@ -1,6 +1,6 @@
-import React, { Component, useState, useEffect, useMemo } from 'react';
+import React, { Component, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
-    Activity, Sparkles, CheckCircle, ChevronRight, X, Info, Clock, Download,
+    Activity, Sparkles, CheckCircle, ChevronRight, ChevronUp, ChevronDown, X, Info, Clock, Download,
     Heart, Play, AlertTriangle, FileText, Lock, CheckSquare, ArrowRight,
     CheckCircle2, Edit3, AlertCircle, Pill, ShieldAlert, ClipboardList, Save
 } from 'lucide-react';
@@ -10,11 +10,10 @@ import { WorkflowActionCard } from './WorkflowCards';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import { WellnessFormId } from './WellnessFormRouter';
 import { LiveSessionTimeline } from './LiveSessionTimeline';
-import { SessionVitalsTrendChart } from './SessionVitalsTrendChart';
+import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
 import { createSessionVital, createTimelineEvent } from '../../services/clinicalLog';
-import { supabase } from '../../supabaseClient';
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -38,7 +37,7 @@ export class Phase2ErrorBoundary extends React.Component<EBProps, EBState> {
         if (this.state.hasError) {
             return (
                 <div className="rounded-2xl border border-red-800/50 bg-red-950/20 p-8 text-center space-y-4">
-                    <p className="text-lg font-black text-red-300">Session view error — the session data was preserved.</p>
+                    <p className="text-lg font-black text-red-300">Session view error, the session data was preserved.</p>
                     <p className="text-sm text-slate-400 font-mono">{this.state.error}</p>
                     <button
                         onClick={this.handleReset}
@@ -102,17 +101,17 @@ const SOURCE_LINKS: Array<{ pattern: RegExp; label: string; url: string }> = [
     },
     {
         pattern: /Kroenke.*2001/i,
-        label: 'Kroenke & Spitzer (2001) — PHQ-9',
+        label: 'Kroenke & Spitzer (2001), PHQ-9',
         url: 'https://pubmed.ncbi.nlm.nih.gov/11556941/',
     },
     {
         pattern: /Spitzer.*2006/i,
-        label: 'Spitzer et al. (2006) — GAD-7',
+        label: 'Spitzer et al. (2006), GAD-7',
         url: 'https://pubmed.ncbi.nlm.nih.gov/16717171/',
     },
     {
         pattern: /Weathers.*2013/i,
-        label: 'Weathers et al. (2013) — PCL-5 / CAPS-5',
+        label: 'Weathers et al. (2013), PCL-5 / CAPS-5',
         url: 'https://www.ptsd.va.gov/professional/assessment/adult-sr/ptsd-checklist.asp',
     },
 ];
@@ -130,25 +129,110 @@ function getRegulatoryLinks(basis: string): Array<{ label: string; url: string }
     return links;
 }
 
-// Emotional states for companion overlay
+// Emotional states, dark-room safe palette (matches PatientCompanionPage)
+// rest: dim ~15% opacity bg + muted *-300/80 text (eye-safe, WCAG AA on black)
+// glow: ~60% opacity fill, bright enough to confirm tap without harshness
 const COMPANION_FEELINGS = [
-    { id: 'blissful', label: 'Blissful', color: 'bg-emerald-500/20 border-emerald-400/50 hover:bg-emerald-500/40 text-emerald-100' },
-    { id: 'peaceful', label: 'Peaceful', color: 'bg-teal-500/20 border-teal-400/50 hover:bg-teal-500/40 text-teal-100' },
-    { id: 'grounded', label: 'Grounded / Safe', color: 'bg-cyan-500/20 border-cyan-400/50 hover:bg-cyan-500/40 text-cyan-100' },
-    { id: 'connected', label: 'Connected', color: 'bg-sky-500/20 border-sky-400/50 hover:bg-sky-500/40 text-sky-100' },
-    { id: 'euphoric', label: 'Euphoric', color: 'bg-violet-500/20 border-violet-400/50 hover:bg-violet-500/40 text-violet-100' },
-    { id: 'drifting', label: 'Drifting / Floating', color: 'bg-indigo-500/20 border-indigo-400/50 hover:bg-indigo-500/40 text-indigo-100' },
-    { id: 'curious', label: 'Curious', color: 'bg-purple-500/20 border-purple-400/50 hover:bg-purple-500/40 text-purple-100' },
-    { id: 'open', label: 'Open / Surrendered', color: 'bg-fuchsia-500/20 border-fuchsia-400/50 hover:bg-fuchsia-500/40 text-fuchsia-100' },
-    { id: 'emotional', label: 'Emotional / Crying', color: 'bg-blue-500/20 border-blue-400/50 hover:bg-blue-500/40 text-blue-100' },
-    { id: 'confused', label: 'Confused', color: 'bg-slate-500/20 border-slate-400/50 hover:bg-slate-500/40 text-slate-100' },
-    { id: 'anxious', label: 'Anxious', color: 'bg-amber-500/20 border-amber-400/50 hover:bg-amber-500/40 text-amber-100' },
-    { id: 'overwhelmed', label: 'Overwhelmed', color: 'bg-orange-500/20 border-orange-400/50 hover:bg-orange-500/40 text-orange-100' },
-    { id: 'tense', label: 'Tense / Resistance', color: 'bg-rose-500/20 border-rose-400/50 hover:bg-rose-500/40 text-rose-100' },
-    { id: 'fearful', label: 'Fearful', color: 'bg-red-600/20 border-red-500/50 hover:bg-red-600/40 text-red-100' },
-    { id: 'nauseous', label: 'Nauseous', color: 'bg-yellow-700/20 border-yellow-600/50 hover:bg-yellow-700/40 text-yellow-100' },
-    { id: 'need_support', label: 'Need Support', color: 'bg-pink-600/30 border-pink-400/60 hover:bg-pink-600/50 text-pink-100 ring-1 ring-pink-400/40' },
+    { id: 'blissful', label: 'Blissful', rest: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300/80', glow: 'bg-emerald-500/60 border-emerald-400/70 text-emerald-200' },
+    { id: 'peaceful', label: 'Peaceful', rest: 'bg-teal-500/15 border-teal-500/30 text-teal-300/80', glow: 'bg-teal-500/60 border-teal-400/70 text-teal-200' },
+    { id: 'grounded', label: 'Grounded / Safe', rest: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300/80', glow: 'bg-cyan-500/60 border-cyan-400/70 text-cyan-200' },
+    { id: 'connected', label: 'Connected', rest: 'bg-sky-500/15 border-sky-500/30 text-sky-300/80', glow: 'bg-sky-500/60 border-sky-400/70 text-sky-200' },
+    { id: 'euphoric', label: 'Euphoric', rest: 'bg-violet-500/15 border-violet-500/30 text-violet-300/80', glow: 'bg-violet-500/60 border-violet-400/70 text-violet-200' },
+    { id: 'drifting', label: 'Drifting / Floating', rest: 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300/80', glow: 'bg-indigo-500/60 border-indigo-400/70 text-indigo-200' },
+    { id: 'curious', label: 'Curious', rest: 'bg-purple-500/15 border-purple-500/30 text-purple-300/80', glow: 'bg-purple-500/60 border-purple-400/70 text-purple-200' },
+    { id: 'open', label: 'Open / Surrendered', rest: 'bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-300/80', glow: 'bg-fuchsia-500/60 border-fuchsia-400/70 text-fuchsia-200' },
+    { id: 'emotional', label: 'Emotional / Crying', rest: 'bg-blue-500/15 border-blue-500/30 text-blue-300/80', glow: 'bg-blue-500/60 border-blue-400/70 text-blue-200' },
+    { id: 'confused', label: 'Confused', rest: 'bg-slate-500/15 border-slate-500/30 text-slate-300/80', glow: 'bg-slate-500/60 border-slate-400/70 text-slate-200' },
+    { id: 'anxious', label: 'Anxious', rest: 'bg-amber-500/15 border-amber-500/30 text-amber-300/80', glow: 'bg-amber-500/60 border-amber-400/70 text-amber-200' },
+    { id: 'overwhelmed', label: 'Overwhelmed', rest: 'bg-orange-500/15 border-orange-500/30 text-orange-300/80', glow: 'bg-orange-500/60 border-orange-400/70 text-orange-200' },
+    { id: 'tense', label: 'Tense / Resistance', rest: 'bg-rose-500/15 border-rose-500/30 text-rose-300/80', glow: 'bg-rose-500/60 border-rose-400/70 text-rose-200' },
+    { id: 'fearful', label: 'Fearful', rest: 'bg-red-600/15 border-red-600/30 text-red-300/80', glow: 'bg-red-600/60 border-red-500/70 text-red-200' },
+    { id: 'nauseous', label: 'Nauseous', rest: 'bg-yellow-700/15 border-yellow-700/30 text-yellow-300/80', glow: 'bg-yellow-600/60 border-yellow-500/70 text-yellow-200' },
+    { id: 'need_support', label: 'Need Support', rest: 'bg-pink-600/20 border-pink-500/40 text-pink-300/80 ring-1 ring-pink-500/20', glow: 'bg-pink-500/65 border-pink-400/70 text-pink-200 ring-1 ring-pink-400/50' },
 ];
+
+/**
+ * CompanionButtonGrid, dark-room 4×4 feeling grid with instant-on / slow-fade glow.
+ * Instant-on: litId set on click → transition-none snaps to glow.
+ * Slow fade: litId cleared after 160ms → CSS duration-[1800ms] fades back.
+ */
+const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => {
+    const [litId, setLitId] = useState<string | null>(null);
+    const litTimer = useRef<NodeJS.Timeout | null>(null);
+
+    const handleTap = (id: string) => {
+        const key = `companion_logs_${sessionId}`;
+        const existing = JSON.parse(localStorage.getItem(key) || '[]');
+        existing.push({ timestamp: new Date().toISOString(), feeling: id });
+        localStorage.setItem(key, JSON.stringify(existing));
+
+        if (litTimer.current) clearTimeout(litTimer.current);
+        setLitId(id);
+        litTimer.current = setTimeout(() => setLitId(null), 160);
+    };
+
+    return (
+        <div className="relative z-20 shrink-0 w-full border-t border-white/8 bg-black/50 backdrop-blur-sm px-2 pb-3 pt-2">
+            <div className="grid grid-cols-4 gap-1 w-full">
+                {COMPANION_FEELINGS.map(f => {
+                    const isLit = litId === f.id;
+                    return (
+                        <button
+                            key={f.id}
+                            onClick={() => handleTap(f.id)}
+                            className={[
+                                'backdrop-blur-md border rounded-lg',
+                                'px-1 py-1.5',
+                                'min-h-[36px]',
+                                'font-semibold tracking-wide text-center leading-tight',
+                                'shadow-sm select-none',
+                                isLit
+                                    ? `${f.glow} transition-none scale-[1.04] shadow-lg`
+                                    : `${f.rest} transition-[background-color,border-color,box-shadow] duration-[1800ms] ease-out active:scale-95`,
+                            ].join(' ')}
+                            style={{ fontSize: 'clamp(8px, 2.2vw, 11px)' }}
+                            aria-label={`Log feeling: ${f.label}`}
+                        >
+                            {f.label}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
+/**
+ * CompanionVideo, full-screen ambient video for tablet/mobile.
+ *
+ * The landscape 16:9 video is rotated -90° to display as portrait.
+ * ResizeObserver measures the container and swaps width↔height on the
+ * video element before rotating, so the full video frame is always visible
+ * with no cropping and no letterboxing.
+ *
+ * Fallback (before first measurement): object-contain, no rotation.
+ */
+const CompanionVideo: React.FC = () => (
+    <div
+        className="relative flex-1 overflow-hidden pointer-events-none"
+        aria-hidden="true"
+    >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
+        <div className="absolute top-5 left-0 right-0 text-center z-20">
+            <p className="text-white/20 text-xs tracking-[0.2em]">
+                Tap to quietly log your state
+            </p>
+        </div>
+        <video
+            src="/admin_uploads/spherecules.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-contain opacity-90"
+        />
+    </div>
+);
 
 export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, completedForms, onOpenForm, onCompletePhase }) => {
 
@@ -160,21 +244,91 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // Bump this counter whenever we want to force a contraindication re-evaluation
     const [contraindicationKey, setContraindicationKey] = useState(0);
 
-    // Re-evaluate contraindications when dosing protocol or medications are updated
-    // in localStorage (DosingProtocolForm and StructuredSafetyCheckForm write these keys)
+    // WO-528: declare eventLog + getElapsedSec BEFORE any useEffect that references them
+    const [eventLog, setEventLog] = useState<SessionEventPin[]>([]);
+
+    // Helper: returns elapsed seconds since session start. Safe to call at any time.
+    const getElapsedSec = useCallback((): number => {
+        try {
+            const raw = localStorage.getItem(SESSION_START_KEY);
+            if (!raw) return 0;
+            return Math.round((Date.now() - Number(raw)) / 1000);
+        } catch { return 0; }
+    }, [SESSION_START_KEY]);
+
+    // WO-559: Ref flag set true when practitioner taps "Additional Dose" during a live session.
+    // handleDosingUpdated reads this to emit additional_dose instead of dose_admin.
+    const isLiveRedoseRef = useRef(false);
+
+    // Re-evaluate contraindications + stamp DOSE event pin when dosing protocol saved
     useEffect(() => {
         const bump = () => setContraindicationKey(k => k + 1);
-        // storage event = cross-tab writes; ppn:dosing-updated = same-tab writes
         const handleStorage = (e: StorageEvent) => {
             if (e.key === 'ppn_dosing_protocol' || e.key === 'mock_patient_medications_names') bump();
         };
+        // When dosing protocol is saved while live, push the appropriate event pin.
+        // If isLiveRedoseRef is set the save originated from the Additional Dose button —
+        // emit additional_dose (amber/orange). Otherwise it is the initial dose_admin (emerald).
+        const handleDosingUpdated = () => {
+            bump();
+            const isRedose = isLiveRedoseRef.current;
+            isLiveRedoseRef.current = false; // clear flag regardless
+            setEventLog(prev => [
+                ...prev,
+                {
+                    id: `dose-${Date.now()}`,
+                    elapsedSec: getElapsedSec(),
+                    type: isRedose ? 'additional_dose' : 'dose_admin',
+                    label: isRedose ? 'Additional Dose' : 'Dose Admin',
+                } satisfies SessionEventPin,
+            ]);
+            // WO-559: persist additional_dose to log_session_timeline_events
+            if (isRedose) {
+                const UUID_RE_D = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                const sid = (journey.sessionId ?? journey.session?.sessionId) as string | undefined;
+                if (sid && UUID_RE_D.test(sid)) {
+                    // Compute elapsed HH:MM:SS at the moment of the event (no stale closure)
+                    const elSec = getElapsedSec();
+                    const eH = Math.floor(elSec / 3600).toString().padStart(2, '0');
+                    const eM = Math.floor((elSec % 3600) / 60).toString().padStart(2, '0');
+                    const eS = Math.floor(elSec % 60).toString().padStart(2, '0');
+                    const elStr = `${eH}:${eM}:${eS}`;
+                    createTimelineEvent({
+                        session_id: sid,
+                        event_timestamp: new Date().toISOString(),
+                        event_type: 'clinical_decision',
+                        metadata: { event_description: `Additional Dose administered at T+${elStr}` },
+                    }).catch(e => console.warn('[WO-559] Additional Dose timeline write failed:', e));
+                }
+            }
+        };
         window.addEventListener('storage', handleStorage);
-        window.addEventListener('ppn:dosing-updated', bump);
+        window.addEventListener('ppn:dosing-updated', handleDosingUpdated);
         return () => {
             window.removeEventListener('storage', handleStorage);
-            window.removeEventListener('ppn:dosing-updated', bump);
+            window.removeEventListener('ppn:dosing-updated', handleDosingUpdated);
         };
-    }, []);
+        // getElapsedSec is stable (useCallback), safe to include
+    }, [getElapsedSec, journey]);
+
+    // Mirror every LiveSessionTimeline quick-action onto the chart as an event pin
+    useEffect(() => {
+        const handleSessionEvent = (e: Event) => {
+            const { type, label } = (e as CustomEvent).detail ?? {};
+            if (!type) return;
+            setEventLog(prev => [
+                ...prev,
+                {
+                    id: `tl-${Date.now()}`,
+                    elapsedSec: getElapsedSec(),
+                    type,
+                    label: label ?? type,
+                } satisfies SessionEventPin,
+            ]);
+        };
+        window.addEventListener('ppn:session-event', handleSessionEvent);
+        return () => window.removeEventListener('ppn:session-event', handleSessionEvent);
+    }, [getElapsedSec]);
 
     // Restore mode from localStorage on mount (survives companion-page navigation)
     const [mode, setMode] = useState<SessionMode>(() => {
@@ -186,36 +340,17 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         try {
             localStorage.setItem(SESSION_KEY, nextMode);
             if (nextMode === 'live') {
-                // Only write start time once — don't overwrite if already set
+                // Only write start time once, don't overwrite if already set
                 if (!localStorage.getItem(SESSION_START_KEY)) {
                     localStorage.setItem(SESSION_START_KEY, String(Date.now()));
                 }
-                // WO-524: Write session_started_at to DB — authoritative timer source for TopHeader chips
-                const sid = journey.sessionId ?? journey.session?.sessionId;
-                const UUID_RE_MODE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-                if (sid && UUID_RE_MODE.test(sid)) {
-                    supabase.from('log_clinical_records')
-                        .update({ session_started_at: new Date().toISOString() })
-                        .eq('id', sid)
-                        .then(({ error }) => { if (error) console.warn('[Session] Failed to write session_started_at:', error); });
-                }
             } else if (nextMode === 'pre') {
                 localStorage.removeItem(SESSION_START_KEY);
-            } else if (nextMode === 'post') {
-                // WO-524: Write session_ended_at to DB — chips disappear when session is closed out
-                const sid = journey.sessionId ?? journey.session?.sessionId;
-                const UUID_RE_MODE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-                if (sid && UUID_RE_MODE.test(sid)) {
-                    supabase.from('log_clinical_records')
-                        .update({ session_ended_at: new Date().toISOString() })
-                        .eq('id', sid)
-                        .then(({ error }) => { if (error) console.warn('[Session] Failed to write session_ended_at:', error); });
-                }
             }
         } catch { /* quota exceeded */ }
     };
 
-    // Timer — calculated from wall-clock start time so it survives rerenders
+    // Timer, calculated from wall-clock start time so it survives rerenders
     const [elapsedTime, setElapsedTime] = useState('00:00:00');
     useEffect(() => {
         if (mode !== 'live') {
@@ -251,7 +386,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
             switch (e.key.toLowerCase()) {
                 case 'u': setShowUpdatePanel(p => !p); break;
-                case 'v': onOpenForm('session-vitals'); break;
+                case 'v':
+                    // Stamp a vital_check pin on the chart when practitioner opens vitals form
+                    setEventLog(prev => [...prev, {
+                        id: `vitals-${Date.now()}`,
+                        elapsedSec: getElapsedSec(),
+                        type: 'vital_check',
+                        label: 'Vitals Recorded',
+                    } satisfies SessionEventPin]);
+                    onOpenForm('session-vitals');
+                    break;
                 case 'a': onOpenForm('safety-and-adverse-event'); break;
             }
         };
@@ -259,10 +403,67 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [mode, onOpenForm]);
 
-    // Post-session assessment state
+    // Post-session assessment state, WO-547: restored from localStorage on mount
+    // so navigating away and returning preserves completed state.
+    // WO-557 Fix A: assessmentKey may resolve as 'demo' initially if sessionId isn't
+    // hydrated yet. useEffect re-reads whenever the key stabilises to the real UUID,
+    // preventing the stale-key bug that caused the ✅ badge to stay blank on return.
+    const assessmentKey = `ppn_phase2_assessment_${journey.session?.sessionId ?? journey.sessionId ?? 'demo'}`;
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
-    const [assessmentCompleted, setAssessmentCompleted] = useState(false);
-    const [assessmentScores, setAssessmentScores] = useState<{ meq: number; edi: number; ceq: number } | null>(null);
+    // WO-548: Collapsed accordion to access session chart/ledger from post-session view
+    const [showPostSessionTimeline, setShowPostSessionTimeline] = useState(false);
+    const [assessmentCompleted, setAssessmentCompleted] = useState<boolean>(() => {
+        try { return !!localStorage.getItem(assessmentKey); } catch { return false; }
+    });
+    const [assessmentScores, setAssessmentScores] = useState<{ meq: number; edi: number; ceq: number } | null>(() => {
+        try {
+            const raw = localStorage.getItem(assessmentKey);
+            return raw ? JSON.parse(raw) : null;
+        } catch { return null; }
+    });
+    // WO-557: Re-read from localStorage whenever assessmentKey settles to the real UUID.
+    // This covers the case where the component mounts with key='demo', data is written
+    // under the real UUID key, then the component remounts, the lazy useState initialiser
+    // runs only once so it misses the update. useEffect catches the drift.
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem(assessmentKey);
+            if (raw) {
+                setAssessmentCompleted(true);
+                setAssessmentScores(JSON.parse(raw));
+            } else {
+                // Don't reset to false if already true from in-session completion
+                setAssessmentCompleted(prev => prev || false);
+            }
+        } catch { /* non-critical */ }
+    }, [assessmentKey]);
+
+    // WO-547 / WO-557: Derive safety event status from companion logs + live event log.
+    // WO-557 Fix B: expanded check covers all distress feelings (not just need_support)
+    // and catches safety_event type from both companion dispatch (WO-556) and Phase 2
+    // direct form submissions. Auto-completes vacuously when zero events logged.
+    const DISTRESS_FEELINGS = new Set([
+        'need_support', 'anxious', 'overwhelmed', 'fearful', 'tense', 'nauseous'
+    ]);
+    const hasSafetyEvents = useMemo(() => {
+        // 1. Check companion_logs localStorage for any distress feeling
+        try {
+            const sessionKey = journey.session?.sessionId ?? journey.sessionId ?? 'demo';
+            const key = `companion_logs_${sessionKey}`;
+            const raw = localStorage.getItem(key);
+            if (raw) {
+                const logs: Array<{ timestamp: string; feeling: string }> = JSON.parse(raw);
+                if (logs.some(l => DISTRESS_FEELINGS.has(l.feeling))) return true;
+            }
+        } catch { /* non-critical */ }
+        // 2. Check live eventLog for safety_event pins (covers both companion dispatch
+        //    via WO-556 CustomEvent and Phase 2's safety-and-adverse-event form)
+        return eventLog.some(e =>
+            e.type === 'safety_event' ||
+            e.type === 'safety-and-adverse-event' ||
+            e.type === 'rescue-protocol'
+        );
+    }, [eventLog, journey]);
 
     // Live Vitals (mock)
     const [liveVitals] = useState({ hr: 82, bp: '125/82', spo2: 98, hrv: 45 });
@@ -276,7 +477,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     const [updateHR, setUpdateHR] = useState('');
     const [updateBPSys, setUpdateBPSys] = useState('');
     const [updateBPDia, setUpdateBPDia] = useState('');
-    // Companion overlay — open/close without affecting session timer
+    // Companion overlay, open/close without affecting session timer
     const [showCompanion, setShowCompanion] = useState(false);
     interface SessionUpdateEntry {
         timestamp: string;
@@ -287,28 +488,108 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         note: string;
         hr: string;
         bp: string;
+        elapsedSec?: number; // WO-528: stamp elapsed seconds for chart X-axis
+        tempF?: number; // reserved for future temperature field
     }
     const [updateLog, setUpdateLog] = useState<SessionUpdateEntry[]>([]);
 
+    // WO-559 Issue B, Vitals pre-population helper.
+    // Called when the Session Update panel opens. Finds the most recent log entry
+    // that has at least one vital recorded and pre-fills the form fields.
+    // If no prior entry exists, fields remain blank (true first entry behavior).
+    const prefillVitalsFromLastEntry = useCallback((log: SessionUpdateEntry[]) => {
+        const lastWithVitals = log.find(e => e.hr || e.bp);
+        if (!lastWithVitals) return;
+        if (lastWithVitals.hr) setUpdateHR(lastWithVitals.hr);
+        if (lastWithVitals.bp) {
+            const parts = lastWithVitals.bp.split('/');
+            if (parts[0] && parts[0] !== '?') setUpdateBPSys(parts[0]);
+            if (parts[1] && parts[1] !== '?') setUpdateBPDia(parts[1]);
+        }
+    }, []);
+
+    // WO-528: derive VitalsSnapshot[] from updateLog entries that contain HR or BP data.
+    // Each entry is mapped to an elapsed-time X value so the chart uses a consistent timeline.
+    const vitalsChartData: VitalsSnapshot[] = useMemo(() => {
+        return updateLog
+            .filter(e => e.hr || e.bp)
+            .map((e, i) => ({
+                id: `upd-${i}`,
+                elapsedSec: e.elapsedSec ?? 0,
+                // Use undefined for unrecorded fields, Recharts treats undefined as a gap,
+                // so no line is drawn toward zero when a field was not entered.
+                heartRate: e.hr ? parseInt(e.hr, 10) : undefined,
+                bpSystolic: e.bp ? parseInt(e.bp.split('/')[0], 10) : undefined,
+                temperatureF: e.tempF ?? undefined, // no default, only plot when explicitly recorded
+            }))
+            .sort((a, b) => a.elapsedSec - b.elapsedSec);
+    }, [updateLog]);
+
+    // WO-528: parse elapsedTime HH:MM:SS string to seconds to drive the chart x-axis domain.
+    // The chart uses this to grow the domain even when no new vitals are logged.
+    const sessionDurationSec = useMemo(() => {
+        const parts = elapsedTime.split(':').map(Number);
+        if (parts.length !== 3) return 0;
+        return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    }, [elapsedTime]);
+
     const handleSaveUpdate = async () => {
         const bpStr = (updateBPSys || updateBPDia) ? `${updateBPSys || '?'}/${updateBPDia || '?'}` : '';
+        const elapsedSec = getElapsedSec();
         const entry: SessionUpdateEntry = {
             timestamp: new Date().toLocaleTimeString(),
             elapsed: elapsedTime,
+            elapsedSec,         // WO-528: stamp elapsed seconds for chart X-axis
             affect: updateAffect,
             responsiveness: updateResponsiveness,
             comfort: updateComfort,
             note: updateNote.trim(),
             hr: updateHR,
             bp: bpStr,
+            tempF: undefined,   // reserved for future temperature field
         };
         setUpdateLog(prev => [entry, ...prev]);
 
-        // Emit to log_clinical_vitals table seamlessly
-        if ((updateHR || updateBPSys || updateBPDia) && journey.session?.sessionNumber) {
+        // WO-528: push a SESSION_UPDATE event pin for the chart overlay strip
+        // regardless of whether vitals were entered, qualitative updates still appear
+        setEventLog(prev => [
+            ...prev,
+            {
+                id: `upd-pin-${Date.now()}`,
+                elapsedSec,
+                type: 'session_update',
+                label: updateAffect ? `Update: ${updateAffect}` : 'Session Update',
+            } satisfies SessionEventPin,
+        ]);
+
+        // WO-547: Persist session update event pin to log_session_timeline_events
+        // Guard: only write when journey.sessionId is a real UUID (not 'demo' / legacy numeric IDs)
+        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        const resolvedSessionId = journey.sessionId ?? journey.session?.sessionId;
+        if (resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
+            try {
+                await createTimelineEvent({
+                    session_id: resolvedSessionId,
+                    event_timestamp: new Date().toISOString(),
+                    event_type: 'clinical_decision',
+                    performed_by: undefined,
+                    metadata: {
+                        event_description: updateAffect
+                            ? `Session Update (T+${elapsedTime}): ${updateAffect}${updateResponsiveness ? ` · ${updateResponsiveness}` : ''
+                            }${updateComfort ? ` · ${updateComfort}` : ''}`
+                            : `Session Update at T+${elapsedTime}`,
+                    },
+                });
+            } catch (err) {
+                console.warn('[WO-547] Session Update, timeline event write failed (non-critical):', err);
+            }
+        }
+
+        // Emit vitals to log_session_vitals table
+        if ((updateHR || updateBPSys || updateBPDia) && resolvedSessionId && UUID_RE.test(resolvedSessionId ?? '')) {
             try {
                 await createSessionVital({
-                    session_id: journey.session.sessionNumber.toString(),
+                    session_id: resolvedSessionId,
                     heart_rate: updateHR ? parseInt(updateHR, 10) : undefined,
                     bp_systolic: updateBPSys ? parseInt(updateBPSys, 10) : undefined,
                     bp_diastolic: updateBPDia ? parseInt(updateBPDia, 10) : undefined,
@@ -319,31 +600,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             }
         }
 
-        // BUG-529-05: Persist observation fields to timeline ledger
-        const UUID_RE_DSP = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        const realSessionId = journey.sessionId ?? journey.session?.sessionId;
-        if (realSessionId && UUID_RE_DSP.test(realSessionId)) {
-            const obsParts: string[] = [];
-            if (updateAffect) obsParts.push(`Affect: ${updateAffect}`);
-            if (updateResponsiveness) obsParts.push(`Resp: ${updateResponsiveness}`);
-            if (updateComfort) obsParts.push(`Comfort: ${updateComfort}`);
-            if (updateNote.trim()) obsParts.push(updateNote.trim());
-            if (obsParts.length > 0) {
-                try {
-                    const { data: { user: obsUser } } = await supabase.auth.getUser();
-                    await createTimelineEvent({
-                        session_id: realSessionId,
-                        event_timestamp: new Date().toISOString(),
-                        event_type: 'patient_observation',
-                        performed_by: obsUser?.id ?? undefined,
-                        metadata: { event_description: obsParts.join(' · ') },
-                    });
-                } catch (err) {
-                    console.warn('[Session Update] Failed to write observation timeline event:', err);
-                }
-            }
-        }
-
         // Reset fields
         setUpdateAffect(''); setUpdateResponsiveness(''); setUpdateComfort('');
         setUpdateNote(''); setUpdateHR(''); setUpdateBPSys(''); setUpdateBPDia('');
@@ -351,7 +607,17 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         addToast({ title: 'Session Update Saved', message: `Logged at T+${elapsedTime}`, type: 'success' });
     };
 
-    // ── Contraindication checker — MUST stay above early returns (Rules of Hooks) ──
+    // WO-559 Issue B: Pre-populate vitals each time the update panel is opened.
+    // Runs only when showUpdatePanel transitions from false → true.
+    const prevShowUpdatePanel = useRef(false);
+    useEffect(() => {
+        if (showUpdatePanel && !prevShowUpdatePanel.current) {
+            prefillVitalsFromLastEntry(updateLog);
+        }
+        prevShowUpdatePanel.current = showUpdatePanel;
+    }, [showUpdatePanel, updateLog, prefillVitalsFromLastEntry]);
+
+    // ── Contraindication checker, MUST stay above early returns (Rules of Hooks) ──
     // GUARD: Only run after the practitioner has actually completed the Dosing Protocol form.
     // Without this, stale localStorage from a previous session would trigger warnings
     // before the user has entered anything in the current session.
@@ -372,7 +638,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             }
             // Medications: use same source + same fallback as patientMeds display below.
             // The isDosingProtocolComplete guard (line 315) already prevents phantom
-            // warnings from stale localStorage — the fallback is safe here.
+            // warnings from stale localStorage, the fallback is safe here.
             let medications: string[] = [];
             try {
                 const cachedMeds = localStorage.getItem('mock_patient_medications_names');
@@ -394,7 +660,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDosingProtocolComplete, contraindicationKey, journey]);
 
-    // Current meds list for display — MUST stay above early returns (Rules of Hooks)
+    // Current meds list for display, MUST stay above early returns (Rules of Hooks)
     const patientMeds = useMemo(() => {
         try {
             const cached = localStorage.getItem('mock_patient_medications_names');
@@ -404,12 +670,73 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             }
         } catch (_) { }
         return [];
-    }, []);
+    }, [contraindicationKey]);
+
+    // ── Substance clear / change handler ─────────────────────────────────────────
+    // Pre-session: silently wipes the substance from localStorage so the practitioner
+    // can re-select without any record of the wrong click.
+    // Live session: re-opens the Dosing Protocol form, the amendment is then
+    // captured as a timestamped entry by the form's save handler.
+    const handleClearSubstance = () => {
+        if (isLive) {
+            // Post-start: open form so change is recorded as a timestamped event
+            onOpenForm('dosing-protocol');
+        } else {
+            // Pre-start: silent clear, no clinical record needed
+            try {
+                const raw = localStorage.getItem('ppn_dosing_protocol');
+                if (raw) {
+                    const protocol = JSON.parse(raw);
+                    delete protocol.substance_name;
+                    delete protocol.substance;
+                    localStorage.setItem('ppn_dosing_protocol', JSON.stringify(protocol));
+                }
+            } catch { }
+            setContraindicationKey(k => k + 1);
+            window.dispatchEvent(new Event('ppn:dosing-updated'));
+        }
+    };
 
     // ── POST-SESSION VIEW ──────────────────────────────────────────────────────────
     if (mode === 'post') {
         return (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-500">
+
+                {/* WO-548: Collapsible accordion, session chart + ledger during closeout */}
+                <div className="bg-slate-900/40 border border-slate-700/40 rounded-2xl overflow-hidden">
+                    <button
+                        onClick={() => setShowPostSessionTimeline(v => !v)}
+                        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-slate-800/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                        aria-expanded={showPostSessionTimeline}
+                        aria-controls="post-session-timeline-panel"
+                    >
+                        <div className="flex items-center gap-2.5">
+                            <Activity className="w-4 h-4 text-amber-400" aria-hidden="true" />
+                            <span className="text-sm font-black text-slate-400 uppercase tracking-widest">View Session Timeline &amp; Ledger</span>
+                        </div>
+                        {showPostSessionTimeline
+                            ? <ChevronUp className="w-4 h-4 text-slate-500" />
+                            : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                    </button>
+                    {showPostSessionTimeline && (
+                        <div id="post-session-timeline-panel" className="px-5 pb-5 pt-2 space-y-5 border-t border-slate-700/40 animate-in slide-in-from-top-2 duration-200">
+                            {config.enabledFeatures.includes('session-vitals') && (
+                                <SessionVitalsTrendChart
+                                    sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                    substance={journey.session?.substance}
+                                    onThresholdViolation={() => { }}
+                                    data={vitalsChartData}
+                                    events={eventLog}
+                                    sessionDurationSec={sessionDurationSec}
+                                />
+                            )}
+                            <LiveSessionTimeline
+                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                active={false}
+                            />
+                        </div>
+                    )}
+                </div>
                 <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
                     <div className="flex items-start justify-between mb-8">
                         <div>
@@ -456,14 +783,28 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             {assessmentCompleted && <span className="text-xs font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded border border-emerald-500/20">COMPLETED</span>}
                         </button>
 
-                        <div className="p-5 bg-slate-800/40 border border-slate-700 rounded-2xl flex items-center justify-between opacity-50 cursor-not-allowed">
+                        <div className={`p-5 rounded-2xl flex items-center justify-between transition-all ${hasSafetyEvents
+                            ? 'bg-amber-900/10 border border-amber-700/40 cursor-pointer hover:border-amber-500/50'
+                            : 'bg-slate-800/40 border border-slate-700 opacity-50 cursor-not-allowed'
+                            }`}>
                             <div className="flex items-center gap-4">
-                                <div className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center">
-                                    <div className="w-2 h-2 rounded-full bg-slate-600" />
+                                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${hasSafetyEvents ? 'border-amber-500 bg-amber-500/10' : 'border-slate-600'
+                                    }`}>
+                                    {hasSafetyEvents
+                                        ? <CheckSquare className="w-5 h-5 text-amber-400" />
+                                        : <div className="w-2 h-2 rounded-full bg-slate-600" />}
                                 </div>
-                                <span className="text-slate-400 font-bold">Review Safety Events (0)</span>
+                                <span className={`font-bold ${hasSafetyEvents ? 'text-amber-300' : 'text-slate-400'
+                                    }`}>
+                                    Review Safety Events {hasSafetyEvents ? '' : '(0)'}
+                                </span>
                             </div>
-                            <span className="text-xs text-slate-600 font-bold border border-slate-700 px-2 py-1 rounded">NO EVENTS</span>
+                            <span className={`text-xs font-bold border px-2 py-1 rounded ${hasSafetyEvents
+                                ? 'text-amber-400 border-amber-700/40 bg-amber-500/10'
+                                : 'text-slate-600 border-slate-700'
+                                }`}>
+                                {hasSafetyEvents ? 'REVIEW' : 'NO EVENTS'}
+                            </span>
                         </div>
                     </div>
 
@@ -503,6 +844,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     onComplete={(scores) => {
                                         setAssessmentScores(scores);
                                         setAssessmentCompleted(true);
+                                        // WO-545: persist so Phase 3 Session Snapshot can read across render boundary
+                                        try {
+                                            const sessionKey = journey.session?.sessionId ?? journey.sessionId ?? 'demo';
+                                            localStorage.setItem(
+                                                `ppn_phase2_assessment_${sessionKey}`,
+                                                JSON.stringify(scores)
+                                            );
+                                        } catch { /* quota exceeded, non-critical */ }
                                     }}
                                     onClose={() => setShowAssessmentModal(false)}
                                 />
@@ -545,13 +894,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
                 {/* ── Section Label + Progress ─────────────────────────────────────── */}
                 <div className="flex items-center justify-between px-1">
-                    <h2 className="ppn-label" style={{ color: '#34D399' }}>
+                    <h2 className="ppn-label" style={{ color: '#FBBF24' }}>
                         {isLive ? 'Session Active' : 'Session Preparation'} · {PHASE2_STEPS.length} Steps
                     </h2>
                     <div className="flex items-center gap-3">
                         <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-gradient-to-r from-emerald-700 to-emerald-400 rounded-full transition-all duration-700"
+                                className="h-full bg-gradient-to-r from-amber-700 to-amber-400 rounded-full transition-all duration-700"
                                 style={{ width: `${(PHASE2_STEPS.filter(s => s.isComplete).length / PHASE2_STEPS.length) * 100}%` }}
                                 role="progressbar"
                                 aria-valuenow={PHASE2_STEPS.filter(s => s.isComplete).length}
@@ -577,26 +926,26 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 className={[
                                     'relative flex flex-col rounded-xl transition-all duration-300 overflow-hidden',
                                     step.isComplete
-                                        ? 'bg-teal-900/20'
+                                        ? 'bg-amber-900/20'
                                         : isCurrent
-                                            ? 'bg-emerald-900/40 shadow-lg shadow-emerald-950/60'
+                                            ? 'bg-amber-950/60 shadow-lg shadow-amber-950/60'
                                             : 'bg-slate-800/20 hover:bg-slate-800/35',
                                 ].join(' ')}
                             >
                                 {/* Top accent stripe */}
                                 <div className={[
                                     'h-0.5 w-full',
-                                    step.isComplete ? 'bg-teal-600/60' : isCurrent ? 'bg-emerald-400' : 'bg-slate-700/40',
+                                    step.isComplete ? 'bg-amber-600/60' : isCurrent ? 'bg-amber-400' : 'bg-slate-700/40',
                                 ].join(' ')} aria-hidden="true" />
 
                                 <div className="flex flex-col flex-1 p-4 gap-3">
                                     {/* Step label + status badge */}
                                     <div className="flex items-center justify-between gap-1">
-                                        <span className={`text-xs md:text-sm font-bold uppercase tracking-widest ${step.isComplete ? 'text-teal-500' : isCurrent ? 'text-emerald-400' : 'text-slate-500'}`}>
+                                        <span className={`font-['Manrope',sans-serif] text-xl md:text-2xl font-extrabold tracking-tight leading-none ${step.isComplete ? 'text-amber-300/80' : isCurrent ? 'text-amber-200/90' : 'text-slate-400/80'}`}>
                                             Step {index + 1}
                                         </span>
                                         {step.isComplete ? (
-                                            <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0" aria-label="Complete" />
+                                            <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" aria-label="Complete" />
                                         ) : (
                                             <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-400">
                                                 {isStart ? 'Gate' : 'Req'}
@@ -608,13 +957,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <div className="flex items-start gap-2.5">
                                         <div className={[
                                             'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
-                                            step.isComplete ? 'bg-teal-500/15' : isCurrent ? 'bg-emerald-500/25' : 'bg-slate-700/30',
+                                            step.isComplete ? 'bg-amber-500/15' : isCurrent ? 'bg-amber-500/25' : 'bg-slate-700/30',
                                         ].join(' ')}>
-                                            <span className={`material-symbols-outlined text-[18px] ${step.isComplete ? 'text-teal-400' : isCurrent ? 'text-emerald-300' : 'text-slate-500'}`}>
+                                            <span className={`material-symbols-outlined text-[18px] ${step.isComplete ? 'text-amber-400' : isCurrent ? 'text-amber-300' : 'text-slate-500'}`}>
                                                 {step.icon}
                                             </span>
                                         </div>
-                                        <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${step.isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
+                                        <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${step.isComplete ? 'text-amber-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
                                             {step.label}
                                         </h4>
                                     </div>
@@ -623,7 +972,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <div className="mt-auto pt-2">
                                         {step.isComplete ? (
                                             <div className="flex flex-col items-center gap-1 mt-2">
-                                                {/* Dosage HUD — only for dosing-protocol step */}
+                                                {/* Dosage HUD, only for dosing-protocol step */}
                                                 {step.id === 'dosing-protocol' && (() => {
                                                     try {
                                                         const raw = localStorage.getItem('ppn_dosing_protocol');
@@ -635,24 +984,24 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                         const route = p.route_of_administration;
                                                         if (!name) return null;
                                                         return (
-                                                            <div className="w-full mb-2 px-3 py-2 bg-emerald-950/40 border border-emerald-700/30 rounded-xl text-center">
-                                                                <p className="text-base font-black text-emerald-200 uppercase tracking-widest leading-tight">{name}</p>
-                                                                <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-emerald-300/80">
+                                                            <div className="w-full mb-2 px-3 py-2 bg-amber-950/40 border border-amber-700/30 rounded-xl text-center">
+                                                                <p className="text-base font-black text-amber-200 uppercase tracking-widest leading-tight">{name}</p>
+                                                                <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-amber-300/80">
                                                                     {dose && <span>{dose}{unit}</span>}
-                                                                    {dose && route && <span className="text-emerald-700">·</span>}
+                                                                    {dose && route && <span className="text-amber-700">·</span>}
                                                                     {route && <span>{route}</span>}
                                                                 </div>
                                                             </div>
                                                         );
                                                     } catch { return null; }
                                                 })()}
-                                                <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-teal-400">
+                                                <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-amber-400">
                                                     <CheckCircle2 className="w-4 h-4" /> COMPLETED
                                                 </span>
                                                 {!isStart && (
                                                     <button
                                                         onClick={() => onOpenForm(step.id)}
-                                                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-teal-300 transition-all"
+                                                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-amber-300 transition-all"
                                                         aria-label={`Amend ${step.label}`}
                                                     >
                                                         <Edit3 className="w-3.5 h-3.5" aria-hidden="true" /> Amend
@@ -665,7 +1014,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                 onClick={canStartSession ? () => setAndPersistMode('live') : undefined}
                                                 disabled={!canStartSession}
                                                 className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
-                                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-950/50'
+                                                    ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-950/50'
                                                     : 'bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/50'
                                                     }`}
                                                 aria-label="Start dosing session"
@@ -679,7 +1028,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         ) : isCurrent ? (
                                             <button
                                                 onClick={() => onOpenForm(step.id)}
-                                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600/40 hover:bg-emerald-600/60 text-emerald-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-emerald-950/50"
+                                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600/40 hover:bg-amber-600/60 text-amber-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-amber-950/50"
                                             >
                                                 Open
                                             </button>
@@ -700,29 +1049,40 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
                 {/* ── Contraindication Alert ─────────────────────────────────────── */}
                 {contraindicationResults && contraindicationResults.absoluteFlags.length > 0 ? (
-                    /* ══ ABSOLUTE CONTRAINDICATION — Full-width emergency alert ══ */
+                    /* ══ ABSOLUTE CONTRAINDICATION, Full-width emergency alert ══ */
                     <div className="relative rounded-2xl overflow-hidden border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.35)] animate-pulse-border">
                         {/* Pulsing background glow */}
                         <div className="absolute inset-0 bg-gradient-to-br from-red-950/80 via-red-900/60 to-red-950/80 pointer-events-none" />
                         {/* Animated top stripe */}
                         <div className="relative bg-red-600 px-5 py-3 flex items-center gap-3">
                             <AlertTriangle className="w-6 h-6 text-white flex-shrink-0 animate-bounce" />
-                            <span className="text-white font-black text-lg uppercase tracking-[0.2em]">⚠ ABSOLUTE CONTRAINDICATION — DO NOT ADMINISTER</span>
+                            <span className="text-white font-black text-lg uppercase tracking-[0.2em]">⚠ ABSOLUTE CONTRAINDICATION, DO NOT ADMINISTER</span>
                         </div>
                         <div className="relative p-5 space-y-4">
-                            {/* Drug pair callout: show all meds that are in the MEDICATION category flags */}
+                            {/* Drug pair callout: meds ✕ substance with functional clear button */}
                             <div className="flex items-center justify-center gap-4 flex-wrap">
                                 {patientMeds.map((med, i) => (
                                     <span key={i} className="px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl text-red-200 font-black text-base">
                                         {med}
                                     </span>
                                 ))}
-                                <span className="text-red-400 font-black text-2xl">✕</span>
-                                <span className="px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl text-red-200 font-black text-base">
-                                    {journey.session?.substance || 'Selected Substance'}
-                                </span>
+                                <span className="text-red-400 font-black text-2xl" aria-hidden="true">✕</span>
+                                {/* Substance pill with clear button */}
+                                <div className="flex items-center gap-1 px-4 py-2 bg-red-900/60 border border-red-400/60 rounded-xl">
+                                    <span className="text-red-200 font-black text-base">
+                                        {journey.session?.substance || 'Selected Substance'}
+                                    </span>
+                                    <button
+                                        onClick={handleClearSubstance}
+                                        aria-label={isLive ? 'Change substance (opens form, change will be timestamped)' : 'Clear substance selection'}
+                                        title={isLive ? 'Change substance, will log a timestamped amendment' : 'Clear, re-select substance'}
+                                        className="ml-2 w-5 h-5 flex items-center justify-center rounded-full bg-red-700/60 hover:bg-red-600 border border-red-500/60 hover:border-red-400 text-red-200 hover:text-white transition-all flex-shrink-0"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                </div>
                             </div>
-                            {/* Flag details — uses ContraindicationFlag.headline + .detail */}
+                            {/* Flag details, uses ContraindicationFlag.headline + .detail */}
                             <div className="space-y-2">
                                 {contraindicationResults.absoluteFlags.map((flag: any, i: number) => {
                                     const sourceLinks = flag.regulatoryBasis ? getRegulatoryLinks(flag.regulatoryBasis) : [];
@@ -771,11 +1131,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                     </div>
                 ) : contraindicationResults && contraindicationResults.relativeFlags.length > 0 ? (
-                    /* ══ RELATIVE CONTRAINDICATION — Amber warning ══ */
+                    /* ══ RELATIVE CONTRAINDICATION, Amber warning ══ */
                     <div className="rounded-2xl border-2 border-amber-500/70 bg-gradient-to-br from-amber-950/60 to-amber-900/40 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
                         <div className="bg-amber-600/90 px-5 py-3 flex items-center gap-3 rounded-t-xl">
                             <AlertCircle className="w-5 h-5 text-white flex-shrink-0" />
-                            <span className="text-white font-black text-base uppercase tracking-[0.15em]">⚠ RELATIVE CONTRAINDICATION — Proceed with Caution</span>
+                            <span className="text-white font-black text-base uppercase tracking-[0.15em]">⚠ RELATIVE CONTRAINDICATION, Proceed with Caution</span>
                         </div>
                         <div className="p-5 space-y-3">
                             {contraindicationResults.relativeFlags.map((flag: any, i: number) => {
@@ -821,7 +1181,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                     </div>
                 ) : (
-                    /* ══ ALL CLEAR or no substance yet — compact strip ══ */
+                    /* ══ ALL CLEAR or no substance yet, compact strip ══ */
                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
                         <div className="flex-1 min-w-0">
                             <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
@@ -841,14 +1201,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             ) : (
                                 <span className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/40 border border-emerald-600/40 text-emerald-300 text-sm font-black uppercase tracking-wider">
                                     <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                                    ALL CLEAR — No Contraindications
+                                    ALL CLEAR, No Contraindications
                                 </span>
                             )}
                         </div>
                     </div>
                 )}
 
-                {/* ── Session HUD (sticky when live) — shows timer + most recent vitals ── */}
+                {/* ── Session HUD (sticky when live), shows timer + most recent vitals ── */}
                 <div className={`rounded-2xl border transition-all duration-500 ${isLive ? 'sticky top-2 z-30 bg-[#061115]/95 border-emerald-900/40 shadow-lg shadow-emerald-950/30 backdrop-blur-xl'
                     : 'bg-slate-900/30 border-slate-800/40 opacity-50 select-none'
                     }`}>
@@ -933,21 +1293,75 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 </div>
 
-                {/* ── Three Action Buttons ────────────────────────────────────────── */}
-                <div className="grid grid-cols-3 gap-3">
+                {/* ── Action Buttons ────────────────────────────────────────────── */}
+                <div className="grid grid-cols-2 gap-3">
                     <button onClick={isLive ? () => setShowUpdatePanel(p => !p) : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? (showUpdatePanel ? 'bg-emerald-600/30 border-emerald-400/60 text-emerald-100' : 'bg-gradient-to-br from-emerald-900/60 to-teal-900/40 hover:from-emerald-800/70 border-emerald-500/40 hover:border-emerald-400/60 text-emerald-100') : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'} shadow-lg`}
                         aria-label="Log session update">
                         <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
                         <span>Session Update</span>
                     </button>
-                    <button onClick={isLive ? () => onOpenForm('rescue-protocol') : undefined} disabled={!isLive}
+                    {/* WO-559: Additional Dose, reuses the existing Dosing Protocol slideout.
+                        Sets isLiveRedoseRef before opening so the ppn:dosing-updated handler
+                        knows to emit additional_dose (orange) instead of dose_admin (emerald). */}
+                    <button onClick={isLive ? () => {
+                        isLiveRedoseRef.current = true;
+                        onOpenForm('dosing-protocol');
+                    } : undefined} disabled={!isLive}
+                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-orange-900/60 to-amber-900/40 hover:from-orange-800/70 border-orange-500/40 hover:border-orange-400/60 text-orange-100 shadow-lg shadow-orange-950/30' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
+                        aria-label="Log additional dose">
+                        <Pill className={`w-5 h-5 ${isLive ? 'text-orange-300' : 'text-slate-600'}`} />
+                        <span>Additional Dose</span>
+                    </button>
+                    <button onClick={isLive ? async () => {
+                        const elapsedNow = getElapsedSec();
+                        // WO-528: stamp rescue event pin on the chart immediately
+                        setEventLog(prev => [...prev, {
+                            id: `rescue-${Date.now()}`,
+                            elapsedSec: elapsedNow,
+                            type: 'rescue-protocol',
+                            label: 'Rescue Protocol',
+                        } satisfies SessionEventPin]);
+                        // WO-547: persist rescue protocol activation to log_session_timeline_events
+                        const UUID_RE2 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                        const sid = journey.sessionId ?? journey.session?.sessionId;
+                        if (sid && UUID_RE2.test(sid)) {
+                            createTimelineEvent({
+                                session_id: sid,
+                                event_timestamp: new Date().toISOString(),
+                                event_type: 'safety_event',
+                                metadata: { event_description: `Rescue Protocol initiated at T+${elapsedTime}` },
+                            }).catch(e => console.warn('[WO-547] Rescue timeline write failed:', e));
+                        }
+                        onOpenForm('rescue-protocol');
+                    } : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-purple-900/60 to-fuchsia-900/40 hover:from-purple-800/70 border-purple-500/40 hover:border-purple-400/60 text-purple-100 shadow-lg shadow-purple-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
                         aria-label="Log rescue protocol">
                         <span className={`material-symbols-outlined text-[20px] ${isLive ? 'text-purple-300' : 'text-slate-600'}`}>emergency</span>
                         <span>Rescue Protocol</span>
                     </button>
-                    <button onClick={isLive ? () => onOpenForm('safety-and-adverse-event') : undefined} disabled={!isLive}
+                    <button onClick={isLive ? async () => {
+                        const elapsedNow2 = getElapsedSec();
+                        // WO-528: stamp adverse event pin on the chart immediately
+                        setEventLog(prev => [...prev, {
+                            id: `adverse-${Date.now()}`,
+                            elapsedSec: elapsedNow2,
+                            type: 'safety-and-adverse-event',
+                            label: 'Adverse Event',
+                        } satisfies SessionEventPin]);
+                        // WO-547: persist adverse event activation to log_session_timeline_events
+                        const UUID_RE3 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                        const sid2 = journey.sessionId ?? journey.session?.sessionId;
+                        if (sid2 && UUID_RE3.test(sid2)) {
+                            createTimelineEvent({
+                                session_id: sid2,
+                                event_timestamp: new Date().toISOString(),
+                                event_type: 'safety_event',
+                                metadata: { event_description: `Adverse Event logged at T+${elapsedTime}` },
+                            }).catch(e => console.warn('[WO-547] Adverse Event timeline write failed:', e));
+                        }
+                        onOpenForm('safety-and-adverse-event');
+                    } : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? 'bg-gradient-to-br from-red-900/60 to-rose-900/40 hover:from-red-800/70 border-red-500/40 hover:border-red-400/60 text-red-100 shadow-lg shadow-red-950/40' : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'}`}
                         aria-label="Log adverse reaction">
                         <AlertTriangle className={`w-5 h-5 ${isLive ? 'text-red-300' : 'text-slate-600'}`} />
@@ -998,26 +1412,26 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                         <div className="grid grid-cols-3 gap-3">
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm) — optional</label>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm), optional</label>
                                 <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic — optional</label>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic, optional</label>
                                 <input type="number" placeholder="e.g. 120" value={updateBPSys} onChange={e => setUpdateBPSys(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic — optional</label>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic, optional</label>
                                 <input type="number" placeholder="e.g. 80" value={updateBPDia} onChange={e => setUpdateBPDia(e.target.value)}
                                     className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note — optional</label>
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note, optional</label>
                             <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
-                            <p className="text-xs text-slate-600 mt-1 italic">Observation fields are saved to the session timeline. Vitals are logged to the clinical record.</p>
+                            <p className="text-xs text-slate-600 mt-1 italic">Note is stored locally for session reference. Affect, responsiveness, and vitals are persisted to the clinical record.</p>
                         </div>
                         <button onClick={handleSaveUpdate}
                             className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
@@ -1026,7 +1440,39 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 )}
 
-                {/* ── Update Log ──────────────────────────────────────────────────── */}
+                {/* ── Cockpit Real Estate: always fixed between buttons and update log ── */}
+                {isLive && (
+                    <div className="space-y-6">
+                        {/* WO-548 Defect #11, Known Behavior:
+                            When all event type toggles are on, session update markers can overlap vital sign
+                            data points due to data density. This is expected at high-frequency logging rates.
+                            If the graph library supports z-index series layering, vital signs should surface
+                            above session update markers. Enhancement deferred, not a blocker. */}
+                        {config.enabledFeatures.includes('session-vitals') && (
+                            <SessionVitalsTrendChart
+                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                substance={journey.session?.substance}
+                                onThresholdViolation={(vital, value) => {
+                                    addToast({
+                                        title: `[ALERT] ${vital} threshold exceeded`,
+                                        message: `${vital}: ${value}, review immediately`,
+                                        type: 'error',
+                                        persistent: true
+                                    });
+                                }}
+                                data={vitalsChartData}
+                                events={eventLog}
+                                sessionDurationSec={sessionDurationSec}
+                            />
+                        )}
+                        <LiveSessionTimeline
+                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                            active={true}
+                        />
+                    </div>
+                )}
+
+                {/* ── Update Log, grows below the fixed chart ─────────────────────── */}
                 {updateLog.length > 0 && (
                     <div className="space-y-2">
                         <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 px-1">Session Updates ({updateLog.length})</p>
@@ -1054,7 +1500,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 )}
 
-                {/* Keyboard shortcuts hint — live only */}
+                {/* Keyboard shortcuts hint */}
                 {isLive && (
                     <div className="flex items-center justify-center gap-4 px-4 py-2.5 bg-slate-900/40 border border-slate-800/50 rounded-xl">
                         <p className="text-xs font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
@@ -1066,30 +1512,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         ))}
                     </div>
                 )}
-
-                {/* ── Cockpit Real Estate (live session outputs) ───────────────────── */}
-                {isLive && (
-                    <div className="space-y-6">
-                        {config.enabledFeatures.includes('session-vitals') && (
-                            <SessionVitalsTrendChart
-                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                substance={journey.session?.substance}
-                                onThresholdViolation={(vital, value) => {
-                                    addToast({
-                                        title: `[ALERT] ${vital} threshold exceeded`,
-                                        message: `${vital}: ${value} — review immediately`,
-                                        type: 'error',
-                                        persistent: true
-                                    });
-                                }}
-                            />
-                        )}
-                        <LiveSessionTimeline
-                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                            active={true}
-                        />
-                    </div>
-                )}
             </div>
 
             {/* ── Companion Overlay: fixed layer, timer stays running ─────────── */}
@@ -1097,118 +1519,26 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 showCompanion && (
                     <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden selection:bg-transparent">
 
-                        {/* Close button — top-right */}
+                        {/* Close, absolute top-right, above everything */}
                         <button
                             onClick={() => setShowCompanion(false)}
-                            className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white/70 hover:bg-white/20 hover:text-white backdrop-blur-md transition-all"
+                            className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-white/8 border border-white/15 text-white/35 hover:bg-white/15 hover:text-white/60 backdrop-blur-md transition-all"
                             aria-label="Return to session"
                         >
                             <X className="w-4 h-4" />
                         </button>
                         <div className="absolute top-4 right-16 z-50 flex items-center h-10">
-                            <span className="text-[11px] font-bold tracking-widest text-white/40 uppercase">Return to session</span>
+                            <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">Return to session</span>
                         </div>
 
-                        {/* ── Ambient visual — breathing gradient orb, no video file required ── */}
-                        <div className="flex-1 flex items-center justify-center p-6 pt-16 min-h-0">
-                            <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl shadow-black/80"
-                                style={{ aspectRatio: '16/9' }}>
-                                {/* CSS animated ambient companion background */}
-                                <div
-                                    className="absolute inset-0"
-                                    style={{
-                                        background: 'radial-gradient(ellipse at 50% 50%, #1e1b4b 0%, #0a0a1a 60%, #000 100%)',
-                                        animation: 'none',
-                                    }}
-                                >
-                                    {/* Breathing orb */}
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '50%', left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            width: '40%', height: '40%',
-                                            borderRadius: '50%',
-                                            background: 'radial-gradient(circle, rgba(99,102,241,0.35) 0%, rgba(139,92,246,0.15) 50%, transparent 80%)',
-                                            animation: 'companion-breathe 6s ease-in-out infinite',
-                                            filter: 'blur(24px)',
-                                        }}
-                                        aria-hidden="true"
-                                    />
-                                    {/* Outer slow pulse ring */}
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '50%', left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            width: '60%', height: '60%',
-                                            borderRadius: '50%',
-                                            border: '1px solid rgba(99,102,241,0.12)',
-                                            animation: 'companion-breathe 6s ease-in-out infinite 1.5s',
-                                        }}
-                                        aria-hidden="true"
-                                    />
-                                    {/* Center icon */}
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="text-center space-y-3 opacity-50">
-                                            <div className="w-14 h-14 rounded-full border border-indigo-500/30 mx-auto flex items-center justify-center"
-                                                style={{ animation: 'companion-breathe 6s ease-in-out infinite 0.5s' }}>
-                                                <Sparkles className="w-6 h-6 text-indigo-400" />
-                                            </div>
-                                            <p className="text-white/40 text-[11px] font-semibold tracking-[0.3em] uppercase">Companion Mode</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Keyframe style injected inline — avoids global CSS dependency */}
-                                <style>{`
-                                    @keyframes companion-breathe {
-                                        0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-                                        50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.12); }
-                                    }
-                                `}</style>
-                            </div>
+                        {/* Full-screen flex-col: video fills top, buttons at bottom */}
+                        <div className="flex flex-col flex-1 min-h-0 pt-14">
+                            <CompanionVideo />
+                            <CompanionButtonGrid
+                                sessionId={journey.sessionId || 'demo-1'}
+                            />
                         </div>
 
-                        {/* Prompt */}
-                        <div className="text-center pb-3">
-                            <p className="text-white/40 text-sm font-semibold tracking-[0.2em] uppercase">Tap to quietly log your state</p>
-                        </div>
-
-                        {/* Button grid — solid dark block BELOW video, never overlaps */}
-                        <div className="relative z-20 w-full bg-black/80 backdrop-blur-md border-t border-white/10 px-4 py-5 flex-shrink-0">
-                            <div className="grid grid-cols-4 gap-2 max-w-5xl mx-auto">
-                                {COMPANION_FEELINGS.map(f => (
-                                    <button
-                                        key={f.id}
-                                        onClick={async () => {
-                                            // Keep localStorage write for same-tab display
-                                            const key = `companion_logs_${journey.sessionId || 'demo-1'}`;
-                                            const existing = JSON.parse(localStorage.getItem(key) || '[]');
-                                            existing.push({ timestamp: new Date().toISOString(), feeling: f.id });
-                                            localStorage.setItem(key, JSON.stringify(existing));
-                                            // BUG-529-06: Also persist to timeline ledger
-                                            const UUID_RE_COMP = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-                                            const sid = journey.sessionId;
-                                            if (sid && UUID_RE_COMP.test(sid)) {
-                                                try {
-                                                    await createTimelineEvent({
-                                                        session_id: sid,
-                                                        event_timestamp: new Date().toISOString(),
-                                                        event_type: 'patient_observation',
-                                                        performed_by: undefined, // companion = patient interface
-                                                        metadata: { event_description: `Patient reported: ${f.label}` },
-                                                    });
-                                                } catch (err) {
-                                                    console.warn('[Companion] Failed to write feeling to timeline:', err);
-                                                }
-                                            }
-                                        }}
-                                        className={`${f.color} backdrop-blur-lg border rounded-xl px-2 py-3 text-xs font-bold tracking-wide uppercase text-center transition-all duration-200 active:scale-95 active:brightness-150 shadow-lg`}
-                                        aria-label={`Log feeling: ${f.label}`}
-                                    >{f.label}</button>
-                                ))}
-                            </div>
-                        </div>
                     </div>
                 )
             }
