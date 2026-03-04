@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import {
     TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download,
     Heart, Activity, FileText, Shield, Brain, AlertTriangle,
-    Pill, Clock, Zap, Info, ChevronRight
+    Pill, Clock, Zap, Info, ChevronRight, Link as LinkIcon
 } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import SymptomDecayCurve from '../arc-of-care/SymptomDecayCurve';
@@ -14,6 +14,7 @@ import PatientJourneySnapshot from '../analytics/PatientJourneySnapshot';
 import ConfidenceCone from '../analytics/ConfidenceCone';
 import { NeuroplasticityWindowBadge } from './NeuroplasticityWindowBadge';
 import { PatientProgressSummary, type ProgressSummaryData } from './PatientProgressSummary';
+import MagicLinkModal from './MagicLinkModal';
 import { downloadDischargeSummary, type DischargeSummaryData } from '../../services/dischargeSummary';
 import { useToast } from '../../contexts/ToastContext';
 import { usePhase3Data } from '../../hooks/usePhase3Data';
@@ -189,6 +190,7 @@ const IntegrationCard: React.FC<{
 export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onOpenForm, completedForms = new Set() }) => {
     const [showPulseCheck, setShowPulseCheck] = useState(true);
     const [showProgressSummary, setShowProgressSummary] = useState(false);
+    const [isMagicLinkModalOpen, setIsMagicLinkModalOpen] = useState(false);
     const [showSafetyTimeline, setShowSafetyTimeline] = useState(false);
     const { addToast } = useToast();
 
@@ -267,7 +269,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
 
     const meq30Summary = completedForms.has('meq30')
         ? (() => {
-            const meq = phase3.phase2Assessment?.meq;
+            const meq = journey.session?.meq30Score;
             return meq != null ? `MEQ-30 score: ${meq} · Click to amend` : 'MEQ-30 recorded · Click to amend';
         })()
         : undefined;
@@ -309,7 +311,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
             protocolName: 'TRD Standard 3-Dose',
             baseline: { phq9: baselinePhq9, gad7: 15, caps5: 20 },
             final: { phq9: phase3.currentPhq9 ?? 5, gad7: 6, caps5: 12 },
-            meq30Peak: phase3.phase2Assessment?.meq ?? 78,
+            meq30Peak: journey.session?.meq30Score ?? 78,
             responseAchieved: 'YES (>=50% reduction)',
             remissionAchieved: 'YES',
             adverseEventsCount: safetyEvents.length,
@@ -374,7 +376,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
         <div className="space-y-6 animate-in fade-in duration-500">
 
             {/* 1 ── Session Snapshot Strip ───────────────────────────────────── */}
-            <SessionSnapshotStrip journey={journey} phase2Assessment={phase3.phase2Assessment} />
+            <SessionSnapshotStrip journey={journey} phase2Assessment={{ meq: journey.session?.meq30Score ?? null, ceq: journey.session?.ceqScore ?? null }} />
 
             {/* 2 ── Neuroplasticity Window Badge ────────────────────────────── */}
             {/* WO-550 Defect #23: hasRealSession hides misleading 'closed' state for demo data */}
@@ -457,7 +459,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                             summary={behavioralSummary}
                         />
                         {/* MEQ-30 card, only if not completed in Phase 2 */}
-                        {!phase3.phase2Assessment && (
+                        {!journey.session?.meq30Score && (
                             <IntegrationCard
                                 stepNum={6}
                                 icon={<Zap className="w-4 h-4" />}
@@ -482,15 +484,15 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 />
                 {phase3.isLoading ? (
                     <div className="h-32 bg-slate-800/30 rounded-2xl animate-pulse" />
-                ) : phase3.aceScore === 0 && phase3.gad7Score === 0 ? (
+                ) : (journey.risk.baseline?.ace === 0 && journey.risk.baseline?.gad7 === 0) ? (
                     <PanelEmptyState message="Complete Phase 1 Mental Health Screening to unlock this integration forecast." />
                 ) : (
                     <PredictedIntegrationNeeds
-                        aceScore={phase3.aceScore}
-                        gad7Score={phase3.gad7Score}
-                        expectancyScale={phase3.expectancyScale}
+                        aceScore={journey.risk.baseline?.ace ?? 0}
+                        gad7Score={journey.risk.baseline?.gad7 ?? 0}
+                        expectancyScale={journey.baseline?.expectancy ?? 0}
                         phq9Score={baselinePhq9}
-                        pcl5Score={phase3.pcl5Score}
+                        pcl5Score={journey.risk.baseline?.pcl5 ?? 0}
                     />
                 )}
             </div>
@@ -543,8 +545,6 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 />
                 {phase3.isLoading ? (
                     <div className="h-64 bg-slate-800/30 rounded-2xl animate-pulse" />
-                ) : !phase3.hasRealDecayData ? (
-                    <PanelEmptyState message="Complete a Longitudinal Assessment to see the patient journey timeline." />
                 ) : (
                     <PatientJourneySnapshot />
                 )}
@@ -761,17 +761,24 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
             <div className="pt-8 border-t border-slate-700/50 flex flex-col sm:flex-row items-center gap-4 justify-center">
                 <button
                     onClick={() => setShowProgressSummary(true)}
-                    className="flex items-center justify-center gap-3 w-full sm:w-1/2 py-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-black text-base tracking-wide rounded-2xl shadow border border-slate-600/50 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    className="flex items-center justify-center gap-3 w-full sm:w-1/3 py-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-black text-sm md:text-base tracking-wide rounded-2xl shadow border border-slate-600/50 transition-all hover:scale-[1.01] active:scale-[0.99]"
                 >
                     <FileText className="w-5 h-5 text-teal-400" />
-                    Generate Patient Progress Summary
+                    Progress Summary
+                </button>
+                <button
+                    onClick={() => setIsMagicLinkModalOpen(true)}
+                    className="flex items-center justify-center gap-3 w-full sm:w-1/3 py-4 bg-slate-800 hover:bg-slate-700 text-indigo-300 font-black text-sm md:text-base tracking-wide rounded-2xl shadow border border-indigo-500/30 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                >
+                    <LinkIcon className="w-5 h-5" />
+                    Share Patient Link
                 </button>
                 <button
                     onClick={handleDischargeSummary}
-                    className="flex items-center justify-center gap-3 w-full sm:w-1/2 py-4 bg-gradient-to-r from-teal-700 to-teal-600 hover:from-teal-600 hover:to-teal-500 text-white font-black text-base tracking-wide rounded-2xl shadow-lg shadow-teal-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] border border-teal-500/30"
+                    className="flex items-center justify-center gap-3 w-full sm:w-1/3 py-4 bg-gradient-to-r from-teal-700 to-teal-600 hover:from-teal-600 hover:to-teal-500 text-white font-black text-sm md:text-base tracking-wide rounded-2xl shadow-lg shadow-teal-900/40 transition-all hover:scale-[1.01] active:scale-[0.99] border border-teal-500/30"
                 >
                     <CheckCircle className="w-5 h-5" />
-                    Complete Journey &amp; Discharge Summary
+                    Discharge Summary
                 </button>
             </div>
 
@@ -782,6 +789,13 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                     onClose={() => setShowProgressSummary(false)}
                 />
             )}
+
+            {/* Magic Link Modal */}
+            <MagicLinkModal
+                isOpen={isMagicLinkModalOpen}
+                onClose={() => setIsMagicLinkModalOpen(false)}
+                patientHash={journey.patientId || "pt-unknown-hash"}
+            />
         </div>
     );
 };

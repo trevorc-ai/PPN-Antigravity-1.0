@@ -115,7 +115,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
 
             let query = supabase
                 .from('log_clinical_records')
-                .select('patient_link_code, session_date, session_type, session_number, ref_substances(substance_name)')
+                .select('id, patient_link_code_hash, session_date, session_type_id, session_number, ref_substances(substance_name)')
                 .order('session_date', { ascending: false });
 
             if (siteId) {
@@ -134,14 +134,21 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
             }
             if (qErr) throw qErr;
 
-            // Group by patient_link_code client-side
+            // Group by patient_link_code_hash client-side
             const grouped: Record<string, { sessions: typeof data }> = {};
             for (const row of (data ?? [])) {
-                const pid = row.patient_link_code;
+                // Fallback to record ID if link code hash is missing, mimicking MyProtocols logic
+                const pid = row.patient_link_code_hash || (row as any).id;
                 if (!pid) continue;
                 if (!grouped[pid]) grouped[pid] = { sessions: [] };
                 grouped[pid].sessions.push(row);
             }
+
+            const SESSION_TYPE_LABELS: Record<number, string> = {
+                1: 'Preparation',
+                2: 'Treatment',
+                3: 'Integration',
+            };
 
             const result: LivePatient[] = Object.entries(grouped).map(([pid, { sessions }]) => {
                 const sorted = [...sessions].sort((a, b) =>
@@ -151,13 +158,14 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                 const latestAny = latest as any;
                 const substanceData = latestAny?.ref_substances;
                 const substanceName = Array.isArray(substanceData) ? substanceData[0]?.substance_name : substanceData?.substance_name;
+                const sessionTypeStr = latest?.session_type_id ? SESSION_TYPE_LABELS[latest.session_type_id] : '';
 
                 return {
                     id: pid,
                     lastSession: latest?.session_date ?? 'Unknown',
-                    phase: derivePhase(latest?.session_type ?? null),
+                    phase: derivePhase(sessionTypeStr),
                     sessionCount: sessions.length,
-                    sessionType: latest?.session_type ?? '',
+                    sessionType: sessionTypeStr,
                     substance: substanceName ?? undefined,
                 };
             });
@@ -436,7 +444,9 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 >
                                     <div className="min-w-0 w-full sm:w-auto">
                                         <div className="flex justify-between items-start w-full">
-                                            <p className="text-base font-bold text-white font-mono tracking-wide truncate">{patient.id}</p>
+                                            <p className="text-base font-bold text-white font-mono tracking-wide truncate">
+                                                {patient.id.length >= 32 ? `SID-${patient.id.substring(0, 8).toUpperCase()}` : patient.id}
+                                            </p>
                                             <span className={`sm:hidden text-xs font-semibold px-2 py-0.5 rounded border whitespace-nowrap ml-2 shrink-0 ${PHASE_COLORS[patient.phase]}`}>
                                                 {patient.phase}
                                             </span>
