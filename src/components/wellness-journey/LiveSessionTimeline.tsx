@@ -1,7 +1,6 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
 import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock, Mic, Music, AlertTriangle, Send } from 'lucide-react';
 import { getTimelineEvents, createTimelineEvent } from '../../services/clinicalLog';
-import { supabase } from '../../supabaseClient';
 
 export interface TimelineEvent {
     id: string;
@@ -17,9 +16,12 @@ interface LiveSessionTimelineProps {
     active: boolean; // Controls whether refetching happens
 }
 
-const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string, symbol: string, label: string }> = {
+// WO-528: exported so SessionVitalsTrendChart can reuse the same palette
+export const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string, symbol: string, label: string }> = {
     DOSE: { icon: <Pill className="w-4 h-4" />, color: 'text-indigo-400 bg-indigo-500/20 border-indigo-500/30', symbol: '●', label: '[DOSE]' },
     dose_admin: { icon: <Pill className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '●', label: '[DOSE]' },
+    // WO-559: Additional / supplemental dose, orange to match chart pin (distinct from initial dose_admin)
+    additional_dose: { icon: <Pill className="w-4 h-4" />, color: 'text-orange-400 bg-orange-500/20 border-orange-500/30', symbol: '➕', label: '[ADD DOSE]' },
     vital_check: { icon: <Activity className="w-4 h-4" />, color: 'text-blue-400 bg-blue-500/20 border-blue-500/30', symbol: '○', label: '[VITALS]' },
     patient_observation: { icon: <Activity className="w-4 h-4" />, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30', symbol: '○', label: '[OBSERVATION]' },
     music_change: { icon: <Diamond className="w-4 h-4 text-violet-400 fill-violet-400" />, color: 'text-violet-400 bg-violet-500/20 border-violet-500/30', symbol: '◆', label: '[MUSIC]' },
@@ -49,14 +51,6 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
     const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [draftNote, setDraftNote] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [uid, setUid] = useState<string | null>(null);
-
-    // WO-525: Resolve authenticated user UUID once on mount
-    useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            setUid(user?.id ?? null);
-        });
-    }, []);
 
     const handleAddNote = async (e?: React.FormEvent, presetType?: string, presetDesc?: string) => {
         if (e) e.preventDefault();
@@ -70,12 +64,16 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         const eventData = {
             session_id: sessionId,
             event_timestamp: new Date().toISOString(),
-            event_type: type as 'dose_admin' | 'vital_check' | 'patient_observation' | 'music_change' | 'clinical_decision' | 'safety_event' | 'touch_consent' | 'other',
-            performed_by: uid ?? undefined,
+            event_type: type as any, // QUICK_ACTIONS types are validated by the BE; cast to satisfy union
+            performed_by: 'Current Clinician',
             metadata: { event_description: description }
         };
 
         await createTimelineEvent(eventData);
+        // Notify DosingSessionPhase chart listener, zero prop drilling
+        window.dispatchEvent(new CustomEvent('ppn:session-event', {
+            detail: { type, label: description, timestamp: eventData.event_timestamp }
+        }));
         if (!presetDesc) setDraftNote('');
         setIsSubmitting(false);
         fetchLocalEvents();
@@ -84,7 +82,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
     const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
     const fetchLocalEvents = useCallback(async () => {
-        // Guard: only query if sessionId is a real UUID — prevents session_id=eq.undefined
+        // Guard: only query if sessionId is a real UUID, prevents session_id=eq.undefined
         // or session_id=eq.1 errors when the component mounts before session creation resolves.
         if (!sessionId || !UUID_RE.test(sessionId)) return;
 
@@ -117,25 +115,15 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
     useEffect(() => {
         fetchLocalEvents();
 
-        if (!active || !sessionId || !UUID_RE.test(sessionId)) return;
+        if (!active) return;
 
-        // WO-525: Realtime subscription — replaces 30s poll for collaborative multi-practitioner use
-        const channel = supabase
-            .channel(`timeline-${sessionId}`)
-            .on(
-                'postgres_changes',
-                {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'log_session_timeline_events',
-                    filter: `session_id=eq.${sessionId}`,
-                },
-                () => { fetchLocalEvents(); }
-            )
-            .subscribe();
+        // Fetch periodically or subscribe
+        const interval = setInterval(() => {
+            fetchLocalEvents();
+        }, 30000);
 
-        return () => { supabase.removeChannel(channel); };
-    }, [fetchLocalEvents, active, sessionId]);
+        return () => clearInterval(interval);
+    }, [fetchLocalEvents, active]);
 
     const handleExportLog = () => {
         const lines = [

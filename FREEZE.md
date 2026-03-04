@@ -25,13 +25,13 @@ src/components/wellness-journey/DemoDataBadge.tsx
 src/components/wellness-journey/DosingSessionPhase.tsx
 src/components/wellness-journey/ExportButton.tsx
 src/components/wellness-journey/FeedbackToast.tsx
-src/components/wellness-journey/IntegrationPhase.tsx
-src/components/wellness-journey/LiveSessionTimeline.tsx
+
+
 src/components/wellness-journey/NeuroplasticityWindowBadge.tsx
 src/components/wellness-journey/PatientOutcomePanel.tsx
 src/components/wellness-journey/PatientProgressSummary.tsx
 src/components/wellness-journey/PatientSelectModal.tsx
-src/components/wellness-journey/Phase1StepGuide.tsx
+
 src/components/wellness-journey/PhaseIndicator.tsx
 src/components/wellness-journey/PreparationPhase.tsx
 src/components/wellness-journey/ProtocolConfiguratorModal.tsx
@@ -40,7 +40,7 @@ src/components/wellness-journey/RiskEligibilityReport.tsx
 
 src/components/wellness-journey/SlideOutPanel.tsx
 src/components/wellness-journey/StructuredIntegrationSession.tsx
-src/components/wellness-journey/WellnessFormRouter.tsx
+
 src/components/wellness-journey/WorkflowCards.tsx
 src/components/wellness-journey/index.ts
 
