@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, useLocation, Navigate, Outlet } fr
 
 // ─────────────────────────────────────────────────────────────────────────────
 // WO-513: Route-Based Code Splitting
-// ALL page imports are now lazy, each route loads its own JS chunk on demand.
+// ALL page imports are now lazy — each route loads its own JS chunk on demand.
 // The landing page (~80-150KB) no longer drags down the entire app (~2-4MB).
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -22,6 +22,8 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Academy = lazy(() => import('./pages/Academy'));
 const PartnerDemoHub = lazy(() => import('./pages/PartnerDemoHub'));
+const PatientReport = lazy(() => import('./pages/PatientReport'));
+const IntegrationCompass = lazy(() => import('./pages/IntegrationCompass'));
 
 // ── Tier 2: Post-Auth Entry Points ───────────────────────────────────────────
 const SimpleSearch = lazy(() => import('./pages/SimpleSearch'));
@@ -64,8 +66,6 @@ const RiskMatrixPage = lazy(() => import('./pages/deep-dives/RiskMatrixPage'));
 const SafetySurveillancePage = lazy(() => import('./pages/deep-dives/SafetySurveillancePage'));
 const PatientFlowPage = lazy(() => import('./pages/deep-dives/PatientFlowPage'));
 const WorkflowChaosPage = lazy(() => import('./pages/deep-dives/WorkflowChaosPage'));
-const PatientReport = lazy(() => import('./pages/PatientReport'));
-const IntegrationCompass = lazy(() => import('./pages/IntegrationCompass'));
 
 // ── Tier 5: Dev/Showcase (low priority) ──────────────────────────────────────
 const ArcOfCareDemo = lazy(() => import('./pages/ArcOfCareDemo'));
@@ -107,7 +107,7 @@ import HelpFAQ from './pages/HelpFAQ';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page Loading Fallback
-// Matches the app's dark theme, no jarring white flash between route changes.
+// Matches the app's dark theme — no jarring white flash between route changes.
 // ─────────────────────────────────────────────────────────────────────────────
 const PageLoader: React.FC = () => (
   <div className="flex h-screen w-full items-center justify-center bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
@@ -187,7 +187,7 @@ const ProtectedLayout: React.FC<{
 };
 
 /**
- * RequireAuth, Session Gate
+ * RequireAuth — Session Gate
  *
  * Sits between the Router and ProtectedLayout. Checks the Supabase session:
  *   - loading  → show a subtle spinner (prevents flash redirect on cold page load)
@@ -253,7 +253,7 @@ const AppContent: React.FC = () => {
   }, []);
 
   return (
-    <Router>
+    <>
       {/* Staging environment banner — only renders when VITE_APP_ENV=staging */}
       {import.meta.env.VITE_APP_ENV === 'staging' && (
         <div style={{
@@ -265,121 +265,125 @@ const AppContent: React.FC = () => {
           ⚠️ Staging Environment — Test Data Only — Not for Clinical Use
         </div>
       )}
-      <ScrollToTop />
-      {/*
+      <Router>
+        <ScrollToTop />
+        {/*
         Single <Suspense> boundary wraps all routes.
         PageLoader provides a dark-themed fallback so there is no white flash
         between route transitions. AuthProvider, ToastProvider, and ThemeProvider
-        remain outside Suspense, they must initialize synchronously.
+        remain outside Suspense — they must initialize synchronously.
       */}
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={user ? <Navigate to="/search" replace /> : <Navigate to="/landing" replace />} />
-          <Route path="/landing" element={<Landing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/waitlist" element={<Waitlist />} />
-          <Route path="/secure-gate" element={<SecureGate />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/contribution" element={<ContributionModel />} />
-          <Route path="/arc-of-care" element={<ArcOfCareDemo />} />
-          <Route path="/arc-of-care-phase2" element={<ArcOfCarePhase2Demo />} />
-          <Route path="/arc-of-care-phase3" element={<ArcOfCarePhase3Demo />} />
-          <Route path="/arc-of-care-dashboard" element={<ArcOfCareDashboard />} />
-          <Route path="/meq30" element={<MEQ30Page />} />
-          <Route path="/patient-form/:formId" element={<PatientFormPage />} />
-          <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
-          <Route path="/login" element={user ? <Navigate to="/search" replace /> : <Login />} />
-          <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/academy" replace />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/academy" element={<Academy />} />
-          <Route path="/partner-demo" element={<PartnerDemoHub />} />
-          {/* WO-570: IntegrationCompass replaces PatientReport, route preserved */}
-          <Route path="/patient-report" element={<IntegrationCompass />} />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={user ? <Navigate to="/search" replace /> : <Navigate to="/landing" replace />} />
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/waitlist" element={<Waitlist />} />
+            <Route path="/secure-gate" element={<SecureGate />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/contribution" element={<ContributionModel />} />
+            <Route path="/arc-of-care" element={<ArcOfCareDemo />} />
+            <Route path="/arc-of-care-phase2" element={<ArcOfCarePhase2Demo />} />
+            <Route path="/arc-of-care-phase3" element={<ArcOfCarePhase3Demo />} />
+            <Route path="/arc-of-care-dashboard" element={<ArcOfCareDashboard />} />
+            <Route path="/meq30" element={<MEQ30Page />} />
+            <Route path="/patient-form/:formId" element={<PatientFormPage />} />
+            <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
+            <Route path="/login" element={user ? <Navigate to="/search" replace /> : <Login />} />
+            <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/academy" replace />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/academy" element={<Academy />} />
+            <Route path="/partner-demo" element={<PartnerDemoHub />} />
+            {/* Patient-facing shareable report — no auth required */}
+            <Route path="/patient-report" element={<PatientReport />} />
+            {/* WO-570: Integration Compass — patient post-session integration tool */}
+            <Route path="/integration-compass" element={<IntegrationCompass />} />
 
-          {/* Deep Dives (Public Marketing Pages) */}
-          <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
-          <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
-          <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
-          <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacologyPage />} />
-          <Route path="/deep-dives/protocol-efficiency" element={<ProtocolEfficiencyPage />} />
-          <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
-          <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
-          <Route path="/deep-dives/risk-matrix" element={<RiskMatrixPage />} />
+            {/* Deep Dives (Public Marketing Pages) */}
+            <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
+            <Route path="/deep-dives/clinic-performance" element={<ClinicPerformancePage />} />
+            <Route path="/deep-dives/patient-constellation" element={<PatientConstellationPage />} />
+            <Route path="/deep-dives/molecular-pharmacology" element={<MolecularPharmacologyPage />} />
+            <Route path="/deep-dives/protocol-efficiency" element={<ProtocolEfficiencyPage />} />
+            <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
+            <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
+            <Route path="/deep-dives/risk-matrix" element={<RiskMatrixPage />} />
 
-          {/* Protected Routes, RequireAuth gates all children behind a valid session */}
-          <Route element={<RequireAuth />}>
-            <Route element={
-              <ProtectedLayout
-                isAuthenticated={!!user}
-                onLogout={signOut}
-                isSidebarOpen={isSidebarOpen}
-                setIsSidebarOpen={setIsSidebarOpen}
-                showTour={showTour}
-                setShowTour={setShowTour}
-              />
-            }>
-              <Route path="/search" element={<SimpleSearch onStartTour={() => setShowTour(true)} />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/catalog" element={<SubstanceCatalog />} />
-              <Route path="/monograph/:id" element={<SubstanceMonograph />} />
-              <Route path="/interactions" element={<InteractionChecker />} />
-              <Route path="/audit" element={<AuditLogs />} />
+            {/* Protected Routes — RequireAuth gates all children behind a valid session */}
+            <Route element={<RequireAuth />}>
+              <Route element={
+                <ProtectedLayout
+                  isAuthenticated={!!user}
+                  onLogout={signOut}
+                  isSidebarOpen={isSidebarOpen}
+                  setIsSidebarOpen={setIsSidebarOpen}
+                  showTour={showTour}
+                  setShowTour={setShowTour}
+                />
+              }>
+                <Route path="/search" element={<SimpleSearch onStartTour={() => setShowTour(true)} />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/news" element={<News />} />
+                <Route path="/catalog" element={<SubstanceCatalog />} />
+                <Route path="/monograph/:id" element={<SubstanceMonograph />} />
+                <Route path="/interactions" element={<InteractionChecker />} />
+                <Route path="/audit" element={<AuditLogs />} />
 
-              {/* WELLNESS JOURNEY / ARC OF CARE */}
-              <Route path="/wellness-journey" element={<WellnessJourney />} />
-              <Route path="/arc-of-care-god-view" element={<Navigate to="/wellness-journey" replace />} />
-              <Route path="/companion/:sessionId" element={<PatientCompanionPage />} />
+                {/* WELLNESS JOURNEY / ARC OF CARE */}
+                <Route path="/wellness-journey" element={<WellnessJourney />} />
+                <Route path="/arc-of-care-god-view" element={<Navigate to="/wellness-journey" replace />} />
+                <Route path="/companion/:sessionId" element={<PatientCompanionPage />} />
 
-              {/* PROTOCOL BUILDER */}
-              <Route path="/protocols" element={<MyProtocols />} />
-              <Route path="/protocol/:id" element={<ProtocolDetail />} />
-              <Route path="/clinician/:id" element={<ClinicianProfile />} />
-              <Route path="/help" element={<HelpCenterLayout />}>
-                <Route index element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
-                <Route path="faq" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
-                <Route path="quickstart" element={<HelpQuickstart />} />
-                <Route path="overview" element={<HelpOverview />} />
-                <Route path="interaction-checker" element={<HelpInteractionChecker />} />
-                <Route path="wellness-journey" element={<HelpWellnessJourney />} />
-                <Route path="reports" element={<HelpSessionReporting />} />
-                <Route path="scanner" element={<HelpScanner />} />
-                <Route path="devices" element={<HelpDevices />} />
-                <Route path="settings" element={<HelpSettings />} />
-                <Route path="*" element={<div className="text-slate-500 font-medium py-10">Documentation content currently being drafted.</div>} />
+                {/* PROTOCOL BUILDER */}
+                <Route path="/protocols" element={<MyProtocols />} />
+                <Route path="/protocol/:id" element={<ProtocolDetail />} />
+                <Route path="/clinician/:id" element={<ClinicianProfile />} />
+                <Route path="/help" element={<HelpCenterLayout />}>
+                  <Route index element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
+                  <Route path="faq" element={<HelpFAQ onStartTour={() => setShowTour(true)} />} />
+                  <Route path="quickstart" element={<HelpQuickstart />} />
+                  <Route path="overview" element={<HelpOverview />} />
+                  <Route path="interaction-checker" element={<HelpInteractionChecker />} />
+                  <Route path="wellness-journey" element={<HelpWellnessJourney />} />
+                  <Route path="reports" element={<HelpSessionReporting />} />
+                  <Route path="scanner" element={<HelpScanner />} />
+                  <Route path="devices" element={<HelpDevices />} />
+                  <Route path="settings" element={<HelpSettings />} />
+                  <Route path="*" element={<div className="text-slate-500 font-medium py-10">Documentation content currently being drafted.</div>} />
+                </Route>
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/profile/edit" element={<ProfileEdit />} />
+                <Route path="/data-export" element={<DataExport />} />
+                <Route path="/session-export" element={<SessionExportCenter />} />
+                <Route path="/clinical-report-pdf" element={<ClinicalReportPDF />} />
+                <Route path="/demo-clinical-report-pdf" element={<DemoClinicalReportPDF />} />
+
+                {/* DEV/TEST SHOWCASE ROUTES */}
+                <Route path="/component-showcase" element={<ComponentShowcase />} />
+                <Route path="/hidden-components" element={<HiddenComponentsShowcase />} />
+
+                <Route path="/logout" element={
+                  <div className="p-8 text-center flex flex-col items-center justify-center h-full">
+                    <h2 className="text-2xl font-black mb-4">Confirm Sign Out</h2>
+                    <button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out</button>
+                  </div>
+                } />
+
+                {/* Catch-all for undefined protected routes */}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Route>
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/profile/edit" element={<ProfileEdit />} />
-              <Route path="/data-export" element={<DataExport />} />
-              <Route path="/session-export" element={<SessionExportCenter />} />
-              <Route path="/clinical-report-pdf" element={<ClinicalReportPDF />} />
-              <Route path="/demo-clinical-report-pdf" element={<DemoClinicalReportPDF />} />
-
-              {/* DEV/TEST SHOWCASE ROUTES */}
-              <Route path="/component-showcase" element={<ComponentShowcase />} />
-              <Route path="/hidden-components" element={<HiddenComponentsShowcase />} />
-
-              <Route path="/logout" element={
-                <div className="p-8 text-center flex flex-col items-center justify-center h-full">
-                  <h2 className="text-2xl font-black mb-4">Confirm Sign Out</h2>
-                  <button onClick={signOut} className="px-8 py-3 bg-red-500/10 text-red-500 rounded-xl font-black uppercase tracking-widest border border-red-500/20 hover:bg-red-500/20 transition-all">Sign Out</button>
-                </div>
-              } />
-
-              {/* Catch-all for undefined protected routes */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Route>
-          </Route>
-        </Routes>
-      </Suspense>
-    </Router>
+          </Routes>
+        </Suspense>
+      </Router>
+    </>
   );
 };
 
