@@ -1,13 +1,13 @@
 /**
- * PatientProgressSummary — WO-304
+ * PatientProgressSummary, WO-304
  *
  * Printable patient-facing 1-pager showing clinical progress in plain English.
  *
  * Design priorities:
- *  1. No PHI — Subject_ID only. No name, DOB, or contact info.
- *  2. Language guardrails — "tracks" not "diagnoses", "% change in score" not "% better"
- *  3. Print-optimised — white background, black text, @media print safe
- *  4. Growth engine — patient takes it home → word-of-mouth referrals
+ *  1. No PHI, Subject_ID only. No name, DOB, or contact info.
+ *  2. Language guardrails, "tracks" not "diagnoses", "% change in score" not "% better"
+ *  3. Print-optimised, white background, black text, @media print safe
+ *  4. Growth engine, patient takes it home → word-of-mouth referrals
  *
  * Clinical framing: This is a PROGRESS SUMMARY, not a medical report.
  */
@@ -97,7 +97,7 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
     return (
         /* Backdrop */
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 print:hidden-backdrop">
-            {/* Summary panel — screen view */}
+            {/* Summary panel, screen view */}
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto print:overflow-visible relative">
 
                 {/* Screen-only toolbar */}
@@ -124,7 +124,7 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                     </div>
                 </div>
 
-                {/* ══ PRINTABLE CONTENT — everything below is in the PDF ══ */}
+                {/* ══ PRINTABLE CONTENT, everything below is in the PDF ══ */}
                 <div ref={printRef} className="p-8 space-y-6 print:p-6 print:space-y-5">
 
                     {/* Header */}
@@ -275,7 +275,7 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                     {/* Footer */}
                     <div className="border-t-2 border-gray-200 pt-4 flex items-start justify-between">
                         <div>
-                            <p className="text-[11px] text-gray-400 font-black uppercase tracking-wide">CONFIDENTIAL — For Patient Use Only</p>
+                            <p className="text-[11px] text-gray-400 font-black uppercase tracking-wide">CONFIDENTIAL, For Patient Use Only</p>
                             <p className="text-[10px] text-gray-300 mt-0.5">
                                 This summary tracks self-reported outcomes and is not a medical diagnosis.
                                 All clinical decisions remain the responsibility of the licensed healthcare provider.

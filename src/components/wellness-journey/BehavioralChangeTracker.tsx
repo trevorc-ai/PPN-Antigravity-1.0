@@ -12,7 +12,7 @@ interface BehavioralChangeTrackerProps {
 interface BehavioralChangeData {
     change_date: string;
     change_type: string;
-    what_changed_ids: number[];   // FK integer IDs — WO-214
+    what_changed_ids: number[];   // FK integer IDs, WO-214
     is_positive: boolean;
     impact_level: 'highly_positive' | 'moderately_positive' | 'neutral' | 'moderately_negative' | 'highly_negative';
     confidence_score: number;
@@ -30,7 +30,7 @@ const CHANGE_TYPES = [
     { id: 'nutrition', label: 'Nutrition', icon: '🥗' },
 ];
 
-// WO-214: Numeric IDs are interim (1-8) — will align to ref_behavioral_change_actions
+// WO-214: Numeric IDs are interim (1-8), will align to ref_behavioral_change_actions
 // PKs once that table is seeded. Using offset 301+ to avoid collision.
 const WHAT_CHANGED_ITEMS: RefPickerItem[] = [
     { id: 301, label: 'Set new boundaries' },
@@ -94,7 +94,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
     const [form, setForm] = useState<BehavioralChangeData>({
         change_date: today,
         change_type: '',
-        what_changed_ids: [],  // number[] — RefPicker (WO-214)
+        what_changed_ids: [],  // number[], RefPicker (WO-214)
         is_positive: true,
         impact_level: 'moderately_positive',
         confidence_score: 0,
@@ -103,7 +103,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
 
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-    // WO-214: RefPicker handles toggle internally — onChange provides full number[] directly
+    // WO-214: RefPicker handles toggle internally, onChange provides full number[] directly
 
     const handleSave = useCallback(async () => {
         if (!form.change_type || form.confidence_score === 0) return;
@@ -142,7 +142,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 </div>
                 <div>
                     <h3 className="text-lg font-black text-slate-300">Behavioral Change Tracker</h3>
-                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3 — Integration Progress</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3, Integration Progress</p>
                 </div>
             </div>
 
@@ -186,7 +186,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 </div>
             </div>
 
-            {/* What Changed — RefPicker WO-214 */}
+            {/* What Changed, RefPicker WO-214 */}
             <RefPicker
                 items={WHAT_CHANGED_ITEMS}
                 selected={form.what_changed_ids}
