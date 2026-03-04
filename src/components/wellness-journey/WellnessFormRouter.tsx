@@ -227,6 +227,13 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             const failed = results.filter(r => !r.success);
             if (failed.length === 0) {
                 onSaved('Session Vitals');
+                // BUG-529 Quick Key V fix: add ledger entry for vitals check
+                await createTimelineEvent({
+                    session_id: sessionId,
+                    event_timestamp: new Date().toISOString(),
+                    event_type: 'vital_check',
+                    metadata: { event_description: 'Vitals recorded' },
+                });
             } else {
                 // Log to console only, DB may not be migrated yet. Don't block the UI.
                 console.warn('[WellnessFormRouter] Some vitals failed to save to DB:', failed.length, 'readings.');
@@ -252,7 +259,21 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             severity_grade_id: data.severity_grade?.toString(),
             is_resolved: data.resolved,
         });
-        result.success ? onSaved('Safety & Adverse Event') : onError('Safety & Adverse Event', result.error);
+        if (result.success) {
+            onSaved('Safety & Adverse Event');
+            // BUG-529-03: add ledger entry — was writing to log_safety_events only, never to timeline
+            await createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type: 'safety_event',
+                metadata: {
+                    event_description: `Adverse event logged: ${data.event_type ?? 'Other'}${data.severity_grade ? ` (Grade ${data.severity_grade})` : ''
+                        }`,
+                },
+            });
+        } else {
+            onError('Safety & Adverse Event', result.error);
+        }
     }, [sessionId]);
 
     const handleRescueProtocolSave = useCallback(async (data: RescueProtocolData) => {
@@ -261,9 +282,23 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         const result = await createSessionEvent({
             session_id: sessionId,
             event_type: 'rescue',
-            intervention_type_id: data.intervention_type ? undefined : undefined,
+            intervention_type_id: null, // RescueProtocolData provides string label only, no FK integer
         });
-        result.success ? onSaved('Rescue Protocol') : onError('Rescue Protocol', result.error);
+        if (result.success) {
+            onSaved('Rescue Protocol');
+            // BUG-529-04: add ledger entry — was writing to log_safety_events only, never to timeline
+            await createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type: 'clinical_decision',
+                metadata: {
+                    event_description: `Rescue protocol activated${data.intervention_type ? `: ${data.intervention_type}` : ''
+                        }`,
+                },
+            });
+        } else {
+            onError('Rescue Protocol', result.error);
+        }
     }, [sessionId]);
 
     const handleTimelineSave = useCallback(async (events: TimelineEvent[]) => {

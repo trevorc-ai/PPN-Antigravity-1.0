@@ -22,7 +22,6 @@ src/components/wellness-journey/CompletenessWidget.tsx
 src/components/wellness-journey/ComplianceDocumentsPanel.tsx
 src/components/wellness-journey/DeltaChart.tsx
 src/components/wellness-journey/DemoDataBadge.tsx
-src/components/wellness-journey/DosingSessionPhase.tsx
 src/components/wellness-journey/ExportButton.tsx
 src/components/wellness-journey/FeedbackToast.tsx
 
