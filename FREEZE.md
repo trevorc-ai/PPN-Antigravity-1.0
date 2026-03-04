@@ -37,7 +37,7 @@ src/components/wellness-journey/PreparationPhase.tsx
 src/components/wellness-journey/ProtocolConfiguratorModal.tsx
 src/components/wellness-journey/QuickActionsMenu.tsx
 src/components/wellness-journey/RiskEligibilityReport.tsx
-src/components/wellness-journey/SessionVitalsTrendChart.tsx
+
 src/components/wellness-journey/SlideOutPanel.tsx
 src/components/wellness-journey/StructuredIntegrationSession.tsx
 src/components/wellness-journey/WellnessFormRouter.tsx
