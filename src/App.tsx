@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, useLocation, Navigate, Outlet } fr
 
 // ─────────────────────────────────────────────────────────────────────────────
 // WO-513: Route-Based Code Splitting
-// ALL page imports are now lazy — each route loads its own JS chunk on demand.
+// ALL page imports are now lazy, each route loads its own JS chunk on demand.
 // The landing page (~80-150KB) no longer drags down the entire app (~2-4MB).
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -22,7 +22,6 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Academy = lazy(() => import('./pages/Academy'));
 const PartnerDemoHub = lazy(() => import('./pages/PartnerDemoHub'));
-const PatientReport = lazy(() => import('./pages/PatientReport'));
 
 // ── Tier 2: Post-Auth Entry Points ───────────────────────────────────────────
 const SimpleSearch = lazy(() => import('./pages/SimpleSearch'));
@@ -65,6 +64,8 @@ const RiskMatrixPage = lazy(() => import('./pages/deep-dives/RiskMatrixPage'));
 const SafetySurveillancePage = lazy(() => import('./pages/deep-dives/SafetySurveillancePage'));
 const PatientFlowPage = lazy(() => import('./pages/deep-dives/PatientFlowPage'));
 const WorkflowChaosPage = lazy(() => import('./pages/deep-dives/WorkflowChaosPage'));
+const PatientReport = lazy(() => import('./pages/PatientReport'));
+const IntegrationCompass = lazy(() => import('./pages/IntegrationCompass'));
 
 // ── Tier 5: Dev/Showcase (low priority) ──────────────────────────────────────
 const ArcOfCareDemo = lazy(() => import('./pages/ArcOfCareDemo'));
@@ -106,7 +107,7 @@ import HelpFAQ from './pages/HelpFAQ';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Page Loading Fallback
-// Matches the app's dark theme — no jarring white flash between route changes.
+// Matches the app's dark theme, no jarring white flash between route changes.
 // ─────────────────────────────────────────────────────────────────────────────
 const PageLoader: React.FC = () => (
   <div className="flex h-screen w-full items-center justify-center bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a]">
@@ -186,7 +187,7 @@ const ProtectedLayout: React.FC<{
 };
 
 /**
- * RequireAuth — Session Gate
+ * RequireAuth, Session Gate
  *
  * Sits between the Router and ProtectedLayout. Checks the Supabase session:
  *   - loading  → show a subtle spinner (prevents flash redirect on cold page load)
@@ -253,12 +254,23 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
+      {/* Staging environment banner — only renders when VITE_APP_ENV=staging */}
+      {import.meta.env.VITE_APP_ENV === 'staging' && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99999,
+          background: '#f59e0b', color: '#000', textAlign: 'center',
+          fontSize: '11px', fontWeight: 900, padding: '4px 0',
+          letterSpacing: '0.1em', textTransform: 'uppercase'
+        }}>
+          ⚠️ Staging Environment — Test Data Only — Not for Clinical Use
+        </div>
+      )}
       <ScrollToTop />
       {/*
         Single <Suspense> boundary wraps all routes.
         PageLoader provides a dark-themed fallback so there is no white flash
         between route transitions. AuthProvider, ToastProvider, and ThemeProvider
-        remain outside Suspense — they must initialize synchronously.
+        remain outside Suspense, they must initialize synchronously.
       */}
       <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -286,8 +298,8 @@ const AppContent: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/academy" element={<Academy />} />
           <Route path="/partner-demo" element={<PartnerDemoHub />} />
-          {/* Patient-facing shareable report — no auth required */}
-          <Route path="/patient-report" element={<PatientReport />} />
+          {/* WO-570: IntegrationCompass replaces PatientReport, route preserved */}
+          <Route path="/patient-report" element={<IntegrationCompass />} />
 
           {/* Deep Dives (Public Marketing Pages) */}
           <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />
@@ -299,7 +311,7 @@ const AppContent: React.FC = () => {
           <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
           <Route path="/deep-dives/risk-matrix" element={<RiskMatrixPage />} />
 
-          {/* Protected Routes — RequireAuth gates all children behind a valid session */}
+          {/* Protected Routes, RequireAuth gates all children behind a valid session */}
           <Route element={<RequireAuth />}>
             <Route element={
               <ProtectedLayout

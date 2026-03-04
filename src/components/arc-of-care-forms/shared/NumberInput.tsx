@@ -2,13 +2,13 @@ import React from 'react';
 import { Plus, Minus } from 'lucide-react';
 
 /**
- * NumberInput — Direct text entry with optional ± nudge buttons.
+ * NumberInput, Direct text entry with optional ± nudge buttons.
  *
  * UX changes (global fix):
  *   - type="number" BANNED: spinner arrows are slow and cause float corruption
  *     (e.g. 0.1 + 0.2 = 0.30000000000000004).
  *   - type="text" + inputMode="numeric" opens the numeric keyboard on iOS/Android
- *     so the user types the value directly — fastest clinical input path.
+ *     so the user types the value directly, fastest clinical input path.
  *   - ± buttons are kept as a convenience for small ±1 nudges only.
  *   - safeAdd() clamps float precision to the step's decimal places.
  */
@@ -91,7 +91,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
             )}
 
             <div className="relative flex-1">
-                {/* UI-ONLY: type="text" + inputMode="numeric" is intentional — prevents browser spinner arrows
+                {/* UI-ONLY: type="text" + inputMode="numeric" is intentional, prevents browser spinner arrows
                     and opens numeric keyboard on iOS/Android. Accepts numeric values only. Not persisted here. */}
                 <input
                     type="text"

@@ -67,6 +67,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
         {
             title: 'Core',
             items: [
+                { label: 'Search', icon: 'search', path: '/search' },
                 { label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
                 { label: 'Analytics', icon: 'insights', path: '/analytics' },
                 { label: 'My Protocols', icon: 'article', path: '/protocols' },

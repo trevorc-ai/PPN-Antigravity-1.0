@@ -5,9 +5,9 @@
  *
  * Displays live data from the seeded benchmark_cohorts + benchmark_trials tables.
  * Renders three tiers:
- *   1. Social proof counter — "Grounded in 1,565 global clinical trials"
- *   2. Benchmark cohort cards — the 9 seeded landmark studies
- *   3. Modality comparison bar — effect sizes across psilocybin / MDMA / ketamine
+ *   1. Social proof counter, "Grounded in 1,565 global clinical trials"
+ *   2. Benchmark cohort cards, the 9 seeded landmark studies
+ *   3. Modality comparison bar, effect sizes across psilocybin / MDMA / ketamine
  *
  * All data is real. Zero mock values. Source citations shown on every card.
  */
@@ -291,10 +291,10 @@ export default function GlobalBenchmarkIntelligence({ alwaysShow = false }: { al
                     <div className="flex items-center justify-between mb-4">
                         <div>
                             <h3 className="text-base font-black tracking-tight" style={{ color: '#A8B5D1' }}>
-                                Effect Sizes by Study — Global Benchmarks
+                                Effect Sizes by Study, Global Benchmarks
                             </h3>
                             <p className="text-xs mt-0.5 text-slate-500">
-                                Hedges' g (absolute) — larger bar = stronger improvement vs. control
+                                Hedges' g (absolute), larger bar = stronger improvement vs. control
                             </p>
                         </div>
                         <div className="flex items-center gap-3 text-xs text-slate-500">
@@ -491,7 +491,7 @@ export default function GlobalBenchmarkIntelligence({ alwaysShow = false }: { al
                 </div>
             )}
 
-            {/* Empty state — shouldn't appear after seeding but handles gracefully */}
+            {/* Empty state, shouldn't appear after seeding but handles gracefully */}
             {!loading && cohorts.length === 0 && (
                 <div className="text-center py-12 text-slate-600 text-sm">
                     No benchmark data available yet.

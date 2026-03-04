@@ -73,7 +73,7 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
         : 0;
     const isAfterglowPeriod = daysPostSession <= 14;
 
-    // WO-117: Empty data state — render graceful fallback instead of crashing
+    // WO-117: Empty data state, render graceful fallback instead of crashing
     if (safeData.length === 0) {
         return (
             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">

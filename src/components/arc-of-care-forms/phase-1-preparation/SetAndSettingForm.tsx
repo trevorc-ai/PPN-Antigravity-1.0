@@ -4,7 +4,7 @@ import { FormFooter } from '../shared/FormFooter';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 
 /**
- * SetAndSettingForm — Treatment Expectancy + Clinical Observations (combined)
+ * SetAndSettingForm, Treatment Expectancy + Clinical Observations (combined)
  *
  * Previously split across two steps (Set & Setting + Baseline Observations).
  * Merged to reduce Phase 1 from 5 steps → 4 steps.
@@ -53,7 +53,7 @@ const getInterpretation = (score: number) => {
     return {
         label: 'High Belief in Treatment',
         color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-        desc: 'Patient has strong belief in treatment efficacy — positive prognostic indicator.',
+        desc: 'Patient has strong belief in treatment efficacy, positive prognostic indicator.',
     };
 };
 
@@ -163,7 +163,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
 
                     {/* Interpretation pill */}
                     <div className={`px-4 py-2.5 rounded-xl border text-sm font-semibold ${interpretation.color}`}>
-                        {interpretation.label} — {interpretation.desc}
+                        {interpretation.label}, {interpretation.desc}
                     </div>
                 </div>
             </section>

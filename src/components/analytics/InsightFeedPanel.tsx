@@ -1,11 +1,11 @@
 /**
- * InsightFeedPanel.tsx — WO-302
+ * InsightFeedPanel.tsx, WO-302
  * ================================
  * Actionable clinical intelligence card feed.
  * Evaluates all 8 rules from insightEngine.ts and renders triggered insight cards.
  *
  * Design rules:
- *   - Severity shown as TEXT BADGE only — never color-only (accessibility)
+ *   - Severity shown as TEXT BADGE only, never color-only (accessibility)
  *   - Cards are dismissible (stored in localStorage, keyed by card.id + date)
  *   - Staggered fade-in animation on mount (no bounce, no spin)
  *   - Empty state if no rules trigger or fewer than 5 patients
@@ -89,7 +89,7 @@ const dismissCard = (card: InsightCard): void => {
     try {
         localStorage.setItem(getDismissKey(card), 'true');
     } catch {
-        // localStorage unavailable — no-op
+        // localStorage unavailable, no-op
     }
 };
 
@@ -145,7 +145,7 @@ const InsightCardItem: FC<InsightCardItemProps> = ({ card, index, onDismiss }) =
             {/* Header row */}
             <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex items-center gap-2 flex-wrap">
-                    {/* Severity badge — text only, not color-only */}
+                    {/* Severity badge, text only, not color-only */}
                     <span
                         className={`
               text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-full border
@@ -218,7 +218,7 @@ const EmptyState: FC<{ hasData: boolean }> = ({ hasData }) => (
         {hasData ? (
             <>
                 <p className="text-sm font-bold mb-1" style={{ color: '#A8B5D1', fontSize: '14px' }}>
-                    All clear — no active insights
+                    All clear, no active insights
                 </p>
                 <p className="text-xs leading-relaxed" style={{ color: '#6B7A99', fontSize: '12px' }}>
                     No patterns requiring attention were detected in your current data.
@@ -358,7 +358,7 @@ const InsightFeedPanel: FC<InsightFeedPanelProps> = ({ siteId }) => {
                     className="w-full text-xs text-slate-600 hover:text-slate-400 transition-colors py-2 text-center focus:outline-none focus:ring-2 focus:ring-slate-600 rounded-lg"
                     style={{ fontSize: '12px' }}
                 >
-                    {cards.length - visibleCards.length} dismissed insight{cards.length - visibleCards.length !== 1 ? 's' : ''} — show all
+                    {cards.length - visibleCards.length} dismissed insight{cards.length - visibleCards.length !== 1 ? 's' : ''}, show all
                 </button>
             )}
 

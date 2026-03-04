@@ -31,12 +31,52 @@ import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatm
 import RegulatoryWeather from '../components/analytics/RegulatoryWeather';
 import InsightFeedPanel from '../components/analytics/InsightFeedPanel';
 
+// ── WO-570: Integration Compass Components ───────────────────────────────────
+import { CompassSpiderGraph } from '../components/compass/CompassSpiderGraph';
+import { FlightPlanChart } from '../components/compass/FlightPlanChart';
+import { BrainNetworkMap } from '../components/compass/BrainNetworkMap';
+import { EmotionalWaveform } from '../components/compass/EmotionalWaveform';
+import { CompassEMAGraph } from '../components/compass/CompassEMAGraph';
+import { CompassZone } from '../components/compass/CompassZone';
+import { FeelingWave } from '../components/compass/FeelingWave';
+import { DailyCheckInCard } from '../components/compass/DailyCheckInCard';
+import { DayAwarenessHeader } from '../components/compass/DayAwarenessHeader';
+import { CompassInsightLine } from '../components/compass/CompassInsightLine';
+import { IntegrationStoryChart } from '../components/compass/IntegrationStoryChart';
+import { NetworkBenchmarkBlock } from '../components/compass/NetworkBenchmarkBlock';
+
+// Compass mock data
+const MOCK_TIMELINE = [
+    { id: '1', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 30 * 60000).toISOString(), eventType: 'feeling', label: 'Anxiety', minutesFromStart: 30, intensity: 4, displayMinutes: '30m', intensityLabel: 'Low' },
+    { id: '2', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 90 * 60000).toISOString(), eventType: 'mystical', label: 'Awe', minutesFromStart: 90, intensity: 10, displayMinutes: '90m', intensityLabel: 'Peak' },
+    { id: '3', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 150 * 60000).toISOString(), eventType: 'insight', label: 'Insight', minutesFromStart: 150, intensity: 9, displayMinutes: '150m', intensityLabel: 'High' },
+    { id: '4', sessionId: 'mock', occurredAt: new Date(Date.now() - 9 * 3600000 + 210 * 60000).toISOString(), eventType: 'feeling', label: 'Gratitude', minutesFromStart: 210, intensity: 8, displayMinutes: '210m', intensityLabel: 'High' },
+];
+
+const MOCK_EMA = [
+    { date: '2026-02-21', dayLabel: 'Day 1', dayNumber: 1, moodLevel: 5, sleepQuality: 4, anxietyLevel: 7, connectionLevel: 5 },
+    { date: '2026-02-23', dayLabel: 'Day 3', dayNumber: 3, moodLevel: 6, sleepQuality: 5, anxietyLevel: 6, connectionLevel: 6 },
+    { date: '2026-02-25', dayLabel: 'Day 5', dayNumber: 5, moodLevel: 7, sleepQuality: 6, anxietyLevel: 5, connectionLevel: 7 },
+    { date: '2026-02-27', dayLabel: 'Day 7', dayNumber: 7, moodLevel: 7, sleepQuality: 7, anxietyLevel: 4, connectionLevel: 7 },
+    { date: '2026-03-01', dayLabel: 'Day 9', dayNumber: 9, moodLevel: 8, sleepQuality: 7, anxietyLevel: 3, connectionLevel: 8 },
+    { date: '2026-03-02', dayLabel: 'Day 10', dayNumber: 10, moodLevel: 8, sleepQuality: 8, anxietyLevel: 3, connectionLevel: 8 },
+];
+
+const MOCK_OUTCOMES = [
+    { daysPostSession: 0, phq9Score: 18, gad7Score: 14, phq2Score: 3, gad2Score: 3 },
+    { daysPostSession: 7, phq9Score: 13, gad7Score: 9, phq2Score: 2, gad2Score: 2 },
+    { daysPostSession: 10, phq9Score: 11, gad7Score: 8, phq2Score: 2, gad2Score: 1 },
+];
+
+
+
 const ComponentShowcase: React.FC = () => {
     // Mock data
     const mockSessionId = 'test-session-123';
     const mockSessionStartTime = new Date(Date.now() - 3600000); // 1 hour ago
 
     return (
+
         <PageContainer className="!max-w-7xl space-y-12 pb-20 pt-8">
             {/* READ-ONLY WARNING BANNER */}
             <div className="bg-amber-500/20 border-2 border-amber-500/50 rounded-xl px-6 py-3 -mt-4">
@@ -77,9 +117,9 @@ const ComponentShowcase: React.FC = () => {
                 <div className="mb-12">
                     <div className="mb-4">
                         <h3 className="text-xl font-black text-slate-300">Dosage Calculator</h3>
-                        <p className="text-sm text-slate-400 font-mono mb-2">Potency Normalizer — Ibogaine HCl vs. Total Plant Alkaloid (TPA)</p>
+                        <p className="text-sm text-slate-400 font-mono mb-2">Potency Normalizer, Ibogaine HCl vs. Total Plant Alkaloid (TPA)</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> Different forms of ibogaine have different strengths — just like the difference between a shot of espresso and a cup of drip coffee. This calculator converts the amount of substance given into a standardized "active dose" so the care team always knows exactly how much ibogaine a patient is actually receiving, regardless of which form was used.
+                            <span className="font-semibold text-slate-300">What this shows:</span> Different forms of ibogaine have different strengths, just like the difference between a shot of espresso and a cup of drip coffee. This calculator converts the amount of substance given into a standardized "active dose" so the care team always knows exactly how much ibogaine a patient is actually receiving, regardless of which form was used.
                         </p>
                     </div>
                     <div className="bg-black border border-slate-800 rounded-2xl p-8">
@@ -93,7 +133,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Crisis Logger</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Tactical Incident Logging Interface</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> A real-time log where the clinical team records any unexpected safety event during a session — for example, a patient's heart rate spiking or a moment of extreme psychological distress. Each entry is timestamped automatically. This creates a clear, time-stamped record that protects both the patient and the practitioner.
+                            <span className="font-semibold text-slate-300">What this shows:</span> A real-time log where the clinical team records any unexpected safety event during a session, for example, a patient's heart rate spiking or a moment of extreme psychological distress. Each entry is timestamped automatically. This creates a clear, time-stamped record that protects both the patient and the practitioner.
                         </p>
                     </div>
                     <div className="bg-black border border-slate-800 rounded-2xl p-8">
@@ -110,7 +150,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Blind Vetting Scanner</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Client Security Check Terminal</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> Before a patient is admitted to a session, this tool runs a background screen to flag any potential safety concerns — like medications that could interact dangerously with the treatment. The review is done without exposing the patient's name or personal details, protecting their privacy while keeping the clinical team informed.
+                            <span className="font-semibold text-slate-300">What this shows:</span> Before a patient is admitted to a session, this tool runs a background screen to flag any potential safety concerns, like medications that could interact dangerously with the treatment. The review is done without exposing the patient's name or personal details, protecting their privacy while keeping the clinical team informed.
                         </p>
                     </div>
                     <div className="bg-[#0a0a0a] border border-slate-800 rounded-2xl p-8">
@@ -124,7 +164,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Practitioner Profile</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">User Profile Editing & Partner Tiers</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> The account settings page where a practitioner manages their personal details, clinic information, and subscription tier. Different tiers unlock different features — similar to how a streaming service offers different plans. Practitioners can update credentials and contact info here.
+                            <span className="font-semibold text-slate-300">What this shows:</span> The account settings page where a practitioner manages their personal details, clinic information, and subscription tier. Different tiers unlock different features, similar to how a streaming service offers different plans. Practitioners can update credentials and contact info here.
                         </p>
                     </div>
                     <div className="bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] border border-slate-800 rounded-2xl overflow-hidden">
@@ -148,7 +188,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Clinic Performance Radar</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Clinic Metrics vs. Network Average</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> Think of this like a report card for your clinic, displayed as a spider-web shape. Each point on the web represents a different area — patient safety, session completion rates, follow-up compliance, and more. The bigger and more balanced your web is, the stronger your clinic's overall performance. The dotted line shows how other clinics in the network are doing, so you can see where you stand.
+                            <span className="font-semibold text-slate-300">What this shows:</span> Think of this like a report card for your clinic, displayed as a spider-web shape. Each point on the web represents a different area, patient safety, session completion rates, follow-up compliance, and more. The bigger and more balanced your web is, the stronger your clinic's overall performance. The dotted line shows how other clinics in the network are doing, so you can see where you stand.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -162,7 +202,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Patient Galaxy</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Outcomes Clustering Analysis</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> Each dot in this chart is a patient (shown anonymously). Dots that are close together had similar outcomes — for example, a group of patients who all showed major improvement in anxiety scores will cluster together. This helps clinicians spot patterns: "What do our best outcomes have in common?" It's like finding constellations — individual points that together reveal a bigger picture.
+                            <span className="font-semibold text-slate-300">What this shows:</span> Each dot in this chart is a patient (shown anonymously). Dots that are close together had similar outcomes, for example, a group of patients who all showed major improvement in anxiety scores will cluster together. This helps clinicians spot patterns: "What do our best outcomes have in common?" It's like finding constellations, individual points that together reveal a bigger picture.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -190,7 +230,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Molecular Bridge</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Receptor Affinity Profiles</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> Every psychedelic substance works by attaching to specific receptors in the brain — like a key fitting into a lock. This chart shows which "locks" each substance prefers, and how strongly it binds. Understanding this helps clinicians predict how a substance will affect a patient's mood, perception, and heart rate before they ever administer it.
+                            <span className="font-semibold text-slate-300">What this shows:</span> Every psychedelic substance works by attaching to specific receptors in the brain, like a key fitting into a lock. This chart shows which "locks" each substance prefers, and how strongly it binds. Understanding this helps clinicians predict how a substance will affect a patient's mood, perception, and heart rate before they ever administer it.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -204,7 +244,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Genomic Safety Gauge</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">CYP450 Metabolic Risk Analysis</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> Your liver uses a family of enzymes called CYP450 to break down medications. Some people's genes cause their liver to process drugs faster or slower than average — which changes how long a substance stays in their system. This gauge shows how a patient's genetic profile affects their risk level, helping the clinical team adjust dosing to avoid dangerous drug build-up.
+                            <span className="font-semibold text-slate-300">What this shows:</span> Your liver uses a family of enzymes called CYP450 to break down medications. Some people's genes cause their liver to process drugs faster or slower than average, which changes how long a substance stays in their system. This gauge shows how a patient's genetic profile affects their risk level, helping the clinical team adjust dosing to avoid dangerous drug build-up.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -218,7 +258,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Safety Performance Benchmark</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Adverse Event Rate vs. Network Average</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> This tracks how often something unexpected — like a medical complication or a patient needing emergency support — happened in your clinic, compared to other clinics in the PPN network. A lower bar is better. If your clinic is performing above the network average on safety, this chart will show that clearly. It's your safety score card, updated over time.
+                            <span className="font-semibold text-slate-300">What this shows:</span> This tracks how often something unexpected, like a medical complication or a patient needing emergency support, happened in your clinic, compared to other clinics in the PPN network. A lower bar is better. If your clinic is performing above the network average on safety, this chart will show that clearly. It's your safety score card, updated over time.
                         </p>
                     </div>
                     <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
@@ -242,7 +282,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Regulatory Mosaic</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Legal & Regulatory Landscape Map</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> The rules around psychedelic therapy vary dramatically depending on where you are — what's legal in Oregon may be completely restricted in another state. This mosaic gives a visual overview of the regulatory environment across different regions and substances, so practitioners always know what's allowed where they practice. Think of it as a legal weather map for the field.
+                            <span className="font-semibold text-slate-300">What this shows:</span> The rules around psychedelic therapy vary dramatically depending on where you are, what's legal in Oregon may be completely restricted in another state. This mosaic gives a visual overview of the regulatory environment across different regions and substances, so practitioners always know what's allowed where they practice. Think of it as a legal weather map for the field.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -254,9 +294,9 @@ const ComponentShowcase: React.FC = () => {
                 <div className="mb-12">
                     <div className="mb-4">
                         <h3 className="text-xl font-black text-slate-300">Patient Journey Snapshot</h3>
-                        <p className="text-sm text-slate-400 font-mono mb-2">Timeline View — Preparation Through Integration</p>
+                        <p className="text-sm text-slate-400 font-mono mb-2">Timeline View, Preparation Through Integration</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> A bird's-eye view of a single patient's entire treatment timeline — from their first intake appointment, through the dosing session, all the way into their follow-up integration work. Each milestone is marked so the care team can see at a glance where the patient is in their journey and what's coming next. It's like a travel itinerary for the patient's healing process.
+                            <span className="font-semibold text-slate-300">What this shows:</span> A bird's-eye view of a single patient's entire treatment timeline, from their first intake appointment, through the dosing session, all the way into their follow-up integration work. Each milestone is marked so the care team can see at a glance where the patient is in their journey and what's coming next. It's like a travel itinerary for the patient's healing process.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -270,7 +310,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Revenue Forensics</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Clinic Financial Audit & Trend Analysis</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> A deep look at where your clinic's money is coming from — and where it's leaking out. This view breaks revenue down by service type, time period, and patient category, then highlights unusual patterns worth investigating. If a certain protocol is generating much less revenue than expected, or costs have spiked, this chart will surface it. It's a financial magnifying glass for practice operators.
+                            <span className="font-semibold text-slate-300">What this shows:</span> A deep look at where your clinic's money is coming from, and where it's leaking out. This view breaks revenue down by service type, time period, and patient category, then highlights unusual patterns worth investigating. If a certain protocol is generating much less revenue than expected, or costs have spiked, this chart will surface it. It's a financial magnifying glass for practice operators.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -284,7 +324,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Confidence Cone</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Outcome Forecast with Uncertainty Range</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> When we project how a patient's outcomes might improve over time, there's always some uncertainty — the future isn't guaranteed. The "cone" shape on this chart shows the most likely path (the center line) alongside the range of possible outcomes (the wide part of the cone). A narrow cone means we're confident in the prediction. A wide cone means there's more uncertainty. It's an honest picture of what the data can and can't tell us.
+                            <span className="font-semibold text-slate-300">What this shows:</span> When we project how a patient's outcomes might improve over time, there's always some uncertainty, the future isn't guaranteed. The "cone" shape on this chart shows the most likely path (the center line) alongside the range of possible outcomes (the wide part of the cone). A narrow cone means we're confident in the prediction. A wide cone means there's more uncertainty. It's an honest picture of what the data can and can't tell us.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -298,7 +338,7 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Safety Risk Matrix</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Likelihood × Severity Risk Assessment Grid</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> This is a grid that plots potential risks on two axes: how likely something is to happen, and how serious it would be if it did. A risk in the top-right corner (very likely AND very serious) demands immediate attention. A risk in the bottom-left corner (rare AND minor) can be monitored. This helps care teams prioritize which risks to prepare for first — the same framework hospitals use for patient safety planning.
+                            <span className="font-semibold text-slate-300">What this shows:</span> This is a grid that plots potential risks on two axes: how likely something is to happen, and how serious it would be if it did. A risk in the top-right corner (very likely AND very serious) demands immediate attention. A risk in the bottom-left corner (rare AND minor) can be monitored. This helps care teams prioritize which risks to prepare for first, the same framework hospitals use for patient safety planning.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -310,9 +350,9 @@ const ComponentShowcase: React.FC = () => {
                 <div className="mb-12">
                     <div className="mb-4">
                         <h3 className="text-xl font-black text-slate-300">Patient Flow Diagram</h3>
-                        <p className="text-sm text-slate-400 font-mono mb-2">Retention & Dropout Funnel — From Intake to Completion</p>
+                        <p className="text-sm text-slate-400 font-mono mb-2">Retention & Dropout Funnel, From Intake to Completion</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> This flow chart tracks where patients go after each stage of treatment. The width of each stream tells you how many patients moved forward vs. dropped off. If a large number of patients complete the dosing session but don't show up for integration follow-ups, that gap will be clearly visible here. It's a retention funnel — like water flowing through pipes, showing you exactly where the leaks are.
+                            <span className="font-semibold text-slate-300">What this shows:</span> This flow chart tracks where patients go after each stage of treatment. The width of each stream tells you how many patients moved forward vs. dropped off. If a large number of patients complete the dosing session but don't show up for integration follow-ups, that gap will be clearly visible here. It's a retention funnel, like water flowing through pipes, showing you exactly where the leaks are.
                         </p>
                     </div>
                     <GlassmorphicCard className="h-[500px] relative overflow-hidden">
@@ -324,9 +364,9 @@ const ComponentShowcase: React.FC = () => {
                 <div className="mb-12">
                     <div className="mb-4">
                         <h3 className="text-xl font-black text-slate-300">Receptor Binding Affinity Matrix</h3>
-                        <p className="text-sm text-slate-400 font-mono mb-2">pKi Heatmap — 10 Compounds × 8 Receptor Systems</p>
+                        <p className="text-sm text-slate-400 font-mono mb-2">pKi Heatmap, 10 Compounds × 8 Receptor Systems</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> This color-coded grid compares ten different psychedelic substances against eight types of brain receptors. Each cell is shaded based on how strongly that substance "grabs onto" that receptor — darker means stronger binding. This reference lets clinicians quickly understand things like: "If I use this substance, which brain systems will it most strongly affect — serotonin? Dopamine? Both?" It's essentially a fingerprint for each substance.
+                            <span className="font-semibold text-slate-300">What this shows:</span> This color-coded grid compares ten different psychedelic substances against eight types of brain receptors. Each cell is shaded based on how strongly that substance "grabs onto" that receptor, darker means stronger binding. This reference lets clinicians quickly understand things like: "If I use this substance, which brain systems will it most strongly affect, serotonin? Dopamine? Both?" It's essentially a fingerprint for each substance.
                         </p>
                     </div>
                     <ReceptorBindingHeatmap />
@@ -336,7 +376,7 @@ const ComponentShowcase: React.FC = () => {
                 <div className="mb-12">
                     <div className="mb-4">
                         <h3 className="text-xl font-black text-slate-300">Regulatory Weather</h3>
-                        <p className="text-sm text-slate-400 font-mono mb-2">Live Compliance Status Feed — OHA, DORA, FDA</p>
+                        <p className="text-sm text-slate-400 font-mono mb-2">Live Compliance Status Feed, OHA, DORA, FDA</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
                             <span className="font-semibold text-slate-300">What this shows:</span> Just like a weather forecast tells you whether to bring an umbrella, this panel tells practitioners whether the regulatory environment is calm, shifting, or stormy. It monitors ongoing changes from key agencies like the Oregon Health Authority (OHA), the FDA, and state-level regulators, and summarizes them in plain terms. If new rules are about to affect your clinic, you'll see the warning here before it becomes a problem.
                         </p>
@@ -348,9 +388,9 @@ const ComponentShowcase: React.FC = () => {
                 <div className="mb-12">
                     <div className="mb-4">
                         <h3 className="text-xl font-black text-slate-300">Clinical Intelligence Feed</h3>
-                        <p className="text-sm text-slate-400 font-mono mb-2">Actionable Insight Cards — Safety, Signals & Opportunities</p>
+                        <p className="text-sm text-slate-400 font-mono mb-2">Actionable Insight Cards, Safety, Signals & Opportunities</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> This is your clinic's smart assistant — a live feed of the most important things you should probably know right now. It might surface a safety warning ("Three patients this week had elevated heart rate during Phase 2"), a trend to investigate ("Your integration completion rate dropped 15% this month"), or an opportunity ("This protocol has a 30% better outcome rate for PTSD patients in similar clinics"). It turns raw data into plain-English action items.
+                            <span className="font-semibold text-slate-300">What this shows:</span> This is your clinic's smart assistant, a live feed of the most important things you should probably know right now. It might surface a safety warning ("Three patients this week had elevated heart rate during Phase 2"), a trend to investigate ("Your integration completion rate dropped 15% this month"), or an opportunity ("This protocol has a 30% better outcome rate for PTSD patients in similar clinics"). It turns raw data into plain-English action items.
                         </p>
                     </div>
                     <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
@@ -364,12 +404,110 @@ const ComponentShowcase: React.FC = () => {
                         <h3 className="text-xl font-black text-slate-300">Global Benchmark Intelligence</h3>
                         <p className="text-sm text-slate-400 font-mono mb-2">Live Data from Peer-Reviewed Clinical Trial Cohorts Worldwide</p>
                         <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">
-                            <span className="font-semibold text-slate-300">What this shows:</span> This panel connects your clinic's outcomes to data from published clinical research around the world. Instead of guessing how your results compare to the broader field, you can see it directly: "Our PTSD remission rate is 12% above what peer-reviewed trials found for similar patients using this protocol." It's like having access to a global scorecard — turning your clinic's data into a conversation with the entire field of psychedelic medicine.
+                            <span className="font-semibold text-slate-300">What this shows:</span> This panel connects your clinic's outcomes to data from published clinical research around the world. Instead of guessing how your results compare to the broader field, you can see it directly: "Our PTSD remission rate is 12% above what peer-reviewed trials found for similar patients using this protocol." It's like having access to a global scorecard, turning your clinic's data into a conversation with the entire field of psychedelic medicine.
                         </p>
                     </div>
                     <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
                         <GlobalBenchmarkIntelligence />
                     </div>
+                </div>
+            </Section>
+
+            {/* ── WO-570: Integration Compass Components ──────────────────────────────── */}
+            <Section spacing="default">
+                <h2 className="text-3xl font-black text-slate-300 mb-2 flex items-center gap-3">
+                    <span className="px-3 py-1 rounded-lg text-sm font-bold" style={{ background: 'rgba(45,212,191,0.15)', color: '#2dd4bf' }}>
+                        WO-570
+                    </span>
+                    Integration Compass Components
+                </h2>
+                <p className="text-slate-500 mb-8">All 12 new compass components shown with mock data.</p>
+
+                {/* Group A: Wonder Layer */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 className="text-lg font-black text-teal-400 mb-6 uppercase tracking-widest" style={{ fontSize: 12 }}>A1 · CompassSpiderGraph</h3>
+                    <CompassSpiderGraph
+                        substanceCategory="psilocybin"
+                        accentColor="#2dd4bf"
+                        timelineEvents={MOCK_TIMELINE}
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 className="text-lg font-black text-teal-400 mb-6" style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em' }}>A2 · FlightPlanChart</h3>
+                    <FlightPlanChart
+                        substanceCategory="psilocybin"
+                        accentColor="#2dd4bf"
+                        timelineEvents={MOCK_TIMELINE}
+                        sessionStartTime={new Date(Date.now() - 9 * 3600000).toISOString()}
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>A3 · BrainNetworkMap</h3>
+                    <BrainNetworkMap substanceCategory="psilocybin" accentColor="#2dd4bf" />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>A4 · EmotionalWaveform</h3>
+                    <EmotionalWaveform timelineEvents={MOCK_TIMELINE} sessionDurationMinutes={360} />
+                </div>
+
+                {/* Group B: Integration Layer */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>B1 · CompassEMAGraph</h3>
+                    <CompassEMAGraph
+                        points={MOCK_EMA}
+                        sessionDate={new Date(Date.now() - 10 * 86400000).toISOString()}
+                        daysPostSession={10}
+                        accentColor="#2dd4bf"
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>B2 · CompassZone</h3>
+                    <CompassZone number={1} title="Your Experience Map" accentColor="#2dd4bf">
+                        <p style={{ color: '#64748b', fontSize: 14 }}>Zone content renders here. Number badge and title are auto-styled.</p>
+                    </CompassZone>
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>B3 · FeelingWave</h3>
+                    <FeelingWave events={MOCK_TIMELINE} />
+                </div>
+
+                {/* Group C: Daily Ritual */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>C2 · DayAwarenessHeader &amp; C3 · CompassInsightLine</h3>
+                    <DayAwarenessHeader daysPostSession={10} accentColor="#2dd4bf" substanceName="Psilocybin" />
+                    <CompassInsightLine emaPoints={MOCK_EMA} streak={3} />
+                </div>
+
+                {/* Group D: Clinical Intelligence */}
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>D1 · IntegrationStoryChart</h3>
+                    <IntegrationStoryChart
+                        points={MOCK_OUTCOMES}
+                        baselinePhq9={18}
+                        sessionDate={new Date(Date.now() - 10 * 86400000).toISOString()}
+                        accentColor="#2dd4bf"
+                    />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>D2 · NetworkBenchmarkBlock</h3>
+                    <NetworkBenchmarkBlock substanceCategory="psilocybin" accentColor="#2dd4bf" />
+                </div>
+
+                <div style={{ background: '#050c1a', borderRadius: 20, padding: '28px 32px', marginBottom: 28, border: '1px solid rgba(45,212,191,0.08)' }}>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#2dd4bf', marginBottom: 20 }}>C1 · DailyCheckInCard (mock, DB writes disabled for showcase)</h3>
+                    <p style={{ fontSize: 12, color: '#475569', marginBottom: 12 }}>Note: this will attempt to write to Supabase. Only QA structure here, not submission.</p>
+                    <DailyCheckInCard
+                        sessionId="showcase-mock-session"
+                        patientUuid={null}
+                        emaPoints={MOCK_EMA}
+                        streak={3}
+                    />
                 </div>
             </Section>
 

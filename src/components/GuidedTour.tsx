@@ -1,9 +1,9 @@
 /**
- * GuidedTour.tsx — Global Site Tour (Spotlight Edition)
+ * GuidedTour.tsx, Global Site Tour (Spotlight Edition)
  *
  * Animation model:
  *  - The CARD wrapper stays mounted the whole tour; only its CONTENT fades+slides
- *    via the `key` trick — React remounts the inner div on step change, triggering
+ *    via the `key` trick, React remounts the inner div on step change, triggering
  *    the CSS @keyframes "stepIn" animation. No disappear/reappear flash.
  *  - The SPOTLIGHT div glides via CSS transition (top/left/width/height) so it
  *    smoothly follows the new target element.
@@ -169,7 +169,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
   const updatePosition = useCallback(() => {
     const el = document.querySelector(step.selector);
     if (!el) {
-      // No matching element — show card in a default centred position
+      // No matching element, show card in a default centred position
       setTargetRect(null);
       setCardStyle({
         position: 'fixed',
@@ -198,7 +198,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
   }, [step, positionOn]);
 
   // ── Step change effect ──────────────────────────────────────────────────────
-  // NOTE: We do NOT hide the card here — the card stays visible and the
+  // NOTE: We do NOT hide the card here, the card stays visible and the
   // content inside it is re-keyed (triggering the stepIn animation).
   // The spotlight glides to the new position via CSS transition.
 
@@ -211,7 +211,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
     }
   }, [currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Reposition on resize / scroll (passive — never blocks scrolling) ─────────
+  // ── Reposition on resize / scroll (passive, never blocks scrolling) ─────────
 
   useEffect(() => {
     const handler = () => {
@@ -365,7 +365,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
           <div style={mobileBackdropStyle} aria-hidden="true" />
         )}
 
-        {/* Popover card — stays mounted; content re-keys per step */}
+        {/* Popover card, stays mounted; content re-keys per step */}
         {cardVisible && (
           <div
             className="bg-[#0c1016] border-2 border-primary/60 rounded-[1.5rem] p-6
@@ -373,7 +373,7 @@ const GuidedTour: React.FC<GuidedTourProps> = ({ onComplete }) => {
               flex flex-col gap-4"
             style={{ ...cardStyle, zIndex: 10000 }}
           >
-            {/* Step content — re-keyed on step change to trigger slide-in animation */}
+            {/* Step content, re-keyed on step change to trigger slide-in animation */}
             <div key={currentStep} className="ppn-step-content flex flex-col gap-4" aria-live="polite">
 
               {/* Header row */}

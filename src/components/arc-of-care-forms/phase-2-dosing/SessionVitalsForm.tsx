@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, Activity, Droplet, Clock, Save, Plus, Trash2, CheckCircle, Wind, Thermometer, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Heart, Activity, Droplet, Clock, Plus, Trash2, Wind, Thermometer, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 import { VitalPresetsBar, VitalPreset } from '../shared/VitalPresetsBar';
 import { FormFooter } from '../shared/FormFooter';
@@ -65,8 +65,38 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
     onBack
 }) => {
     const { config } = useProtocol();
-    const showQTTracker = config.enabledFeatures.includes('session-vitals');
+    const qtTrackerEnabled = config.enabledFeatures.includes('session-vitals');
     const showEKGMonitor = config.enabledFeatures.includes('ekg-monitoring');
+
+    // WO-534: QT Tracker, auto-hide unless Ibogaine is selected substance.
+    // A manual override toggle lets practitioners capture baseline readings
+    // before Ibogaine administration begins.
+    const getSelectedSubstance = useCallback((): string => {
+        try {
+            const raw = localStorage.getItem('ppn_dosing_protocol');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                // DosingProtocolForm stores substance under `substance_name` (see DosingProtocolForm.tsx:129)
+                return (parsed.substance_name ?? parsed.substance ?? parsed.primary_substance ?? '').toLowerCase();
+            }
+        } catch (_) { /* ignore parse errors */ }
+        return '';
+    }, []);
+
+    const [isIbogaine, setIsIbogaine] = useState<boolean>(() => getSelectedSubstance().includes('ibogaine'));
+    const [qtManualOverride, setQtManualOverride] = useState<boolean>(false);
+
+    // Re-check substance whenever localStorage changes (e.g. protocol updated in sibling form)
+    useEffect(() => {
+        const handleStorage = () => setIsIbogaine(getSelectedSubstance().includes('ibogaine'));
+        window.addEventListener('storage', handleStorage);
+        // Also poll once on mount in case value was set before this panel opened
+        handleStorage();
+        return () => window.removeEventListener('storage', handleStorage);
+    }, [getSelectedSubstance]);
+
+    // QT Tracker is shown when: substance is Ibogaine OR practitioner manually toggled it on
+    const showQTTracker = qtTrackerEnabled && (isIbogaine || qtManualOverride);
     // Auto-stamp recorded_at on first render
     function nowStamp(): string {
         const d = new Date();
@@ -86,7 +116,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
             const cached = localStorage.getItem('ppn_latest_vitals');
             if (cached) {
                 const parsed = JSON.parse(cached) as VitalSignReading;
-                // Merge cached values over defaults — keep the ID fresh
+                // Merge cached values over defaults, keep the ID fresh
                 baseline = {
                     ...baseline,
                     heart_rate: parsed.heart_rate ?? baseline.heart_rate,
@@ -98,7 +128,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                     temperature: parsed.temperature ?? baseline.temperature,
                 };
             }
-        } catch (_) { /* malformed cache — use defaults */ }
+        } catch (_) { /* malformed cache, use defaults */ }
 
         return [{ ...baseline, recorded_at: baseline.recorded_at || nowStamp() }];
     });
@@ -484,7 +514,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </div>
                                     {reading.respiratory_rate !== undefined && getVitalStatus('rr', reading.respiratory_rate) !== 'normal' && (
                                         <p className={`text-sm ${getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? '⚠️ Critical — respiratory depression risk' : '⚠️ Outside normal range'}
+                                            {getVitalStatus('rr', reading.respiratory_rate) === 'critical' ? '⚠️ Critical, respiratory depression risk' : '⚠️ Outside normal range'}
                                         </p>
                                     )}
                                 </div>
@@ -514,7 +544,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     </div>
                                     {reading.temperature !== undefined && getVitalStatus('temp', reading.temperature) !== 'normal' && (
                                         <p className={`text-sm ${getVitalStatus('temp', reading.temperature) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {getVitalStatus('temp', reading.temperature) === 'critical' ? '⚠️ Critical — hyperthermia risk' : '⚠️ Mild fever'}
+                                            {getVitalStatus('temp', reading.temperature) === 'critical' ? '⚠️ Critical, hyperthermia risk' : '⚠️ Mild fever'}
                                         </p>
                                     )}
                                 </div>
@@ -535,14 +565,14 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="0">0 — None (dry skin)</option>
-                                        <option value="1">1 — Mild (slight moisture)</option>
-                                        <option value="2">2 — Moderate (visible sweating)</option>
-                                        <option value="3">3 — Severe (profuse sweating)</option>
+                                        <option value="0">0, None (dry skin)</option>
+                                        <option value="1">1, Mild (slight moisture)</option>
+                                        <option value="2">2, Moderate (visible sweating)</option>
+                                        <option value="3">3, Severe (profuse sweating)</option>
                                     </select>
                                     {reading.diaphoresis_score !== undefined && getDiaphoresisStatus(reading.diaphoresis_score) !== 'normal' && (
                                         <p className={`text-sm ${getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? '⚠️ Severe — check temp & hydration' : '⚠️ Monitor closely'}
+                                            {getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? '⚠️ Severe, check temp & hydration' : '⚠️ Monitor closely'}
                                         </p>
                                     )}
                                 </div>
@@ -563,20 +593,20 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="alert">Alert (A) — Fully awake</option>
-                                        <option value="verbal">Verbal (V) — Responds to voice</option>
-                                        <option value="pain">Pain (P) — Responds to pain only</option>
-                                        <option value="unresponsive">Unresponsive (U) — No response</option>
+                                        <option value="alert">Alert (A), Fully awake</option>
+                                        <option value="verbal">Verbal (V), Responds to voice</option>
+                                        <option value="pain">Pain (P), Responds to pain only</option>
+                                        <option value="unresponsive">Unresponsive (U), No response</option>
                                     </select>
                                     {reading.level_of_consciousness && getLOCStatus(reading.level_of_consciousness) !== 'normal' && (
                                         <p className={`text-sm ${getLOCStatus(reading.level_of_consciousness) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {reading.level_of_consciousness === 'unresponsive' ? '🚨 EMERGENCY — initiate rescue protocol' :
-                                                reading.level_of_consciousness === 'pain' ? '⚠️ Critical — over-sedation' :
-                                                    '⚠️ Monitor — reduced responsiveness'}
+                                            {reading.level_of_consciousness === 'unresponsive' ? '🚨 EMERGENCY, initiate rescue protocol' :
+                                                reading.level_of_consciousness === 'pain' ? '⚠️ Critical, over-sedation' :
+                                                    '⚠️ Monitor, reduced responsiveness'}
                                         </p>
                                     )}
                                 </div>
-                                {/* Neurological Observations — WO-413 GAP-2 (Dr. Allen FRD 2026-02-25)
+                                {/* Neurological Observations, WO-413 GAP-2 (Dr. Allen FRD 2026-02-25)
                                     Display-only this sprint. clonus + saccadic = ibogaine safety flags.
                                     diaphoresis is already persisted above (0-3 scale). */}
                                 <div className="col-span-full pt-3 border-t border-slate-700/30">
@@ -592,7 +622,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 id={`clonus-${reading.id}`}
                                                 type="checkbox"
                                                 className="w-5 h-5 rounded border-slate-600 bg-slate-900 checked:bg-amber-600 checked:border-amber-500 focus:ring-2 focus:ring-amber-500/40 transition-all cursor-pointer"
-                                                aria-label="Clonus observed — muscle reflex activity"
+                                                aria-label="Clonus observed, muscle reflex activity"
                                             />
                                             <span className="ppn-body text-slate-300 group-hover:text-slate-100 transition-colors">
                                                 Clonus
@@ -609,7 +639,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                                 id={`saccadic-${reading.id}`}
                                                 type="checkbox"
                                                 className="w-5 h-5 rounded border-slate-600 bg-slate-900 checked:bg-amber-600 checked:border-amber-500 focus:ring-2 focus:ring-amber-500/40 transition-all cursor-pointer"
-                                                aria-label="Saccadic eye movements observed — rapid involuntary eye movement"
+                                                aria-label="Saccadic eye movements observed, rapid involuntary eye movement"
                                             />
                                             <span className="ppn-body text-slate-300 group-hover:text-slate-100 transition-colors">
                                                 Saccadic Eye Movements
@@ -623,22 +653,57 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                             </div>
                         </div>
 
-                        {/* QT Interval Tracker — Phase 2 cardiac monitoring (WO-413 PRD B)
-                            Confirmed defaults: Philips IntelliVue / Schiller ETM — Dr. Allen 2026-02-25
-                            dangerThresholdMs=500, cautionThresholdMs=475 — Dr. Allen confirmed 2026-02-25 */}
-                        {showQTTracker && index === readings.length - 1 && (
-                            <div className="pt-4 border-t border-amber-500/15">
-                                <QTIntervalTracker
-                                    divergenceThresholdMs={50}
-                                    dangerThresholdMs={500}
-                                    cautionThresholdMs={475}
-                                    deviceALabel="Philips IntelliVue"
-                                    deviceBLabel="Schiller ETM"
-                                />
+                        {/* WO-534: QT Interval Tracker, auto-hidden unless Ibogaine is selected.
+                            Shows a manual override toggle when substance is NOT Ibogaine
+                            so practitioners can capture a baseline QTc before administration.
+                            Confirmed defaults: Philips IntelliVue / Schiller ETM, Dr. Allen 2026-02-25
+                            dangerThresholdMs=500, cautionThresholdMs=475, Dr. Allen confirmed 2026-02-25 */}
+                        {qtTrackerEnabled && index === readings.length - 1 && (
+                            <div className="pt-4 border-t border-amber-500/15 space-y-3">
+                                {/* Manual override toggle (visible only when NOT auto-showing) */}
+                                {!isIbogaine && (
+                                    <div className="flex items-center justify-between px-4 py-3 bg-amber-900/10 border border-amber-500/20 rounded-xl">
+                                        <div className="flex items-center gap-2.5">
+                                            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" aria-hidden="true" />
+                                            <div>
+                                                <p className="text-sm font-bold text-amber-300 leading-tight">QT Interval Tracker</p>
+                                                <p className="text-xs text-amber-600 mt-0.5">
+                                                    Auto-hidden, not Ibogaine protocol.
+                                                    Enable to capture baseline QTc.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setQtManualOverride(v => !v)}
+                                            aria-label={qtManualOverride ? 'Hide QT Interval Tracker' : 'Show QT Interval Tracker for baseline'}
+                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold uppercase tracking-wide transition-all ${qtManualOverride
+                                                ? 'bg-amber-600/20 border-amber-500/40 text-amber-300 hover:bg-amber-600/30'
+                                                : 'bg-slate-800/60 border-slate-600/50 text-slate-400 hover:border-amber-500/40 hover:text-amber-300'
+                                                }`}
+                                        >
+                                            {qtManualOverride
+                                                ? <><EyeOff className="w-3.5 h-3.5" aria-hidden="true" /> Hide</>
+                                                : <><Eye className="w-3.5 h-3.5" aria-hidden="true" /> Show</>
+                                            }
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* QT Tracker panel, shown when Ibogaine OR override active */}
+                                {showQTTracker && (
+                                    <QTIntervalTracker
+                                        divergenceThresholdMs={50}
+                                        dangerThresholdMs={500}
+                                        cautionThresholdMs={475}
+                                        deviceALabel="Philips IntelliVue"
+                                        deviceBLabel="Schiller ETM"
+                                    />
+                                )}
                             </div>
                         )}
 
-                        {/* EKG Monitoring Panel — WO-413 MT-1 Level 1
+                        {/* EKG Monitoring Panel, WO-413 MT-1 Level 1
                             Shown on last reading block only. Receives HR from this reading for Bazett QTc.
                             Gated behind 'ekg-monitoring' feature flag. Display-only this sprint. */}
                         {showEKGMonitor && index === readings.length - 1 && (
@@ -660,9 +725,9 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <input
                                         id={`recorded-at-${index}`}
                                         type="datetime-local"
+                                        tabIndex={-1}
                                         value={reading.recorded_at ?? ''}
                                         onChange={(e) => updateReading(index, 'recorded_at', e.target.value)}
-                                        tabIndex={10 + index * 10 + 6}
                                         className="flex-1 px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                                         aria-label="Date and time of reading"
                                     />
@@ -677,7 +742,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                 </div>
                             </div>
 
-                            {/* Add Another Reading — inline, auto-saves current */}
+                            {/* Add Another Reading, inline, auto-saves current */}
                             <button
                                 onClick={addReading}
                                 tabIndex={10 + index * 10 + 8}

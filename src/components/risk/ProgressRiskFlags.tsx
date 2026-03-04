@@ -25,7 +25,7 @@ export const ProgressRiskFlags: React.FC<ProgressRiskFlagsProps> = ({
     return (
         <div className="relative bg-yellow-500/10 backdrop-blur-xl border border-yellow-500/30 rounded-2xl p-6">
 
-            {/* Tooltip — top-right corner, opens inward */}
+            {/* Tooltip, top-right corner, opens inward */}
             <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>
                 <AdvancedTooltip
                     tier="guide"
@@ -38,7 +38,7 @@ export const ProgressRiskFlags: React.FC<ProgressRiskFlagsProps> = ({
                             <div><span className="font-bold text-[#A8B5D1]">PHQ-9 Trend:</span> Kroenke & Spitzer (2002). J Gen Intern Med.</div>
                             <div><span className="font-bold text-[#A8B5D1]">GAD-7 Trend:</span> Spitzer et al. (2006). Arch Intern Med.</div>
                             <div><span className="font-bold text-[#A8B5D1]">PCL-5 Trend:</span> Weathers et al. (2013). VA PTSD Research.</div>
-                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Declining trends defined as ≥5% regression toward baseline over 2+ consecutive check-ins. Clinical decision support only — not a substitute for practitioner judgment.</div>
+                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Declining trends defined as ≥5% regression toward baseline over 2+ consecutive check-ins. Clinical decision support only, not a substitute for practitioner judgment.</div>
                         </div>
                     }
                 >

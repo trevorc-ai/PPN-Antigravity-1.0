@@ -52,7 +52,7 @@ export const ObservationSelector: React.FC<ObservationSelectorProps> = ({
                 .eq('is_active', true)
                 .order('observation_text');
 
-            // Table may not exist yet — treat as empty, not an error
+            // Table may not exist yet, treat as empty, not an error
             if (error) {
                 console.warn('[ObservationSelector] ref_clinical_observations not available:', error.message);
                 setObservations([]);

@@ -113,7 +113,7 @@ export const HelpOverview = () => (
                 { icon: 'favorite', title: 'Wellness Journey', desc: 'Phase-by-phase tracking for each patient: Preparation → Dosing → Integration. Log vitals, assessments, and pulse checks.' },
                 { icon: 'clinical_notes', title: 'Protocol Builder', desc: 'Log de-identified session data. Each submission strengthens the alliance benchmark and contributes to the global evidence base.' },
                 { icon: 'newspaper', title: 'News & Updates', desc: 'Curated research headlines and regulatory updates from the psychedelic therapy field, refreshed daily.' },
-                { icon: 'manage_search', title: 'Audit Logs', desc: 'A complete, tamper-evident record of every action taken within your account — for compliance and peace of mind.' },
+                { icon: 'manage_search', title: 'Audit Logs', desc: 'A complete, tamper-evident record of every action taken within your account, for compliance and peace of mind.' },
             ].map(({ icon, title, desc }) => (
                 <div key={title} className="flex gap-4 p-5 bg-slate-900/40 border border-slate-800/60 rounded-2xl hover:border-indigo-500/20 transition-all group">
                     <span className="material-symbols-outlined text-indigo-400 text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">{icon}</span>
@@ -137,14 +137,14 @@ export const HelpInteractionChecker = () => (
             <SectionBadge icon="security" label="Safety Shield" color="red" />
             <h2 className="text-3xl font-black text-slate-200 tracking-tight">Using the Interaction Checker</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
-                The Interaction Checker validates clinical combinations against a 13-point safety matrix. Think of it as a spell-checker for medicine — it looks at the substance you plan to use and compares it against the medications your patient is already taking.
+                The Interaction Checker validates clinical combinations against a 13-point safety matrix. Think of it as a spell-checker for medicine, it looks at the substance you plan to use and compares it against the medications your patient is already taking.
             </p>
         </div>
 
         <div className="space-y-4">
             <FAQItem
                 q="What do the alert colours mean?"
-                a="Red (Stop): This combination has a high risk of a severe reaction. Strongly consider not proceeding. Yellow (Caution): This combination might cause side effects or reduce treatment effectiveness — proceed with care. Green (Clear): No known conflicts found in our database."
+                a="Red (Stop): This combination has a high risk of a severe reaction. Strongly consider not proceeding. Yellow (Caution): This combination might cause side effects or reduce treatment effectiveness, proceed with care. Green (Clear): No known conflicts found in our database."
             />
             <FAQItem
                 q="How do I check an interaction?"
@@ -156,7 +156,7 @@ export const HelpInteractionChecker = () => (
             />
             <FAQItem
                 q="What is Serotonin Toxicity?"
-                a="A potentially dangerous condition caused by excess serotonin activity in the nervous system — often triggered by combining serotonergic drugs (like SSRIs) with substances such as psilocybin or MDMA. The checker will flag this risk automatically."
+                a="A potentially dangerous condition caused by excess serotonin activity in the nervous system, often triggered by combining serotonergic drugs (like SSRIs) with substances such as psilocybin or MDMA. The checker will flag this risk automatically."
             />
         </div>
 
@@ -164,7 +164,7 @@ export const HelpInteractionChecker = () => (
             <h3 className="text-lg font-black text-slate-300 mb-4 uppercase tracking-widest text-sm">Glossary</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <GlossaryCard term="Contraindication" definition="A medical reason not to use a specific treatment because it could be harmful." />
-                <GlossaryCard term="Interaction" definition="When two drugs change how the other one works — altering efficacy or increasing risk." />
+                <GlossaryCard term="Interaction" definition="When two drugs change how the other one works, altering efficacy or increasing risk." />
                 <GlossaryCard term="Serotonin Toxicity" definition="A dangerous condition caused by too much serotonin activity, often from mixing certain drugs." />
             </div>
         </div>
@@ -203,7 +203,7 @@ export const HelpWellnessJourney = () => (
         <div className="space-y-4">
             <FAQItem
                 q="Why can't I move to the next phase?"
-                a="Each phase is gated. Phase 2 (Dosing) requires a confirmed Dosing Protocol and Vitals log. Phase 3 (Integration) requires a completed Dosing Session. If a button is greyed out, check the checklist items above it — all must show a green tick."
+                a="Each phase is gated. Phase 2 (Dosing) requires a confirmed Dosing Protocol and Vitals log. Phase 3 (Integration) requires a completed Dosing Session. If a button is greyed out, check the checklist items above it, all must show a green tick."
             />
             <FAQItem
                 q="What are Pulse Checks?"
@@ -234,7 +234,7 @@ export const HelpSessionReporting = () => (
         <div className="space-y-4">
             <FAQItem
                 q="How do I export a session report?"
-                a="Navigate to My Protocols and click the session you want. On the session detail page, click the Export PDF button. The report includes session date, protocol details, dosage, and outcome scores — with all PHI replaced by the anonymous Subject ID."
+                a="Navigate to My Protocols and click the session you want. On the session detail page, click the Export PDF button. The report includes session date, protocol details, dosage, and outcome scores, with all PHI replaced by the anonymous Subject ID."
             />
             <FAQItem
                 q="What is a Subject ID?"
@@ -242,7 +242,7 @@ export const HelpSessionReporting = () => (
             />
             <FAQItem
                 q="Can I export data for Medicare or insurance purposes?"
-                a="The CSV export from Audit Logs contains structured, MedDRA-coded session data that many insurance platforms accept. For specific insurance requirements, consult your billing department — PPN provides the data, not the submission workflow."
+                a="The CSV export from Audit Logs contains structured, MedDRA-coded session data that many insurance platforms accept. For specific insurance requirements, consult your billing department, PPN provides the data, not the submission workflow."
             />
             <FAQItem
                 q="How long is session data retained?"
@@ -261,14 +261,14 @@ export const HelpScanner = () => (
             <SectionBadge icon="document_scanner" label="Patient Bridge" color="purple" />
             <h2 className="text-3xl font-black text-slate-200 tracking-tight">Patient Bridge Scanner</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
-                The Patient Bridge leverages OCR (optical character recognition) via mobile camera access to rapidly ingest paperwork and physical questionnaires directly into the secure environment — eliminating manual data entry.
+                The Patient Bridge leverages OCR (optical character recognition) via mobile camera access to rapidly ingest paperwork and physical questionnaires directly into the secure environment, eliminating manual data entry.
             </p>
         </div>
 
         <div className="space-y-4">
             <FAQItem
                 q="What documents can I scan?"
-                a="Any printed form with structured content: intake questionnaires, consent forms, physical PHQ-9 or GAD-7 surveys, or legacy paper session notes. The scanner works best with printed text — handwriting recognition has limited accuracy."
+                a="Any printed form with structured content: intake questionnaires, consent forms, physical PHQ-9 or GAD-7 surveys, or legacy paper session notes. The scanner works best with printed text, handwriting recognition has limited accuracy."
             />
             <FAQItem
                 q="How does the Reagent Eye work?"
@@ -276,7 +276,7 @@ export const HelpScanner = () => (
             />
             <FAQItem
                 q="Does the Reagent Eye guarantee purity?"
-                a="No. It confirms that the colour reaction is consistent with a known substance — a strong indicator, but not conclusive. It cannot detect every possible impurity. Always apply clinical judgment alongside the result."
+                a="No. It confirms that the colour reaction is consistent with a known substance, a strong indicator, but not conclusive. It cannot detect every possible impurity. Always apply clinical judgment alongside the result."
             />
             <FAQItem
                 q="Is scanned data sent to the cloud immediately?"
@@ -287,7 +287,7 @@ export const HelpScanner = () => (
         <div>
             <h3 className="text-lg font-black text-slate-300 mb-4 uppercase tracking-widest text-sm">Glossary</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <GlossaryCard term="OCR" definition="Optical Character Recognition — software that reads printed text from an image or camera feed." />
+                <GlossaryCard term="OCR" definition="Optical Character Recognition, software that reads printed text from an image or camera feed." />
                 <GlossaryCard term="Reagent Test" definition="A chemical drop that changes colour on contact with a specific drug, used to identify substances." />
                 <GlossaryCard term="False Positive" definition="When a test reads 'safe' but the substance is actually something else or impure." />
             </div>
@@ -304,14 +304,14 @@ export const HelpDevices = () => (
             <SectionBadge icon="devices" label="Device Syncing" color="sky" />
             <h2 className="text-3xl font-black text-slate-200 tracking-tight">Device Syncing & Integrations</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
-                PPN is designed to work across desktop, tablet, and mobile. All data syncs in real-time via your secure Supabase-backed account — no manual export or import needed between devices.
+                PPN is designed to work across desktop, tablet, and mobile. All data syncs in real-time via your secure Supabase-backed account, no manual export or import needed between devices.
             </p>
         </div>
 
         <div className="space-y-4">
             <FAQItem
                 q="Can I use PPN on my phone during a session?"
-                a="Yes. The interface is fully responsive. The Patient Companion page is specifically designed for a tablet or phone that the patient holds during their session — it displays a calming visual environment and allows pulse check submissions."
+                a="Yes. The interface is fully responsive. The Patient Companion page is specifically designed for a tablet or phone that the patient holds during their session, it displays a calming visual environment and allows pulse check submissions."
             />
             <FAQItem
                 q="Is there a native mobile app?"
@@ -319,7 +319,7 @@ export const HelpDevices = () => (
             />
             <FAQItem
                 q="Does data sync between my laptop and tablet?"
-                a="Yes — instantly. Because everything is stored in your encrypted cloud account, any device signed into your account will see the same data in real-time."
+                a="Yes, instantly. Because everything is stored in your encrypted cloud account, any device signed into your account will see the same data in real-time."
             />
         </div>
 
@@ -353,7 +353,7 @@ export const HelpSettings = () => (
             />
             <FAQItem
                 q="How do I delete my account?"
-                a="Contact the PPN team directly at support@ppnportal.net. Account deletion is a manual process to ensure data integrity for the alliance — your de-identified session data may be retained in aggregate form per our privacy policy."
+                a="Contact the PPN team directly at support@ppnportal.net. Account deletion is a manual process to ensure data integrity for the alliance, your de-identified session data may be retained in aggregate form per our privacy policy."
             />
         </div>
 

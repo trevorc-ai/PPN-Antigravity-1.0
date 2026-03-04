@@ -2,12 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
     ShieldCheck,
     Printer,
-    Download,
-    Share2,
     Activity,
     TrendingUp,
-    Users,
-    AlertTriangle
+    AlertTriangle,
+    Download,
+    ChevronDown
 } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
@@ -55,18 +54,50 @@ const Analytics = () => {
 
         fetchUserSite();
     }, []);
+
     const handlePrint = () => {
         window.print();
     };
 
-    return (
-        <PageContainer className="!max-w-7xl space-y-8 animate-in fade-in duration-700 pb-20 pt-8 overflow-x-hidden print:p-0 print:space-y-4 print:bg-white">
+    const kpiStats = [
+        {
+            label: 'Active Protocols',
+            value: analytics.loading ? '...' : analytics.activeProtocols.toString(),
+            trend: '+12%',
+            icon: Activity,
+            color: 'text-blue-400 print:text-blue-700'
+        },
+        {
+            label: 'Patient Alerts',
+            value: analytics.loading ? '...' : analytics.patientAlerts.toString(),
+            trend: analytics.patientAlerts > 0 ? `${analytics.patientAlerts}` : '0',
+            icon: AlertTriangle,
+            color: 'text-amber-400 print:text-amber-700'
+        },
+        {
+            label: 'Network Efficiency',
+            value: analytics.loading ? '...' : `${analytics.networkEfficiency}%`,
+            trend: '+0.8%',
+            icon: TrendingUp,
+            color: 'text-emerald-400 print:text-emerald-700'
+        },
+        {
+            label: 'Risk Score',
+            value: analytics.loading ? '...' : analytics.riskScore,
+            trend: 'Stable',
+            icon: ShieldCheck,
+            color: analytics.riskScore === 'Low' ? 'text-emerald-400 print:text-emerald-700' : analytics.riskScore === 'Medium' ? 'text-amber-400 print:text-amber-700' : 'text-red-400 print:text-red-700'
+        }
+    ];
 
-            {/* HEADER - Hide on Print (except limits) */}
+    return (
+        <PageContainer className="!max-w-7xl space-y-8 animate-in fade-in duration-700 pb-20 pt-8 print:p-0 print:space-y-4 print:bg-white">
+
+            {/* HEADER - Hide on Print */}
             <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 print:hidden">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
+                        <h1 className="text-3xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
                             Clinical Intelligence
                         </h1>
                     </div>
@@ -75,7 +106,7 @@ const Analytics = () => {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4">
                     <button
                         onClick={analytics.refetch}
                         disabled={analytics.loading}
@@ -95,13 +126,6 @@ const Analytics = () => {
                         className="hover:bg-slate-800/50 transition-colors mr-2"
                     >
                         {analytics.loading ? '...' : '↻ Refresh'}
-                    </button>
-                    <button
-                        onClick={handlePrint}
-                        className="hidden md:flex p-3 bg-indigo-600 hover:bg-indigo-500 text-slate-300 rounded-xl items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20"
-                    >
-                        <Printer className="w-5 h-5" />
-                        <span className="font-bold">Export Report</span>
                     </button>
                 </div>
             </Section>
@@ -128,68 +152,39 @@ const Analytics = () => {
                 </Section>
             )}
 
+            {/* ── KPI RIBBON + SAFETY PERFORMANCE, Unified section ─────────── */}
+            <Section spacing="tight" className="space-y-0">
 
-
-            {/* KPI RIBBON */}
-            <Section spacing="tight" className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2">
-                {[
-                    {
-                        label: 'Active Protocols',
-                        value: analytics.loading ? '...' : analytics.activeProtocols.toString(),
-                        trend: '+12%',
-                        icon: Activity,
-                        color: 'text-blue-400 print:text-blue-700'
-                    },
-                    {
-                        label: 'Patient Alerts',
-                        value: analytics.loading ? '...' : analytics.patientAlerts.toString(),
-                        trend: analytics.patientAlerts > 0 ? `${analytics.patientAlerts}` : '0',
-                        icon: AlertTriangle,
-                        color: 'text-amber-400 print:text-amber-700'
-                    },
-                    {
-                        label: 'Network Efficiency',
-                        value: analytics.loading ? '...' : `${analytics.networkEfficiency}%`,
-                        trend: '+0.8%',
-                        icon: TrendingUp,
-                        color: 'text-emerald-400 print:text-emerald-700'
-                    },
-                    {
-                        label: 'Risk Score',
-                        value: analytics.loading ? '...' : analytics.riskScore,
-                        trend: 'Stable',
-                        icon: ShieldCheck,
-                        color: analytics.riskScore === 'Low' ? 'text-emerald-400 print:text-emerald-700' : analytics.riskScore === 'Medium' ? 'text-amber-400 print:text-amber-700' : 'text-red-400 print:text-red-700'
-                    }
-                ].map((stat, i) => (
-                    <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl h-full flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none">
-                        <div className="flex items-center gap-2 mb-2">
-                            <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                            <div className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-slate-500">{stat.label}</div>
+                {/* KPI CARDS, 4-up horizontal grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2 mb-0">
+                    {kpiStats.map((stat, i) => (
+                        <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
+                            <div className="flex items-center gap-2 mb-2">
+                                <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                                <div className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-slate-500">{stat.label}</div>
+                            </div>
+                            <div className="flex items-baseline gap-2">
+                                <div className={`text-3xl font-black ${stat.color} tracking-tight`}>{stat.value}</div>
+                                <div className="text-xs font-bold bg-slate-900/50 px-2 py-0.5 rounded border border-slate-800 print:bg-gray-100 print:text-slate-600 print:border-gray-200" style={{ color: '#8B9DC3' }}>{stat.trend}</div>
+                            </div>
                         </div>
-                        <div className="flex items-baseline gap-2">
-                            <div className={`text-3xl font-black ${stat.color} tracking-tight`}>{stat.value}</div>
-                            <div className="text-xs font-bold bg-slate-900/50 px-2 py-0.5 rounded border border-slate-800 print:bg-gray-100 print:text-slate-600 print:border-gray-200" style={{ color: '#8B9DC3' }}>{stat.trend}</div>
-                        </div>
-                    </div>
-                ))}
-            </Section>
-
-            {/* SAFETY PERFORMANCE BENCHMARK */}
-            <Section spacing="tight">
-                <div className="flex items-center justify-between mb-4">
-                    <div>
-                        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Safety Performance</h2>
-                        <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>Your adverse event rate vs. network average</p>
-                    </div>
-                    {!benchmark && !benchmarkLoading && (
-                        <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-indigo-500/10 border-indigo-500/30 text-indigo-400 uppercase tracking-widest">
-                            Preview — sample data
-                        </span>
-                    )}
+                    ))}
                 </div>
 
-                <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
+                {/* SAFETY PERFORMANCE, Full-width integrated panel */}
+                <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6 print:bg-white print:border-gray-200 print:shadow-none">
+                    {/* Section header inside the panel */}
+                    <div className="flex items-center justify-between mb-5">
+                        <div>
+                            <h2 className="text-lg font-black tracking-tight" style={{ color: '#A8B5D1' }}>Safety Performance</h2>
+                            <p className="text-sm mt-0.5" style={{ color: '#8B9DC3' }}>Your adverse event rate vs. network average</p>
+                        </div>
+                        {!benchmark && !benchmarkLoading && (
+                            <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-indigo-500/10 border-indigo-500/30 text-indigo-400 uppercase tracking-widest">
+                                Preview, sample data
+                            </span>
+                        )}
+                    </div>
                     {benchmarkLoading ? (
                         <div className="flex items-center justify-center py-12">
                             <div className="text-center">
@@ -207,26 +202,9 @@ const Analytics = () => {
                             status={benchmark.status}
                         />
                     ) : (
-                        /* No data yet — show sample / preview state */
+                        /* No data yet, show sample / preview state */
                         <SafetyBenchmark />
                     )}
-                </div>
-            </Section>
-
-
-            {/* GLOBAL BENCHMARK INTELLIGENCE — Live data from ref_benchmark_cohorts + ref_benchmark_trials */}
-            <Section spacing="tight" className="print:break-inside-avoid">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Global Benchmark Intelligence</h2>
-                        <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>Your outcomes grounded in worldwide published clinical evidence</p>
-                    </div>
-                    <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-emerald-500/10 border-emerald-500/30 text-emerald-400 uppercase tracking-widest">
-                        Live Data
-                    </span>
-                </div>
-                <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
-                    <GlobalBenchmarkIntelligence />
                 </div>
             </Section>
 
@@ -237,14 +215,14 @@ const Analytics = () => {
                 </div>
             </Section>
 
-            {/* FILTER CONTROLS — positioned above charts, hide on print */}
+            {/* FILTER CONTROLS, positioned above charts, hide on print */}
             <Section spacing="tight" className="print:hidden">
                 <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-[#0a0c12]/80 border border-slate-800/80 p-3 rounded-2xl backdrop-blur-xl shadow-2xl">
                     <div className="flex items-center gap-2 px-2">
                         <div className="size-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
                             <span className="material-symbols-outlined text-indigo-400 text-lg">tune</span>
                         </div>
-                        <span className="text-xs font-black uppercase tracking-widest hidden md:block" style={{ color: '#8B9DC3' }}>Filters</span>
+                        <span className="text-xs font-black uppercase tracking-widest hidden md:block" style={{ color: '#8B9DC3' }}>Chart Filters</span>
                     </div>
 
                     <div className="h-6 w-px bg-slate-800 hidden xl:block"></div>
@@ -279,42 +257,73 @@ const Analytics = () => {
             {/* ── COMPONENT GRID ──────────────────────────────────────────────── */}
             <Section spacing="default" className="space-y-8 print:space-y-8">
 
-                {/* ROW 1: Performance Radar — full width, 3-col internal grid */}
+                {/* ROW 1: Performance Radar, full width, 3-col internal grid */}
                 <div className="print:break-inside-avoid">
-                    <GlassmorphicCard className="min-h-[520px] h-auto lg:h-[520px] relative overflow-hidden print:h-[420px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10 bg-[#0a0c12]/80 backdrop-blur-sm rounded-xl pr-3 pb-1">
-                            <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
-                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
+                    <GlassmorphicCard className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '520px' }}>
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 px-6 pt-6 pb-0 z-10 shrink-0">
+                            <div>
+                                <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
+                                <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
+                            </div>
                         </div>
-                        <ClinicPerformanceRadar data={filteredData} />
+                        <div className="flex-1 min-h-0" style={{ minHeight: '460px' }}>
+                            <ClinicPerformanceRadar data={filteredData} />
+                        </div>
                     </GlassmorphicCard>
                 </div>
 
-                {/* ROW 2: Patient Galaxy — full width, large scatter + filter controls */}
+                {/* ROW 2: Patient Galaxy, full width, large scatter + filter controls */}
                 <div className="print:break-inside-avoid">
-                    <GlassmorphicCard className="min-h-[580px] h-auto lg:h-[580px] relative overflow-hidden print:h-[480px] print:shadow-none print:border-gray-200 print:bg-white">
-                        <div className="absolute top-6 left-6 z-10 bg-[#0a0c12]/80 backdrop-blur-sm rounded-xl pr-3 pb-1">
-                            <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</h3>
+                    <GlassmorphicCard className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '620px' }}>
+                        <div className="px-6 pt-6 pb-0 z-10 shrink-0" aria-hidden="true">
+                            <p className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</p>
                             <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
                         </div>
-                        <PatientConstellation data={filteredData} />
+                        <div className="flex-1 min-h-0 p-2" style={{ minHeight: '540px' }}>
+                            <PatientConstellation data={filteredData} hideHeader />
+                        </div>
                     </GlassmorphicCard>
                 </div>
-
-
 
             </Section>
 
-            {/* MOBILE-ONLY: Export button at bottom — easier to reach on phone */}
-            <div className="md:hidden flex justify-center pb-4 print:hidden">
-                <button
-                    onClick={handlePrint}
-                    className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-slate-300 rounded-xl transition-colors shadow-lg shadow-indigo-500/20 font-bold"
-                >
-                    <Printer className="w-5 h-5" />
-                    Export Report
-                </button>
-            </div>
+            {/* ── GLOBAL BENCHMARK INTELLIGENCE, Placed below practitioner analytics ─── */}
+            <Section spacing="tight" className="print:break-inside-avoid">
+                {/* PRODDY recommendation: GBI belongs below practitioner-specific analytics
+                    to reduce cognitive overload. The practitioner's own data comes first. */}
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Global Benchmark Intelligence</h2>
+                        <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>Your outcomes grounded in worldwide published clinical evidence</p>
+                    </div>
+                    <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-emerald-500/10 border-emerald-500/30 text-emerald-400 uppercase tracking-widest">
+                        Live Data
+                    </span>
+                </div>
+                <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
+                    <GlobalBenchmarkIntelligence alwaysShow={true} />
+                </div>
+            </Section>
+
+            {/* ── EXPORT REPORT, Bottom of page, prominently placed ─────────── */}
+            <Section spacing="tight" className="print:hidden">
+                <div className="bg-[#0a0c12]/80 border border-slate-800/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 className="text-base font-black" style={{ color: '#A8B5D1' }}>Export Clinical Intelligence Report</h3>
+                        <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>
+                            Generate a PDF report of all current analytics, safety metrics, performance benchmarks, and network comparisons.
+                        </p>
+                    </div>
+                    <button
+                        onClick={handlePrint}
+                        id="export-report-btn"
+                        className="flex items-center gap-3 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition-all shadow-lg shadow-indigo-500/20 font-bold text-sm uppercase tracking-widest whitespace-nowrap shrink-0"
+                    >
+                        <Printer className="w-5 h-5" />
+                        Export PDF Report
+                    </button>
+                </div>
+            </Section>
 
             {/* PRINT FOOTER */}
             <div className="hidden print:block text-center text-xs text-slate-400 pt-8 border-t border-gray-200 mt-8">
@@ -325,18 +334,34 @@ const Analytics = () => {
             <style jsx global>{`
                 @media print {
                     @page {
-                        margin: 1cm;
-                        size: portrait;
+                        margin: 1.5cm;
+                        size: A4 portrait;
                     }
                     body {
                         background: white !important;
-                        color: black !important;
+                        color: #1e293b !important;
+                        font-family: 'Inter', 'Helvetica Neue', sans-serif !important;
                     }
                     /* Force charts to print background colors if needed */
                     * {
                         -webkit-print-color-adjust: exact !important;
                         print-color-adjust: exact !important;
                     }
+                    /* Hide non-essential chrome on print */
+                    nav, aside, header.site-header, .print\\:hidden {
+                        display: none !important;
+                    }
+                    /* Override dark backgrounds */
+                    .bg-\\[\\#0a0c12\\]\\/50,
+                    .bg-\\[\\#0f1218\\] {
+                        background: #f8fafc !important;
+                        border-color: #e2e8f0 !important;
+                    }
+                    /* Override dark text colors */
+                    .text-slate-500 { color: #475569 !important; }
+                    .text-slate-300 { color: #1e293b !important; }
+                    /* Make charts visible on white */
+                    .recharts-surface { background: transparent; }
                 }
             `}</style>
         </PageContainer>
