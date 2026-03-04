@@ -23,7 +23,8 @@ export const EDI_BRIEF_CONFIG: AssessmentConfig = {
     name: 'Ego Dissolution Check',
     shortName: 'EDI-Brief',
     description: 'Two quick questions about the depth of your experience.',
-    questionsPerPage: 2,
+    // WO-549: 1 question per page — Previous button activates after question 1.
+    questionsPerPage: 1,
     scoring: {
         method: 'average'
     },

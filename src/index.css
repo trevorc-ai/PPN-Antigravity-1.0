@@ -1,4 +1,11 @@
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
+  overflow-x: hidden;
+  max-width: 100%;
   background: #0a1628;
   background-attachment: fixed;
   color: #A8B5D1;
@@ -747,18 +754,34 @@ textarea,
 select {
   color-scheme: dark;
 }
+
 /* =====================================================
    PATIENT PROGRESS SUMMARY — PRINT STYLES (WO-304)
    Produces a clean white single-page document when
    window.print() is invoked from the preview modal.
    ===================================================== */
 @media print {
+
   /* Flatten fixed/modal positioning */
-  .fixed { position: static !important; }
-  .overflow-y-auto { overflow: visible !important; }
-  .max-h-\[90vh\] { max-height: none !important; }
-  .backdrop-blur-sm { backdrop-filter: none !important; }
-  .sticky { position: static !important; }
+  .fixed {
+    position: static !important;
+  }
+
+  .overflow-y-auto {
+    overflow: visible !important;
+  }
+
+  .max-h-\[90vh\] {
+    max-height: none !important;
+  }
+
+  .backdrop-blur-sm {
+    backdrop-filter: none !important;
+  }
+
+  .sticky {
+    position: static !important;
+  }
 
   /* Preserve key colours with print-color-adjust */
   * {

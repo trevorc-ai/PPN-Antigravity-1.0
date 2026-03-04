@@ -124,6 +124,7 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                         <div className="flex gap-2">
                             <input
                                 type="datetime-local"
+                                tabIndex={-1}
                                 value={data.start_time ?? ''}
                                 onChange={(e) => updateField('start_time', e.target.value)}
                                 className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
@@ -141,6 +142,7 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                         <div className="flex gap-2">
                             <input
                                 type="datetime-local"
+                                tabIndex={-1}
                                 value={data.end_time ?? ''}
                                 onChange={(e) => updateField('end_time', e.target.value)}
                                 className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"

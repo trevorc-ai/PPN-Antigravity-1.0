@@ -27,7 +27,7 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
 
     return (
         <div className="relative bg-yellow-500/10 backdrop-blur-xl border border-yellow-500/30 rounded-2xl p-6">
-            {/* Tooltip — top-right corner, opens inward */}
+            {/* Tooltip, top-right corner, opens inward */}
             <div style={{ position: 'absolute', top: '1.25rem', right: '1.25rem' }}>
                 <AdvancedTooltip
                     tier="guide"
@@ -40,7 +40,7 @@ export const SessionRiskFlags: React.FC<SessionRiskFlagsProps> = ({
                             <div><span className="font-bold text-[#A8B5D1]">Heart Rate:</span> AHA Guidelines for PAT monitoring (2020).</div>
                             <div><span className="font-bold text-[#A8B5D1]">Blood Pressure:</span> JNC 8 Hypertension Guidelines.</div>
                             <div><span className="font-bold text-[#A8B5D1]">SpO2:</span> WHO Pulse Oximetry Training Manual.</div>
-                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
+                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only, not a substitute for practitioner judgment.</div>
                         </div>
                     }
                 >

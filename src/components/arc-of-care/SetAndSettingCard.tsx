@@ -87,7 +87,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
             </div>
 
 
-            {/* Single-column vertical stack — no uneven cell heights */}
+            {/* Single-column vertical stack, no uneven cell heights */}
             <div className="space-y-6 divide-y divide-slate-800/60">
                 {/* Expectancy Scale */}
                 <div className="space-y-3">
@@ -204,7 +204,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                     <PHQ9SeverityZones score={phq9Score} />
                 </div>
 
-                {/* PCL-5 PTSD — WO-060 Phase 1C */}
+                {/* PCL-5 PTSD, WO-060 Phase 1C */}
                 {pcl5Score !== undefined && (
                     <div className="space-y-3 pt-6">
                         <div className="flex items-center gap-2">

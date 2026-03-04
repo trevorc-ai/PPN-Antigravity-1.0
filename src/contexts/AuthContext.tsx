@@ -20,15 +20,22 @@ import { clearDataCache } from '../hooks/useDataCache';
         if (type === 'invite' || type === 'signup') {
             sessionStorage.setItem('ppn_pending_invite', 'true');
         }
+        if (type === 'recovery') {
+            sessionStorage.setItem('ppn_pending_recovery', 'true');
+        }
     } catch {
-        // Non-critical — fail silently
+        // Non-critical, fail silently
     }
 })();
+
+type UserRole = 'admin' | 'partner' | 'user' | null;
 
 interface AuthContextType {
     user: User | null;
     session: Session | null;
     loading: boolean;
+    userRole: UserRole;
+    isPartner: boolean;
     signOut: () => Promise<void>;
 }
 
@@ -38,12 +45,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
+    const [userRole, setUserRole] = useState<UserRole>(null);
 
     useEffect(() => {
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setUser(session?.user ?? null);
+            setUserRole((session?.user?.app_metadata?.role as UserRole) ?? null);
             setLoading(false);
         });
 
@@ -53,6 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
+            // Role is in the JWT app_metadata — no extra DB fetch needed
+            setUserRole((session?.user?.app_metadata?.role as UserRole) ?? null);
             setLoading(false);
 
             // ── Invite / signup link interception ───────────────────────────
@@ -68,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // via magic link, never sets a password, then can't log back in.
             if (session && typeof window !== 'undefined') {
                 const pendingInvite = sessionStorage.getItem('ppn_pending_invite');
+                const pendingRecovery = sessionStorage.getItem('ppn_pending_recovery');
                 const rawHash = window.location.hash;
                 const hashParams = new URLSearchParams(rawHash.replace(/^#/, ''));
                 const hashType = hashParams.get('type');
@@ -75,11 +87,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     pendingInvite === 'true' ||
                     hashType === 'invite' ||
                     hashType === 'signup';
+                const isRecoveryFlow =
+                    event === 'PASSWORD_RECOVERY' ||
+                    pendingRecovery === 'true' ||
+                    hashType === 'recovery';
 
                 if (isInviteFlow) {
                     sessionStorage.removeItem('ppn_pending_invite');
-                    // Use replace() so the back button doesn't return to the
-                    // raw invite URL (which is already consumed/expired).
+                    window.location.replace(
+                        window.location.origin + window.location.pathname + '#/reset-password'
+                    );
+                    return;
+                }
+
+                if (isRecoveryFlow) {
+                    sessionStorage.removeItem('ppn_pending_recovery');
                     window.location.replace(
                         window.location.origin + window.location.pathname + '#/reset-password'
                     );
@@ -124,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, userRole, isPartner: userRole === 'partner', signOut }}>
             {children}
         </AuthContext.Provider>
     );

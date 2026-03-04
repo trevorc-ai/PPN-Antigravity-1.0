@@ -83,7 +83,7 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                         </div>
                     </div>
 
-                    {/* Right: Risk Level Badge — centered both axes */}
+                    {/* Right: Risk Level Badge, centered both axes */}
                     <div className="flex items-center justify-center">
                         <div className="flex items-center gap-2">
                             <span className="text-3xl">{getRiskIcon(overallRiskLevel)}</span>
@@ -94,7 +94,7 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                     </div>
                 </div>
 
-                {/* Tooltip — absolute top-right corner, opens bottom-left */}
+                {/* Tooltip, absolute top-right corner, opens bottom-left */}
                 <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem' }}>
                     <AdvancedTooltip
                         tier="guide"
@@ -105,7 +105,7 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                         content={
                             <div className="text-sm">
                                 Risk level is calculated based on baseline assessments (PHQ-9, GAD-7, ACE), real-time vitals, and algorithmic prediction of adverse event probability compared to the global patient population.
-                                <div className="mt-2 pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
+                                <div className="mt-2 pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only, not a substitute for practitioner judgment.</div>
                             </div>
                         }
                     >
@@ -113,7 +113,7 @@ export const RiskIndicators: React.FC<RiskIndicatorsProps> = ({
                     </AdvancedTooltip>
                 </div>
 
-                {/* Patient Characteristics — Left justified, below header */}
+                {/* Patient Characteristics, Left justified, below header */}
                 {patientCharacteristics && (
                     <div className="mb-5 pl-1 space-y-1 border-b border-slate-700/50 pb-4">
                         <div className="text-sm font-medium text-[#A8B5D1]">

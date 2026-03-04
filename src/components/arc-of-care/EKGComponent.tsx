@@ -12,10 +12,10 @@ interface EKGRhythm {
     severity_tier: 'normal' | 'monitor' | 'critical';
 }
 
-/** QTc flag levels — maps to Dr. Allen's Ibogaine safety thresholds */
+/** QTc flag levels, maps to Dr. Allen's Ibogaine safety thresholds */
 type QTcFlag = 'normal' | 'borderline' | 'prolonged' | 'red-flag';
 
-/** Static waveform findings (Level 1 — no ref table needed) */
+/** Static waveform findings (Level 1, no ref table needed) */
 const WAVEFORM_FINDINGS = [
     { code: 'ST_ELEVATION', label: 'ST Elevation' },
     { code: 'T_WAVE_INVERSION', label: 'T-Wave Inversion' },
@@ -26,7 +26,7 @@ const WAVEFORM_FINDINGS = [
 
 type WaveformFindingCode = (typeof WAVEFORM_FINDINGS)[number]['code'];
 
-/** QRS Axis options — standard clinical quadrant labeling */
+/** QRS Axis options, standard clinical quadrant labeling */
 const QRS_AXIS_OPTIONS = [
     { value: '', label: 'Select...' },
     { value: 'NORMAL', label: 'Normal Axis (0° to +90°)' },
@@ -40,7 +40,7 @@ export interface EKGData {
     prIntervalMs: string;
     qrsDurationMs: string;
     qtIntervalMs: string;
-    qtcMs: number | null;        // auto-calculated — Bazett formula
+    qtcMs: number | null;        // auto-calculated, Bazett formula
     qrsAxis: string;
     waveformFindings: WaveformFindingCode[];
 }
@@ -52,7 +52,7 @@ export interface EKGComponentProps {
      * Required for auto-calc; QTc will show manual-entry prompt if absent.
      */
     heartRate?: number;
-    /** Fires whenever EKG data changes — parent can surface for display or future persist. */
+    /** Fires whenever EKG data changes, parent can surface for display or future persist. */
     onChange?: (data: EKGData) => void;
 }
 
@@ -123,7 +123,7 @@ function getQTcFlagDisplay(flag: QTcFlag | null): QTcFlagDisplay | null {
             };
         case 'red-flag':
             return {
-                label: 'RED FLAG — Torsades Risk',
+                label: 'RED FLAG, Torsades Risk',
                 sublabel: '> 500 ms',
                 textCls: 'text-red-300',
                 bgCls: 'bg-red-500/10',
@@ -328,9 +328,9 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                                     aria-live="polite"
                                 >
                                     {selectedRhythm.severity_tier === 'critical'
-                                        ? '⚠️ Critical rhythm — clinical response required'
+                                        ? '⚠️ Critical rhythm, clinical response required'
                                         : selectedRhythm.severity_tier === 'monitor'
-                                            ? '👁 Monitor — increased observation'
+                                            ? '👁 Monitor, increased observation'
                                             : '✓ Normal rhythm'}
                                 </p>
                             )}
@@ -408,9 +408,9 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                                         : 'text-teal-400'
                                 }`}>
                                 {parseInt(prIntervalMs) > 200
-                                    ? '⚠️ Prolonged (>200ms) — 1° AV Block'
+                                    ? '⚠️ Prolonged (>200ms), 1° AV Block'
                                     : parseInt(prIntervalMs) < 120
-                                        ? '⚠️ Short (<120ms) — Pre-excitation?'
+                                        ? '⚠️ Short (<120ms), Pre-excitation?'
                                         : '✓ Normal range'}
                             </p>
                         )}
@@ -454,7 +454,7 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                                         : 'text-teal-400'
                                 }`}>
                                 {parseInt(qrsDurationMs) > 120
-                                    ? '⚠️ Wide QRS — BBB or conduction defect'
+                                    ? '⚠️ Wide QRS, BBB or conduction defect'
                                     : parseInt(qrsDurationMs) < 60
                                         ? '⚠️ Narrow (<60ms)'
                                         : '✓ Normal range'}
@@ -528,12 +528,12 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                                         Bazett formula · QT {qtIntervalMs}ms · HR {heartRate} bpm
                                         {qtcFlag === 'red-flag' && (
                                             <span className="ml-2 text-red-400 font-semibold">
-                                                — Consult physician immediately
+                                               , Consult physician immediately
                                             </span>
                                         )}
                                         {qtcFlag === 'prolonged' && (
                                             <span className="ml-2 text-orange-400 font-semibold">
-                                                — Increased monitoring required
+                                               , Increased monitoring required
                                             </span>
                                         )}
                                     </p>
@@ -605,7 +605,7 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                         </div>
                         {waveformFindings.size > 0 && (
                             <p className="ppn-meta text-amber-400/80 mt-2 font-semibold">
-                                ⚠️ {waveformFindings.size} finding{waveformFindings.size > 1 ? 's' : ''} flagged — document in safety event log if clinically significant
+                                ⚠️ {waveformFindings.size} finding{waveformFindings.size > 1 ? 's' : ''} flagged, document in safety event log if clinically significant
                             </p>
                         )}
                     </fieldset>
@@ -614,7 +614,7 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                 {/* ── Display-only notice ── */}
                 <div className="flex items-center gap-2 pt-1 border-t border-slate-800/50">
                     <span className="ppn-meta text-slate-600">
-                        Display only — DB persist after log_ table migration is defined
+                        Display only, DB persist after log_ table migration is defined
                         &nbsp;·&nbsp; Level 2 scope post-Friday pilot
                     </span>
                 </div>

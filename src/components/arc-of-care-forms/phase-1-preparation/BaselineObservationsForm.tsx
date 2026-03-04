@@ -18,7 +18,7 @@ interface BaselineObservationsFormProps {
     onSave?: (data: BaselineObservationsData) => void;
     initialData?: BaselineObservationsData;
     patientId?: string;
-    /** Called after Save & Continue — advances to the next Phase 1 step */
+    /** Called after Save & Continue, advances to the next Phase 1 step */
     onComplete?: () => void;
 }
 

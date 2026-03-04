@@ -17,9 +17,7 @@ const ForgotPassword: React.FC = () => {
 
         try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                // Construct the redirect URL for HashRouter: origin + pathname + hash fragment.
-                // e.g. https://ppnportal.net/#/reset-password
-                redirectTo: `${window.location.origin}${window.location.pathname}#/reset-password`,
+                redirectTo: `${window.location.origin}/#/reset-password`,
             });
 
             if (error) throw error;
@@ -110,9 +108,6 @@ const ForgotPassword: React.FC = () => {
                                         </>
                                     )}
                                 </button>
-                                <p className="text-center text-xs text-slate-600 font-medium pt-1">
-                                    If you don't receive an email within 2 minutes, check your spam folder or contact your PPN administrator.
-                                </p>
                             </form>
 
                             {/* Footer */}

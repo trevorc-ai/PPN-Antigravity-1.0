@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { Loader2, AlertCircle, Activity, ShieldCheck, Info } from 'lucide-react';
@@ -17,11 +17,7 @@ const Login: React.FC = () => {
     .replace(/-/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase()) || 'your page';
 
-  const [email, setEmail] = useState(() => {
-    // BUG-518-12: Pre-populate email from localStorage on return visits.
-    // Practitioner B2B context only — not patient PHI.
-    return localStorage.getItem('ppn_last_email') || '';
-  });
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,8 +40,6 @@ const Login: React.FC = () => {
       if (error) throw error;
 
       if (data.session) {
-        // BUG-518-12: Persist email for pre-population on next visit.
-        localStorage.setItem('ppn_last_email', email);
         navigate(from, { replace: true });
       }
 
@@ -62,7 +56,7 @@ const Login: React.FC = () => {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/#/reset-password`,
+        redirectTo: window.location.origin + '/',
       });
 
       if (error) throw error;
@@ -84,7 +78,7 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#05070a] flex items-center justify-center p-4 relative overflow-hidden">
 
-      {/* Background orbs — deeper, matching Pricing dark base */}
+      {/* Background orbs, deeper, matching Pricing dark base */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-indigo-900/15 rounded-full blur-[140px] opacity-50" />
         <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-indigo-900/10 rounded-full blur-[140px] opacity-35" />
@@ -112,7 +106,7 @@ const Login: React.FC = () => {
           <span className="text-sm font-bold uppercase tracking-widest">Back to Home</span>
         </button>
 
-        {/* Logo / Branding — Pricing style */}
+        {/* Logo / Branding, Pricing style */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center gap-4 mb-5">
             <div className="w-14 h-14 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-900/30">
@@ -127,7 +121,7 @@ const Login: React.FC = () => {
           </p>
         </div>
 
-        {/* Card — Pricing aesthetic: rounded-[2.5rem], glow ring */}
+        {/* Card, Pricing aesthetic: rounded-[2.5rem], glow ring */}
         <div className="relative">
           {/* Indigo glow ring */}
           <div className="absolute -inset-0.5 bg-indigo-500/10 blur-md opacity-60 rounded-[2.5rem]" />
@@ -175,16 +169,7 @@ const Login: React.FC = () => {
                   required
                   disabled={loading}
                 />
-                {/* Forgot password — below field, right-aligned */}
-                <div className="flex justify-end mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowResetModal(true)}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
+
               </div>
 
               {/* Submit */}
@@ -203,16 +188,25 @@ const Login: React.FC = () => {
                 )}
               </button>
 
+              {/* Forgot password, below Sign In, clean tab order */}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowResetModal(true)}
+                  className="text-xs text-slate-500 hover:text-indigo-400 font-bold transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
 
 
-              {/* Invitation-only notice — replaces dead Sign Up link (BUG-518-03) */}
+              {/* Sign Up */}
               <div className="text-center pt-2 border-t border-slate-800/60">
                 <p className="text-sm text-slate-500 font-medium">
-                  PPN Portal is{' '}
-                  <span className="text-slate-400 font-bold">invitation-only.</span>
-                </p>
-                <p className="text-xs text-slate-600 font-medium mt-1">
-                  Access is granted by your PPN administrator via email invitation.
+                  Don't have an account?{' '}
+                  <Link to="/academy" className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors">
+                    Sign Up
+                  </Link>
                 </p>
               </div>
             </form>
@@ -226,7 +220,7 @@ const Login: React.FC = () => {
         </div>
       </div >
 
-      {/* Password Reset Modal — upgraded to match new card style */}
+      {/* Password Reset Modal, upgraded to match new card style */}
       {
         showResetModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -240,13 +234,13 @@ const Login: React.FC = () => {
                     setError(null);
                     setResetSuccess(false);
                   }}
-                  className="absolute top-6 right-6 p-2 hover:bg-slate-800/60 rounded-xl text-slate-500 hover:text-slate-300 transition-all"
+                  className="absolute top-6 right-6 p-2 hover:bg-slate-800/60 rounded-xl text-slate-400 hover:text-slate-200 transition-all"
                 >
                   <span className="material-symbols-outlined">close</span>
                 </button>
 
                 <h2 className="text-3xl font-black tracking-tighter text-slate-300 mb-1">Reset Password</h2>
-                <p className="text-sm text-slate-500 font-medium mb-8 uppercase tracking-widest">
+                <p className="text-sm text-slate-400 font-medium mb-8 uppercase tracking-widest">
                   We'll send a secure link to your email.
                 </p>
 
@@ -278,7 +272,7 @@ const Login: React.FC = () => {
                         type="email"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
-                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-500 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                         placeholder="your@email.com"
                         required
                         disabled={resetLoading}

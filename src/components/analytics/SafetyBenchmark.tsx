@@ -22,7 +22,7 @@ interface SafetyBenchmarkProps {
     status?: 'excellent' | 'good' | 'average' | 'needs_improvement';
 }
 
-const ALERT_THRESHOLD = 20; // events per 100 sessions — hard safety limit
+const ALERT_THRESHOLD = 20; // events per 100 sessions, hard safety limit
 
 // CustomTooltip imported from shared
 
@@ -96,7 +96,7 @@ export default function SafetyBenchmark({
             {/* ── BENCHMARK CHART ────────────────────────────────────────── */}
             <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5" role="img" aria-label="Bar chart comparing your adverse event rate with the network average">
                 <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-4">
-                    Benchmark Comparison — events per 100 sessions
+                    Benchmark Comparison, events per 100 sessions
                 </p>
                 <div className="h-36">
                     {!chartReady ? (

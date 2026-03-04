@@ -103,7 +103,7 @@ export const BaselineRiskFlags: React.FC<BaselineRiskFlagsProps> = ({
                                             <div><span className="font-bold text-[#A8B5D1]">GAD-7:</span> Spitzer et al. (2006). Arch Intern Med.</div>
                                             <div><span className="font-bold text-[#A8B5D1]">PCL-5:</span> Weathers et al. (2013). VA PTSD Research.</div>
                                             <div><span className="font-bold text-[#A8B5D1]">ACE:</span> Felitti et al. (1998). Am J Prev Med.</div>
-                                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only — not a substitute for practitioner judgment.</div>
+                                            <div className="pt-2 border-t border-slate-700 text-slate-400 text-xs">Clinical decision support only, not a substitute for practitioner judgment.</div>
                                         </div>
                                     }
                                 >

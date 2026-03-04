@@ -162,6 +162,94 @@ export async function createClinicalSession(
     }
 }
 
+// ─── Route normalisation map (LEAD WO-534) ───────────────────────────────────
+// Maps DosingProtocolForm display strings → ref_routes.route_name values.
+// Unmatched strings (Insufflated, Vaporized) resolve to null — do not throw.
+const ROUTE_NORMALISE: Record<string, string | null> = {
+    'Oral': 'Oral',
+    'Sublingual': 'Sublingual',
+    'Intramuscular (IM)': 'Intramuscular',
+    'Intravenous (IV)': 'Intravenous',
+    'Intranasal': 'Intranasal',
+    'Insufflated': null,   // No matching ref_routes row — store null
+    'Vaporized': null,     // No matching ref_routes row — store null
+};
+
+/**
+ * WO-534: Parameter type for updateDosingProtocol — mirrors DosingProtocolData
+ * from DosingProtocolForm without importing from the component layer.
+ */
+export interface DosingProtocolUpdateData {
+    substance_id?: string;
+    dosage_amount?: number;
+    dosage_unit?: string;
+    route_of_administration?: string;
+}
+
+/**
+ * WO-534: Updates the existing stub log_clinical_records row with substance,
+ * dosage, and route — data supplied by the Dosing Protocol form (Phase 2).
+ *
+ * Called by WellnessFormRouter on DosingProtocolForm save. Always use UPDATE
+ * (not upsert) because createClinicalSession() always creates the stub first.
+ *
+ * @param sessionId  UUID of the existing log_clinical_records row
+ * @param data       DosingProtocolData from the form
+ */
+export async function updateDosingProtocol(
+    sessionId: string,
+    data: {
+        substance_id?: string;
+        dosage_amount?: number;
+        dosage_unit?: string;
+        route_of_administration?: string;
+    },
+): Promise<{ success: boolean; error?: unknown }> {
+    try {
+        // 1. Resolve substance_id: form delivers a string (HTML select), DB needs BIGINT.
+        const substanceId = data.substance_id
+            ? parseInt(data.substance_id, 10) || null
+            : null;
+
+        // 2. Resolve route_id via normalisation map → FK lookup.
+        let routeId: number | null = null;
+        const normalisedRoute = data.route_of_administration
+            ? (ROUTE_NORMALISE[data.route_of_administration] ?? null)
+            : null;
+
+        if (normalisedRoute) {
+            const { data: routeRow } = await supabase
+                .from('ref_routes')
+                .select('route_id')
+                .eq('route_name', normalisedRoute)
+                .single();
+            routeId = routeRow?.route_id ?? null;
+        }
+
+        // 3. UPDATE only the dosing fields — never overwrite unrelated session columns.
+        const { error } = await supabase
+            .from('log_clinical_records')
+            .update({
+                substance_id: substanceId,
+                dosage: data.dosage_amount ?? null,
+                route_id: routeId,
+                // session_type_id remains PREPARATION (set by createClinicalSession)
+                // until the practitioner advances phase — no change here.
+            })
+            .eq('id', sessionId);
+
+        if (error) throw error;
+
+        console.info(
+            `[clinicalLog] updateDosingProtocol: session ${sessionId} → substance_id=${substanceId}, dosage=${data.dosage_amount ?? null}, route_id=${routeId}`,
+        );
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] updateDosingProtocol:', error);
+        return { success: false, error };
+    }
+}
+
 // ============================================================================
 // PHASE 1: PREPARATION
 // ============================================================================
@@ -411,7 +499,7 @@ export async function createTimelineEvent(data: TimelineEventData) {
                 event_type: resolvedEventType,               // NOT NULL CHECK ✅ — migration 066 DEFAULT 'other'
                 event_type_id: data.event_type_id ?? null,  // INTEGER FK → ref_flow_event_types (optional)
                 performed_by: data.performed_by ?? null,     // UUID FK → auth.users
-                metadata: data.metadata ?? null,             // BUG-529-02: JSONB structured shorthand — NOT PHI
+                // metadata: intentionally omitted — no free-text JSON blobs in log tables
             }])
             .select()
             .single();

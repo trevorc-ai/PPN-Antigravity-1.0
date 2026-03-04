@@ -17,9 +17,9 @@ const FILTERS = [
   { label: 'Botanical', value: 'botanical', activeClasses: 'bg-amber-700   border-amber-600  text-[#A8B5D1]', countClasses: 'bg-amber-600  text-[#A8B5D1]' },
 ];
 
-// ─── Risk tier chip config — WCAG AA contrast: text-color-200 on bg-color-900 ──
+// ─── Risk tier chip config, WCAG AA contrast: text-color-200 on bg-color-900 ──
 const RISK_CONFIG: Record<RiskTier, { icon: string; classes: string; label: string }> = {
-  'CARDIAC RISK': { icon: '⚠', classes: 'bg-red-900/70    text-red-200    border-red-700/60', label: 'Cardiac Risk — EKG required' },
+  'CARDIAC RISK': { icon: '⚠', classes: 'bg-red-900/70    text-red-200    border-red-700/60', label: 'Cardiac Risk, EKG required' },
   'MAOI INTERACTION RISK': { icon: '⚡', classes: 'bg-amber-900/60  text-amber-200  border-amber-700/50', label: 'MAOI Interaction Risk' },
   'FDA APPROVED · REMS': { icon: '✓', classes: 'bg-emerald-900/60 text-emerald-200 border-emerald-700/50', label: 'FDA Approved · REMS Program' },
   'DISSOCIATIVE PROTOCOL': { icon: '◎', classes: 'bg-blue-900/60   text-blue-200   border-blue-700/50', label: 'Dissociative Protocol' },
@@ -79,11 +79,11 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
   return (
     <article className="group bg-[#0a0d14] border border-slate-800/50 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:border-slate-700/70 hover:shadow-xl shadow-md h-full">
 
-      {/* Molecule image — pure black, 3D image floats */}
+      {/* Molecule image, pure black, 3D image floats */}
       <div className="h-60 bg-black relative flex items-center justify-center overflow-hidden shrink-0">
         <img
           src={sub.imageUrl}
-          alt={`${sub.name} molecular structure — 3D ball-and-stick model`}
+          alt={`${sub.name} molecular structure, 3D ball-and-stick model`}
           loading="eager"
           className="w-52 h-52 object-contain transition-transform duration-500 group-hover:-translate-y-2"
         />
@@ -120,7 +120,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
           </span>
         </div>
 
-        {/* Risk tier chip — icon + label, high contrast */}
+        {/* Risk tier chip, icon + label, high contrast */}
         <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium ${riskConfig.classes}`}>
           <span aria-hidden="true" className="text-lg leading-none">{riskConfig.icon}</span>
           <span>{riskConfig.label}</span>
@@ -146,7 +146,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
         <InteractionLink interactions={interactions} substanceName={sub.name} />
       </div>
 
-      {/* CTA button — blue */}
+      {/* CTA button, blue */}
       <div className="px-6 pb-6 mt-auto">
         <button
           onClick={() => navigate(`/monograph/${sub.id}`)}
@@ -265,7 +265,7 @@ const SubstanceCatalog: React.FC = () => {
             </p>
           )}
 
-          {/* Grid — max 2 columns */}
+          {/* Grid, max 2 columns */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
             {filteredSubstances.length > 0
               ? filteredSubstances.map(sub => (

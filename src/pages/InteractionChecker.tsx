@@ -1,10 +1,11 @@
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../supabaseClient';
 import { useDataCache } from '../hooks/useDataCache';
+import { ComboSelect, ComboOption } from '../components/ui/ComboSelect';
 
 // WO-096: Types for live ref table data
 interface RefSubstance {
@@ -18,141 +19,6 @@ interface RefMedication {
   medication_category: string | null;
 }
 
-// ─── Custom accessible medication dropdown ───────────────────────────────────
-// Replaces native <select>/<optgroup> whose category labels are uncontrollable
-// OS grey (WCAG fail). This renders category headers in full-contrast white.
-interface MedDropdownProps {
-  medications: RefMedication[];
-  value: string;
-  onChange: (val: string) => void;
-  disabled?: boolean;
-  placeholder?: string;
-}
-
-const MedDropdown: React.FC<MedDropdownProps> = ({ medications, value, onChange, disabled, placeholder }) => {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const ref = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
-
-  // Close on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-        setSearch('');
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  // Close on Escape — stopPropagation so it doesn't bubble to SlideOutPanel
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && open) {
-        e.stopPropagation();
-        setOpen(false);
-        setSearch('');
-      }
-    };
-    document.addEventListener('keydown', handler, true);
-    return () => document.removeEventListener('keydown', handler, true);
-  }, [open]);
-
-  // Auto-focus search input when dropdown opens
-  useEffect(() => {
-    if (open && searchRef.current) {
-      setTimeout(() => searchRef.current?.focus(), 50);
-    }
-  }, [open]);
-
-  const filtered = search.trim()
-    ? medications.filter(m => m.medication_name.toLowerCase().includes(search.toLowerCase()))
-    : medications;
-
-  const displayValue = value || placeholder || 'Select Interactor...';
-
-  return (
-    <div ref={ref} className="relative">
-      {/* Trigger button */}
-      <button
-        type="button"
-        id="medication-select-trigger"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        disabled={disabled}
-        onClick={() => { setOpen(o => !o); if (open) setSearch(''); }}
-        className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait text-left"
-        style={{ color: value ? '#8B9DC3' : '#4B5E7A' }}
-      >
-        <span className="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-xl text-slate-300 pointer-events-none">
-          dataset
-        </span>
-        <span className="truncate block">{displayValue}</span>
-        <span className="absolute right-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-600 pointer-events-none">
-          {open ? 'expand_less' : 'expand_more'}
-        </span>
-      </button>
-
-      {/* Dropdown panel */}
-      {open && (
-        <div className="absolute z-50 left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
-          {/* Search input */}
-          <div className="p-3 border-b border-slate-700/60">
-            <input
-              ref={searchRef}
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Type to search medications..."
-              className="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary"
-              aria-label="Search medications"
-            />
-          </div>
-          <ul
-            role="listbox"
-            aria-label="Select medication"
-            className="max-h-72 overflow-y-auto py-2"
-          >
-            {/* Clear option */}
-            {!search && (
-              <li
-                role="option"
-                aria-selected={value === ''}
-                onClick={() => { onChange(''); setOpen(false); setSearch(''); }}
-                className="px-4 py-2.5 text-sm text-slate-400 hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-700/50"
-              >
-                {placeholder || 'Select Interactor...'}
-              </li>
-            )}
-
-            {filtered.length === 0 && (
-              <li className="px-5 py-4 text-sm text-slate-500 text-center">No medications match "{search}"</li>
-            )}
-
-            {filtered.map(med => (
-              <li
-                key={med.medication_id}
-                role="option"
-                aria-selected={value === med.medication_name}
-                onClick={() => { onChange(med.medication_name); setOpen(false); setSearch(''); }}
-                className={`px-5 py-2.5 text-sm cursor-pointer transition-colors ${value === med.medication_name
-                  ? 'bg-blue-600 text-white font-semibold'
-                  : 'text-[#A8B5D1] hover:bg-slate-800'
-                  }`}
-              >
-                {med.medication_name}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-};
-// ─── End MedDropdown ─────────────────────────────────────────────────────────
-
 const InteractionChecker: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -164,6 +30,23 @@ const InteractionChecker: React.FC = () => {
   const [dbRule, setDbRule] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
+
+  // ── WO-526: Flash bug fix, clear stale result immediately on selection change
+  // Without this, the previous dbRule shows for ~300ms (debounce delay) before
+  // the new query fires, causing a flash of wrong results.
+  const handlePsychedelicChange = (val: string) => {
+    setSelectedPsychedelic(val);
+    setDbRule(null);
+    setErrorState(null);
+    if (val && selectedMedication) setIsLoading(true);
+  };
+
+  const handleMedicationChange = (val: string) => {
+    setSelectedMedication(val);
+    setDbRule(null);
+    setErrorState(null);
+    if (selectedPsychedelic && val) setIsLoading(true);
+  };
 
   const [substances, setSubstances] = useState<RefSubstance[]>([]);
   const [medications, setMedications] = useState<RefMedication[]>([]);
@@ -212,6 +95,17 @@ const InteractionChecker: React.FC = () => {
     }
   }, [refData]);
 
+  // ── Derived ComboOption arrays ─────────────────────────────────────────────
+  const substanceOptions: ComboOption[] = useMemo(
+    () => substances.map((s) => ({ value: s.substance_name, label: s.substance_name })),
+    [substances]
+  );
+
+  const medicationOptions: ComboOption[] = useMemo(
+    () => medications.map((m) => ({ value: m.medication_name, label: m.medication_name })),
+    [medications]
+  );
+
   // Fetch Interaction Logic
   useEffect(() => {
     const fetchInteraction = async () => {
@@ -234,8 +128,7 @@ const InteractionChecker: React.FC = () => {
           return;
         }
 
-        // Step 2: Query ref_clinical_interactions (correct table — verified 2026-02-19)
-        // Note: ref_knowledge_graph exists but has wrong schema (legacy alert rules system).
+        // Step 2: Query ref_clinical_interactions (correct table, verified 2026-02-19)
         const { data, error } = await supabase
           .from('ref_clinical_interactions')
           .select('*')
@@ -246,7 +139,6 @@ const InteractionChecker: React.FC = () => {
         if (error) throw error;
 
         if (data) {
-          // Map ref_knowledge_graph columns to UI risk model
           const risk = data.risk_level ?? 1;
           const severityLabel = data.severity_grade ?? 'Low';
 
@@ -258,21 +150,20 @@ const InteractionChecker: React.FC = () => {
             severity: severityLabel,
             description: data.clinical_description,
             mechanism: data.mechanism,
-            clinical_insight: null, // not in ref_clinical_interactions schema
+            clinical_insight: null,
             source: data.evidence_source ?? 'National Library of Medicine / PubMed',
             sourceUrl: data.source_url,
             isKnown: true
           });
 
         } else {
-          // Explicit "No Record Found" -> Nominal Logic
           setDbRule(null);
         }
 
       } catch (err: any) {
         console.error('Interaction Query Error:', err);
         setErrorState(err.message || "Database connection failed");
-        setDbRule(null); // Ensure we don't show stale data
+        setDbRule(null);
       } finally {
         setIsLoading(false);
       }
@@ -286,7 +177,6 @@ const InteractionChecker: React.FC = () => {
     if (!selectedPsychedelic || !selectedMedication) return null;
     if (isLoading) return null;
 
-    // SAFETY CATCH: If there was a DB error, return explicit ERROR object
     if (errorState) {
       return {
         id: 'ERR-SYSTEM',
@@ -296,14 +186,13 @@ const InteractionChecker: React.FC = () => {
         severity: 'SYSTEM ERROR',
         description: `CRITICAL FAILURE: Unable to verify interaction safety due to database error: ${errorState}.`,
         mechanism: 'System integrity check failed.',
-        isKnown: true, // Treat as known failure
+        isKnown: true,
         isError: true
       };
     }
 
     if (dbRule) return dbRule;
 
-    // Default "Nominal" ONLY if no error
     return {
       id: 'RULE-NOMINAL',
       substance: selectedPsychedelic,
@@ -327,7 +216,6 @@ const InteractionChecker: React.FC = () => {
   const handlePrint = () => window.print();
   const handleRequestAgent = () => addToast({ title: 'Request Logged', message: 'The clinical data team has been notified.', type: 'success' });
 
-  // Styles logic...
   const getSeverityStyles = (risk: number, isError?: boolean) => {
     if (isError) return {
       bg: 'bg-red-900/20',
@@ -367,6 +255,24 @@ const InteractionChecker: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] overflow-hidden text-slate-300">
+      {/* ── Print Styles: clean white PDF output ── */}
+      <style>{`
+        @media print {
+          body { background: #ffffff !important; color: #0f172a !important; }
+          .bg-gradient-to-br, [class*="bg-"] { background: #ffffff !important; box-shadow: none !important; }
+          [class*="border-"] { border-color: #cbd5e1 !important; }
+          [class*="text-slate"], [class*="text-primary"], [style*="color"] { color: #0f172a !important; }
+          [class*="rounded-"] { border-radius: 0.5rem !important; }
+          button, nav, .sticky, [class*="blur"] { display: none !important; }
+          /* Keep Print / Save button visible in print preview only */ 
+          [data-print-btn] { display: none !important; }
+          [class*="shadow"], [class*="glow"] { box-shadow: none !important; }
+          [class*="opacity-5"], [class*="opacity-10"] { display: none !important; }
+          h1, h2, h3 { color: #0f172a !important; page-break-after: avoid; }
+          .print\:hidden { display: none !important; }
+          @page { margin: 1.5cm 2cm; size: letter portrait; }
+        }
+      `}</style>
       {/* Background Texture & Glows */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)] pointer-events-none z-0" />
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none opacity-50 z-0" />
@@ -404,58 +310,54 @@ const InteractionChecker: React.FC = () => {
           </div>
         </div>
 
+        {/* ── Agent Selector Grid (WO-524: Both replaced with ComboSelect) ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Input: Psychedelic */}
+
+          {/* Input: Psychedelic (Primary Agent) */}
           <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedPsychedelic ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
-            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Primary Agent (Psychedelic)</label>
-            <div className="relative group">
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300 group-focus-within:text-primary transition-colors">
-                <span className="material-symbols-outlined text-xl">biotech</span>
-              </div>
-              <select
-                value={selectedPsychedelic}
-                onChange={(e) => setSelectedPsychedelic(e.target.value)}
-                disabled={refLoading}
-                className="w-full h-16 bg-black border border-slate-800 rounded-2xl pl-14 pr-12 text-base font-bold focus:ring-1 focus:ring-primary focus:outline-none appearance-none cursor-pointer hover:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-wait"
-                style={{ color: '#8B9DC3', WebkitAppearance: 'none' }}
-              >
-                <option value="">{refLoading ? 'Loading...' : 'Select Controlled Substance...'}</option>
-                {substances.map(s => (
-                  <option key={s.substance_id} value={s.substance_name}>
-                    {s.substance_name.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-600">
-                <span className="material-symbols-outlined">expand_more</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 px-2">
+            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1" htmlFor="combo-psychedelic">
+              Primary Agent (Psychedelic)
+            </label>
+            <ComboSelect
+              options={substanceOptions}
+              value={selectedPsychedelic}
+              onChange={handlePsychedelicChange}
+              disabled={refLoading}
+              placeholder={refLoading ? 'Loading...' : 'Select Controlled Substance...'}
+              leftIcon="biotech"
+              id="primary-agent-select"
+            /><div className="flex items-center gap-2 px-2">
               <span className="material-symbols-outlined text-sm text-slate-400">lock</span>
-              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Validated List Only</span>
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Validated list only</span>
             </div>
           </section>
 
-          {/* Input: Medication */}
+          {/* Input: Medication (Secondary Agent) */}
           <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedMedication ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
-            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1">Secondary Agent (Medication/Condition)</label>
-            <MedDropdown
-              medications={medications}
+            <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1" htmlFor="combo-medication">
+              Secondary Agent (Medication/Condition)
+            </label>
+            <ComboSelect
+              options={medicationOptions}
               value={selectedMedication}
-              onChange={setSelectedMedication}
+              onChange={handleMedicationChange}
               disabled={refLoading}
               placeholder={refLoading ? 'Loading medications...' : medications.length === 0 ? 'No medications in database' : 'Select Interactor...'}
+              leftIcon="dataset"
+              id="secondary-agent-select"
             />
 
             {/* Missing Agent Workflow */}
             <div className="px-2">
-              <button
-                onClick={handleRequestAgent}
-                className="text-sm font-bold text-primary hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center gap-2 group"
+              {/* a11y: blue-300 (#93c5fd) achieves ~4.8:1 on dark card bg, WCAG AA pass */}
+              <a
+                href="mailto:support@ppnportal.net?subject=Database%20Update%20Request&body=Please%20add%20the%20following%20agent%20to%20the%20institutional%20database%3A%0A%0AAgent%20Name%3A%20%0AAgent%20Class%3A%20%0AReference%20Source%3A%20"
+                className="text-sm font-bold text-[#93c5fd] hover:text-[#bfdbfe] uppercase tracking-widest transition-colors flex items-center gap-2 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#93c5fd]"
+                aria-label="Request institutional database update via email"
               >
                 <span>Agent not listed? Request institutional database update.</span>
-                <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">arrow_forward</span>
-              </button>
+                <span className="material-symbols-outlined text-xs opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
+              </a>
             </div>
           </section>
         </div>
@@ -540,7 +442,7 @@ const InteractionChecker: React.FC = () => {
                         <p className="text-sm font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
                         <p className="text-base font-mono font-black" style={{ color: '#8B9DC3' }}>{analysisResult.id} // SECURE_NODE_0x7</p>
                       </div>
-                      {/* Citation — always shown, links to source_url or PubMed search */}
+                      {/* Citation */}
                       <div className="flex items-center gap-2">
                         <a
                           href={analysisResult.sourceUrl || `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(analysisResult.source)}`}
@@ -552,7 +454,6 @@ const InteractionChecker: React.FC = () => {
                           <span className="material-symbols-outlined text-xs">open_in_new</span>
                         </a>
                       </div>
-
                     </div>
                   </div>
                 </div>

@@ -184,7 +184,7 @@ const ClinicianProfile: React.FC = () => {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate('/settings')} // /profile/edit not implemented — routes to account settings
+              onClick={() => navigate('/settings')} // /profile/edit not implemented, routes to account settings
               className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 border border-primary/30 rounded-2xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
             >
               <span className="material-symbols-outlined text-lg">edit</span>
@@ -285,7 +285,7 @@ const ClinicianProfile: React.FC = () => {
 
               <div className="space-y-2">
                 <h2 className="text-3xl font-black text-slate-300 tracking-tight leading-none">{clinician.name}</h2>
-                <p className="text-sm font-bold text-slate-500 italic">{clinician.education} — {clinician.role}</p>
+                <p className="text-sm font-bold text-slate-500 italic">{clinician.education}, {clinician.role}</p>
                 <div className="pt-2">
                   <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border transition-colors ${clinician.status === 'Available' ? 'bg-clinical-green/10 text-clinical-green border-clinical-green/20' :
                     clinician.status === 'In Session' ? 'bg-accent-amber/10 text-accent-amber border-accent-amber/20' :
