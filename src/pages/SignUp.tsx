@@ -6,9 +6,8 @@ import { useToast } from '../contexts/ToastContext';
 
 interface SiteOption {
     site_id: string;
-    name: string;
-    city?: string;
-    state_province?: string;
+    site_name: string;
+    region?: string;
 }
 
 const SignUp = () => {
@@ -16,6 +15,7 @@ const SignUp = () => {
     const { addToast } = useToast();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [confirmEmail, setConfirmEmail] = useState<string | null>(null); // Fix 5: email confirm screen
 
     // Wizard State
     const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -63,10 +63,9 @@ const SignUp = () => {
         const fetchSites = async () => {
             const { data, error } = await supabase
                 .from('log_sites')
-                .select('site_id, name, city, state_province')
-                .eq('is_active', true)
-                .eq('is_discoverable', true) // Only fetch public clinics
-                .order('name');
+                .select('site_id, site_name, region')
+                .eq('is_active', true) // Fix 1: removed non-existent is_discoverable column
+                .order('site_name');
 
             if (!error && data) {
                 setSitesList(data as SiteOption[]);
@@ -135,13 +134,13 @@ const SignUp = () => {
             if (formData.affiliation_route === 'solo') {
                 // Stealth/Solo Track: Create a hidden site
                 const { data: newSite, error: siteErr } = await supabase.from('log_sites').insert([{
-                    name: `${formData.display_name}'s Workspace`,
-                    is_active: true,
-                    is_discoverable: false
+                    site_name: `${formData.display_name || formData.first_name}'s Workspace`,
+                    is_active: true
+                    // Fix 2: removed non-existent is_discoverable column
                 }]).select('site_id').single();
                 if (siteErr) throw new Error("Could not initialize secure workspace.");
                 finalSiteId = newSite.site_id;
-                expectedRole = 'solopreneur';
+                expectedRole = 'clinician'; // Fix 4: solopreneur is not a valid role constraint value
                 finalIsActive = true; // Solo users approve themselves
             }
             else if (formData.affiliation_route === 'new') {
@@ -157,13 +156,10 @@ const SignUp = () => {
                 }
 
                 const { data: newSite, error: siteErr } = await supabase.from('log_sites').insert([{
-                    name: formData.new_site_name.trim(),
-                    address_line1: formData.address_line1.trim(),
-                    city: formData.city.trim(),
-                    state_province: formData.state_province.trim(),
-                    postal_code: formData.postal_code.trim(),
-                    is_active: true,
-                    is_discoverable: true
+                    site_name: formData.new_site_name.trim(),
+                    is_active: true
+                    // Fix 3: removed non-existent columns (is_discoverable, address_line1, city, state_province, postal_code)
+                    // These columns don't exist in log_sites schema. Address data not currently captured here.
                 }]).select('site_id').single();
                 if (siteErr) throw new Error("Failed to register new clinic: " + siteErr.message);
                 finalSiteId = newSite.site_id;
@@ -192,14 +188,11 @@ const SignUp = () => {
 
             const userId = authData.user.id;
 
-            // 3. Upsert Progressive Profile
+            // 3. Upsert Progressive Profile (only columns that exist in live schema)
             await supabase.from('log_user_profiles').upsert({
                 user_id: userId,
-                first_name: formData.first_name.trim(),
-                last_name: formData.last_name.trim(),
-                display_name: formData.display_name.trim() || `${formData.first_name} ${formData.last_name}`,
-                is_profile_public: formData.is_profile_public,
-                npi_number: formData.npi_number.trim() || null
+                user_first_name: formData.first_name.trim(),
+                user_last_name: formData.last_name.trim()
             });
 
             // 4. Bind Affiliation
@@ -220,8 +213,8 @@ const SignUp = () => {
                     navigate('/');
                 }
             } else {
-                addToast({ title: 'Authentication Setup', message: 'Please verify your email to unlock your workspace.', type: 'success' });
-                navigate('/login');
+                // Fix 5: Show in-page confirmation screen instead of bouncing to /login blindly
+                setConfirmEmail(formData.email);
             }
 
         } catch (err: any) {
@@ -230,6 +223,33 @@ const SignUp = () => {
             setLoading(false);
         }
     };
+
+    // --- Email Confirmation Screen (Fix 5) ---
+    if (confirmEmail) {
+        return (
+            <div className="min-h-screen bg-[#0B0E14] flex flex-col items-center justify-center p-4">
+                <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/10 via-[#0B0E14] to-[#0B0E14] pointer-events-none" />
+                <div className="w-full max-w-md bg-[#151921] border border-slate-800 rounded-2xl shadow-2xl p-10 text-center relative z-10">
+                    <div className="w-14 h-14 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(79,70,229,0.2)]">
+                        <Mail className="w-7 h-7 text-indigo-400" />
+                    </div>
+                    <h2 className="text-xl font-black text-slate-200 tracking-tight mb-2">Check Your Email</h2>
+                    <p className="text-sm text-slate-400 font-medium mb-4 leading-relaxed">
+                        We sent a confirmation link to:
+                    </p>
+                    <p className="text-sm font-black text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-lg px-4 py-2 mb-6 break-all">{confirmEmail}</p>
+                    <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                        Click the link in that email to activate your secure workspace. Check your spam folder if you don't see it within a few minutes.
+                    </p>
+                    <div className="mt-8 pt-6 border-t border-slate-800">
+                        <Link to="/login" className="text-xs text-slate-500 hover:text-indigo-400 font-black uppercase tracking-widest transition-colors">
+                            Already confirmed? Sign In →
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#0B0E14] flex flex-col items-center justify-center p-4 relative overflow-y-auto py-12">
@@ -365,6 +385,7 @@ const SignUp = () => {
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className={`p-2 rounded-lg ${formData.affiliation_route === 'invite' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`}><Mail className="w-5 h-5" /></div>
                                     <h3 className="text-sm font-bold text-slate-200">I have an Invite</h3>
+                                    <span className="ml-auto text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">Soon</span>
                                 </div>
                                 <p className="text-xs text-slate-500 font-medium">Use an encrypted token provided by your site administrator.</p>
                             </label>
@@ -389,7 +410,7 @@ const SignUp = () => {
                                         <option value="" disabled>Search Public Directory...</option>
                                         {sitesList.map(s => (
                                             <option key={s.site_id} value={s.site_id}>
-                                                {s.name} {s.city && s.state_province ? `(${s.city}, ${s.state_province})` : ''}
+                                                {s.site_name} {s.region ? `(${s.region})` : ''}
                                             </option>
                                         ))}
                                     </select>
