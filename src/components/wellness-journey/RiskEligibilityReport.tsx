@@ -20,7 +20,7 @@ interface RiskEligibilityReportProps {
 }
 
 // ============================================================================
-// BADGE — text-labeled, never color-only (INSPECTOR requirement)
+// BADGE, text-labeled, never color-only (INSPECTOR requirement)
 // ============================================================================
 
 const SeverityBadge: React.FC<{ severity: 'ABSOLUTE' | 'RELATIVE'; category: string }> = ({ severity, category }) => {
@@ -120,14 +120,14 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
         PROCEED_WITH_CAUTION: {
             icon: <AlertTriangle className="w-6 h-6 text-amber-400 flex-shrink-0" />,
             label: '[PROCEED WITH CAUTION]',
-            sublabel: `${result.relativeFlags.length} relative contraindication${result.relativeFlags.length !== 1 ? 's' : ''} — provider documentation required`,
+            sublabel: `${result.relativeFlags.length} relative contraindication${result.relativeFlags.length !== 1 ? 's' : ''}, provider documentation required`,
             bannerClass: 'bg-amber-950/30 border-amber-500/30',
             textClass: 'text-amber-300',
             sublabelClass: 'text-amber-400/80',
         },
         CLEAR: {
             icon: <ShieldCheck className="w-6 h-6 text-emerald-400 flex-shrink-0" />,
-            label: '[CLEAR — ELIGIBLE TO PROCEED]',
+            label: '[CLEAR, ELIGIBLE TO PROCEED]',
             sublabel: 'No contraindications detected. Phase 2 dosing session may proceed.',
             bannerClass: 'bg-emerald-950/30 border-emerald-500/30',
             textClass: 'text-emerald-300',
@@ -216,7 +216,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                 </div>
             )}
 
-            {/* CLEAR state — no flags */}
+            {/* CLEAR state, no flags */}
             {isClear && (
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/20 flex-shrink-0">
                     <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
@@ -237,8 +237,8 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                         Relative contraindications have been identified. To proceed to Phase 2, you must document your clinical justification below and acknowledge the flagged risks.
                     </p>
 
-                    {/* UI-ONLY: not persisted — value stays in local state to gate the proceed button.
-                        Parent receives justification string via onOverrideConfirmed prop — never directly written to Supabase from here. */}
+                    {/* UI-ONLY: not persisted, value stays in local state to gate the proceed button.
+                        Parent receives justification string via onOverrideConfirmed prop, never directly written to Supabase from here. */}
                     <textarea
                         id="contraindication-justification"
                         value={justification}
@@ -305,7 +305,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                         disabled={!canProceed}
                         title={
                             isBlocked
-                                ? 'Phase 2 is locked — absolute contraindications must be resolved'
+                                ? 'Phase 2 is locked, absolute contraindications must be resolved'
                                 : isCaution && !canProceed
                                     ? 'Complete and save the provider override documentation to unlock Phase 2'
                                     : 'Proceed to Phase 2 Dosing Session'

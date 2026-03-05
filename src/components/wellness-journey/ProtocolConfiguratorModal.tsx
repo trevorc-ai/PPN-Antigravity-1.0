@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useProtocol, type ProtocolArchetype } from '../../contexts/ProtocolContext';
-import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal, HelpCircle, User } from 'lucide-react';
+import { Activity, Shield, Sparkles, X, Settings2, Info, CheckCircle, SlidersHorizontal, HelpCircle, User, ArrowLeft } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface ProtocolConfiguratorModalProps {
     onClose: () => void;
+    /** Called when the user clicks Back on Step 1, parent reopens PatientSelectModal */
+    onBack?: () => void;
     /** Called with intake data when the practitioner clicks Save */
     onIntakeComplete?: (intake: PatientIntakeData) => void;
 }
@@ -14,6 +16,7 @@ export interface PatientIntakeData {
     age: string;
     weight: string;
     gender: string;
+    smoking: string;
 }
 
 const CONDITIONS = [
@@ -28,6 +31,7 @@ const CONDITIONS = [
 ];
 
 const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+const SMOKING_STATUSES = ['Non-smoker', 'Ex-smoker', 'Current smoker', 'Prefer not to say'];
 
 const ARCHETYPES = [
     {
@@ -114,7 +118,7 @@ const CUSTOM_DOMAINS = [
     }
 ];
 
-export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps> = ({ onClose, onIntakeComplete }) => {
+export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps> = ({ onClose, onBack, onIntakeComplete }) => {
     const { config, setConfig } = useProtocol();
     const [selectedId, setSelectedId] = useState<ProtocolArchetype>(config.protocolType);
     const [saveAsDefault, setSaveAsDefault] = useState(true);
@@ -127,8 +131,44 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     const [age, setAge] = useState('');
     const [weight, setWeight] = useState('');
     const [gender, setGender] = useState('');
+    const [smoking, setSmoking] = useState('');
 
     const [step, setStep] = useState<1 | 2>(1);
+
+    // ── Completion state (used in step 2), hoisted to top level for hooks compliance ──
+    const stepDone = {
+        condition: !!condition,
+        age: !!age && !isNaN(parseFloat(age)) && parseFloat(age) >= 18,
+        weight: !!weight && !isNaN(parseFloat(weight)) && parseFloat(weight) > 0,
+        gender: !!gender,
+        smoking: !!smoking,
+    };
+    const allComplete = stepDone.condition && stepDone.age && stepDone.weight && stepDone.gender && stepDone.smoking;
+
+    // Ref for the Start Session button, receives focus when allComplete flips true
+    const startBtnRef = useRef<HTMLButtonElement>(null);
+    // Refs for the numeric inputs, used for programmatic focus progression
+    const ageInputRef = useRef<HTMLInputElement>(null);
+    const weightInputRef = useRef<HTMLInputElement>(null);
+
+    // Auto-focus the Start Session button the moment all 5 steps are complete —
+    // but ONLY if the weight input isn't currently being typed into.
+    // When weight has focus, the onBlur handler below takes over.
+    useEffect(() => {
+        if (step === 2 && allComplete && startBtnRef.current) {
+            if (document.activeElement !== weightInputRef.current) {
+                startBtnRef.current.focus();
+            }
+        }
+    }, [step, allComplete]);
+
+    // Auto-focus the Age input once condition + gender + smoking are all selected
+    // and the user hasn't entered an age yet. This saves a click before the numeric fields.
+    useEffect(() => {
+        if (step === 2 && condition && gender && smoking && !age) {
+            ageInputRef.current?.focus();
+        }
+    }, [step, condition, gender, smoking, age]);
 
     const toggleFeature = (id: string) => {
         setCustomFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
@@ -145,18 +185,25 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
         setStep(2);
     };
 
+    const handleBack = () => setStep(1);
+
     const handleSave = () => {
+        // Persist intake data to localStorage so WellnessJourney can restore it on remount.
+        try {
+            localStorage.setItem('ppn_patient_intake', JSON.stringify({ condition, age, weight, gender, smoking }));
+        } catch (_) { }
         // Surface intake data to parent (WellnessJourney will store in journey.demographics)
         if (onIntakeComplete) {
-            onIntakeComplete({ condition, age, weight, gender });
+            onIntakeComplete({ condition, age, weight, gender, smoking });
         }
         onClose();
     };
 
     if (step === 2) {
+
         return (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
-                <div className="w-full max-w-2xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="w-full max-w-2xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ maxHeight: '100dvh' }}>
                     <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
@@ -164,103 +211,67 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             </div>
                             <div>
                                 <h2 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">New Patient Setup</h2>
-                                <p className="text-base text-slate-400 mt-1">Tell us about this patient, then choose your workflow.</p>
+                                <p className="text-base text-slate-400 mt-1">Complete all 5 steps, then start your session.</p>
                             </div>
                         </div>
+                        {/* Close button */}
+                        <button
+                            onClick={onClose}
+                            aria-label="Close patient setup"
+                            className="p-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-all flex-shrink-0 ml-4"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
                     </div>
 
-                    <div className="p-6 md:p-8 space-y-6 overflow-y-auto max-h-[85vh] custom-scrollbar">
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center flex-shrink-0">
-                                    <User className="w-4 h-4 text-indigo-400" />
+                    <div className="p-5 space-y-2.5 overflow-y-auto custom-scrollbar" style={{ maxHeight: 'calc(100dvh - 180px)' }}>
+
+                        {/* Step 1, Condition */}
+                        <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.condition ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.condition ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
+                                    {stepDone.condition ? <CheckCircle className="w-4 h-4" /> : '1'}
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-bold text-white">Patient Context</h3>
-                                    <p className="text-sm text-slate-400">Non-identifying clinical context only. No names or PHI.</p>
-                                </div>
+                                <label className="form-label" style={{ color: '#A8B5D1' }}>
+                                    What are you treating? <span className="text-indigo-400">*</span>
+                                </label>
                             </div>
+                            <div className="flex flex-wrap gap-2">
+                                {CONDITIONS.map(c => (
+                                    <button
+                                        key={c}
+                                        type="button"
+                                        onClick={() => setCondition(c)}
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${condition === c
+                                            ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                                            : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                            }`}
+                                    >
+                                        {c}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-5 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
-                                <div className="sm:col-span-4">
-                                    <label htmlFor="intake-condition" className="block text-sm font-semibold text-slate-300 mb-2">
-                                        What are you treating? <span className="text-indigo-400">*</span>
-                                    </label>
-                                    <div className="flex flex-wrap gap-2">
-                                        {CONDITIONS.map(c => (
-                                            <button
-                                                key={c}
-                                                type="button"
-                                                onClick={() => setCondition(c)}
-                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${condition === c
-                                                    ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
-                                                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
-                                                    }`}
-                                            >
-                                                {c}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
+                        {/* Steps 2 & 3, Gender + Smoking Status (combined row) */}
+                        <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.gender && stepDone.smoking ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
+                            <div className="grid grid-cols-2 gap-6">
+                                {/* Gender */}
                                 <div>
-                                    <label htmlFor="intake-age" className="block text-sm font-semibold text-slate-300 mb-2">Age</label>
-                                    <input
-                                        id="intake-age"
-                                        type="number"
-                                        min="18"
-                                        max="99"
-                                        placeholder="e.g. 42"
-                                        value={age}
-                                        onChange={e => setAge(e.target.value)}
-                                        className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label htmlFor="intake-weight" className="block text-sm font-semibold text-slate-300 mb-2">
-                                        Weight
-                                        <AdvancedTooltip
-                                            content="Enter weight in kilograms (kg). To convert from pounds: divide lbs by 2.205. Example: 150 lbs ÷ 2.205 = 68 kg. All mg/kg dosing calculations use this value."
-                                            tier="standard"
-                                            type="info"
-                                            side="bottom"
-                                        >
-                                            <span className="ml-1.5 text-slate-500 cursor-help text-xs font-normal">(kg) ⓘ</span>
-                                        </AdvancedTooltip>
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            id="intake-weight"
-                                            type="number"
-                                            min="20"
-                                            max="300"
-                                            step="0.1"
-                                            placeholder="e.g. 68"
-                                            value={weight}
-                                            onChange={e => setWeight(e.target.value)}
-                                            className="w-full px-4 py-2.5 pr-10 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
-                                        />
-                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">kg</span>
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.gender ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
+                                            {stepDone.gender ? <CheckCircle className="w-4 h-4" /> : '2'}
+                                        </div>
+                                        <label className="form-label" style={{ color: '#A8B5D1' }}>Gender</label>
                                     </div>
-                                    {/* Live lbs equivalent — prevents lbs/kg entry error */}
-                                    {weight && !isNaN(parseFloat(weight)) && parseFloat(weight) > 0 && (
-                                        <p className="mt-1 text-xs text-slate-500">
-                                            ≈ {(parseFloat(weight) * 2.205).toFixed(1)} lbs
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="sm:col-span-2">
-                                    <label className="block text-sm font-semibold text-slate-300 mb-2">Gender</label>
                                     <div className="flex flex-wrap gap-2">
                                         {GENDERS.map(g => (
                                             <button
                                                 key={g}
                                                 type="button"
                                                 onClick={() => setGender(g)}
-                                                className={`px-3 py-2 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
-                                                    ? 'bg-indigo-600 text-white border-indigo-500'
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
+                                                    ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
                                                     : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                                     }`}
                                             >
@@ -269,14 +280,126 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         ))}
                                     </div>
                                 </div>
+                                {/* Smoking Status */}
+                                <div>
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.smoking ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
+                                            {stepDone.smoking ? <CheckCircle className="w-4 h-4" /> : '3'}
+                                        </div>
+                                        <label className="form-label" style={{ color: '#A8B5D1' }}>Smoking Status</label>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {SMOKING_STATUSES.map(s => (
+                                            <button
+                                                key={s}
+                                                type="button"
+                                                onClick={() => setSmoking(s)}
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${smoking === s
+                                                    ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                                                    : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                    }`}
+                                            >
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        {/* Steps 4 & 5, Age + Weight (combined row) */}
+                        <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.age && stepDone.weight ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
+                            <div className="grid grid-cols-2 gap-6">
+                                {/* Age */}
+                                <div>
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.age ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
+                                            {stepDone.age ? <CheckCircle className="w-4 h-4" /> : '4'}
+                                        </div>
+                                        <label htmlFor="intake-age" className="form-label" style={{ color: '#A8B5D1' }}>Age</label>
+                                    </div>
+                                    <input
+                                        ref={ageInputRef}
+                                        id="intake-age"
+                                        type="number"
+                                        min="18"
+                                        max="99"
+                                        placeholder="e.g. 42"
+                                        value={age}
+                                        onChange={e => setAge(e.target.value)}
+                                        onKeyDown={e => {
+                                            if (e.key === 'Enter' && stepDone.age) {
+                                                e.preventDefault();
+                                                weightInputRef.current?.focus();
+                                            }
+                                        }}
+                                        className="w-full px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                    />
+                                </div>
+                                {/* Weight */}
+                                <div>
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 border transition-all duration-200 ${stepDone.weight ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-600 text-slate-400'}`}>
+                                            {stepDone.weight ? <CheckCircle className="w-4 h-4" /> : '5'}
+                                        </div>
+                                        <label htmlFor="intake-weight" className="form-label" style={{ color: '#A8B5D1' }}>
+                                            Weight
+                                            <AdvancedTooltip
+                                                content="Enter weight in kilograms (kg). To convert from pounds: divide lbs by 2.205. Example: 150 lbs ÷ 2.205 = 68 kg. All mg/kg dosing calculations use this value."
+                                                tier="standard"
+                                                type="info"
+                                                side="bottom"
+                                            >
+                                                <span className="ml-1.5 text-slate-500 cursor-help text-xs font-normal normal-case tracking-normal">(kg) ⓘ</span>
+                                            </AdvancedTooltip>
+                                        </label>
+                                    </div>
+                                    <div className="relative">
+                                        <input
+                                            ref={weightInputRef}
+                                            id="intake-weight"
+                                            type="number"
+                                            min="20"
+                                            max="300"
+                                            step="0.1"
+                                            placeholder="e.g. 68"
+                                            value={weight}
+                                            onChange={e => setWeight(e.target.value)}
+                                            onBlur={() => {
+                                                if (allComplete) startBtnRef.current?.focus();
+                                            }}
+                                            className="w-full px-4 py-2.5 pr-10 bg-slate-800/60 border border-slate-700/50 focus:border-indigo-500/60 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                        />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">kg</span>
+                                    </div>
+                                    {/* Live lbs equivalent, prevents lbs/kg entry error */}
+                                    {stepDone.weight && (
+                                        <p className="mt-1.5 text-xs text-slate-500">≈ {(parseFloat(weight) * 2.205).toFixed(1)} lbs</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className="flex justify-end items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                    {/* Footer, Back + Start Session */}
+                    <div className="flex justify-between items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
                         <button
+                            onClick={handleBack}
+                            aria-label="Back to protocol selection"
+                            className="flex items-center gap-2 px-5 py-3 text-base font-semibold rounded-xl border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 hover:border-slate-600 transition-all active:scale-95"
+                        >
+                            ← Back
+                        </button>
+                        <button
+                            ref={startBtnRef}
                             onClick={handleSave}
-                            className="px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg border active:scale-95 bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-indigo-500/10"
+                            disabled={!allComplete}
+                            aria-label={allComplete ? 'Start session' : 'Complete all five steps to enable'}
+                            className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all duration-300 border ${allComplete
+                                ? 'bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-lg shadow-indigo-500/20 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900'
+                                : 'bg-slate-800/40 border-slate-700/40 text-slate-500 cursor-not-allowed opacity-50'
+                                }`}
                         >
                             Start Session →
                         </button>
@@ -288,7 +411,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
-            <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col max-h-[90dvh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ maxHeight: '100dvh' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                     <div className="flex items-center gap-4">
@@ -300,10 +423,18 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <p className="text-base text-slate-400 mt-1">Configure your clinical interface layout.</p>
                         </div>
                     </div>
+                    {/* X, on Step 1, goes back to PatientSelectModal (not forward into the journey) */}
+                    <button
+                        onClick={onBack ?? onClose}
+                        aria-label="Back to patient selection"
+                        className="p-2 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-all flex-shrink-0 ml-4"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
                 </div>
 
                 {/* Body */}
-                <div className="p-6 md:p-8 space-y-8 overflow-y-auto max-h-[85vh] custom-scrollbar">
+                <div className="p-6 md:p-8 space-y-8 overflow-y-auto custom-scrollbar" style={{ maxHeight: 'calc(100dvh - 180px)' }}>
 
                     {/* Educational Callout */}
                     <div className="flex items-start gap-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
@@ -312,7 +443,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             <p className="text-base text-indigo-200 font-medium tracking-wide">Choose Your Workspace</p>
                             <p className="text-base text-indigo-300/80 mt-1.5 leading-relaxed">
                                 Select the tools you actually use to keep your interface clean and fast.
-                                <strong className="text-indigo-200 font-medium"> Please don't over-select "just in case"</strong> — you can change these settings at any time!
+                                <strong className="text-indigo-200 font-medium"> Please don't over-select "just in case"</strong>, you can change these settings at any time!
                             </p>
                         </div>
                     </div>
@@ -446,8 +577,16 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                     </div>
                 </div>
 
-                {/* Footer */}
-                <div className="flex justify-end items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                {/* Footer, Back + Start Session */}
+                <div className="flex justify-between items-center gap-3 px-6 py-5 border-t border-slate-800/60 bg-slate-900/40">
+                    <button
+                        onClick={onBack ?? onClose}
+                        aria-label="Back to patient selection"
+                        className="flex items-center gap-2 px-5 py-3 text-base font-semibold rounded-xl border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 hover:border-slate-600 transition-all active:scale-95"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back
+                    </button>
                     <button
                         onClick={handleNextStep}
                         className={`px-8 py-3 text-lg font-extrabold rounded-xl transition-all shadow-lg border active:scale-95 ${selectedId === 'clinical' ? 'bg-indigo-700/50 hover:bg-indigo-600/60 border-indigo-500/50 text-indigo-100 shadow-indigo-500/10' :

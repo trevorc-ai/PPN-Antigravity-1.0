@@ -162,9 +162,23 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
 
     const handleTap = (id: string) => {
         const key = `companion_logs_${sessionId}`;
+        const feeling = COMPANION_FEELINGS.find(f => f.id === id)?.label ?? id;
         const existing = JSON.parse(localStorage.getItem(key) || '[]');
         existing.push({ timestamp: new Date().toISOString(), feeling: id });
         localStorage.setItem(key, JSON.stringify(existing));
+
+        // BUG-529-06: persist companion tap to log_session_timeline_events
+        // UUID guard: only call when sessionId is a real UUID, not 'demo' or numeric legacy ID
+        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (sessionId && UUID_RE.test(sessionId)) {
+            createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type: 'patient_observation',
+                performed_by: undefined, // patient-initiated — no practitioner UUID
+                metadata: { event_description: `Patient reported: ${feeling}` },
+            }).catch(e => console.warn('[BUG-529-06] Companion tap timeline write failed:', e));
+        }
 
         if (litTimer.current) clearTimeout(litTimer.current);
         setLitId(id);
@@ -224,7 +238,7 @@ const CompanionVideo: React.FC = () => (
             </p>
         </div>
         <video
-            src="/admin_uploads/spherecules.mp4"
+            src="/video/spherecules.mp4"
             autoPlay
             loop
             muted

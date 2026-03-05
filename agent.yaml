@@ -31,7 +31,7 @@ agents:
 
   - name: "PRODDY"
     role: "Product Strategist & Scope Manager"
-    temperature: 6
+    temperature: 7
     capabilities: ["Product Strategy", "Roadmap Planning"]
     instructions: |
       Do not edit any code without explicit user approval. Evaluate CUE's ideas. 

@@ -59,7 +59,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
         }
     }, [isOpen, title]);
 
-    // Handle Escape key — stopPropagation prevents the event from
+    // Handle Escape key, stopPropagation prevents the event from
     // reaching other global listeners (e.g. PatientSelectModal) when
     // this panel is the topmost interactive layer.
     useEffect(() => {
@@ -179,7 +179,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
                     {children}
                 </div>
 
-                {/* Sticky Footer — custom footer if provided; forms own their own footers otherwise */}
+                {/* Sticky Footer, custom footer if provided; forms own their own footers otherwise */}
                 {footer && (
                     <div className="sticky bottom-0 z-10 bg-slate-900 border-t border-slate-700/50">
                         <div className="px-6 py-4">{footer}</div>

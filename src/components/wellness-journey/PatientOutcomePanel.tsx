@@ -155,7 +155,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
             <div className="mb-6 flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
                     <h2 className="text-xl font-black text-white leading-tight">
-                        {data.primaryInstrument} dropped {Math.abs(pctChange)}% since baseline — {
+                        {data.primaryInstrument} dropped {Math.abs(pctChange)}% since baseline, {
                             data.responseAchieved ? 'Response threshold achieved' : 'Approaching response threshold'
                         }.
                     </h2>
@@ -279,7 +279,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
                     <div className="flex items-center gap-4 w-full justify-between bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl">
                         <div className="flex items-center gap-3 text-amber-300 text-sm font-medium">
                             <AlertTriangle className="w-5 h-5 flex-shrink-0" />
-                            <span>Low experience depth + limited response — consider dose escalation review.</span>
+                            <span>Low experience depth + limited response, consider dose escalation review.</span>
                         </div>
                         {onOpenDosingProtocol && (
                             <button onClick={onOpenDosingProtocol} className="whitespace-nowrap flex items-center gap-2 px-4 py-2 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 font-bold text-sm rounded-lg transition-colors">

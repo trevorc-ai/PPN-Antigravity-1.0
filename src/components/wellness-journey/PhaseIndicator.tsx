@@ -8,9 +8,9 @@ interface PhaseIndicatorProps {
 }
 
 // ── LOCKED PHASE COLOR SYSTEM ─────────────────────────────────────────────
-// Phase 1 = Indigo  (calm, methodical preparation — blue-violet family)
-// Phase 2 = Amber   (active, focused — warm attention)
-// Phase 3 = Teal    (healing, growth — muted cool)
+// Phase 1 = Indigo  (calm, methodical preparation, blue-violet family)
+// Phase 2 = Amber   (active, focused, warm attention)
+// Phase 3 = Teal    (healing, growth, muted cool)
 // RED is RESERVED for warnings, adverse events, and safety flags ONLY.
 const PHASE_CONFIG = {
     1: {
@@ -57,7 +57,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
               The "connected tab" illusion:
               - Tabs have rounded-t-xl (top corners rounded, bottom flat)
               - Active tab: marginBottom: -1px so it overlaps the panel's top border
-              - Active tab: has NO bottom border — its bottom bleeds into the panel
+              - Active tab: has NO bottom border, its bottom bleeds into the panel
               - Active tab: z-index 10 so it sits in front of the panel border
               - Inactive tabs: full border, slightly lower opacity bg
             */}
@@ -115,8 +115,8 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                                     : <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                             }
 
-                            <span className="text-base">
-                                <span className={`font-black mr-1 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
+                            <span className="text-lg md:text-xl font-semibold">
+                                <span className={`font-black mr-1.5 ${isActive ? '' : isLocked ? 'text-slate-600' : 'text-slate-500'}`}>
                                     {phaseId}
                                 </span>
                                 {cfg.label}
@@ -136,7 +136,7 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                 >
                     {([1, 2, 3] as const).map((id) => (
                         <option key={id} value={id}>
-                            {id} — {PHASE_CONFIG[id].label}
+                            {id}, {PHASE_CONFIG[id].label}
                         </option>
                     ))}
                 </select>
