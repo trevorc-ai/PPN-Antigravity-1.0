@@ -1,10 +1,14 @@
 # FREEZE.md — Protected Files
 # Pre-commit hook reads this file. Any file listed here will BLOCK a commit.
 # To unfreeze: remove it from the list and commit this file first.
-# Last updated: 2026-03-03
+# Last updated: 2026-03-05 — LOCKDOWN MODE ACTIVE
 
 # ── Governance (never touch without explicit authorization) ──
 agent.yaml
+GLOBAL_CONSTITUTION.md
+MASTER_PLAN.md
+FREEZE.md
+handoff.sh
 
 # ── Core CSS / Design System (stable — changes affect ALL pages) ──
 src/index.css
@@ -15,6 +19,12 @@ src/services/contraindicationEngine.ts
 # ── Authentication Flow (recently stabilized) ──
 src/contexts/AuthContext.tsx
 src/pages/ResetPassword.tsx
+src/pages/SecureGate.tsx
+
+# ── Active Clinical Components (recently stabilized) ──
+src/components/session/ActiveSessionsWidget.tsx
+src/components/compass/BrainNetworkMap.tsx
+src/components/wellness-journey/Phase1StepGuide.tsx
 
 # ── Wellness Journey (frozen post-sprint WO-524/525/526/527/529) ──
 src/components/wellness-journey/BehavioralChangeTracker.tsx
@@ -42,6 +52,12 @@ src/components/wellness-journey/StructuredIntegrationSession.tsx
 
 src/components/wellness-journey/WorkflowCards.tsx
 src/components/wellness-journey/index.ts
+
+# ── Environment & Secrets (never commit real keys) ──
+# NOTE: .env files must also be listed in .gitignore
+.env
+.env.local
+.env.staging
 
 ## Housecleaning Standard
 Files eligible for daily archive (move OUT of project, NOT delete):
