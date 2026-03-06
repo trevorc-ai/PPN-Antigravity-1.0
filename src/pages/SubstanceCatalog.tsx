@@ -142,8 +142,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
           </div>
         </div>
 
-        {/* Interaction badge link */}
-        <InteractionLink interactions={interactions} substanceName={sub.name} />
+
       </div>
 
       {/* CTA button, blue */}
