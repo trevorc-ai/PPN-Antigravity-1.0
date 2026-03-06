@@ -271,7 +271,7 @@ export default function Dashboard() {
               </button>
             </div>
             <h1 className="ppn-page-title mt-4" style={{ color: '#A8B5D1' }}>
-              {displayName ? `${getTimeOfDayGreeting()}, ${displayName}.` : getTimeOfDayGreeting() + '.'}
+              {getTimeOfDayGreeting()}.
             </h1>
             <p className="ppn-meta text-slate-500 mt-1">{formatCurrentDate()}</p>
           </div>
@@ -323,19 +323,7 @@ export default function Dashboard() {
           </div>
         </Section>
 
-        {/* SUGGESTED NEXT STEPS — contextual, below data */}
-        <Section spacing="tight">
-          <div className="flex items-center gap-3 mb-4">
-            <CheckCircle className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-base font-black tracking-tight" style={{ color: '#A8B5D1' }}>Suggested Next Steps</h2>
-            <span className="ml-auto text-xs text-slate-500 font-medium">Based on your activity</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <NextStepItem number={1} text="Start a new Wellness Journey session" link="/wellness-journey" />
-            <NextStepItem number={2} text="View your Clinical Intelligence report" link="/analytics" />
-            <NextStepItem number={3} text="Log pending follow-up sessions" link="/wellness-journey" />
-          </div>
-        </Section>
+
 
 
         {/* QUICK ACTIONS — always-on color, not hover-only */}
@@ -450,8 +438,8 @@ export default function Dashboard() {
           </div>
         </Section>
 
-        {/* NETWORK ACTIVITY — coming once live Supabase data is connected */}
-        <Section spacing="tight">
+        {/* NETWORK ACTIVITY — hidden until live data connected */}
+        <Section spacing="tight" className="hidden">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Network Activity</h2>
             <span className="text-xs text-slate-500 font-medium">Peer Network</span>
