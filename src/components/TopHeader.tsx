@@ -252,7 +252,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           <div className="flex items-center gap-4 shrink-0">
             <button
               onClick={onMenuClick}
-              className="hidden lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 transition-all shadow-lg"
+              className="block lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 transition-all shadow-lg"
             >
               <span className="material-symbols-outlined">menu</span>
             </button>
