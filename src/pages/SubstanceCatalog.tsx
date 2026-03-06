@@ -102,7 +102,7 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
 
         {/* Name + chemical name (revealed on hover) */}
         <div className="min-h-[3.5rem] space-y-1.5">
-          <h3 className="text-xl font-bold text-[#A8B5D1] group-hover:text-[#A8B5D1] transition-colors leading-tight">
+          <h3 className="text-3xl font-bold text-[#A8B5D1] group-hover:text-[#A8B5D1] transition-colors leading-tight">
             {sub.name}
           </h3>
           <p className="text-base text-slate-500 leading-snug line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-h-[1.5rem]">
