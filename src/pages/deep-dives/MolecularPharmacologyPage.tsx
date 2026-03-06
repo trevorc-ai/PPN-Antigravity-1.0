@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MolecularPharmacology from '../../components/analytics/MolecularPharmacology';
 import ReceptorBindingHeatmap from '../../components/analytics/ReceptorBindingHeatmap';
 import { PageContainer } from '../../components/layouts/PageContainer';
@@ -8,12 +9,21 @@ import { BarChart2, Grid3X3 } from 'lucide-react';
 type ActiveTab = 'affinity-chart' | 'heatmap';
 
 const MolecularPharmacologyPage = () => {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<ActiveTab>('affinity-chart');
 
     return (
         <PageContainer className="py-8">
             <Section>
                 {/* ── Page header ──────────────────────────────────────────────── */}
+                {/* Back to Dashboard — this page has no Breadcrumbs (public route) */}
+                <button
+                    onClick={() => navigate('/dashboard')}
+                    className="flex items-center gap-1.5 mb-6 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-200 transition-colors group"
+                >
+                    <span className="material-symbols-outlined text-[15px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                    Back to Dashboard
+                </button>
                 <div className="border-b border-slate-800 pb-6 mb-8">
                     <h1 className="text-5xl font-black tracking-tighter mb-2">Molecular Pharmacology</h1>
                     <p className="text-slate-300 text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed">
@@ -30,8 +40,8 @@ const MolecularPharmacologyPage = () => {
                         aria-controls="panel-affinity-chart"
                         onClick={() => setActiveTab('affinity-chart')}
                         className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-black uppercase tracking-widest border transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${activeTab === 'affinity-chart'
-                                ? 'bg-indigo-500/20 border-indigo-500/60 text-indigo-300'
-                                : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
+                            ? 'bg-indigo-500/20 border-indigo-500/60 text-indigo-300'
+                            : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
                             }`}
                     >
                         <BarChart2 size={16} />
@@ -45,8 +55,8 @@ const MolecularPharmacologyPage = () => {
                         aria-controls="panel-heatmap"
                         onClick={() => setActiveTab('heatmap')}
                         className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-black uppercase tracking-widest border transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/50 ${activeTab === 'heatmap'
-                                ? 'bg-indigo-500/20 border-indigo-500/60 text-indigo-300'
-                                : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
+                            ? 'bg-indigo-500/20 border-indigo-500/60 text-indigo-300'
+                            : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600'
                             }`}
                     >
                         <Grid3X3 size={16} />

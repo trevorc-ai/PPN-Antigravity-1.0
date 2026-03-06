@@ -19,6 +19,8 @@ const Pricing = lazy(() => import('./pages/Pricing'));
 const ContributionModel = lazy(() => import('./pages/ContributionModel'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const DataPolicy = lazy(() => import('./pages/DataPolicy')); // WO-531: Sterile Schema trust page
+const DataPolicyPrint = lazy(() => import('./pages/DataPolicyPrint')); // WO-531: Print one-pager
 const Checkout = lazy(() => import('./pages/Checkout'));
 const Academy = lazy(() => import('./pages/Academy'));
 const PartnerDemoHub = lazy(() => import('./pages/PartnerDemoHub'));
@@ -86,6 +88,7 @@ import TopHeader from './components/TopHeader';
 import Breadcrumbs from './components/Breadcrumbs';
 import Footer from './components/Footer';
 import GuidedTour from './components/GuidedTour';
+import MobileBottomNav from './components/MobileBottomNav';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ToastContainer } from './components/ui/Toast';
@@ -119,13 +122,19 @@ const PageLoader: React.FC = () => (
 );
 
 /**
- * ScrollToTop Component
- * Resets the scroll position of the main research viewport whenever the location changes.
+ * SmartScrollToTop Component
+ * Resets scroll on fresh forward navigations only.
+ * Skips reset on browser back/forward (POP) so the user returns to their prior scroll position.
  */
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
+  // useNavigationType distinguishes PUSH (link click) from POP (back/forward)
+  const navType = (window.history.state?.type as string | undefined);
 
   useEffect(() => {
+    // Skip scroll reset for back/forward browser navigation
+    if (navType === 'POP') return;
+
     if (hash) {
       const id = hash.replace('#', '');
       const element = document.getElementById(id);
@@ -141,7 +150,7 @@ const ScrollToTop = () => {
     } else {
       window.scrollTo(0, 0);
     }
-  }, [pathname, hash]);
+  }, [pathname, hash, navType]);
 
   return null;
 };
@@ -176,11 +185,13 @@ const ProtectedLayout: React.FC<{
           onStartTour={() => setShowTour(true)}
         />
         <Breadcrumbs />
-        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent">
+        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent pb-20 lg:pb-0">
           {showTour && <GuidedTour onComplete={completeTour} />}
           <Outlet />
           <Footer />
         </main>
+        {/* Mobile bottom nav — lg:hidden inside component */}
+        <MobileBottomNav />
       </div>
     </div>
   );
@@ -283,6 +294,8 @@ const AppContent: React.FC = () => {
             <Route path="/secure-gate" element={<SecureGate />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/data-policy" element={<DataPolicy />} /> {/* WO-531 */}
+            <Route path="/data-policy/print" element={<DataPolicyPrint />} /> {/* WO-531: print one-pager */}
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/contribution" element={<ContributionModel />} />
             <Route path="/arc-of-care" element={<ArcOfCareDemo />} />
