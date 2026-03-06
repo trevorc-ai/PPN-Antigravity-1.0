@@ -305,7 +305,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
             </span>
           </div>
           <h1 className="ppn-page-title">
-            {displayName ? `Welcome back, ${displayName}.` : 'Clinical Intelligence Portal'}
+            Welcome back.
           </h1>
           <p className="ppn-body text-slate-400 max-w-lg mx-auto">
             Search the platform, or select a tool below to get started.
@@ -421,21 +421,6 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
             )}
           </div>
 
-          {/* Quick-link chips */}
-          {!showResults && (
-            <div className="flex flex-wrap gap-2 mt-4 justify-center">
-              {QUICK_LINKS.map(({ label, path, icon: Icon, color }) => (
-                <button
-                  key={path}
-                  onClick={() => navigate(path)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl border bg-transparent text-sm font-bold transition-all duration-150 hover:scale-[1.03] active:scale-95 ${color}`}
-                >
-                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                  {label}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* ── 3. Feature tiles ─────────────────────────────────────────────── */}
