@@ -233,7 +233,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
     </div>
 );
 
-export default function PatientConstellation({ data }: { data?: PatientNode[] }) {
+export default function PatientConstellation({ data, hideHeader: _hideHeader }: { data?: PatientNode[]; hideHeader?: boolean }) {
     const [selectedPatient, setSelectedPatient] = useState<PatientNode | null>(null);
     const [showGuide, setShowGuide] = useState(false);
     const [chartReady, setChartReady] = useState(false);

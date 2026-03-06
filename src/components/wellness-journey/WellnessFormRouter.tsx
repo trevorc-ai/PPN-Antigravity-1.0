@@ -484,7 +484,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <DailyPulseCheckForm onSave={handlePulseCheckSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'meq30':
-            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
+            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose} onExit={onExit ?? onClose ?? onComplete} />;
 
         // ── Phase 3: Integration, Integration Work ──────────────────────────
         case 'structured-integration':
