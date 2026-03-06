@@ -8,6 +8,11 @@ src/pages/Dashboard.tsx
 src/pages/SimpleSearch.tsx
 src/components/Footer.tsx
 
+# ── My Protocols, Interaction Checker, Substance Library (frozen 2026-03-06) ──
+src/pages/MyProtocols.tsx
+src/pages/InteractionChecker.tsx
+src/pages/SubstanceCatalog.tsx
+
 
 # ── Governance (never touch without explicit authorization) ──
 agent.yaml
