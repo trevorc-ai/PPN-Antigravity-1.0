@@ -447,21 +447,6 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
           </div>
           <ReceptorBindingHeatmap />
         </div>
-
-        {/* ── 5. Global Benchmark Intelligence ─────────────────────────────── */}
-        <div className="space-y-4 pb-16">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest">Global Benchmark Intelligence</h2>
-            <span className="flex items-center gap-1.5 text-[10px] font-black text-emerald-600 uppercase tracking-widest border border-emerald-900/50 px-2 py-0.5 rounded-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live data
-            </span>
-            <div className="flex-1 h-px bg-slate-800" />
-          </div>
-          {/* alwaysShow=true bypasses the isContributor gate for beta testers */}
-          <GlobalBenchmarkIntelligence alwaysShow={true} />
-        </div>
-
       </div>
     </div>
   );
