@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Loader2, AlertCircle, Activity, ShieldCheck, Info } from 'lucide-react';
+import { Loader2, AlertCircle, Activity, ShieldCheck, Info, Eye, EyeOff } from 'lucide-react';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ const Login: React.FC = () => {
     return localStorage.getItem('ppn_last_email') || '';
   });
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showResetModal, setShowResetModal] = useState(false);
@@ -46,7 +47,14 @@ const Login: React.FC = () => {
       if (data.session) {
         // BUG-518-12: Persist email for pre-population on next visit.
         localStorage.setItem('ppn_last_email', email);
+        // Navigate to the originally requested page (or /search as fallback).
+        // AuthContext.onAuthStateChange handles invite/recovery redirects.
+        // For normal logins, this navigate() is the sole routing action.
         navigate(from, { replace: true });
+      } else {
+        // Session is null with no error — rare Supabase edge case
+        setError('Login succeeded but no session was created. Please try again.');
+        setLoading(false);
       }
 
     } catch (err: any) {
@@ -165,26 +173,28 @@ const Login: React.FC = () => {
                 <label htmlFor="login-password" className="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
                   Password
                 </label>
-                <input
-                  id="login-password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
-                  placeholder="••••••••"
-                  required
-                  disabled={loading}
-                />
-                {/* Forgot password — below field, right-aligned */}
-                <div className="flex justify-end mt-2">
+                <div className="relative">
+                  <input
+                    id="login-password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-5 py-3.5 pr-12 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    placeholder="••••••••"
+                    required
+                    disabled={loading}
+                  />
                   <button
                     type="button"
-                    onClick={() => setShowResetModal(true)}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
+                    onClick={() => setShowPassword(v => !v)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    tabIndex={-1}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    Forgot Password?
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+
               </div>
 
               {/* Submit */}
@@ -203,6 +213,16 @@ const Login: React.FC = () => {
                 )}
               </button>
 
+              {/* Forgot password — below Sign In, centered (better tab order) */}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowResetModal(true)}
+                  className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
 
 
               {/* Invitation-only notice — replaces dead Sign Up link (BUG-518-03) */}

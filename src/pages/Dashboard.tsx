@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Activity, AlertTriangle, TrendingUp, Users,
   Map, ArrowRight, Plus, Clock,
-  CheckCircle, BarChart3, Target
+  BarChart3, Target, Share2
 } from 'lucide-react';
 
 import { PageContainer } from '../components/layouts/PageContainer';
@@ -12,7 +12,6 @@ import SafetyRiskMatrix from '../components/analytics/SafetyRiskMatrix';
 import { usePractitionerProtocols } from '../hooks/usePractitionerProtocols';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
-import GuidedTour from '../components/GuidedTour';
 
 // --- COMPONENT: CLINIC PERFORMANCE CARD (PRIMARY) ---
 interface ClinicPerformanceCardProps {
@@ -79,36 +78,6 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
   );
 };
 
-// --- COMPONENT: NEXT STEP ITEM ---
-interface NextStepProps {
-  number: number;
-  text: string;
-  link: string;
-  urgent?: boolean;
-}
-
-const NextStepItem: React.FC<NextStepProps> = ({ number, text, link, urgent }) => {
-  const navigate = useNavigate();
-  return (
-    <button
-      onClick={() => navigate(link)}
-      className="flex items-center gap-4 p-4 rounded-3xl bg-slate-900/40 backdrop-blur-sm hover:bg-slate-800/60 border border-slate-800 hover:border-slate-600 transition-all group text-left w-full shadow-lg"
-    >
-      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-sm transition-colors ${urgent
-        ? 'bg-red-500/10 text-red-500 border border-red-500/30 group-hover:bg-red-500/20'
-        : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:bg-indigo-500/20'
-        }`}>
-        {number}
-      </div>
-      <span className="flex-1 text-sm font-bold text-slate-400 group-hover:text-[#A8B5D1] transition-colors">
-        {text}
-      </span>
-      <div className="p-1.5 rounded-full bg-slate-800/50 group-hover:bg-indigo-500/20 transition-colors">
-        <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 transition-colors" />
-      </div>
-    </button>
-  );
-};
 
 // --- COMPONENT: CLEAN INSIGHT CARD ---
 interface InsightCardProps {
@@ -191,46 +160,6 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { protocols, loading: protocolsLoading, refetch, lastFetchedAt } = usePractitionerProtocols();
 
-  // ── Auto-tour on first login ───────────────────────────────────────────────
-  const [showTour, setShowTour] = useState(false);
-  const tourTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    const toured = user.user_metadata?.onboarding_toured === true;
-    if (!toured) {
-      tourTimerRef.current = setTimeout(() => setShowTour(true), 1500);
-    }
-    return () => {
-      if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
-    };
-  }, [user]);
-
-  const handleTourComplete = async () => {
-    setShowTour(false);
-    await supabase.auth.updateUser({ data: { onboarding_toured: true } });
-  };
-
-  // ── Personalized display name ──────────────────────────────────────────────
-  const [displayName, setDisplayName] = useState<string>('');
-
-  useEffect(() => {
-    if (!user) return;
-    // Instant fallback from email while profile loads
-    const emailPrefix = user.email?.split('@')[0] ?? 'there';
-    setDisplayName(emailPrefix);
-
-    (async () => {
-      const { data } = await supabase
-        .from('log_user_profiles')
-        .select('display_name, full_name')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (data?.display_name) setDisplayName(data.display_name);
-      else if (data?.full_name) setDisplayName(data.full_name.split(' ')[0]);
-    })();
-  }, [user]);
-
   const hasProtocols = protocols.length > 0;
 
   return (
@@ -252,7 +181,7 @@ export default function Dashboard() {
               <button
                 onClick={refetch}
                 disabled={protocolsLoading}
-                title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Click to refresh'}
+                title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Refresh data'}
                 style={{
                   background: 'transparent',
                   border: '1px solid rgba(56,139,253,0.2)',
@@ -331,7 +260,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
 
             {/* Log Protocol — indigo */}
             <button
@@ -435,6 +364,26 @@ export default function Dashboard() {
               </div>
             </button>
 
+            {/* Share PPN — rose (Available to all users) */}
+            <button
+              id="quick-action-share-network"
+              onClick={() => navigate('/network-library')}
+              className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl
+                  bg-rose-500/12 hover:bg-rose-500/22
+                  border border-rose-500/35 hover:border-rose-400/60
+                  shadow-lg shadow-rose-900/30
+                  transition-all active:scale-95 cursor-pointer overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-600/10 to-transparent pointer-events-none" />
+              <div className="w-12 h-12 rounded-2xl bg-rose-500/25 flex items-center justify-center shadow-inner transition-transform group-hover:scale-110">
+                <Share2 className="w-6 h-6 text-rose-300" />
+              </div>
+              <div className="text-center relative z-10">
+                <p className="text-sm font-black text-rose-200 leading-tight">Share PPN</p>
+                <p className="text-xs text-rose-400/70 mt-0.5 hidden sm:block">Invite network</p>
+              </div>
+            </button>
+
           </div>
         </Section>
 
@@ -452,9 +401,6 @@ export default function Dashboard() {
         </Section>
 
       </PageContainer>
-
-      {/* Auto-tour overlay — renders outside PageContainer to occupy fixed position */}
-      {showTour && <GuidedTour onComplete={handleTourComplete} />}
     </div>
   );
 }

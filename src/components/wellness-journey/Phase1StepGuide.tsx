@@ -1,11 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { ArrowRight, ChevronDown, ChevronUp, Edit3, CheckCircle2, AlertTriangle, Syringe, HeartPulse, ClipboardCheck, FileText, Pill } from 'lucide-react';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { ChevronDown, ChevronUp, Edit3, CheckCircle2, HeartPulse, ClipboardCheck, FileText, Pill } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
-import { RiskEligibilityReport } from './RiskEligibilityReport';
-import { ComplianceDocumentsPanel } from './ComplianceDocumentsPanel';
-import { runContraindicationEngine, type IntakeScreeningData } from '../../services/contraindicationEngine';
-import { useToast } from '../../contexts/ToastContext';
-import { exportRiskReportToPDF } from '../../services/pdfGenerator';
 import { useProtocol } from '../../contexts/ProtocolContext';
 
 // ── PHASE 1 COLOR: INDIGO ─────────────────────────────────────────────────────
@@ -98,18 +93,7 @@ interface Phase1HUDProps {
 }
 
 const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount, totalCount, patientId = '' }) => {
-    // Read dosing protocol from localStorage (populated by DosingProtocolForm)
-    const dosingProtocol = useMemo(() => {
-        try {
-            const raw = localStorage.getItem('ppn_dosing_protocol');
-            return raw ? JSON.parse(raw) : null;
-        } catch { return null; }
-    }, [completedFormIds]);
-
-    const substance = dosingProtocol?.substance_name || dosingProtocol?.substance || null;
-    const dosageStr = dosingProtocol?.dosage_amount
-        ? `${dosingProtocol.dosage_amount}${dosingProtocol.dosage_unit || 'mg'}`
-        : null;
+    // Dosing protocol (substance/dosage) is a Phase 2 concern — not shown in Phase 1 HUD.
 
     // Read PHQ-9 / GAD-7 from localStorage.
     // Stored by BaselineAssessmentWizard under key ppn_wizard_baseline_${patientId}.
@@ -179,7 +163,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
 
             {/* Chips row, equal-width grid so all 6 chips spread across the full width */}
             <div
-                className="grid grid-cols-3 sm:grid-cols-6 gap-2"
+                className="grid grid-cols-2 sm:grid-cols-4 gap-2"
                 role="list"
                 aria-label="Documented values from preparation forms"
             >
@@ -219,24 +203,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
                         ariaLabel={`Set and Setting: ${setAndSetting ?? 'Not yet entered'}`}
                     />
                 </div>
-                <div role="listitem">
-                    <HUDChip
-                        icon={<Syringe className="w-3.5 h-3.5" />}
-                        label="Substance"
-                        value={substance}
-                        colorClass="text-indigo-200"
-                        ariaLabel={`Substance: ${substance ?? 'Not yet entered'}`}
-                    />
-                </div>
-                <div role="listitem">
-                    <HUDChip
-                        icon={<span className="ppn-meta" aria-hidden="true">mg</span>}
-                        label="Dosage"
-                        value={dosageStr}
-                        colorClass="text-indigo-200"
-                        ariaLabel={`Dosage: ${dosageStr ?? 'Not yet entered'}`}
-                    />
-                </div>
+
             </div>
 
             {/* Medications strip, shows as soon as meds are entered in Phase 1 Safety Check */}
@@ -262,79 +229,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
 };
 
 
-interface EligibilityPanelProps {
-    steps: Phase1Step[];
-    completedFormIds: Set<string>;
-    onStartStep: (formId: WellnessFormId) => void;
-    onCompletePhase?: () => void;
-    onValidityChange?: (valid: boolean) => void;
-}
 
-export const EligibilityPanel: React.FC<EligibilityPanelProps> = ({ steps, completedFormIds, onStartStep, onCompletePhase, onValidityChange }) => {
-    const { addToast } = useToast();
-
-    // WO-558: Read real patient data from localStorage instead of hardcoded mock values.
-    // ppn_wizard_baseline_${patientId} is written by MentalHealthScreeningForm on save.
-    // Fallback to 0 when no real data exists, the engine will not flag a ghost patient.
-    const mentalHealthData = useMemo(() => {
-        try {
-            // Try known patientId keys first, then the generic fallback
-            for (const suffix of ['', 'PT-RISK9W2P']) {
-                const raw = localStorage.getItem(`ppn_wizard_baseline_${suffix}`);
-                if (raw) return JSON.parse(raw)?.mentalHealth ?? null;
-            }
-        } catch { }
-        return null;
-    }, [completedFormIds]);
-
-    const storedMeds = useMemo(() => {
-        try {
-            const cached = localStorage.getItem('mock_patient_medications_names');
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
-            }
-        } catch { }
-        return [];
-    }, [completedFormIds]);
-
-    const realIntakeData: IntakeScreeningData = {
-        patientId: 'PT-ACTIVE',
-        sessionSubstance: 'psilocybin',
-        medications: storedMeds,
-        psychiatricHistory: [],
-        familyHistory: [],
-        cssrsScore: 0,
-        lastSystolicBP: 0,
-        isPregnant: false,
-        ageYears: 0,
-        phq9Score: mentalHealthData?.phq9 ?? 0,
-        gad7Score: mentalHealthData?.gad7 ?? 0,
-        pcl5Score: mentalHealthData?.pcl5 ?? 0,
-        bmi: 0,
-    };
-
-    const result = runContraindicationEngine(realIntakeData);
-
-    const handleExport = () => {
-        exportRiskReportToPDF(result);
-        addToast({
-            title: 'Report Downloaded',
-            message: 'Risk Eligibility Report has been generated and saved as PDF.',
-            type: 'success'
-        });
-    };
-
-    return (
-        <RiskEligibilityReport
-            result={result}
-            onOverrideConfirmed={(justification) => console.log('Override saved:', justification)}
-            onExportPDF={handleExport}
-            onValidityChange={onValidityChange}
-            hideProceedButton
-        />
-    );
-};
 
 // ── Phase1StepGuide ───────────────────────────────────────────────────────────
 interface Phase1StepGuideProps {
@@ -353,7 +248,6 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
     patientId = '',
 }) => {
     const heroRef = useRef<HTMLDivElement>(null);
-    const [canProceedToPhase2, setCanProceedToPhase2] = useState(false);
     const { config } = useProtocol();
 
     const activeSteps = PHASE1_STEPS.filter(step => config.enabledFeatures.includes(step.id));
@@ -540,27 +434,6 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                         </span>
                     </div>
 
-                    {/* Action Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-                        {/* Left Column: Administrative (Export Docs) */}
-                        <div className="w-full h-full">
-                            <ComplianceDocumentsPanel
-                                patientId="PT-RISK9W2P"
-                                completedForms={Array.from(completedFormIds)}
-                            />
-                        </div>
-
-                        {/* Right Column: Clinical (Risk & Clearance) */}
-                        <div className="w-full h-full">
-                            <EligibilityPanel
-                                steps={PHASE1_STEPS}
-                                completedFormIds={completedFormIds}
-                                onStartStep={onStartStep}
-                                onCompletePhase={onCompletePhase}
-                                onValidityChange={setCanProceedToPhase2}
-                            />
-                        </div>
-                    </div>
 
                     {bottomStatusBar && (
                         <div className="mt-8">
@@ -568,28 +441,17 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                         </div>
                     )}
 
-                    {/* Proceed to Phase 2 Bottom Container */}
+                    {/* Proceed to Phase 2 — unlocks when all 4 steps are complete.
+                        Contraindications are clinical intelligence / advisory only;
+                        they are never a hard gate on Phase 2 access. */}
                     <div className="mt-8 pt-6 border-t border-slate-700/50">
                         <button
                             id="phase1-proceed-phase2"
-                            onClick={canProceedToPhase2 ? onCompletePhase : undefined}
-                            disabled={!canProceedToPhase2}
-                            className={`w-full py-4 rounded-2xl text-base sm:text-lg font-black uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 ${canProceedToPhase2
-                                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:-translate-y-1'
-                                : 'bg-slate-800/60 text-slate-500 cursor-not-allowed border border-slate-700/50'
-                                }`}
+                            onClick={onCompletePhase}
+                            className="w-full py-4 rounded-2xl text-base sm:text-lg font-black uppercase tracking-widest transition-all shadow-xl flex items-center justify-center gap-3 bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:-translate-y-1 active:scale-[0.98]"
                         >
-                            {canProceedToPhase2 ? (
-                                <>
-                                    <CheckCircle2 className="w-6 h-6" />
-                                    Proceed to Phase 2 Dosing
-                                </>
-                            ) : (
-                                <>
-                                    <AlertTriangle className="w-6 h-6" />
-                                    [LOCKED] Complete Eligibility Requirements to Proceed
-                                </>
-                            )}
+                            <CheckCircle2 className="w-6 h-6" />
+                            Proceed to Phase 2 Dosing
                         </button>
                     </div>
                 </div>

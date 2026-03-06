@@ -48,6 +48,7 @@ const navSections: NavSection[] = [
     items: [
       { label: 'Interactions', icon: 'warning', path: '/interactions' },
       { label: 'Audit Logs', icon: 'history', path: '/audit' },
+      { label: 'Download Center', icon: 'download', path: '/download-center' },
     ],
   },
   {

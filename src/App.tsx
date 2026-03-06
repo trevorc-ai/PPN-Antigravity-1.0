@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate, Outlet, useNavigationType } from 'react-router-dom';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // WO-513: Route-Based Code Splitting
@@ -42,9 +42,11 @@ const MyProtocols = lazy(() => import('./pages/MyProtocols'));
 const ProtocolDetail = lazy(() => import('./pages/ProtocolDetail'));
 const ClinicianProfile = lazy(() => import('./pages/ClinicianProfile'));
 const Notifications = lazy(() => import('./pages/Notifications'));
+const AdminSharingLibrary = lazy(() => import('./pages/AdminSharingLibrary')); // WO-558
 const Settings = lazy(() => import('./pages/Settings'));
 const DataExport = lazy(() => import('./pages/DataExport'));
 const SessionExportCenter = lazy(() => import('./pages/SessionExportCenter'));
+const DownloadCenter = lazy(() => import('./pages/DownloadCenter'));
 const ClinicalReportPDF = lazy(() => import('./pages/ClinicalReportPDF'));
 const DemoClinicalReportPDF = lazy(() => import('./pages/DemoClinicalReportPDF'));
 const ProfileEdit = lazy(() => import('./pages/ProfileEdit'));
@@ -128,12 +130,13 @@ const PageLoader: React.FC = () => (
  */
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
-  // useNavigationType distinguishes PUSH (link click) from POP (back/forward)
-  const navType = (window.history.state?.type as string | undefined);
+  // useNavigationType correctly distinguishes PUSH (link click) from POP (back/forward)
+  // in HashRouter — window.history.state?.type is NOT set by React Router's HashRouter.
+  const navigationType = useNavigationType();
 
   useEffect(() => {
     // Skip scroll reset for back/forward browser navigation
-    if (navType === 'POP') return;
+    if (navigationType === 'POP') return;
 
     if (hash) {
       const id = hash.replace('#', '');
@@ -150,7 +153,7 @@ const ScrollToTop = () => {
     } else {
       window.scrollTo(0, 0);
     }
-  }, [pathname, hash, navType]);
+  }, [pathname, hash, navigationType]);
 
   return null;
 };
@@ -366,10 +369,12 @@ const AppContent: React.FC = () => {
                   <Route path="*" element={<div className="text-slate-500 font-medium py-10">Documentation content currently being drafted.</div>} />
                 </Route>
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="/network-library" element={<AdminSharingLibrary />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/profile/edit" element={<ProfileEdit />} />
                 <Route path="/data-export" element={<DataExport />} />
                 <Route path="/session-export" element={<SessionExportCenter />} />
+                <Route path="/download-center" element={<DownloadCenter />} />
                 <Route path="/clinical-report-pdf" element={<ClinicalReportPDF />} />
                 <Route path="/demo-clinical-report-pdf" element={<DemoClinicalReportPDF />} />
 

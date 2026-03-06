@@ -329,10 +329,11 @@ export async function createConsent(
                     return null;
                 }
                 return {
+                    id: Math.floor(Math.random() * 2147483647), // Bypass missing auto-increment in log_consent
                     verified: true,
                     verified_at: now,
                     site_id: siteId,
-                    consent_type_id: typeId,  // INTEGER FK → ref_consent_types ✅ migration 068
+                    consent_type_id: typeId,  // INTEGER FK → ref_consent_types
                     // type: intentionally omitted — deprecated TEXT column
                 };
             })
@@ -341,7 +342,13 @@ export async function createConsent(
         // If no valid types mapped (e.g. only checkbox ticked, no types selected),
         // insert a single row with consent_obtained = true and no type FK.
         if (rows.length === 0) {
-            rows.push({ verified: true, verified_at: now, site_id: siteId, consent_type_id: null as unknown as number });
+            rows.push({
+                id: Math.floor(Math.random() * 2147483647),
+                verified: true,
+                verified_at: now,
+                site_id: siteId,
+                consent_type_id: null as unknown as number
+            });
         }
 
         const { error } = await supabase.from('log_consent').insert(rows);
