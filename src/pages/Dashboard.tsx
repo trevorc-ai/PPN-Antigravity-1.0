@@ -252,7 +252,7 @@ export default function Dashboard() {
               <button
                 onClick={refetch}
                 disabled={protocolsLoading}
-                title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Not loaded'}
+                title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Click to refresh'}
                 style={{
                   background: 'transparent',
                   border: '1px solid rgba(56,139,253,0.2)',

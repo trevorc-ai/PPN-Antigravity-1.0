@@ -225,8 +225,8 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
         type: 'warning'
       });
 
-      // Force navigation
-      navigate('/');
+      // Force navigation to dashboard (not '/' which resolves to public landing for logged-in users)
+      navigate('/dashboard');
     }
   };
 
@@ -245,14 +245,14 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const handleAuthAction = () => scrollToSection('secure-access-node');
 
   return (
-    <header className="h-20 border-b border-white/5 bg-[#0a1628] sticky top-0 z-40 backdrop-blur-xl">
+    <header className="h-12 sm:h-20 border-b border-white/5 bg-[#0a1628] sticky top-0 z-40 backdrop-blur-xl">
       <div className="h-full px-6 sm:px-10 pr-6 sm:pr-10 flex items-center justify-end ml-auto max-w-7xl">
         <div className="flex items-center gap-8">
           {/* Portal Title & Local Nav */}
           <div className="flex items-center gap-4 shrink-0">
             <button
               onClick={onMenuClick}
-              className="lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 transition-all shadow-lg"
+              className="hidden lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 transition-all shadow-lg"
             >
               <span className="material-symbols-outlined">menu</span>
             </button>
