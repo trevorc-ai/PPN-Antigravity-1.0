@@ -117,6 +117,14 @@ const SecureGate: React.FC<SecureGateProps> = () => {
 
         {/* Left Content Column */}
         <div className="flex-1 p-8 lg:p-24 space-y-16 relative flex flex-col justify-center">
+          {/* Back to Dashboard Navigation */}
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-200 transition-colors group self-start"
+          >
+            <span className="material-symbols-outlined text-[15px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+            Back to Dashboard
+          </button>
           <div className="border-[1.5px] border-primary/30 rounded-[2.5rem] p-10 sm:p-20 bg-slate-900/5 backdrop-blur-sm relative z-10 overflow-hidden">
             <div className="space-y-6">
               <div className="flex items-center gap-4 text-primary mb-4">

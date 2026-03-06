@@ -77,6 +77,6 @@ A licensed practitioner needs to instantly share a dynamic visualization or data
 - [x] Open Questions list is ≤5 items
 - [x] Total PRD word count is ≤600 words
 - [x] No code, SQL, or schema written anywhere in this document
-- [x] Frontmatter updated: `owner: LEAD`, `status: 00_INBOX`
+- [x] Frontmatter updated: `owner: LEAD`, `status: 01_TRIAGE`
 - [x] Response wrapped in `==== PRODDY ====`
 ==== PRODDY ====

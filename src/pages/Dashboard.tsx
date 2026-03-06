@@ -162,6 +162,24 @@ export default function Dashboard() {
 
   const hasProtocols = protocols.length > 0;
 
+  // Restore scroll position when returning to Dashboard
+  useEffect(() => {
+    const savedScrollY = sessionStorage.getItem('dashboardScrollY');
+    if (savedScrollY) {
+      // Use a slight timeout to ensure DOM is fully painted before scrolling
+      setTimeout(() => {
+        window.scrollTo({ top: parseInt(savedScrollY, 10), behavior: 'instant' });
+      }, 50);
+    }
+
+    const handleScroll = () => {
+      sessionStorage.setItem('dashboardScrollY', window.scrollY.toString());
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#080c14] via-[#0c1220] to-[#0a0e1a] overflow-hidden text-slate-300">
       {/* Background Texture & Glows */}

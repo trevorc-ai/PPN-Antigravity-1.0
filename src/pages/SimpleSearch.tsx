@@ -31,7 +31,6 @@ import {
 
 import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatmap';
 import GlobalBenchmarkIntelligence from '../components/analytics/GlobalBenchmarkIntelligence';
-import { useAuth } from '../contexts/AuthContext';
 
 // ─── Keyword → page map (client-side only, zero network requests) ─────────────
 
@@ -248,15 +247,11 @@ function useSearch(query: string): SearchResult[] {
 
 const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const results = useSearch(query);
-
-  const userName = user?.email?.split('@')[0] ?? '';
-  const displayName = userName.charAt(0).toUpperCase() + userName.slice(1);
 
   // Auto-focus on mount so users arriving via sidebar nav can type immediately
   useEffect(() => {
@@ -305,7 +300,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
             </span>
           </div>
           <h1 className="ppn-page-title">
-            Welcome back.
+            Welcome to the PPN Portal
           </h1>
           <p className="ppn-body text-slate-400 max-w-lg mx-auto">
             Search the platform, or select a tool below to get started.

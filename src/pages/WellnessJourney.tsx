@@ -659,7 +659,7 @@ const WellnessJourneyInternal: React.FC = () => {
             pulseCheckTotal: journey.integration.pulseCheckCompliance,
             phq9Followup: journey.integration.currentPhq9,
         },
-        benchmarkReadiness: result.score,
+        benchmarkReadiness: result?.score ?? 0,
     };
 
     return (
@@ -776,10 +776,10 @@ const WellnessJourneyInternal: React.FC = () => {
                             </div>
                             <button
                                 onClick={() => setPatientBarCollapsed(false)}
-                                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-700/40 border border-slate-600/40 text-[10px] font-bold text-slate-400 uppercase tracking-wide"
+                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-[14px] font-bold text-slate-400 uppercase tracking-wide"
                                 aria-label="Expand patient context bar"
                             >
-                                <ChevronDown className="w-3 h-3" /> Patient
+                                <ChevronDown className="w-4 h-4" /> Patient
                             </button>
                         </div>
                     )}
@@ -796,11 +796,11 @@ const WellnessJourneyInternal: React.FC = () => {
                             }} />
                             <div className="flex items-center gap-2 flex-nowrap shrink-0">
                                 {/* Patient ID */}
-                                <span className="text-[10px] sm:text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
-                                <span className="text-sm sm:text-2xl font-bold sm:font-black text-white font-mono tracking-wide shrink-0">{journey.patientId}</span>
+                                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
+                                <span className="text-base sm:text-2xl font-bold sm:font-black text-white font-mono tracking-wide shrink-0">{journey.patientId}</span>
                                 {/* TEST MODE badge */}
                                 {journey.patientId.startsWith('TEST-') && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-500/15 border border-amber-500/40 text-[10px] sm:text-xs font-semibold text-amber-400 tracking-wide uppercase shrink-0">
+                                    <span className="inline-flex min-h-[36px] items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-sm font-semibold text-amber-400 tracking-wide uppercase shrink-0">
                                         🧪 TEST MODE
                                     </span>
                                 )}
@@ -831,7 +831,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                         <span className="text-indigo-200 font-bold">{journey.condition}</span>
                                     </span>
                                 )}
-                                {/* Edit Config / Switch Patient — hidden on mobile */}
+                                {/* Edit Config / Switch Patient — ensure mobile reachability and 44px min height */}
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -842,7 +842,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                             setShowPatientModal(true);
                                         }
                                     }}
-                                    className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800/50 rounded-lg border border-slate-600/50 text-[12px] sm:text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm shrink-0"
+                                    className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-slate-800/50 rounded-xl border border-slate-600/50 text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm shrink-0"
                                     aria-label={activePhase === 1 ? 'Edit demographics config' : 'Lookup existing patient'}
                                 >
                                     {activePhase === 1 ? 'Edit Config' : 'Lookup'}
@@ -920,10 +920,10 @@ const WellnessJourneyInternal: React.FC = () => {
                         {patientBarCollapsed === false && activePhase === 2 && (
                             <button
                                 onClick={() => setPatientBarCollapsed(true)}
-                                className="flex sm:hidden items-center justify-center gap-1 mt-1 mx-auto px-3 py-1 rounded-lg bg-slate-700/30 border border-slate-700/40 text-[10px] font-bold text-slate-500 uppercase tracking-wide"
+                                className="flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center gap-2 mt-2 mx-auto px-4 py-2 rounded-xl bg-slate-700/30 border border-slate-700/40 text-sm font-bold text-slate-400 uppercase tracking-wide w-full"
                                 aria-label="Collapse patient context bar"
                             >
-                                <ChevronUp className="w-3 h-3" /> Collapse
+                                <ChevronUp className="w-4 h-4" /> Collapse Context
                             </button>
                         )}
 

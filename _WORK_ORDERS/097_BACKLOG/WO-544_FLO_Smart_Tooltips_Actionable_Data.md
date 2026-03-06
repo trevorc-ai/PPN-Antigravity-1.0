@@ -1,8 +1,8 @@
-==== FLO ====
+
 ---
 owner: CUE
 status: 00_INBOX
-authored_by: FLO
+authored_by: PRODDY
 ---
 
 ## WORK ORDER: WO-544
@@ -22,7 +22,7 @@ Upgrade passive data visualization charts (Safety Surveillance, Wellness Journey
 - This layer transforms the chart from a descriptive view into an active safety and forensic logging asset.
 
 ### Tasks
-- [ ] Identify existing Recharts implementations in `SafetySurveillancePage.tsx` and `WellnessJourney.tsx`.
+- [ ] Identify all existing Recharts implementations and components.
 - [ ] Enhance the standard Recharts `<Tooltip />` to utilize a custom component (e.g., `AdvancedTooltip.tsx`).
 - [ ] Inject 9th-grade level explanatory text blocks that correlate raw metric spikes (e.g., G3 Severity Events) with historical probabilities (e.g., probability of protocol deviation).
 - [ ] Verify styling (`bg-slate-900/90`, `border-white/10`) adheres to the Glass Panel standard.
@@ -33,4 +33,4 @@ Upgrade passive data visualization charts (Safety Surveillance, Wellness Journey
 - [x] Actionable tasks identified
 - [x] Priority tagged as P2
 - [x] Routed to `00_INBOX` for CUE review
-==== FLO ====
+

@@ -195,15 +195,9 @@ const Landing: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigate('/waitlist')}
-                  className="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
+                  className="w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
                   Join the Waitlist
-                </button>
-                <button
-                  onClick={() => navigate('/partner-demo')}
-                  className="flex-1 px-8 py-4 bg-transparent hover:bg-slate-800 text-slate-300 text-base font-black rounded-xl uppercase tracking-wide transition-all border border-slate-700 hover:border-slate-500 active:scale-95"
-                >
-                  Watch Demo (2 min)
                 </button>
               </div>
 
