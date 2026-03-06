@@ -233,13 +233,8 @@ const AppContent: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showTour, setShowTour] = useState(false);
 
-  // ── First-login auto-tour trigger (WO-508) ───────────────────────────────
-  useEffect(() => {
-    if (!user) return;
-    if (localStorage.getItem('ppn_tour_completed')) return;
-    const timer = setTimeout(() => setShowTour(true), 1500);
-    return () => clearTimeout(timer);
-  }, [user]);
+  // Auto-tour disabled (WO-554) — tour can still be triggered manually via onStartTour
+
 
   // Suppress ResizeObserver Warnings
   useEffect(() => {
