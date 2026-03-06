@@ -3,6 +3,12 @@
 # To unfreeze: remove it from the list and commit this file first.
 # Last updated: 2026-03-05 — LOCKDOWN MODE ACTIVE
 
+# ── Dashboard & Search (frozen post WO-552/553 cleanup) ──
+src/pages/Dashboard.tsx
+src/pages/SimpleSearch.tsx
+src/components/Footer.tsx
+
+
 # ── Governance (never touch without explicit authorization) ──
 agent.yaml
 GLOBAL_CONSTITUTION.md
