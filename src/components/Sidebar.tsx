@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { X, QrCode, Smartphone, ArrowRight, ShieldCheck, Compass } from 'lucide-react';
 import { AdvancedTooltip } from './ui/AdvancedTooltip';
 
@@ -48,19 +48,13 @@ const navSections: NavSection[] = [
     items: [
       { label: 'Interactions', icon: 'warning', path: '/interactions' },
       { label: 'Audit Logs', icon: 'history', path: '/audit' },
+      { label: 'Download Center', icon: 'download', path: '/download-center' },
     ],
   },
   {
     title: '',
     items: [
       { label: 'Substance Library', icon: 'science', path: '/catalog' },
-    ],
-  },
-  {
-    title: 'Integrations',
-    items: [
-      { label: 'Mobile Scanner', icon: 'qr_code_scanner', path: 'action:scanner', isAction: true, tooltip: 'Connect your mobile device to scan documents directly into the patient record.' },
-      { label: 'Device Sync', icon: 'watch', path: 'action:device', isAction: true, tooltip: 'Instantly beam this session to your mobile device or wearable for remote monitoring.' },
     ],
   },
   {
@@ -73,6 +67,7 @@ const navSections: NavSection[] = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileModalState, setMobileModalState] = React.useState<{ isOpen: boolean; feature: string; title: string; }>({ isOpen: false, feature: '', title: '' });
 
   const DEMO_SESSION_ID = import.meta.env.VITE_DEMO_SESSION_ID ?? '00000000-0570-de00-0000-000000000000';
@@ -166,6 +161,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                               data-tour={tourDataMap[item.path]}
                               onClick={() => {
                                 if (window.innerWidth < 1024) onClose();
+                                // If clicking a nav link to the current page, scroll to top instead
+                                if (location.pathname === item.path) {
+                                  document.querySelector('main')?.scrollTo({ top: 0, behavior: 'smooth' });
+                                }
                               }}
                               className={({ isActive }) =>
                                 `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all select-none ${isActive

@@ -20,6 +20,9 @@ import { useToast } from '../../contexts/ToastContext';
 import { usePhase3Data } from '../../hooks/usePhase3Data';
 import { DemoDataBadge } from './DemoDataBadge';
 import type { RiskFlag } from '../../utils/riskCalculator';
+// SAVS P3-C fix: createPulseCheck wired to inline PulseCheckWidget submit
+// SAVS P3-D fix: createTimelineEvent for discharge summary DB timestamp
+import { createPulseCheck, createTimelineEvent } from '../../services/clinicalLog';
 
 interface IntegrationPhaseProps {
     journey: any;
@@ -296,36 +299,68 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
         URL.revokeObjectURL(url);
     };
 
-    const handleDischargeSummary = () => {
-        const mockDischargeData: DischargeSummaryData = {
+    const handleDischargeSummary = async () => {
+        // siteId comes from auth/registration context, not the journey object
+        const { getCurrentSiteId } = await import('../../services/identity');
+        const resolvedSiteId = await getCurrentSiteId() ?? 'SITE-UNKNOWN';
+
+        const sessionId = journey.session?.sessionId ?? journey.sessionId;
+        const today = new Date().toISOString().split('T')[0];
+
+        const dischargeData: DischargeSummaryData = {
             patientId: journey.patientId ?? 'PT-DEMO',
-            siteId: 'SITE-001',
-            clinicianId: 'Provider-1',
-            treatmentStart: '2025-08-01',
-            treatmentEnd: '2025-11-20',
-            dosingSessionsCount: 3,
+            siteId: resolvedSiteId,
+            clinicianId: journey.clinicianId ?? 'Provider-Unknown', // TODO: wire from auth session user ID when available
+            treatmentStart: journey.sessionDate
+                ? new Date(journey.sessionDate).toISOString().split('T')[0]
+                : today,
+            treatmentEnd: today,
+            dosingSessionsCount: 1, // TODO: multi-session count not yet tracked; single session is current model
             integrationSessionsCount: intAttended,
-            diagnosis: 'Treatment-Resistant Depression (F33.2)',
-            substanceName: journey.session?.substance ?? 'Psilocybin Extract',
-            substanceDose: journey.session?.dose ?? '25mg oral',
-            protocolName: 'TRD Standard 3-Dose',
-            baseline: { phq9: baselinePhq9, gad7: 15, caps5: 20 },
-            final: { phq9: phase3.currentPhq9 ?? 5, gad7: 6, caps5: 12 },
-            meq30Peak: journey.session?.meq30Score ?? 78,
-            responseAchieved: 'YES (>=50% reduction)',
-            remissionAchieved: 'YES',
+            diagnosis: journey.diagnosis ?? 'Not recorded', // TODO: wire when diagnosis field is collected in intake
+            substanceName: journey.session?.substance ?? 'Not recorded',
+            substanceDose: journey.session?.dose ?? 'Not recorded',
+            protocolName: journey.protocolName ?? 'Standard Protocol', // TODO: wire from ProtocolConfigurator record
+            baseline: {
+                phq9: baselinePhq9,
+                gad7: journey.risk?.baseline?.gad7 ?? null, // TODO: add gad7 to baseline schema
+                caps5: null, // TODO: CAPS-5 not yet collected
+            },
+            final: {
+                phq9: phase3.currentPhq9 ?? null,
+                gad7: null, // TODO: wire when longitudinal GAD-7 is tracked
+                caps5: null, // TODO: CAPS-5 not yet collected
+            },
+            meq30Peak: journey.session?.meq30Score ?? null,
+            responseAchieved: phase3.currentPhq9 != null && baselinePhq9 > 0
+                ? (((baselinePhq9 - phase3.currentPhq9) / baselinePhq9) >= 0.5 ? 'YES (>=50% reduction)' : 'NO')
+                : 'NO',
+            remissionAchieved: phase3.currentPhq9 != null
+                ? (phase3.currentPhq9 < 5 ? 'YES' : 'NO')
+                : 'NO',
             adverseEventsCount: safetyEvents.length,
-            grade3EventsCount: 0,
-            chemicalRescueUsed: 'NO',
-            ongoingVulnerabilities: 'Mild residual anxiety. No suicidality.',
-            referralName: 'Unassigned (Pending Referral)',
+            grade3EventsCount: 0, // TODO: wire CTCAE grade filter when safety event severity is tracked
+            chemicalRescueUsed: safetyEvents.some((e: any) => e.event_type === 'rescue') ? 'YES' : 'NO',
+            ongoingVulnerabilities: 'Review integration notes for ongoing concerns.', // TODO: derive from integration session forms
+            referralName: 'Unassigned (Pending Referral)', // TODO: wire from referral tracking
             followUpWeeks: 4,
             emergencyPlanSummary: 'Contact crisis line 988 if symptoms return.',
-            selfCareSummary: 'Continue daily meditation, maintain sleep hygiene, exercise 3x/week.',
-            clinicianStatement: 'Patient showed remarkable progress and has achieved clinical remission.',
+            selfCareSummary: 'Review integration session recommendations for patient-specific plan.',
+            clinicianStatement: 'Discharge summary auto-generated. Clinician review required before distribution.',
         };
-        downloadDischargeSummary(mockDischargeData);
+
+        downloadDischargeSummary(dischargeData);
         addToast({ title: 'Discharge Summary Generated', message: 'Final clinical outcome report exported securely.', type: 'success' });
+
+        // SAVS P3-D fix: stamp DB record that a discharge summary was generated
+        if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+            createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type: 'clinical_decision',
+                metadata: { event_description: 'Discharge summary PDF generated and exported by practitioner.' },
+            }).catch(err => console.warn('[SAVS-P3D] Discharge summary DB timestamp failed:', err));
+        }
     };
 
     const progressSummaryData: ProgressSummaryData = {
@@ -406,19 +441,23 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                         <div className="h-px flex-1 bg-slate-700/50" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {/* SAVS P3-A fix: Step 1 wired to structured-safety form */}
                         <IntegrationCard
                             stepNum={1}
                             icon={<Shield className="w-4 h-4" />}
                             title="Safety Check"
                             description="Confirm the patient is stable and safe post-session."
-                            status={daysPostSession > 3 ? 'archived' : 'pending'}
+                            status={daysPostSession > 3 ? 'archived' : completedForms.has('structured-safety') ? 'completed' : 'pending'}
+                            onOpen={onOpenForm && daysPostSession <= 3 ? () => onOpenForm('structured-safety') : undefined}
                         />
+                        {/* SAVS P3-A fix: Step 2 wired to daily-pulse form */}
                         <IntegrationCard
                             stepNum={2}
                             icon={<Heart className="w-4 h-4" />}
                             title="Daily Pulse, First Check-In"
                             description="Log the patient's first mood and sleep reading post-session."
-                            status={daysPostSession > 3 ? 'archived' : 'pending'}
+                            status={daysPostSession > 3 ? 'archived' : completedForms.has('daily-pulse') ? 'completed' : 'pending'}
+                            onOpen={onOpenForm && daysPostSession <= 3 ? () => onOpenForm('daily-pulse') : undefined}
                         />
                     </div>
                 </div>
@@ -687,8 +726,21 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                                 <PulseCheckWidget
                                     patientId={journey.patientId}
                                     sessionId={journey.session?.sessionId ?? journey.sessionId}
-                                    onSubmit={(data) => {
-                                        console.log('[WO-545] Pulse check submitted:', data);
+                                    onSubmit={async (data) => {
+                                        // SAVS P3-C fix: was console.log only - now writes to log_pulse_checks
+                                        if (!journey.patientId) return;
+                                        const result = await createPulseCheck({
+                                            patient_id: journey.patientId,
+                                            session_id: journey.session?.sessionId ?? journey.sessionId,
+                                            check_date: new Date().toISOString().split('T')[0],
+                                            connection_level: data.connection_level ?? 3,
+                                            sleep_quality: data.sleep_quality ?? 3,
+                                            mood_level: data.mood_level,
+                                            anxiety_level: data.anxiety_level,
+                                        });
+                                        if (!result.success) {
+                                            console.warn('[SAVS-P3C] Pulse check widget DB write failed:', result.error);
+                                        }
                                     }}
                                 />
                             </div>

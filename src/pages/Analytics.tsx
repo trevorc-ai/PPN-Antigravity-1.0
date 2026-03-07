@@ -18,7 +18,7 @@ import { supabase } from '../supabaseClient';
 import { useAnalyticsData } from '../hooks/useAnalyticsData';
 import SafetyBenchmark from '../components/analytics/SafetyBenchmark';
 import { useSafetyBenchmark } from '../hooks/useSafetyBenchmark';
-import GlobalBenchmarkIntelligence from '../components/analytics/GlobalBenchmarkIntelligence';
+
 import InsightFeedPanel from '../components/analytics/InsightFeedPanel';
 
 const Analytics = () => {
@@ -56,7 +56,10 @@ const Analytics = () => {
     }, []);
 
     const handlePrint = () => {
+        const prev = document.title;
+        document.title = `PPN Clinic Report ${new Date().toISOString().slice(0, 10)}`;
         window.print();
+        window.addEventListener('afterprint', () => { document.title = prev; }, { once: true });
     };
 
     const kpiStats = [
@@ -287,23 +290,7 @@ const Analytics = () => {
 
             </Section>
 
-            {/* ── GLOBAL BENCHMARK INTELLIGENCE, Placed below practitioner analytics ─── */}
-            <Section spacing="tight" className="print:break-inside-avoid">
-                {/* PRODDY recommendation: GBI belongs below practitioner-specific analytics
-                    to reduce cognitive overload. The practitioner's own data comes first. */}
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Global Benchmark Intelligence</h2>
-                        <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>Your outcomes grounded in worldwide published clinical evidence</p>
-                    </div>
-                    <span className="text-xs font-black px-3 py-1.5 rounded-full border bg-emerald-500/10 border-emerald-500/30 text-emerald-400 uppercase tracking-widest">
-                        Live Data
-                    </span>
-                </div>
-                <div className="bg-[#0a0c12]/50 border border-slate-800/50 rounded-2xl p-6">
-                    <GlobalBenchmarkIntelligence alwaysShow={true} />
-                </div>
-            </Section>
+
 
             {/* ── EXPORT REPORT, Bottom of page, prominently placed ─────────── */}
             <Section spacing="tight" className="print:hidden">

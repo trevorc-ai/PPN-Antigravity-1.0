@@ -405,8 +405,60 @@ const Settings: React.FC = () => {
           </div>
         </div>
 
+        {/* ── Trust & Compliance (WO-531) ─────────────────────────────────── */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2.5 ml-1">
+            <span className="material-symbols-outlined text-slate-300 text-xl" aria-hidden="true">verified_user</span>
+            <h2 className="text-sm font-black uppercase tracking-widest whitespace-nowrap" style={{ color: '#A8B5D1' }}>Trust & Compliance</h2>
+            <div className="h-px bg-slate-800/60 flex-1 ml-4 rounded-full"></div>
+          </div>
+
+          <div className="bg-[#111418]/60 border border-slate-800 rounded-[2rem] p-8 shadow-2xl">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div className="size-14 rounded-2xl bg-indigo-900/30 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shadow-lg flex-shrink-0">
+                <span className="material-symbols-outlined text-3xl" aria-hidden="true">shield_with_heart</span>
+              </div>
+              <div className="flex-1 space-y-1.5">
+                <h3 className="text-base font-bold" style={{ color: '#8B9DC3' }}>Sterile Schema Data Policy</h3>
+                <p className="text-sm text-slate-400 max-w-md font-medium leading-relaxed">
+                  PPN Portal operates a Zero-Knowledge, No-PHI architecture. Read our full data collection policy or download it to share with legal counsel or your clinic's compliance team.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-slate-800/60">
+              <button
+                onClick={() => navigate('/data-policy')}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
+                aria-label="View Data Policy page"
+              >
+                <span className="material-symbols-outlined text-base" aria-hidden="true">open_in_new</span>
+                View Data Policy
+              </button>
+              <button
+                onClick={() => navigate('/terms')}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-black rounded-xl uppercase tracking-widest transition-all active:scale-95"
+                aria-label="View Terms of Service"
+              >
+                <span className="material-symbols-outlined text-base" aria-hidden="true">gavel</span>
+                Terms of Service
+              </button>
+              <a
+                href="/assets/trust/ppn-data-policy-light.pdf"
+                download
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-xl uppercase tracking-widest transition-all shadow-xl active:scale-95"
+                aria-label="Download Data Policy PDF"
+              >
+                <span className="material-symbols-outlined text-base" aria-hidden="true">download</span>
+                Download PDF
+              </a>
+            </div>
+          </div>
+        </div>
+
       </Section>
     </PageContainer>
+
   );
 };
 

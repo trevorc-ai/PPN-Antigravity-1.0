@@ -58,21 +58,24 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     const [isSaving, setIsSaving] = useState(false);
     const [isDone, setIsDone] = useState(false);
 
+    // WO-531 Fix: Navigation callbacks (onExit / onComplete) always fire.
+    // onSave is only called when there are actual responses to persist.
     const handleSaveAndExit = () => {
-        if (onSave) {
+        if (onSave && answeredCount > 0) {
             setIsSaving(true);
             onSave(data);
             setTimeout(() => {
                 setIsSaving(false);
                 if (onExit) onExit();
             }, 300);
-        } else if (onExit) {
-            onExit();
+        } else {
+            // No responses to save — navigate immediately
+            if (onExit) onExit();
         }
     };
 
     const handleSaveAndContinue = () => {
-        if (onSave) {
+        if (onSave && answeredCount > 0) {
             setIsSaving(true);
             onSave(data);
             setIsDone(true);
@@ -81,7 +84,7 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 if (onComplete) onComplete();
             }, 300);
         } else {
-            // No save handler — close the panel immediately (complete exit path guaranteed)
+            // No responses to save — navigate immediately
             setIsDone(true);
             if (onComplete) onComplete();
         }
@@ -102,10 +105,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     const isMysticalExperience = normalizedScore >= 60;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6 meq-form-root">
-            {/* WO-538: Dimmed scrollbar for dark-mode MEQ-30 panel */}
-            <style>{`.meq-form-root ::-webkit-scrollbar{width:6px;height:6px}.meq-form-root ::-webkit-scrollbar-track{background:transparent}.meq-form-root ::-webkit-scrollbar-thumb{background:rgba(100,116,139,0.3);border-radius:3px}.meq-form-root ::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,0.5)}`}</style>
-            {/* Compact Sticky Progress Header */}
+        <div className="max-w-4xl mx-auto space-y-6">
+            {/* ── Compact Sticky Progress Header ────────────────────────────── }
             <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mt-0">
                 <div className="flex-1 space-y-1.5 w-full">
                     <div className="flex items-center justify-between text-xs sm:text-sm">
@@ -221,13 +222,15 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 )}
             </div>
 
+            {/* WO-531 Fix: hasChanges always true so navigation buttons are never
+                unconditionally disabled. isSaving still disables during async save. */}
             <FormFooter
                 onBack={onBack}
                 onSaveAndExit={handleSaveAndExit}
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={true}
-                saveAndContinueLabel={isComplete ? 'Complete Assessment' : 'Save & Continue'}
+                saveAndContinueLabel={isComplete ? 'Save & Done' : 'Complete Assessment'}
                 isDone={isDone}
             />
         </div>

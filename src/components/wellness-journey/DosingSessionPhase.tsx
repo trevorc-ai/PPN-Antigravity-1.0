@@ -400,7 +400,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
             switch (e.key.toLowerCase()) {
                 case 'u': setShowUpdatePanel(p => !p); break;
-                case 'v':
+                case 'v': {
                     // Stamp a vital_check pin on the chart when practitioner opens vitals form
                     setEventLog(prev => [...prev, {
                         id: `vitals-${Date.now()}`,
@@ -408,14 +408,20 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         type: 'vital_check',
                         label: 'Vitals Recorded',
                     } satisfies SessionEventPin]);
+                    // SAVS GAP #2 fix: persist the vitals shortcut activation to the DB ledger
+                    const _sidV = journey.sessionId ?? journey.session?.sessionId;
+                    if (_sidV && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidV)) {
+                        createTimelineEvent({
+                            session_id: _sidV,
+                            event_timestamp: new Date().toISOString(),
+                            event_type: 'vital_check',
+                            metadata: { event_description: `Vitals check initiated via keyboard shortcut at T+${elapsedTime}` },
+                        }).catch(err => console.warn('[SAVS-GAP2] Vitals key DB write failed:', err));
+                    }
                     onOpenForm('session-vitals');
                     break;
-                case 'a':
-                    window.dispatchEvent(new CustomEvent('ppn:session-event', {
-                        detail: { type: 'safety_event', label: 'Safety / Adverse Event' },
-                    }));
-                    onOpenForm('safety-and-adverse-event');
-                    break;
+                }
+                case 'a': onOpenForm('safety-and-adverse-event'); break;
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -830,7 +836,21 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     <div className="flex flex-col items-center pt-8 border-t border-slate-800">
                         <button
                             disabled={!assessmentCompleted}
-                            onClick={onCompletePhase}
+                            onClick={async () => {
+                                // SAVS GAP #4 fix: persist session close + captured scores to DB ledger
+                                const _sidC = journey.sessionId ?? journey.session?.sessionId;
+                                if (_sidC && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidC)) {
+                                    await createTimelineEvent({
+                                        session_id: _sidC,
+                                        event_timestamp: new Date().toISOString(),
+                                        event_type: 'clinical_decision',
+                                        metadata: {
+                                            event_description: `Session submitted and closed. Post-session assessment scores — MEQ: ${assessmentScores?.meq ?? '—'}, EDI: ${assessmentScores?.edi ?? '—'}, CEQ: ${assessmentScores?.ceq ?? '—'}.`,
+                                        },
+                                    }).catch(err => console.warn('[SAVS-GAP4] Session close DB write failed:', err));
+                                }
+                                onCompletePhase();
+                            }}
                             className={`w-full md:w-2/3 py-5 rounded-2xl font-black text-xl tracking-wide shadow-lg transition-all flex items-center justify-center gap-4 ${assessmentCompleted
                                 ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-blue-900/40 cursor-pointer hover:scale-[1.01] active:scale-[0.99]'
                                 : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-slate-700'
@@ -1030,7 +1050,19 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         ) : isStart ? (
                                             /* Start Session CTA */
                                             <button
-                                                onClick={canStartSession ? () => setAndPersistMode('live') : undefined}
+                                                onClick={canStartSession ? () => {
+                                                    setAndPersistMode('live');
+                                                    // SAVS GAP #1 fix: persist session start to DB ledger
+                                                    const _sidS = journey.sessionId ?? journey.session?.sessionId;
+                                                    if (_sidS && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidS)) {
+                                                        createTimelineEvent({
+                                                            session_id: _sidS,
+                                                            event_timestamp: new Date().toISOString(),
+                                                            event_type: 'clinical_decision',
+                                                            metadata: { event_description: 'Dosing session timer started by practitioner.' },
+                                                        }).catch(err => console.warn('[SAVS-GAP1] Session start DB write failed:', err));
+                                                    }
+                                                } : undefined}
                                                 disabled={!canStartSession}
                                                 className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
                                                     ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-950/50'
@@ -1296,6 +1328,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 <button
                                     onClick={() => {
                                         try {
+                                            // SAVS GAP #3 fix: persist session end timestamp to DB ledger
+                                            const _sidE = journey.sessionId ?? journey.session?.sessionId;
+                                            if (_sidE && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidE)) {
+                                                createTimelineEvent({
+                                                    session_id: _sidE,
+                                                    event_timestamp: new Date().toISOString(),
+                                                    event_type: 'clinical_decision',
+                                                    metadata: { event_description: `Session timer stopped by practitioner at T+${elapsedTime}.` },
+                                                }).catch(err => console.warn('[SAVS-GAP3] Session end DB write failed:', err));
+                                            }
                                             setAndPersistMode('post');
                                         } catch (e) {
                                             console.error('[TreatmentPhase] mode transition failed, falling back to phase complete', e);

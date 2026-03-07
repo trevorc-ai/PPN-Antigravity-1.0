@@ -1,4 +1,5 @@
 import React from 'react';
+import { HelpCircle } from 'lucide-react';
 import { AdvancedTooltip } from '../../ui/AdvancedTooltip';
 
 /**
@@ -17,7 +18,8 @@ interface FormFieldProps {
     required?: boolean;
     error?: string;
     helpText?: string;
-    tooltip?: string;
+    tooltip?: React.ReactNode;
+    tooltipTier?: 'micro' | 'standard' | 'guide';
     icon?: React.ReactNode;
     children: React.ReactNode;
 }
@@ -29,6 +31,7 @@ export const FormField: React.FC<FormFieldProps> = ({
     error,
     helpText,
     tooltip,
+    tooltipTier = 'micro',
     icon,
     children
 }) => {
@@ -42,8 +45,8 @@ export const FormField: React.FC<FormFieldProps> = ({
                 {label}
                 {required && <span className="text-red-400">*</span>}
                 {tooltip && (
-                    <AdvancedTooltip content={tooltip} tier="micro">
-                        <span className="text-slate-400 cursor-help">ⓘ</span>
+                    <AdvancedTooltip content={tooltip} tier={tooltipTier}>
+                        <HelpCircle className="w-4 h-4 text-slate-400 hover:text-blue-400 cursor-help transition-colors" />
                     </AdvancedTooltip>
                 )}
             </label>

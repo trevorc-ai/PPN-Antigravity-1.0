@@ -197,6 +197,24 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         result.success ? onSaved('Set & Setting') : onError('Set & Setting', result.error);
     }, [patientId, siteId]);
 
+    // SAVS P1-B fix: persist PHQ-9 / GAD-7 / ACE / PCL-5 scores to DB on Mental Health Screening complete.
+    // BaselineAssessmentWizard calls onComplete(WizardData) - no DB write inside the component.
+    const handleMentalHealthSave = useCallback(async (data: { phq9?: number | null; gad7?: number | null; ace?: number | null; pcl5?: number | null }) => {
+        if (!patientId || !siteId) {
+            onSaved('Mental Health Screening'); // Advance UI even without DB write
+            return;
+        }
+        const result = await createBaselineAssessment({
+            patient_id: patientId,
+            site_id: siteId,
+            phq9_score: data.phq9 ?? undefined,
+            gad7_score: data.gad7 ?? undefined,
+            ace_score: data.ace ?? undefined,
+            // pcl5_score: not yet in BaselineAssessmentData schema - stored in localStorage until column is added
+        });
+        result.success ? onSaved('Mental Health Screening') : onError('Mental Health Screening', result.error);
+    }, [patientId, siteId]);
+
     // ── Phase 2 handlers ─────────────────────────────────────────────────────
 
     const handleVitalsSave = useCallback(async (readings: VitalSignReading[]) => {
@@ -314,12 +332,23 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         result.success ? onSaved('Daily Pulse Check') : onError('Daily Pulse Check', result.error);
     }, [patientId, sessionId]);
 
-    const handleMEQ30Save = useCallback(async (_data: MEQ30Data) => {
-        // MEQ-30 score is stored on log_clinical_records.meq30_score (the session record)
-        // This requires an UPDATE to the existing session record, not a new insert.
-        // For now: record that MEQ-30 was completed. Full wiring requires session UPSERT.
+    const handleMEQ30Save = useCallback(async (data: MEQ30Data) => {
+        // SAVS-P3B fix: MEQ30Data only has `responses: Record<number, number>`.
+        // Compute total score by summing all response values.
+        const meq30Total = Object.values(data.responses).reduce((sum, v) => sum + v, 0);
+        if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+            createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type: 'clinical_decision',
+                metadata: {
+                    event_description: `MEQ-30 assessment completed. Total score: ${meq30Total}.`,
+                    meq30_score: meq30Total,
+                },
+            }).catch(err => console.warn('[SAVS-P3B] MEQ-30 DB write failed:', err));
+        }
         onSaved('MEQ-30 Questionnaire');
-    }, []);
+    }, [sessionId]);
 
     const handleIntegrationSessionSave = useCallback(async (data: StructuredIntegrationSessionData) => {
         if (!patientId) { onError('Integration Session', 'No patient ID'); return; }
@@ -406,10 +435,21 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 return undefined;
             })();
 
-            // Wrap the onSave handler to also persist for Amend (WO-529)
-            const handleSafetyCheckSave = (data: StructuredSafetyCheckData) => {
+            // SAVS P1-A fix: persist safety screening completion to the DB ledger.
+            // Data is structurally validated but no dedicated table column exists yet;
+            // we log a clinical_decision event as the immutable record of completion.
+            const handleSafetyCheckSave = async (data: StructuredSafetyCheckData) => {
                 try { localStorage.setItem(safetyKey, JSON.stringify(data)); } catch (_) { }
                 onSaved('Safety Screen');
+                // Write timeline event so the safety check has a permanent clinical timestamp
+                if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+                    createTimelineEvent({
+                        session_id: sessionId,
+                        event_timestamp: new Date().toISOString(),
+                        event_type: 'clinical_decision',
+                        metadata: { event_description: 'Phase 1 Structured Safety Check completed by practitioner.' },
+                    }).catch(err => console.warn('[SAVS-P1A] Safety check DB write failed:', err));
+                }
             };
 
             return <StructuredSafetyCheckForm
@@ -436,7 +476,20 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         case 'mental-health':
             return <MentalHealthScreeningForm
                 patientId={patientId}
-                onComplete={onComplete}
+                onComplete={async (wizardData) => {
+                    // SAVS P1-B fix: persist psychometric scores now that we have WizardData
+                    await handleMentalHealthSave(wizardData.mentalHealth);
+                    // SAVS P1-C fix: stamp Phase 1 completion timestamp in the DB ledger
+                    if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+                        createTimelineEvent({
+                            session_id: sessionId,
+                            event_timestamp: new Date().toISOString(),
+                            event_type: 'clinical_decision',
+                            metadata: { event_description: 'Phase 1 Preparation completed. Baseline assessment recorded.' },
+                        }).catch(err => console.warn('[SAVS-P1C] Phase 1 completion DB write failed:', err));
+                    }
+                    onComplete?.();
+                }}
                 onExit={onExit ?? onClose ?? onComplete}
                 onBack={() => onNavigate ? onNavigate('structured-safety') : onClose?.()}
             />;
@@ -484,7 +537,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <DailyPulseCheckForm onSave={handlePulseCheckSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'meq30':
-            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
+            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose} onExit={onExit ?? onClose ?? onComplete} />;
 
         // ── Phase 3: Integration, Integration Work ──────────────────────────
         case 'structured-integration':
