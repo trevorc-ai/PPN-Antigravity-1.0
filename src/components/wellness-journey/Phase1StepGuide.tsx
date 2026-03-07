@@ -329,7 +329,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
                                 {/* Step number label (H3-equiv) + status badge */}
                                 <div className="flex items-center justify-between gap-1">
-                                    <span className={`font-['Manrope',sans-serif] text-xl md:text-2xl font-extrabold tracking-tight leading-none ${isComplete ? 'text-teal-300/80' : isCurrent ? 'text-indigo-200/90' : 'text-slate-400/80'
+                                    <span className={`font-['Manrope',sans-serif] text-lg sm:text-2xl font-extrabold tracking-tight leading-none ${isComplete ? 'text-teal-300/80' : isCurrent ? 'text-indigo-200/90' : 'text-slate-400/80'
                                         }`}>
                                         Step {index + 1}
                                     </span>
@@ -343,7 +343,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                 </div>
 
                                 {/* Icon + title, primary content */}
-                                <div className="flex items-start gap-2.5">
+                                <div className="flex items-start gap-2.5 min-w-0">
                                     <div className={[
                                         'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
                                         isComplete ? 'bg-teal-500/15' : isCurrent ? 'bg-indigo-500/25' : 'bg-slate-700/30',
@@ -353,9 +353,12 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                             {step.icon}
                                         </span>
                                     </div>
-                                    {/* H3: card title, minimum text-sm */}
-                                    <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
-                                        }`}>
+                                    {/* H3: card title, minimum text-sm. Added truncate to prevent mobile overflow */}
+                                    <h4
+                                        className={`text-sm md:text-base font-black leading-snug pt-1 truncate ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
+                                            }`}
+                                        title={step.label}
+                                    >
                                         {step.label}
                                     </h4>
                                 </div>

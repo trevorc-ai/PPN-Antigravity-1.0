@@ -66,7 +66,7 @@ const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void
             <button
                 type="button"
                 onClick={onClick}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all active:scale-95 ${active
+                className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${active
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
                     : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-[#A8B5D1]'
                     }`}
@@ -204,12 +204,12 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
     const activeFiltersCount = phaseFilter ? 1 : 0;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#060d1a]/90 backdrop-blur-md">
-            <div className="w-full max-w-2xl mx-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#060d1a]/90 backdrop-blur-md p-0 sm:p-4 transition-all duration-300">
+            <div className="w-full max-w-2xl">
 
                 {/* ── Choose View ───────────────────────────────────────────── */}
                 {view === 'choose' && (
-                    <div className="bg-slate-900 border border-slate-700/60 rounded-2xl overflow-hidden shadow-2xl shadow-black/60">
+                    <div className="bg-slate-900 border-t border-x sm:border border-slate-700/60 rounded-t-3xl sm:rounded-2xl overflow-hidden shadow-2xl shadow-black/60 max-h-[95dvh] flex flex-col animate-in slide-in-from-bottom-full sm:zoom-in-95 duration-300">
                         <div className="px-8 pt-8 pb-6 border-b border-slate-800 relative">
                             {(onNavigateBack ?? onClose) && (
                                 <button
@@ -237,27 +237,61 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 <div className="flex-1">
                                     <p className="text-base font-bold text-white">New Patient</p>
                                     <p className="text-sm text-slate-400 mt-0.5">Assign a new anonymous ID and begin Phase 1</p>
-                                    <p className="text-xs text-indigo-400 font-mono mt-2 tracking-wide">→ {newId}</p>
+
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-indigo-400 group-hover:translate-x-1 transition-transform" />
                             </button>
 
-                            {/* Existing Patient */}
-                            <button
-                                onClick={() => setView('existing')}
-                                className="w-full group flex items-center gap-5 p-5 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all active:scale-[0.99] text-left"
-                            >
-                                <div className="w-12 h-12 rounded-xl bg-slate-700/60 border border-slate-600/50 flex items-center justify-center flex-shrink-0">
-                                    <Search className="w-6 h-6 text-slate-400" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-base font-bold text-white">Existing Patient</p>
-                                    <p className="text-sm text-slate-400 mt-0.5">Look up a patient by ID and continue their journey</p>
-                                </div>
-                                <ChevronRight className="w-5 h-5 text-slate-500 group-hover:translate-x-1 transition-transform" />
-                            </button>
+                            {/* Existing Patient + Most Recent — 2-column row per design mockup */}
+                            <div className="grid grid-cols-2 gap-3">
+                                {/* Existing Patient */}
+                                <button
+                                    onClick={() => { fetchPatients(); setView('existing'); }}
+                                    className="group flex items-start gap-3 p-4 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all active:scale-[0.99] text-left"
+                                >
+                                    <div className="w-10 h-10 rounded-xl bg-slate-700/60 border border-slate-600/50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <Search className="w-5 h-5 text-slate-400" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-bold text-white">Existing Patient</p>
+                                        <p className="text-xs text-slate-400 mt-0.5">Look up a patient</p>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-slate-500 group-hover:translate-x-0.5 transition-transform flex-shrink-0 self-center" />
+                                </button>
 
-                            {/* Practice Session, TEST mode, no DB writes */}
+                                {/* Most Recent — one-tap shortcut to last patient */}
+                                {patients.length > 0 ? (
+                                    <button
+                                        onClick={() => onSelect(patients[0].id, false, patients[0].phase)}
+                                        className="group flex items-start gap-3 p-4 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-indigo-500/40 rounded-xl transition-all active:scale-[0.99] text-left"
+                                    >
+                                        <div className="w-10 h-10 rounded-xl bg-slate-700/60 border border-slate-600/50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <Search className="w-5 h-5 text-slate-400" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold text-white">Most Recent</p>
+                                            <p className="text-xs font-mono text-indigo-400 mt-0.5 truncate">{patients[0].id}</p>
+                                            <p className="text-xs text-slate-500 mt-0.5">
+                                                {patients[0].phase} · {new Date(patients[0].lastSession).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                            </p>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 text-indigo-500 group-hover:translate-x-0.5 transition-transform flex-shrink-0 self-center" />
+                                    </button>
+                                ) : (
+                                    // Placeholder shown while loading or when no prior patients exist
+                                    <div className="flex items-start gap-3 p-4 bg-slate-800/30 border border-slate-700/30 rounded-xl opacity-50">
+                                        <div className="w-10 h-10 rounded-xl bg-slate-700/40 border border-slate-700/40 flex items-center justify-center flex-shrink-0">
+                                            <Clock className="w-5 h-5 text-slate-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-500">Most Recent</p>
+                                            <p className="text-xs text-slate-600 mt-0.5">No prior sessions</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Practice Session — all amber/yellow text throughout */}
                             <button
                                 onClick={() => onSelect(testId, true, 'Preparation')}
                                 className="w-full group flex items-center gap-5 p-5 bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/40 rounded-xl transition-all active:scale-[0.99] text-left"
@@ -266,9 +300,9 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     <FlaskConical className="w-6 h-6 text-amber-400" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-base font-bold text-white">Practice Session</p>
-                                    <p className="text-sm text-slate-400 mt-0.5">Explore the Wellness Journey without creating a real patient record</p>
-                                    <p className="text-xs text-amber-400 font-mono mt-2 tracking-wide">→ {testId}</p>
+                                    <p className="text-base font-bold text-amber-400">Practice Session</p>
+                                    <p className="text-sm text-amber-400/70 mt-0.5">Explore the Wellness Journey without creating a real patient record</p>
+
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" />
                             </button>
@@ -334,7 +368,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             <div className="flex items-center justify-between mb-3">
                                 <button
                                     type="button"
-                                    onClick={onNavigateBack ?? onClose}
+                                    onClick={onNavigateBack ?? (() => setView('choose'))}
                                     aria-label="Go back"
                                     className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl border border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 hover:border-slate-600 transition-all active:scale-95"
                                 >
@@ -352,7 +386,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
 
                 {/* ── Existing Patient View ─────────────────────────────────── */}
                 {view === 'existing' && (
-                    <div className="bg-slate-900 border border-slate-700/60 rounded-2xl overflow-hidden shadow-2xl shadow-black/60">
+                    <div className="bg-slate-900 border-t border-x sm:border border-slate-700/60 rounded-t-3xl sm:rounded-2xl overflow-hidden shadow-2xl shadow-black/60 max-h-[95dvh] flex flex-col animate-in slide-in-from-bottom-full sm:zoom-in-95 duration-300">
                         {/* Header */}
                         <div className="px-6 pt-6 pb-4 border-b border-slate-800 relative">
                             {/* X on existing view, goes back to choose, never exits the modal */}
