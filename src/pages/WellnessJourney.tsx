@@ -6,6 +6,7 @@ import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
 import { TreatmentPhase, Phase2ErrorBoundary } from '../components/wellness-journey/DosingSessionPhase';
+import { MobileCockpit } from '../components/wellness-journey/MobileCockpit';
 import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhase';
 import { SlideOutPanel } from '../components/wellness-journey/SlideOutPanel';
 import { WorkflowActionCard } from '../components/wellness-journey/WorkflowCards';
@@ -27,7 +28,7 @@ import { supabase } from '../supabaseClient'; // WO-430: medication hydration on
 import { createClinicalSession } from '../services/clinicalLog';
 import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
 import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components/wellness-journey/ProtocolConfiguratorModal';
-import { MobilePhaseBar } from '../components/wellness-journey/MobilePhaseBar';
+
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -776,7 +777,7 @@ const WellnessJourneyInternal: React.FC = () => {
                             </div>
                             <button
                                 onClick={() => setPatientBarCollapsed(false)}
-                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-[14px] font-bold text-slate-400 uppercase tracking-wide"
+                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-[12px] sm:text-[14px] font-bold text-slate-400 uppercase tracking-wide"
                                 aria-label="Expand patient context bar"
                             >
                                 <ChevronDown className="w-4 h-4" /> Patient
@@ -796,11 +797,11 @@ const WellnessJourneyInternal: React.FC = () => {
                             }} />
                             <div className="flex items-center gap-2 flex-nowrap shrink-0">
                                 {/* Patient ID */}
-                                <span className="text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
-                                <span className="text-base sm:text-2xl font-bold sm:font-black text-white font-mono tracking-wide shrink-0">{journey.patientId}</span>
+                                <span className="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
+                                <span className="text-sm sm:text-2xl font-bold sm:font-black text-white font-mono tracking-wide shrink-0">{journey.patientId}</span>
                                 {/* TEST MODE badge */}
                                 {journey.patientId.startsWith('TEST-') && (
-                                    <span className="inline-flex min-h-[36px] items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-sm font-semibold text-amber-400 tracking-wide uppercase shrink-0">
+                                    <span className="inline-flex min-h-[36px] items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-xs sm:text-sm font-semibold text-amber-400 tracking-wide uppercase shrink-0">
                                         🧪 TEST MODE
                                     </span>
                                 )}
@@ -842,7 +843,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                             setShowPatientModal(true);
                                         }
                                     }}
-                                    className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-slate-800/50 rounded-xl border border-slate-600/50 text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm shrink-0"
+                                    className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-slate-800/50 rounded-xl border border-slate-600/50 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm shrink-0"
                                     aria-label={activePhase === 1 ? 'Edit demographics config' : 'Lookup existing patient'}
                                 >
                                     {activePhase === 1 ? 'Edit Config' : 'Lookup'}
@@ -894,33 +895,14 @@ const WellnessJourneyInternal: React.FC = () => {
                                     Daily Pulse
                                 </button>
                             )}
-                            {/* MEQ-30, always available, provider-discretion instrument — hidden on mobile */}
-                            {config.enabledFeatures.includes('meq30') && (
-                                <AdvancedTooltip
-                                    content="The Mystical Experience Questionnaire (30-item) is typically administered 24–48 hours post-session while the experience is still fresh. It measures depth of mystical experience across 4 subscales. Higher scores (≥60/100) correlate with sustained therapeutic benefit at 6-month follow-up."
-                                    title="MEQ-30, Provider Discretion"
-                                    type="info"
-                                    tier="detailed"
-                                    side="bottom"
-                                    width="w-80"
-                                >
-                                    <button
-                                        onClick={() => handleOpenForm('meq30')}
-                                        className="hidden sm:flex flex-shrink-0 items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
-                                        title="MEQ-30 available at any phase, timing per protocol"
-                                    >
-                                        <span className="material-symbols-outlined text-base">quiz</span>
-                                        MEQ-30
-                                    </button>
-                                </AdvancedTooltip>
-                            )}
+                            {/* MEQ-30 removed from banner — accessible in Phase 3 Integration where it belongs clinically */}
                         </div>
 
                         {/* Mobile: collapse button when bar is expanded during a live session */}
                         {patientBarCollapsed === false && activePhase === 2 && (
                             <button
                                 onClick={() => setPatientBarCollapsed(true)}
-                                className="flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center gap-2 mt-2 mx-auto px-4 py-2 rounded-xl bg-slate-700/30 border border-slate-700/40 text-sm font-bold text-slate-400 uppercase tracking-wide w-full"
+                                className="flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center gap-2 mt-2 mx-auto px-4 py-2 rounded-xl bg-slate-700/30 border border-slate-700/40 text-xs font-bold text-slate-400 uppercase tracking-wide w-full"
                                 aria-label="Collapse patient context bar"
                             >
                                 <ChevronUp className="w-4 h-4" /> Collapse Context
@@ -957,13 +939,7 @@ const WellnessJourneyInternal: React.FC = () => {
 
                     return (
                         <div>
-                            {/* Mobile phase switcher — md:hidden, sits above PhaseIndicator */}
-                            <MobilePhaseBar
-                                activePhase={activePhase}
-                                completedPhases={completedPhases}
-                                onPhaseChange={handlePhaseChange}
-                            />
-                            {/* Desktop phase tabs — unchanged */}
+                            {/* Global Phase Tabs */}
                             <PhaseIndicator
                                 currentPhase={activePhase}
                                 completedPhases={completedPhases}
@@ -988,7 +964,13 @@ const WellnessJourneyInternal: React.FC = () => {
                                     )}
                                     {activePhase === 2 && (
                                         <Phase2ErrorBoundary onReset={() => setActivePhase(2)}>
-                                            <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                            {/* Mobile Cockpit: renders on viewports < 768px. DosingSessionPhase unchanged on desktop. */}
+                                            <div className="block md:hidden">
+                                                <MobileCockpit journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                            </div>
+                                            <div className="hidden md:block">
+                                                <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                            </div>
                                         </Phase2ErrorBoundary>
                                     )}
 
