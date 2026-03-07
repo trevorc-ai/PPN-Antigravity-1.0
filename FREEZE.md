@@ -36,7 +36,7 @@ src/pages/SecureGate.tsx
 # ── Active Clinical Components (recently stabilized) ──
 src/components/session/ActiveSessionsWidget.tsx
 src/components/compass/BrainNetworkMap.tsx
-# Phase1StepGuide.tsx — unfrozen 2026-03-06 for authorized mobile UX push
+src/components/wellness-journey/Phase1StepGuide.tsx
 
 # ── Wellness Journey (frozen post-sprint WO-524/525/526/527/529) ──
 src/components/wellness-journey/BehavioralChangeTracker.tsx
@@ -51,11 +51,11 @@ src/components/wellness-journey/FeedbackToast.tsx
 src/components/wellness-journey/NeuroplasticityWindowBadge.tsx
 src/components/wellness-journey/PatientOutcomePanel.tsx
 src/components/wellness-journey/PatientProgressSummary.tsx
-# PatientSelectModal.tsx — unfrozen 2026-03-06 for authorized mobile UX push
+src/components/wellness-journey/PatientSelectModal.tsx
 
 src/components/wellness-journey/PhaseIndicator.tsx
 src/components/wellness-journey/PreparationPhase.tsx
-# ProtocolConfiguratorModal.tsx — unfrozen 2026-03-06 for authorized mobile UX push
+src/components/wellness-journey/ProtocolConfiguratorModal.tsx
 src/components/wellness-journey/QuickActionsMenu.tsx
 src/components/wellness-journey/RiskEligibilityReport.tsx
 
