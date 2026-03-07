@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import {
   Loader2,
@@ -26,9 +26,10 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
-import SafetyRiskMatrixDemo from '../components/demos/SafetyRiskMatrixDemo';
-import ClinicRadarDemo from '../components/demos/ClinicRadarDemo';
-import PatientJourneyDemo from '../components/demos/PatientJourneyDemo';
+// Lazy-load below-fold demo components so they don't block initial render
+const SafetyRiskMatrixDemo = lazy(() => import('../components/demos/SafetyRiskMatrixDemo'));
+const ClinicRadarDemo = lazy(() => import('../components/demos/ClinicRadarDemo'));
+const PatientJourneyDemo = lazy(() => import('../components/demos/PatientJourneyDemo'));
 import { GravityButton } from '../components/GravityButton';
 import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
 import StarField from '../components/StarField';
@@ -55,8 +56,11 @@ const Landing: React.FC = () => {
     target: frankensteinRef,
     offset: ['start end', 'end start'],
   });
-  const cardParallaxY = useTransform(frankProgress, [0, 1], [60, -60]);
-  const glowParallaxY = useTransform(frankProgress, [0, 1], [30, -30]);
+  const prefersReducedMotion = useReducedMotion();
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+  const disableParallax = prefersReducedMotion || isMobile;
+  const cardParallaxY = useTransform(frankProgress, [0, 1], disableParallax ? [0, 0] : [60, -60]);
+  const glowParallaxY = useTransform(frankProgress, [0, 1], disableParallax ? [0, 0] : [30, -30]);
   const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
 
   useEffect(() => {
@@ -511,7 +515,7 @@ const Landing: React.FC = () => {
               </div>
             </motion.div>
           </div>
-          <motion.div style={{ y: cardParallaxY }} className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
+          <motion.div style={{ y: cardParallaxY }} className="relative lg:sticky top-32 lg:top-48 z-10 pt-4 pb-12">
             <motion.div style={{ y: glowParallaxY }} className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
             <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 group shadow-2xl">
 
@@ -703,7 +707,9 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="bg-[#0a1628] p-4 overflow-x-auto">
                     <div className="min-w-[500px] pointer-events-none">
-                      <SafetyRiskMatrixDemo />
+                      <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
+                        <SafetyRiskMatrixDemo />
+                      </Suspense>
                     </div>
                   </div>
                 </div>
@@ -775,7 +781,9 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="bg-[#0a1628] p-4 overflow-x-auto">
                     <div className="min-w-[500px] pointer-events-none">
-                      <ClinicRadarDemo />
+                      <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
+                        <ClinicRadarDemo />
+                      </Suspense>
                     </div>
                   </div>
                 </div>
@@ -805,7 +813,9 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="bg-[#0a1628] p-4 overflow-x-auto pb-4">
                     <div className="min-w-[500px] pointer-events-none">
-                      <PatientJourneyDemo />
+                      <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
+                        <PatientJourneyDemo />
+                      </Suspense>
                     </div>
                   </div>
                 </div>
