@@ -80,8 +80,10 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 setIsSaving(false);
                 if (onComplete) onComplete();
             }, 300);
-        } else if (onComplete) {
-            onComplete();
+        } else {
+            // No save handler — close the panel immediately (complete exit path guaranteed)
+            setIsDone(true);
+            if (onComplete) onComplete();
         }
     };
 
@@ -101,7 +103,7 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
-            {/* ── Compact Sticky Progress Header ────────────────────────────── }
+            {/* Compact Sticky Progress Header */}
             <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mt-0">
                 <div className="flex-1 space-y-1.5 w-full">
                     <div className="flex items-center justify-between text-xs sm:text-sm">
@@ -222,8 +224,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 onSaveAndExit={handleSaveAndExit}
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
-                hasChanges={Object.keys(data.responses).length > 0}
-                saveAndContinueLabel={isComplete ? 'Save & Done' : 'Save & Continue'}
+                hasChanges={true}
+                saveAndContinueLabel={isComplete ? 'Complete Assessment' : 'Save & Continue'}
                 isDone={isDone}
             />
         </div>
