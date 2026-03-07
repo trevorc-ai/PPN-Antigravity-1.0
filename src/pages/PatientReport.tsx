@@ -77,8 +77,8 @@ const GLOBAL_CSS = `
     gap: 7px;
     padding: 5px 14px 5px 8px;
     border-radius: 9999px;
-    background: rgba(45,212,191,0.08);
-    border: 1px solid rgba(45,212,191,0.25);
+    background: rgba(96,165,250,0.08);
+    border: 1px solid rgba(96,165,250,0.25);
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.18em;
@@ -89,7 +89,7 @@ const GLOBAL_CSS = `
     width: 7px; height: 7px;
     border-radius: 50%;
     background: #60a5fa;
-    box-shadow: 0 0 8px rgba(45,212,191,0.8);
+    box-shadow: 0 0 8px rgba(96,165,250,0.8);
   }
 
   /* ─── Feeling pill hover ────────────────────────────────────────────────── */
@@ -274,9 +274,9 @@ const FeelingWave: React.FC<{
                 {GHOST_FEELINGS.map((label, i) => (
                     <span key={i} className="feeling-pill" style={{
                         padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600,
-                        background: `rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.10)`,
-                        border: `1px solid rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.30)`,
-                        color: i % 2 === 0 ? 'rgba(45,212,191,0.75)' : 'rgba(167,139,250,0.75)',
+                        background: `rgba(${i % 2 === 0 ? '96,165,250' : '167,139,250'},0.10)`,
+                        border: `1px solid rgba(${i % 2 === 0 ? '96,165,250' : '167,139,250'},0.30)`,
+                        color: i % 2 === 0 ? 'rgba(96,165,250,0.75)' : 'rgba(167,139,250,0.75)',
                         opacity: 0.75, userSelect: 'none',
                     }}>{label}</span>
                 ))}
@@ -292,8 +292,8 @@ const FeelingWave: React.FC<{
             {feelings.map((f, i) => (
                 <span key={i} className="feeling-pill" style={{
                     padding: '7px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600,
-                    background: `rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.12)`,
-                    border: `1px solid rgba(${i % 2 === 0 ? '45,212,191' : '167,139,250'},0.28)`,
+                    background: `rgba(${i % 2 === 0 ? '96,165,250' : '167,139,250'},0.12)`,
+                    border: `1px solid rgba(${i % 2 === 0 ? '96,165,250' : '167,139,250'},0.28)`,
                     color: i % 2 === 0 ? C.blue : C.violet,
                 }}>{f.label}</span>
             ))}
@@ -392,7 +392,7 @@ const PatientReport: React.FC = () => {
                 background: 'linear-gradient(160deg, #040d1e 0%, #071528 40%, #0a1a30 70%, #060e1c 100%)',
                 padding: '56px 24px 48px',
                 textAlign: 'center',
-                borderBottom: `1px solid rgba(45,212,191,0.10)`,
+                borderBottom: `1px solid rgba(96,165,250,0.10)`,
                 position: 'relative',
                 overflow: 'hidden',
             }}>
@@ -422,7 +422,7 @@ const PatientReport: React.FC = () => {
                     position: 'absolute', top: '50%', left: '50%',
                     transform: 'translate(-50%, -50%)',
                     width: 380, height: 380, borderRadius: '50%',
-                    background: 'radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 70%)',
+                    background: 'radial-gradient(circle, rgba(96,165,250,0.06) 0%, transparent 70%)',
                     pointerEvents: 'none',
                 }} />
                 <div style={{
@@ -484,13 +484,13 @@ const PatientReport: React.FC = () => {
                     <div style={{
                         display: 'inline-flex', gap: 20, alignItems: 'center',
                         padding: '8px 20px', borderRadius: 9999,
-                        background: 'rgba(45,212,191,0.05)',
-                        border: '1px solid rgba(45,212,191,0.15)',
+                        background: 'rgba(96,165,250,0.05)',
+                        border: '1px solid rgba(96,165,250,0.15)',
                     }}>
                         <span style={{ fontSize: 12, color: '#475569', fontWeight: 600, letterSpacing: '0.06em' }}>
                             PHASE 3 · INTEGRATION
                         </span>
-                        <div style={{ width: 1, height: 12, background: 'rgba(45,212,191,0.2)' }} />
+                        <div style={{ width: 1, height: 12, background: 'rgba(96,165,250,0.2)' }} />
                         <span style={{ fontSize: 12, color: C.blue, fontWeight: 700, letterSpacing: '0.06em' }}>
                             HEALING IN PROGRESS
                         </span>
@@ -771,13 +771,13 @@ const PatientReport: React.FC = () => {
                         style={{
                             padding: '17px 14px', borderRadius: 14, fontSize: 14, fontWeight: 700,
                             background: `linear-gradient(135deg, ${C.blue} 0%, #4f46e5 100%)`,
-                            border: `1px solid rgba(45,212,191,0.4)`,
+                            border: `1px solid rgba(96,165,250,0.4)`,
                             color: '#050c1a', cursor: 'pointer',
-                            boxShadow: '0 4px 20px rgba(45,212,191,0.25)',
+                            boxShadow: '0 4px 20px rgba(96,165,250,0.25)',
                             transition: 'box-shadow 0.2s, opacity 0.2s', lineHeight: 1.3,
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(45,212,191,0.35)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(45,212,191,0.25)'; }}
+                        onMouseEnter={e => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(96,165,250,0.35)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(96,165,250,0.25)'; }}
                     >
                         Share with Your Practitioner
                     </button>
@@ -801,7 +801,7 @@ const PatientReport: React.FC = () => {
                 {/* ── Footer ────────────────────────────────────────────────────── */}
                 <div style={{
                     marginTop: 48, paddingTop: 24,
-                    borderTop: `1px solid rgba(45,212,191,0.08)`,
+                    borderTop: `1px solid rgba(96,165,250,0.08)`,
                     textAlign: 'center',
                 }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12, opacity: 0.5 }}>
