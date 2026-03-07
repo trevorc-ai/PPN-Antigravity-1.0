@@ -459,7 +459,7 @@ const Landing: React.FC = () => {
       {/* SECTION: Unified Clinical Operations - NEW */}
       <section ref={frankensteinRef} className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          <div className="space-y-32 pb-16 lg:pb-[30vh]">
+          <div className="space-y-32 pb-16 lg:pb-[30vh] min-h-[600px]">
             <div className="space-y-8">
               <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight leading-tight">
                 The <span className="text-gradient-primary inline-block pb-[0.1em]">Frankenstein Stack</span> is real.
@@ -513,16 +513,19 @@ const Landing: React.FC = () => {
           </div>
           <motion.div style={{ y: cardParallaxY }} className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
             <motion.div style={{ y: glowParallaxY }} className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
-            <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 overflow-hidden group shadow-2xl">
+            <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 group shadow-2xl">
 
-              {/* Complex Connectivity Grid */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40 mix-blend-screen mask-image:radial-gradient(ellipse_at_center,black,transparent)" />
+              {/* Clip wrapper — keeps grid lines + beams inside card without clipping the outer glow */}
+              <div className="absolute inset-0 rounded-[3rem] overflow-hidden pointer-events-none">
+                {/* Complex Connectivity Grid */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40 mix-blend-screen mask-image:radial-gradient(ellipse_at_center,black,transparent)" />
 
-              {/* Dynamic Connection Beams */}
-              <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
-              <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
+                {/* Dynamic Connection Beams */}
+                <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
+                <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
+              </div>
 
-              <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[300px]">
+              <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[420px]">
 
                 {/* Incoming Data Nodes */}
                 <div className="w-full grid grid-cols-3 gap-2 sm:gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
