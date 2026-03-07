@@ -102,7 +102,9 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     const isMysticalExperience = normalizedScore >= 60;
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6 meq-form-root">
+            {/* WO-538: Dimmed scrollbar for dark-mode MEQ-30 panel */}
+            <style>{`.meq-form-root ::-webkit-scrollbar{width:6px;height:6px}.meq-form-root ::-webkit-scrollbar-track{background:transparent}.meq-form-root ::-webkit-scrollbar-thumb{background:rgba(100,116,139,0.3);border-radius:3px}.meq-form-root ::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,0.5)}`}</style>
             {/* Compact Sticky Progress Header */}
             <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 mt-0">
                 <div className="flex-1 space-y-1.5 w-full">

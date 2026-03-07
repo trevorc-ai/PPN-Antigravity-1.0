@@ -410,7 +410,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     } satisfies SessionEventPin]);
                     onOpenForm('session-vitals');
                     break;
-                case 'a': onOpenForm('safety-and-adverse-event'); break;
+                case 'a':
+                    window.dispatchEvent(new CustomEvent('ppn:session-event', {
+                        detail: { type: 'safety_event', label: 'Safety / Adverse Event' },
+                    }));
+                    onOpenForm('safety-and-adverse-event');
+                    break;
             }
         };
         window.addEventListener('keydown', handleKeyDown);

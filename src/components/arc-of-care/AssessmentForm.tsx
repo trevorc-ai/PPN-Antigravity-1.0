@@ -123,10 +123,26 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                     if (exactMatch) {
                         setResponses(prev => ({ ...prev, [unansweredQuestion.id]: exactMatch.value }));
                         e.preventDefault();
+                        // WO-538: Scroll viewport to following question so keyboard nav stays on-screen
+                        const idxOfAnswered = currentQuestions.indexOf(unansweredQuestion);
+                        const nextQ = currentQuestions[idxOfAnswered + 1];
+                        if (nextQ) {
+                            requestAnimationFrame(() => {
+                                document.getElementById(`question-${nextQ.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            });
+                        }
                     } else if (unansweredQuestion.labels?.length && num >= 1 && num <= unansweredQuestion.labels.length) {
                         // Fallback: 1-based index (pressing 1 selects first option, 2 selects second, etc.)
                         setResponses(prev => ({ ...prev, [unansweredQuestion.id]: unansweredQuestion.labels![num - 1].value }));
                         e.preventDefault();
+                        // WO-538: Scroll to next question on fallback path too
+                        const idxOfAnsweredFallback = currentQuestions.indexOf(unansweredQuestion);
+                        const nextQFallback = currentQuestions[idxOfAnsweredFallback + 1];
+                        if (nextQFallback) {
+                            requestAnimationFrame(() => {
+                                document.getElementById(`question-${nextQFallback.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            });
+                        }
                     }
                 }
             }
@@ -189,13 +205,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
     const canGoNext = currentPage < totalPages - 1;
     const canGoPrevious = currentPage > 0;
 
-    // WO-549: Skip/exit handler, confirm before discarding in-progress session
+    // WO-532: Skip/exit — fires immediately at practitioner discretion (no confirm dialog)
     const handleSkip = () => {
-        if (Object.keys(responses).length === 0 || window.confirm(
-            'Exit without saving? Your progress on this assessment will not be recorded.'
-        )) {
-            onSkip?.();
-        }
+        onSkip?.();
     };
 
     return (
