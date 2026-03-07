@@ -171,7 +171,7 @@ export default function PatientCompanionPage() {
                     </p>
                 </div>
                 <video
-                    src="/admin_uploads/spherecules.mp4"
+                    src="/video/spherecules.mp4"
                     autoPlay
                     loop
                     muted
