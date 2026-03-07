@@ -15,23 +15,82 @@ const ResetPassword: React.FC = () => {
     const [validToken, setValidToken] = useState(false);
 
     useEffect(() => {
-        // Listen for PASSWORD_RECOVERY event, this fires when Supabase processes
-        // the #access_token hash in the URL from the reset email link.
-        // getSession() alone fires too early (before hash is parsed).
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (event, session) => {
-                if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
-                    setValidToken(true);
-                } else if (!session) {
+        // ── Manual Token Exchange ─────────────────────────────────────────────
+        // PPN uses HashRouter, so `detectSessionInUrl` is set to `false` in
+        // supabaseClient.ts (Supabase would otherwise conflict with hash routing).
+        // This means we MUST manually parse the URL and exchange the token here.
+        //
+        // Two token formats are handled:
+        //   1. PKCE flow (new): URL contains `?code=xxx` — exchangeCodeForSession()
+        //   2. Legacy implicit (old reset emails): URL contains `#access_token=xxx`
+        // ─────────────────────────────────────────────────────────────────────────
+
+        const doTokenExchange = async () => {
+            // Check for PKCE authorization code in the URL query string
+            const searchParams = new URLSearchParams(window.location.search);
+            const code = searchParams.get('code');
+
+            // Check for legacy implicit token in the URL hash
+            // The hash format is: /#/reset-password#access_token=xxx&refresh_token=yyy
+            // Or: /#access_token=xxx (when Supabase uses hash routing)
+            const fullHash = window.location.hash;
+            // Strip the route prefix (#/reset-password) to get only the params portion
+            const hashParamStr = fullHash.includes('access_token')
+                ? fullHash.substring(fullHash.indexOf('access_token') - 0)
+                : '';
+            const hashParams = new URLSearchParams(hashParamStr);
+            const accessToken = hashParams.get('access_token');
+            const refreshToken = hashParams.get('refresh_token');
+
+            if (code) {
+                // PKCE flow — exchange authorization code for session
+                const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+                if (error) {
                     setError('Invalid or expired recovery link. Please request a new one.');
+                } else if (data.session) {
+                    setValidToken(true);
+                    // Clean the code from the URL to prevent re-use on refresh
+                    window.history.replaceState(null, '', window.location.pathname + '#/reset-password');
+                }
+            } else if (accessToken && refreshToken) {
+                // Legacy implicit flow — set session directly from token pair
+                const { data, error } = await supabase.auth.setSession({
+                    access_token: accessToken,
+                    refresh_token: refreshToken,
+                });
+                if (error) {
+                    setError('Invalid or expired recovery link. Please request a new one.');
+                } else if (data.session) {
+                    setValidToken(true);
+                    window.history.replaceState(null, '', window.location.pathname + '#/reset-password');
+                }
+            } else {
+                // No token in URL — check if user already has a valid session
+                // (handles page refresh after a successful token exchange)
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    setValidToken(true);
+                } else {
+                    setError('No recovery token found. Please request a new password reset link.');
                 }
             }
-        );
+        };
 
-        // Also check existing session (handles page refresh after token already parsed)
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) setValidToken(true);
-        });
+        doTokenExchange();
+
+        // Backup listener: catches PASSWORD_RECOVERY event if AuthContext
+        // triggers a redirect here after detecting the event.
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (event, session) => {
+                // PASSWORD_RECOVERY: explicit recovery event — always valid
+                if (event === 'PASSWORD_RECOVERY' && session) {
+                    setValidToken(true);
+                }
+                // NOTE: SIGNED_IN is NOT treated as valid here.
+                // Normal logins never land on this page (AuthContext no longer
+                // redirects SIGNED_IN events unless last_sign_in_at is null).
+            }
+        );
 
         return () => subscription.unsubscribe();
     }, []);

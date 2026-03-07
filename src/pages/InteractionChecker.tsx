@@ -213,7 +213,12 @@ const InteractionChecker: React.FC = () => {
     navigate('/interactions');
   };
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    const prev = document.title;
+    document.title = `PPN Interaction Report ${new Date().toISOString().slice(0, 10)}`;
+    window.print();
+    window.addEventListener('afterprint', () => { document.title = prev; }, { once: true });
+  };
   const handleRequestAgent = () => addToast({ title: 'Request Logged', message: 'The clinical data team has been notified.', type: 'success' });
 
   const getSeverityStyles = (risk: number, isError?: boolean) => {
@@ -394,7 +399,7 @@ const InteractionChecker: React.FC = () => {
                     className="px-8 py-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3 shrink-0"
                   >
                     <span className="material-symbols-outlined text-lg">print</span>
-                    Print / Save Results
+                    Export
                   </button>
                 </div>
 
@@ -405,7 +410,7 @@ const InteractionChecker: React.FC = () => {
                       <span className="material-symbols-outlined text-4xl">{styles?.icon}</span>
                     </div>
                     <div>
-                      <h3 className={`text-4xl font-black tracking-tighter ${styles?.text}`}>{styles?.label}</h3>
+                      <h3 className={`text-2xl sm:text-4xl font-black tracking-tighter break-words ${styles?.text}`}>{styles?.label}</h3>
                       <p className="text-sm font-mono font-black text-slate-300 uppercase tracking-widest mt-1">
                         Risk Level: {analysisResult.riskLevel} / 10 • Severity: {analysisResult.severity}
                       </p>
@@ -433,15 +438,7 @@ const InteractionChecker: React.FC = () => {
                   </div>
 
                   <div className="lg:col-span-5 flex flex-col justify-end">
-                    <div className="bg-black/60 border border-white/5 rounded-3xl p-8 space-y-6 shadow-2xl">
-                      <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                        <span className="text-sm font-black text-slate-300 uppercase tracking-widest">Protocol Sync Status</span>
-                        <span className="text-sm font-mono text-clinical-green font-black uppercase">Active</span>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-sm font-bold text-slate-600 uppercase tracking-tight">Institutional Reference:</p>
-                        <p className="text-base font-mono font-black" style={{ color: '#8B9DC3' }}>{analysisResult.id} // SECURE_NODE_0x7</p>
-                      </div>
+                    <div className="bg-black/60 border border-white/5 rounded-3xl p-8 shadow-2xl">
                       {/* Citation */}
                       <div className="flex items-center gap-2">
                         <a

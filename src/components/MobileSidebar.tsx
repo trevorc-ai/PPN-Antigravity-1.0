@@ -89,13 +89,6 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             ]
         },
         {
-            title: 'Integrations',
-            items: [
-                { label: 'Patient Bridge Scan', icon: 'qr_code_scanner', path: '/PPN_Bridge_Camera.html', external: true },
-                { label: 'Device Sync', icon: 'watch', path: '#device', external: true },
-            ],
-        },
-        {
             title: 'Intelligence',
             items: [
                 { label: "Clinical Radar", icon: "radar", path: "/deep-dives/clinic-performance" },

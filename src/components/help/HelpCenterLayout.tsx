@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { PageContainer } from '../layouts/PageContainer';
 import { Section } from '../layouts/Section';
-import { Search, ChevronRight, Menu, X } from 'lucide-react';
-import { useLocation, Link, Outlet } from 'react-router-dom';
+import { Search, ChevronRight, Menu, X, Download } from 'lucide-react';
+import { useLocation, Link, Outlet, useNavigate } from 'react-router-dom';
 
 const navSegments = [
     {
-        title: "Getting Started",
+        title: "Key Resources",
         links: [
+            { label: "Download Center", path: "/download-center", external: true, icon: "download" },
             { label: "Quickstart Guide", path: "/help/quickstart" },
             { label: "Platform Overview", path: "/help/overview" },
         ]
@@ -37,6 +38,7 @@ const navSegments = [
 
 export const HelpCenterLayout: React.FC = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -83,19 +85,31 @@ export const HelpCenterLayout: React.FC = () => {
                                     <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-3 px-2">{segment.title}</h4>
                                     <ul className="space-y-1">
                                         {segment.links.map((link, lIdx) => {
-                                            const isActive = location.pathname.includes(link.path);
+                                            const isExternal = 'external' in link && link.external;
+                                            const isActive = !isExternal && location.pathname.includes(link.path);
                                             return (
                                                 <li key={lIdx} className="relative">
-                                                    <Link
-                                                        to={link.path}
-                                                        onClick={() => setMobileMenuOpen(false)}
-                                                        className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-semibold tracking-wide transition-all select-none ${isActive
-                                                            ? 'bg-primary/30 ring-2 ring-primary shadow-lg shadow-primary/20 text-[#8B9DC3]'
-                                                            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'}`}
-                                                    >
-                                                        {isActive && <div className="absolute left-0 w-1 h-5 bg-indigo-600 rounded-r-full" />}
-                                                        <span className="flex-1">{link.label}</span>
-                                                    </Link>
+                                                    {isExternal ? (
+                                                        <button
+                                                            onClick={() => { navigate(link.path); setMobileMenuOpen(false); }}
+                                                            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-semibold tracking-wide transition-all select-none text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/20"
+                                                            aria-label={`Navigate to ${link.label}`}
+                                                        >
+                                                            <Download size={13} className="shrink-0 opacity-70" />
+                                                            <span className="flex-1 text-left">{link.label}</span>
+                                                        </button>
+                                                    ) : (
+                                                        <Link
+                                                            to={link.path}
+                                                            onClick={() => setMobileMenuOpen(false)}
+                                                            className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-semibold tracking-wide transition-all select-none ${isActive
+                                                                ? 'bg-primary/30 ring-2 ring-primary shadow-lg shadow-primary/20 text-[#8B9DC3]'
+                                                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent'}`}
+                                                        >
+                                                            {isActive && <div className="absolute left-0 w-1 h-5 bg-indigo-600 rounded-r-full" />}
+                                                            <span className="flex-1">{link.label}</span>
+                                                        </Link>
+                                                    )}
                                                 </li>
                                             )
                                         })}

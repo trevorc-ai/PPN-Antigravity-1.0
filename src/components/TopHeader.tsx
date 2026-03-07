@@ -225,8 +225,8 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
         type: 'warning'
       });
 
-      // Force navigation
-      navigate('/');
+      // Force navigation to dashboard (not '/' which resolves to public landing for logged-in users)
+      navigate('/dashboard');
     }
   };
 
@@ -245,14 +245,14 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const handleAuthAction = () => scrollToSection('secure-access-node');
 
   return (
-    <header className="h-20 border-b border-white/5 bg-[#0a1628] sticky top-0 z-40 backdrop-blur-xl">
+    <header className="h-12 sm:h-20 border-b border-white/5 bg-[#0a1628] sticky top-0 z-40 backdrop-blur-xl">
       <div className="h-full px-6 sm:px-10 pr-6 sm:pr-10 flex items-center justify-end ml-auto max-w-7xl">
         <div className="flex items-center gap-8">
           {/* Portal Title & Local Nav */}
           <div className="flex items-center gap-4 shrink-0">
             <button
               onClick={onMenuClick}
-              className="lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 transition-all shadow-lg"
+              className="block lg:hidden size-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 transition-all shadow-lg"
             >
               <span className="material-symbols-outlined">menu</span>
             </button>
@@ -311,21 +311,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
               )}
 
               <div className="flex items-center gap-3">
-                {/* Tour - Hidden on mobile */}
-                <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
-                  <button
-                    onClick={onStartTour}
-                    className="size-11 rounded-xl bg-white/5 border border-blue-400/50 hover:border-blue-400/80 flex items-center justify-center text-blue-300 hover:text-blue-200 transition-all hover:bg-blue-500/10 shadow-sm shadow-blue-500/10 group active:scale-90"
-                    aria-label="Tour"
-                  >
-                    <span className="material-symbols-outlined text-[24px] transition-transform group-active:scale-90">explore</span>
-                  </button>
-                  {/* Tooltip */}
-                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
-                    <span className="text-[12px] font-black text-slate-300 tracking-[0.15em] relative z-10">System Tour</span>
-                  </div>
-                </div>
+
 
                 {/* Feedback — Hidden on mobile, visible via dropdown */}
                 <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
@@ -351,21 +337,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   />
                 </div>
 
-                {/* Instant Connect (Send to Phone) - Hidden on mobile */}
-                <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
-                  <button
-                    onClick={() => setIsInstantConnectOpen(true)}
-                    className="size-11 rounded-xl bg-white/5 border border-[#388bfd]/50 hover:border-[#388bfd]/80 flex items-center justify-center text-[#388bfd] hover:text-[#58a6ff] transition-all hover:bg-[#388bfd]/10 shadow-sm shadow-[#388bfd]/10 group active:scale-90"
-                    aria-label="Send to Phone"
-                  >
-                    <span className="material-symbols-outlined text-[24px] transition-transform group-active:scale-90">devices</span>
-                  </button>
-                  {/* Tooltip */}
-                  <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
-                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
-                    <span className="text-[12px] font-black text-[#58a6ff] tracking-[0.15em] relative z-10">Send to Phone</span>
-                  </div>
-                </div>
+
 
 
 

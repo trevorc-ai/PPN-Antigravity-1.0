@@ -11,14 +11,14 @@ export interface DischargeSummaryData {
     substanceDose: string;
     protocolName: string;
     baseline?: {
-        phq9: number;
-        gad7: number;
-        caps5: number;
+        phq9: number | null;
+        gad7: number | null;
+        caps5: number | null;
     };
     final?: {
-        phq9: number;
-        gad7: number;
-        caps5: number;
+        phq9: number | null;
+        gad7: number | null;
+        caps5: number | null;
     };
     clinicalMetricsEnabled?: boolean;
     vitalsEnabled?: boolean;
@@ -68,9 +68,15 @@ export function generateDischargeSummaryText(data: DischargeSummaryData): string
             ? '  Clinical outcome tracking (PHQ-9/GAD-7/CAPS-5) not utilized under this session protocol.'
             : [
                 '                    Baseline    Final       Change',
-                `PHQ-9               ${data.baseline.phq9.toString().padEnd(12)}${data.final.phq9.toString().padEnd(12)}${delta(data.baseline.phq9, data.final.phq9)} pts (${pct(data.baseline.phq9, data.final.phq9)})`,
-                `GAD-7               ${data.baseline.gad7.toString().padEnd(12)}${data.final.gad7.toString().padEnd(12)}${delta(data.baseline.gad7, data.final.gad7)} pts (${pct(data.baseline.gad7, data.final.gad7)})`,
-                `CAPS-5              ${data.baseline.caps5.toString().padEnd(12)}${data.final.caps5.toString().padEnd(12)}${delta(data.baseline.caps5, data.final.caps5)} pts (${pct(data.baseline.caps5, data.final.caps5)})`
+                data.baseline.phq9 != null && data.final.phq9 != null
+                    ? `PHQ-9               ${String(data.baseline.phq9).padEnd(12)}${String(data.final.phq9).padEnd(12)}${delta(data.baseline.phq9, data.final.phq9)} pts (${pct(data.baseline.phq9, data.final.phq9)})`
+                    : 'PHQ-9               Not recorded',
+                data.baseline.gad7 != null && data.final.gad7 != null
+                    ? `GAD-7               ${String(data.baseline.gad7).padEnd(12)}${String(data.final.gad7).padEnd(12)}${delta(data.baseline.gad7, data.final.gad7)} pts (${pct(data.baseline.gad7, data.final.gad7)})`
+                    : 'GAD-7               Not recorded',
+                data.baseline.caps5 != null && data.final.caps5 != null
+                    ? `CAPS-5              ${String(data.baseline.caps5).padEnd(12)}${String(data.final.caps5).padEnd(12)}${delta(data.baseline.caps5, data.final.caps5)} pts (${pct(data.baseline.caps5, data.final.caps5)})`
+                    : 'CAPS-5              Not recorded',
             ].join('\n'),
         `MEQ-30 (Peak)       —           ${data.meq30Peak ? `${data.meq30Peak}/100` : '—'}         —`,
         '',

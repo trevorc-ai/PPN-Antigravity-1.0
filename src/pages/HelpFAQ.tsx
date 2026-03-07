@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { Search, Rocket, Microscope, ShieldCheck, LifeBuoy, MessageSquare, Mail, Calendar, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Rocket, Microscope, ShieldCheck, LifeBuoy, MessageSquare, Mail, Calendar, ChevronDown, Download, ArrowRight } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 
@@ -9,6 +10,7 @@ interface HelpFAQProps {
 }
 
 const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
+  const navigate = useNavigate();
   const [activeFAQ, setActiveFAQ] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -112,7 +114,41 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
   return (
     <div className="w-full">
       <div className="flex flex-col gap-12">
+
+        {/* ─── Download Center Hero Card ─── */}
+        <section className="mb-2">
+          <button
+            id="help-download-center-card"
+            onClick={() => navigate('/download-center')}
+            className="w-full group relative flex flex-col sm:flex-row items-start sm:items-center gap-5 p-6 sm:p-8 rounded-3xl border border-indigo-500/40 bg-gradient-to-br from-indigo-600/10 via-indigo-500/5 to-slate-900/40 backdrop-blur-xl hover:border-indigo-500/70 hover:from-indigo-600/15 hover:shadow-[0_0_40px_rgba(99,102,241,0.12)] transition-all duration-300 shadow-lg text-left overflow-hidden"
+            aria-label="Go to Download Center"
+          >
+            {/* Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 group-hover:bg-indigo-500/30 transition-colors">
+              <Download size={24} />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-1.5">
+                <h3 className="text-lg font-black text-[#A8B5D1] tracking-tight group-hover:text-white transition-colors">Download Center</h3>
+                <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400">New</span>
+              </div>
+              <p className="text-sm text-slate-400 leading-snug">
+                Export patient records, compliance logs, wellness summaries, blank clinical forms, and patient-facing reports, all from one place.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 text-indigo-400 text-xs font-black uppercase tracking-widest shrink-0 group-hover:gap-3 transition-all">
+              Open <ArrowRight size={14} />
+            </div>
+          </button>
+        </section>
+
+        {/* ─── Topic Categories ─── */}
         <section className="mb-10">
+          <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 px-1">Browse Topics</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {categories.map((cat, idx) => (
               <div

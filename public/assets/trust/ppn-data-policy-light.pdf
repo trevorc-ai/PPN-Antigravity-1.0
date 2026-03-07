@@ -1,0 +1,236 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 3706 >>
+stream
+1 1 1 rg
+0 0 595 842 re
+f
+BT
+/F2 18 Tf
+0.059 0.071 0.102 rg
+50 782 Td
+(PPN Portal: The Sterile Schema Data Architecture) Tj
+ET
+BT
+/F1 11 Tf
+0.059 0.071 0.102 rg
+50 760 Td
+(What We Collect. What We Protect. Why It Matters.) Tj
+ET
+BT
+/F1 9 Tf
+0.278 0.337 0.424 rg
+50 746 Td
+(Document v1.0 · 2026-03-05 · ppnportal.net) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+50 727 Td
+(We utilize a Zero-Knowledge, No-PHI architecture. By cryptographically) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+50 715 Td
+(separating the process of care from the identity of the patient, PPN Portal) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+50 703 Td
+(ensures your data acts as an immutable shield of clinical diligence.) Tj
+ET
+BT
+/F2 10 Tf
+0.310 0.275 0.902 rg
+50 683 Td
+(PART 1  THE HARD BOUNDARIES: What We NEVER Collect) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 667 Td
+("  NO PII/PHI  No names, email addresses, street addresses, or SSNs.) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 655 Td
+("  NO Free-Text Clinical Notes  All inputs are structured dropdowns and sliders.) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 643 Td
+("  Patient IDs are Random & Client-Side  Example: PT-KXMR9W2P.) Tj
+ET
+BT
+/F1 9 Tf
+0.278 0.337 0.424 rg
+62 631 Td
+(  You hold the key connecting that ID to your patient.) Tj
+ET
+BT
+/F2 10 Tf
+0.310 0.275 0.902 rg
+50 613 Td
+(PART 2  THE EVIDENCE OF CARE: What We DO Collect) Tj
+ET
+BT
+/F2 10 Tf
+0.310 0.275 0.902 rg
+50 597 Td
+(1. Subject Baseline & Demographics) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 584 Td
+("  Biological Sex) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 572 Td
+("  Primary Indication \(e.g., Treatment-Resistant Depression  mapped to standard codes\)) Tj
+ET
+BT
+/F2 10 Tf
+0.310 0.275 0.902 rg
+50 560 Td
+(2. The Container Metrics \(Set & Setting\)) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 547 Td
+("  Setting Code: Clinic \(Medical/Soft\), Home \(Supervised\), Retreat Center) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 535 Td
+("  Support Ratio: 1:1, 2:1 \(Co-Therapy\), or Group) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 523 Td
+("  Preparation & Integration Hours \(numeric\)) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 511 Td
+("  Support Modalities: CBT, Somatic, IFS, Music/Playlist \(checkbox\)) Tj
+ET
+BT
+/F2 10 Tf
+0.310 0.275 0.902 rg
+50 499 Td
+(3. The Clinical Intervention) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 486 Td
+("  Substance  Mapped to RxNorm Codes \(Psilocybin = 1433, Ketamine = 6130\)) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 474 Td
+("  Dosage & Route  Mapped to UCUM Codes \(e.g., 25mg Oral; 0.5mg/kg IV\)) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 462 Td
+("  Concomitant Medications  Smart grid for interaction risk checks) Tj
+ET
+BT
+/F2 10 Tf
+0.310 0.275 0.902 rg
+50 450 Td
+(4. Safety & Outcomes Tracking) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 437 Td
+("  Psychometric Scores: PHQ-9, GAD-7  mapped to LOINC codes) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 425 Td
+("  Adverse Events  Coded to MedDRA standard) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 413 Td
+("  Session Experience  Intensity and Therapeutic sliders) Tj
+ET
+BT
+/F2 10 Tf
+0.310 0.275 0.902 rg
+50 393 Td
+(PART 3  WHY THIS ARCHITECTURE PROTECTS YOU) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 377 Td
+("  1. Audit-Ready Documentation  Forensic, timestamped export proving standard of care.) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 365 Td
+("  2. Immunity to Subpoenas  Zero-Knowledge: we have nothing to surrender but random IDs.) Tj
+ET
+BT
+/F1 9 Tf
+0.059 0.071 0.102 rg
+62 353 Td
+("  3. Network Benchmarking  No PHI = no regulatory deadlock; real-time outcome comparison.) Tj
+ET
+BT
+/F1 8 Tf
+0.278 0.337 0.424 rg
+50 333 Td
+(© 2026 Precision Psychedelic Network \(PPN\) · All Rights Reserved) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 6 0 R /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000212 00000 n 
+0000004072 00000 n 
+0000000314 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+4208
+%%EOF

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
-import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart, AlertTriangle } from 'lucide-react';
+import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { PhaseIndicator } from '../components/wellness-journey/PhaseIndicator';
 import { PreparationPhase } from '../components/wellness-journey/PreparationPhase';
 import { TreatmentPhase, Phase2ErrorBoundary } from '../components/wellness-journey/DosingSessionPhase';
+import { MobileCockpit } from '../components/wellness-journey/MobileCockpit';
 import { IntegrationPhase } from '../components/wellness-journey/IntegrationPhase';
 import { SlideOutPanel } from '../components/wellness-journey/SlideOutPanel';
 import { WorkflowActionCard } from '../components/wellness-journey/WorkflowCards';
@@ -20,13 +21,14 @@ import { SafetyTimeline, type SafetyEvent } from '../components/safety';
 import { ArcOfCareOnboarding } from '../components/arc-of-care';
 import { Phase1Tour, Phase2Tour, Phase3Tour, CompassTourButton } from '../components/arc-of-care/PhaseTours';
 import { ExportReportButton } from '../components/export/ExportReportButton';
-import { downloadReport } from '../services/reportGenerator';
+import { downloadReport, type PatientReportData } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
 import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
 import { supabase } from '../supabaseClient'; // WO-430: medication hydration on patient select
 import { createClinicalSession } from '../services/clinicalLog';
 import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
 import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components/wellness-journey/ProtocolConfiguratorModal';
+
 
 /**
  * Wellness Journey: Complete Patient Journey Dashboard
@@ -318,6 +320,38 @@ const WellnessJourneyInternal: React.FC = () => {
     // ── Phase 1 guided flow: tracks which forms have been saved ──────────────
     const [completedForms, setCompletedForms] = useState<Set<string>>(() => new Set());
 
+    // ── Mobile patient bar: auto-collapse when Phase 2 session is live ────────
+    // A simple one-time check when entering Phase 2; the provider can also
+    // manually collapse/expand via the toggle. No polling — avoids re-render loops.
+    const [patientBarCollapsed, setPatientBarCollapsed] = useState(false);
+    useEffect(() => {
+        if (activePhase !== 2) {
+            setPatientBarCollapsed(false);
+            return;
+        }
+        const checkLive = () => {
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k?.startsWith('ppn_session_mode_') && localStorage.getItem(k) === 'live') {
+                        setPatientBarCollapsed(true);
+                        return;
+                    }
+                }
+            } catch { /* ignore */ }
+        };
+        // ppn:session-live fires in the same tab from setAndPersistMode('live').
+        // The storage event only fires cross-tab, so this covers same-tab sessions.
+        const handleSessionLive = () => setPatientBarCollapsed(true);
+        checkLive();
+        window.addEventListener('storage', checkLive);
+        window.addEventListener('ppn:session-live', handleSessionLive);
+        return () => {
+            window.removeEventListener('storage', checkLive);
+            window.removeEventListener('ppn:session-live', handleSessionLive);
+        };
+    }, [activePhase]);
+
     // ── Clinician site ID, resolved ONCE at page load, passed to all forms ──
     // Resolving here prevents the race condition where a form mounts and the
     // user clicks Save before the internal async fetch completes.
@@ -379,36 +413,31 @@ const WellnessJourneyInternal: React.FC = () => {
         let isLastPhase1Form = false;
 
         if (formId && activePhase === 1) {
-            // Use functional form to avoid stale `completedForms` closure, this
-            // is the root cause of the WO-354 "button stays illuminated" bug.
-            // When the form's onComplete fires after an async save, the captured
-            // `completedForms` Set might not yet include the just-saved formId.
+            if (!exit) {
+                const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
+                const next = PHASE1_STEPS[currentIndex + 1];
+                nextId = next ? next.id : null;
+            }
+
+            if (!nextId && !exit) {
+                isLastPhase1Form = true;
+            } else if (!nextId && exit) {
+                const allDone = PHASE1_STEPS.every(s => (completedForms.has(s.id) || s.id === formId));
+                if (allDone) isLastPhase1Form = true;
+            }
+
+            if (isLastPhase1Form) {
+                setCompletedPhases(prevPhases => {
+                    const newPhases = [...new Set([...prevPhases, 1 as number])];
+                    localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(newPhases));
+                    return newPhases;
+                });
+            }
+
+            // Use functional form to ensure the state update doesn't drop anything
+            // while preserving our synchronously computed next steps above
             setCompletedForms(prev => {
                 const updated = new Set([...prev, formId]);
-
-                // Determine next step based on the updated set
-                if (!exit) {
-                    const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
-                    const next = PHASE1_STEPS[currentIndex + 1];
-                    nextId = next ? next.id : null;
-                }
-
-                // If no next step, all Phase 1 forms saved, complete the phase
-                if (!nextId && !exit) {
-                    isLastPhase1Form = true;
-                } else if (!nextId && exit) {
-                    const allDone = PHASE1_STEPS.every(s => updated.has(s.id));
-                    if (allDone) isLastPhase1Form = true;
-                }
-
-                if (isLastPhase1Form) {
-                    setCompletedPhases(prevPhases => {
-                        const newPhases = [...new Set([...prevPhases, 1 as number])];
-                        localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(newPhases));
-                        return newPhases;
-                    });
-                }
-
                 return updated;
             });
         }
@@ -604,15 +633,34 @@ const WellnessJourneyInternal: React.FC = () => {
     // Risk detection
     const riskDetection = useRiskDetection(journey.risk);
 
-    // Mock patient data for export
-    const exportPatientData = {
+    // Mock patient data for export formatted as PatientReportData
+    const exportPatientData: PatientReportData = {
         patientId: journey.patientId,
-        sessionDate: journey.sessionDate,
-        substance: journey.session.substance,
-        dosage: journey.session.dosage,
-        baselinePHQ9: journey.baseline.phq9,
-        currentPHQ9: journey.integration.currentPhq9,
-        completedPhases,
+        treatmentPeriod: {
+            start: journey.sessionDate,
+            end: new Date(new Date(journey.sessionDate).getTime() + (journey.daysPostSession * 24 * 60 * 60 * 1000)).toISOString()
+        },
+        baseline: {
+            phq9: journey.baseline.phq9,
+            gad7: journey.baseline.gad7,
+            ace: journey.baseline.aceScore,
+            pcl5: journey.risk.baseline.pcl5,
+        },
+        dosingSession: {
+            date: journey.sessionDate,
+            substance: journey.session.substance || undefined,
+            doseMg: journey.session.dosage ? parseInt(journey.session.dosage) : undefined,
+            meq30Score: journey.session.meq30Score || undefined,
+            adverseEvents: journey.session.safetyEvents,
+        },
+        integration: {
+            sessionsAttended: journey.integration.integrationSessionsAttended,
+            sessionsScheduled: journey.integration.integrationSessionsScheduled,
+            behavioralChanges: journey.integration.behavioralChanges.length,
+            pulseCheckTotal: journey.integration.pulseCheckCompliance,
+            phq9Followup: journey.integration.currentPhq9,
+        },
+        benchmarkReadiness: result?.score ?? 0,
     };
 
     return (
@@ -693,39 +741,71 @@ const WellnessJourneyInternal: React.FC = () => {
                 )}
             </SlideOutPanel>
 
-            <div className="max-w-6xl mx-auto space-y-6">
+            <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 px-3 sm:px-6">
 
                 {/* ─── Page Heading ─── */}
                 <div className="px-1">
                     <h1 className="ppn-page-title">Wellness Journey</h1>
-                    <p className="ppn-body mt-1" style={{ color: '#8B9DC3' }}>
+                    {/* Subtitle hidden on mobile — Phase2LiveBar/MobilePhaseBar show context */}
+                    <p className="ppn-body mt-1 hidden sm:block" style={{ color: '#8B9DC3' }}>
                         {activePhase === 1 && 'Phase 1, Preparation: Complete all baseline assessments before the dosing session.'}
                         {activePhase === 2 && 'Phase 2, Dosing Session: Live documentation during the active session.'}
                         {activePhase === 3 && 'Phase 3, Integration: Post-session monitoring and outcome tracking.'}
                     </p>
+                    {/* Mobile: one-line phase indicator instead of full subtitle */}
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 sm:hidden">
+                        {activePhase === 1 && 'Phase 1 · Preparation'}
+                        {activePhase === 2 && 'Phase 2 · Dosing Session'}
+                        {activePhase === 3 && 'Phase 3 · Integration'}
+                    </p>
                 </div>
 
                 {/* ─── Patient Context Bar ─── */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
-                    {/* Left: Patient identity + demographics pills */}
-                    <div className="flex items-center gap-4">
-                        <CompassTourButton phase={activePhase} onClick={() => {
-                            if (activePhase === 1) setShowTour1(true);
-                            if (activePhase === 2) setShowTour2(true);
-                            if (activePhase === 3) setShowTour3(true);
-                        }} />
-                        <div>
-                            {/* Patient ID, large + mono for quick visual verification */}
-                            <div className="flex items-center gap-3 flex-wrap">
-                                <span className="text-sm md:text-base font-black text-slate-400 uppercase tracking-widest">Patient</span>
-                                <span className="text-xl md:text-2xl font-black text-white font-mono tracking-wide">{journey.patientId}</span>
-                                {/* TEST MODE badge, amber, shown only for practice sessions */}
+                {/* Mobile: compact single-row horizontal scroll strip + live-session collapse */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-3 sm:px-6 py-3 sm:py-4 bg-slate-800/60 border border-slate-700/50 rounded-2xl">
+
+                    {/* Mobile collapsed state: just shows phase badge + expand button */}
+                    {patientBarCollapsed && (
+                        <div className="flex items-center justify-between sm:hidden">
+                            <div className="flex items-center gap-2">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                                </span>
+                                <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Session Live</span>
+                                <span className="text-[10px] text-slate-500 font-semibold ml-1">{journey.patientId}</span>
+                            </div>
+                            <button
+                                onClick={() => setPatientBarCollapsed(false)}
+                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-[12px] sm:text-[14px] font-bold text-slate-400 uppercase tracking-wide"
+                                aria-label="Expand patient context bar"
+                            >
+                                <ChevronDown className="w-4 h-4" /> Patient
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Full patient bar: always shown on sm+, shown on mobile only when not collapsed */}
+                    <div className={`${patientBarCollapsed ? 'hidden sm:flex' : 'flex'} flex-col sm:flex-row sm:items-center justify-between gap-4 w-full`}>
+
+                        {/* Left: Patient identity + demographics pills */}
+                        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-0.5 sm:pb-0">
+                            <CompassTourButton phase={activePhase} onClick={() => {
+                                if (activePhase === 1) setShowTour1(true);
+                                if (activePhase === 2) setShowTour2(true);
+                                if (activePhase === 3) setShowTour3(true);
+                            }} />
+                            <div className="flex items-center gap-2 flex-nowrap shrink-0">
+                                {/* Patient ID */}
+                                <span className="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
+                                <span className="text-sm sm:text-2xl font-bold sm:font-black text-white font-mono tracking-wide shrink-0">{journey.patientId}</span>
+                                {/* TEST MODE badge */}
                                 {journey.patientId.startsWith('TEST-') && (
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-xs font-black text-amber-400 tracking-widest uppercase">
+                                    <span className="inline-flex min-h-[36px] items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-xs sm:text-sm font-semibold text-amber-400 tracking-wide uppercase shrink-0">
                                         🧪 TEST MODE
                                     </span>
                                 )}
-                                {/* Verification Pills, Age / Gender / Weight */}
+                                {/* Demographics pills — hidden on xs, shown sm+ */}
                                 {[{
                                     label: journey.demographics?.age ? `${journey.demographics.age} yrs` : '— yrs',
                                     title: 'Age'
@@ -739,32 +819,36 @@ const WellnessJourneyInternal: React.FC = () => {
                                     <span
                                         key={title}
                                         title={title}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600/50 text-[13px] md:text-sm font-semibold shadow-sm"
+                                        className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600/50 text-[13px] sm:text-sm font-semibold shadow-sm shrink-0"
                                     >
                                         <span className="text-slate-400 font-normal">{title}</span>
                                         <span className="text-white font-bold">{label}</span>
                                     </span>
                                 ))}
-                                {/* Condition pill, shows what's being treated */}
+                                {/* Condition pill */}
                                 {journey.condition && (
-                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-[13px] md:text-sm font-semibold shadow-sm">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-[11px] sm:text-sm font-semibold shadow-sm shrink-0">
                                         <span className="text-indigo-400 font-normal">Treating</span>
                                         <span className="text-indigo-200 font-bold">{journey.condition}</span>
                                     </span>
                                 )}
-                                {/* Change Patient, context-aware: Phase 1 → choose, Phase 2/3 → lookup */}
+                                {/* Edit Config / Switch Patient — ensure mobile reachability and 44px min height */}
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setPatientModalView(activePhase === 1 ? 'choose' : 'existing');
-                                        setShowPatientModal(true);
+                                        if (activePhase === 1) {
+                                            setShowProtocolConfigurator(true);
+                                        } else {
+                                            setPatientModalView('existing');
+                                            setShowPatientModal(true);
+                                        }
                                     }}
-                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-800/50 rounded-lg border border-slate-600/50 text-[13px] md:text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm"
-                                    aria-label={activePhase === 1 ? 'Enter new or lookup patient' : 'Lookup existing patient'}
+                                    className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-slate-800/50 rounded-xl border border-slate-600/50 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm shrink-0"
+                                    aria-label={activePhase === 1 ? 'Edit demographics config' : 'Lookup existing patient'}
                                 >
-                                    {activePhase === 1 ? 'Change' : 'Lookup'}
+                                    {activePhase === 1 ? 'Edit Config' : 'Lookup'}
                                 </button>
-                                {/* QA Fast-Forward Button (DEV ONLY) */}
+                                {/* QA Fast-Forward Button (DEV ONLY) — hidden on mobile */}
                                 {import.meta.env.DEV && (
                                     <button
                                         type="button"
@@ -782,7 +866,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                                 type: 'success'
                                             });
                                         }}
-                                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-[13px] md:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-[12px] sm:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group shrink-0"
                                         title="QA Tool: Auto-complete Phase 1 & 2 forms and jump to Phase 3"
                                     >
                                         <span className="material-symbols-outlined text-sm group-hover:animate-pulse">fast_forward</span>
@@ -790,50 +874,42 @@ const WellnessJourneyInternal: React.FC = () => {
                                     </button>
                                 )}
                             </div>
-                            <p className="text-sm md:text-base mt-0.5" style={{ color: '#8B9DC3' }}>
+                            <p className="text-xs sm:text-sm mt-0 sm:mt-0.5 shrink-0 hidden sm:block" style={{ color: '#8B9DC3' }}>
                                 {activePhase === 1 && 'Pre-treatment preparation, complete baseline assessments before session'}
                                 {activePhase === 2 && `Dosing session in progress · ${journey.sessionDate} · Session #${journey.session.sessionNumber}`}
                                 {activePhase === 3 && `Integration phase · ${journey.daysPostSession} days post-session · Monitoring recovery`}
                             </p>
                         </div>
-                    </div>
 
-                    {/* Right: Phase-aware primary action + export */}
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                        {/* Phase 1: no competing CTA, Phase1StepGuide is the navigator */}
-                        {/* Phase 1 & 2: no competing CTA, phase navigators handle it */}
+                        {/* Right: Phase-aware primary action + export */}
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                            {/* Phase 1 & 2: no competing CTA, phase navigators handle it */}
 
-                        {activePhase === 3 && config.enabledFeatures.includes('daily-pulse') && (
+                            {activePhase === 3 && config.enabledFeatures.includes('daily-pulse') && (
+                                <button
+                                    onClick={() => handleOpenForm('daily-pulse')}
+                                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
+                                    aria-label="Open Daily Pulse Check form"
+                                >
+                                    <span className="material-symbols-outlined text-base" aria-hidden="true">favorite</span>
+                                    Daily Pulse
+                                </button>
+                            )}
+                            {/* MEQ-30 removed from banner — accessible in Phase 3 Integration where it belongs clinically */}
+                        </div>
+
+                        {/* Mobile: collapse button when bar is expanded during a live session */}
+                        {patientBarCollapsed === false && activePhase === 2 && (
                             <button
-                                onClick={() => handleOpenForm('daily-pulse')}
-                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
-                                aria-label="Open Daily Pulse Check form"
+                                onClick={() => setPatientBarCollapsed(true)}
+                                className="flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center gap-2 mt-2 mx-auto px-4 py-2 rounded-xl bg-slate-700/30 border border-slate-700/40 text-xs font-bold text-slate-400 uppercase tracking-wide w-full"
+                                aria-label="Collapse patient context bar"
                             >
-                                <span className="material-symbols-outlined text-base" aria-hidden="true">favorite</span>
-                                Daily Pulse
+                                <ChevronUp className="w-4 h-4" /> Collapse Context
                             </button>
                         )}
-                        {/* MEQ-30, always available, provider-discretion instrument */}
-                        {config.enabledFeatures.includes('meq30') && (
-                            <AdvancedTooltip
-                                content="The Mystical Experience Questionnaire (30-item) is typically administered 24–48 hours post-session while the experience is still fresh. It measures depth of mystical experience across 4 subscales. Higher scores (≥60/100) correlate with sustained therapeutic benefit at 6-month follow-up."
-                                title="MEQ-30, Provider Discretion"
-                                type="info"
-                                tier="detailed"
-                                side="bottom"
-                                width="w-80"
-                            >
-                                <button
-                                    onClick={() => handleOpenForm('meq30')}
-                                    className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30 hover:border-purple-500/50 text-purple-300 font-bold rounded-xl transition-all active:scale-95 text-sm"
-                                    title="MEQ-30 available at any phase, timing per protocol"
-                                >
-                                    <span className="material-symbols-outlined text-base">quiz</span>
-                                    MEQ-30
-                                </button>
-                            </AdvancedTooltip>
-                        )}
-                    </div>
+
+                    </div>{/* end full patient bar */}
                 </div>
 
                 {/* ── Phase Panel, one glowing border per phase ───────────────── */}
@@ -863,7 +939,7 @@ const WellnessJourneyInternal: React.FC = () => {
 
                     return (
                         <div>
-                            {/* Phase tabs, sit ABOVE the content border, not inside it */}
+                            {/* Global Phase Tabs */}
                             <PhaseIndicator
                                 currentPhase={activePhase}
                                 completedPhases={completedPhases}
@@ -871,7 +947,7 @@ const WellnessJourneyInternal: React.FC = () => {
                             />
                             {/* Phase content, border on left/right/bottom only, active tab connects at top */}
                             <div
-                                className={`rounded-b-2xl border-2 ${phasePalette.border} ${phasePalette.bg} p-4 sm:p-6 space-y-6`}
+                                className={`rounded-b-2xl border-2 ${phasePalette.border} ${phasePalette.bg} p-3 sm:p-6 space-y-4 sm:space-y-6`}
                                 style={{ boxShadow: phasePalette.shadow }}
                             >
                                 {/* Phase Content, WO-113: Each phase has CTA buttons to open forms */}
@@ -888,7 +964,13 @@ const WellnessJourneyInternal: React.FC = () => {
                                     )}
                                     {activePhase === 2 && (
                                         <Phase2ErrorBoundary onReset={() => setActivePhase(2)}>
-                                            <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                            {/* Mobile Cockpit: renders on viewports < 768px. DosingSessionPhase unchanged on desktop. */}
+                                            <div className="block md:hidden">
+                                                <MobileCockpit journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                            </div>
+                                            <div className="hidden md:block">
+                                                <TreatmentPhase journey={journey} completedForms={completedForms} onOpenForm={handleOpenForm} onCompletePhase={completeCurrentPhase} />
+                                            </div>
                                         </Phase2ErrorBoundary>
                                     )}
 
@@ -969,121 +1051,40 @@ const WellnessJourneyInternal: React.FC = () => {
                                     )}
                                 </div>
 
-                                {/* Bottom Status Bar, hidden during Phase 1 early stages and Phase 2.
-                     During Phase 2, the session is active and PHQ-9/MEQ numbers are
-                     meaningless, the practitioner is focused on real-time events.
-                     WO-547: Hidden for Phase 2. Show for Phase 1 (≥3 forms) and Phase 3. */}
-                                {activePhase !== 2 && (activePhase !== 1 || completedForms.size >= 3) && (
-                                    <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden">
-                                        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-700/50">
 
-                                            {/* Total Improvement, WO-558: only renders real data */}
-                                            <div className="px-6 py-5">
-                                                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Total Improvement</p>
-                                                {totalImprovement !== null ? (
-                                                    <>
-                                                        <div className="flex items-baseline gap-2">
-                                                            <span className="text-3xl font-black text-emerald-400">{totalImprovement > 0 ? `-${totalImprovement}` : `+${Math.abs(totalImprovement)}`}</span>
-                                                            <span className="text-sm" style={{ color: '#8B9DC3' }}>pts (PHQ-9)</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-2 mt-1.5 text-xs">
-                                                            <span className="text-red-400">Baseline: {journey.baseline.phq9}</span>
-                                                            <span className="text-slate-600">→</span>
-                                                            <span className="text-emerald-400">Today: {journey.integration.currentPhq9}</span>
-                                                        </div>
-                                                        <p className="text-emerald-400 text-xs font-bold mt-2 uppercase tracking-widest">
-                                                            {isRemission ? '✓ Remission' : '↗ Improving'}
-                                                        </p>
-                                                    </>
-                                                ) : (
-                                                    <p className="text-slate-500 text-sm font-semibold mt-1">Complete a Longitudinal Assessment to see improvement data.</p>
-                                                )}
-                                            </div>
 
-                                            {/* MEQ-30 Correlation */}
-                                            <div className="px-6 py-5">
-                                                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>MEQ-30 Score</p>
-                                                <div className="text-3xl font-black">
-                                                    {journey.session.meq30Score !== null
-                                                        ? <span className="text-emerald-400">{journey.session.meq30Score}/100</span>
-                                                        : <span className="text-slate-500 text-base font-semibold">Not recorded</span>
-                                                    }
+                                {/* Bottom row: disclaimer label + info tooltip | Phase lock | Export Report button
+                                    Hidden during Phase 2 (Cockpit Mode — practitioner is focused on real-time clinical actions) */}
+                                {activePhase !== 2 && (
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 pb-1 border-t border-slate-700/30 mt-4 sm:mt-8">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                                            {/* Disclaimer — icon+title only on mobile, full text on sm+ */}
+                                            <div className="flex gap-2 items-center sm:items-start sm:gap-3 max-w-xl bg-slate-900/60 border border-slate-700/50 px-3 py-2 sm:p-4 rounded-xl shadow-inner">
+                                                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 flex-shrink-0 mt-0 sm:mt-0.5" />
+                                                <div>
+                                                    <h4 className="text-xs sm:text-base font-bold text-slate-300 uppercase tracking-wider">Clinical Decision Support Disclaimer</h4>
+                                                    {/* Full disclaimer text — hidden on mobile */}
+                                                    <p className="hidden sm:block text-sm text-slate-400 leading-relaxed mt-1">
+                                                        This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider.
+                                                    </p>
                                                 </div>
-                                                {journey.session.meq30Score !== null && (
-                                                    <p className="text-emerald-400 text-xs mt-2">High mystical experience → Sustained benefit ✓</p>
-                                                )}
                                             </div>
 
-                                            {/* Risk Level, wired to live riskDetection data */}
-                                            <div className="px-6 py-5">
-                                                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#8B9DC3' }}>Risk Level</p>
-                                                <div className="flex items-center gap-2.5">
-                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${riskDetection.overallRiskLevel === 'high' ? 'bg-red-500/20' :
-                                                        riskDetection.overallRiskLevel === 'moderate' ? 'bg-amber-500/20' :
-                                                            'bg-emerald-500/20'
-                                                        }`} aria-hidden="true">
-                                                        <svg className={`w-4 h-4 ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                                                'text-emerald-400'
-                                                            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            {riskDetection.overallRiskLevel === 'high' ? (
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                                                            ) : riskDetection.overallRiskLevel === 'moderate' ? (
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01" />
-                                                            ) : (
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                            )}
-                                                        </svg>
-                                                    </div>
-                                                    <div>
-                                                        <span className={`text-3xl font-black ${riskDetection.overallRiskLevel === 'high' ? 'text-red-400' :
-                                                            riskDetection.overallRiskLevel === 'moderate' ? 'text-amber-400' :
-                                                                'text-emerald-400'
-                                                            }`}>
-                                                            {riskDetection.overallRiskLevel.toUpperCase()}
-                                                        </span>
-                                                        <span className="sr-only">Risk Status: {riskDetection.overallRiskLevel.toUpperCase()}</span>
-                                                    </div>
+                                            {/* Phase lock notice inline */}
+                                            {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
+                                                <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 border border-slate-700/40 rounded-lg shadow-sm">
+                                                    <Lock className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                                                    <span className="text-xs sm:text-sm text-slate-400 font-medium">
+                                                        Phase {activePhase + 1} unlocks after Phase {activePhase}.
+                                                    </span>
                                                 </div>
-                                                <p className="text-xs mt-2" style={{ color: '#8B9DC3' }}>
-                                                    {riskDetection.overallRiskLevel === 'high' ? 'Immediate review required' :
-                                                        riskDetection.overallRiskLevel === 'moderate' ? 'Monitor closely' :
-                                                            'Excellent compliance'}
-                                                </p>
-                                            </div>
-
+                                            )}
                                         </div>
+
+                                        {/* Export Report */}
+                                        <ExportReportButton data={exportPatientData} />
                                     </div>
                                 )}
-
-                                {/* Bottom row: disclaimer label + info tooltip | Phase lock | Export Report button */}
-                                <div className="flex items-center justify-between gap-4 pt-3 pb-1 border-t border-slate-700/30 mt-6 md:mt-8">
-                                    <div className="flex items-center gap-6 flex-wrap">
-                                        {/* Always-visible legal disclaimer container */}
-                                        <div className="flex gap-3 items-start max-w-xl bg-slate-900/60 border border-slate-700/50 p-4 rounded-xl shadow-inner">
-                                            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                                            <div>
-                                                <h4 className="text-base font-bold text-slate-300 uppercase tracking-wider mb-1">Clinical Decision Support Disclaimer</h4>
-                                                <p className="text-sm text-slate-400 leading-relaxed">
-                                                    This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Phase lock notice inline */}
-                                        {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
-                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 border border-slate-700/40 rounded-lg shadow-sm">
-                                                <Lock className="w-4 h-4 text-slate-500" />
-                                                <span className="text-sm text-slate-400 font-medium">
-                                                    Phase {activePhase + 1} unlocks when you complete Phase {activePhase}.
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Export Report */}
-                                    <ExportReportButton patientData={exportPatientData} />
-                                </div>
                             </div>
                         </div>
                     );

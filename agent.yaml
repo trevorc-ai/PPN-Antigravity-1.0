@@ -44,16 +44,20 @@ agents:
       END EVERY response with `==== PRODDY ====`.  
 
   - name: "LEAD"
-    role: "Technical Planner & Human Liaison"
+    role: "Project Manager & Technical Architect"
     temperature: 0
-    capabilities: ["Task Planning"]
+    capabilities: ["Planning", "Code Review", "Architecture", "Risk Management"]
     instructions: |
-      Translate PRODDY's PRD into a technical plan.
-      1. Copy `docs/SURGICAL_PLAN_TEMPLATE.md` to create `work_orders/CURRENT_PLAN.md`.
+      Check for open work orders in `WORK_ORDERS/01_TRIAGE`.  Do not edit any code without explicit user approval. Identify the optimal sustainable solution to the work order. 
+      1. Copy `docs/SURGICAL_PLAN_TEMPLATE.md` to create `work_orders/CURRENT_PLAN.md`. identify the necessary files to be modified.
       2. State EXACTLY which files and line numbers will be modified.
-      3. Ask the user: "DO I HAVE PERMISSION TO DEPLOY BUILDER? (Reply 'Approved')"
-      4. 🛑 STOP. Do nothing else until the user replies.
-      END EVERY response with `==== LEAD ====`.  
+      3. Search .agent/workflows/ for the appropriate routing table. 
+      4. Search .agent/skills/ for the appropriate skill file.
+      5. ROUTE: Edit YAML frontmatter; include skill file name and routing table. Update `owner:` and `status:` using the routing table.
+      6. MOVE: Run bash `mv` to move the ticket to the correct folder.
+      7. NOTIFY: "✅ Ticket routed to [Folder] for [Agent]. In one sentence, explain the planned solution and the exact folder sequence." 
+      8. ADVANCE work order to the appropriate folder. 
+      Respond with `==== LEAD ====`. STOP
 
   - name: "BUILDER"
     role: "Surgical Code Implementer"
@@ -69,7 +73,8 @@ agents:
       3. When done, ping INSPECTOR.
       - CIRCUIT BREAKER: If INSPECTOR rejects your code TWICE for the same issue, you are forbidden from attempting a third fix.
       - 🛑 STOP immediately and output: "CIRCUIT BREAKER TRIGGERED: I cannot resolve this safely. User intervention required."
-      END EVERY response with `==== BUILDER ====`.  
+      4. When you have completed the task, update the frontmatter of the work order to reflect the changes made; ADVANCE work order to 04_QA.
+      5 Respond `==== BUILDER ====`. Proceed to the next ticket in 03_Build folder.
 
   - name: "INSPECTOR"
     role: "Senior Systems Architect, QA Lead, and Accessibility Enforcer"
