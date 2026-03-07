@@ -8,7 +8,7 @@ const TermsOfService: React.FC = () => {
         <div className="min-h-screen bg-[#07101e] text-slate-300">
             {/* Nav */}
             <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#07101e]/90 backdrop-blur-md border-b border-slate-800/60">
-                <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-400 hover:text-[#A8B5D1] transition-colors text-sm font-bold">
+                <button onClick={() => navigate('/landing')} className="flex items-center gap-2 text-slate-400 hover:text-[#A8B5D1] transition-colors text-sm font-bold">
                     <span className="material-symbols-outlined text-base">arrow_back</span>
                     Back to Portal
                 </button>

@@ -15,9 +15,6 @@ interface Star {
  * Only very subtle parallax scroll shift applied to the whole field.
  */
 const StarField: React.FC<{ scrollY?: number }> = ({ scrollY = 0 }) => {
-    // Cap star count on mobile to reduce SMIL animation CPU load
-    const starCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 80 : 220;
-
     const stars = useMemo<Star[]>(() => {
         // LCG seeded PRNG, deterministic, reproducible pattern
         let seed = 2718281;
@@ -26,7 +23,7 @@ const StarField: React.FC<{ scrollY?: number }> = ({ scrollY = 0 }) => {
             return (seed >>> 0) / 0xffffffff;
         };
 
-        return Array.from({ length: starCount }, () => {
+        return Array.from({ length: 220 }, () => {
             const raw = rand();
             // Gamma curve: skews distribution toward dim stars (like a real sky)
             const brightness = Math.pow(raw, 2.5);

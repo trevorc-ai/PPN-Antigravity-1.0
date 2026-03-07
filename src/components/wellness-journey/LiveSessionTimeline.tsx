@@ -14,12 +14,6 @@ export interface TimelineEvent {
 interface LiveSessionTimelineProps {
     sessionId: string;
     active: boolean; // Controls whether refetching happens
-    /** Hides the internal header row (title, syncing badge, export button).
-     *  Use when the parent renders its own accordion wrapper. */
-    hideHeader?: boolean;
-    /** Hides the quick-action strip (P.Spoke / Music / Decision / Dose + free-text note).
-     *  Use when those buttons are lifted to a different part of the layout. */
-    hideActions?: boolean;
 }
 
 // WO-528: exported so SessionVitalsTrendChart can reuse the same palette
@@ -42,19 +36,18 @@ export const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string
     CLOSE: { icon: <CheckCircle className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '✓', label: '[CLOSE]' },
 };
 
-// Exported so DosingSessionPhase can render these buttons alongside its own action grid
-export const QUICK_ACTIONS = [
-    { label: 'P. Spoke', type: 'patient_observation', icon: Mic, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30 hover:bg-amber-500/30', desc: 'Patient reported: ' },
-    { label: 'Music', type: 'music_change', icon: Music, color: 'text-violet-400 bg-violet-500/20 border-violet-500/30 hover:bg-violet-500/30', desc: 'Playlist changed to: ' },
+const QUICK_ACTIONS = [
+    { label: 'Patient Spoke', type: 'patient_observation', icon: Mic, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30 hover:bg-amber-500/30', desc: 'Patient reported: ' },
+    { label: 'Music Change', type: 'music_change', icon: Music, color: 'text-violet-400 bg-violet-500/20 border-violet-500/30 hover:bg-violet-500/30', desc: 'Playlist changed to: ' },
     { label: 'Decision', type: 'clinical_decision', icon: AlertTriangle, color: 'text-orange-400 bg-orange-500/20 border-orange-500/30 hover:bg-orange-500/30', desc: 'Decision made: ' },
-    { label: 'Dose', type: 'dose_admin', icon: Pill, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30 hover:bg-emerald-500/30', desc: 'Administered additional dose.' },
+    { label: 'Admin Dose', type: 'dose_admin', icon: Pill, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30 hover:bg-emerald-500/30', desc: 'Administered additional dose.' },
 ];
 
 function formatTimeAMPM(date: Date): string {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
-export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, active, hideHeader = false, hideActions = false }) => {
+export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, active }) => {
     const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [draftNote, setDraftNote] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,21 +60,11 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
 
         if (!description) return;
 
-        // Optimistic update: add event to local state immediately so user sees it right away
-        const optimisticEvent: TimelineEvent = {
-            id: `optimistic-${Date.now()}`,
-            type,
-            timestamp: new Date(),
-            description,
-            author: 'Clinician',
-        };
-        setEvents(prev => [optimisticEvent, ...prev]);
-
         setIsSubmitting(true);
         const eventData = {
             session_id: sessionId,
             event_timestamp: new Date().toISOString(),
-            event_type: type as any,
+            event_type: type as any, // QUICK_ACTIONS types are validated by the BE; cast to satisfy union
             performed_by: 'Current Clinician',
             metadata: { event_description: description }
         };
@@ -93,7 +76,6 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         }));
         if (!presetDesc) setDraftNote('');
         setIsSubmitting(false);
-        // Refetch to get server-side IDs and confirm persistence
         fetchLocalEvents();
     };
 
@@ -115,13 +97,17 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
                 author: row.performed_by || 'Unknown Clinician'
             }));
 
-            // Show real events if we have them, otherwise show empty state (no mock data)
+            // Overwrite with real data if it exists, else keep mock
             if (mappedEvents.length > 0) {
-                // Most recent first
+                // Reverse it so chronological matches the timeline approach
                 setEvents(mappedEvents.reverse());
             } else {
-                // Empty state — do NOT show hardcoded 2025 mock events
-                setEvents([]);
+                // Keep the mock events for visual demonstration
+                setEvents([
+                    { id: '1', type: 'DOSE', timestamp: new Date('2025-10-18T09:14:00'), description: 'Psilocybin 25mg oral administered', notes: 'Patient calm, set and setting confirmed', author: 'Dr. Jane Smith' },
+                    { id: '2', type: 'OBSERVATION', timestamp: new Date('2025-10-18T10:02:00'), description: 'First onset effects reported', notes: 'Patient reported warmth, mild visuals', author: 'Dr. Jane Smith' },
+                    { id: '3', type: 'SAFETY', timestamp: new Date('2025-10-18T10:45:00'), description: 'Patient experiencing slight nausea', notes: 'Provided ginger tea, nausea resolved after 15 minutes', author: 'Dr. Jane Smith' },
+                ]);
             }
         }
     }, [sessionId]);
@@ -168,40 +154,38 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
 
     return (
         <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col overflow-hidden shadow-xl">
-            {!hideHeader && (
-                <div className="flex items-center justify-between p-4 border-b border-slate-700/50 bg-slate-800/20">
-                    <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-indigo-400" />
-                        <div>
-                            <h3 className="text-base font-bold text-[#A8B5D1] uppercase tracking-widest">Live Session Timeline</h3>
-                            {active && (
-                                <span className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                    </span>
-                                    Syncing Live
+            <div className="flex items-center justify-between p-4 border-b border-slate-700/50 bg-slate-800/20">
+                <div className="flex items-center gap-3">
+                    <Clock className="w-5 h-5 text-indigo-400" />
+                    <div>
+                        <h3 className="text-base font-bold text-[#A8B5D1] uppercase tracking-widest">Live Session Timeline</h3>
+                        {active && (
+                            <span className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                 </span>
-                            )}
-                        </div>
+                                Syncing Live
+                            </span>
+                        )}
                     </div>
-                    <button
-                        onClick={handleExportLog}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors"
-                        aria-label="Export session timeline log as text"
-                    >
-                        <Download className="w-3.5 h-3.5" />
-                        Export Log
-                    </button>
                 </div>
-            )}
+                <button
+                    onClick={handleExportLog}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors"
+                    aria-label="Export session timeline log as text"
+                >
+                    <Download className="w-3.5 h-3.5" />
+                    Export Log
+                </button>
+            </div>
 
 
 
 
-            <div className="p-3 max-h-[400px] overflow-y-auto space-y-4">
+            <div className="p-6 max-h-[400px] overflow-y-auto space-y-6">
                 {events.length === 0 ? (
-                    <div className="text-center text-slate-500 py-4 text-sm italic">
+                    <div className="text-center text-slate-500 py-8 text-sm italic">
                         Session timeline is empty. Record events below to begin building the timeline.
                     </div>
                 ) : (
@@ -244,63 +228,6 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
                     })
                 )}
             </div>
-
-            {/* ── Quick-Log action strip + freetext note form ─────────────────── */}
-            {active && !hideActions && (
-                <div className="border-t border-slate-700/50 bg-slate-800/10 p-3 space-y-2.5">
-
-                    {/* One-tap quick actions — compact, 2-row layout on mobile */}
-                    <div className="flex flex-wrap gap-1">
-                        {QUICK_ACTIONS.map(action => (
-                            <button
-                                key={action.type}
-                                onClick={() => handleAddNote(undefined, action.type, action.desc)}
-                                disabled={isSubmitting}
-                                aria-label={`Log: ${action.label}`}
-                                className={[
-                                    'flex items-center gap-1 px-2 py-1 rounded-lg border',
-                                    'text-[10px] font-bold tracking-wide',
-                                    'min-h-[32px] transition-colors active:scale-95',
-                                    action.color,
-                                    isSubmitting ? 'opacity-50 cursor-not-allowed' : '',
-                                ].join(' ')}
-                            >
-                                <action.icon className="w-3 h-3 shrink-0" aria-hidden="true" />
-                                {action.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Freetext note input */}
-                    <form
-                        onSubmit={handleAddNote}
-                        className="flex gap-2 items-center"
-                        aria-label="Add custom session note"
-                    >
-                        <input
-                            type="text"
-                            value={draftNote}
-                            onChange={e => setDraftNote(e.target.value)}
-                            placeholder="Custom note…"
-                            aria-label="Session note text"
-                            className={[
-                                'flex-1 bg-slate-900/60 border border-slate-700 rounded-xl',
-                                'px-3 py-2 text-sm text-slate-200 placeholder-slate-600',
-                                'focus:outline-none focus:ring-1 focus:ring-indigo-500/60 focus:border-indigo-500/40',
-                                'min-h-[40px]',
-                            ].join(' ')}
-                        />
-                        <button
-                            type="submit"
-                            disabled={!draftNote.trim() || isSubmitting}
-                            aria-label="Submit note"
-                            className="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-300 hover:bg-indigo-600/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95 flex-shrink-0"
-                        >
-                            <Send className="w-4 h-4" aria-hidden="true" />
-                        </button>
-                    </form>
-                </div>
-            )}
         </div>
     );
 };

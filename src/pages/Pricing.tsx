@@ -43,7 +43,7 @@ const PricingCard: React.FC<{
       </div>
 
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/login')}
         className={`w-full py-4 rounded-xl text-sm font-black uppercase tracking-[0.2em] transition-all active:scale-95 mb-10 ${buttonClass}`}
       >
         {buttonText}

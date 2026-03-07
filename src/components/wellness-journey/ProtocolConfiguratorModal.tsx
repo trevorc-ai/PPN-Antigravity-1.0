@@ -202,8 +202,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     if (step === 2) {
 
         return (
-            <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6 bg-slate-950/80 backdrop-blur-sm transition-all duration-300">
-                <div className="w-full max-w-2xl bg-[#0a1628] rounded-t-3xl sm:rounded-3xl border-t border-x sm:border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-full sm:zoom-in-95 duration-300" style={{ maxHeight: '95dvh' }}>
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
+                <div className="w-full max-w-2xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ maxHeight: '100dvh' }}>
                     <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
@@ -242,7 +242,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         key={c}
                                         type="button"
                                         onClick={() => setCondition(c)}
-                                        className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${condition === c
+                                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${condition === c
                                             ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
                                             : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                             }`}
@@ -270,7 +270,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                                 key={g}
                                                 type="button"
                                                 onClick={() => setGender(g)}
-                                                className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${gender === g
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${gender === g
                                                     ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
                                                     : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                                     }`}
@@ -294,7 +294,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                                 key={s}
                                                 type="button"
                                                 onClick={() => setSmoking(s)}
-                                                className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${smoking === s
+                                                className={`px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all active:scale-95 ${smoking === s
                                                     ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
                                                     : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
                                                     }`}
@@ -410,8 +410,8 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
     }
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6 bg-slate-950/80 backdrop-blur-sm transition-all duration-300">
-            <div className="w-full max-w-3xl bg-[#0a1628] rounded-t-3xl sm:rounded-3xl border-t border-x sm:border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-full sm:zoom-in-95 duration-300" style={{ maxHeight: '95dvh' }}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-sm">
+            <div className="w-full max-w-3xl bg-[#0a1628] rounded-3xl border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" style={{ maxHeight: '100dvh' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/60 bg-slate-900/40">
                     <div className="flex items-center gap-4">
@@ -545,7 +545,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                                 const theme = getPhaseTheme();
 
                                                 return (
-                                                    <label key={feat.id} className="flex items-start gap-3.5 cursor-pointer group min-h-[44px] sm:min-h-0 py-1 sm:py-0">
+                                                    <label key={feat.id} className="flex items-start gap-3.5 cursor-pointer group">
                                                         <input type="checkbox" className="hidden" checked={isEnabled} onChange={() => toggleFeature(feat.id)} />
                                                         <div className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all flex-shrink-0 shadow-sm border ${theme.box}`}>
                                                             {isEnabled && <svg className="w-3.5 h-3.5 fill-current animate-in zoom-in duration-200" viewBox="0 0 20 20"><path d="M0 11l2-2 5 5L18 3l2 2L7 18z" /></svg>}

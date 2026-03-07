@@ -201,7 +201,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
                 {/* Right Column: Context */}
                 <div className="space-y-6">
                     <div>
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Additional Meds</span>
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-2">Concomitant Meds</span>
                         <div className="flex flex-wrap gap-2">
                             {patient.details.medications.length > 0 ? (
                                 patient.details.medications.map(med => (
@@ -233,7 +233,7 @@ const DossierModal = ({ patient, onClose }: { patient: PatientNode; onClose: () 
     </div>
 );
 
-export default function PatientConstellation({ data, hideHeader: _hideHeader }: { data?: PatientNode[]; hideHeader?: boolean }) {
+export default function PatientConstellation({ data }: { data?: PatientNode[] }) {
     const [selectedPatient, setSelectedPatient] = useState<PatientNode | null>(null);
     const [showGuide, setShowGuide] = useState(false);
     const [chartReady, setChartReady] = useState(false);

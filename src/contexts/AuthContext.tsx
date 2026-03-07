@@ -3,15 +3,30 @@ import { supabase } from '../supabaseClient';
 import { User, Session } from '@supabase/supabase-js';
 import { clearDataCache } from '../hooks/useDataCache';
 
-// ── NOTE: No module-level IIFE ────────────────────────────────────────────────
-// The previous implementation used a module-level IIFE to detect invite/recovery
-// tokens in window.location.hash. This caused a race condition with HashRouter:
-// HashRouter uses the hash for routing (/#/login), while Supabase uses it for
-// tokens. They conflict. The IIFE was removed.
-//
-// Instead ALL auth event logic lives inside onAuthStateChange (reliable, ordered).
-// Token exchange is handled manually in ResetPassword.tsx (detectSessionInUrl=false).
-// ─────────────────────────────────────────────────────────────────────────────────
+// ── Invite-flow detection ────────────────────────────────────────────────────
+// We MUST read the URL hash at module-load time, BEFORE React Router (HashRouter)
+// processes the fragment and strips the Supabase token parameters from it.
+// Supabase appends tokens to the hash like:
+//   https://ppnportal.net/#access_token=xxx&type=invite
+// HashRouter then rewrites the hash to route paths like /#/search,
+// which destroys the type=invite param before onAuthStateChange fires.
+(function captureInviteFlag() {
+    if (typeof window === 'undefined') return;
+    try {
+        const rawHash = window.location.hash;
+        // Parse as URLSearchParams by stripping the leading '#'
+        const params = new URLSearchParams(rawHash.replace(/^#/, ''));
+        const type = params.get('type');
+        if (type === 'invite' || type === 'signup') {
+            sessionStorage.setItem('ppn_pending_invite', 'true');
+        }
+        if (type === 'recovery') {
+            sessionStorage.setItem('ppn_pending_recovery', 'true');
+        }
+    } catch {
+        // Non-critical, fail silently
+    }
+})();
 
 type UserRole = 'admin' | 'partner' | 'user' | null;
 
@@ -33,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [userRole, setUserRole] = useState<UserRole>(null);
 
     useEffect(() => {
-        // Get initial session (handles page refresh — session is already in storage)
+        // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setUser(session?.user ?? null);
@@ -41,45 +56,58 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setLoading(false);
         });
 
-        // Listen for auth state changes
+        // Listen for auth changes
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
+            // Role is in the JWT app_metadata — no extra DB fetch needed
             setUserRole((session?.user?.app_metadata?.role as UserRole) ?? null);
             setLoading(false);
 
-            if (!session || typeof window === 'undefined') return;
+            // ── Invite / signup link interception ───────────────────────────
+            // Two signals are checked (either is sufficient):
+            //   1. sessionStorage flag set at module-load time (reliable across
+            //      all browsers, survives HashRouter fragment rewrite)
+            //   2. URL hash still contains 'type=invite' or 'type=signup'
+            //      (works when the page load is very fast)
+            //
+            // On detection we do a hard replace() to /reset-password so the
+            // user MUST create their own password before entering the portal.
+            // This prevents the scenario where a user gets silently logged in
+            // via magic link, never sets a password, then can't log back in.
+            if (session && typeof window !== 'undefined') {
+                const pendingInvite = sessionStorage.getItem('ppn_pending_invite');
+                const pendingRecovery = sessionStorage.getItem('ppn_pending_recovery');
+                const rawHash = window.location.hash;
+                const hashParams = new URLSearchParams(rawHash.replace(/^#/, ''));
+                const hashType = hashParams.get('type');
+                const isInviteFlow =
+                    pendingInvite === 'true' ||
+                    hashType === 'invite' ||
+                    hashType === 'signup';
+                const isRecoveryFlow =
+                    event === 'PASSWORD_RECOVERY' ||
+                    pendingRecovery === 'true' ||
+                    hashType === 'recovery';
 
-            // ── PASSWORD_RECOVERY: Forgot-password link was clicked ──────────
-            // Supabase emits this event when a reset email link is processed.
-            // Redirect the user to /reset-password so they can set a new password.
-            // NOTE: With detectSessionInUrl: false, this only fires after
-            // ResetPassword.tsx manually calls exchangeCodeForSession().
-            if (event === 'PASSWORD_RECOVERY') {
-                window.location.replace(
-                    window.location.origin + window.location.pathname + '#/reset-password'
-                );
-                return;
+                if (isInviteFlow) {
+                    sessionStorage.removeItem('ppn_pending_invite');
+                    window.location.replace(
+                        window.location.origin + window.location.pathname + '#/reset-password'
+                    );
+                    return;
+                }
+
+                if (isRecoveryFlow) {
+                    sessionStorage.removeItem('ppn_pending_recovery');
+                    window.location.replace(
+                        window.location.origin + window.location.pathname + '#/reset-password'
+                    );
+                    return;
+                }
             }
-
-            // ── Invite flow: new user, first login ───────────────────────────
-            // When an invited user clicks their invite link and lands on
-            // /reset-password, the page exchanges the code for a session.
-            // That triggers a SIGNED_IN event. We detect first-time users by
-            // checking last_sign_in_at — it is null on the very first sign-in.
-            // Redirect them to /reset-password so they MUST set a password.
-            // (Confirmed behavior: invited users must set a password before entry.)
-            if (event === 'SIGNED_IN' && !session.user?.last_sign_in_at) {
-                window.location.replace(
-                    window.location.origin + window.location.pathname + '#/reset-password'
-                );
-                return;
-            }
-
-            // All other SIGNED_IN events are normal logins — do NOT redirect.
-            // Navigation after login is handled by Login.tsx's navigate(from) call.
         });
 
         return () => subscription.unsubscribe();
@@ -131,5 +159,3 @@ export const useAuth = () => {
     }
     return context;
 };
-
-

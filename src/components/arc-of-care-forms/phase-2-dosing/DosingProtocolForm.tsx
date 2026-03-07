@@ -223,20 +223,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                     {/* Substance */}
                     <FormField
                         label="Substance"
-                        tooltip={selectedSubstance ? (
-                            <div className="space-y-1">
-                                <p className="font-bold text-white">{selectedSubstance.substance_name}</p>
-                                <p className="text-slate-300">
-                                    {selectedSubstance.description || selectedSubstance.clinical_info || 'Primary active pharmacological agent for the dosing session.'}
-                                </p>
-                                {selectedSubstance.regulatory_classification && (
-                                    <p className="text-xs text-amber-400 mt-1 pt-1 border-t border-slate-700/50">
-                                        Sch. {selectedSubstance.regulatory_classification}
-                                    </p>
-                                )}
-                            </div>
-                        ) : 'Select the psychedelic substance being administered to view clinical parameters.'}
-                        tooltipTier="standard"
+                        tooltip="Select the psychedelic substance being administered"
                         required
                     >
                         <select
@@ -267,7 +254,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                                 min={0}
                                 step="any"
                                 placeholder="e.g. 25"
-                                className="flex-1 min-w-0 px-4 py-3 bg-slate-800/50 text-slate-300 focus:outline-none placeholder:text-slate-600 appearance-none m-0"
+                                className="flex-1 px-4 py-3 bg-slate-800/50 text-slate-300 focus:outline-none placeholder:text-slate-600 appearance-none m-0"
                             />
                             <div className="w-px bg-slate-700/50" />
                             <select

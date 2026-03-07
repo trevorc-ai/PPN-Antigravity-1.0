@@ -71,26 +71,13 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     onExit,
 }) => {
     const [data, setData] = useState<StructuredSafetyCheckData>({
-        monitoring_date: initialData.monitoring_date ?? new Date().toISOString().slice(0, 10),
-        cssrs_score: initialData.cssrs_score ?? 0,
-        safety_concern_ids: initialData.safety_concern_ids ?? [],
-        action_taken_ids: initialData.action_taken_ids ?? [],
-        follow_up_required: initialData.follow_up_required ?? false,
+        monitoring_date: initialData.monitoring_date || new Date().toISOString().slice(0, 10),
+        cssrs_score: initialData.cssrs_score || 0,
+        safety_concern_ids: initialData.safety_concern_ids || [],
+        action_taken_ids: initialData.action_taken_ids || [],
+        follow_up_required: initialData.follow_up_required || false,
         follow_up_timeframe: initialData.follow_up_timeframe,
     });
-
-    React.useEffect(() => {
-        if (initialData && Object.keys(initialData).length > 0) {
-            setData(prev => ({
-                ...prev,
-                ...initialData,
-                monitoring_date: initialData.monitoring_date ?? prev.monitoring_date,
-                cssrs_score: initialData.cssrs_score ?? prev.cssrs_score,
-                safety_concern_ids: initialData.safety_concern_ids ?? prev.safety_concern_ids,
-                action_taken_ids: initialData.action_taken_ids ?? prev.action_taken_ids,
-            }));
-        }
-    }, [initialData]);
 
     const [isSaving, setIsSaving] = useState(false);
 

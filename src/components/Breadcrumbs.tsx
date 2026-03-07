@@ -60,7 +60,7 @@ const Breadcrumbs: React.FC = () => {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="hidden sm:flex px-6 sm:px-10 py-3.5 bg-[#0a1628]/60 border-b border-white/[0.04] backdrop-blur-2xl items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap z-30 shadow-sm"
+      className="px-6 sm:px-10 py-3.5 bg-[#0a1628]/60 border-b border-white/[0.04] backdrop-blur-2xl flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap z-30 shadow-sm"
     >
       {/* Back Button - Only shows on deep pages (not Dashboard or Portal root) */}
       {location.pathname !== '/dashboard' && location.pathname !== '/advanced-search' && (

@@ -37,55 +37,6 @@ const buildRadarData = (kiProfile: SubstanceKiProfile) => {
   ];
 };
 
-// ─── Substance breadcrumb switcher — always opens downward ──────────────────
-const SubstanceSwitcher: React.FC<{ currentId: string; onSelect: (id: string) => void }> = ({ currentId, onSelect }) => {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const currentName = SUBSTANCES.find(s => s.id === currentId)?.name ?? currentId;
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 text-slate-200 text-sm font-bold rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500/60 transition-all cursor-pointer hover:bg-slate-700/80"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-label="Switch substance"
-      >
-        {currentName}
-        <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-      </button>
-      {open && (
-        <div className="absolute top-full left-0 mt-1 z-50 bg-[#0d1526] border border-slate-700/60 rounded-xl shadow-2xl overflow-hidden min-w-[160px]" role="listbox">
-          {SUBSTANCES.map(s => (
-            <button
-              key={s.id}
-              role="option"
-              aria-selected={s.id === currentId}
-              onClick={() => { onSelect(s.id); setOpen(false); }}
-              className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors ${s.id === currentId
-                  ? 'bg-indigo-600/30 text-indigo-300'
-                  : 'text-slate-300 hover:bg-slate-700/60 hover:text-slate-100'
-                }`}
-            >
-              {s.name}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
 const RECEPTOR_DESCRIPTIONS: Record<string, { role: string; clinicalNote: string }> = {
   '5-HT2A': { role: 'Serotonin 2A Receptor', clinicalNote: 'Primary driver of psychedelic effects. Agonism promotes neuroplasticity and altered perception.' },
   '5-HT1A': { role: 'Serotonin 1A Receptor', clinicalNote: 'Modulates anxiety and mood. Partial agonism associated with anxiolytic effects during sessions.' },
@@ -315,10 +266,16 @@ const SubstanceMonograph: React.FC = () => {
         <div className="h-4 w-px bg-slate-800" />
         <div className="flex items-center gap-2">
           <span className="text-sm text-slate-600 font-semibold uppercase tracking-widest hidden sm:block">Viewing:</span>
-          <SubstanceSwitcher
-            currentId={sub.id}
-            onSelect={(id) => navigate(`/monograph/${id}`)}
-          />
+          <select
+            value={sub.id}
+            onChange={e => navigate(`/monograph/${e.target.value}`)}
+            className="bg-slate-800/80 border border-slate-700/60 text-slate-200 text-sm font-bold rounded-xl px-3 py-1.5 focus:outline-none focus:border-indigo-500/60 transition-all cursor-pointer"
+            aria-label="Switch substance"
+          >
+            {SUBSTANCES.map(s => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
         </div>
         {sub.riskTier && (
           <span className={`ml-auto hidden sm:inline-flex px-3 py-1 rounded-full text-sm font-semibold border

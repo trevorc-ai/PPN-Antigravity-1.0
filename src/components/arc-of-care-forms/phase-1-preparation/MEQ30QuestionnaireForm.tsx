@@ -58,24 +58,21 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     const [isSaving, setIsSaving] = useState(false);
     const [isDone, setIsDone] = useState(false);
 
-    // WO-531 Fix: Navigation callbacks (onExit / onComplete) always fire.
-    // onSave is only called when there are actual responses to persist.
     const handleSaveAndExit = () => {
-        if (onSave && answeredCount > 0) {
+        if (onSave) {
             setIsSaving(true);
             onSave(data);
             setTimeout(() => {
                 setIsSaving(false);
                 if (onExit) onExit();
             }, 300);
-        } else {
-            // No responses to save — navigate immediately
-            if (onExit) onExit();
+        } else if (onExit) {
+            onExit();
         }
     };
 
     const handleSaveAndContinue = () => {
-        if (onSave && answeredCount > 0) {
+        if (onSave) {
             setIsSaving(true);
             onSave(data);
             setIsDone(true);
@@ -83,10 +80,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 setIsSaving(false);
                 if (onComplete) onComplete();
             }, 300);
-        } else {
-            // No responses to save — navigate immediately
-            setIsDone(true);
-            if (onComplete) onComplete();
+        } else if (onComplete) {
+            onComplete();
         }
     };
 
@@ -222,15 +217,13 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                 )}
             </div>
 
-            {/* WO-531 Fix: hasChanges always true so navigation buttons are never
-                unconditionally disabled. isSaving still disables during async save. */}
             <FormFooter
                 onBack={onBack}
                 onSaveAndExit={handleSaveAndExit}
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
-                hasChanges={true}
-                saveAndContinueLabel={isComplete ? 'Save & Done' : 'Complete Assessment'}
+                hasChanges={Object.keys(data.responses).length > 0}
+                saveAndContinueLabel={isComplete ? 'Save & Done' : 'Save & Continue'}
                 isDone={isDone}
             />
         </div>

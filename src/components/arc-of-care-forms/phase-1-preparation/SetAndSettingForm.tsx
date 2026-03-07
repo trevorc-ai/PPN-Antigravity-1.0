@@ -133,7 +133,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
 
             {/* ── Section 1: Treatment Expectancy ──────────────────────── */}
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-5 space-y-4">
-                <h3 className="text-base font-bold text-slate-500">Patient Treatment Expectancy</h3>
+                <h3 className="text-base font-bold text-slate-500">Treatment Expectancy</h3>
 
                 <div className="space-y-3">
                     {/* Slider + inline value */}

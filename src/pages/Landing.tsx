@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import {
   Loader2,
@@ -26,10 +26,9 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
-// Lazy-load below-fold demo components so they don't block initial render
-const SafetyRiskMatrixDemo = lazy(() => import('../components/demos/SafetyRiskMatrixDemo'));
-const ClinicRadarDemo = lazy(() => import('../components/demos/ClinicRadarDemo'));
-const PatientJourneyDemo = lazy(() => import('../components/demos/PatientJourneyDemo'));
+import SafetyRiskMatrixDemo from '../components/demos/SafetyRiskMatrixDemo';
+import ClinicRadarDemo from '../components/demos/ClinicRadarDemo';
+import PatientJourneyDemo from '../components/demos/PatientJourneyDemo';
 import { GravityButton } from '../components/GravityButton';
 import { BentoGrid, BentoCard } from '../components/layouts/BentoGrid';
 import StarField from '../components/StarField';
@@ -56,11 +55,8 @@ const Landing: React.FC = () => {
     target: frankensteinRef,
     offset: ['start end', 'end start'],
   });
-  const prefersReducedMotion = useReducedMotion();
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
-  const disableParallax = prefersReducedMotion || isMobile;
-  const cardParallaxY = useTransform(frankProgress, [0, 1], disableParallax ? [0, 0] : [60, -60]);
-  const glowParallaxY = useTransform(frankProgress, [0, 1], disableParallax ? [0, 0] : [30, -30]);
+  const cardParallaxY = useTransform(frankProgress, [0, 1], [60, -60]);
+  const glowParallaxY = useTransform(frankProgress, [0, 1], [30, -30]);
   const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
 
   useEffect(() => {
@@ -133,13 +129,25 @@ const Landing: React.FC = () => {
         </div>
         <button
           onClick={() => navigate('/login')}
-          className="px-5 py-2 bg-slate-800 border border-slate-600 hover:border-indigo-500/60 hover:bg-slate-700 text-[#A8B5D1] text-sm font-bold rounded-xl transition-all"
+          className="px-5 py-2.5 min-h-[44px] bg-slate-800 border border-slate-600 hover:border-indigo-500/60 hover:bg-slate-700 text-[#A8B5D1] text-sm font-bold rounded-xl transition-all"
         >
           Sign In
         </button>
       </header>
 
-      <StarField scrollY={scrollY} />
+      {/* StarField: desktop-only — static CSS gradient replaces it on mobile for performance */}
+      <div className="hidden lg:block">
+        <StarField scrollY={scrollY} />
+      </div>
+      {/* Mobile static sky — no SMIL, no JS, zero battery drain */}
+      <div
+        className="fixed inset-0 pointer-events-none overflow-hidden z-0 lg:hidden"
+        aria-hidden="true"
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 60% at 50% 20%, #0f1f3d 0%, #07101e 60%, #040c18 100%)',
+        }}
+      />
 
       {/* SECTION: Hero — top padding accounts for sticky nav height */}
       <div className="relative pt-40 pb-20 lg:pt-52 lg:pb-32 px-6 overflow-hidden z-10">
@@ -199,9 +207,15 @@ const Landing: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => navigate('/waitlist')}
-                  className="w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
+                  className="flex-1 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-base font-black rounded-xl uppercase tracking-wide transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 border-t border-white/20"
                 >
                   Join the Waitlist
+                </button>
+                <button
+                  onClick={() => navigate('/partner-demo')}
+                  className="flex-1 px-8 py-4 bg-transparent hover:bg-slate-800 text-slate-300 text-base font-black rounded-xl uppercase tracking-wide transition-all border border-slate-700 hover:border-slate-500 active:scale-95"
+                >
+                  Watch Demo (2 min)
                 </button>
               </div>
 
@@ -217,7 +231,7 @@ const Landing: React.FC = () => {
                   Already have an account?{' '}
                   <button
                     onClick={() => navigate('/login')}
-                    className="text-primary hover:text-blue-400 font-bold underline underline-offset-2 transition-colors"
+                    className="text-primary hover:text-blue-400 font-bold underline underline-offset-2 transition-colors px-1 inline-flex items-center min-h-[44px]"
                   >
                     Sign In →
                   </button>
@@ -365,7 +379,7 @@ const Landing: React.FC = () => {
             { text: "ICAN INTEGRATED", icon: "integration_instructions" },
             { text: "CLINICAL INFRASTRUCTURE", icon: "dns" },
           ]).flat().map((item, i) => (
-            <div key={i} className="flex items-center gap-2 text-slate-500">
+            <div key={i} className="flex items-center gap-2 text-slate-500 transition-all duration-300 ease-in-out">
               <span className="material-symbols-outlined text-sm text-primary/70">{item.icon}</span>
               <span className="text-xs font-black uppercase tracking-[0.2em]">{item.text}</span>
             </div>
@@ -463,7 +477,7 @@ const Landing: React.FC = () => {
       {/* SECTION: Unified Clinical Operations - NEW */}
       <section ref={frankensteinRef} className="py-24 px-6 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          <div className="space-y-32 pb-16 lg:pb-[30vh] min-h-[600px]">
+          <div className="space-y-32 pb-16 lg:pb-[30vh]">
             <div className="space-y-8">
               <h2 className="text-3xl sm:text-4xl font-black text-slate-300 tracking-tight leading-tight">
                 The <span className="text-gradient-primary inline-block pb-[0.1em]">Frankenstein Stack</span> is real.
@@ -515,21 +529,18 @@ const Landing: React.FC = () => {
               </div>
             </motion.div>
           </div>
-          <motion.div style={{ y: cardParallaxY }} className="relative lg:sticky top-32 lg:top-48 z-10 pt-4 pb-12">
+          <motion.div style={{ y: cardParallaxY }} className="relative sticky top-32 lg:top-48 z-10 pt-4 pb-12">
             <motion.div style={{ y: glowParallaxY }} className="absolute inset-0 bg-indigo-500/10 rounded-[3rem] blur-[80px] opacity-50" />
-            <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 group shadow-2xl">
+            <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-slate-800 rounded-[3rem] p-10 space-y-8 overflow-hidden group shadow-2xl">
 
-              {/* Clip wrapper — keeps grid lines + beams inside card without clipping the outer glow */}
-              <div className="absolute inset-0 rounded-[3rem] overflow-hidden pointer-events-none">
-                {/* Complex Connectivity Grid */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40 mix-blend-screen mask-image:radial-gradient(ellipse_at_center,black,transparent)" />
+              {/* Complex Connectivity Grid */}
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40 mix-blend-screen mask-image:radial-gradient(ellipse_at_center,black,transparent)" />
 
-                {/* Dynamic Connection Beams */}
-                <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
-                <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
-              </div>
+              {/* Dynamic Connection Beams */}
+              <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
+              <div className="absolute top-0 left-1/2 w-px h-full bg-gradient-to-b from-transparent via-indigo-500/50 to-transparent opacity-20 group-hover:opacity-50 transition-opacity duration-1000" />
 
-              <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[420px]">
+              <div className="relative z-10 flex flex-col gap-10 items-center justify-center min-h-[300px]">
 
                 {/* Incoming Data Nodes */}
                 <div className="w-full grid grid-cols-3 gap-2 sm:gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
@@ -707,9 +718,7 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="bg-[#0a1628] p-4 overflow-x-auto">
                     <div className="min-w-[500px] pointer-events-none">
-                      <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
-                        <SafetyRiskMatrixDemo />
-                      </Suspense>
+                      <SafetyRiskMatrixDemo />
                     </div>
                   </div>
                 </div>
@@ -781,9 +790,7 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="bg-[#0a1628] p-4 overflow-x-auto">
                     <div className="min-w-[500px] pointer-events-none">
-                      <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
-                        <ClinicRadarDemo />
-                      </Suspense>
+                      <ClinicRadarDemo />
                     </div>
                   </div>
                 </div>
@@ -813,9 +820,7 @@ const Landing: React.FC = () => {
                   </div>
                   <div className="bg-[#0a1628] p-4 overflow-x-auto pb-4">
                     <div className="min-w-[500px] pointer-events-none">
-                      <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
-                        <PatientJourneyDemo />
-                      </Suspense>
+                      <PatientJourneyDemo />
                     </div>
                   </div>
                 </div>

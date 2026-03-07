@@ -415,7 +415,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 <div>
                     <div className="flex items-center justify-between p-4 bg-slate-800/30 border border-slate-700/50 rounded-lg">
                         <span className="font-bold text-sm text-slate-400 tracking-wider" title="Pulls from ref_medications. Populates drug interaction checks in Phase 2.">
-                            ADDITIONAL MEDICATIONS ⓘ
+                            CONCOMITANT MEDICATIONS ⓘ
                         </span>
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -423,7 +423,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                 className="sr-only peer"
                                 checked={data.medications.medication_changes}
                                 onChange={(e) => updateData('medications', { medication_changes: e.target.checked })}
-                                aria-label="Toggle additional medications"
+                                aria-label="Toggle concomitant medications"
                             />
                             <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900" />
                         </label>
@@ -443,7 +443,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                         }
                                     }}
                                     className="w-full px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm appearance-none cursor-pointer"
-                                    aria-label="Add additional medication"
+                                    aria-label="Add concomitant medication"
                                 >
                                     <option value="">Select Medication to Add...</option>
                                     {medicationOptions.map(m => (
