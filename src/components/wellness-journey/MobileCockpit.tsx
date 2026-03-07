@@ -232,7 +232,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
                     </button>
 
                     <button
-                        onClick={() => logQuickIntervention('practitioner_observation', 'Patient Supported')}
+                        onClick={() => logQuickIntervention('patient_observation', 'Patient Supported')}
                         className="w-full flex items-center justify-center gap-3 min-h-[60px] bg-teal-600/20 text-teal-300 border border-teal-500/30 hover:bg-teal-600/30 font-bold text-lg rounded-2xl active:scale-95 transition-all duration-300"
                     >
                         <CheckCircle2 className="w-6 h-6" />
