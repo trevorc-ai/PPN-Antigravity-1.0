@@ -56,8 +56,9 @@ UPDATE public.ref_substances SET
     receptor_nmda_ki  = 500.0           -- nM — primary mechanism (open-channel block)
 WHERE substance_name = 'Ketamine';
 
--- ── LSD ─────────────────────────────────────────────────────────────────────
+-- ── LSD-25 (actual row name in DB) ───────────────────────────────────────────────
 -- Source: Nichols (2016) Pharmacol Rev; Wacker et al. (2017) Cell.
+-- NOTE: DB has substance_name = 'LSD-25', not 'LSD' — targeting correctly.
 UPDATE public.ref_substances SET
     rxnorm_cui        = NULL,           -- Not in RxNorm (Schedule I)
     receptor_5ht2a_ki = 1.1,            -- nM — extremely high affinity
@@ -65,6 +66,17 @@ UPDATE public.ref_substances SET
     receptor_5ht2c_ki = 2.8,            -- nM
     receptor_d2_ki    = 95.0,           -- nM — notable D2 activity
     receptor_sert_ki  = 100.0,          -- nM
+    receptor_nmda_ki  = NULL
+WHERE substance_name = 'LSD-25';
+
+-- 'LSD' row also exists in DB with all-null receptor data — populate as alias
+UPDATE public.ref_substances SET
+    rxnorm_cui        = NULL,
+    receptor_5ht2a_ki = 1.1,
+    receptor_5ht1a_ki = 30.0,
+    receptor_5ht2c_ki = 2.8,
+    receptor_d2_ki    = 95.0,
+    receptor_sert_ki  = 100.0,
     receptor_nmda_ki  = NULL
 WHERE substance_name = 'LSD';
 
@@ -116,6 +128,9 @@ UPDATE public.ref_substances SET
     receptor_sert_ki  = NULL,
     receptor_nmda_ki  = NULL
 WHERE substance_name = 'Mescaline';
+
+-- 'Other / Investigational' — intentionally left with NULL receptor data.
+-- No authoritative Ki values applicable to a catch-all category.
 
 -- ── Verification ────────────────────────────────────────────────────────────
 -- Run after execution. Confirm all 8 rows have receptor data populated.
