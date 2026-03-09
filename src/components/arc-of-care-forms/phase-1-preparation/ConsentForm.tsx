@@ -56,6 +56,16 @@ const CONSENT_TYPES = [
     },
 ];
 
+/** Returns a YYYY-MM-DDTHH:mm string in the user's LOCAL timezone.
+ *  datetime-local inputs require local time, not UTC.
+ *  Using toISOString() alone gives UTC and shifts the displayed time by the timezone offset. */
+function localDateTimeString(): string {
+    const now = new Date();
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
+}
+
 const ConsentForm: React.FC<ConsentFormProps> = ({
     onSave,
     initialData = { consent_types: [], consent_obtained: false },
@@ -73,7 +83,16 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
             setTimeout(() => setIdCopied(false), 2000);
         });
     };
-    const [data, setData] = useState<ConsentData>(initialData);
+    const [data, setData] = useState<ConsentData>(() => {
+        const init = initialData as ConsentData;
+        // Auto-stamp datetime on rehydrate: if consent was previously obtained
+        // but the datetime is missing (saved before that field existed),
+        // fill it now so canSave evaluates correctly.
+        if (init.consent_obtained && !init.verification_datetime) {
+            return { ...init, verification_datetime: localDateTimeString() };
+        }
+        return init;
+    });
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
@@ -88,9 +107,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
             ...prev,
             consent_obtained: checked,
             // Auto-stamp now; clear on uncheck
-            verification_datetime: checked
-                ? new Date().toISOString().slice(0, 16)
-                : undefined,
+            verification_datetime: checked ? localDateTimeString() : undefined,
             // Clear type selections on uncheck so the next check starts clean
             consent_types: checked ? prev.consent_types : [],
         }));
@@ -123,10 +140,10 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
         }
     };
 
-    // Consent types are optional, only the checkbox + timestamp are mandatory
-    const canSave =
-        data.consent_obtained &&
-        !!data.verification_datetime;
+    // canSave: checkbox checked is the only hard requirement.
+    // verification_datetime is auto-stamped when the checkbox is checked
+    // or on mount when rehydrating a previously-saved consent.
+    const canSave = data.consent_obtained;
 
     const handleSaveAndExit = async () => {
         if (!canSave) return;
@@ -348,7 +365,6 @@ const ConsentForm: React.FC<ConsentFormProps> = ({
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={canSave && !lastSaved}
-                saveAndContinueLabel="Save Consent Documentation"
             />
         </div>
     );
