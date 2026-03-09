@@ -102,6 +102,7 @@ function ScoreInputLarge({
     id: string; label: string; value: number | null;
     onChange: (v: number | null) => void; max: number;
 }) {
+    const isOutOfRange = value !== null && (value < 0 || value > max);
     return (
         <div>
             <label htmlFor={id} className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1.5">
@@ -115,9 +116,21 @@ function ScoreInputLarge({
                 min={0}
                 max={max}
                 value={value ?? ''}
-                onChange={(e) => onChange(e.target.value === '' ? null : parseInt(e.target.value, 10))}
-                className="w-full bg-slate-800/60 border border-slate-700 rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                onChange={(e) => {
+                    if (e.target.value === '') { onChange(null); return; }
+                    const parsed = parseInt(e.target.value, 10);
+                    // Clamp to valid range — prevents Postgres CHECK constraint violation
+                    onChange(Math.max(0, Math.min(max, parsed)));
+                }}
+                className={`w-full bg-slate-800/60 border rounded-xl px-3 py-2.5 text-slate-300 text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all ${isOutOfRange ? 'border-red-500/70 bg-red-900/10' : 'border-slate-700'
+                    }`}
+                aria-describedby={isOutOfRange ? `${id}-error` : undefined}
             />
+            {isOutOfRange && (
+                <p id={`${id}-error`} className="text-xs text-red-400 mt-1">
+                    Must be between 0 and {max}
+                </p>
+            )}
         </div>
     );
 }
@@ -252,13 +265,21 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
     }, [data, patientId, onExit]);
 
     const handleSubmitAll = useCallback(() => {
+        // Guard: clamp pcl5 to 0-80 before any DB write (matches CHECK constraint)
+        const pcl5Clamped = data.mentalHealth.pcl5 !== null
+            ? Math.max(0, Math.min(80, data.mentalHealth.pcl5))
+            : null;
+        const safeData: WizardData = {
+            ...data,
+            mentalHealth: { ...data.mentalHealth, pcl5: pcl5Clamped },
+        };
         const input: NarrativeInput = {
             patientId,
             mentalHealth: {
-                phq9: data.mentalHealth.phq9 ?? undefined,
-                gad7: data.mentalHealth.gad7 ?? undefined,
-                ace: data.mentalHealth.ace ?? undefined,
-                pcl5: data.mentalHealth.pcl5 ?? undefined,
+                phq9: safeData.mentalHealth.phq9 ?? undefined,
+                gad7: safeData.mentalHealth.gad7 ?? undefined,
+                ace: safeData.mentalHealth.ace ?? undefined,
+                pcl5: safeData.mentalHealth.pcl5 ?? undefined,
             },
             setSetting: { treatment_expectancy: data.setSetting.treatment_expectancy },
             physiology: {
@@ -275,12 +296,12 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
         };
         const gen = generateBaselineNarrative(input);
         // Persist data during Phase 1 routing navigation
-        try { localStorage.setItem(STORAGE_KEY(patientId), JSON.stringify(data)); } catch { /* ignore */ }
+        try { localStorage.setItem(STORAGE_KEY(patientId), JSON.stringify(safeData)); } catch { /* ignore */ }
 
         setSaveContFlash(true);
         setTimeout(() => {
             setSaveContFlash(false);
-            onComplete?.(data);
+            onComplete?.(safeData);
         }, 700);
     }, [data, patientId, onComplete]);
 
