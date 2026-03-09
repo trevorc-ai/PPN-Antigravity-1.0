@@ -66,6 +66,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const [data, setData] = useState<DosingProtocolData>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+    const [submitAttempted, setSubmitAttempted] = useState(false);
 
     // Read patient medications (names) from localStorage for contraindication check.
     // The StructuredSafetyCheckForm writes medication IDs; we also try names from the
@@ -92,7 +93,12 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
 
 
 
+    const checkValid = (d: DosingProtocolData) =>
+        Boolean(d.substance_id && d.dosage_amount !== undefined && d.dosage_amount > 0 && d.route_of_administration);
+
     const handleSaveAndExit = () => {
+        setSubmitAttempted(true);
+        if (!checkValid(data)) return;
         if (onSave) {
             setIsSaving(true);
             onSave(data);
@@ -106,6 +112,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     };
 
     const handleSaveAndContinue = () => {
+        setSubmitAttempted(true);
+        if (!checkValid(data)) return;
         if (onSave) {
             setIsSaving(true);
             onSave(data);
@@ -267,13 +275,13 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                                 min={0}
                                 step="any"
                                 placeholder="e.g. 25"
-                                className="flex-1 min-w-0 px-4 py-3 bg-slate-800/50 text-slate-300 focus:outline-none placeholder:text-slate-600 appearance-none m-0"
+                                className="flex-1 min-w-[3rem] px-4 py-3 bg-slate-800/50 text-slate-300 focus:outline-none placeholder:text-slate-600 appearance-none m-0"
                             />
                             <div className="w-px bg-slate-700/50" />
                             <select
                                 value={data.dosage_unit ?? 'mg'}
                                 onChange={(e) => updateField('dosage_unit', e.target.value)}
-                                className="w-24 px-3 py-3 bg-slate-800/80 text-slate-300 focus:outline-none cursor-pointer appearance-none text-center"
+                                className="w-16 sm:w-24 px-2 sm:px-3 py-3 bg-slate-800/80 text-slate-300 focus:outline-none cursor-pointer appearance-none text-center"
                             >
                                 {DOSAGE_UNITS.map(unit => (
                                     <option key={unit} value={unit}>{unit}</option>
@@ -319,6 +327,21 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
 
                 </div>
             </div>
+
+            {/* Inline validation message — shown only after a submit attempt */}
+            {submitAttempted && !isValid && (
+                <div className="flex items-start gap-3 px-4 py-3 bg-red-950/60 border border-red-500/50 rounded-xl animate-in fade-in slide-in-from-top-1 duration-200" role="alert">
+                    <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <div className="text-sm text-red-300">
+                        <span className="font-semibold">Required fields missing: </span>
+                        {[
+                            !data.substance_id && 'Substance',
+                            (!data.dosage_amount || data.dosage_amount <= 0) && 'Dosage',
+                            !data.route_of_administration && 'Route of Administration',
+                        ].filter(Boolean).join(', ')}
+                    </div>
+                </div>
+            )}
 
             <FormFooter
                 onBack={onBack}

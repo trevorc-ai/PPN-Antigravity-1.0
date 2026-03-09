@@ -436,7 +436,16 @@ export async function createConsent(
         console.log('[clinicalLog] createConsent insert:', { table: 'log_phase1_consent', payload: { ...payload, patient_uuid: '[redacted]' } });
 
         const { error } = await supabase.from('log_phase1_consent').insert([payload]);
-        if (error) throw error;
+        if (error) {
+            console.error('[clinicalLog] createConsent DB error:', {
+                message: (error as { message?: string }).message,
+                code: (error as { code?: string }).code,
+                details: (error as { details?: string }).details,
+                hint: (error as { hint?: string }).hint,
+                payload: { ...payload, patient_uuid: '[redacted]', consented_by: '[redacted]' },
+            });
+            throw error;
+        }
         return { success: true };
     } catch (error) {
         console.error('[clinicalLog] createConsent:', error);

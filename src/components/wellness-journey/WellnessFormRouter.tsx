@@ -177,6 +177,13 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         // Persist locally first, HUD reads this key regardless of DB outcome.
         try { localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(data)); } catch (_) { }
 
+        // TEST mode: skip all DB writes — no session row in log_clinical_records exists.
+        // Return true so ConsentForm advances normally.
+        if (patientId.startsWith('TEST-')) {
+            addToast({ title: '🧪 Practice Mode', message: 'Consent acknowledged (no DB write in practice mode).', type: 'info' });
+            return true;
+        }
+
         const resolvedSiteId = siteId ?? await getCurrentSiteId();
         if (!resolvedSiteId) { onError('Consent', 'No site ID resolved'); return false; }
 
