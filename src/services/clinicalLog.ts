@@ -423,9 +423,9 @@ export async function createConsent(
             consentTypeIds.push(1);
         }
 
-        // log_phase1_consent.id: bigint NOT NULL, no default sequence — supply via Date.now() (fits bigint, unique per ms)
+        // log_phase1_consent.id: GENERATED ALWAYS AS IDENTITY — do NOT supply a value.
+        // Supplying id causes Postgres error 428C9 (cannot insert into GENERATED ALWAYS column).
         const payload = {
-            id: Date.now(),
             patient_uuid: patientUuid,
             session_id: sessionId ?? null,
             site_id: siteId,
