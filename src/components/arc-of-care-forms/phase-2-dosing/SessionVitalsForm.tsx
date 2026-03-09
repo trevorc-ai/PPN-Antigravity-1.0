@@ -39,7 +39,7 @@ export interface VitalSignReading {
     respiratory_rate?: number;                                              // breaths/min (normal 12-20)
     temperature?: number;                                                   // °F (normal 97.0-99.5)
     diaphoresis_score?: 0 | 1 | 2 | 3;                                    // 0=None, 1=Mild, 2=Moderate, 3=Severe
-    level_of_consciousness?: 'alert' | 'verbal' | 'pain' | 'unresponsive'; // AVPU scale
+    level_of_consciousness?: 'alert' | 'dreamy' | 'deep_trance' | 'non_responsive' | 'agitated'; // codes from ref_consciousness_levels
     recorded_at?: string;
     data_source?: string;
     device_id?: string;
@@ -237,8 +237,11 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
 
     function getLOCStatus(loc?: string): 'normal' | 'elevated' | 'critical' {
         if (!loc || loc === 'alert') return 'normal';
-        if (loc === 'verbal') return 'elevated';
-        return 'critical'; // pain or unresponsive
+        if (loc === 'dreamy') return 'elevated';        // monitoring warranted
+        if (loc === 'deep_trance') return 'elevated';   // expected in session, but track
+        if (loc === 'agitated') return 'elevated';      // intervention may be needed
+        if (loc === 'non_responsive') return 'critical'; // rescue protocol review
+        return 'elevated';
     }
 
     function getStatusColor(status: 'normal' | 'elevated' | 'critical'): string {
@@ -579,10 +582,10 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
 
                                 {/* Level of Consciousness */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                                    <label className="flex items-center gap-1.5 ppn-label text-slate-400 mb-2">
                                         <AlertTriangle className="w-4 h-4 text-yellow-400" />
-                                        LOC (AVPU)
-                                        <AdvancedTooltip content="AVPU scale: Alert=Normal, Verbal=Responds to voice, Pain=Over-sedation, Unresponsive=Emergency. Required per CANMAT guidelines." tier="micro">
+                                        Level of Consciousness
+                                        <AdvancedTooltip content="Select the patient's current level of consciousness. Non-Responsive should trigger immediate rescue protocol review." tier="micro">
                                             <span className="text-slate-400 cursor-help">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
@@ -593,16 +596,17 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="alert">Alert (A), Fully awake</option>
-                                        <option value="verbal">Verbal (V), Responds to voice</option>
-                                        <option value="pain">Pain (P), Responds to pain only</option>
-                                        <option value="unresponsive">Unresponsive (U), No response</option>
+                                        <option value="alert">Alert — Fully awake and oriented</option>
+                                        <option value="dreamy">Dreamy — Eyes-closed, responsive to voice</option>
+                                        <option value="deep_trance">Deep Trance — Minimal responsiveness, expected</option>
+                                        <option value="agitated">Agitated — Distressed or combative</option>
+                                        <option value="non_responsive">Non-Responsive — No response to voice or touch</option>
                                     </select>
                                     {reading.level_of_consciousness && getLOCStatus(reading.level_of_consciousness) !== 'normal' && (
                                         <p className={`text-sm ${getLOCStatus(reading.level_of_consciousness) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
-                                            {reading.level_of_consciousness === 'unresponsive' ? '🚨 EMERGENCY, initiate rescue protocol' :
-                                                reading.level_of_consciousness === 'pain' ? '⚠️ Critical, over-sedation' :
-                                                    '⚠️ Monitor, reduced responsiveness'}
+                                            {reading.level_of_consciousness === 'non_responsive' ? '🚨 Non-Responsive — review rescue protocol immediately' :
+                                                reading.level_of_consciousness === 'agitated' ? '⚠️ Agitated — consider grounding or intervention' :
+                                                    '⚠️ Monitor closely — reduced responsiveness'}
                                         </p>
                                     )}
                                 </div>
