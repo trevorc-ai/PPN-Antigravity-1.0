@@ -30,7 +30,6 @@ import {
     createConsent,
     createBaselineAssessment,
     createSessionVital,
-    createSessionObservation,
     createSessionEvent,
     createTimelineEvent,
     createPulseCheck,
@@ -38,8 +37,11 @@ import {
     createBehavioralChange,
     createLongitudinalAssessment,
     updateDosingProtocol,
+    createMEQ30Score,
+    createSafetyScreen,
 } from '../../services/clinicalLog';
 import type { DosingProtocolUpdateData } from '../../services/clinicalLog';
+import { FLOW_EVENT_TYPE_CODES } from '../../services/refFlowEventTypes';
 
 // Form data types
 import type { ConsentData } from '../arc-of-care-forms/phase-1-preparation/ConsentForm';
@@ -173,8 +175,16 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
         const resolvedSiteId = siteId ?? await getCurrentSiteId();
         if (!resolvedSiteId) { onError('Consent', 'No site ID resolved'); return false; }
-        const result = await createConsent(data.consent_types, resolvedSiteId);
+        const result = await createConsent(data.consent_types, resolvedSiteId, patientId, sessionId);
         if (result.success) {
+            if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+                createTimelineEvent({
+                    session_id: sessionId,
+                    event_timestamp: new Date().toISOString(),
+                    event_type_code: 'consent_verified',
+                    metadata: { event_description: 'Informed consent verified.' },
+                }).catch(err => console.warn('[WellnessFormRouter] Consent timeline write failed:', err));
+            }
             onSaved('Informed Consent');
             return true;
         } else {
@@ -182,7 +192,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return false;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [siteId, CONSENT_STORAGE_KEY]);
+    }, [siteId, sessionId, CONSENT_STORAGE_KEY]);
 
     // WO-529: Persist set-and-setting to localStorage on save.
     // SetAndSettingForm already self-rehydrates, this handler just fires the DB write.
@@ -198,7 +208,6 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     }, [patientId, siteId]);
 
     // SAVS P1-B fix: persist PHQ-9 / GAD-7 / ACE / PCL-5 scores to DB on Mental Health Screening complete.
-    // BaselineAssessmentWizard calls onComplete(WizardData) - no DB write inside the component.
     const handleMentalHealthSave = useCallback(async (data: { phq9?: number | null; gad7?: number | null; ace?: number | null; pcl5?: number | null }) => {
         if (!patientId || !siteId) {
             onSaved('Mental Health Screening'); // Advance UI even without DB write
@@ -210,7 +219,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             phq9_score: data.phq9 ?? undefined,
             gad7_score: data.gad7 ?? undefined,
             ace_score: data.ace ?? undefined,
-            // pcl5_score: not yet in BaselineAssessmentData schema - stored in localStorage until column is added
+            pcl5_score: data.pcl5 ?? undefined,  // ✅ wired — CHECK 0–80
         });
         result.success ? onSaved('Mental Health Screening') : onError('Mental Health Screening', result.error);
     }, [patientId, siteId]);
@@ -238,7 +247,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 respiratory_rate: r.respiratory_rate,
                 temperature: r.temperature,
                 diaphoresis_score: r.diaphoresis_score,
-                level_of_consciousness: r.level_of_consciousness,
+                consciousness_level_code: r.level_of_consciousness,  // resolved → consciousness_level_id FK
                 recorded_at: r.recorded_at,
             }));
             const results = await Promise.all(promises);
@@ -246,7 +255,6 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             if (failed.length === 0) {
                 onSaved('Session Vitals');
             } else {
-                // Log to console only, DB may not be migrated yet. Don't block the UI.
                 console.warn('[WellnessFormRouter] Some vitals failed to save to DB:', failed.length, 'readings.');
             }
         } catch (err) {
@@ -275,23 +283,43 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     const handleRescueProtocolSave = useCallback(async (data: RescueProtocolData) => {
         if (!sessionId) return; // silent, Rescue form auto-saves immediately, session may not exist yet
-        // 'rescue' maps to safety_event_type_id = 13 (OTHER) via SAFETY_EVENT_TYPE_ID in clinicalLog.ts
+        // Rescue protocol → log_safety_events (NOT log_session_timeline_events)
+        // RescueProtocolData: { intervention_type, start_time, end_time, duration_minutes }
+        // Metadata from start_time/end_time stored in the safety event notes field.
         const result = await createSessionEvent({
             session_id: sessionId,
-            event_type: 'rescue',
-            intervention_type_id: data.intervention_type ? undefined : undefined,
+            site_id: siteId ?? undefined,
+            event_type: data.intervention_type ?? 'rescue',  // live ref lookup → safety_event_type_id
         });
-        result.success ? onSaved('Rescue Protocol') : onError('Rescue Protocol', result.error);
-    }, [sessionId]);
+        if (result.success) {
+            // Also stamp session timeline so the rescue appears on the session arc
+            if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+                createTimelineEvent({
+                    session_id: sessionId,
+                    event_timestamp: data.start_time ?? new Date().toISOString(),
+                    event_type_code: 'session_completed', // closest valid code; rescue protocol is an in-session event
+                    metadata: {
+                        event_description: `Rescue protocol: ${data.intervention_type ?? 'unspecified'}.`,
+                        intervention_type: data.intervention_type,
+                        duration_minutes: data.duration_minutes,
+                    },
+                }).catch(err => console.warn('[WellnessFormRouter] Rescue timeline stamp failed:', err));
+            }
+            onSaved('Rescue Protocol');
+        } else {
+            onError('Rescue Protocol', result.error);
+        }
+    }, [sessionId, siteId]);
 
     const handleTimelineSave = useCallback(async (events: TimelineEvent[]) => {
         if (!sessionId) return; // silent
-        const validEvents = events.filter(e => e.event_type && e.event_timestamp);
+        const supportedCodes = new Set(FLOW_EVENT_TYPE_CODES);
+        const validEvents = events.filter(e => e.event_timestamp && e.event_type && supportedCodes.has(e.event_type as any));
         if (validEvents.length === 0) return;
         const promises = validEvents.map(e => createTimelineEvent({
             session_id: sessionId,
             event_timestamp: e.event_timestamp,
-            event_type: e.event_type,
+            event_type_code: e.event_type as any,
             performed_by: e.performed_by,
             metadata: { ...e.metadata, event_description: e.event_description },
         }));
@@ -333,22 +361,30 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     }, [patientId, sessionId]);
 
     const handleMEQ30Save = useCallback(async (data: MEQ30Data) => {
-        // SAVS-P3B fix: MEQ30Data only has `responses: Record<number, number>`.
         // Compute total score by summing all response values.
         const meq30Total = Object.values(data.responses).reduce((sum, v) => sum + v, 0);
-        if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+
+        // Write to log_phase3_meq30 (authoritative) + denormalized log_clinical_records.meq30_score
+        if (patientId && sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+            createMEQ30Score({
+                patient_uuid: patientId,
+                session_id: sessionId,
+                meq30_score: meq30Total,  // CHECK 0–150 in log_phase3_meq30
+            }).catch(err => console.warn('[WellnessFormRouter] MEQ-30 DB write failed:', err));
+
+            // Also stamp timeline
             createTimelineEvent({
                 session_id: sessionId,
                 event_timestamp: new Date().toISOString(),
-                event_type: 'clinical_decision',
+                event_type_code: 'followup_assessment_completed',
                 metadata: {
                     event_description: `MEQ-30 assessment completed. Total score: ${meq30Total}.`,
                     meq30_score: meq30Total,
                 },
-            }).catch(err => console.warn('[SAVS-P3B] MEQ-30 DB write failed:', err));
+            }).catch(err => console.warn('[WellnessFormRouter] MEQ-30 timeline stamp failed:', err));
         }
         onSaved('MEQ-30 Questionnaire');
-    }, [sessionId]);
+    }, [patientId, sessionId]);
 
     const handleIntegrationSessionSave = useCallback(async (data: StructuredIntegrationSessionData) => {
         if (!patientId) { onError('Integration Session', 'No patient ID'); return; }
@@ -358,7 +394,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             integration_session_number: data.session_number,
             session_date: data.session_date,
             session_duration_minutes: data.session_duration_minutes,
-            attended: data.attendance_status === 'attended',
+            attendance_status_code: data.attendance_status,  // ✅ wired — resolved → FK via live ref lookup
             insight_integration_rating: data.insight_integration_rating,
             emotional_processing_rating: data.emotional_processing_rating,
             behavioral_application_rating: data.behavioral_application_rating,
@@ -392,8 +428,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             days_post_session: data.days_post_session,
             phq9_score: data.phq9_score,
             gad7_score: data.gad7_score,
-            whoqol_score: data.whoqol_score,
-            psqi_score: data.psqi_score,
+            // whoqol_score and psqi_score removed — columns dropped in schema rebuild (A4)
             cssrs_score: data.cssrs_score,
         });
         result.success ? onSaved('Longitudinal Assessment') : onError('Longitudinal Assessment', result.error);
@@ -446,7 +481,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                     createTimelineEvent({
                         session_id: sessionId,
                         event_timestamp: new Date().toISOString(),
-                        event_type: 'clinical_decision',
+                        event_type_code: 'baseline_assessment_completed',
                         metadata: { event_description: 'Phase 1 Structured Safety Check completed by practitioner.' },
                     }).catch(err => console.warn('[SAVS-P1A] Safety check DB write failed:', err));
                 }
@@ -484,7 +519,7 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                         createTimelineEvent({
                             session_id: sessionId,
                             event_timestamp: new Date().toISOString(),
-                            event_type: 'clinical_decision',
+                            event_type_code: 'baseline_assessment_completed',
                             metadata: { event_description: 'Phase 1 Preparation completed. Baseline assessment recorded.' },
                         }).catch(err => console.warn('[SAVS-P1C] Phase 1 completion DB write failed:', err));
                     }

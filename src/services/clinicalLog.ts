@@ -3,39 +3,53 @@
  *
  * Responsible for: ALL log_ table writes (one function per form).
  * Every function wraps in try/catch — never throws to the caller.
- * Uses identity.ts for patient/site context.
+ * Uses identity.ts for patient/site context and canonical patient_uuid resolution.
  */
 
 import { supabase } from '../supabaseClient';
+import { getOrCreateCanonicalPatientUuid } from './identity';
+import { getEventTypeIdByCode, type FlowEventTypeCode } from './refFlowEventTypes';
 
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
 
+/** Returns true only if s looks like a canonical UUID (8-4-4-4-12 hex). */
+function isCanonicalUUID(s: string | null | undefined): boolean {
+    if (s == null || typeof s !== 'string') return false;
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s.trim());
+}
+
 export interface BaselineAssessmentData {
-    patient_id: string;          // VARCHAR(10) — matches log_baseline_assessments.patient_id
+    patient_id: string;          // canonical patient_uuid (uuid)
     site_id: string;             // UUID — matches log_baseline_assessments.site_id
-    expectancy_scale?: number;   // 1-100
-    ace_score?: number;          // 0-10
-    gad7_score?: number;         // 0-21
-    phq9_score?: number;         // 0-27
-    observation_ids?: number[];  // FK to ref_clinical_observations (PHI-safe)
+    expectancy_scale?: number;   // CHECK 1–100
+    ace_score?: number;          // CHECK 0–10
+    gad7_score?: number;         // CHECK 0–21
+    phq9_score?: number;         // CHECK 0–27
+    pcl5_score?: number;         // CHECK 0–80
+    // observation_ids removed — log_baseline_observations deleted in rebuild
 }
 
 export interface SessionEventData {
-    session_id: string;             // UUID — log_clinical_records.id
-    event_type?: string;            // DEPRECATED display label — use safety_event_type_id instead
-    safety_event_type_id?: number;  // FK → ref_safety_events(safety_event_id) — migration 071b
-    meddra_code_id?: number;        // FK to ref_meddra_codes
-    intervention_type_id?: number;
-    severity_grade_id?: string;     // TEXT — matches log_safety_events.severity_grade_id
+    session_id: string;               // UUID — log_clinical_records.id
+    site_id?: string;                 // UUID — log_safety_events.site_id
+    event_type?: string;              // Display label — resolved to safety_event_type_id via live ref lookup
+    safety_event_type_id?: number;    // FK → ref_safety_events.safety_event_id
+    meddra_code_id?: number;          // FK → ref_meddra_codes
+    intervention_type_id?: number;    // FK → ref_intervention_types
+    severity_grade_id?: string;       // Grade label/number — resolved → severity_grade_id_fk (bigint) via live ref
+    ctcae_grade?: number;             // CHECK 1–5
+    causality_code?: string;          // ENUM: certain|probable|possible|unlikely|conditional|unclassifiable
     is_resolved?: boolean;
+    resolved_at?: string;             // ISO timestamptz
+    logged_by_user_id?: string;       // UUID — defaults to authed user if omitted
 }
 
 export interface PulseCheckData {
-    patient_id: string;          // VARCHAR(10) NOT NULL
+    patient_id: string;          // canonical patient_uuid (uuid) — log_pulse_checks.patient_uuid
     session_id?: string;         // UUID — optional FK to log_clinical_records.id
-    check_date?: string;         // 'YYYY-MM-DD' — schema has DEFAULT CURRENT_DATE
+    check_date?: string;         // 'YYYY-MM-DD'
     connection_level: number;    // 1-5
     sleep_quality: number;       // 1-5
     mood_level?: number;         // 1-5
@@ -44,16 +58,16 @@ export interface PulseCheckData {
 
 export interface SessionVitalData {
     session_id: string;
-    heart_rate?: number;
+    heart_rate?: number;           // CHECK 40–200
     hrv?: number;
-    bp_systolic?: number;
-    bp_diastolic?: number;
-    oxygen_saturation?: number;
-    respiratory_rate?: number;
-    temperature?: number;
-    diaphoresis_score?: number;      // 0-3
-    level_of_consciousness?: string; // AVPU
-    source?: string;
+    bp_systolic?: number;          // CHECK 60–250
+    bp_diastolic?: number;         // CHECK 40–150
+    oxygen_saturation?: number;    // CHECK 70–100
+    respiratory_rate?: number;     // CHECK 0–60
+    temperature?: number;          // CHECK 85–115°F
+    diaphoresis_score?: number;    // CHECK 0–3
+    consciousness_level_code?: string;  // code → resolved to consciousness_level_id (int FK)
+    data_source_code?: string;          // code → resolved to data_source_id (bigint FK)
     device_id?: string;
     recorded_at?: string;
 }
@@ -61,41 +75,39 @@ export interface SessionVitalData {
 export interface TimelineEventData {
     session_id: string;
     event_timestamp: string;
-    // Must match log_session_timeline_events.event_type CHECK constraint
-    event_type?: 'dose_admin' | 'vital_check' | 'patient_observation' | 'clinical_decision' | 'music_change' | 'touch_consent' | 'safety_event' | 'other';
+    /** Stable event_type_code from ref_flow_event_types; resolved to event_type_id at insert. Prefer over event_type_id. */
+    event_type_code?: FlowEventTypeCode;
+    /** When provided (e.g. from ref lookup), used directly. Otherwise event_type_code is resolved via ref_flow_event_types. */
     event_type_id?: number;
     performed_by?: string;
     metadata?: Record<string, unknown>;
 }
 
-
 export interface IntegrationSessionData {
-    patient_id: string;
+    patient_id: string;              // canonical patient_uuid (uuid)
     dosing_session_id?: string;
     integration_session_number: number;
     session_date: string;
     session_duration_minutes?: number;
     therapist_user_id?: string;
-    attended?: boolean;
-    insight_integration_rating?: number;
-    emotional_processing_rating?: number;
-    behavioral_application_rating?: number;
-    engagement_level_rating?: number;
-    session_focus_ids?: number[];
-    homework_assigned_ids?: number[];
-    therapist_observation_ids?: number[];
+    attendance_status_id?: number;        // FK → ref_attendance_statuses.id (integer)
+    attendance_status_code?: string;      // Code resolved → attendance_status_id via live ref lookup
+    insight_integration_rating?: number;  // CHECK 1–5
+    emotional_processing_rating?: number; // CHECK 1–5
+    behavioral_application_rating?: number; // CHECK 1–5
+    engagement_level_rating?: number;     // CHECK 1–5
+    session_focus_ids?: number[];         // FK array → ref_session_focus_areas, cardinality ≤ 10
+    homework_assigned_ids?: number[];     // FK array → ref_homework_types, cardinality ≤ 10
+    therapist_observation_ids?: number[]; // FK array → ref_therapist_observations, cardinality ≤ 10
 }
 
 export interface BehavioralChangeData {
-    patient_id: string;
+    patient_id: string;              // canonical patient_uuid (uuid) — log_behavioral_changes.patient_uuid
     session_id?: string;
     change_date: string;
-    // change_category removed — requires ref_behavioral_categories FK (ID only, no free text)
-    change_type_ids?: number[];  // FK array to ref_behavioral_change_types
-    // impact_on_wellbeing removed — requires ref_wellbeing_impact FK
+    change_type_ids?: number[];  // FK array → ref_behavioral_change_types
     confidence_sustaining?: number;
-    // related_to_dosing removed — requires ref table FK
-    is_positive?: boolean;       // boolean — derived from UX selection, not free text
+    is_positive?: boolean;
 }
 
 export interface LongitudinalAssessmentData {
@@ -103,11 +115,24 @@ export interface LongitudinalAssessmentData {
     session_id?: string;
     assessment_date: string;
     days_post_session?: number;
-    phq9_score?: number;
-    gad7_score?: number;
-    whoqol_score?: number;
-    psqi_score?: number;
-    cssrs_score?: number;
+    phq9_score?: number;     // CHECK 0–27
+    gad7_score?: number;     // CHECK 0–21
+    cssrs_score?: number;    // CHECK 0–5
+}
+
+interface MEQ30ScoreData {
+    patient_uuid: string;
+    session_id: string;
+    meq30_score: number;  // CHECK 0–150 (log_phase3_meq30); update log_clinical_records CHECK 0–100
+}
+
+interface SafetyScreenData {
+    patient_uuid: string;
+    session_id?: string;
+    site_id: string;
+    contraindication_verdict_id?: number;  // FK → ref_contraindication_verdicts.verdict_id
+    ekg_rhythm_id?: number;                // FK → ref_ekg_rhythms.id
+    concomitant_med_ids?: number[];        // NOT NULL DEFAULT '{}'
 }
 
 export interface ConsentData {
@@ -121,41 +146,72 @@ export interface ConsentData {
 // SESSION CREATION
 // ============================================================================
 
+const TABLE_LOG_CLINICAL_RECORDS = 'log_clinical_records';
+
 /**
  * Creates a stub log_clinical_records row at session start.
- * Returns the DB-generated UUID which must be used as sessionId for all
- * subsequent Phase 2 form writes (FK: log_session_vitals.session_id → log_clinical_records.id).
- *
- * We use patient_link_code for PHI-safe patient identification.
- * Substance, dosage etc. are filled in by the Dosing Protocol form.
+ * Resolves canonical patient_uuid via log_patient_site_links first, then inserts session with
+ * practitioner_id, site_id, patient_link_code_hash, patient_uuid, session_date.
+ * Returns sessionId and patientUuid for downstream use.
  */
 export async function createClinicalSession(
     patientId: string,
     siteId: string,
-): Promise<{ success: boolean; sessionId?: string; error?: unknown }> {
+): Promise<{ success: boolean; sessionId?: string; patientUuid?: string; error?: unknown }> {
     try {
-        // Resolve the authenticated practitioner's UUID — required (NOT NULL) on log_clinical_records
+        if (siteId == null || String(siteId).trim() === '') {
+            const err = new Error('createClinicalSession: site_id is required — missing, null, or empty. Resolve site via getCurrentSiteId / log_user_sites before insert.');
+            console.error('[clinicalLog]', err.message);
+            return { success: false, error: err };
+        }
+
+        const patientUuid = await getOrCreateCanonicalPatientUuid(patientId, siteId);
+        if (!patientUuid) {
+            const err = new Error('createClinicalSession: could not resolve or create canonical patient_uuid for (patient_link_code, site_id). Check log_patient_site_links.');
+            console.error('[clinicalLog]', err.message);
+            return { success: false, error: err };
+        }
+
         const { data: { user }, error: authError } = await supabase.auth.getUser();
         if (!user) {
             console.error('[clinicalLog] createClinicalSession: no authenticated user', authError);
             return { success: false, error: authError ?? 'Not authenticated — cannot create session without practitioner UUID' };
         }
 
+        const payload: Record<string, unknown> = {
+            practitioner_id: user.id,
+            site_id: siteId,
+            patient_link_code_hash: patientId || null,
+            patient_uuid: patientUuid,
+            session_date: new Date().toISOString().split('T')[0],
+        };
+
+        console.log('[clinicalLog] createClinicalSession insert:', {
+            table: TABLE_LOG_CLINICAL_RECORDS,
+            payload: { ...payload, patient_uuid: payload.patient_uuid },
+        });
+
         const { data, error } = await supabase
-            .from('log_clinical_records')
-            .insert([{
-                patient_link_code: patientId,
-                site_id: siteId,
-                practitioner_id: user.id,          // UUID FK — authenticated user ✅
-                session_date: new Date().toISOString().split('T')[0],
-                session_type: 'preparation',        // DEPRECATED VARCHAR — kept for read compatibility
-                session_type_id: 1,                 // FK → ref_session_types(id=1, PREPARATION) ✅ migration 067
-            }])
+            .from(TABLE_LOG_CLINICAL_RECORDS)
+            .insert([payload])
             .select('id')
             .single();
 
-        if (error) throw error;
-        return { success: true, sessionId: data?.id as string };
+        if (error) {
+            const errShape = {
+                table: TABLE_LOG_CLINICAL_RECORDS,
+                message: (error as { message?: string }).message,
+                code: (error as { code?: string }).code,
+                details: (error as { details?: string }).details,
+                hint: (error as { hint?: string }).hint,
+                status: (error as { status?: number }).status,
+                statusCode: (error as { statusCode?: number }).statusCode,
+                fullError: error,
+            };
+            console.error('[clinicalLog] createClinicalSession Supabase error:', errShape);
+            throw error;
+        }
+        return { success: true, sessionId: data?.id as string, patientUuid };
     } catch (error) {
         console.error('[clinicalLog] createClinicalSession:', error);
         return { success: false, error };
@@ -163,16 +219,14 @@ export async function createClinicalSession(
 }
 
 // ─── Route normalisation map (LEAD WO-534) ───────────────────────────────────
-// Maps DosingProtocolForm display strings → ref_routes.route_name values.
-// Unmatched strings (Insufflated, Vaporized) resolve to null — do not throw.
 const ROUTE_NORMALISE: Record<string, string | null> = {
     'Oral': 'Oral',
     'Sublingual': 'Sublingual',
     'Intramuscular (IM)': 'Intramuscular',
     'Intravenous (IV)': 'Intravenous',
     'Intranasal': 'Intranasal',
-    'Insufflated': null,   // No matching ref_routes row — store null
-    'Vaporized': null,     // No matching ref_routes row — store null
+    'Insufflated': null,
+    'Vaporized': null,
 };
 
 /**
@@ -206,12 +260,12 @@ export async function updateDosingProtocol(
     },
 ): Promise<{ success: boolean; error?: unknown }> {
     try {
-        // 1. Resolve substance_id: form delivers a string (HTML select), DB needs BIGINT.
+        // A3: substance_id is integer in log_clinical_records. parseInt() returns a JS number;
+        // Supabase sends it as a JSON number and Postgres accepts it for both integer and bigint columns.
         const substanceId = data.substance_id
             ? parseInt(data.substance_id, 10) || null
             : null;
 
-        // 2. Resolve route_id via normalisation map → FK lookup.
         let routeId: number | null = null;
         const normalisedRoute = data.route_of_administration
             ? (ROUTE_NORMALISE[data.route_of_administration] ?? null)
@@ -226,23 +280,18 @@ export async function updateDosingProtocol(
             routeId = routeRow?.route_id ?? null;
         }
 
-        // 3. UPDATE only the dosing fields — never overwrite unrelated session columns.
+        // Schema columns: substance_id, dosage_amount, route_id — NOT dosage_unit or substance
         const { error } = await supabase
             .from('log_clinical_records')
             .update({
                 substance_id: substanceId,
-                dosage: data.dosage_amount ?? null,
+                dosage_amount: data.dosage_amount ?? null,
                 route_id: routeId,
-                // session_type_id remains PREPARATION (set by createClinicalSession)
-                // until the practitioner advances phase — no change here.
+                // do not pass dosage_unit or other fields not present in schema
             })
             .eq('id', sessionId);
 
         if (error) throw error;
-
-        console.info(
-            `[clinicalLog] updateDosingProtocol: session ${sessionId} → substance_id=${substanceId}, dosage=${data.dosage_amount ?? null}, route_id=${routeId}`,
-        );
         return { success: true };
     } catch (error) {
         console.error('[clinicalLog] updateDosingProtocol:', error);
@@ -254,34 +303,68 @@ export async function updateDosingProtocol(
 // PHASE 1: PREPARATION
 // ============================================================================
 
-/** Creates a new baseline assessment for a patient. Maps to log_baseline_assessments. */
+const TABLE_LOG_BASELINE_ASSESSMENTS = 'log_baseline_assessments';
+
+/**
+ * Creates a new baseline assessment. Maps to log_baseline_assessments.
+ * Schema: patient_uuid (uuid), site_id (uuid), assessment_date, phq9_score, gad7_score, ace_score, expectancy_scale, etc.
+ * No text column for patient link code exists; patient_uuid receives only real UUIDs. Link codes are never sent to UUID columns.
+ */
 export async function createBaselineAssessment(data: BaselineAssessmentData) {
     try {
+        if (!isCanonicalUUID(data.site_id)) {
+            const err = new Error('createBaselineAssessment: site_id must be a valid UUID. Got: ' + (data.site_id ?? 'missing'));
+            console.error('[clinicalLog]', err.message);
+            return { success: false, error: err };
+        }
+
+        if (!isCanonicalUUID(data.patient_id)) {
+            const err = new Error(
+                'Baseline save blocked: patient_uuid could not be resolved. log_baseline_assessments requires a canonical patient UUID; the current Wellness Journey identity model supplies only a patient link code (e.g. PT-XXXXXXXXXX). Unlinked baseline rows are not acceptable for data integrity.'
+            );
+            console.error('[clinicalLog] createBaselineAssessment:', err.message);
+            return { success: false, error: err };
+        }
+
+        // Resolve authenticated user for created_by / completed_by_user_id
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const payload: Record<string, unknown> = {
+            site_id: data.site_id,
+            patient_uuid: data.patient_id,
+            assessment_date: new Date().toISOString(),
+            expectancy_scale: data.expectancy_scale ?? null,
+            ace_score: data.ace_score ?? null,           // CHECK 0–10
+            gad7_score: data.gad7_score ?? null,         // CHECK 0–21
+            phq9_score: data.phq9_score ?? null,         // CHECK 0–27
+            pcl5_score: data.pcl5_score ?? null,         // CHECK 0–80
+            completed_by_user_id: user?.id ?? null,      // FK → auth.users.id
+            created_by: user?.id ?? null,
+        };
+
+        // NOTE: log_baseline_observations was deleted in schema rebuild — DO NOT write to it.
+
+        console.log('[clinicalLog] createBaselineAssessment insert:', { table: TABLE_LOG_BASELINE_ASSESSMENTS, payload });
+
         const { data: result, error } = await supabase
-            .from('log_baseline_assessments')
-            .insert([{
-                patient_id: data.patient_id,
-                site_id: data.site_id,
-                expectancy_scale: data.expectancy_scale,
-                ace_score: data.ace_score,
-                gad7_score: data.gad7_score,
-                phq9_score: data.phq9_score,
-                assessment_date: new Date().toISOString(),
-            }])
+            .from(TABLE_LOG_BASELINE_ASSESSMENTS)
+            .insert([payload])
             .select()
             .single();
 
-        if (error) throw error;
-
-        if (data.observation_ids && data.observation_ids.length > 0 && result) {
-            const observations = data.observation_ids.map(obs_id => ({
-                baseline_assessment_id: result.baseline_assessment_id,
-                observation_id: obs_id,
-            }));
-            const { error: obsError } = await supabase
-                .from('log_baseline_observations')
-                .insert(observations);
-            if (obsError) console.error('[clinicalLog] observation link (non-fatal):', obsError);
+        if (error) {
+            const errShape = {
+                table: TABLE_LOG_BASELINE_ASSESSMENTS,
+                message: (error as { message?: string }).message,
+                code: (error as { code?: string }).code,
+                details: (error as { details?: string }).details,
+                hint: (error as { hint?: string }).hint,
+                status: (error as { status?: number }).status,
+                statusCode: (error as { statusCode?: number }).statusCode,
+                fullError: error,
+            };
+            console.error('[clinicalLog] createBaselineAssessment Supabase error:', errShape);
+            throw error;
         }
 
         return { success: true, data: result };
@@ -292,66 +375,67 @@ export async function createBaselineAssessment(data: BaselineAssessmentData) {
 }
 
 /**
- * Records consent verification. Inserts one row per consent type selected.
- * Maps form string codes → ref_consent_types integer IDs (migration 068).
+ * Records consent verification.
+ * A2 FIX: Rewired from deleted 'log_consent' table → 'log_phase1_consent' (staging rebuild).
  *
- * ref_consent_types mapping (confirmed 2026-02-25):
- *   id=1  INFORMED_CONSENT      ← form: 'informed_consent'
- *   id=2  DATA_USE              ← (not in form currently)
- *   id=3  PHOTO_VIDEO           ← form: 'photography_recording'
- *   id=4  RESEARCH_PARTICIPATION ← form: 'research_participation'
- *   id=5  EMERGENCY_CONTACT     ← (not in form currently)
- *   id=6  HIPAA_AUTHORIZATION   ← form: 'hipaa_authorization' (added migration 068)
+ * Schema (log_phase1_consent):
+ *   id bigint NOT NULL (no sequence — supplied via Date.now()),
+ *   patient_uuid uuid NOT NULL,
+ *   session_id uuid (optional),
+ *   site_id uuid NOT NULL,
+ *   consent_type_ids integer[] NOT NULL DEFAULT '{}',
+ *   consented_at timestamptz NOT NULL DEFAULT now(),
+ *   consented_by uuid
+ *
+ * Maps form string codes → ref_consent_types integer IDs (live DB confirmed).
  */
 const CONSENT_TYPE_ID_MAP: Record<string, number> = {
-    informed_consent: 1,        // INFORMED_CONSENT
-    data_use: 2,                // DATA_USE
-    photography_recording: 3,   // PHOTO_VIDEO
-    photo_video: 3,             // PHOTO_VIDEO (alternate key)
-    research_participation: 4,  // RESEARCH_PARTICIPATION
-    emergency_contact: 5,       // EMERGENCY_CONTACT
-    hipaa_authorization: 6,     // HIPAA_AUTHORIZATION (added migration 068)
+    informed_consent: 1,
+    data_use: 2,
+    photography_recording: 3, // alias
+    photo_video: 3,           // PHOTO_VIDEO in ref_consent_types
+    research_participation: 4,
+    emergency_contact: 5,
+    hipaa_authorization: 6,
 };
 
 export async function createConsent(
-    consentTypes: string[], // form string codes from ConsentForm.CONSENT_TYPES
+    consentTypes: string[],
     siteId: string,
+    patientUuid: string,
+    sessionId?: string,
 ): Promise<{ success: boolean; error?: unknown }> {
     try {
-        const now = new Date().toISOString();
-
-        // Map each string code → integer FK. Unknown codes are logged and skipped.
-        const rows = consentTypes
-            .map(code => {
-                const typeId = CONSENT_TYPE_ID_MAP[code.toLowerCase()];
-                if (!typeId) {
-                    console.warn('[clinicalLog] createConsent: unknown consent type code:', code, '— skipped');
-                    return null;
-                }
-                return {
-                    id: Math.floor(Math.random() * 2147483647), // Bypass missing auto-increment in log_consent
-                    verified: true,
-                    verified_at: now,
-                    site_id: siteId,
-                    consent_type_id: typeId,  // INTEGER FK → ref_consent_types
-                    // type: intentionally omitted — deprecated TEXT column
-                };
-            })
-            .filter((r): r is NonNullable<typeof r> => r !== null);
-
-        // If no valid types mapped (e.g. only checkbox ticked, no types selected),
-        // insert a single row with consent_obtained = true and no type FK.
-        if (rows.length === 0) {
-            rows.push({
-                id: Math.floor(Math.random() * 2147483647),
-                verified: true,
-                verified_at: now,
-                site_id: siteId,
-                consent_type_id: null as unknown as number
-            });
+        // Resolve authenticated user for consented_by
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (!user) {
+            console.error('[clinicalLog] createConsent: no authenticated user', authError);
+            return { success: false, error: authError ?? 'Not authenticated' };
         }
 
-        const { error } = await supabase.from('log_consent').insert(rows);
+        // Map string codes → integer IDs, collect into one array
+        const consentTypeIds: number[] = consentTypes
+            .map(code => CONSENT_TYPE_ID_MAP[code.toLowerCase()])
+            .filter((id): id is number => !!id);
+
+        if (consentTypeIds.length === 0) {
+            console.warn('[clinicalLog] createConsent: no valid consent type codes mapped — defaulting to [1] (INFORMED_CONSENT)');
+            consentTypeIds.push(1);
+        }
+
+        // log_phase1_consent.id: bigint NOT NULL, no default sequence — supply via Date.now() (fits bigint, unique per ms)
+        const payload = {
+            id: Date.now(),
+            patient_uuid: patientUuid,
+            session_id: sessionId ?? null,
+            site_id: siteId,
+            consent_type_ids: consentTypeIds,
+            consented_by: user.id,
+        };
+
+        console.log('[clinicalLog] createConsent insert:', { table: 'log_phase1_consent', payload: { ...payload, patient_uuid: '[redacted]' } });
+
+        const { error } = await supabase.from('log_phase1_consent').insert([payload]);
         if (error) throw error;
         return { success: true };
     } catch (error) {
@@ -365,48 +449,83 @@ export async function createConsent(
 // ============================================================================
 
 /**
- * Maps SafetyAndAdverseEventForm display labels → ref_safety_events integer PKs.
- * Source of truth: ref_safety_events table (confirmed 2026-02-25, migration 071b).
- * Falls back to 13 (OTHER) for any unrecognized label.
+ * Resolves safety_event_type_id from label string via live ref_safety_events lookup.
+ * Falls back to null if not found — never guesses.
  */
-const SAFETY_EVENT_TYPE_ID: Record<string, number> = {
-    'Nausea / Vomiting': 8,   // NAUSEA
-    'Panic Attack': 9,   // PANIC_ATTACK
-    'Hypertension': 6,   // HYPERTENSION
-    'Tachycardia': 11,  // TACHYCARDIA
-    'Dizziness / Syncope': 4,   // DIZZINESS
-    'Severe Anxiety': 1,   // ANXIETY
-    'Psychotic Episode': 2,   // CONFUSIONAL_STATE (closest match)
-    'Cardiac Event': 11,  // TACHYCARDIA (closest match)
-    'Respiratory Distress': 13,  // OTHER
-    'Headache': 5,   // HEADACHE
-    'Other': 13,  // OTHER
-    'rescue': 13,  // OTHER
-};
+async function resolveSafetyEventTypeId(label: string): Promise<number | null> {
+    const { data, error } = await supabase
+        .from('ref_safety_events')
+        .select('safety_event_id')
+        .ilike('safety_event_name', label)
+        .maybeSingle();
+    if (error || !data) {
+        console.warn('[clinicalLog] resolveSafetyEventTypeId: no match for', label);
+        return null;
+    }
+    return data.safety_event_id;
+}
+
+/**
+ * Resolves severity_grade_id_fk (bigint) from grade string via ref_severity_grade.
+ * E.g. 'Grade 2' or '2' → bigint PK.
+ */
+async function resolveSeverityGradeId(grade: string | undefined): Promise<number | null> {
+    if (!grade) return null;
+    // Try numeric string first
+    const numeric = parseInt(grade.replace(/\D/g, ''), 10);
+    if (!isNaN(numeric)) {
+        const { data } = await supabase
+            .from('ref_severity_grade')
+            .select('severity_grade_id')
+            .eq('grade_number', numeric)
+            .maybeSingle();
+        if (data) return data.severity_grade_id;
+    }
+    // Fallback: label match
+    const { data } = await supabase
+        .from('ref_severity_grade')
+        .select('severity_grade_id')
+        .ilike('grade_label', `%${grade}%`)
+        .maybeSingle();
+    return data?.severity_grade_id ?? null;
+}
 
 /** Logs a safety/adverse event. Maps to log_safety_events. */
 export async function createSessionEvent(data: SessionEventData) {
-    // Resolve safety_event_type_id FK:
-    //   1. Use explicit FK if caller already resolved it (preferred path).
-    //   2. Fall back to mapping event_type display label → integer FK.
-    //   3. If neither available, leave null (column is nullable post-071b).
-    const safety_event_type_id =
-        data.safety_event_type_id ??
-        (data.event_type ? (SAFETY_EVENT_TYPE_ID[data.event_type] ?? 13) : null);
-
     try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Resolve safety_event_type_id: prefer explicit ID, then live label lookup
+        let safety_event_type_id: number | null = data.safety_event_type_id ?? null;
+        if (!safety_event_type_id && data.event_type) {
+            safety_event_type_id = await resolveSafetyEventTypeId(data.event_type);
+        }
+
+        // Resolve severity_grade_id_fk via live ref lookup (NOT hardcoded)
+        const severity_grade_id_fk = await resolveSeverityGradeId(data.severity_grade_id);
+
+        // log_safety_events columns (live schema verified 2026-03-08):
+        // ae_id (text PK, NOT NULL), session_id, site_id, meddra_code_id, intervention_type_id,
+        // severity_grade_id_fk (bigint), safety_event_type_id (bigint),
+        // ctcae_grade (smallint CHECK 1–5), causality_code (ENUM), is_resolved, resolved_at,
+        // logged_by_user_id, created_by
+        // PHANTOM COLUMNS REMOVED: severity_grade_id, occurred_at
         const { data: result, error } = await supabase
             .from('log_safety_events')
             .insert([{
                 ae_id: crypto.randomUUID(),
                 session_id: data.session_id,
-                // safety_event_type_id FK → ref_safety_events ✅ migration 071b
+                site_id: data.site_id ?? null,
                 safety_event_type_id,
-                // event_type TEXT deprecated — not written (column retained in DB per additive rule)
-                meddra_code_id: data.meddra_code_id,
-                intervention_type_id: data.intervention_type_id,
-                severity_grade_id: data.severity_grade_id,
+                meddra_code_id: data.meddra_code_id ?? null,
+                intervention_type_id: data.intervention_type_id ?? null,
+                severity_grade_id_fk,                                      // bigint FK, NOT severity_grade_id
+                ctcae_grade: data.ctcae_grade ?? null,                      // CHECK 1–5
+                causality_code: data.causality_code ?? null,                // ENUM
                 is_resolved: data.is_resolved ?? false,
+                resolved_at: data.resolved_at ?? null,
+                logged_by_user_id: data.logged_by_user_id ?? user?.id ?? null,
+                created_by: user?.id ?? null,
             }])
             .select()
             .single();
@@ -418,25 +537,79 @@ export async function createSessionEvent(data: SessionEventData) {
     }
 }
 
-/** Records a vital sign reading. Maps to log_session_vitals. */
+/**
+ * Resolves consciousness_level_id (int) from a code string via ref_consciousness_levels.
+ * FK: log_session_vitals.consciousness_level_id → ref_consciousness_levels.id
+ */
+async function resolveConsciousnessLevelId(code: string): Promise<number | null> {
+    const { data, error } = await supabase
+        .from('ref_consciousness_levels')
+        .select('id')
+        .eq('code', code)
+        .maybeSingle();
+    if (error || !data) {
+        console.warn('[clinicalLog] resolveConsciousnessLevelId: no match for code', code);
+        return null;
+    }
+    return data.id;
+}
+
+/**
+ * Resolves data_source_id (bigint) from a code string via ref_data_sources.
+ * FK: log_session_vitals.data_source_id → ref_data_sources.data_source_id
+ */
+async function resolveDataSourceId(code: string): Promise<number | null> {
+    const { data, error } = await supabase
+        .from('ref_data_sources')
+        .select('data_source_id')
+        .eq('code', code)
+        .maybeSingle();
+    if (error || !data) {
+        console.warn('[clinicalLog] resolveDataSourceId: no match for code', code);
+        return null;
+    }
+    return data.data_source_id;
+}
+
+/**
+ * Records a vital sign reading. Maps to log_session_vitals.
+ *
+ * Live schema (verified 2026-03-08):
+ * - consciousness_level_id: integer FK → ref_consciousness_levels.id
+ * - data_source_id: bigint FK → ref_data_sources.data_source_id
+ * - PHANTOM COLUMNS REMOVED: level_of_consciousness, source
+ * - Check constraints: heart_rate 40–200, bp_systolic 60–250, bp_diastolic 40–150,
+ *   oxygen_saturation 70–100, respiratory_rate 0–60, temperature 85–115°F, diaphoresis_score 0–3
+ */
 export async function createSessionVital(data: SessionVitalData) {
     try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Resolve FK IDs via live ref lookups
+        const consciousness_level_id = data.consciousness_level_code
+            ? await resolveConsciousnessLevelId(data.consciousness_level_code)
+            : null;
+        const data_source_id = data.data_source_code
+            ? await resolveDataSourceId(data.data_source_code)
+            : null;
+
         const { data: result, error } = await supabase
             .from('log_session_vitals')
             .insert([{
                 session_id: data.session_id,
                 recorded_at: data.recorded_at ?? new Date().toISOString(),
-                heart_rate: data.heart_rate,
-                hrv: data.hrv,
-                bp_systolic: data.bp_systolic,
-                bp_diastolic: data.bp_diastolic,
-                oxygen_saturation: data.oxygen_saturation,
-                respiratory_rate: data.respiratory_rate,
-                temperature: data.temperature,
-                diaphoresis_score: data.diaphoresis_score,
-                level_of_consciousness: data.level_of_consciousness,
-                source: data.source,
-                device_id: data.device_id,
+                heart_rate: data.heart_rate ?? null,
+                hrv: data.hrv ?? null,
+                bp_systolic: data.bp_systolic ?? null,
+                bp_diastolic: data.bp_diastolic ?? null,
+                oxygen_saturation: data.oxygen_saturation ?? null,
+                respiratory_rate: data.respiratory_rate ?? null,
+                temperature: data.temperature ?? null,
+                diaphoresis_score: data.diaphoresis_score ?? null,
+                consciousness_level_id,   // int FK via resolveConsciousnessLevelId()
+                data_source_id,           // bigint FK via resolveDataSourceId()
+                device_id: data.device_id ?? null,
+                created_by: user?.id ?? null,
             }])
             .select()
             .single();
@@ -464,53 +637,64 @@ export async function getSessionVitals(sessionId: string) {
     }
 }
 
-/** Records a session observation from controlled vocabulary. Maps to log_session_observations. */
-export async function createSessionObservation(sessionId: string, observationId: number) {
-    try {
-        const { data: result, error } = await supabase
-            .from('log_session_observations')
-            .insert([{ session_id: sessionId, observation_id: observationId }])
-            .select()
-            .single();
-        if (error) throw error;
-        return { success: true, data: result };
-    } catch (error) {
-        console.error('[clinicalLog] createSessionObservation:', error);
-        return { success: false, error };
-    }
+// createSessionObservation() REMOVED — log_session_observations table deleted in schema rebuild (2026-03-08).
+// Any callers must be updated to remove this call.
+
+/** Schema: log_session_timeline_events has event_type_id (integer). FK to ref_flow_event_types(id). No event_type column. */
+const TABLE_LOG_SESSION_TIMELINE_EVENTS = 'log_session_timeline_events';
+
+/**
+ * Resolve event_type_id from TimelineEventData: use event_type_id if valid; else resolve event_type_code via ref_flow_event_types.
+ * Fails (returns null) if event_type_code is provided but not found in ref — no guessing, no fallback.
+ */
+async function resolveTimelineEventTypeId(data: TimelineEventData): Promise<number | null> {
+    if (data.event_type_id != null && Number.isInteger(data.event_type_id)) return data.event_type_id;
+    if (data.event_type_code) return getEventTypeIdByCode(data.event_type_code);
+    return null;
 }
 
-// Valid values for log_session_timeline_events.event_type CHECK constraint
-const VALID_TIMELINE_EVENT_TYPES = new Set([
-    'dose_admin', 'vital_check', 'patient_observation',
-    'clinical_decision', 'music_change', 'touch_consent',
-    'safety_event', 'other',
-]);
-
-/** Records a timeline event. Maps to log_session_timeline_events. */
+/** Records a timeline event. Uses event_type_code -> ref_flow_event_types lookup. Fails safely if code not found. */
 export async function createTimelineEvent(data: TimelineEventData) {
-    // Resolve event_type string — must satisfy CHECK constraint in live schema.
-    // Falls back to 'other' for any unrecognized value. event_type is NOT NULL.
-    const resolvedEventType = (
-        data.event_type && VALID_TIMELINE_EVENT_TYPES.has(data.event_type)
-            ? data.event_type
-            : 'other'
-    );
-
     try {
+        const eventTypeId = await resolveTimelineEventTypeId(data);
+        if (eventTypeId == null) {
+            const msg = data.event_type_code
+                ? `event_type_code '${data.event_type_code}' not found in ref_flow_event_types. Cannot insert timeline event.`
+                : 'Timeline event requires event_type_code or event_type_id.';
+            console.error('[clinicalLog] createTimelineEvent:', msg);
+            return { success: false, error: new Error(msg) };
+        }
+
+        const payload: Record<string, unknown> = {
+            session_id: data.session_id,
+            event_timestamp: data.event_timestamp,
+            event_type_id: eventTypeId,
+            performed_by: data.performed_by ?? null,
+            metadata: data.metadata ?? null,
+        };
+
+        console.log('[clinicalLog] createTimelineEvent insert:', { table: TABLE_LOG_SESSION_TIMELINE_EVENTS, payload });
+
         const { data: result, error } = await supabase
-            .from('log_session_timeline_events')
-            .insert([{
-                session_id: data.session_id,
-                event_timestamp: data.event_timestamp,
-                event_type: resolvedEventType,               // NOT NULL CHECK ✅ — migration 066 DEFAULT 'other'
-                event_type_id: data.event_type_id ?? null,  // INTEGER FK → ref_flow_event_types (optional)
-                performed_by: data.performed_by ?? null,     // UUID FK → auth.users
-                metadata: data.metadata ?? null,     // JSONB {event_description, notes} — not PHI ✅ BUG-529-02
-            }])
+            .from(TABLE_LOG_SESSION_TIMELINE_EVENTS)
+            .insert([payload])
             .select()
             .single();
-        if (error) throw error;
+
+        if (error) {
+            const errShape = {
+                table: TABLE_LOG_SESSION_TIMELINE_EVENTS,
+                message: (error as { message?: string }).message,
+                code: (error as { code?: string }).code,
+                details: (error as { details?: string }).details,
+                hint: (error as { hint?: string }).hint,
+                status: (error as { status?: number }).status,
+                statusCode: (error as { statusCode?: number }).statusCode,
+                fullError: error,
+            };
+            console.error('[clinicalLog] createTimelineEvent Supabase error:', errShape);
+            throw error;
+        }
         return { success: true, data: result };
     } catch (error) {
         console.error('[clinicalLog] createTimelineEvent:', error);
@@ -541,16 +725,18 @@ export async function getTimelineEvents(sessionId: string) {
 /** Creates a daily pulse check entry. Maps to log_pulse_checks. */
 export async function createPulseCheck(data: PulseCheckData) {
     try {
+        // Schema: patient_uuid (uuid), session_id, check_date, connection_level, sleep_quality, mood_level, anxiety_level
+        // A4 FIX: patient_link_code_hash column removed in rebuild — now uses patient_uuid
         const { data: result, error } = await supabase
             .from('log_pulse_checks')
             .insert([{
-                patient_id: data.patient_id,
-                session_id: data.session_id,
-                check_date: data.check_date,
+                patient_uuid: data.patient_id,
+                session_id: data.session_id ?? null,
+                check_date: data.check_date ?? new Date().toISOString().split('T')[0],
                 connection_level: data.connection_level,
                 sleep_quality: data.sleep_quality,
-                mood_level: data.mood_level,
-                anxiety_level: data.anxiety_level,
+                mood_level: data.mood_level ?? null,
+                anxiety_level: data.anxiety_level ?? null,
             }])
             .select()
             .single();
@@ -562,26 +748,66 @@ export async function createPulseCheck(data: PulseCheckData) {
     }
 }
 
-/** Creates an integration session record. Maps to log_integration_sessions. */
+/**
+ * Resolves attendance_status_id (int) via live ref_attendance_statuses lookup.
+ * FK: log_integration_sessions.attendance_status_id → ref_attendance_statuses.id
+ */
+async function resolveAttendanceStatusId(statusCode: string): Promise<number | null> {
+    const { data, error } = await supabase
+        .from('ref_attendance_statuses')
+        .select('id')
+        .eq('code', statusCode)
+        .maybeSingle();
+    if (error || !data) {
+        console.warn('[clinicalLog] resolveAttendanceStatusId: no match for code', statusCode);
+        return null;
+    }
+    return data.id;
+}
+
+/**
+ * Creates an integration session record. Maps to log_integration_sessions.
+ *
+ * Live schema (verified 2026-03-08):
+ * - attendance_status_id: integer FK → ref_attendance_statuses.id (replaces deleted 'attended' boolean)
+ * - therapist_user_id: uuid FK → auth.users.id
+ * - Array cardinality constraints: session_focus_ids ≤ 10, homework_assigned_ids ≤ 10,
+ *   therapist_observation_ids ≤ 10
+ * - Rating CHECK constraints: all rating fields 1–5
+ */
 export async function createIntegrationSession(data: IntegrationSessionData) {
     try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Resolve attendance_status_id via live ref lookup
+        let attendance_status_id: number | null = data.attendance_status_id ?? null;
+        if (!attendance_status_id && data.attendance_status_code) {
+            attendance_status_id = await resolveAttendanceStatusId(data.attendance_status_code);
+        }
+
+        // Enforce cardinality limits before insert (CHECK constraints in DB)
+        const session_focus_ids = (data.session_focus_ids ?? []).slice(0, 10);
+        const homework_assigned_ids = (data.homework_assigned_ids ?? []).slice(0, 10);
+        const therapist_observation_ids = (data.therapist_observation_ids ?? []).slice(0, 10);
+
         const { data: result, error } = await supabase
             .from('log_integration_sessions')
             .insert([{
-                patient_id: data.patient_id,
-                dosing_session_id: data.dosing_session_id,
+                patient_uuid: data.patient_id,
+                dosing_session_id: data.dosing_session_id ?? null,
                 integration_session_number: data.integration_session_number,
                 session_date: data.session_date,
-                session_duration_minutes: data.session_duration_minutes,
-                therapist_user_id: data.therapist_user_id,
-                attended: data.attended ?? true,
-                insight_integration_rating: data.insight_integration_rating,
-                emotional_processing_rating: data.emotional_processing_rating,
-                behavioral_application_rating: data.behavioral_application_rating,
-                engagement_level_rating: data.engagement_level_rating,
-                session_focus_ids: data.session_focus_ids,
-                homework_assigned_ids: data.homework_assigned_ids,
-                therapist_observation_ids: data.therapist_observation_ids,
+                session_duration_minutes: data.session_duration_minutes ?? null,
+                therapist_user_id: data.therapist_user_id ?? user?.id ?? null,
+                attendance_status_id,  // FK → ref_attendance_statuses.id
+                insight_integration_rating: data.insight_integration_rating ?? null,
+                emotional_processing_rating: data.emotional_processing_rating ?? null,
+                behavioral_application_rating: data.behavioral_application_rating ?? null,
+                engagement_level_rating: data.engagement_level_rating ?? null,
+                session_focus_ids,
+                homework_assigned_ids,
+                therapist_observation_ids,
+                created_by: user?.id ?? null,
             }])
             .select()
             .single();
@@ -595,24 +821,21 @@ export async function createIntegrationSession(data: IntegrationSessionData) {
 
 /** Creates a behavioral change record. Maps to log_behavioral_changes. */
 export async function createBehavioralChange(data: BehavioralChangeData) {
-    // is_positive is a boolean derived from UI selection — acceptable
     const is_positive = data.is_positive ?? true;
 
     try {
+        // log_behavioral_changes (rebuilt schema):
+        // patient_uuid (uuid), session_id, change_date, change_type_ids (ARRAY), confidence_sustaining, is_positive
+        // A4 FIX: patient_link_code_hash → patient_uuid
         const { data: result, error } = await supabase
             .from('log_behavioral_changes')
             .insert([{
-                patient_id: data.patient_id,
-                session_id: data.session_id,
+                patient_uuid: data.patient_id,
+                session_id: data.session_id ?? null,
                 change_date: data.change_date,
-                // change_category removed — requires ref_behavioral_categories FK
-                change_type_ids: data.change_type_ids, // FK array to ref_behavioral_change_types ✅
-                // impact_on_wellbeing removed — requires ref_wellbeing_impact FK
-                confidence_sustaining: data.confidence_sustaining, // numeric score ✅
-                // related_to_dosing removed — requires ref table FK
-                // change_type (legacy text) removed
-                // change_description (legacy text) removed
-                is_positive, // boolean ✅
+                change_type_ids: data.change_type_ids ?? null, // integer[] FK → ref_behavioral_change_types
+                confidence_sustaining: data.confidence_sustaining ?? null,
+                is_positive,
             }])
             .select()
             .single();
@@ -624,21 +847,28 @@ export async function createBehavioralChange(data: BehavioralChangeData) {
     }
 }
 
-/** Creates a longitudinal assessment record. Maps to log_longitudinal_assessments. */
+/**
+ * Creates a longitudinal assessment record. Maps to log_longitudinal_assessments.
+ *
+ * Live schema (verified 2026-03-08):
+ * - phq9_score CHECK 0–27, gad7_score CHECK 0–21, cssrs_score CHECK 0–5
+ * - session_id FK → log_clinical_records.id, patient_uuid FK → log_patient_site_links.patient_uuid
+ */
 export async function createLongitudinalAssessment(data: LongitudinalAssessmentData) {
     try {
+        const { data: { user } } = await supabase.auth.getUser();
+
         const { data: result, error } = await supabase
             .from('log_longitudinal_assessments')
             .insert([{
-                patient_id: data.patient_id,
-                session_id: data.session_id,
+                patient_uuid: data.patient_id,
+                session_id: data.session_id ?? null,
                 assessment_date: data.assessment_date,
-                days_post_session: data.days_post_session,
-                phq9_score: data.phq9_score,
-                gad7_score: data.gad7_score,
-                whoqol_score: data.whoqol_score,
-                psqi_score: data.psqi_score,
-                cssrs_score: data.cssrs_score,
+                days_post_session: data.days_post_session ?? null,
+                phq9_score: data.phq9_score ?? null,     // CHECK 0–27
+                gad7_score: data.gad7_score ?? null,     // CHECK 0–21
+                cssrs_score: data.cssrs_score ?? null,   // CHECK 0–5
+                created_by: user?.id ?? null,
             }])
             .select()
             .single();
@@ -646,6 +876,85 @@ export async function createLongitudinalAssessment(data: LongitudinalAssessmentD
         return { success: true, data: result };
     } catch (error) {
         console.error('[clinicalLog] createLongitudinalAssessment:', error);
+        return { success: false, error };
+    }
+}
+
+// ============================================================================
+// PHASE 3: NEW CLINICAL LOG FUNCTIONS
+// ============================================================================
+
+/**
+ * Creates a MEQ-30 score record. Maps to log_phase3_meq30.
+ *
+ * Live schema (verified 2026-03-08):
+ * - id: bigint NOT NULL, no sequence — supply Date.now()
+ * - meq30_score: integer NOT NULL, CHECK 0–150
+ * - Also updates denormalized log_clinical_records.meq30_score (CHECK 0–100 — clamp before update)
+ * - patient_uuid FK → log_patient_site_links.patient_uuid
+ * - session_id FK → log_clinical_records.id
+ */
+export async function createMEQ30Score(data: MEQ30ScoreData) {
+    try {
+        // Insert into authoritative log_phase3_meq30
+        const { error: insertError } = await supabase
+            .from('log_phase3_meq30')
+            .insert([{
+                id: Date.now(),                    // bigint NOT NULL — no sequence
+                patient_uuid: data.patient_uuid,
+                session_id: data.session_id,
+                meq30_score: data.meq30_score,    // CHECK 0–150
+            }]);
+        if (insertError) throw insertError;
+
+        // Update denormalized score on log_clinical_records (CHECK 0–100 — clamp)
+        const denormalizedScore = Math.min(data.meq30_score, 100);
+        const { error: updateError } = await supabase
+            .from('log_clinical_records')
+            .update({ meq30_score: denormalizedScore })
+            .eq('id', data.session_id);
+        if (updateError) {
+            console.warn('[clinicalLog] createMEQ30Score: denormalized update failed (non-fatal)', updateError);
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] createMEQ30Score:', error);
+        return { success: false, error };
+    }
+}
+
+/**
+ * Creates a safety screen record. Maps to log_phase1_safety_screen.
+ *
+ * Live schema (verified 2026-03-08):
+ * - id: bigint NOT NULL, no sequence — supply Date.now()
+ * - patient_uuid, site_id: NOT NULL
+ * - concomitant_med_ids: NOT NULL DEFAULT '{}'
+ * - contraindication_verdict_id FK → ref_contraindication_verdicts.verdict_id
+ * - ekg_rhythm_id FK → ref_ekg_rhythms.id
+ * - session_id FK → log_clinical_records.id
+ */
+export async function createSafetyScreen(data: SafetyScreenData) {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        const { error } = await supabase
+            .from('log_phase1_safety_screen')
+            .insert([{
+                id: Date.now(),                                              // bigint NOT NULL — no sequence
+                patient_uuid: data.patient_uuid,
+                session_id: data.session_id ?? null,
+                site_id: data.site_id,
+                contraindication_verdict_id: data.contraindication_verdict_id ?? null,
+                ekg_rhythm_id: data.ekg_rhythm_id ?? null,
+                concomitant_med_ids: data.concomitant_med_ids ?? [],        // NOT NULL DEFAULT '{}'
+                screened_by: user?.id ?? null,
+            }]);
+        if (error) throw error;
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] createSafetyScreen:', error);
         return { success: false, error };
     }
 }
