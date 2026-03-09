@@ -47,6 +47,8 @@ import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components
 
 interface PatientJourney {
     patientId: string;
+    /** Canonical patient UUID from log_patient_site_links; use for any table that expects patient_uuid. */
+    patientUuid?: string;
     /** UUID, maps to log_clinical_records.id for the active session */
     sessionId?: string;
     /** Non-PII clinical characteristics, used for quick verification at session start */
@@ -194,10 +196,12 @@ const WellnessJourneyInternal: React.FC = () => {
         // TEST mode: skip all DB writes, use a local-only session UUID
         const isTestSession = patientId.startsWith('TEST-');
 
+        let patientUuid: string | undefined;
         if (!isTestSession && resolvedSiteId) {
             const result = await createClinicalSession(patientId, resolvedSiteId);
             if (result.success && result.sessionId) {
                 sessionId = result.sessionId;
+                patientUuid = result.patientUuid;
             } else {
                 console.error('[WellnessJourney] ❌ createClinicalSession FAILED, patient will NOT persist to DB.', result.error);
                 sessionId = crypto.randomUUID();
@@ -206,7 +210,7 @@ const WellnessJourneyInternal: React.FC = () => {
             console.error('[WellnessJourney] ❌ No siteId resolved, session will NOT persist to DB. Check log_user_sites.');
             sessionId = crypto.randomUUID();
         } else {
-            // TEST session, ephemeral local ID only
+            // TEST session, ephemeral local ID only; no canonical patient_uuid
             sessionId = crypto.randomUUID();
             console.log('[WellnessJourney] 🧪 TEST session started, no DB writes will occur. Patient ID:', patientId);
         }
@@ -253,6 +257,7 @@ const WellnessJourneyInternal: React.FC = () => {
         setJourney(prev => ({
             ...prev,
             patientId,
+            patientUuid,
             sessionId,
             demographics: isNew ? undefined : prev.demographics,
         }));
@@ -731,6 +736,7 @@ const WellnessJourneyInternal: React.FC = () => {
                     <WellnessFormRouter
                         formId={activeFormId}
                         patientId={journey.patientId}
+                        patientUuid={journey.patientUuid}
                         sessionId={journey.sessionId}
                         siteId={clinicianSiteId}
                         onComplete={() => handleFormComplete(activeFormId)}

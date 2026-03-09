@@ -102,6 +102,9 @@ export type WellnessFormId =
 interface WellnessFormRouterProps {
     formId: WellnessFormId;
     patientId?: string;
+    /** Resolved canonical UUID from log_patient_site_links. If provided, used directly.
+     *  If absent, handlers fall back to getOrCreateCanonicalPatientUuid(patientId, siteId). */
+    patientUuid?: string;
     sessionId?: string;  // UUID, log_clinical_records.id
     siteId?: string;     // Resolved by parent (WellnessJourney) at page load
     onComplete?: () => void;  // Advance to next form / mark complete
@@ -113,6 +116,7 @@ interface WellnessFormRouterProps {
 export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     formId,
     patientId = '',
+    patientUuid: patientUuidProp,
     sessionId,
     siteId: siteIdProp,
     onComplete,
@@ -175,7 +179,15 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
         const resolvedSiteId = siteId ?? await getCurrentSiteId();
         if (!resolvedSiteId) { onError('Consent', 'No site ID resolved'); return false; }
-        const result = await createConsent(data.consent_types, resolvedSiteId, patientId, sessionId);
+
+        // ⚠️  CRITICAL: patient_uuid must be a real UUID, not the PT- link code.
+        //    patientUuidProp is set by WellnessJourney after createClinicalSession succeeds.
+        //    Fall back to live lookup only if the parent failed to pass it.
+        const canonicalUuid = patientUuidProp
+            ?? await import('./../../services/identity').then(m => m.getOrCreateCanonicalPatientUuid(patientId, resolvedSiteId));
+        if (!canonicalUuid) { onError('Consent', 'Could not resolve canonical patient UUID'); return false; }
+
+        const result = await createConsent(data.consent_types, resolvedSiteId, canonicalUuid, sessionId);
         if (result.success) {
             if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
                 createTimelineEvent({
@@ -197,9 +209,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     // WO-529: Persist set-and-setting to localStorage on save.
     // SetAndSettingForm already self-rehydrates, this handler just fires the DB write.
     const handleSetAndSettingSave = useCallback(async (data: SetAndSettingData) => {
-        if (!patientId || !siteId) return;
+        const resolvedPatientId = patientUuidProp ?? patientId;
+        if (!resolvedPatientId || !siteId) return;
         const result = await createBaselineAssessment({
-            patient_id: patientId,
+            patient_id: resolvedPatientId,
             site_id: siteId,
             expectancy_scale: data.treatment_expectancy,
             // observations[] included in form data; no dedicated DB column yet, same behaviour as before
@@ -209,12 +222,13 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     // SAVS P1-B fix: persist PHQ-9 / GAD-7 / ACE / PCL-5 scores to DB on Mental Health Screening complete.
     const handleMentalHealthSave = useCallback(async (data: { phq9?: number | null; gad7?: number | null; ace?: number | null; pcl5?: number | null }) => {
-        if (!patientId || !siteId) {
+        const resolvedPatientId = patientUuidProp ?? patientId;
+        if (!resolvedPatientId || !siteId) {
             onSaved('Mental Health Screening'); // Advance UI even without DB write
             return;
         }
         const result = await createBaselineAssessment({
-            patient_id: patientId,
+            patient_id: resolvedPatientId,
             site_id: siteId,
             phq9_score: data.phq9 ?? undefined,
             gad7_score: data.gad7 ?? undefined,
