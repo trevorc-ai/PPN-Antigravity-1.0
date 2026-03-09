@@ -132,6 +132,23 @@ interface PatientJourney {
 }
 
 const PHASE_STORAGE_KEY = 'ppn_wellness_completed_phases';
+const ACTIVE_SESSION_KEY = 'ppn_active_session';
+const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours — one clinical shift
+
+/** Read and validate a stored session. Returns null if expired or missing. */
+function readStoredSession(): { patientId: string; sessionId: string; patientUuid?: string; activePhase: 1 | 2 | 3; savedAt: number } | null {
+    try {
+        const raw = localStorage.getItem(ACTIVE_SESSION_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed?.patientId || !parsed?.sessionId) return null;
+        if (Date.now() - (parsed.savedAt ?? 0) > SESSION_TTL_MS) {
+            localStorage.removeItem(ACTIVE_SESSION_KEY);
+            return null;
+        }
+        return parsed;
+    } catch { return null; }
+}
 
 const WellnessJourneyInternal: React.FC = () => {
     const navigate = useNavigate();
@@ -158,8 +175,11 @@ const WellnessJourneyInternal: React.FC = () => {
     // Onboarding state
     const [showOnboarding, setShowOnboarding] = useState(false);
 
-    // Patient selection gate, blocks until provider chooses new or existing patient
-    const [showPatientModal, setShowPatientModal] = useState(true);
+    // Patient selection gate — skipped automatically if a valid in-progress session exists
+    const _initialStoredSession = readStoredSession();
+    const [showPatientModal, setShowPatientModal] = useState(!_initialStoredSession);
+    // Stored session used to show the Resume card in PatientSelectModal
+    const [storedActiveSession, setStoredActiveSession] = useState(_initialStoredSession);
     // Controls which view the modal opens to: 'choose' (Phase 1) or 'existing' (Phase 2/3)
     const [patientModalView, setPatientModalView] = useState<'choose' | 'existing'>('choose');
 
@@ -172,6 +192,16 @@ const WellnessJourneyInternal: React.FC = () => {
         'Integration': 3,
         'Complete': 3,
     };
+
+    // If a stored session existed on mount, restore state immediately without
+    // going through the patient selection modal.
+    useEffect(() => {
+        const stored = readStoredSession();
+        if (!stored) return;
+        setJourney(prev => ({ ...prev, patientId: stored.patientId, sessionId: stored.sessionId, patientUuid: stored.patientUuid }));
+        setActivePhase(stored.activePhase);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // run once on mount only
 
     const handlePatientSelect = useCallback(async (patientId: string, isNew: boolean, phase: string) => {
         // ── STEP 0: Clear previous patient's session data from localStorage ──────
@@ -312,9 +342,24 @@ const WellnessJourneyInternal: React.FC = () => {
         setShowPatientModal(true);
     }, []);
 
+
+    // Resume: called when clinician taps the Resume card on PatientSelectModal
+    const handleResume = useCallback(() => {
+        const stored = readStoredSession();
+        if (!stored) return;
+        setJourney(prev => ({ ...prev, patientId: stored.patientId, sessionId: stored.sessionId, patientUuid: stored.patientUuid }));
+        setActivePhase(stored.activePhase);
+        setShowPatientModal(false);
+    }, []);
+
     // Stable callback for closing the patient modal, navigates to the user's
     // previous page (whatever they were on before clicking Wellness Journey).
-    const handleClosePatientModal = useCallback(() => navigate(-1), [navigate]);
+    // Clears stored session on intentional exit.
+    const handleClosePatientModal = useCallback(() => {
+        try { localStorage.removeItem(ACTIVE_SESSION_KEY); } catch { /* ignore */ }
+        setStoredActiveSession(null);
+        navigate(-1);
+    }, [navigate]);
 
     // WO-113: SlideOut form panel state
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -622,6 +667,22 @@ const WellnessJourneyInternal: React.FC = () => {
         };
     });
 
+    // ── Persist active session to localStorage so navigation-away → back restores state ──
+    // This effect is placed AFTER the journey useState to avoid "used before declaration" errors.
+    useEffect(() => {
+        if (!journey.patientId || journey.patientId === 'PT-RISK9W2P') return; // placeholder, not a real session
+        if (!journey.sessionId) return;
+        const payload = {
+            patientId: journey.patientId,
+            sessionId: journey.sessionId,
+            patientUuid: journey.patientUuid,
+            activePhase,
+            savedAt: Date.now(),
+        };
+        try { localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(payload)); } catch { /* ignore quota errors */ }
+        setStoredActiveSession(payload);
+    }, [journey.patientId, journey.sessionId, journey.patientUuid, activePhase]);
+
     // WO-558: patientCharacteristics removed, was hardcoded dummy data, never displayed from real source.
 
     // WO-558: totalImprovement only meaningful when baseline was actually recorded.
@@ -677,6 +738,8 @@ const WellnessJourneyInternal: React.FC = () => {
                     onClose={handleClosePatientModal}
                     onNavigateBack={handleClosePatientModal}
                     initialView={patientModalView}
+                    activeSession={storedActiveSession}
+                    onResume={handleResume}
                 />
             )}
 

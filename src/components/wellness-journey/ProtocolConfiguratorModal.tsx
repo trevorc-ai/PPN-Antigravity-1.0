@@ -327,6 +327,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                         placeholder="e.g. 42"
                                         value={age}
                                         onChange={e => setAge(e.target.value)}
+                                        onFocus={e => e.target.select()}
                                         onKeyDown={e => {
                                             if (e.key === 'Enter' && stepDone.age) {
                                                 e.preventDefault();
@@ -365,6 +366,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                                             placeholder="e.g. 68"
                                             value={weight}
                                             onChange={e => setWeight(e.target.value)}
+                                            onFocus={e => e.target.select()}
                                             onBlur={() => {
                                                 if (allComplete) startBtnRef.current?.focus();
                                             }}
