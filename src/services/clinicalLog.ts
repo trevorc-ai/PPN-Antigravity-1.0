@@ -448,6 +448,23 @@ export async function createConsent(
             });
             throw error;
         }
+
+        // WO-592: Consent = start of a real clinical relationship.
+        // Promote the parent session from 'draft' → 'active' so it appears in analytics
+        // and My Protocols. This covers multi-visit workflows where Phase 1 (consent +
+        // baseline) happens before the dosing session (Phase 2).
+        if (sessionId) {
+            const { error: statusError } = await supabase
+                .from('log_clinical_records')
+                .update({ session_status: 'active', created_by: user.id })
+                .eq('id', sessionId)
+                .eq('session_status', 'draft'); // only promote drafts — don't overwrite active/completed
+            if (statusError) {
+                // Non-fatal: consent was saved successfully; log but don't fail the call
+                console.warn('[clinicalLog] createConsent: failed to promote session_status', statusError);
+            }
+        }
+
         return { success: true };
     } catch (error) {
         console.error('[clinicalLog] createConsent:', error);
