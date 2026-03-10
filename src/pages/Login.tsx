@@ -217,7 +217,7 @@ const Login: React.FC = () => {
               <div className="flex justify-center">
                 <button
                   type="button"
-                  onClick={() => setShowResetModal(true)}
+                  onClick={() => { setShowResetModal(true); setError(null); }}
                   className="text-xs text-indigo-400 hover:text-indigo-300 font-bold transition-colors"
                 >
                   Forgot Password?

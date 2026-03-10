@@ -63,7 +63,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
             createTimelineEvent({
                 session_id: sessionId,
                 event_timestamp: new Date().toISOString(),
-                event_type: 'clinical_decision',
+                event_type_code: 'intake_completed',
                 metadata: { event_description: 'Session Timer Started via Mobile Cockpit' }
             }).catch(e => console.warn('[SAVS] Timeline start event failed:', e));
         }
@@ -82,7 +82,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
             createTimelineEvent({
                 session_id: sessionId,
                 event_timestamp: new Date().toISOString(),
-                event_type: 'clinical_decision',
+                event_type_code: 'session_completed',
                 metadata: { event_description: `Session Ended via Mobile Cockpit at ${elapsedTime}` }
             }).catch(e => console.warn('[SAVS] Timeline end event failed:', e));
         }
@@ -93,10 +93,11 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
         const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         if (UUID_RE.test(sessionId)) {
             try {
+                // Timeline: only session_completed is supported by ref_flow_event_types for Phase 2 quick actions.
                 await createTimelineEvent({
                     session_id: sessionId,
                     event_timestamp: new Date().toISOString(),
-                    event_type: type as 'dose_admin' | 'vital_check' | 'patient_observation' | 'clinical_decision' | 'music_change' | 'touch_consent' | 'safety_event' | 'other', // must match CHECK constraint in log_session_timeline_events
+                    event_type_code: 'session_completed',
                     metadata: { event_description: `Mobile Action: ${label} at ${elapsedTime}` }
                 });
                 addToast({ title: 'Logged', message: `${label} captured`, type: 'success' });

@@ -136,7 +136,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                     onClick={toggleMode}
                     aria-label={`Switch to ${mode === 'experience' ? 'science' : 'experience'} mode`}
                     style={{
-                        fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase',
+                        fontSize: 14, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase',
                         padding: '5px 14px', borderRadius: 9999, cursor: 'pointer',
                         background: 'rgba(45,212,191,0.08)',
                         border: '1px solid rgba(45,212,191,0.30)',
@@ -235,7 +235,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                         x={cx} y={cy + maxR + 28}
                         textAnchor="middle"
                         fill="rgba(245,158,11,0.75)"
-                        fontSize={9}
+                        fontSize={14}
                         fontWeight={700}
                         letterSpacing="0.08em"
                     >
@@ -255,7 +255,7 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                             textAnchor="middle"
                             dominantBaseline="middle"
                             fill="rgba(226,232,240,0.65)"
-                            fontSize={9}
+                            fontSize={14}
                             fontWeight={600}
                         >
                             {labels[i]}
@@ -266,11 +266,11 @@ export const CompassSpiderGraph: React.FC<CompassSpiderGraphProps> = ({
                 {/* Legend */}
                 <g transform={`translate(12, 6)`}>
                     <line x1={0} y1={6} x2={18} y2={6} stroke="rgba(100,116,139,0.6)" strokeWidth={1.5} strokeDasharray="4 3" />
-                    <text x={22} y={10} fill="rgba(100,116,139,0.8)" fontSize={9} fontWeight={600}>Predicted</text>
+                    <text x={22} y={10} fill="rgba(100,116,139,0.8)" fontSize={14} fontWeight={600}>Predicted</text>
                     {hasLivedData && (
                         <>
                             <line x1={0} y1={20} x2={18} y2={20} stroke={accentColor} strokeWidth={2} />
-                            <text x={22} y={24} fill={accentColor} fontSize={9} fontWeight={600}>Your Experience</text>
+                            <text x={22} y={24} fill={accentColor} fontSize={14} fontWeight={600}>Your Experience</text>
                         </>
                     )}
                 </g>

@@ -126,20 +126,45 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
                 })}
             </div>
 
-            {/* ── Mobile: select ──────────────────────────────────── */}
-            <div className="md:hidden">
-                <select
-                    value={currentPhase}
-                    onChange={(e) => onPhaseChange(Number(e.target.value) as 1 | 2 | 3)}
-                    className="w-full px-4 py-3 bg-slate-900/60 border border-slate-700 rounded-xl text-slate-300 text-sm font-bold"
-                    aria-label="Select phase"
-                >
-                    {([1, 2, 3] as const).map((id) => (
-                        <option key={id} value={id}>
-                            {id}, {PHASE_CONFIG[id].label}
-                        </option>
-                    ))}
-                </select>
+            {/* ── Mobile: pill tab buttons (44px touch targets) ──── */}
+            <div className="md:hidden flex gap-2 w-full" role="tablist" aria-label="Journey phases">
+                {([1, 2, 3] as const).map((phaseId) => {
+                    const cfg = PHASE_CONFIG[phaseId];
+                    const isActive = currentPhase === phaseId;
+                    const isCompleted = completedPhases.includes(phaseId);
+                    const isLocked =
+                        phaseId > 1 &&
+                        !completedPhases.includes((phaseId - 1) as 1 | 2 | 3) &&
+                        !isActive;
+                    return (
+                        <button
+                            key={phaseId}
+                            onClick={() => !isLocked && onPhaseChange(phaseId)}
+                            disabled={isLocked}
+                            role="tab"
+                            aria-selected={isActive}
+                            aria-label={`Phase ${phaseId}: ${cfg.label}${isLocked ? ' (locked)' : ''}`}
+                            className={[
+                                'flex-1 flex items-center justify-center gap-1.5 rounded-xl font-bold text-sm transition-all duration-200 select-none',
+                                'min-h-[44px] px-2 py-2',
+                                isActive
+                                    ? `${cfg.activeBg} border ${cfg.activeBorder} ${cfg.activeText}`
+                                    : isLocked
+                                        ? 'bg-slate-900/40 border border-slate-800/50 text-slate-600 cursor-not-allowed'
+                                        : 'bg-slate-800/50 border border-slate-700/60 text-slate-300',
+                            ].join(' ')}
+                        >
+                            {isLocked
+                                ? <Lock className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                                : isCompleted && !isActive
+                                    ? <CheckCircle className="w-3.5 h-3.5 text-teal-400 flex-shrink-0" aria-hidden="true" />
+                                    : null
+                            }
+                            <span className="leading-none">{phaseId}</span>
+                            <span className="leading-none truncate hidden xs:inline">{cfg.label}</span>
+                        </button>
+                    );
+                })}
             </div>
         </div>
     );

@@ -25,7 +25,7 @@ import { downloadReport, type PatientReportData } from '../services/reportGenera
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
 import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
 import { supabase } from '../supabaseClient'; // WO-430: medication hydration on patient select
-import { createClinicalSession } from '../services/clinicalLog';
+import { createClinicalSession, createPatientProfile, createPatientIndication, closeOutSession } from '../services/clinicalLog';
 import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
 import { ProtocolConfiguratorModal, type PatientIntakeData } from '../components/wellness-journey/ProtocolConfiguratorModal';
 
@@ -132,6 +132,23 @@ interface PatientJourney {
 }
 
 const PHASE_STORAGE_KEY = 'ppn_wellness_completed_phases';
+const ACTIVE_SESSION_KEY = 'ppn_active_session';
+const SESSION_TTL_MS = 8 * 60 * 60 * 1000; // 8 hours — one clinical shift
+
+/** Read and validate a stored session. Returns null if expired or missing. */
+function readStoredSession(): { patientId: string; sessionId: string; patientUuid?: string; activePhase: 1 | 2 | 3; savedAt: number } | null {
+    try {
+        const raw = localStorage.getItem(ACTIVE_SESSION_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed?.patientId || !parsed?.sessionId) return null;
+        if (Date.now() - (parsed.savedAt ?? 0) > SESSION_TTL_MS) {
+            localStorage.removeItem(ACTIVE_SESSION_KEY);
+            return null;
+        }
+        return parsed;
+    } catch { return null; }
+}
 
 const WellnessJourneyInternal: React.FC = () => {
     const navigate = useNavigate();
@@ -158,8 +175,11 @@ const WellnessJourneyInternal: React.FC = () => {
     // Onboarding state
     const [showOnboarding, setShowOnboarding] = useState(false);
 
-    // Patient selection gate, blocks until provider chooses new or existing patient
-    const [showPatientModal, setShowPatientModal] = useState(true);
+    // Patient selection gate — skipped automatically if a valid in-progress session exists
+    const _initialStoredSession = readStoredSession();
+    const [showPatientModal, setShowPatientModal] = useState(true); // WO-577: always show modal; stored session surfaces as Resume card inside
+    // Stored session used to show the Resume card in PatientSelectModal
+    const [storedActiveSession, setStoredActiveSession] = useState(_initialStoredSession);
     // Controls which view the modal opens to: 'choose' (Phase 1) or 'existing' (Phase 2/3)
     const [patientModalView, setPatientModalView] = useState<'choose' | 'existing'>('choose');
 
@@ -172,6 +192,16 @@ const WellnessJourneyInternal: React.FC = () => {
         'Integration': 3,
         'Complete': 3,
     };
+
+    // If a stored session existed on mount, restore state immediately without
+    // going through the patient selection modal.
+    useEffect(() => {
+        const stored = readStoredSession();
+        if (!stored) return;
+        setJourney(prev => ({ ...prev, patientId: stored.patientId, sessionId: stored.sessionId, patientUuid: stored.patientUuid }));
+        setActivePhase(stored.activePhase);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // run once on mount only
 
     const handlePatientSelect = useCallback(async (patientId: string, isNew: boolean, phase: string) => {
         // ── STEP 0: Clear previous patient's session data from localStorage ──────
@@ -312,9 +342,24 @@ const WellnessJourneyInternal: React.FC = () => {
         setShowPatientModal(true);
     }, []);
 
+
+    // Resume: called when clinician taps the Resume card on PatientSelectModal
+    const handleResume = useCallback(() => {
+        const stored = readStoredSession();
+        if (!stored) return;
+        setJourney(prev => ({ ...prev, patientId: stored.patientId, sessionId: stored.sessionId, patientUuid: stored.patientUuid }));
+        setActivePhase(stored.activePhase);
+        setShowPatientModal(false);
+    }, []);
+
     // Stable callback for closing the patient modal, navigates to the user's
     // previous page (whatever they were on before clicking Wellness Journey).
-    const handleClosePatientModal = useCallback(() => navigate(-1), [navigate]);
+    // Clears stored session on intentional exit.
+    const handleClosePatientModal = useCallback(() => {
+        try { localStorage.removeItem(ACTIVE_SESSION_KEY); } catch { /* ignore */ }
+        setStoredActiveSession(null);
+        navigate(-1);
+    }, [navigate]);
 
     // WO-113: SlideOut form panel state
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -504,6 +549,20 @@ const WellnessJourneyInternal: React.FC = () => {
 
     // Mark current phase complete and advance
     const completeCurrentPhase = useCallback(() => {
+        // WO-577: Phase 3 final closeout — mark session submitted + clear ACTIVE_SESSION_KEY
+        // Read sessionId from localStorage (avoids forward-reference to journey useState)
+        if (activePhase === 3) {
+            const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            try {
+                const stored = readStoredSession();
+                if (stored?.sessionId && UUID_RE.test(stored.sessionId)) {
+                    closeOutSession(stored.sessionId).catch(err =>
+                        console.warn('[WO-577] closeOutSession failed (non-fatal):', err)
+                    );
+                }
+                localStorage.removeItem(ACTIVE_SESSION_KEY);
+            } catch { /* ignore */ }
+        }
         const updated = [...new Set([...completedPhases, activePhase])];
         setCompletedPhases(updated);
         localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updated));
@@ -622,6 +681,22 @@ const WellnessJourneyInternal: React.FC = () => {
         };
     });
 
+    // ── Persist active session to localStorage so navigation-away → back restores state ──
+    // This effect is placed AFTER the journey useState to avoid "used before declaration" errors.
+    useEffect(() => {
+        if (!journey.patientId || journey.patientId === 'PT-RISK9W2P') return; // placeholder, not a real session
+        if (!journey.sessionId) return;
+        const payload = {
+            patientId: journey.patientId,
+            sessionId: journey.sessionId,
+            patientUuid: journey.patientUuid,
+            activePhase,
+            savedAt: Date.now(),
+        };
+        try { localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(payload)); } catch { /* ignore quota errors */ }
+        setStoredActiveSession(payload);
+    }, [journey.patientId, journey.sessionId, journey.patientUuid, activePhase]);
+
     // WO-558: patientCharacteristics removed, was hardcoded dummy data, never displayed from real source.
 
     // WO-558: totalImprovement only meaningful when baseline was actually recorded.
@@ -677,6 +752,8 @@ const WellnessJourneyInternal: React.FC = () => {
                     onClose={handleClosePatientModal}
                     onNavigateBack={handleClosePatientModal}
                     initialView={patientModalView}
+                    activeSession={storedActiveSession}
+                    onResume={handleResume}
                 />
             )}
 
@@ -685,17 +762,49 @@ const WellnessJourneyInternal: React.FC = () => {
                 <ProtocolConfiguratorModal
                     onClose={() => setShowProtocolConfigurator(false)}
                     onBack={handleProtocolBack}
-                    onIntakeComplete={(intake: PatientIntakeData) => {
-                        setJourney(prev => ({
-                            ...prev,
-                            condition: intake.condition || undefined,
-                            demographics: {
-                                ...prev.demographics,
-                                age: intake.age ? parseInt(intake.age, 10) : undefined,
-                                gender: intake.gender || undefined,
-                                weightKg: intake.weight ? parseFloat(intake.weight) : undefined,
-                            },
-                        }));
+                    onIntakeComplete={async (intake: PatientIntakeData) => {
+                        // Read patientUuid + sessionId from journey state before the async setJourney
+                        // (they were set during handlePatientSelect when createClinicalSession ran)
+                        let latestPatientUuid: string | undefined;
+                        let latestSessionId: string | undefined;
+                        setJourney(curr => {
+                            latestPatientUuid = curr.patientUuid;
+                            latestSessionId = curr.sessionId;
+                            return {
+                                ...curr,
+                                condition: intake.condition || undefined,
+                                demographics: {
+                                    ...curr.demographics,
+                                    age: intake.age ? parseInt(intake.age, 10) : undefined,
+                                    gender: intake.gender || undefined,
+                                    weightKg: intake.weight ? parseFloat(intake.weight) : undefined,
+                                },
+                            };
+                        });
+
+                        // Write patient profile + indication to DB (fire-and-forget, non-blocking to UI)
+                        const resolvedSite = await getCurrentSiteId();
+                        if (latestPatientUuid && resolvedSite) {
+                            // Patient demographics -> log_patient_profiles
+                            createPatientProfile({
+                                patient_uuid: latestPatientUuid,
+                                site_id: resolvedSite,
+                                session_id: latestSessionId,
+                                sex_label: intake.gender || undefined,
+                                age_at_intake: intake.age ? parseInt(intake.age, 10) : undefined,
+                                weight_kg: intake.weight ? parseFloat(intake.weight) : undefined,
+                                smoking_label: intake.smoking || undefined,
+                            }).catch(err => console.warn('[WellnessJourney] createPatientProfile failed (non-fatal):', err));
+
+                            // Clinical indication -> log_patient_indications
+                            if (intake.condition) {
+                                createPatientIndication({
+                                    patient_uuid: latestPatientUuid,
+                                    session_id: latestSessionId,
+                                    indication_label: intake.condition,
+                                }).catch(err => console.warn('[WellnessJourney] createPatientIndication failed (non-fatal):', err));
+                            }
+                        }
                     }}
                 />
             )}
@@ -747,16 +856,16 @@ const WellnessJourneyInternal: React.FC = () => {
                 )}
             </SlideOutPanel>
 
-            <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 px-3 sm:px-6">
+            <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6">
 
                 {/* ─── Page Heading ─── */}
                 <div className="px-1">
                     <h1 className="ppn-page-title">Wellness Journey</h1>
                     {/* Subtitle hidden on mobile — Phase2LiveBar/MobilePhaseBar show context */}
                     <p className="ppn-body mt-1 hidden sm:block" style={{ color: '#8B9DC3' }}>
-                        {activePhase === 1 && 'Phase 1, Preparation: Complete all baseline assessments before the dosing session.'}
-                        {activePhase === 2 && 'Phase 2, Dosing Session: Live documentation during the active session.'}
-                        {activePhase === 3 && 'Phase 3, Integration: Post-session monitoring and outcome tracking.'}
+                        {activePhase === 1 && 'Phase 1 — Preparation: Complete all baseline assessments before the dosing session.'}
+                        {activePhase === 2 && 'Phase 2 — Dosing Session: Live documentation during the active session.'}
+                        {activePhase === 3 && 'Phase 3 — Integration: Post-session monitoring and outcome tracking.'}
                     </p>
                     {/* Mobile: one-line phase indicator instead of full subtitle */}
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 sm:hidden">

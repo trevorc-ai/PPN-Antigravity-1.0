@@ -71,6 +71,9 @@ export const HelpCenterLayout: React.FC = () => {
                     {/* Mobile Nav Toggle */}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        aria-label={mobileMenuOpen ? 'Close documentation menu' : 'Open documentation menu'}
+                        aria-expanded={mobileMenuOpen}
+                        aria-controls="help-sidebar-nav"
                         className="lg:hidden flex items-center gap-2 px-4 py-3 bg-slate-800/80 border border-slate-700 rounded-xl text-slate-300 font-bold text-sm w-full shadow-lg"
                     >
                         {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -78,7 +81,7 @@ export const HelpCenterLayout: React.FC = () => {
                     </button>
 
                     {/* Left Sidebar Nav */}
-                    <aside className={`w-full lg:w-64 shrink-0 bg-slate-900/40 backdrop-blur-md border border-slate-800 rounded-3xl p-6 h-fit sticky top-24 shadow-xl ${mobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
+                    <aside id="help-sidebar-nav" className={`w-full lg:w-64 shrink-0 bg-slate-900/40 backdrop-blur-md border border-slate-800 rounded-3xl p-6 h-fit sticky top-24 shadow-xl ${mobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
                         <nav className="space-y-8">
                             {navSegments.map((segment, sIdx) => (
                                 <div key={sIdx}>

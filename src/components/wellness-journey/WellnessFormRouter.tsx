@@ -39,6 +39,7 @@ import {
     updateDosingProtocol,
     createMEQ30Score,
     createSafetyScreen,
+    createSetAndSettingLog,
 } from '../../services/clinicalLog';
 import type { DosingProtocolUpdateData } from '../../services/clinicalLog';
 import { FLOW_EVENT_TYPE_CODES } from '../../services/refFlowEventTypes';
@@ -218,14 +219,34 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     const handleSetAndSettingSave = useCallback(async (data: SetAndSettingData) => {
         const resolvedPatientId = patientUuidProp ?? patientId;
         if (!resolvedPatientId || !siteId) return;
-        const result = await createBaselineAssessment({
+
+        // Write treatment expectancy to log_baseline_assessments (existing)
+        const baselineResult = await createBaselineAssessment({
             patient_id: resolvedPatientId,
             site_id: siteId,
             expectancy_scale: data.treatment_expectancy,
-            // observations[] included in form data; no dedicated DB column yet, same behaviour as before
         });
-        result.success ? onSaved('Set & Setting') : onError('Set & Setting', result.error);
-    }, [patientId, siteId]);
+        if (!baselineResult.success) {
+            console.warn('[WellnessFormRouter] handleSetAndSettingSave: baseline write failed (non-fatal)', baselineResult.error);
+        }
+
+        // Write session linkage to log_phase1_set_and_setting (new table — schema rebuild)
+        if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+            const settingResult = await createSetAndSettingLog({
+                patient_uuid: resolvedPatientId,
+                session_id: sessionId,
+                site_id: siteId,
+                treatment_expectancy: data.treatment_expectancy,
+                // mindset_type_label / session_setting_label: not yet captured in SetAndSettingForm UI
+                // will be wired when form is extended with those dropdowns
+            });
+            if (!settingResult.success) {
+                console.warn('[WellnessFormRouter] handleSetAndSettingSave: log_phase1_set_and_setting write failed (non-fatal)', settingResult.error);
+            }
+        }
+
+        onSaved('Set & Setting');
+    }, [patientId, patientUuidProp, siteId, sessionId]);
 
     // SAVS P1-B fix: persist PHQ-9 / GAD-7 / ACE / PCL-5 scores to DB on Mental Health Screening complete.
     const handleMentalHealthSave = useCallback(async (data: { phq9?: number | null; gad7?: number | null; ace?: number | null; pcl5?: number | null }) => {
@@ -491,21 +512,38 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 return undefined;
             })();
 
-            // SAVS P1-A fix: persist safety screening completion to the DB ledger.
-            // Data is structurally validated but no dedicated table column exists yet;
-            // we log a clinical_decision event as the immutable record of completion.
+            // SAVS P1-A fix: persist safety screening completion to both tables:
+            // - log_phase1_safety_screen: authoritative record (was missing before)
+            // - log_session_timeline_events: permanent clinical timestamp stamp
             const handleSafetyCheckSave = async (data: StructuredSafetyCheckData) => {
                 try { localStorage.setItem(safetyKey, JSON.stringify(data)); } catch (_) { }
-                onSaved('Safety Screen');
-                // Write timeline event so the safety check has a permanent clinical timestamp
+
+                const resolvedPatientId = patientUuidProp ?? patientId;
+                const resolvedSiteId = siteId ?? await import('../../services/identity').then(m => m.getCurrentSiteId());
+
+                // Write to log_phase1_safety_screen (new authoritative table for safety screen data)
+                if (resolvedPatientId && resolvedSiteId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(resolvedPatientId)) {
+                    createSafetyScreen({
+                        patient_uuid: resolvedPatientId,
+                        session_id: sessionId ?? undefined,
+                        site_id: resolvedSiteId,
+                        // contraindication_verdict_id / ekg_rhythm_id: not yet captured in StructuredSafetyCheckForm UI
+                        // will be wired when form exposes those dropdowns
+                        concomitant_med_ids: [],
+                    }).catch(err => console.warn('[SAVS-P1A] log_phase1_safety_screen write failed (non-fatal):', err));
+                }
+
+                // Also stamp timeline so the safety check has a permanent clinical timestamp
                 if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
                     createTimelineEvent({
                         session_id: sessionId,
                         event_timestamp: new Date().toISOString(),
                         event_type_code: 'baseline_assessment_completed',
                         metadata: { event_description: 'Phase 1 Structured Safety Check completed by practitioner.' },
-                    }).catch(err => console.warn('[SAVS-P1A] Safety check DB write failed:', err));
+                    }).catch(err => console.warn('[SAVS-P1A] Safety check timeline stamp failed:', err));
                 }
+
+                onSaved('Safety Screen');
             };
 
             return <StructuredSafetyCheckForm

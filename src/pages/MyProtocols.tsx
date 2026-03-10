@@ -68,7 +68,7 @@ export const MyProtocols = () => {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) return { data: [], error: null };
 
-                // Parallel fetch: sessions + all reference tables needed for client-side join
+                // Step 1: Parallel fetch — sessions (scoped to this practitioner) + ref tables
                 const [
                     sessionResult,
                     substanceResult,
@@ -81,52 +81,76 @@ export const MyProtocols = () => {
                         .from('log_clinical_records')
                         .select(`
                             id,
+                            patient_uuid,
                             session_date,
                             session_type_id,
                             substance_id,
-                            indication_id,
                             patient_sex_id,
                             patient_age_years,
                             weight_range_id,
-                            patient_smoking_status_id
+                            patient_smoking_status_id,
+                            created_at
                         `)
-                        .eq('practitioner_id', user.id)
+                        .eq('created_by', user.id)            // created_by = practitioner's user id
                         .order('created_at', { ascending: false })
                         .limit(100),
                     supabase.from('ref_substances').select('substance_id, substance_name'),
                     supabase.from('ref_indications').select('indication_id, indication_name'),
-                    supabase.from('ref_sex').select('id, sex_label'),
+                    supabase.from('ref_sex').select('sex_id, sex_label'),
                     supabase.from('ref_weight_ranges').select('id, range_label'),
                     supabase.from('ref_smoking_status').select('smoking_status_id, status_name'),
                 ]);
 
                 if (sessionResult.error) throw sessionResult.error;
 
-                // Build client-side lookup maps
+                // Step 2: Fetch indications for all patients in this result set
+                // indication_id lives in log_patient_indications, not log_clinical_records
+                const patientUuids = [
+                    ...new Set((sessionResult.data ?? []).map((r: any) => r.patient_uuid).filter(Boolean))
+                ];
+
+                const { data: indicationsRaw } = patientUuids.length > 0
+                    ? await supabase
+                        .from('log_patient_indications')
+                        .select('patient_uuid, indication_id, is_primary')
+                        .in('patient_uuid', patientUuids)
+                    : { data: [] };
+
+                // Build patient → primary indication_id map
+                const patientIndicationMap = new Map<string, number>();
+                for (const ind of (indicationsRaw || []) as any[]) {
+                    const existing = patientIndicationMap.get(ind.patient_uuid);
+                    if (!existing || ind.is_primary) {
+                        patientIndicationMap.set(ind.patient_uuid, ind.indication_id);
+                    }
+                }
+
+                // Step 3: Build client-side lookup maps from ref tables
                 const substanceMap = buildMap(substanceResult.data, 'substance_id', 'substance_name');
                 const indicationMap = buildMap(indicationResult.data, 'indication_id', 'indication_name');
                 const sexMap = buildMap(sexResult.data, 'id', 'sex_label');
                 const weightMap = buildMap(weightResult.data, 'id', 'range_label');
                 const smokingMap = buildMap(smokingResult.data, 'smoking_status_id', 'status_name');
 
-                const formattedData: Protocol[] = (sessionResult.data ?? []).map((record: any) => ({
-                    id: record.id,
-                    // patient_link_code dropped in migration 079, use UUID prefix as reference
-                    patient_ref: record.id
-                        ? `SID-${record.id.substring(0, 8).toUpperCase()}`
-                        : '—',
-                    substance_name: substanceMap[record.substance_id] ?? (record.substance_id ? `Substance #${record.substance_id}` : '—'),
-                    session_date: record.session_date || '—',
-                    submitted_at: record.created_at ?? null,
-                    session_type_id: record.session_type_id ?? null,
-                    status: SESSION_TYPE_LABELS[record.session_type_id as number] ?? 'In Progress',
-                    // New columns, display '—' when not yet recorded
-                    indication_name: indicationMap[record.indication_id] ?? '—',
-                    sex_label: sexMap[record.patient_sex_id] ?? '—',
-                    patient_age: record.patient_age_years != null ? `${record.patient_age_years}` : '—',
-                    smoking_status: smokingMap[record.patient_smoking_status_id] ?? '—',
-                    weight_label: weightMap[record.weight_range_id] ?? '—',
-                }));
+                const formattedData: Protocol[] = (sessionResult.data ?? []).map((record: any) => {
+                    const indicationId = patientIndicationMap.get(record.patient_uuid) ?? null;
+                    return {
+                        id: record.id,
+                        patient_ref: record.id
+                            ? `SID-${record.id.substring(0, 8).toUpperCase()}`
+                            : '—',
+                        substance_name: substanceMap[record.substance_id] ?? (record.substance_id ? `Substance #${record.substance_id}` : '—'),
+                        session_date: record.session_date || '—',
+                        submitted_at: record.created_at ?? null,
+                        session_type_id: record.session_type_id ?? null,
+                        status: SESSION_TYPE_LABELS[record.session_type_id as number] ?? 'In Progress',
+                        indication_name: indicationId ? (indicationMap[indicationId] ?? '—') : '—',
+                        sex_label: sexMap[record.patient_sex_id] ?? '—',
+                        patient_age: record.patient_age_years != null ? `${record.patient_age_years}` : '—',
+                        smoking_status: smokingMap[record.patient_smoking_status_id] ?? '—',
+                        weight_label: weightMap[record.weight_range_id] ?? '—',
+                    };
+                });
 
                 return { data: formattedData, error: null };
             } catch (error) {

@@ -1,0 +1,74 @@
+---
+description: BUILDER mandatory protocol — build work orders from 03_BUILD only
+---
+
+# BUILDER Protocol
+
+> BUILDER has ONE job: build the WOs in `_WORK_ORDERS/03_BUILD/`. Nothing else.
+
+## 🚨 HARD RULES (no exceptions)
+
+1. **BUILDER does NOT do pipeline scans.** That is LEAD's job.
+2. **BUILDER does NOT triage or move tickets.** That is LEAD's job.
+3. **BUILDER does NOT write strategy, PRDs, or analysis documents.** That is PRODDY's/INSPECTORS's job.
+4. **BUILDER does NOT touch files not listed in the WO's `files:` frontmatter.** Surgical only.
+5. **If 03_BUILD is empty, BUILDER reports that and STOPS.** Does not self-assign work from other queues.
+
+## Step 1: Read the WO (mandatory)
+
+```bash
+ls /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/_WORK_ORDERS/03_BUILD/
+```
+
+Read every `.md` file in `03_BUILD`. Build them in priority order (P0 before P1 before P2).
+
+## Step 2: Read mandatory skills BEFORE writing any code
+
+For ANY React/TSX/CSS change, MUST read:
+- `.agent/skills/frontend-surgical-standards/SKILL.md`
+- `.agent/skills/frontend-best-practices/SKILL.md`
+
+For ANY database/migration change, MUST read:
+- `.agent/skills/migration-manager/SKILL.md`
+- `.agent/skills/database-schema-validator/SKILL.md`
+
+## Step 3: Check the WO Constraints section
+
+Before every edit, quote the WO's `Constraints` or `Constraints` block verbatim.
+If an edit would violate a constraint, STOP and flag to LEAD.
+
+**Do not proceed if:**
+- The file you need to edit is NOT in the WO's `files:` list
+- The change requires schema migrations not explicitly scoped in the WO
+- The WO says "surgical only" and you're about to touch more than 2 functions
+
+## Step 4: TWO-STRIKE RULE
+
+If a fix fails or causes a TypeScript/build error twice in a row:
+1. STOP immediately
+2. Revert to last working state via git
+3. Report the failure and request new strategy from LEAD
+
+```bash
+git diff --stat HEAD  # check what changed
+git checkout -- <file>  # revert a specific file if needed
+```
+
+## Step 5: QA before marking done
+
+Run the inspector QA script after every build:
+- Read `.agent/skills/inspector-qa/SKILL.md` and follow the checklist
+- Take a browser screenshot to confirm the UI renders correctly
+
+## Step 6: Finalize and auto-continue
+
+Move the completed WO to `04_QA`:
+
+```bash
+mv _WORK_ORDERS/03_BUILD/WO-XXX.md _WORK_ORDERS/04_QA/
+```
+
+Then run `/finalize_feature` to commit and push.
+
+> **Auto-continue rule:** A ticket in `03_BUILD` is pre-approved. No user confirmation is needed between tickets. After closing one WO, immediately `ls 03_BUILD/`, pick the next highest-priority file, and start building it. Only stop when `03_BUILD` is empty, then report: "03_BUILD is empty. All tickets complete."
+

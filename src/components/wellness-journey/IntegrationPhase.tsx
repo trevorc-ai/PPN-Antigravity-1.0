@@ -357,7 +357,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
             createTimelineEvent({
                 session_id: sessionId,
                 event_timestamp: new Date().toISOString(),
-                event_type: 'clinical_decision',
+                event_type_code: 'integration_visit_completed',
                 metadata: { event_description: 'Discharge summary PDF generated and exported by practitioner.' },
             }).catch(err => console.warn('[SAVS-P3D] Discharge summary DB timestamp failed:', err));
         }
@@ -585,7 +585,10 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 {phase3.isLoading ? (
                     <div className="h-64 bg-slate-800/30 rounded-2xl animate-pulse" />
                 ) : (
-                    <PatientJourneySnapshot />
+                    <PatientJourneySnapshot
+                        sessionId={journey.sessionId}
+                        phase2Events={safetyEvents}
+                    />
                 )}
             </div>
 
@@ -847,6 +850,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 isOpen={isMagicLinkModalOpen}
                 onClose={() => setIsMagicLinkModalOpen(false)}
                 patientHash={journey.patientId || "pt-unknown-hash"}
+                sessionId={journey.sessionId ?? journey.session?.sessionId}
             />
         </div>
     );

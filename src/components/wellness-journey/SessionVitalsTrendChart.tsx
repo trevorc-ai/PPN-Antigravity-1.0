@@ -36,6 +36,12 @@ interface SessionVitalsTrendChartProps {
     events?: SessionEventPin[];
     /** Total elapsed seconds, drives the growing X-axis domain */
     sessionDurationSec?: number;
+    /**
+     * WO-576 Sub-task E: lifted visibility callback.
+     * Fires whenever the user toggles a series button so DosingSessionPhase
+     * can pass the same visible state to LiveSessionTimeline.
+     */
+    onVisibilityChange?: (visible: Record<string, boolean>) => void;
 }
 
 // ── Thresholds ────────────────────────────────────────────────────────────────
@@ -290,11 +296,16 @@ export const SessionVitalsTrendChart: FC<SessionVitalsTrendChartProps> = ({
     data = [],
     events = [],
     sessionDurationSec = 0,
+    onVisibilityChange,
 }) => {
     const [visible, setVisible] = useState<Record<SeriesKey, boolean>>({
         hr: true, bp: true, temp: true, events: true,
     });
-    const toggle = (key: SeriesKey) => setVisible(v => ({ ...v, [key]: !v[key] }));
+    const toggle = (key: SeriesKey) => setVisible(v => {
+        const next = { ...v, [key]: !v[key] };
+        onVisibilityChange?.(next);
+        return next;
+    });
 
     // Hovered event dot, lifted state for the custom tooltip overlay
     const [hoveredEvent, setHoveredEvent] = useState<{

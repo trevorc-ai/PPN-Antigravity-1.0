@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, ArrowLeft, X, Loader2, AlertCircle, Camera, Lock, QrCode, FlaskConical } from 'lucide-react';
+import { UserPlus, Search, ChevronRight, Clock, Activity, ArrowUp, ArrowDown, ArrowLeft, X, Loader2, AlertCircle, Camera, Lock, QrCode, FlaskConical, RotateCcw } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 import { getCurrentSiteId, generatePatientId } from '../../services/identity';
 
@@ -20,6 +20,10 @@ interface PatientSelectModalProps {
     onNavigateBack?: () => void;
     /** Phase 1 → 'choose' (New + Existing). Phase 2/3 → 'existing' (lookup only). */
     initialView?: 'choose' | 'existing';
+    /** If set, shows a Resume card so the clinician can jump back into the in-progress session */
+    activeSession?: { patientId: string; activePhase: 1 | 2 | 3; savedAt: number } | null;
+    /** Called when the clinician taps the Resume card */
+    onResume?: () => void;
 }
 
 type Phase = 'Preparation' | 'Treatment' | 'Integration' | 'Complete';
@@ -76,7 +80,7 @@ const FilterChip: React.FC<{ label: string; active: boolean; onClick: () => void
         );
     }
 
-export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect, onClose, onNavigateBack, initialView = 'choose' }) => {
+export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect, onClose, onNavigateBack, initialView = 'choose', activeSession, onResume }) => {
     const [view, setView] = useState<'choose' | 'existing'>(initialView);
     const [search, setSearch] = useState('');
     const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
@@ -226,6 +230,33 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                         </div>
 
                         <div className="p-6 space-y-4">
+                            {/* ── Resume previous session ─────────────────────── */}
+                            {activeSession && onResume && (() => {
+                                const PHASE_LABELS: Record<1 | 2 | 3, string> = {
+                                    1: 'Phase 1 · Preparation',
+                                    2: 'Phase 2 · Dosing Session',
+                                    3: 'Phase 3 · Integration',
+                                };
+                                const minutesAgo = Math.floor((Date.now() - activeSession.savedAt) / 60000);
+                                const timeLabel = minutesAgo < 2 ? 'just now' : minutesAgo < 60 ? `${minutesAgo}m ago` : `${Math.floor(minutesAgo / 60)}h ago`;
+                                return (
+                                    <button
+                                        onClick={onResume}
+                                        className="w-full group flex items-center gap-5 p-5 bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/30 hover:border-emerald-500/60 rounded-xl transition-all active:scale-[0.99] text-left"
+                                    >
+                                        <div className="w-12 h-12 rounded-xl bg-emerald-600/20 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                                            <RotateCcw className="w-6 h-6 text-emerald-400" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-base font-bold text-white">Resume Session</p>
+                                            <p className="text-xs font-mono text-emerald-400 mt-0.5 truncate">{activeSession.patientId}</p>
+                                            <p className="text-xs text-slate-400 mt-0.5">{PHASE_LABELS[activeSession.activePhase]} · {timeLabel}</p>
+                                        </div>
+                                        <ChevronRight className="w-5 h-5 text-emerald-400 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+                                    </button>
+                                );
+                            })()}
+
                             {/* New Patient */}
                             <button
                                 onClick={() => onSelect(newId, true, 'Preparation')}

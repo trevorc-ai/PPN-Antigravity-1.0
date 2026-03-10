@@ -124,7 +124,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         />
                     </FormField>
 
-                    <FormField label="PHQ-9 Score" tooltip="Depression (0-27)">
+                    <FormField label="PHQ-9 Score" tooltip="Patient Health Questionnaire-9 (PHQ-9). Measures depression severity. Score 0-27: 0-4 minimal, 5-9 mild, 10-14 moderate, 15-19 moderately severe, 20-27 severe.">
                         <div className="space-y-2">
                             <NumberInput
                                 value={data.phq9_score}
@@ -142,7 +142,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         </div>
                     </FormField>
 
-                    <FormField label="GAD-7 Score" tooltip="Anxiety (0-21)">
+                    <FormField label="GAD-7 Score" tooltip="Generalized Anxiety Disorder-7 (GAD-7). Measures anxiety severity. Score 0-21: 0-4 minimal, 5-9 mild, 10-14 moderate, 15-21 severe.">
                         <div className="space-y-2">
                             <NumberInput
                                 value={data.gad7_score}
@@ -160,7 +160,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         </div>
                     </FormField>
 
-                    <FormField label="WHOQOL Score" tooltip="Quality of Life (0-100)">
+                    <FormField label="WHOQOL Score" tooltip="World Health Organization Quality of Life (WHOQOL) measure. Higher scores indicate better quality of life across physical, psychological, social, and environmental domains. Range 0-100.">
                         <NumberInput
                             value={data.whoqol_score}
                             onChange={(val) => updateField('whoqol_score', val)}
@@ -170,7 +170,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         />
                     </FormField>
 
-                    <FormField label="PSQI Score" tooltip="Sleep Quality (0-21)">
+                    <FormField label="PSQI Score" tooltip="Pittsburgh Sleep Quality Index (PSQI). Assesses sleep quality over the past month. Score 0-21: 0-4 good sleep, 5 or above indicates poor sleep quality requiring clinical attention.">
                         <NumberInput
                             value={data.psqi_score}
                             onChange={(val) => updateField('psqi_score', val)}
@@ -180,7 +180,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         />
                     </FormField>
 
-                    <FormField label="C-SSRS Score" tooltip="Suicidal Ideation (0-5)" required>
+                    <FormField label="C-SSRS Score" tooltip="Columbia Suicide Severity Rating Scale (C-SSRS). Mandatory field. Score 0-5: 1-2 ideation only, 3+ ideation with intent or plan. Scores 3 or above trigger an immediate clinical alert." required>
                         <NumberInput
                             value={data.cssrs_score}
                             onChange={(val) => updateField('cssrs_score', val)}

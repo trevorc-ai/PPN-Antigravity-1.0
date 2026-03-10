@@ -9,11 +9,11 @@ import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import { WorkflowActionCard } from './WorkflowCards';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import { WellnessFormId } from './WellnessFormRouter';
-import { LiveSessionTimeline } from './LiveSessionTimeline';
+import { LiveSessionTimeline, QUICK_ACTIONS } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
-import { createSessionVital, createTimelineEvent } from '../../services/clinicalLog';
+import { createSessionVital, createTimelineEvent, endDosingSession } from '../../services/clinicalLog';
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -167,18 +167,7 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
         existing.push({ timestamp: new Date().toISOString(), feeling: id });
         localStorage.setItem(key, JSON.stringify(existing));
 
-        // BUG-529-06: persist companion tap to log_session_timeline_events
-        // UUID guard: only call when sessionId is a real UUID, not 'demo' or numeric legacy ID
-        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        if (sessionId && UUID_RE.test(sessionId)) {
-            createTimelineEvent({
-                session_id: sessionId,
-                event_timestamp: new Date().toISOString(),
-                event_type: 'patient_observation',
-                performed_by: undefined, // patient-initiated — no practitioner UUID
-                metadata: { event_description: `Patient reported: ${feeling}` },
-            }).catch(e => console.warn('[BUG-529-06] Companion tap timeline write failed:', e));
-        }
+        // Timeline: patient_observation has no ref_flow_event_types code; skip DB write.
 
         if (litTimer.current) clearTimeout(litTimer.current);
         setLitId(id);
@@ -261,6 +250,20 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // WO-528: declare eventLog + getElapsedSec BEFORE any useEffect that references them
     const [eventLog, setEventLog] = useState<SessionEventPin[]>([]);
 
+    // WO-576 Sub-task E: chart series visibility state — lifted here so LiveSessionTimeline
+    // receives the same state and filters its ledger entries to match the chart.
+    const [chartVisible, setChartVisible] = useState<{ hr: boolean; bp: boolean; temp: boolean; events: boolean }>({
+        hr: true, bp: true, temp: true, events: true,
+    });
+
+    // Derive sessionStartMs from localStorage for T+ timer in LiveSessionTimeline
+    const sessionStartMs = useMemo(() => {
+        try {
+            const raw = localStorage.getItem(SESSION_START_KEY);
+            return raw ? Number(raw) : undefined;
+        } catch { return undefined; }
+    }, [SESSION_START_KEY]);
+
     // Helper: returns elapsed seconds since session start. Safe to call at any time.
     const getElapsedSec = useCallback((): number => {
         try {
@@ -307,12 +310,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     const eM = Math.floor((elSec % 3600) / 60).toString().padStart(2, '0');
                     const eS = Math.floor(elSec % 60).toString().padStart(2, '0');
                     const elStr = `${eH}:${eM}:${eS}`;
-                    createTimelineEvent({
-                        session_id: sid,
-                        event_timestamp: new Date().toISOString(),
-                        event_type: 'clinical_decision',
-                        metadata: { event_description: `Additional Dose administered at T+${elStr}` },
-                    }).catch(e => console.warn('[WO-559] Additional Dose timeline write failed:', e));
+                    // Timeline: no ref_flow_event_types code for additional_dose; skip DB write.
                 }
             }
         };
@@ -399,7 +397,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (mode !== 'live') return;
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
             switch (e.key.toLowerCase()) {
-                case 'u': setShowUpdatePanel(p => !p); break;
+                case 'u': setActivePanel(p => p === 'update' ? 'graph' : 'update'); break;
                 case 'v': {
                     // Stamp a vital_check pin on the chart when practitioner opens vitals form
                     setEventLog(prev => [...prev, {
@@ -411,17 +409,24 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     // SAVS GAP #2 fix: persist the vitals shortcut activation to the DB ledger
                     const _sidV = journey.sessionId ?? journey.session?.sessionId;
                     if (_sidV && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidV)) {
-                        createTimelineEvent({
-                            session_id: _sidV,
-                            event_timestamp: new Date().toISOString(),
-                            event_type: 'vital_check',
-                            metadata: { event_description: `Vitals check initiated via keyboard shortcut at T+${elapsedTime}` },
-                        }).catch(err => console.warn('[SAVS-GAP2] Vitals key DB write failed:', err));
+                        // Timeline: no ref_flow_event_types code for vital_check; skip DB write.
                     }
                     onOpenForm('session-vitals');
                     break;
                 }
-                case 'a': onOpenForm('safety-and-adverse-event'); break;
+                case 'a': {
+                    // WO-535-B: Stamp adverse event pin on the chart at key-press time,
+                    // matching the button path (lines ~1367-1382). Without this, Quick Key A
+                    // opened the form but never emitted a graph event pin or ledger entry.
+                    setEventLog(prev => [...prev, {
+                        id: `adverse-key-${Date.now()}`,
+                        elapsedSec: getElapsedSec(),
+                        type: 'safety-and-adverse-event',
+                        label: 'Adverse Event',
+                    } satisfies SessionEventPin]);
+                    onOpenForm('safety-and-adverse-event');
+                    break;
+                }
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -493,8 +498,9 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // Live Vitals (mock)
     const [liveVitals] = useState({ hr: 82, bp: '125/82', spo2: 98, hrv: 45 });
 
-    // ── Session Update Panel state ────────────────────────────────────────
-    const [showUpdatePanel, setShowUpdatePanel] = useState(false);
+    // ── Active cockpit panel: only one of graph / timeline / update is open at once ──
+    // Default: graph open (State A)
+    const [activePanel, setActivePanel] = useState<'graph' | 'timeline' | 'update'>('graph');
     const [updateAffect, setUpdateAffect] = useState('');
     const [updateResponsiveness, setUpdateResponsiveness] = useState('');
     const [updateComfort, setUpdateComfort] = useState('');
@@ -587,27 +593,18 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             } satisfies SessionEventPin,
         ]);
 
-        // WO-547: Persist session update event pin to log_session_timeline_events
-        // Guard: only write when journey.sessionId is a real UUID (not 'demo' / legacy numeric IDs)
         const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         const resolvedSessionId = journey.sessionId ?? journey.session?.sessionId;
-        if (resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
-            try {
-                await createTimelineEvent({
-                    session_id: resolvedSessionId,
-                    event_timestamp: new Date().toISOString(),
-                    event_type: 'clinical_decision',
-                    performed_by: undefined,
-                    metadata: {
-                        event_description: updateAffect
-                            ? `Session Update (T+${elapsedTime}): ${updateAffect}${updateResponsiveness ? ` · ${updateResponsiveness}` : ''
-                            }${updateComfort ? ` · ${updateComfort}` : ''}`
-                            : `Session Update at T+${elapsedTime}`,
-                    },
-                });
-            } catch (err) {
-                console.warn('[WO-547] Session Update, timeline event write failed (non-critical):', err);
-            }
+
+        // WO-576 Sub-task B: persist free-text note from Session Update pop-out
+        // to the Live Session Timeline via createTimelineEvent with 'general_note'.
+        if (updateNote.trim() && resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
+            createTimelineEvent({
+                session_id: resolvedSessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type_code: 'general_note' as any, // cast: DB lookup handles type resolution
+                metadata: { event_description: updateNote.trim() },
+            }).catch(err => console.warn('[WO-576] Session Update note timeline write failed:', err));
         }
 
         // Emit vitals to log_session_vitals table
@@ -628,19 +625,19 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         // Reset fields
         setUpdateAffect(''); setUpdateResponsiveness(''); setUpdateComfort('');
         setUpdateNote(''); setUpdateHR(''); setUpdateBPSys(''); setUpdateBPDia('');
-        setShowUpdatePanel(false);
+        setActivePanel('graph'); // Close update panel after save
         addToast({ title: 'Session Update Saved', message: `Logged at T+${elapsedTime}`, type: 'success' });
     };
 
     // WO-559 Issue B: Pre-populate vitals each time the update panel is opened.
-    // Runs only when showUpdatePanel transitions from false → true.
-    const prevShowUpdatePanel = useRef(false);
+    // Runs only when activePanel transitions TO 'update'.
+    const prevActivePanel = useRef<'graph' | 'timeline' | 'update'>('graph');
     useEffect(() => {
-        if (showUpdatePanel && !prevShowUpdatePanel.current) {
+        if (activePanel === 'update' && prevActivePanel.current !== 'update') {
             prefillVitalsFromLastEntry(updateLog);
         }
-        prevShowUpdatePanel.current = showUpdatePanel;
-    }, [showUpdatePanel, updateLog, prefillVitalsFromLastEntry]);
+        prevActivePanel.current = activePanel;
+    }, [activePanel, updateLog, prefillVitalsFromLastEntry]);
 
     // ── Contraindication checker, MUST stay above early returns (Rules of Hooks) ──
     // GUARD: Only run after the practitioner has actually completed the Dosing Protocol form.
@@ -753,11 +750,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     data={vitalsChartData}
                                     events={eventLog}
                                     sessionDurationSec={sessionDurationSec}
+                                    onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
                                 />
                             )}
                             <LiveSessionTimeline
                                 sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                                 active={false}
+                                visible={chartVisible}
+                                sessionStartMs={sessionStartMs}
                             />
                         </div>
                     )}
@@ -843,7 +843,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     await createTimelineEvent({
                                         session_id: _sidC,
                                         event_timestamp: new Date().toISOString(),
-                                        event_type: 'clinical_decision',
+                                        event_type_code: 'session_completed',
                                         metadata: {
                                             event_description: `Session submitted and closed. Post-session assessment scores — MEQ: ${assessmentScores?.meq ?? '—'}, EDI: ${assessmentScores?.edi ?? '—'}, CEQ: ${assessmentScores?.ceq ?? '—'}.`,
                                         },
@@ -953,150 +953,166 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     </div>
                 </div>
 
-                {/* ── Step Cards (3-up, matching Phase 1 anatomy exactly) ──────────── */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {PHASE2_STEPS.map((step, index) => {
-                        const isStart = step.id === '__start__';
-                        const isCurrent = !isLive && index === currentStepIdx;
-
-                        return (
+                {/* ── Step Cards: full cards pre-session, compact pills when live ─── */}
+                {isLive ? (
+                    /* Collapsed pill row — visible glanceable status when timer is running */
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {PHASE2_STEPS.map((step, index) => (
                             <div
                                 key={step.id}
-                                className={[
-                                    'relative flex flex-col rounded-xl transition-all duration-300 overflow-hidden',
-                                    step.isComplete
-                                        ? 'bg-amber-900/20'
-                                        : isCurrent
-                                            ? 'bg-amber-950/60 shadow-lg shadow-amber-950/60'
-                                            : 'bg-slate-800/20 hover:bg-slate-800/35',
-                                ].join(' ')}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold ${step.isComplete
+                                    ? 'bg-amber-900/30 border-amber-600/40 text-amber-300'
+                                    : 'bg-slate-800/40 border-slate-700/40 text-slate-500'
+                                    }`}
                             >
-                                {/* Top accent stripe */}
-                                <div className={[
-                                    'h-0.5 w-full',
-                                    step.isComplete ? 'bg-amber-600/60' : isCurrent ? 'bg-amber-400' : 'bg-slate-700/40',
-                                ].join(' ')} aria-hidden="true" />
+                                {step.isComplete
+                                    ? <CheckCircle2 className="w-3 h-3 text-amber-400" aria-hidden="true" />
+                                    : <span className="material-symbols-outlined text-[12px]">{step.icon}</span>}
+                                <span>Step {index + 1}</span>
+                                <span className="text-[10px] opacity-60 hidden sm:inline">{step.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {PHASE2_STEPS.map((step, index) => {
+                            const isStart = step.id === '__start__';
+                            const isCurrent = !isLive && index === currentStepIdx;
 
-                                <div className="flex flex-col flex-1 p-4 gap-3">
-                                    {/* Step label + status badge */}
-                                    <div className="flex items-center justify-between gap-1">
-                                        <span className={`font-['Manrope',sans-serif] text-xl md:text-2xl font-extrabold tracking-tight leading-none ${step.isComplete ? 'text-amber-300/80' : isCurrent ? 'text-amber-200/90' : 'text-slate-400/80'}`}>
-                                            Step {index + 1}
-                                        </span>
-                                        {step.isComplete ? (
-                                            <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" aria-label="Complete" />
-                                        ) : (
-                                            <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-400">
-                                                {isStart ? 'Gate' : 'Req'}
-                                            </span>
-                                        )}
-                                    </div>
+                            return (
+                                <div
+                                    key={step.id}
+                                    className={[
+                                        'relative flex flex-col rounded-xl transition-all duration-300 overflow-hidden',
+                                        step.isComplete
+                                            ? 'bg-amber-900/20'
+                                            : isCurrent
+                                                ? 'bg-amber-950/60 shadow-lg shadow-amber-950/60'
+                                                : 'bg-slate-800/20 hover:bg-slate-800/35',
+                                    ].join(' ')}
+                                >
+                                    {/* Top accent stripe */}
+                                    <div className={[
+                                        'h-0.5 w-full',
+                                        step.isComplete ? 'bg-amber-600/60' : isCurrent ? 'bg-amber-400' : 'bg-slate-700/40',
+                                    ].join(' ')} aria-hidden="true" />
 
-                                    {/* Icon + title */}
-                                    <div className="flex items-start gap-2.5">
-                                        <div className={[
-                                            'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
-                                            step.isComplete ? 'bg-amber-500/15' : isCurrent ? 'bg-amber-500/25' : 'bg-slate-700/30',
-                                        ].join(' ')}>
-                                            <span className={`material-symbols-outlined text-[18px] ${step.isComplete ? 'text-amber-400' : isCurrent ? 'text-amber-300' : 'text-slate-500'}`}>
-                                                {step.icon}
+                                    <div className="flex flex-col flex-1 p-4 gap-3">
+                                        {/* Step label + decorative icon badge (top-right) */}
+                                        <div className="flex items-center justify-between gap-1">
+                                            <span className={`font-['Manrope',sans-serif] text-xl font-extrabold tracking-tight leading-none ${step.isComplete ? 'text-amber-300/80' : isCurrent ? 'text-amber-200/90' : 'text-slate-400/80'}`}>
+                                                Step {index + 1}
                                             </span>
+                                            {step.isComplete ? (
+                                                <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" aria-label="Complete" />
+                                            ) : (
+                                                <div className={[
+                                                    'w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0',
+                                                    isCurrent ? 'bg-amber-500/25' : 'bg-slate-700/30',
+                                                ].join(' ')} aria-hidden="true">
+                                                    <span className={`material-symbols-outlined text-[16px] ${isCurrent ? 'text-amber-300' : 'text-slate-500'}`}>
+                                                        {step.icon}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
-                                        <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${step.isComplete ? 'text-amber-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
+
+                                        {/* Card title — left-justified, larger */}
+                                        <h4 className={`text-xl font-black leading-snug ${step.isComplete ? 'text-amber-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
                                             {step.label}
                                         </h4>
-                                    </div>
 
-                                    {/* CTA area */}
-                                    <div className="mt-auto pt-2">
-                                        {step.isComplete ? (
-                                            <div className="flex flex-col items-center gap-1 mt-2">
-                                                {/* Dosage HUD, only for dosing-protocol step */}
-                                                {step.id === 'dosing-protocol' && (() => {
-                                                    try {
-                                                        const raw = localStorage.getItem('ppn_dosing_protocol');
-                                                        if (!raw) return null;
-                                                        const p = JSON.parse(raw);
-                                                        const name = p.substance_name || p.substance;
-                                                        const dose = p.dosage_amount;
-                                                        const unit = p.dosage_unit || 'mg';
-                                                        const route = p.route_of_administration;
-                                                        if (!name) return null;
-                                                        return (
-                                                            <div className="w-full mb-2 px-3 py-2 bg-amber-950/40 border border-amber-700/30 rounded-xl text-center">
-                                                                <p className="text-base font-black text-amber-200 uppercase tracking-widest leading-tight">{name}</p>
-                                                                <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-amber-300/80">
-                                                                    {dose && <span>{dose}{unit}</span>}
-                                                                    {dose && route && <span className="text-amber-700">·</span>}
-                                                                    {route && <span>{route}</span>}
+                                        {/* CTA area */}
+                                        <div className="mt-auto pt-2">
+                                            {step.isComplete ? (
+                                                <div className="flex flex-col items-center gap-1 mt-2">
+                                                    {/* Dosage HUD, only for dosing-protocol step */}
+                                                    {step.id === 'dosing-protocol' && (() => {
+                                                        try {
+                                                            const raw = localStorage.getItem('ppn_dosing_protocol');
+                                                            if (!raw) return null;
+                                                            const p = JSON.parse(raw);
+                                                            const name = p.substance_name || p.substance;
+                                                            const dose = p.dosage_amount;
+                                                            const unit = p.dosage_unit || 'mg';
+                                                            const route = p.route_of_administration;
+                                                            if (!name) return null;
+                                                            return (
+                                                                <div className="w-full mb-2 px-3 py-2 bg-amber-950/40 border border-amber-700/30 rounded-xl text-center">
+                                                                    <p className="text-base font-black text-amber-200 uppercase tracking-widest leading-tight">{name}</p>
+                                                                    <div className="flex items-center justify-center gap-3 mt-1 text-sm font-bold text-amber-300/80">
+                                                                        {dose && <span>{dose}{unit}</span>}
+                                                                        {dose && route && <span className="text-amber-700">·</span>}
+                                                                        {route && <span>{route}</span>}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        );
-                                                    } catch { return null; }
-                                                })()}
-                                                <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-amber-400">
-                                                    <CheckCircle2 className="w-4 h-4" /> COMPLETED
-                                                </span>
-                                                {!isStart && (
-                                                    <button
-                                                        onClick={() => onOpenForm(step.id)}
-                                                        className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-amber-300 transition-all"
-                                                        aria-label={`Amend ${step.label}`}
-                                                    >
-                                                        <Edit3 className="w-3.5 h-3.5" aria-hidden="true" /> Amend
-                                                    </button>
-                                                )}
-                                            </div>
-                                        ) : isStart ? (
-                                            /* Start Session CTA */
-                                            <button
-                                                onClick={canStartSession ? () => {
-                                                    setAndPersistMode('live');
-                                                    // SAVS GAP #1 fix: persist session start to DB ledger
-                                                    const _sidS = journey.sessionId ?? journey.session?.sessionId;
-                                                    if (_sidS && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidS)) {
-                                                        createTimelineEvent({
-                                                            session_id: _sidS,
-                                                            event_timestamp: new Date().toISOString(),
-                                                            event_type: 'clinical_decision',
-                                                            metadata: { event_description: 'Dosing session timer started by practitioner.' },
-                                                        }).catch(err => console.warn('[SAVS-GAP1] Session start DB write failed:', err));
-                                                    }
-                                                } : undefined}
-                                                disabled={!canStartSession}
-                                                className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
-                                                    ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-950/50'
-                                                    : 'bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/50'
-                                                    }`}
-                                                aria-label="Start dosing session"
-                                            >
-                                                {canStartSession ? (
-                                                    <><Play className="w-4 h-4 fill-white" aria-hidden="true" /> Start</>
-                                                ) : (
-                                                    <><Lock className="w-4 h-4" aria-hidden="true" /> Locked</>
-                                                )}
-                                            </button>
-                                        ) : isCurrent ? (
-                                            <button
-                                                onClick={() => onOpenForm(step.id)}
-                                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600/40 hover:bg-amber-600/60 text-amber-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-amber-950/50"
-                                            >
-                                                Open
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => onOpenForm(step.id)}
-                                                className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
-                                            >
-                                                Open
-                                            </button>
-                                        )}
+                                                            );
+                                                        } catch { return null; }
+                                                    })()}
+                                                    <span className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-amber-400">
+                                                        <CheckCircle2 className="w-4 h-4" /> COMPLETED
+                                                    </span>
+                                                    {!isStart && (
+                                                        <button
+                                                            onClick={() => onOpenForm(step.id)}
+                                                            className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-amber-300 transition-all"
+                                                            aria-label={`Amend ${step.label}`}
+                                                        >
+                                                            <Edit3 className="w-3.5 h-3.5" aria-hidden="true" /> Amend
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ) : isStart ? (
+                                                /* Start Session CTA */
+                                                <button
+                                                    onClick={canStartSession ? () => {
+                                                        setAndPersistMode('live');
+                                                        // SAVS GAP #1 fix: persist session start to DB ledger
+                                                        const _sidS = journey.sessionId ?? journey.session?.sessionId;
+                                                        if (_sidS && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidS)) {
+                                                            createTimelineEvent({
+                                                                session_id: _sidS,
+                                                                event_timestamp: new Date().toISOString(),
+                                                                event_type_code: 'intake_completed',
+                                                                metadata: { event_description: 'Dosing session timer started by practitioner.' },
+                                                            }).catch(err => console.warn('[SAVS-GAP1] Session start DB write failed:', err));
+                                                        }
+                                                    } : undefined}
+                                                    disabled={!canStartSession}
+                                                    className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 font-black text-sm rounded-xl transition-all active:scale-95 ${canStartSession
+                                                        ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-950/50'
+                                                        : 'bg-slate-800/30 text-slate-600 cursor-not-allowed border border-slate-700/50'
+                                                        }`}
+                                                    aria-label="Start dosing session"
+                                                >
+                                                    {canStartSession ? (
+                                                        <><Play className="w-4 h-4 fill-white" aria-hidden="true" /> Start</>
+                                                    ) : (
+                                                        <><Lock className="w-4 h-4" aria-hidden="true" /> Locked</>
+                                                    )}
+                                                </button>
+                                            ) : isCurrent ? (
+                                                <button
+                                                    onClick={() => onOpenForm(step.id)}
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600/40 hover:bg-amber-600/60 text-amber-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-amber-950/50"
+                                                >
+                                                    Open
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => onOpenForm(step.id)}
+                                                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
+                                                >
+                                                    Open
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                            );
+                        })}
+                    </div>
+                )} {/* end isLive ? pill row : full cards */}
 
                 {/* ── Contraindication Alert ─────────────────────────────────────── */}
                 {contraindicationResults && contraindicationResults.absoluteFlags.length > 0 ? (
@@ -1314,50 +1330,270 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             })()}
                         </div>
 
-                        {/* ── Right: Companion + End Session buttons (live only) ── */}
-                        {isLive && (
-                            <div className="flex items-center gap-3 ml-auto">
-                                <button
-                                    onClick={() => setShowCompanion(true)}
-                                    className="px-4 py-2.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 font-semibold rounded-xl border border-indigo-500/30 transition-colors uppercase tracking-widest text-xs flex items-center gap-1.5"
-                                    aria-label="Open patient companion view"
-                                >
-                                    <Sparkles className="w-3.5 h-3.5" />
-                                    Companion
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        try {
-                                            // SAVS GAP #3 fix: persist session end timestamp to DB ledger
-                                            const _sidE = journey.sessionId ?? journey.session?.sessionId;
-                                            if (_sidE && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidE)) {
-                                                createTimelineEvent({
-                                                    session_id: _sidE,
-                                                    event_timestamp: new Date().toISOString(),
-                                                    event_type: 'clinical_decision',
-                                                    metadata: { event_description: `Session timer stopped by practitioner at T+${elapsedTime}.` },
-                                                }).catch(err => console.warn('[SAVS-GAP3] Session end DB write failed:', err));
-                                            }
-                                            setAndPersistMode('post');
-                                        } catch (e) {
-                                            console.error('[TreatmentPhase] mode transition failed, falling back to phase complete', e);
-                                            onCompletePhase();
-                                        }
-                                    }}
-                                    className="px-5 py-2.5 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2 group"
-                                >
-                                    End Session
-                                    <ArrowRight className="w-3.5 h-3.5 opacity-50 group-hover:translate-x-0.5 transition-transform" />
-                                </button>
-                            </div>
-                        )}
                     </div>
                 </div>
 
+                {/* ══ THREE-PANEL COCKPIT (State A / B / C) ══════════════════════════ */}
+                {isLive && (
+                    <div className="space-y-1">
+
+                        {/* ── Panel A: Session Vitals Graph ── */}
+                        <div className="rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-900/60">
+                            {/* Header — always visible, click to toggle */}
+                            <button
+                                onClick={() => setActivePanel(p => p === 'graph' ? 'graph' : 'graph')}
+                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/30 transition-colors"
+                                aria-expanded={activePanel === 'graph'}
+                                aria-controls="cockpit-graph"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Activity className="w-4 h-4 text-indigo-400" aria-hidden="true" />
+                                    <span className="text-sm font-bold text-[#A8B5D1] uppercase tracking-widest">Session Vitals Trend</span>
+                                    {activePanel !== 'graph' && (
+                                        <span className="text-[10px] text-slate-600 font-semibold">— collapsed</span>
+                                    )}
+                                </div>
+                                <ChevronDown
+                                    className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${activePanel === 'graph' ? '' : '-rotate-90'}`}
+                                    aria-hidden="true"
+                                />
+                            </button>
+                            {/* Content */}
+                            {activePanel === 'graph' && (
+                                <div id="cockpit-graph" className="border-t border-slate-700/40">
+                                    {config.enabledFeatures.includes('session-vitals') ? (
+                                        <SessionVitalsTrendChart
+                                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                            substance={journey.session?.substance}
+                                            onThresholdViolation={(vital, value) => {
+                                                addToast({
+                                                    title: `[ALERT] ${vital} threshold exceeded`,
+                                                    message: `${vital}: ${value}, review immediately`,
+                                                    type: 'error',
+                                                    persistent: true
+                                                });
+                                            }}
+                                            data={vitalsChartData}
+                                            events={eventLog}
+                                            sessionDurationSec={sessionDurationSec}
+                                            onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
+                                        />
+                                    ) : (
+                                        <p className="text-center text-slate-600 text-sm py-6">Vitals chart not enabled.</p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* ── Panel B: Live Session Timeline ── */}
+                        <div className="rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-900/60">
+                            <div
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => setActivePanel(p => p === 'timeline' ? 'graph' : 'timeline')}
+                                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActivePanel(p => p === 'timeline' ? 'graph' : 'timeline'); } }}
+                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/30 transition-colors cursor-pointer select-none"
+                                aria-expanded={activePanel === 'timeline'}
+                                aria-controls="cockpit-timeline"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-indigo-400" aria-hidden="true" />
+                                    <span className="text-sm font-bold text-[#A8B5D1] uppercase tracking-widest">Live Session Timeline</span>
+                                    <span className="relative flex h-2 w-2" aria-hidden="true">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {/* Filter toggles — always visible in header for quick access */}
+                                    {(['hr', 'bp', 'temp', 'events'] as const).map(key => (
+                                        <button
+                                            key={key}
+                                            onClick={e => { e.stopPropagation(); setChartVisible(prev => ({ ...prev, [key]: !prev[key] })); }}
+                                            className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider transition-colors border ${chartVisible[key]
+                                                ? key === 'hr' ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
+                                                    : key === 'bp' ? 'bg-blue-500/20 border-blue-500/40 text-blue-300'
+                                                        : key === 'temp' ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                                                            : 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300'
+                                                : 'bg-slate-800/40 border-slate-700/40 text-slate-600 line-through'
+                                                }`}
+                                            aria-pressed={chartVisible[key]}
+                                            aria-label={`Toggle ${key} entries`}
+                                        >{key}</button>
+                                    ))}
+                                    <ChevronDown
+                                        className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${activePanel === 'timeline' ? '' : '-rotate-90'}`}
+                                        aria-hidden="true"
+                                    />
+                                </div>
+                            </div>
+                            {activePanel === 'timeline' && (
+                                <div id="cockpit-timeline" className="border-t border-slate-700/40">
+                                    <LiveSessionTimeline
+                                        sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
+                                        active={true}
+                                        visible={chartVisible}
+                                        sessionStartMs={sessionStartMs}
+                                        hideHeader={true}
+                                        hideActions={true}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* ── Panel C: Session Update ── */}
+                        <div className="rounded-2xl overflow-hidden border border-emerald-900/40 bg-slate-900/60">
+                            <button
+                                onClick={() => setActivePanel(p => p === 'update' ? 'graph' : 'update')}
+                                className="w-full flex items-center justify-between px-4 py-3 hover:bg-emerald-950/20 transition-colors"
+                                aria-expanded={activePanel === 'update'}
+                                aria-controls="cockpit-update"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <ClipboardList className="w-4 h-4 text-emerald-400" aria-hidden="true" />
+                                    <span className="text-sm font-bold text-emerald-300/80 uppercase tracking-widest">Session Update</span>
+                                    {activePanel === 'update' && (
+                                        <span className="text-[10px] text-slate-500">T+{elapsedTime} · {new Date().toLocaleTimeString()}</span>
+                                    )}
+                                </div>
+                                <ChevronDown
+                                    className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${activePanel === 'update' ? '' : '-rotate-90'}`}
+                                    aria-hidden="true"
+                                />
+                            </button>
+                            {activePanel === 'update' && (
+                                <div id="cockpit-update" className="border-t border-emerald-900/30 p-4 space-y-4 animate-in slide-in-from-top-1 duration-150">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Patient Affect</label>
+                                            <select value={updateAffect} onChange={e => setUpdateAffect(e.target.value)}
+                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
+                                                <option value="">— Select —</option>
+                                                <option>Calm</option><option>Anxious</option><option>Euphoric</option>
+                                                <option>Dissociative</option><option>Tearful</option><option>Processing (internal)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Responsiveness</label>
+                                            <select value={updateResponsiveness} onChange={e => setUpdateResponsiveness(e.target.value)}
+                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
+                                                <option value="">— Select —</option>
+                                                <option>Fully responsive</option><option>Partially responsive</option>
+                                                <option>Eyes closed, calm</option><option>Eyes closed, distressed</option>
+                                                <option>Unresponsive (monitor)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Physical Comfort</label>
+                                            <select value={updateComfort} onChange={e => setUpdateComfort(e.target.value)}
+                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
+                                                <option value="">— Select —</option>
+                                                <option>Normal, no complaints</option><option>Restless</option>
+                                                <option>Nausea reported</option><option>Requesting blanket</option>
+                                                <option>Position adjusted</option><option>Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm), optional</label>
+                                            <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
+                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic, optional</label>
+                                            <input type="number" placeholder="e.g. 120" value={updateBPSys} onChange={e => setUpdateBPSys(e.target.value)}
+                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic, optional</label>
+                                            <input type="number" placeholder="e.g. 80" value={updateBPDia} onChange={e => setUpdateBPDia(e.target.value)}
+                                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note, optional</label>
+                                        <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
+                                            className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
+                                        <p className="text-xs text-slate-600 mt-1 italic">Affect, responsiveness, and vitals are persisted to the clinical record.</p>
+                                    </div>
+                                    <button onClick={handleSaveUpdate}
+                                        className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
+                                        <Save className="w-4 h-4" /> Save Update
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Chips row: P.Spoke · Music · Decision + Companion + End Session */}
+                        <div className="flex items-center gap-2 flex-wrap pt-1">
+                            {QUICK_ACTIONS.map(action => {
+                                const IconComp = action.icon;
+                                return (
+                                    <button
+                                        key={action.type}
+                                        onClick={() => {
+                                            const sid = journey.sessionId ?? journey.session?.sessionId;
+                                            if (sid) {
+                                                createTimelineEvent({
+                                                    session_id: sid,
+                                                    event_timestamp: new Date().toISOString(),
+                                                    event_type_code: action.type as import('../../services/refFlowEventTypes').FlowEventTypeCode,
+                                                    metadata: { event_description: action.desc },
+                                                }).catch(err => console.warn('[chips] write failed:', err));
+                                            }
+                                        }}
+                                        aria-label={`Log: ${action.label}`}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold min-h-[36px] transition-colors active:scale-95 ${action.color}`}
+                                    >
+                                        <IconComp className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                                        {action.label}
+                                    </button>
+                                );
+                            })}
+                            <div className="flex-1" />
+                            <button
+                                onClick={() => setShowCompanion(true)}
+                                className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 font-semibold rounded-xl border border-indigo-500/30 transition-colors uppercase tracking-widest text-xs flex items-center gap-1.5"
+                                aria-label="Open patient companion view"
+                            >
+                                <Sparkles className="w-3.5 h-3.5" />
+                                Companion
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const _sidE = journey.sessionId ?? journey.session?.sessionId;
+                                        if (_sidE && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidE)) {
+                                            createTimelineEvent({
+                                                session_id: _sidE,
+                                                event_timestamp: new Date().toISOString(),
+                                                event_type_code: 'session_completed',
+                                                metadata: { event_description: `Dosing session ended by practitioner at T+${elapsedTime}.` },
+                                            }).catch(err => console.warn('[SAVS-GAP3] Session end DB write failed:', err));
+                                            endDosingSession(_sidE).catch(err =>
+                                                console.warn('[WO-577] endDosingSession failed (non-fatal):', err)
+                                            );
+                                        }
+                                        setAndPersistMode('post');
+                                    } catch (e) {
+                                        console.error('[TreatmentPhase] mode transition failed:', e);
+                                        onCompletePhase();
+                                    }
+                                }}
+                                className="px-5 py-2 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2 group"
+                            >
+                                End Dosing Session
+                                <ArrowRight className="w-3.5 h-3.5 opacity-50 group-hover:translate-x-0.5 transition-transform" />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 {/* ── Action Buttons ────────────────────────────────────────────── */}
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={isLive ? () => setShowUpdatePanel(p => !p) : undefined} disabled={!isLive}
-                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? (showUpdatePanel ? 'bg-emerald-600/30 border-emerald-400/60 text-emerald-100' : 'bg-gradient-to-br from-emerald-900/60 to-teal-900/40 hover:from-emerald-800/70 border-emerald-500/40 hover:border-emerald-400/60 text-emerald-100') : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'} shadow-lg`}
+                    <button onClick={isLive ? () => setActivePanel(p => p === 'update' ? 'graph' : 'update') : undefined} disabled={!isLive}
+                        className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? (activePanel === 'update' ? 'bg-emerald-600/30 border-emerald-400/60 text-emerald-100' : 'bg-gradient-to-br from-emerald-900/60 to-teal-900/40 hover:from-emerald-800/70 border-emerald-500/40 hover:border-emerald-400/60 text-emerald-100') : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'} shadow-lg`}
                         aria-label="Log session update">
                         <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />
                         <span>Session Update</span>
@@ -1387,12 +1623,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         const UUID_RE2 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
                         const sid = journey.sessionId ?? journey.session?.sessionId;
                         if (sid && UUID_RE2.test(sid)) {
-                            createTimelineEvent({
-                                session_id: sid,
-                                event_timestamp: new Date().toISOString(),
-                                event_type: 'safety_event',
-                                metadata: { event_description: `Rescue Protocol initiated at T+${elapsedTime}` },
-                            }).catch(e => console.warn('[WO-547] Rescue timeline write failed:', e));
+                            // Timeline: no ref_flow_event_types code for rescue; skip DB write.
                         }
                         onOpenForm('rescue-protocol');
                     } : undefined} disabled={!isLive}
@@ -1414,12 +1645,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         const UUID_RE3 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
                         const sid2 = journey.sessionId ?? journey.session?.sessionId;
                         if (sid2 && UUID_RE3.test(sid2)) {
-                            createTimelineEvent({
-                                session_id: sid2,
-                                event_timestamp: new Date().toISOString(),
-                                event_type: 'safety_event',
-                                metadata: { event_description: `Adverse Event logged at T+${elapsedTime}` },
-                            }).catch(e => console.warn('[WO-547] Adverse Event timeline write failed:', e));
+                            // Timeline: no ref_flow_event_types code for safety_event; skip DB write.
                         }
                         onOpenForm('safety-and-adverse-event');
                     } : undefined} disabled={!isLive}
@@ -1431,135 +1657,9 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 </div>
 
                 {/* ── Session Update Panel ───────────────────────────────────────────── */}
-                {showUpdatePanel && isLive && (
-                    <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-black text-emerald-300 uppercase tracking-widest">Session Update</p>
-                                <p className="text-xs text-slate-500 mt-0.5">T+{elapsedTime} · {new Date().toLocaleTimeString()}</p>
-                            </div>
-                            <button onClick={() => setShowUpdatePanel(false)} className="text-slate-500 hover:text-slate-300 transition-colors p-1"><X className="w-4 h-4" /></button>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Patient Affect</label>
-                                <select value={updateAffect} onChange={e => setUpdateAffect(e.target.value)}
-                                    className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
-                                    <option value="">— Select —</option>
-                                    <option>Calm</option><option>Anxious</option><option>Euphoric</option>
-                                    <option>Dissociative</option><option>Tearful</option><option>Processing (internal)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Responsiveness</label>
-                                <select value={updateResponsiveness} onChange={e => setUpdateResponsiveness(e.target.value)}
-                                    className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
-                                    <option value="">— Select —</option>
-                                    <option>Fully responsive</option><option>Partially responsive</option>
-                                    <option>Eyes closed, calm</option><option>Eyes closed, distressed</option>
-                                    <option>Unresponsive (monitor)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Physical Comfort</label>
-                                <select value={updateComfort} onChange={e => setUpdateComfort(e.target.value)}
-                                    className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
-                                    <option value="">— Select —</option>
-                                    <option>Normal, no complaints</option><option>Restless</option>
-                                    <option>Nausea reported</option><option>Requesting blanket</option>
-                                    <option>Position adjusted</option><option>Other</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-3">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm), optional</label>
-                                <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
-                                    className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic, optional</label>
-                                <input type="number" placeholder="e.g. 120" value={updateBPSys} onChange={e => setUpdateBPSys(e.target.value)}
-                                    className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
-                            </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic, optional</label>
-                                <input type="number" placeholder="e.g. 80" value={updateBPDia} onChange={e => setUpdateBPDia(e.target.value)}
-                                    className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note, optional</label>
-                            <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
-                                className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
-                            <p className="text-xs text-slate-600 mt-1 italic">Note is stored locally for session reference. Affect, responsiveness, and vitals are persisted to the clinical record.</p>
-                        </div>
-                        <button onClick={handleSaveUpdate}
-                            className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
-                            <Save className="w-4 h-4" /> Save Update
-                        </button>
-                    </div>
-                )}
+                {/* Session Update panel moved to three-panel accordion above */}
 
-                {/* ── Cockpit Real Estate: always fixed between buttons and update log ── */}
-                {isLive && (
-                    <div className="space-y-6">
-                        {/* WO-548 Defect #11, Known Behavior:
-                            When all event type toggles are on, session update markers can overlap vital sign
-                            data points due to data density. This is expected at high-frequency logging rates.
-                            If the graph library supports z-index series layering, vital signs should surface
-                            above session update markers. Enhancement deferred, not a blocker. */}
-                        {config.enabledFeatures.includes('session-vitals') && (
-                            <SessionVitalsTrendChart
-                                sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                                substance={journey.session?.substance}
-                                onThresholdViolation={(vital, value) => {
-                                    addToast({
-                                        title: `[ALERT] ${vital} threshold exceeded`,
-                                        message: `${vital}: ${value}, review immediately`,
-                                        type: 'error',
-                                        persistent: true
-                                    });
-                                }}
-                                data={vitalsChartData}
-                                events={eventLog}
-                                sessionDurationSec={sessionDurationSec}
-                            />
-                        )}
-                        <LiveSessionTimeline
-                            sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
-                            active={true}
-                        />
-                    </div>
-                )}
-
-                {/* ── Update Log, grows below the fixed chart ─────────────────────── */}
-                {updateLog.length > 0 && (
-                    <div className="space-y-2">
-                        <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 px-1">Session Updates ({updateLog.length})</p>
-                        {updateLog.map((entry, i) => (
-                            <div key={i} className="flex gap-3 p-3 bg-slate-800/40 border border-slate-700/40 rounded-xl text-sm">
-                                <div className="flex-shrink-0 text-right min-w-[56px]">
-                                    <p className="font-mono text-xs font-bold text-emerald-400">T+{entry.elapsed}</p>
-                                    <p className="text-[10px] text-slate-600">{entry.timestamp}</p>
-                                </div>
-                                <div className="flex-1 min-w-0 space-y-1">
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {entry.affect && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.affect}</span>}
-                                        {entry.responsiveness && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.responsiveness}</span>}
-                                        {entry.comfort && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.comfort}</span>}
-                                        {(entry.hr || entry.bp) && (
-                                            <span className="px-2 py-0.5 rounded-md bg-emerald-900/40 border border-emerald-700/30 text-emerald-300 text-xs font-semibold">
-                                                {entry.hr && `HR ${entry.hr}`}{entry.hr && entry.bp && ' · '}{entry.bp && `BP ${entry.bp}`}
-                                            </span>
-                                        )}
-                                    </div>
-                                    {entry.note && <p className="text-slate-400 text-xs italic">{entry.note}</p>}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                {/* Live graph and timeline are now rendered above action buttons — removed from here */}
 
                 {/* Keyboard shortcuts hint */}
                 {isLive && (

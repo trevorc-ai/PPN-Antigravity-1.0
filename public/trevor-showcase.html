@@ -502,6 +502,106 @@
             cursor: pointer;
             white-space: nowrap;
         }
+
+        .btn-secondary:active {
+            opacity: 0.85;
+        }
+
+        /* SHARE STRIP */
+        .share-strip {
+            margin-bottom: 20px;
+        }
+
+        .share-strip-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .share-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.15s;
+            text-align: left;
+            width: 100%;
+        }
+
+        .share-btn:hover,
+        .share-btn:active {
+            border-color: rgba(56, 139, 253, 0.5);
+            background: rgba(56, 139, 253, 0.06);
+        }
+
+        .share-btn-inner {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .share-btn-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 2px;
+        }
+
+        .share-btn-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--cyan);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .share-btn-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            color: var(--cyan);
+        }
+
+        /* SHARE TOAST */
+        .share-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(57, 208, 216, 0.15);
+            border: 1px solid rgba(57, 208, 216, 0.4);
+            color: var(--cyan);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: 100px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 300;
+            white-space: nowrap;
+        }
+
+        .share-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 
@@ -547,7 +647,50 @@
             </a>
         </div>
 
-        <!-- STEPS -->
+        <!-- SHARE STRIP -->
+        <div class="share-strip">
+            <p class="share-strip-label">1-tap share during or after demo</p>
+            <div class="share-row">
+                <button class="share-btn"
+                    onclick="shareLink('https://ppnportal.net','PPN Portal','The clinical documentation platform for psychedelic therapy practitioners.')"
+                    aria-label="Share Main Platform">
+                    <div class="share-btn-inner">
+                        <span class="share-btn-label">Main Platform</span>
+                        <span class="share-btn-name">ppnportal.net</span>
+                    </div>
+                    <span class="share-btn-icon">&#x1F4E4;</span>
+                </button>
+                <button class="share-btn"
+                    onclick="shareLink('https://ppnportal.net/phantom-shield.html','Phantom Shield — PPN','Structural zero-PHI privacy architecture for psychedelic therapy client records.')"
+                    aria-label="Share Phantom Shield">
+                    <div class="share-btn-inner">
+                        <span class="share-btn-label">Privacy Layer</span>
+                        <span class="share-btn-name">Phantom Shield</span>
+                    </div>
+                    <span class="share-btn-icon">&#x1F4E4;</span>
+                </button>
+                <button class="share-btn"
+                    onclick="shareLink('https://ppnportal.net/partner-preview.html','PPN Partner Preview','See the full platform story: clinical intelligence, global benchmarks, and Phantom Shield privacy.')"
+                    aria-label="Share Partner Preview">
+                    <div class="share-btn-inner">
+                        <span class="share-btn-label">Full Story</span>
+                        <span class="share-btn-name">Partner Preview</span>
+                    </div>
+                    <span class="share-btn-icon">&#x1F4E4;</span>
+                </button>
+                <button class="share-btn"
+                    onclick="shareLink('https://ppnportal.net/phantom-shield-card.html','PPN Share Card','Scan the QR to explore the Psychedelic Practitioner Network.')"
+                    aria-label="Share QR Card">
+                    <div class="share-btn-inner">
+                        <span class="share-btn-label">Share Card</span>
+                        <span class="share-btn-name">QR Card</span>
+                    </div>
+                    <span class="share-btn-icon">&#x1F4E4;</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- DEMO STEPS LABEL -->
         <div class="section-heading">The Demo (30 min)</div>
 
         <!-- STEP 0: SET THE STAGE -->
@@ -892,6 +1035,9 @@
         <button class="complete-btn" onclick="closeComplete()">Back to Script</button>
     </div>
 
+    <!-- SHARE TOAST -->
+    <div class="share-toast" id="shareToast" aria-live="polite"></div>
+
     <script>
         let timerInterval = null;
         let seconds = 0;
@@ -991,6 +1137,47 @@
 
         function closeComplete() {
             document.getElementById('completeScreen').classList.remove('show');
+        }
+
+        // ── Share Action ─────────────────────────────────────────────────────────
+        function shareLink(url, title, text) {
+            if (navigator.share) {
+                navigator.share({ title: title, text: text, url: url })
+                    .catch(function (err) {
+                        // User cancelled or browser error — fall back silently
+                        if (err.name !== 'AbortError') copyFallback(url);
+                    });
+            } else {
+                copyFallback(url);
+            }
+        }
+
+        function copyFallback(url) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(function () {
+                    showShareToast('Link copied!');
+                });
+            } else {
+                // Legacy fallback for older browsers
+                var ta = document.createElement('textarea');
+                ta.value = url;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); showShareToast('Link copied!'); } catch (e) { }
+                document.body.removeChild(ta);
+            }
+        }
+
+        var _shareToastTimer = null;
+        function showShareToast(msg) {
+            var toast = document.getElementById('shareToast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(_shareToastTimer);
+            _shareToastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
         }
     </script>
 </body>

@@ -20,7 +20,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Shield, ClipboardList, Mic, Music, ChevronUp, ChevronDown } from 'lucide-react';
-import { createTimelineEvent } from '../../services/clinicalLog';
 
 interface Phase2LiveBarProps {
     sessionId: string | undefined;
@@ -74,16 +73,7 @@ export const Phase2LiveBar: React.FC<Phase2LiveBarProps> = ({
             detail: { type: action.id, label: desc, timestamp: new Date().toISOString() }
         }));
 
-        // Persist to DB when we have a real session UUID
-        if (sessionId && UUID_RE.test(sessionId)) {
-            await createTimelineEvent({
-                session_id: sessionId,
-                event_timestamp: new Date().toISOString(),
-                event_type: action.id as any,
-                performed_by: undefined,
-                metadata: { event_description: desc },
-            }).catch(e => console.warn('[Phase2LiveBar] Timeline write failed:', e));
-        }
+        // Timeline: patient_observation / music_change have no ref_flow_event_types code; skip DB write to avoid unsupported codes.
 
         setBusy(null);
     };

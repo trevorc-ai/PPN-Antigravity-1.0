@@ -356,7 +356,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         min="40"
                                         max="200"
                                         value={reading.heart_rate ?? ''}
-                                        onChange={(e) => updateReading(index, 'heart_rate', e.target.value ? parseInt(e.target.value) : undefined)}
+                                        onChange={(e) => { if (!e.target.value) { updateReading(index, 'heart_rate', undefined); return; } const v = parseInt(e.target.value); if (!isNaN(v)) updateReading(index, 'heart_rate', Math.min(Math.max(v, 0), 200)); }}
                                         className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.heart_rate ? getStatusColor(hrStatus) : 'border-slate-600'
                                             }`}
                                         placeholder="70"
@@ -411,7 +411,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         min="70"
                                         max="100"
                                         value={reading.spo2 ?? ''}
-                                        onChange={(e) => updateReading(index, 'spo2', e.target.value ? parseInt(e.target.value) : undefined)}
+                                        onChange={(e) => { if (!e.target.value) { updateReading(index, 'spo2', undefined); return; } const v = parseInt(e.target.value); if (!isNaN(v)) updateReading(index, 'spo2', Math.min(Math.max(v, 0), 100)); }}
                                         className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.spo2 ? getStatusColor(spo2Status) : 'border-slate-600'
                                             }`}
                                         placeholder="98"
@@ -438,7 +438,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         min="60"
                                         max="250"
                                         value={reading.bp_systolic ?? ''}
-                                        onChange={(e) => updateReading(index, 'bp_systolic', e.target.value ? parseInt(e.target.value) : undefined)}
+                                        onChange={(e) => { if (!e.target.value) { updateReading(index, 'bp_systolic', undefined); return; } const v = parseInt(e.target.value); if (!isNaN(v)) updateReading(index, 'bp_systolic', Math.min(Math.max(v, 0), 250)); }}
                                         className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.bp_systolic ? getStatusColor(bpStatus) : 'border-slate-600'
                                             }`}
                                         placeholder="120"
@@ -460,7 +460,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         min="40"
                                         max="150"
                                         value={reading.bp_diastolic ?? ''}
-                                        onChange={(e) => updateReading(index, 'bp_diastolic', e.target.value ? parseInt(e.target.value) : undefined)}
+                                        onChange={(e) => { if (!e.target.value) { updateReading(index, 'bp_diastolic', undefined); return; } const v = parseInt(e.target.value); if (!isNaN(v)) updateReading(index, 'bp_diastolic', Math.min(Math.max(v, 0), 150)); }}
                                         className="w-full px-4 py-3 bg-slate-950/80 border border-slate-600 rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600"
                                         placeholder="80"
                                     />
@@ -508,7 +508,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             min="0"
                                             max="60"
                                             value={reading.respiratory_rate ?? ''}
-                                            onChange={(e) => updateReading(index, 'respiratory_rate', e.target.value ? parseInt(e.target.value) : undefined)}
+                                            onChange={(e) => { if (!e.target.value) { updateReading(index, 'respiratory_rate', undefined); return; } const v = parseInt(e.target.value); if (!isNaN(v)) updateReading(index, 'respiratory_rate', Math.min(Math.max(v, 0), 60)); }}
                                             className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.respiratory_rate !== undefined ? getStatusColor(getVitalStatus('rr', reading.respiratory_rate)) : 'border-slate-600'
                                                 }`}
                                             placeholder="16"
@@ -568,10 +568,10 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                             }`}
                                     >
                                         <option value="">Select...</option>
-                                        <option value="0">0, None (dry skin)</option>
-                                        <option value="1">1, Mild (slight moisture)</option>
-                                        <option value="2">2, Moderate (visible sweating)</option>
-                                        <option value="3">3, Severe (profuse sweating)</option>
+                                        <option value="0">0 — None (dry skin)</option>
+                                        <option value="1">1 — Mild (slight moisture)</option>
+                                        <option value="2">2 — Moderate (visible sweating)</option>
+                                        <option value="3">3 — Severe (profuse sweating)</option>
                                     </select>
                                     {reading.diaphoresis_score !== undefined && getDiaphoresisStatus(reading.diaphoresis_score) !== 'normal' && (
                                         <p className={`text-sm ${getDiaphoresisStatus(reading.diaphoresis_score) === 'critical' ? 'text-red-400' : 'text-yellow-400'}`}>
@@ -580,11 +580,11 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     )}
                                 </div>
 
-                                {/* Level of Consciousness */}
+                                {/* Consciousness */}
                                 <div className="space-y-2">
-                                    <label className="flex items-center gap-1.5 ppn-label text-slate-400 mb-2">
+                                    <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
                                         <AlertTriangle className="w-4 h-4 text-yellow-400" />
-                                        Level of Consciousness
+                                        Consciousness
                                         <AdvancedTooltip content="Select the patient's current level of consciousness. Non-Responsive should trigger immediate rescue protocol review." tier="micro">
                                             <span className="text-slate-400 cursor-help">ⓘ</span>
                                         </AdvancedTooltip>

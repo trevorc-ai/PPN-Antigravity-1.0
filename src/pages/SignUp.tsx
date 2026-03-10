@@ -148,7 +148,7 @@ const SignUp = () => {
                 // Check Duplicates First
                 const { data: dupCheck } = await supabase.from('log_sites')
                     .select('site_id')
-                    .ilike('name', `%${formData.new_site_name}%`)
+                    .ilike('site_name', `%${formData.new_site_name}%`)
                     .eq('postal_code', formData.postal_code);
 
                 if (dupCheck && dupCheck.length > 0) {
@@ -176,6 +176,9 @@ const SignUp = () => {
                 email: formData.email,
                 password: formData.password,
                 options: {
+                    // Redirect the confirmation email link back to this app.
+                    // Uses the current origin so it works on localhost AND production.
+                    emailRedirectTo: `${window.location.origin}${window.location.pathname}#/login`,
                     data: {
                         first_name: formData.first_name,
                         last_name: formData.last_name
@@ -477,9 +480,22 @@ const SignUp = () => {
                             className="w-full flex items-center justify-center gap-2 text-slate-200 bg-indigo-600 hover:bg-indigo-500 font-black tracking-widest uppercase rounded-xl text-sm px-5 py-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(79,70,229,0.2)] active:scale-[0.98]"
                         >
                             {loading ? (
-                                <><Loader2 className="w-5 h-5 animate-spin" /> Provisioning Data Vault...</>
+                                <><Loader2 className="w-5 h-5 animate-spin" /> Creating your account...</>
                             ) : (
-                                <>{(step === 1 || (step === 2 && formData.affiliation_route === 'new')) ? 'Proceed Forward' : 'Initialize Vault'} <ArrowRight className="w-4 h-4 ml-1" /></>
+                                <>
+                                    {step === 1
+                                        ? 'Continue'
+                                        : step === 2 && formData.affiliation_route === 'new'
+                                            ? 'Continue'
+                                            : step === 3
+                                                ? 'Register My Clinic'
+                                                : formData.affiliation_route === 'existing'
+                                                    ? 'Request to Join Clinic'
+                                                    : formData.affiliation_route === 'solo'
+                                                        ? 'Create My Account'
+                                                        : 'Create My Account'}
+                                    <ArrowRight className="w-4 h-4 ml-1" />
+                                </>
                             )}
                         </button>
 

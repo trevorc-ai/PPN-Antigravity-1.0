@@ -489,7 +489,7 @@ const Landing: React.FC = () => {
                 Structured Workflows
               </div>
               <h3 className="text-2xl font-black text-slate-300 tracking-tight">Structured workflow.</h3>
-              <p className="text-slate-300 text-lg leading-relaxed font-medium mt-1">Standardized templates replace chaotic free-text notes. Data enters structured and stays structured—powering insights while dramatically reducing charting time.</p>
+              <p className="text-slate-300 text-lg leading-relaxed font-medium mt-1">Standardized templates replace chaotic free-text notes. Data enters structured and stays structured, powering insights while dramatically reducing charting time.</p>
             </motion.div>
 
             <motion.div

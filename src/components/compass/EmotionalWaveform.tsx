@@ -6,9 +6,9 @@ function getEventColor(type: string): string {
     const t = type.toLowerCase();
     if (t.includes('insight') || t.includes('sacred') || t.includes('mystical') || t.includes('awe')) return '#f59e0b'; // gold
     if (t.includes('difficult') || t.includes('fear') || t.includes('grief') || t.includes('hard')) return '#fb7185'; // rose (difficulty)
-    if (t.includes('joy') || t.includes('love') || t.includes('bliss') || t.includes('peace')) return '#2dd4bf';     // teal (joy)
+    if (t.includes('joy') || t.includes('love') || t.includes('bliss') || t.includes('peace')) return '#60a5fa';     // blue (joy)
     if (t.includes('companion')) return '#fb7185';
-    if (t === 'feeling' || t.includes('emotion')) return '#2dd4bf';
+    if (t === 'feeling' || t.includes('emotion')) return '#60a5fa';
     return '#a78bfa'; // violet default
 }
 
@@ -95,8 +95,8 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
             >
                 <defs>
                     <linearGradient id="wave-fill" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="#2dd4bf" stopOpacity={isGhost ? '0.15' : '0.30'} />
-                        <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0" />
+                        <stop offset="0%" stopColor="#60a5fa" stopOpacity={isGhost ? '0.15' : '0.30'} />
+                        <stop offset="100%" stopColor="#60a5fa" stopOpacity="0" />
                     </linearGradient>
                     <filter id="wave-glow">
                         <feGaussianBlur stdDeviation="2" result="blur" />
@@ -122,7 +122,7 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
                     <path
                         d={waveLinePath}
                         fill="none"
-                        stroke={isGhost ? 'rgba(45,212,191,0.35)' : '#2dd4bf'}
+                        stroke={isGhost ? 'rgba(96,165,250,0.35)' : '#60a5fa'}
                         strokeWidth={2}
                         strokeLinecap="round"
                         filter={isGhost ? undefined : 'url(#wave-glow)'}
@@ -157,17 +157,17 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
                         x={-10} y={toY(5) + 4}
                         textAnchor="end"
                         fill="rgba(100,116,139,0.5)"
-                        fontSize={8}
+                        fontSize={14}
                     >5</text>
 
                     {/* X-axis time labels */}
                     {[0, Math.floor(totalMin * 0.25), Math.floor(totalMin * 0.5), Math.floor(totalMin * 0.75), totalMin].map(m => (
                         <text
                             key={m}
-                            x={toX(m)} y={cH + 14}
+                            x={toX(m)} y={cH + 16}
                             textAnchor="middle"
                             fill="rgba(100,116,139,0.5)"
-                            fontSize={8}
+                            fontSize={14}
                         >
                             {m < 60 ? `${m}m` : `${Math.round(m / 60)}h`}
                         </text>
@@ -188,7 +188,7 @@ export const EmotionalWaveform: React.FC<EmotionalWaveformProps> = ({
                             border: `1px solid ${getEventColor(tooltip.type)}40`,
                             borderRadius: 8,
                             padding: '4px 9px',
-                            fontSize: 12,
+                            fontSize: 14,
                             color: '#A8B5D1',
                         }}>
                             <span style={{ color: getEventColor(tooltip.type), fontWeight: 800 }}>

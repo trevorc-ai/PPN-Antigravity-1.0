@@ -262,33 +262,40 @@ const FunnelChart: React.FC<FunnelChartProps> = ({ filters, className = '' }) =>
                 </div>
             )}
 
-            {/* Chart */}
-            <div className="h-[350px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                        data={data}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis
-                            dataKey="stage"
-                            angle={-45}
-                            textAnchor="end"
-                            height={100}
-                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                        />
-                        <YAxis
-                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                            label={{ value: 'Unique Patients', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(43, 116, 243, 0.1)' }} />
-                        <Bar dataKey="patients" radius={[8, 8, 0, 0]}>
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={getBarColor(index, data.length)} />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+            {/* Chart — horizontal scroll for mobile (WO-547) */}
+            <div style={{
+                overflowX: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pan-x',
+                position: 'relative',
+            }}>
+                <div className="h-[350px]" style={{ minWidth: 480 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                            data={data}
+                            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                            <XAxis
+                                dataKey="stage"
+                                angle={-45}
+                                textAnchor="end"
+                                height={100}
+                                tick={{ fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                            />
+                            <YAxis
+                                tick={{ fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                                label={{ value: 'Unique Patients', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                            />
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(43, 116, 243, 0.1)' }} />
+                            <Bar dataKey="patients" radius={[8, 8, 0, 0]}>
+                                {data.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={getBarColor(index, data.length)} />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* Summary Stats */}

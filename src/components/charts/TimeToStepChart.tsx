@@ -178,40 +178,47 @@ const TimeToStepChart: React.FC<TimeToStepChartProps> = ({ filters, className = 
                 </div>
             </div>
 
-            {/* Chart */}
-            <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                        data={data}
-                        layout="vertical"
-                        margin={{ top: 5, right: 60, left: 5, bottom: 5 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis
-                            type="number"
-                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                            label={{ value: 'Days', position: 'insideBottom', offset: -5, fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                        />
-                        <YAxis
-                            type="category"
-                            dataKey="transition"
-                            width={150}
-                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(43, 116, 243, 0.1)' }} />
-                        <Bar dataKey="medianDays" radius={[0, 8, 8, 0]}>
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={getBarColor(entry.medianDays)} />
-                            ))}
-                            <LabelList
-                                dataKey="medianDays"
-                                position="right"
-                                formatter={(value: number) => `${value}d`}
-                                style={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+            {/* Chart — horizontal scroll for mobile (WO-547) */}
+            <div style={{
+                overflowX: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pan-x',
+                position: 'relative',
+            }}>
+                <div className="h-[300px]" style={{ minWidth: 480 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                            data={data}
+                            layout="vertical"
+                            margin={{ top: 5, right: 60, left: 5, bottom: 5 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                            <XAxis
+                                type="number"
+                                tick={{ fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                                label={{ value: 'Days', position: 'insideBottom', offset: -5, fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
                             />
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+                            <YAxis
+                                type="category"
+                                dataKey="transition"
+                                width={150}
+                                tick={{ fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                            />
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(43, 116, 243, 0.1)' }} />
+                            <Bar dataKey="medianDays" radius={[0, 8, 8, 0]}>
+                                {data.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={getBarColor(entry.medianDays)} />
+                                ))}
+                                <LabelList
+                                    dataKey="medianDays"
+                                    position="right"
+                                    formatter={(value: number) => `${value}d`}
+                                    style={{ fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                                />
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* Legend */}
