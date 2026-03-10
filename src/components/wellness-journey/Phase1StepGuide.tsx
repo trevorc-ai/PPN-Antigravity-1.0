@@ -24,14 +24,14 @@ export const PHASE1_STEPS: Phase1Step[] = [
     },
     {
         id: 'structured-safety',
-        label: 'Safety Check - Conditions Prior to Treatment',
+        label: 'Safety Check',
         description: 'Screen for contraindications and treatment eligibility.',
         required: true,
         icon: 'shield',
     },
     {
         id: 'mental-health',
-        label: 'Mental Health Screening',
+        label: 'Mental Health',
         description: 'PHQ-9, GAD-7, and baseline psychological assessment.',
         required: true,
         icon: 'psychology',
@@ -327,41 +327,34 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
 
                             <div className="flex flex-col flex-1 p-4 gap-3">
 
-                                {/* Step number label (H3-equiv) + status badge */}
+                                {/* Step number label + decorative icon badge (top-right) */}
                                 <div className="flex items-center justify-between gap-1">
-                                    <span className={`font-['Manrope',sans-serif] text-lg sm:text-2xl font-extrabold tracking-tight leading-none ${isComplete ? 'text-teal-300/80' : isCurrent ? 'text-indigo-200/90' : 'text-slate-400/80'
+                                    <span className={`font-['Manrope',sans-serif] text-xl font-extrabold tracking-tight leading-none ${isComplete ? 'text-teal-300/80' : isCurrent ? 'text-indigo-200/90' : 'text-slate-400/80'
                                         }`}>
                                         Step {index + 1}
                                     </span>
                                     {isComplete ? (
                                         <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0" aria-label="Complete" />
-                                    ) : step.required ? (
-                                        <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-400">
-                                            Req
-                                        </span>
-                                    ) : null}
+                                    ) : (
+                                        <div className={[
+                                            'w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0',
+                                            isCurrent ? 'bg-indigo-500/25' : 'bg-slate-700/30',
+                                        ].join(' ')} aria-hidden="true">
+                                            <span className={`material-symbols-outlined text-[16px] ${isCurrent ? 'text-indigo-300' : 'text-slate-500'}`}>
+                                                {step.icon}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Icon + title, primary content */}
-                                <div className="flex items-start gap-2.5 min-w-0">
-                                    <div className={[
-                                        'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
-                                        isComplete ? 'bg-teal-500/15' : isCurrent ? 'bg-indigo-500/25' : 'bg-slate-700/30',
-                                    ].join(' ')}>
-                                        <span className={`material-symbols-outlined text-[18px] ${isComplete ? 'text-teal-400' : isCurrent ? 'text-indigo-300' : 'text-slate-500'
-                                            }`}>
-                                            {step.icon}
-                                        </span>
-                                    </div>
-                                    {/* H3: card title, minimum text-sm. Added truncate to prevent mobile overflow */}
-                                    <h4
-                                        className={`text-sm md:text-base font-black leading-snug pt-1 truncate ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
-                                            }`}
-                                        title={step.label}
-                                    >
-                                        {step.label}
-                                    </h4>
-                                </div>
+                                {/* Card title — left-justified, larger */}
+                                <h4
+                                    className={`text-xl font-black leading-snug ${isComplete ? 'text-teal-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'
+                                        }`}
+                                    title={step.label}
+                                >
+                                    {step.label}
+                                </h4>
 
                                 {/* Description, only on the active step for space; text-sm */}
                                 {isCurrent && (

@@ -13,7 +13,7 @@ import { LiveSessionTimeline } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
-import { createSessionVital, createTimelineEvent } from '../../services/clinicalLog';
+import { createSessionVital, createTimelineEvent, endDosingSession } from '../../services/clinicalLog';
 
 // ── Error Boundary: catches render crashes in Phase 2 sub-trees ────────────────
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
@@ -167,18 +167,7 @@ const CompanionButtonGrid: React.FC<{ sessionId: string }> = ({ sessionId }) => 
         existing.push({ timestamp: new Date().toISOString(), feeling: id });
         localStorage.setItem(key, JSON.stringify(existing));
 
-        // BUG-529-06: persist companion tap to log_session_timeline_events
-        // UUID guard: only call when sessionId is a real UUID, not 'demo' or numeric legacy ID
-        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        if (sessionId && UUID_RE.test(sessionId)) {
-            createTimelineEvent({
-                session_id: sessionId,
-                event_timestamp: new Date().toISOString(),
-                event_type: 'patient_observation',
-                performed_by: undefined, // patient-initiated — no practitioner UUID
-                metadata: { event_description: `Patient reported: ${feeling}` },
-            }).catch(e => console.warn('[BUG-529-06] Companion tap timeline write failed:', e));
-        }
+        // Timeline: patient_observation has no ref_flow_event_types code; skip DB write.
 
         if (litTimer.current) clearTimeout(litTimer.current);
         setLitId(id);
@@ -261,6 +250,20 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // WO-528: declare eventLog + getElapsedSec BEFORE any useEffect that references them
     const [eventLog, setEventLog] = useState<SessionEventPin[]>([]);
 
+    // WO-576 Sub-task E: chart series visibility state — lifted here so LiveSessionTimeline
+    // receives the same state and filters its ledger entries to match the chart.
+    const [chartVisible, setChartVisible] = useState<{ hr: boolean; bp: boolean; temp: boolean; events: boolean }>({
+        hr: true, bp: true, temp: true, events: true,
+    });
+
+    // Derive sessionStartMs from localStorage for T+ timer in LiveSessionTimeline
+    const sessionStartMs = useMemo(() => {
+        try {
+            const raw = localStorage.getItem(SESSION_START_KEY);
+            return raw ? Number(raw) : undefined;
+        } catch { return undefined; }
+    }, [SESSION_START_KEY]);
+
     // Helper: returns elapsed seconds since session start. Safe to call at any time.
     const getElapsedSec = useCallback((): number => {
         try {
@@ -307,12 +310,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     const eM = Math.floor((elSec % 3600) / 60).toString().padStart(2, '0');
                     const eS = Math.floor(elSec % 60).toString().padStart(2, '0');
                     const elStr = `${eH}:${eM}:${eS}`;
-                    createTimelineEvent({
-                        session_id: sid,
-                        event_timestamp: new Date().toISOString(),
-                        event_type: 'clinical_decision',
-                        metadata: { event_description: `Additional Dose administered at T+${elStr}` },
-                    }).catch(e => console.warn('[WO-559] Additional Dose timeline write failed:', e));
+                    // Timeline: no ref_flow_event_types code for additional_dose; skip DB write.
                 }
             }
         };
@@ -411,17 +409,24 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     // SAVS GAP #2 fix: persist the vitals shortcut activation to the DB ledger
                     const _sidV = journey.sessionId ?? journey.session?.sessionId;
                     if (_sidV && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidV)) {
-                        createTimelineEvent({
-                            session_id: _sidV,
-                            event_timestamp: new Date().toISOString(),
-                            event_type: 'vital_check',
-                            metadata: { event_description: `Vitals check initiated via keyboard shortcut at T+${elapsedTime}` },
-                        }).catch(err => console.warn('[SAVS-GAP2] Vitals key DB write failed:', err));
+                        // Timeline: no ref_flow_event_types code for vital_check; skip DB write.
                     }
                     onOpenForm('session-vitals');
                     break;
                 }
-                case 'a': onOpenForm('safety-and-adverse-event'); break;
+                case 'a': {
+                    // WO-535-B: Stamp adverse event pin on the chart at key-press time,
+                    // matching the button path (lines ~1367-1382). Without this, Quick Key A
+                    // opened the form but never emitted a graph event pin or ledger entry.
+                    setEventLog(prev => [...prev, {
+                        id: `adverse-key-${Date.now()}`,
+                        elapsedSec: getElapsedSec(),
+                        type: 'safety-and-adverse-event',
+                        label: 'Adverse Event',
+                    } satisfies SessionEventPin]);
+                    onOpenForm('safety-and-adverse-event');
+                    break;
+                }
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -587,27 +592,18 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             } satisfies SessionEventPin,
         ]);
 
-        // WO-547: Persist session update event pin to log_session_timeline_events
-        // Guard: only write when journey.sessionId is a real UUID (not 'demo' / legacy numeric IDs)
         const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         const resolvedSessionId = journey.sessionId ?? journey.session?.sessionId;
-        if (resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
-            try {
-                await createTimelineEvent({
-                    session_id: resolvedSessionId,
-                    event_timestamp: new Date().toISOString(),
-                    event_type: 'clinical_decision',
-                    performed_by: undefined,
-                    metadata: {
-                        event_description: updateAffect
-                            ? `Session Update (T+${elapsedTime}): ${updateAffect}${updateResponsiveness ? ` · ${updateResponsiveness}` : ''
-                            }${updateComfort ? ` · ${updateComfort}` : ''}`
-                            : `Session Update at T+${elapsedTime}`,
-                    },
-                });
-            } catch (err) {
-                console.warn('[WO-547] Session Update, timeline event write failed (non-critical):', err);
-            }
+
+        // WO-576 Sub-task B: persist free-text note from Session Update pop-out
+        // to the Live Session Timeline via createTimelineEvent with 'general_note'.
+        if (updateNote.trim() && resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
+            createTimelineEvent({
+                session_id: resolvedSessionId,
+                event_timestamp: new Date().toISOString(),
+                event_type_code: 'general_note' as any, // cast: DB lookup handles type resolution
+                metadata: { event_description: updateNote.trim() },
+            }).catch(err => console.warn('[WO-576] Session Update note timeline write failed:', err));
         }
 
         // Emit vitals to log_session_vitals table
@@ -753,11 +749,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     data={vitalsChartData}
                                     events={eventLog}
                                     sessionDurationSec={sessionDurationSec}
+                                    onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
                                 />
                             )}
                             <LiveSessionTimeline
                                 sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                                 active={false}
+                                visible={chartVisible}
+                                sessionStartMs={sessionStartMs}
                             />
                         </div>
                     )}
@@ -843,7 +842,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     await createTimelineEvent({
                                         session_id: _sidC,
                                         event_timestamp: new Date().toISOString(),
-                                        event_type: 'clinical_decision',
+                                        event_type_code: 'session_completed',
                                         metadata: {
                                             event_description: `Session submitted and closed. Post-session assessment scores — MEQ: ${assessmentScores?.meq ?? '—'}, EDI: ${assessmentScores?.edi ?? '—'}, CEQ: ${assessmentScores?.ceq ?? '—'}.`,
                                         },
@@ -978,34 +977,29 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 ].join(' ')} aria-hidden="true" />
 
                                 <div className="flex flex-col flex-1 p-4 gap-3">
-                                    {/* Step label + status badge */}
+                                    {/* Step label + decorative icon badge (top-right) */}
                                     <div className="flex items-center justify-between gap-1">
-                                        <span className={`font-['Manrope',sans-serif] text-xl md:text-2xl font-extrabold tracking-tight leading-none ${step.isComplete ? 'text-amber-300/80' : isCurrent ? 'text-amber-200/90' : 'text-slate-400/80'}`}>
+                                        <span className={`font-['Manrope',sans-serif] text-xl font-extrabold tracking-tight leading-none ${step.isComplete ? 'text-amber-300/80' : isCurrent ? 'text-amber-200/90' : 'text-slate-400/80'}`}>
                                             Step {index + 1}
                                         </span>
                                         {step.isComplete ? (
                                             <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" aria-label="Complete" />
                                         ) : (
-                                            <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-400">
-                                                {isStart ? 'Gate' : 'Req'}
-                                            </span>
+                                            <div className={[
+                                                'w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0',
+                                                isCurrent ? 'bg-amber-500/25' : 'bg-slate-700/30',
+                                            ].join(' ')} aria-hidden="true">
+                                                <span className={`material-symbols-outlined text-[16px] ${isCurrent ? 'text-amber-300' : 'text-slate-500'}`}>
+                                                    {step.icon}
+                                                </span>
+                                            </div>
                                         )}
                                     </div>
 
-                                    {/* Icon + title */}
-                                    <div className="flex items-start gap-2.5">
-                                        <div className={[
-                                            'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5',
-                                            step.isComplete ? 'bg-amber-500/15' : isCurrent ? 'bg-amber-500/25' : 'bg-slate-700/30',
-                                        ].join(' ')}>
-                                            <span className={`material-symbols-outlined text-[18px] ${step.isComplete ? 'text-amber-400' : isCurrent ? 'text-amber-300' : 'text-slate-500'}`}>
-                                                {step.icon}
-                                            </span>
-                                        </div>
-                                        <h4 className={`text-sm md:text-base font-black leading-snug pt-1 ${step.isComplete ? 'text-amber-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
-                                            {step.label}
-                                        </h4>
-                                    </div>
+                                    {/* Card title — left-justified, larger */}
+                                    <h4 className={`text-xl font-black leading-snug ${step.isComplete ? 'text-amber-200' : isCurrent ? 'text-[#A8B5D1]' : 'text-slate-400'}`}>
+                                        {step.label}
+                                    </h4>
 
                                     {/* CTA area */}
                                     <div className="mt-auto pt-2">
@@ -1058,7 +1052,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                         createTimelineEvent({
                                                             session_id: _sidS,
                                                             event_timestamp: new Date().toISOString(),
-                                                            event_type: 'clinical_decision',
+                                                            event_type_code: 'intake_completed',
                                                             metadata: { event_description: 'Dosing session timer started by practitioner.' },
                                                         }).catch(err => console.warn('[SAVS-GAP1] Session start DB write failed:', err));
                                                     }
@@ -1326,17 +1320,22 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     Companion
                                 </button>
                                 <button
-                                    onClick={() => {
+                                    onClick={async () => {
                                         try {
-                                            // SAVS GAP #3 fix: persist session end timestamp to DB ledger
+                                            // WO-577: write session_ended_at to DB before transitioning
                                             const _sidE = journey.sessionId ?? journey.session?.sessionId;
                                             if (_sidE && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_sidE)) {
+                                                // Stamp timeline event first (fire-and-forget)
                                                 createTimelineEvent({
                                                     session_id: _sidE,
                                                     event_timestamp: new Date().toISOString(),
-                                                    event_type: 'clinical_decision',
-                                                    metadata: { event_description: `Session timer stopped by practitioner at T+${elapsedTime}.` },
+                                                    event_type_code: 'session_completed',
+                                                    metadata: { event_description: `Dosing session ended by practitioner at T+${elapsedTime}.` },
                                                 }).catch(err => console.warn('[SAVS-GAP3] Session end DB write failed:', err));
+                                                // Write session_ended_at to log_clinical_records
+                                                endDosingSession(_sidE).catch(err =>
+                                                    console.warn('[WO-577] endDosingSession failed (non-fatal):', err)
+                                                );
                                             }
                                             setAndPersistMode('post');
                                         } catch (e) {
@@ -1346,7 +1345,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     }}
                                     className="px-5 py-2.5 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2 group"
                                 >
-                                    End Session
+                                    End Dosing Session
                                     <ArrowRight className="w-3.5 h-3.5 opacity-50 group-hover:translate-x-0.5 transition-transform" />
                                 </button>
                             </div>
@@ -1387,12 +1386,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         const UUID_RE2 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
                         const sid = journey.sessionId ?? journey.session?.sessionId;
                         if (sid && UUID_RE2.test(sid)) {
-                            createTimelineEvent({
-                                session_id: sid,
-                                event_timestamp: new Date().toISOString(),
-                                event_type: 'safety_event',
-                                metadata: { event_description: `Rescue Protocol initiated at T+${elapsedTime}` },
-                            }).catch(e => console.warn('[WO-547] Rescue timeline write failed:', e));
+                            // Timeline: no ref_flow_event_types code for rescue; skip DB write.
                         }
                         onOpenForm('rescue-protocol');
                     } : undefined} disabled={!isLive}
@@ -1414,12 +1408,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         const UUID_RE3 = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
                         const sid2 = journey.sessionId ?? journey.session?.sessionId;
                         if (sid2 && UUID_RE3.test(sid2)) {
-                            createTimelineEvent({
-                                session_id: sid2,
-                                event_timestamp: new Date().toISOString(),
-                                event_type: 'safety_event',
-                                metadata: { event_description: `Adverse Event logged at T+${elapsedTime}` },
-                            }).catch(e => console.warn('[WO-547] Adverse Event timeline write failed:', e));
+                            // Timeline: no ref_flow_event_types code for safety_event; skip DB write.
                         }
                         onOpenForm('safety-and-adverse-event');
                     } : undefined} disabled={!isLive}
@@ -1524,40 +1513,15 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 data={vitalsChartData}
                                 events={eventLog}
                                 sessionDurationSec={sessionDurationSec}
+                                onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
                             />
                         )}
                         <LiveSessionTimeline
                             sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                             active={true}
+                            visible={chartVisible}
+                            sessionStartMs={sessionStartMs}
                         />
-                    </div>
-                )}
-
-                {/* ── Update Log, grows below the fixed chart ─────────────────────── */}
-                {updateLog.length > 0 && (
-                    <div className="space-y-2">
-                        <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 px-1">Session Updates ({updateLog.length})</p>
-                        {updateLog.map((entry, i) => (
-                            <div key={i} className="flex gap-3 p-3 bg-slate-800/40 border border-slate-700/40 rounded-xl text-sm">
-                                <div className="flex-shrink-0 text-right min-w-[56px]">
-                                    <p className="font-mono text-xs font-bold text-emerald-400">T+{entry.elapsed}</p>
-                                    <p className="text-[10px] text-slate-600">{entry.timestamp}</p>
-                                </div>
-                                <div className="flex-1 min-w-0 space-y-1">
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {entry.affect && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.affect}</span>}
-                                        {entry.responsiveness && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.responsiveness}</span>}
-                                        {entry.comfort && <span className="px-2 py-0.5 rounded-md bg-slate-700/60 text-slate-300 text-xs font-semibold">{entry.comfort}</span>}
-                                        {(entry.hr || entry.bp) && (
-                                            <span className="px-2 py-0.5 rounded-md bg-emerald-900/40 border border-emerald-700/30 text-emerald-300 text-xs font-semibold">
-                                                {entry.hr && `HR ${entry.hr}`}{entry.hr && entry.bp && ' · '}{entry.bp && `BP ${entry.bp}`}
-                                            </span>
-                                        )}
-                                    </div>
-                                    {entry.note && <p className="text-slate-400 text-xs italic">{entry.note}</p>}
-                                </div>
-                            </div>
-                        ))}
                     </div>
                 )}
 
