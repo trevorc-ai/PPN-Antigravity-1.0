@@ -347,7 +347,8 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                     <ScoreSelect id="phq9" label="PHQ-9 (0–27)" value={data.mentalHealth.phq9} onChange={(v) => updateData('mentalHealth', { phq9: v })} min={0} max={27} />
                     <ScoreSelect id="gad7" label="GAD-7 (0–21)" value={data.mentalHealth.gad7} onChange={(v) => updateData('mentalHealth', { gad7: v })} min={0} max={21} />
                     <ScoreSelect id="ace" label="ACE (0–10)" value={data.mentalHealth.ace} onChange={(v) => updateData('mentalHealth', { ace: v })} min={0} max={10} />
-                    <ScoreInputLarge id="pcl5" label="PCL-5 (0–80)" value={data.mentalHealth.pcl5} onChange={(v) => updateData('mentalHealth', { pcl5: v })} max={80} />
+                    {/* WO-582: PCL-5 converted from ScoreInputLarge (type=number) to ScoreSelect (dropdown) */}
+                    <ScoreSelect id="pcl5" label="PCL-5 (0–80)" value={data.mentalHealth.pcl5} onChange={(v) => updateData('mentalHealth', { pcl5: v })} min={0} max={80} />
                 </div>
             </section>
 

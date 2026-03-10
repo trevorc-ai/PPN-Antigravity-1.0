@@ -206,8 +206,8 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                                         onClick={() => toggleAssessment(a.id)}
                                         disabled={a.required}
                                         className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${isSelected
-                                                ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
-                                                : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                                            ? 'bg-indigo-500/10 border-indigo-500/40 text-indigo-200'
+                                            : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:border-slate-600'
                                             } ${a.required ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
                                         aria-pressed={isSelected}
                                     >
@@ -270,45 +270,22 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                         </p>
                     </div>
 
-                    {/* Score Summary */}
-                    <div className={`backdrop-blur-xl border rounded-2xl p-8 ${severityInfo.bgColor} ${severityInfo.borderColor}`}>
-                        <div className="text-center mb-6">
+
+                    {/* WO-582: Score Summary removed from patient-facing view.
+                        Raw scores (MEQ, EDI, CEQ) are written to the DB via onComplete()
+                        above and visible in the practitioner clinical record — not here.
+                        Patient sees only an affirming qualitative message. */}
+                    <div className="backdrop-blur-xl border rounded-2xl p-8 bg-teal-500/5 border-teal-500/20">
+                        <div className="text-center">
                             <div className="flex items-center justify-center mb-4">
-                                {severityInfo.icon}
+                                <TrendingUp className="w-12 h-12 text-teal-400" />
                             </div>
-                            <div className={`text-5xl font-black mb-2 ${severityInfo.color}`}>
-                                {finalMEQScore}/100
-                            </div>
-                            <div className={`text-xl font-bold mb-4 ${severityInfo.color}`}>
-                                {severityInfo.label}
+                            <div className="text-xl font-bold text-teal-300 mb-3">
+                                Your responses have been recorded
                             </div>
                             <p className="text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
-                                {severityInfo.description}
+                                Your practitioner will review your assessment and use it to guide your integration support. Every response helps shape a more personalised care plan.
                             </p>
-                        </div>
-
-                        {/* MEQ Score detail */}
-                        <div className="mt-8 pt-8 border-t border-slate-700/50">
-                            <h3 className="text-slate-300 text-base font-bold mb-4 text-center">
-                                Assessment Scores
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-base">
-                                <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-300 mb-2">MEQ Score</p>
-                                    <p className="text-3xl font-black text-emerald-400">{finalMEQScore}</p>
-                                    <p className="text-slate-500 text-sm mt-1">Mystical Experience</p>
-                                </div>
-                                <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-300 mb-2">EDI Score</p>
-                                    <p className="text-3xl font-black text-blue-400">{scores.edi_brief ?? '—'}</p>
-                                    <p className="text-slate-500 text-sm mt-1">Emotional Depth</p>
-                                </div>
-                                <div className="p-4 bg-slate-900/40 rounded-lg text-center">
-                                    <p className="text-slate-300 mb-2">CEQ Score</p>
-                                    <p className="text-3xl font-black text-amber-400">{scores.ceq_brief ?? '—'}</p>
-                                    <p className="text-slate-500 text-sm mt-1">Challenging Experience</p>
-                                </div>
-                            </div>
                         </div>
 
                         {/* Next Steps */}
@@ -316,8 +293,8 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                             <h3 className="text-slate-300 text-base font-bold mb-4">Next Steps</h3>
                             <div className="space-y-3">
                                 <div className="flex items-start gap-3 p-3 bg-slate-900/40 rounded-lg">
-                                    <div className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <span className="text-emerald-400 text-sm font-bold">1</span>
+                                    <div className="w-6 h-6 rounded-full bg-teal-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <span className="text-teal-400 text-sm font-bold">1</span>
                                     </div>
                                     <div>
                                         <p className="text-slate-300 font-semibold text-base">Continue Integration Protocol</p>
@@ -351,6 +328,7 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                             </div>
                         </div>
                     </div>
+
 
                     {/* Actions */}
                     <div className="flex items-center justify-center gap-4">
@@ -433,10 +411,10 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                             <div
                                 key={id}
                                 className={`h-2 flex-1 rounded-full transition-all duration-300 ${i < selectedIdx
-                                        ? 'bg-emerald-400'
-                                        : i === selectedIdx
-                                            ? 'bg-indigo-400'
-                                            : 'bg-slate-700'
+                                    ? 'bg-emerald-400'
+                                    : i === selectedIdx
+                                        ? 'bg-indigo-400'
+                                        : 'bg-slate-700'
                                     }`}
                             />
                         ))}

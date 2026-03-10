@@ -235,19 +235,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                     </div>
                 </div>
 
-                {/* Current Score */}
-                {answeredCount > 0 && (
-                    <div className="mt-4 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
-                        <div className="flex items-center justify-between">
-                            <span className="text-indigo-300 text-base font-semibold">
-                                Current {config.shortName} Score
-                            </span>
-                            <span className="text-2xl font-black text-indigo-400">
-                                {currentScore}/100
-                            </span>
-                        </div>
-                    </div>
-                )}
+                {/* WO-582: Live score ticker removed — patient-facing view.
+                    currentScore is still computed and passed to onComplete() for DB write.
+                    Progress percentage shown instead (non-clinical, non-morale-impacting). */}
             </div>
 
             {/* Questions */}
@@ -356,9 +346,12 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
             {/* Navigation */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex items-center justify-between">
+                    {/* WO-582 Fix 3: tabIndex and aria-label ensure keyboard navigation (WCAG 2.1 SC 2.4.3) */}
                     <button
                         onClick={handlePrevious}
                         disabled={!canGoPrevious}
+                        tabIndex={canGoPrevious ? 0 : -1}
+                        aria-label="Go to previous page of questions"
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${canGoPrevious
                             ? 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                             : 'bg-slate-800/50 text-slate-600 cursor-not-allowed'
@@ -392,8 +385,11 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     ) : (
+                        // WO-582 Fix 3: tabIndex + aria-label for keyboard accessibility (WCAG 2.1 SC 2.4.3)
                         <button
                             onClick={handleComplete}
+                            tabIndex={0}
+                            aria-label="Complete and submit this assessment"
                             className="flex items-center gap-2 px-6 py-3 rounded-lg font-bold transition-all bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
                         >
                             <CheckCircle className="w-5 h-5" />
@@ -402,7 +398,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
