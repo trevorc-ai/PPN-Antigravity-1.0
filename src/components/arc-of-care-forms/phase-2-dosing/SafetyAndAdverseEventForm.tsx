@@ -474,7 +474,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                            <FormField label="Event Type" required>
+                            <FormField label="Event Type" tooltip="Select the clinical category that best describes the adverse event. Use 'Other' only when no available option applies; document specifics in the follow-up plan." required>
                                 <select
                                     value={data.event_type ?? ''}
                                     onChange={e => update('event_type', e.target.value)}
@@ -517,7 +517,7 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
                                 )}
                             </FormField>
 
-                            <FormField label="Severity Grade" required>
+                            <FormField label="Severity Grade" tooltip="CTCAE severity grading: Grade 1 mild (no intervention needed), Grade 2 moderate (minor intervention), Grade 3 severe (hospitalization), Grade 4 life-threatening, Grade 5 fatal. Grade 3 triggers mandatory regulatory reporting." required>
                                 <div className="space-y-1.5">
                                     {SEVERITY_GRADES.map(grade => (
                                         <label
