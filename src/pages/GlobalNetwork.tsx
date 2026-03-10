@@ -1,6 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import StarField from '../components/StarField';
+
+// Inline star field — uses absolute (not fixed) so it clips inside the hero's overflow-hidden boundary.
+// StarField component uses fixed inset-0 which overlaps all subsequent page sections.
+function HeroStars() {
+    const stars = useMemo(() => {
+        let seed = 2718281;
+        const rand = () => { seed = (seed * 1664525 + 1013904223) & 0xffffffff; return (seed >>> 0) / 0xffffffff; };
+        return Array.from({ length: 160 }, (_, i) => {
+            const brightness = Math.pow(rand(), 2.5);
+            return { x: rand() * 100, y: rand() * 100, r: 0.3 + rand() * 1.6, op: 0.05 + brightness * 0.75, i };
+        });
+    }, []);
+    return (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+            <div className="absolute inset-0 bg-[#07101e]" />
+            <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                {stars.map(s => (
+                    <circle key={s.i} cx={`${s.x}%`} cy={`${s.y}%`} r={s.r} fill="white">
+                        <animate attributeName="opacity"
+                            values={`${s.op.toFixed(3)};${(s.op * 0.12).toFixed(3)};${s.op.toFixed(3)}`}
+                            dur={`${14 + (s.i % 23) * 1.3}s`} begin={`${(s.i % 19) * 1.1}s`}
+                            repeatCount="indefinite" calcMode="spline"
+                            keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" />
+                    </circle>
+                ))}
+            </svg>
+        </div>
+    );
+}
 
 // WO-562: Global Research Network Front Door
 const ACCENT = '#8b5cf6';
@@ -74,9 +102,7 @@ export default function GlobalNetwork() {
 
             {/* Hero with StarField */}
             <section className="relative overflow-hidden px-6 pt-16 pb-28 text-center">
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <StarField />
-                </div>
+                <HeroStars />
                 <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse at 50% 0%, ${ACCENT}20 0%, transparent 65%)` }} />
                 <div className="relative z-10 max-w-3xl mx-auto">
                     <span className="inline-block px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase mb-6"
