@@ -44,7 +44,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
   return (
     <div
       onClick={() => link && navigate(link)}
-      className={`relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 transition-all group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
+      className={`shrink-0 w-[85vw] snap-center md:w-auto md:shrink-1 relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 transition-all group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
     >
       {/* Background Hover Glow */}
       <div className={`absolute -top-10 -right-10 w-32 h-32 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none ${styles.bg}`}></div>
@@ -189,7 +189,7 @@ export default function Dashboard() {
       <PageContainer className="relative z-10 flex flex-col gap-8 pt-8">
 
         {/* HEADER SECTION */}
-        <Section spacing="tight" data-tour="dashboard-header" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-800/80 pb-8">
+        <Section spacing="tight" data-tour="dashboard-header" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-800/80 pb-4 md:pb-8">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -200,30 +200,16 @@ export default function Dashboard() {
                 onClick={refetch}
                 disabled={protocolsLoading}
                 title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Refresh data'}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid rgba(56,139,253,0.2)',
-                  color: '#6b7a8d',
-                  fontSize: 12,
-                  padding: '4px 10px',
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                }}
-                className="hover:bg-slate-800/50 transition-colors"
+                className="min-h-[44px] min-w-[44px] px-3 flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-transparent text-xs font-bold text-slate-500 hover:bg-slate-800/50 active:scale-95 transition-all"
               >
                 {protocolsLoading ? '...' : '↻ Refresh'}
               </button>
             </div>
-            <h1 className="ppn-page-title mt-4" style={{ color: '#A8B5D1' }}>
+            <h1 className="ppn-page-title mt-3 md:mt-4" style={{ color: '#A8B5D1' }}>
               {getTimeOfDayGreeting()}.
             </h1>
             <p className="ppn-meta text-slate-500 mt-1">{formatCurrentDate()}</p>
           </div>
-
-
         </Section>
 
         {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}
@@ -232,7 +218,7 @@ export default function Dashboard() {
             <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
             <span className="text-xs text-slate-500 font-medium">This Month</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="flex overflow-x-auto overflow-y-hidden snap-x touch-pan-x gap-4 pb-4 md:grid md:grid-cols-2 lg:grid-cols-4 w-full scrollbar-hide">
             <ClinicPerformanceCard
               title="Protocols Logged"
               value={hasProtocols ? String(protocols.length) : '--'}
@@ -275,7 +261,7 @@ export default function Dashboard() {
 
         {/* QUICK ACTIONS — always-on color, not hover-only */}
         <Section spacing="tight">
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -285,11 +271,11 @@ export default function Dashboard() {
               id="quick-action-log-protocol"
               data-tour="wellness-journey"
               onClick={() => navigate('/wellness-journey')}
-              className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl
+              className="group relative flex flex-col items-center justify-center gap-3 p-5 min-h-[100px] rounded-2xl
                 bg-indigo-500/12 hover:bg-indigo-500/22
                 border border-indigo-500/35 hover:border-indigo-400/60
                 shadow-lg shadow-indigo-900/30
-                transition-all active:scale-95 cursor-pointer overflow-hidden"
+                transition-all duration-300 active:scale-95 cursor-pointer overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 to-transparent pointer-events-none" />
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/25 flex items-center justify-center shadow-inner">
@@ -404,6 +390,21 @@ export default function Dashboard() {
 
           </div>
         </Section>
+
+        {/* STICKY BOTTOM CTA — Thumb-zone primary action, hidden on desktop where sidebar handles nav */}
+        <div className="md:hidden fixed bottom-[72px] left-0 right-0 z-40 flex justify-center px-6 pb-2 pointer-events-none">
+          <button
+            onClick={() => navigate('/wellness-journey')}
+            className="pointer-events-auto w-full max-w-sm flex items-center justify-center gap-3 min-h-[52px] rounded-2xl
+              bg-indigo-600 hover:bg-indigo-500 active:scale-95
+              text-white font-black text-sm tracking-wide
+              shadow-xl shadow-indigo-900/60
+              transition-all duration-300"
+          >
+            <Plus className="w-5 h-5" />
+            Log New Protocol
+          </button>
+        </div>
 
         {/* NETWORK ACTIVITY — hidden until live data connected */}
         <Section spacing="tight" className="hidden">
