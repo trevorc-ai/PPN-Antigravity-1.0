@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Brain, Activity, Heart, Link as LinkIcon, Check, Copy, X, ShieldAlert } from 'lucide-react';
+import { Brain, Activity, Heart, Link as LinkIcon, Check, Share2, X, ShieldAlert, Eye } from 'lucide-react';
 
 interface MagicLinkModalProps {
     isOpen: boolean;
     onClose: () => void;
     patientHash: string; // e.g., "e3b0c44298fc1c14"
+    sessionId?: string;  // Needed to open the Integration Compass preview
 }
 
-const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patientHash }) => {
+const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patientHash, sessionId }) => {
     // --- State Management ---
     const [toggles, setToggles] = useState({
         neurobiology: false, // Off by default (can overwhelm some patients)
@@ -55,12 +56,19 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
             const newLink = `https://ppnportal.net/journey/auth?token=${payload.magic_link_token}&id=${payload.patient_hash}`;
             setGeneratedLink(newLink);
 
-            // 3. Copy to clipboard
-            navigator.clipboard.writeText(newLink);
+            // 3. Share via native share sheet (or clipboard fallback)
+            const shareData = { title: 'Your Integration Compass', url: newLink };
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                navigator.share(shareData).catch(() => {
+                    navigator.clipboard.writeText(newLink);
+                });
+            } else {
+                navigator.clipboard.writeText(newLink);
+            }
             setIsCopied(true);
             setIsGenerating(false);
 
-            // Reset copy state after 3 seconds
+            // Reset state after 3 seconds
             setTimeout(() => setIsCopied(false), 3000);
         }, 1200);
     };
@@ -73,17 +81,23 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-white/5">
                     <div>
-                        <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-                            <LinkIcon className="text-indigo-400 w-5 h-5" />
+                        {/* AC-1: ppn-card-title replaces text-xl font-bold text-slate-100 */}
+                        <h2 className="ppn-card-title flex items-center gap-2">
+                            {/* AC-4: Phase 3 = teal, not indigo */}
+                            <LinkIcon className="text-teal-400 w-5 h-5" />
                             Customize Patient Journey Link
                         </h2>
-                        <p className="text-sm text-slate-400 mt-1">
+                        {/* AC-1: ppn-body replaces text-sm text-slate-400 */}
+                        <p className="ppn-body text-slate-400 mt-1">
                             Select which clinical modules this patient is ready to see.
-                            <span className="text-emerald-400 ml-1">ID: {patientHash.substring(0, 8)}...</span>
+                            {/* AC-4: teal replaces emerald for Phase 3 patient hash */}
+                            <span className="text-teal-400 ml-1">ID: {patientHash.substring(0, 8)}...</span>
                         </p>
                     </div>
+                    {/* AC-3: aria-label on icon-only close button */}
                     <button
                         onClick={onClose}
+                        aria-label="Close modal"
                         className="p-2 text-slate-400 hover:text-slate-100 hover:bg-white/5 rounded-full transition-colors"
                     >
                         <X className="w-5 h-5" />
@@ -100,15 +114,21 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
                                 <Brain className="w-6 h-6 text-cyan-400" />
                             </div>
                             <div>
-                                <h3 className="text-base font-semibold text-slate-200">Neurobiology & Brain Maps</h3>
-                                <p className="text-sm text-slate-400 mt-1 max-w-sm">
+                                {/* AC-1: ppn-label replaces text-base font-semibold text-slate-200 */}
+                                <h3 className="ppn-label text-slate-200">Neurobiology &amp; Brain Maps</h3>
+                                {/* AC-1: ppn-body replaces text-sm text-slate-400 */}
+                                <p className="ppn-body text-slate-400 mt-1 max-w-sm">
                                     Includes the Dual-Mode Radar Chart and DMN fMRI visualizations. Best for highly analytical patients needing scientific validation.
                                 </p>
                             </div>
                         </div>
+                        {/* AC-3: role=switch, aria-checked, aria-label, focus-visible ring */}
                         <button
                             onClick={() => handleToggle('neurobiology')}
-                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${toggles.neurobiology ? 'bg-indigo-500' : 'bg-slate-700'}`}
+                            role="switch"
+                            aria-checked={toggles.neurobiology}
+                            aria-label={toggles.neurobiology ? 'Disable Neurobiology & Brain Maps' : 'Enable Neurobiology & Brain Maps'}
+                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${toggles.neurobiology ? 'bg-teal-600' : 'bg-slate-700'}`}
                         >
                             <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${toggles.neurobiology ? 'translate-x-7' : 'translate-x-0'}`} />
                         </button>
@@ -121,15 +141,19 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
                                 <Activity className="w-6 h-6 text-indigo-400" />
                             </div>
                             <div>
-                                <h3 className="text-base font-semibold text-slate-200">Pharmacokinetic Flight Plan</h3>
-                                <p className="text-sm text-slate-400 mt-1 max-w-sm">
+                                <h3 className="ppn-label text-slate-200">Pharmacokinetic Flight Plan</h3>
+                                <p className="ppn-body text-slate-400 mt-1 max-w-sm">
                                     Includes the timeline curve and synchronized somatic body map. Helps normalize physical sensations and reduces health anxiety.
                                 </p>
                             </div>
                         </div>
+                        {/* AC-3: role=switch, aria-checked, aria-label, focus-visible ring */}
                         <button
                             onClick={() => handleToggle('flightPlan')}
-                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${toggles.flightPlan ? 'bg-indigo-500' : 'bg-slate-700'}`}
+                            role="switch"
+                            aria-checked={toggles.flightPlan}
+                            aria-label={toggles.flightPlan ? 'Disable Pharmacokinetic Flight Plan' : 'Enable Pharmacokinetic Flight Plan'}
+                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${toggles.flightPlan ? 'bg-teal-600' : 'bg-slate-700'}`}
                         >
                             <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${toggles.flightPlan ? 'translate-x-7' : 'translate-x-0'}`} />
                         </button>
@@ -142,15 +166,19 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
                                 <Heart className="w-6 h-6 text-purple-400" />
                             </div>
                             <div>
-                                <h3 className="text-base font-semibold text-slate-200">P.E.M.S. Integration Framework</h3>
-                                <p className="text-sm text-slate-400 mt-1 max-w-sm">
+                                <h3 className="ppn-label text-slate-200">P.E.M.S. Integration Framework</h3>
+                                <p className="ppn-body text-slate-400 mt-1 max-w-sm">
                                     Includes the somatic tag-cloud and structured journaling prompts. Essential for grounding patients in the days following a session.
                                 </p>
                             </div>
                         </div>
+                        {/* AC-3: role=switch, aria-checked, aria-label, focus-visible ring */}
                         <button
                             onClick={() => handleToggle('pems')}
-                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${toggles.pems ? 'bg-indigo-500' : 'bg-slate-700'}`}
+                            role="switch"
+                            aria-checked={toggles.pems}
+                            aria-label={toggles.pems ? 'Disable P.E.M.S. Framework' : 'Enable P.E.M.S. Framework'}
+                            className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${toggles.pems ? 'bg-teal-600' : 'bg-slate-700'}`}
                         >
                             <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${toggles.pems ? 'translate-x-7' : 'translate-x-0'}`} />
                         </button>
@@ -159,7 +187,8 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
                     {/* Zero-Knowledge Disclaimer */}
                     <div className="flex items-center gap-3 p-4 mt-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
                         <ShieldAlert className="text-amber-400 w-5 h-5 shrink-0" />
-                        <p className="text-sm text-amber-200/80">
+                        {/* AC-1: ppn-body replaces text-sm text-amber-200/80 */}
+                        <p className="ppn-body text-amber-200/80">
                             <strong>Zero-Knowledge Safety:</strong> This link is cryptographically tied to the patient hash. It contains zero PII and maintains your full HIPAA Safe Harbor status.
                         </p>
                     </div>
@@ -174,45 +203,68 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
                                 type="text"
                                 readOnly
                                 value={generatedLink}
-                                className="bg-transparent text-sm text-slate-300 w-full outline-none select-all"
+                                // AC-1: ppn-body replaces text-sm text-slate-300
+                                className="bg-transparent ppn-body text-slate-300 w-full outline-none select-all"
                             />
                             <button
                                 onClick={() => {
-                                    navigator.clipboard.writeText(generatedLink);
+                                    const shareData = { title: 'Your Integration Compass', url: generatedLink };
+                                    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                                        navigator.share(shareData).catch(() => navigator.clipboard.writeText(generatedLink));
+                                    } else {
+                                        navigator.clipboard.writeText(generatedLink);
+                                    }
                                     setIsCopied(true);
                                     setTimeout(() => setIsCopied(false), 3000);
                                 }}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-sm text-slate-200 rounded-md transition-colors"
+                                aria-label={isCopied ? 'Link shared' : 'Share link'}
+                                className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 ppn-body text-slate-200 rounded-md transition-colors"
                             >
-                                {isCopied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                                {isCopied ? 'Copied' : 'Copy'}
+                                {/* AC-2: teal replaces emerald-400 */}
+                                {isCopied ? <Check className="w-4 h-4 text-teal-400" /> : <Share2 className="w-4 h-4" />}
+                                {isCopied ? 'Shared' : 'Share'}
                             </button>
                         </div>
                     )}
 
-                    <div className="flex items-center justify-end gap-4">
-                        <button
-                            onClick={onClose}
-                            className="px-6 py-3 text-sm font-medium text-slate-300 hover:text-white transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleGenerateLink}
-                            disabled={isGenerating}
-                            className={`flex items-center gap-2 px-8 py-3 text-sm font-bold text-white rounded-xl shadow-lg transition-all ${isCopied
-                                    ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/25'
+                    <div className="flex items-center justify-between gap-4">
+                        {/* View button: opens the patient compass in a new tab so the practitioner can preview it */}
+                        {sessionId ? (
+                            <button
+                                onClick={() => window.open(`/integration-compass?sessionId=${sessionId}`, '_blank', 'noopener,noreferrer')}
+                                aria-label="View patient compass in a new tab"
+                                className="flex items-center gap-2 px-5 py-3 ppn-body font-medium text-teal-300 hover:text-teal-100 bg-teal-900/20 hover:bg-teal-900/40 border border-teal-700/40 hover:border-teal-500/60 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+                            >
+                                <Eye className="w-4 h-4" />
+                                View
+                            </button>
+                        ) : <div />}
+
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={onClose}
+                                className="px-6 py-3 ppn-body font-medium text-slate-300 hover:text-white transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleGenerateLink}
+                                disabled={isGenerating}
+                                className={`flex items-center gap-2 px-8 py-3 ppn-body font-bold text-white rounded-xl shadow-lg transition-all ${isCopied
+                                    // AC-2: teal replaces emerald for success state
+                                    ? 'bg-teal-700 hover:bg-teal-600 shadow-teal-900/40 border border-teal-500/30'
                                     : 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25'
-                                }`}
-                        >
-                            {isGenerating ? (
-                                <span className="animate-pulse">Generating Secure Payload...</span>
-                            ) : isCopied ? (
-                                <><Check className="w-4 h-4" /> Link Copied to Clipboard</>
-                            ) : (
-                                <><LinkIcon className="w-4 h-4" /> Generate Magic Link</>
-                            )}
-                        </button>
+                                    }`}
+                            >
+                                {isGenerating ? (
+                                    <span className="animate-pulse">Generating Secure Payload...</span>
+                                ) : isCopied ? (
+                                    <><Check className="w-4 h-4" /> Link Ready to Share</>
+                                ) : (
+                                    <><LinkIcon className="w-4 h-4" /> Generate Magic Link</>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
