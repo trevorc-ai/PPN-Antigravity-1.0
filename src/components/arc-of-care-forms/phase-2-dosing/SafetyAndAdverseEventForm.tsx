@@ -105,11 +105,11 @@ const INTERVENTION_TYPES = [
 ];
 
 const SEVERITY_GRADES = [
-    { value: 1, label: 'Grade 1, Mild' },
-    { value: 2, label: 'Grade 2, Moderate' },
-    { value: 3, label: 'Grade 3, Severe' },
-    { value: 4, label: 'Grade 4, Life-Threatening' },
-    { value: 5, label: 'Grade 5, Fatal' },
+    { value: 1, label: 'Grade 1 — Mild' },
+    { value: 2, label: 'Grade 2 — Moderate' },
+    { value: 3, label: 'Grade 3 — Severe' },
+    { value: 4, label: 'Grade 4 — Life-Threatening' },
+    { value: 5, label: 'Grade 5 — Fatal' },
 ];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

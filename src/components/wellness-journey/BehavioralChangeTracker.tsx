@@ -142,7 +142,7 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 </div>
                 <div>
                     <h3 className="text-lg font-black text-slate-300">Behavioral Change Tracker</h3>
-                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3, Integration Progress</p>
+                    <p className="text-sm text-slate-500 uppercase tracking-widest">Phase 3 — Integration Progress</p>
                 </div>
             </div>
 

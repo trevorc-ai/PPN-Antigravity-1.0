@@ -420,11 +420,11 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                                     aria-label="Adverse event severity grade"
                                 >
                                     <option value="">Select Grade...</option>
-                                    <option value="1">Grade 1, Mild (No Intervention)</option>
-                                    <option value="2">Grade 2, Moderate (Minimal Intervention)</option>
-                                    <option value="3">Grade 3, Severe (Significant Intervention)</option>
-                                    <option value="4">Grade 4, Life-Threatening</option>
-                                    <option value="5">Grade 5, Fatal</option>
+                                    <option value="1">Grade 1 — Mild (No Intervention)</option>
+                                    <option value="2">Grade 2 — Moderate (Minimal Intervention)</option>
+                                    <option value="3">Grade 3 — Severe (Significant Intervention)</option>
+                                    <option value="4">Grade 4 — Life-Threatening</option>
+                                    <option value="5">Grade 5 — Fatal</option>
                                 </select>
                             </div>
                         </div>
