@@ -1247,7 +1247,9 @@ const PatientReport: React.FC = () => {
 
                 {/* ── ZONE 4: Safety — only rendered if flagged ────────────────── */}
                 {zones.z4 && (
-                    <Zone number={4} title="Safety & Support" accentColor={C.rose}>
+                    <Zone number={4} title="Safety & Support" accentColor={C.rose}
+                        tooltip="This section only appears when your practitioner has flagged something important. It includes crisis resources, safety notes, and areas to monitor during your integration."
+                    >
                         {/* 988 crisis line — always visible */}
                         <div style={{
                             marginBottom: 12, padding: '14px 18px',
@@ -1304,7 +1306,7 @@ const PatientReport: React.FC = () => {
                     tooltip="Two visual perspectives on what happened during your session. The Experience Profile maps the intensity of key biological and subjective dimensions. The Flight Plan shows how your medicine metabolized across time."
                 >
                     <p style={{ fontSize: 14, color: '#94a3b8', marginBottom: 20, lineHeight: 1.75 }}>
-                        Two views of what happened in your body and mind. These are biological and experiential patterns — not a diagnosis or medical record.
+                        Two views of what happened in your body and mind. These are biological and experiential patterns, not a diagnosis or medical record.
                     </p>
 
                     {/* Spider chart — progressive disclosure on mobile */}
@@ -1343,30 +1345,36 @@ const PatientReport: React.FC = () => {
 
                     {/* Coming Soon: Neurological Map — deferred per WO-546 Out of Scope */}
                     <div style={{ marginTop: 28 }}>
-                        <div className="no-print" style={{
-                            background: 'rgba(15,23,42,0.60)',
-                            backdropFilter: 'blur(16px)',
-                            WebkitBackdropFilter: 'blur(16px)',
-                            border: '1px solid rgba(255,255,255,0.07)',
-                            borderRadius: '2rem',
-                            padding: '28px 24px',
-                            textAlign: 'center',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-                        }}>
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                aria-hidden="true" style={{ opacity: 0.35 }}>
-                                <rect x="3" y="11" width="18" height="11" rx="2"
-                                    stroke="#60a5fa" strokeWidth="1.5" />
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"
-                                    stroke="#60a5fa" strokeWidth="1.5" strokeLinecap="round" />
-                                <circle cx="12" cy="16" r="1.5" fill="#60a5fa" />
-                            </svg>
-                            <p style={{
-                                fontSize: 14, fontWeight: 700, color: '#475569',
-                                letterSpacing: '0.06em', margin: 0
-                            }}>Neurological Map</p>
-                            <p style={{ fontSize: 12, color: '#334155', margin: 0 }}>Coming Soon: In Development</p>
-                        </div>
+                        <AdvancedTooltip
+                            content="The Neurological Map will visualize brain network activity patterns correlated with your session data. Currently in development."
+                            side="top" type="science" width="w-72"
+                        >
+                            <div className="no-print" style={{
+                                background: 'rgba(15,23,42,0.60)',
+                                backdropFilter: 'blur(16px)',
+                                WebkitBackdropFilter: 'blur(16px)',
+                                border: '1px solid rgba(255,255,255,0.07)',
+                                borderRadius: '2rem',
+                                padding: '28px 24px',
+                                textAlign: 'center',
+                                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+                                cursor: 'help',
+                            }}>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                    aria-hidden="true" style={{ opacity: 0.35 }}>
+                                    <rect x="3" y="11" width="18" height="11" rx="2"
+                                        stroke="#60a5fa" strokeWidth="1.5" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"
+                                        stroke="#60a5fa" strokeWidth="1.5" strokeLinecap="round" />
+                                    <circle cx="12" cy="16" r="1.5" fill="#60a5fa" />
+                                </svg>
+                                <p style={{
+                                    fontSize: 14, fontWeight: 700, color: '#475569',
+                                    letterSpacing: '0.06em', margin: 0
+                                }}>Neurological Map</p>
+                                <p style={{ fontSize: 12, color: '#334155', margin: 0 }}>Coming Soon: In Development</p>
+                            </div>
+                        </AdvancedTooltip>
                     </div>
                 </Zone>
 

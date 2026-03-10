@@ -80,11 +80,15 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
 
   // WO-524: Active session timer chips
+  // Migration 079: patient_link_code dropped — use patient_link_code_hash or id for display
   interface ActiveChip { sessionId: string; subjectId: string; startedAt: string; }
   const [activeChips, setActiveChips] = useState<ActiveChip[]>([]);
+  const fetchActiveChipsInFlight = useRef(false);
 
   const fetchActiveChips = useCallback(async () => {
     if (!isAuthenticated) return;
+    if (fetchActiveChipsInFlight.current) return;
+    fetchActiveChipsInFlight.current = true;
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -92,26 +96,34 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
         .from('log_user_sites').select('site_id')
         .eq('user_id', user.id).eq('is_active', true).single();
       if (!mySite) return;
-      const { data: sessions } = await supabase
+      const { data: sessions, error } = await supabase
         .from('log_clinical_records')
-        .select('id, patient_link_code, session_started_at')
+        .select('id, patient_link_code_hash, session_started_at')
         .eq('site_id', mySite.site_id)
         .eq('session_date', new Date().toISOString().split('T')[0])
         .not('session_started_at', 'is', null)
         .is('session_ended_at', null);
+      if (error) {
+        console.warn('[TopHeader] fetchActiveChips:', error.message);
+        return;
+      }
       setActiveChips((sessions ?? []).map((s: any) => ({
         sessionId: s.id,
-        subjectId: String(s.patient_link_code ?? s.id).slice(0, 6).toUpperCase(),
+        subjectId: String(s.patient_link_code_hash ?? s.id).slice(0, 6).toUpperCase(),
         startedAt: s.session_started_at,
       })));
     } catch (err) { console.warn('[TopHeader] fetchActiveChips:', err); }
+    finally {
+      fetchActiveChipsInFlight.current = false;
+    }
   }, [isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchActiveChips();
     const interval = setInterval(fetchActiveChips, 60000);
     return () => clearInterval(interval);
-  }, [fetchActiveChips]);
+  }, [isAuthenticated, fetchActiveChips]);
 
   const isLanding = location.pathname === '/';
 
@@ -355,10 +367,15 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
 
               {/* User Dropdown Menu */}
-              <div id="tour-user-profile" className="relative" ref={menuRef}>
+              <div id="tour-user-profile" className="relative group/avatar" ref={menuRef}>
                 <div
                   className="flex items-center gap-3 pl-2 group cursor-pointer hover:bg-white/5 rounded-2xl p-1 transition-all"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  role="button"
+                  aria-label="Open account menu"
+                  aria-expanded={isMenuOpen}
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setIsMenuOpen(!isMenuOpen); }}
                 >
                   <div className="relative">
                     <div className="size-10 rounded-full bg-gradient-to-br from-primary to-blue-600 border-2 border-primary/40 group-hover:border-primary transition-all shadow-[0_0_15px_rgba(43,116,243,0.2)] flex items-center justify-center">
