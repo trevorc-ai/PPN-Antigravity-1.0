@@ -226,7 +226,7 @@ export const Waitlist: FC = () => {
                             <>
                                 <div className="mb-8">
                                     <h2 className="text-2xl font-black text-slate-100 mb-1">Request Founding Access</h2>
-                                    <p className="text-sm text-slate-500 font-medium">No payment required — early access only.</p>
+                                    <p className="text-sm text-slate-500 font-medium">No payment required. Early access only.</p>
                                 </div>
 
                                 {status === 'error' && (

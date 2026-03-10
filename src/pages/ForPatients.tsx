@@ -13,7 +13,7 @@ const FEATURES = [
     },
     {
         title: 'Phantom Shield Privacy',
-        body: 'You are a hash code, not a name. Your documentation never contains your identity — only your outcomes. PPN cannot identify you even if asked to.',
+        body: 'You are a hash code, not a name. Your documentation never contains your identity, only your outcomes. PPN cannot identify you even if asked to.',
     },
     {
         title: 'Compare to Global Average',
@@ -29,7 +29,7 @@ const FEATURES = [
     },
     {
         title: 'Citizen Science Contribution',
-        body: 'With your permission, your anonymized session outcomes contribute to the global benchmark — helping future patients and researchers worldwide.',
+        body: 'With your permission, your anonymized session outcomes contribute to the global benchmark, helping future patients and researchers worldwide.',
     },
 ];
 
@@ -74,7 +74,7 @@ export default function ForPatients() {
                         Track Your Healing.<br /><span style={{ color: ACCENT }}>Own Your Story.</span>
                     </h1>
                     <p className="ppn-body text-slate-400 max-w-xl mx-auto mb-10" style={{ lineHeight: 1.7 }}>
-                        Your experience belongs to you. PPN gives you a private, zero-PHI space to document your healing journey — and the option to compare your arc to thousands of anonymized others, privately.
+                        Your experience belongs to you. PPN gives you a private, zero-PHI space to document your healing journey, with the option to compare your arc to thousands of anonymized others, privately.
                     </p>
                     <div className="flex flex-wrap justify-center gap-2 mb-10">
                         {['Private Journaling', 'Phantom Shield Privacy', 'Citizen Science', 'Global Benchmark', 'Export Anytime'].map(p => (
@@ -107,7 +107,7 @@ export default function ForPatients() {
                     </svg>
                     <div>
                         <span className="font-bold text-sm" style={{ color: ACCENT }}>Phantom Shield Active</span>
-                        <p className="ppn-meta text-slate-400 mt-0.5">You are a Subject ID — not a name. PPN cannot identify you even under a court order. This is structural, not just policy.</p>
+                        <p className="ppn-meta text-slate-400 mt-0.5">You are a Subject ID, not a name. PPN cannot identify you even under a court order. This is structural, not just policy.</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@ export default function ForPatients() {
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="ppn-section-title mb-3">Everything You Need to Track Your Healing</h2>
-                        <p className="ppn-body text-slate-500 max-w-lg mx-auto">Private, beautiful, and structured — PPN gives patients the same clinical-grade tools their practitioners use.</p>
+                        <p className="ppn-body text-slate-500 max-w-lg mx-auto">Private, beautiful, and structured: PPN gives patients the same clinical-grade tools their practitioners use.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {FEATURES.map(f => (

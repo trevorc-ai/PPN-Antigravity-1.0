@@ -167,7 +167,7 @@ export default function ForPayers() {
             <section className="max-w-6xl mx-auto px-6 py-24">
                 <div className="text-center mb-16">
                     <h2 className="ppn-section-title mb-3">Actuarial Intelligence at Every Layer</h2>
-                    <p className="ppn-body text-slate-500 max-w-lg mx-auto">From individual session records to population-level risk modeling — PPN is the data infrastructure that psychedelic therapy coverage decisions require.</p>
+                    <p className="ppn-body text-slate-500 max-w-lg mx-auto">From individual session records to population-level risk modeling: PPN is the data infrastructure that psychedelic therapy coverage decisions require.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {FEATURES.map(f => (

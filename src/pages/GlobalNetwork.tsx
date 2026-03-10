@@ -58,11 +58,11 @@ const FEATURES = [
     },
     {
         title: 'Protocol Harmonization',
-        body: 'A shared ontology for substance, protocol, and outcome variables — enabling apples-to-apples comparison across institutions and national borders.',
+        body: 'A shared ontology for substance, protocol, and outcome variables, enabling apples-to-apples comparison across institutions and national borders.',
     },
     {
         title: 'Citizen Science Contribution',
-        body: 'Each anonymized session logged by a PPN practitioner enriches the global benchmark — turning clinical practice into real-world evidence that matters.',
+        body: 'Each anonymized session logged by a PPN practitioner enriches the global benchmark, turning clinical practice into real-world evidence that matters.',
     },
     {
         title: 'Policy Advocacy Intelligence',
@@ -177,7 +177,7 @@ export default function GlobalNetwork() {
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="ppn-section-title mb-3">Built for Researchers &amp; Policy Advocates</h2>
-                        <p className="ppn-body text-slate-500 max-w-lg mx-auto">From individual session data to population-level intelligence — PPN bridges the clinical-research gap.</p>
+                        <p className="ppn-body text-slate-500 max-w-lg mx-auto">From individual session data to population-level intelligence: PPN bridges the clinical-research gap.</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {FEATURES.map(f => (

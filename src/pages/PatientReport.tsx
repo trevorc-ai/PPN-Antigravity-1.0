@@ -1365,7 +1365,7 @@ const PatientReport: React.FC = () => {
                                 fontSize: 14, fontWeight: 700, color: '#475569',
                                 letterSpacing: '0.06em', margin: 0
                             }}>Neurological Map</p>
-                            <p style={{ fontSize: 12, color: '#334155', margin: 0 }}>Coming Soon — In Development</p>
+                            <p style={{ fontSize: 12, color: '#334155', margin: 0 }}>Coming Soon: In Development</p>
                         </div>
                     </div>
                 </Zone>
