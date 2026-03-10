@@ -1,0 +1,381 @@
+# PPN Governance, Vocabulary, and Analytics Operating Model
+_Last revised: March 8, 2026_
+_Format: Markdown handoff for a fresh chat_
+
+## 1. Purpose
+
+This document defines the operating model that sits above the database rebuild and UI reconnection plans.
+
+It exists to make the system:
+- stable
+- governable
+- privacy-safe
+- analytically credible
+- scalable without turning into uncontrolled schema sprawl
+
+This document does not replace the database rebuild plan or the Cursor/UI reconnection plan.
+
+It adds the governance rules that protect them.
+
+## 2. Core principle
+
+The product is not just software.
+
+The product is:
+1. controlled vocabulary
+2. de-identified structured data
+3. defensible analytics
+4. safe operational governance
+
+That means governance is part of the product, not an afterthought.
+
+## 3. Strategic posture
+
+The system should optimize for:
+- structured, repeatable data capture
+- de-identified records
+- low administrative burden
+- clinician trust
+- audit-defensible reporting
+- careful benchmarking
+- reproducible analytics
+
+The system should not optimize for:
+- free-form narrative as the default
+- uncontrolled schema growth
+- one-off custom fields for every clinic request
+- speculative benchmarking without disclosure rules
+- vague AI claims without governed inputs
+
+## 4. Vocabulary is the moat
+
+The core competitive advantage is not feature sprawl.
+
+It is:
+- better reference vocabularies
+- better curation
+- better mappings
+- better governance
+- faster response to legitimate practitioner needs
+- cleaner downstream analytics
+
+Reference tables are not just lookup helpers.
+They are a managed operating system.
+
+## 5. Governance roles
+
+### 5.1 Product owner
+Owns:
+- product direction
+- scope decisions
+- final approval of meaningful schema and vocabulary changes
+
+### 5.2 Vocabulary curator
+Owns:
+- reference-table hygiene
+- naming standards
+- synonym mapping
+- retirement decisions
+- request triage
+- data dictionary updates
+
+### 5.3 Clinical advisor or advisory board
+Owns:
+- review of clinically meaningful additions
+- safety relevance
+- terminology appropriateness
+- interpretation risk review
+
+### 5.4 Data architect
+Owns:
+- schema integrity
+- normalization strategy
+- key design
+- migration safety
+- analytics-readiness
+
+### 5.5 Application implementer
+Owns:
+- UI and service-layer implementation
+- validation logic
+- adherence to the locked schema
+- no invention outside the spec
+
+## 6. Vocabulary request workflow
+
+### 6.1 When a request is needed
+A vocabulary request is appropriate when:
+- a clinician cannot accurately capture a real clinical concept using existing structured options
+- a meaningful concept appears repeatedly across sites
+- a missing coded concept blocks safe or valid reporting
+- a concept is needed for compliance, safety, or outcomes analysis
+
+### 6.2 When a request is not needed
+A vocabulary request is not appropriate when:
+- the user wants a one-off convenience label
+- the concept is duplicate or synonymous with existing values
+- the request is actually for a UI tweak, not a new coded concept
+- the request belongs in a local workflow note rather than the shared data model
+
+### 6.3 Required request fields
+Every vocabulary request should capture:
+- requesting site
+- requesting user
+- domain area
+- requested label
+- plain-English meaning
+- reason needed
+- urgency
+- whether safety or regulatory reporting is affected
+- examples of current mismatch
+
+### 6.4 Request outcomes
+A request can end as:
+- approved, new value added
+- mapped to existing value
+- rejected with explanation
+- deferred pending review
+- split into product request and vocabulary request
+
+## 7. Safety-critical fast path
+
+Some missing concepts cannot wait for the normal queue.
+
+Examples:
+- serious adverse event classification gap
+- contraindication category missing
+- intervention code needed for a real event
+- safety workflow blocked by missing structured option
+
+For these:
+1. route to fast-path review
+2. curator and clinical reviewer evaluate quickly
+3. add coded value if appropriate
+4. document the addition and update dictionaries immediately
+
+Fast-path does not mean no governance.
+It means accelerated governance.
+
+## 8. Data dictionary standard
+
+Every reference table must have a dictionary entry that includes:
+- table purpose
+- field purpose
+- allowed values or row pattern
+- source of truth owner
+- meaning of each code
+- UI display guidance
+- synonyms or alias rules
+- deprecation rules
+- reporting implications
+
+No reference table should exist without dictionary coverage.
+
+## 9. Versioning and retirement
+
+### 9.1 Additive first
+Where possible, vocabulary changes should be additive.
+
+Do not casually rename or repurpose values already in use.
+
+### 9.2 Retirement
+When a value must be retired:
+- keep historical data readable
+- mark value inactive
+- define replacement mapping if applicable
+- update UI to prevent new use
+- document the change in the dictionary
+
+### 9.3 Breaking changes
+Breaking changes require:
+- explicit review
+- migration plan
+- impact analysis
+- update to all affected mappings and UI flows
+
+## 10. Free-text policy
+
+### 10.1 Default rule
+No free text in core clinical data tables.
+
+This includes:
+- patient profile
+- baseline assessments
+- session logs
+- safety events
+- outcomes tables
+- longitudinal assessment tables
+
+### 10.2 Allowed exceptions
+Free text may exist only in tightly controlled operational areas such as:
+- vocabulary request queue
+- internal admin review notes
+- correction explanation logs where explicitly allowed
+- temporary governance workflow tables
+
+### 10.3 Exception requirements
+Any free-text exception must define:
+- where it is allowed
+- who can write it
+- whether it is temporary or retained
+- whether it is visible in exports
+- how it is reviewed or converted into structured data
+
+## 11. Identity and pseudonymization rules
+
+### 11.1 Canonical identity
+- `patient_uuid` is the internal canonical patient identifier
+- `patient_link_code` is the readable pseudonymous patient code
+- `site_id` scopes identity to the site context
+- `log_patient_site_links` is the patient-level source of truth
+
+### 11.2 Readable code usage
+The readable code is for:
+- UI display
+- human workflow
+- non-sensitive operational reference
+
+It is not a substitute for canonical UUID linkage.
+
+### 11.3 No PHI/PII rule
+The system should avoid storing direct PHI/PII in the clinical data layer.
+
+## 12. Correction and audit policy
+
+### 12.1 Preferred pattern
+Clinical log data should generally be append-only.
+
+### 12.2 If correction is needed
+Use a correction mechanism rather than silent overwrite where possible.
+
+A correction record should capture:
+- what is being corrected
+- who corrected it
+- when
+- why
+- replacement value or invalidation status
+
+### 12.3 Audit expectations
+The system should preserve:
+- original event trail where appropriate
+- correction lineage
+- who performed the change
+
+## 13. Analytics and disclosure rules
+
+### 13.1 Benchmarks are descriptive
+Benchmark outputs should be framed as descriptive and comparative, not causal.
+
+### 13.2 Small-N suppression
+Do not display highly specific benchmark cuts when the denominator is too small.
+
+A minimum reporting threshold should be defined before launch.
+
+### 13.3 k-anonymity mindset
+Even aggregate reporting can create re-identification risk when combined with:
+- rare protocol combinations
+- small sites
+- unusual dosing patterns
+- demographic outliers
+
+Analytics should be reviewed with disclosure risk in mind, not just row-level access rules.
+
+### 13.4 Sensitive slices
+Do not casually expose:
+- very small cohort breakdowns
+- site-level outlier patterns in tiny samples
+- combinations that make a patient or practitioner inferable
+
+### 13.5 Statistical humility
+The platform should avoid overstating:
+- outcome claims
+- efficacy claims
+- clinical superiority claims
+- interpretations unsupported by sample quality
+
+## 14. Large-vocabulary UX rules
+
+Small vocabularies may use:
+- chips
+- segmented controls
+- radio groups
+
+Large vocabularies should use:
+- grouped dropdowns
+- searchable selects
+- hierarchical selectors
+- progressive disclosure
+- curated favorites where appropriate
+
+Do not force long uncontrolled chip lists into the UI.
+
+## 15. Array-field governance
+
+Array fields are allowed only when explicitly approved.
+
+If arrays are used:
+- document why a junction table was not chosen
+- apply app-level validation
+- control cardinality
+- plan indexes carefully
+- understand that per-element FK enforcement is limited
+
+Arrays are a tradeoff, not a free win.
+
+## 16. Launch gates for governance
+
+Before launch, the system should have:
+
+1. a named curator
+2. a documented vocabulary request process
+3. a data dictionary standard
+4. retirement/versioning rules
+5. free-text exception rules
+6. correction policy
+7. small-N and disclosure policy
+8. benchmark wording rules
+9. large-vocabulary UI patterns
+10. a change log for vocabulary and schema decisions
+
+## 17. Operating KPIs
+
+Suggested governance KPIs:
+- vocabulary request turnaround time
+- percent of requests mapped to existing values
+- percent of requests requiring new values
+- number of inactive or deprecated codes still in use
+- time from approved request to UI availability
+- number of reports suppressed by small-N rule
+- number of correction records over time
+- number of ghost-save or invalid-entry incidents detected
+
+## 18. Interaction with the rebuild plans
+
+This governance document does not override the locked architecture.
+
+It constrains and strengthens it.
+
+Use this hierarchy:
+1. Database reset and rebuild plan
+2. Cursor/UI reconnection plan
+3. Governance, vocabulary, and analytics operating model
+
+If a governance concern requires a schema change, it should be proposed explicitly and reviewed against the master implementation plan.
+
+## 19. Fresh-chat starter note
+
+Use this summary in a fresh chat:
+
+We have a locked database rebuild plan and a locked Cursor/UI reconnection plan. This governance document adds the operating model above them. Vocabulary is a managed system, not just a set of lookup tables. Governance is part of the product. `patient_uuid` is the canonical internal identity, `patient_link_code` is the readable pseudonymous code, and `log_patient_site_links` is the patient-level source of truth. No free text is allowed in core clinical tables by default. Workflow milestones and live session events remain separate. Benchmarking must follow small-N and disclosure rules. Reference tables require active curation, versioning, dictionary coverage, and a request workflow.
+
+## 20. Bottom line
+
+The platform should behave like a governed clinical data system, not an improvisational form builder.
+
+That means:
+- structured data first
+- controlled vocabulary first
+- governed changes
+- explicit disclosure rules
+- clean audit trails
+- no schema drift by convenience
