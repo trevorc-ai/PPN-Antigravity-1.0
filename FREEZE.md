@@ -2,7 +2,7 @@
 # Pre-commit hook reads this file. Any file listed here will BLOCK a commit.
 # To unfreeze: remove it from the list and commit this file first.
 # Last updated: 2026-03-05 — LOCKDOWN MODE ACTIVE
-FREEZE ALL PAGES; READ-ONLY MODE UNTIL FURTHER NOTICE
+FREEZE ALL PAGES in src/pages/ and src/components/; READ-ONLY MODE UNTIL FURTHER NOTICE
 
 # ── Dashboard & Search (frozen post WO-552/553 cleanup) ──
 src/pages/Dashboard.tsx

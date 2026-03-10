@@ -1,11 +1,8 @@
 User-agent: *
-Disallow: /partner-hub.html
-Disallow: /partner-preview.html
-Disallow: /jason-tour.html
-Disallow: /jason-demo.html
+Disallow: /internal/
 Disallow: /admin_uploads/
 
-# Public pages — indexable
+# Public pages — crawlable
 Allow: /phantom-shield.html
 Allow: /phantom-shield-card.html
 Allow: /
