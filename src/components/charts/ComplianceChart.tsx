@@ -227,44 +227,51 @@ const ComplianceChart: React.FC<ComplianceChartProps> = ({ filters, className = 
                 </div>
             </div>
 
-            {/* Chart */}
-            <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                        data={data}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                    >
-                        <defs>
-                            <linearGradient id="complianceGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#2b74f3" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#2b74f3" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                        <XAxis
-                            dataKey="monthLabel"
-                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                            angle={-45}
-                            textAnchor="end"
-                            height={80}
-                        />
-                        <YAxis
-                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                            label={{ value: 'Compliance Rate (%)', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
-                            domain={[0, 100]}
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Area
-                            type="monotone"
-                            dataKey="complianceRate"
-                            stroke="#2b74f3"
-                            strokeWidth={3}
-                            fill="url(#complianceGradient)"
-                            dot={{ fill: '#2b74f3', r: 5 }}
-                            activeDot={{ r: 7, fill: '#2b74f3', stroke: '#fff', strokeWidth: 2 }}
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
+            {/* Chart — horizontal scroll for mobile (WO-547) */}
+            <div style={{
+                overflowX: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pan-x',
+                position: 'relative',
+            }}>
+                <div className="h-[300px]" style={{ minWidth: 480 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                            data={data}
+                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                            <defs>
+                                <linearGradient id="complianceGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#2b74f3" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#2b74f3" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                            <XAxis
+                                dataKey="monthLabel"
+                                tick={{ fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                                angle={-45}
+                                textAnchor="end"
+                                height={80}
+                            />
+                            <YAxis
+                                tick={{ fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                                label={{ value: 'Compliance Rate (%)', angle: -90, position: 'insideLeft', fill: '#94a3b8', fontSize: 14, fontWeight: 700 }}
+                                domain={[0, 100]}
+                            />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Area
+                                type="monotone"
+                                dataKey="complianceRate"
+                                stroke="#2b74f3"
+                                strokeWidth={3}
+                                fill="url(#complianceGradient)"
+                                dot={{ fill: '#2b74f3', r: 5 }}
+                                activeDot={{ r: 7, fill: '#2b74f3', stroke: '#fff', strokeWidth: 2 }}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* Benchmark Lines */}

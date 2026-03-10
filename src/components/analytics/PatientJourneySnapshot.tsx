@@ -25,8 +25,8 @@ const CustomTooltip = ({ active, payload }: any) => {
           <span className="text-xs font-mono text-slate-300 uppercase tracking-widest">{data.displayDate}</span>
           {isEvent && (
             <span className={`text-xs font-black uppercase px-1.5 py-0.5 rounded ${data.type === 'dose' ? 'bg-cyan-500/10 text-cyan-500' :
-                data.type === 'safety' ? 'bg-amber-500/10 text-amber-500' :
-                  'bg-indigo-500/10 text-indigo-500'
+              data.type === 'safety' ? 'bg-amber-500/10 text-amber-500' :
+                'bg-indigo-500/10 text-indigo-500'
               }`}>
               {data.type}
             </span>
@@ -101,34 +101,59 @@ const CustomEventDot = (props: any) => {
   );
 };
 
-const PatientJourneySnapshot: React.FC = () => {
+// WO-534: Props for real Phase 2 session wiring.
+// sessionId - the active log_clinical_records UUID; drives hasRealSession state.
+// phase2Events - adverse events / session events from journey.session.adverseEvents.
+interface PatientJourneySnapshotProps {
+  sessionId?: string;
+  phase2Events?: Array<{ event_type?: string; event_timestamp?: string; metadata?: any }>;
+}
 
-  // ETL: Normalize data for Recharts composed view
+const PatientJourneySnapshot: React.FC<PatientJourneySnapshotProps> = ({ sessionId, phase2Events }) => {
+  // WO-534: Real session = valid UUID. Drives chart mode (real events vs demo data).
+  const hasRealSession = !!(sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId));
+  const hasRealEvents = hasRealSession && Array.isArray(phase2Events) && phase2Events.length > 0;
+
+  // WO-534: ETL - always start from MOCK_JOURNEY_DATA so the PHQ-9 decay line renders.
+  // When a real session exists, prepend real Phase 2 events as pinned markers over the demo line.
   const chartData = useMemo(() => {
-    return MOCK_JOURNEY_DATA.map(item => {
+    // Convert real Phase 2 events to chart-compatible entries
+    const realEventEntries = hasRealEvents
+      ? phase2Events!.map(ev => {
+        const eventType =
+          ev.event_type === 'adverse_event' || ev.event_type === 'safety_check' ? 'safety'
+            : ev.event_type === 'dose_administered' ? 'dose'
+              : 'integration';
+        return {
+          date: ev.event_timestamp ?? new Date().toISOString(),
+          type: eventType,
+          label: ev.metadata?.event_description ?? ev.event_type ?? 'Session Event',
+          value: null,
+        };
+      })
+      : [];
+
+    const sourceData = [...realEventEntries, ...MOCK_JOURNEY_DATA];
+
+    return sourceData.map(item => {
       let score = null;
       let eventY = null;
 
-      // Logic: 
-      // - If type is 'assessment', parse the Score for the Line Chart (Y-Axis).
-      // - If type is NOT 'assessment', assign a fixed Y value (e.g., 0) for the Scatter Plot timeline.
-
       if (item.type === 'assessment') {
-        // Parse "Score: 12" -> 12
         const match = item.value?.toString().match(/\d+/);
         score = match ? parseInt(match[0]) : null;
       } else {
-        eventY = 0; // Events sit on the baseline
+        eventY = 0;
       }
 
       return {
         ...item,
         displayDate: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         score,
-        eventY
+        eventY,
       };
     }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, []);
+  }, [hasRealEvents, phase2Events]);
 
   return (
     <div className="bg-[#0a0c10] border border-slate-800 rounded-[2.5rem] p-6 sm:p-8 shadow-xl flex flex-col h-full relative overflow-hidden group">
@@ -180,6 +205,12 @@ const PatientJourneySnapshot: React.FC = () => {
 
             {/* Threshold Line for Remission */}
             <ReferenceLine y={5} yAxisId="left" stroke="#10b981" strokeDasharray="3 3" strokeOpacity={0.5} label={{ value: 'Remission (<5)', fill: '#10b981', fontSize: 9, position: 'insideTopRight' }} />
+
+            {/* WO-534: When real session has no events, show a note at the dose baseline */}
+            {hasRealSession && !hasRealEvents && (
+              <ReferenceLine y={0} yAxisId="left" stroke="#475569" strokeDasharray="2 4" strokeOpacity={0.4}
+                label={{ value: 'No adverse events logged this session', fill: '#475569', fontSize: 9, position: 'insideTopLeft' }} />
+            )}
 
             {/* Layer 1: Symptom Line */}
             <Line

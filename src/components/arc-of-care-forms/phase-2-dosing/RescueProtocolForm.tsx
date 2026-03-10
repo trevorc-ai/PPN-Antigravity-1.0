@@ -119,43 +119,23 @@ const RescueProtocolForm: React.FC<RescueProtocolFormProps> = ({
                     </select>
                 </FormField>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField label="Start Time">
-                        <div className="flex gap-2">
-                            <input
-                                type="datetime-local"
-                                tabIndex={-1}
-                                value={data.start_time ?? ''}
-                                onChange={(e) => updateField('start_time', e.target.value)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
-                            />
-                            <button
-                                onClick={startIntervention}
-                                className="px-4 py-3 bg-orange-600 hover:bg-orange-700 text-slate-300 rounded-lg font-medium"
-                            >
-                                Start
-                            </button>
-                        </div>
-                    </FormField>
-
-                    <FormField label="End Time">
-                        <div className="flex gap-2">
-                            <input
-                                type="datetime-local"
-                                tabIndex={-1}
-                                value={data.end_time ?? ''}
-                                onChange={(e) => updateField('end_time', e.target.value)}
-                                className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
-                            />
-                            <button
-                                onClick={endIntervention}
-                                className="px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-                            >
-                                End
-                            </button>
-                        </div>
-                    </FormField>
-                </div>
+                <FormField label="Start Time">
+                    <div className="flex gap-2">
+                        <input
+                            type="datetime-local"
+                            tabIndex={-1}
+                            value={data.start_time ?? ''}
+                            onChange={(e) => updateField('start_time', e.target.value)}
+                            className="flex-1 px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
+                        />
+                        <button
+                            onClick={startIntervention}
+                            className="px-4 py-3 bg-orange-600 hover:bg-orange-700 text-slate-300 rounded-lg font-medium"
+                        >
+                            Start
+                        </button>
+                    </div>
+                </FormField>
 
                 {/* Active Intervention Indicator */}
                 {data.start_time && !data.end_time && (
