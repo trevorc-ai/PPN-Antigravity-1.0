@@ -64,7 +64,7 @@ export const HelpQuickstart = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="rocket_launch" label="Getting Started" color="emerald" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Quickstart Guide</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Quickstart Guide</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 Get from zero to your first logged session in under 10 minutes. This guide walks you through the four essential steps every new practitioner should complete.
             </p>
@@ -98,7 +98,7 @@ export const HelpOverview = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="grid_view" label="Platform Overview" color="indigo" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Platform Overview</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Platform Overview</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 PPN Portal is a measurement and benchmarking tool for psychedelic therapy practitioners. Here's what each major section does.
             </p>
@@ -135,7 +135,7 @@ export const HelpInteractionChecker = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="security" label="Safety Shield" color="red" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Using the Interaction Checker</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Using the Interaction Checker</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 The Interaction Checker validates clinical combinations against a 13-point safety matrix. Think of it as a spell-checker for medicine, it looks at the substance you plan to use and compares it against the medications your patient is already taking.
             </p>
@@ -179,7 +179,7 @@ export const HelpWellnessJourney = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="favorite" label="Wellness Journey" color="emerald" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Navigating Wellness Journey Logs</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Navigating Wellness Journey Logs</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 The Wellness Journey tracks your patient through three clinical phases: Preparation, Dosing, and Integration. Each phase has structured forms and gating criteria that must be met before progressing.
             </p>
@@ -225,10 +225,23 @@ export const HelpSessionReporting = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="summarize" label="Session Reporting" color="indigo" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Session Reporting & Exports</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Session Reporting & Exports</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 Every session you log creates a structured de-identified record. You can export these as PDF clinical summaries or CSV datasets for insurance, billing, or research purposes.
             </p>
+        </div>
+
+        {/* Download Center callout — WO-573 content update */}
+        <div className="flex items-start gap-4 p-5 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl">
+            <span className="material-symbols-outlined text-indigo-400 text-2xl flex-shrink-0 mt-0.5">download</span>
+            <div>
+                <p className="text-base font-bold text-indigo-300 mb-1">Primary Export Path: Download Center</p>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                    All exports, including session PDFs, compliance logs, and patient-facing reports, are now centralised
+                    in the <strong className="text-indigo-300">Download Center</strong>. Navigate there via the sidebar for the full export catalogue.
+                    The legacy Export PDF button on individual session pages remains available but the Download Center is the recommended workflow.
+                </p>
+            </div>
         </div>
 
         <div className="space-y-4">
@@ -258,8 +271,13 @@ export const HelpSessionReporting = () => (
 export const HelpScanner = () => (
     <div className="space-y-10">
         <div>
-            <SectionBadge icon="document_scanner" label="Patient Bridge" color="purple" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Patient Bridge Scanner</h2>
+            <SectionBadge icon="document_scanner" label="Patient Bridge Scanner" color="purple" />
+            {/* WO-573: Coming Soon — feature not yet live in production */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-xs font-black text-amber-400 uppercase tracking-widest mb-3">
+                <span className="material-symbols-outlined text-sm">schedule</span>
+                Coming Soon
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Patient Bridge Scanner</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 The Patient Bridge leverages OCR (optical character recognition) via mobile camera access to rapidly ingest paperwork and physical questionnaires directly into the secure environment, eliminating manual data entry.
             </p>
@@ -302,7 +320,12 @@ export const HelpDevices = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="devices" label="Device Syncing" color="sky" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Device Syncing & Integrations</h2>
+            {/* WO-573: Coming Soon — native mobile app and advanced device sync not yet live */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-xs font-black text-amber-400 uppercase tracking-widest mb-3">
+                <span className="material-symbols-outlined text-sm">schedule</span>
+                Coming Soon
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Device Syncing & Integrations</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 PPN is designed to work across desktop, tablet, and mobile. All data syncs in real-time via your secure Supabase-backed account, no manual export or import needed between devices.
             </p>
@@ -332,7 +355,7 @@ export const HelpSettings = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="settings" label="Account Setup" color="slate" />
-            <h2 className="text-3xl font-black text-slate-200 tracking-tight">Account Settings</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Account Settings</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 Manage your profile, notification preferences, and data export settings from the Settings page. Access it anytime via the sidebar or top-right menu.
             </p>
