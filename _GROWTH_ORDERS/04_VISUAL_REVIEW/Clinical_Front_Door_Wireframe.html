@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[WIREFRAME] Front Door: Clinical — Layout Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    borderRadius: { '2rem': '2rem' },
+                    colors: { slate: { 950: '#020408' } }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #020408;
+        }
+
+        /* WIREFRAME MODE: all surfaces are flat annotation-grey. No brand colors. */
+        .wire-surface {
+            background: #1e293b;
+            border: 1px dashed #475569;
+        }
+
+        .wire-placeholder {
+            background: #0f172a;
+            border: 2px dashed #334155;
+        }
+
+        .wire-label {
+            color: #64748b;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        /* Annotation badge for the reviewer */
+        .review-note {
+            background: #fef9c3;
+            color: #713f12;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body class="text-slate-300 antialiased">
+
+    <!-- ============================================================ -->
+    <!-- REVIEWER INSTRUCTIONS (visible only in this wireframe view) -->
+    <!-- ============================================================ -->
+    <div class="bg-amber-950 border-b border-amber-700 px-6 py-4">
+        <p class="text-amber-300 text-sm font-medium">
+            📐 <strong>Phase 3 Layout Review</strong> - You are evaluating STRUCTURE ONLY.
+            Approve or reject: (1) section order, (2) content hierarchy,
+            (3) CTA placement above/below the fold, (4) proportions.
+            Colors, fonts, and images are NOT finalized at this stage.
+        </p>
+    </div>
+
+    <!-- NAV WIREFRAME -->
+    <nav class="wire-surface px-6 h-20 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="wire-placeholder w-8 h-8 rounded-lg flex items-center justify-center">
+                <span class="wire-label">LOGO</span>
+            </div>
+            <span class="text-slate-400 text-sm font-medium">PPN Brand Wordmark</span>
+        </div>
+        <div class="flex gap-6 items-center">
+            <span class="wire-label">Nav Link 1</span>
+            <span class="wire-label">Nav Link 2</span>
+            <div class="wire-placeholder px-4 py-2 rounded-full">
+                <span class="wire-label">CTA: Sign In</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: HERO                                              -->
+    <!-- ============================================================ -->
+    <section class="wire-surface mx-6 mt-6 rounded-[2rem] p-12">
+        <span class="review-note mb-4 block">SECTION 1: HERO — Above the fold target: H1 + subtitle + both CTAs</span>
+
+        <!-- Badge -->
+        <div class="wire-placeholder inline-flex items-center px-3 py-1 rounded-full mb-6">
+            <span class="wire-label">Eyebrow badge: "Clinical Intelligence Dashboard v2.0"</span>
+        </div>
+
+        <!-- H1 -->
+        <div class="wire-placeholder p-4 rounded-xl mb-4">
+            <p class="wire-label">H1 (~60-70px): "Elevate Your Practice with Zero-PHI Clinical Intelligence."</p>
+            <div class="h-12 bg-slate-700/40 rounded mt-2"></div>
+            <div class="h-12 bg-slate-700/40 rounded mt-2 w-3/4"></div>
+        </div>
+
+        <!-- Subtitle -->
+        <div class="wire-placeholder p-4 rounded-xl mb-8">
+            <p class="wire-label">H2 subtitle (~18px): Platform description, 2 lines.</p>
+            <div class="h-4 bg-slate-700/40 rounded mt-2"></div>
+            <div class="h-4 bg-slate-700/40 rounded mt-2 w-5/6"></div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="flex gap-4">
+            <div class="wire-placeholder px-8 py-4 rounded-full flex items-center gap-2">
+                <span class="wire-label font-bold">PRIMARY CTA: "Join the Network" [Button] →</span>
+            </div>
+            <div class="wire-placeholder px-8 py-4 rounded-full flex items-center gap-2">
+                <span class="wire-label">SECONDARY CTA: "▶ View Demo Showcase"</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: HERO IMAGE / ABSTRACT VISUAL                      -->
+    <!-- ============================================================ -->
+    <section class="mx-6 mt-4">
+        <div class="wire-placeholder rounded-[2rem] h-64 flex flex-col items-center justify-center">
+            <span class="wire-label text-2xl mb-2">[ HERO IMAGE ]</span>
+            <span class="wire-label">Abstract: Indigo glowing clinical data nodes on dark background</span>
+            <span class="wire-label mt-1">Prompt ready in design.md — generated by Nano Banana 2</span>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: 3-COLUMN VALUE PROPS                              -->
+    <!-- ============================================================ -->
+    <section class="mx-6 mt-4">
+        <span class="review-note mb-4 block">SECTION 3: BENEFIT CARDS — reviewing 3-col layout vs. 2-col+feature</span>
+        <div class="grid grid-cols-3 gap-4">
+            <!-- Card 1 -->
+            <div class="wire-surface p-8 rounded-[2rem]">
+                <div class="wire-placeholder w-12 h-12 rounded-xl mb-4 flex items-center justify-center">
+                    <span class="wire-label">ICON</span>
+                </div>
+                <div class="wire-placeholder p-3 rounded-lg mb-3">
+                    <span class="wire-label">H3: "Frictionless Documentation"</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="h-3 bg-slate-700/40 rounded"></div>
+                    <div class="h-3 bg-slate-700/40 rounded w-5/6"></div>
+                    <div class="h-3 bg-slate-700/40 rounded w-4/6"></div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="wire-surface p-8 rounded-[2rem]">
+                <div class="wire-placeholder w-12 h-12 rounded-xl mb-4 flex items-center justify-center">
+                    <span class="wire-label">ICON</span>
+                </div>
+                <div class="wire-placeholder p-3 rounded-lg mb-3">
+                    <span class="wire-label">H3: "Zero-PHI Architecture"</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="h-3 bg-slate-700/40 rounded"></div>
+                    <div class="h-3 bg-slate-700/40 rounded w-5/6"></div>
+                    <div class="h-3 bg-slate-700/40 rounded w-4/6"></div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="wire-surface p-8 rounded-[2rem]">
+                <div class="wire-placeholder w-12 h-12 rounded-xl mb-4 flex items-center justify-center">
+                    <span class="wire-label">ICON</span>
+                </div>
+                <div class="wire-placeholder p-3 rounded-lg mb-3">
+                    <span class="wire-label">H3: "Global Benchmarking"</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="h-3 bg-slate-700/40 rounded"></div>
+                    <div class="h-3 bg-slate-700/40 rounded w-5/6"></div>
+                    <div class="h-3 bg-slate-700/40 rounded w-4/6"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: TRUST / QUOTE                                     -->
+    <!-- ============================================================ -->
+    <section class="mx-6 mt-4">
+        <span class="review-note mb-4 block">SECTION 4: TRUST SIGNAL — centered pull quote, full-width</span>
+        <div class="wire-surface rounded-[2rem] p-16 text-center">
+            <div class="wire-placeholder p-4 rounded-xl max-w-2xl mx-auto">
+                <p class="wire-label">BLOCKQUOTE: "PPN is creating the gold standard for clinical documentation in the
+                    evolving field of psychedelic medicine."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: FOOTER CTA                                        -->
+    <!-- ============================================================ -->
+    <section class="mx-6 mt-4 mb-10">
+        <span class="review-note mb-4 block">SECTION 5: FOOTER CTA — single action, full-width</span>
+        <div class="wire-surface rounded-[2rem] p-16 text-center">
+            <div class="wire-placeholder p-4 rounded-xl max-w-xl mx-auto mb-8">
+                <span class="wire-label">H2: "Ready to join the vanguard of psychedelic medicine?"</span>
+            </div>
+            <div class="space-y-2 mb-10 max-w-lg mx-auto">
+                <div class="h-3 bg-slate-700/40 rounded"></div>
+                <div class="h-3 bg-slate-700/40 rounded w-4/6 mx-auto"></div>
+            </div>
+            <div class="wire-placeholder inline-flex px-10 py-4 rounded-full">
+                <span class="wire-label font-bold">PRIMARY CTA: "Create Your Zero-PHI Account Now" →</span>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
