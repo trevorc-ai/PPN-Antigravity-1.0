@@ -71,7 +71,7 @@ export async function ruleIntegrationDropout(siteId: number): Promise<InsightCar
         // Get non-responders: patients with baseline + follow-up PHQ-9, change < 50%
         const { data: trajectories, error } = await supabase
             .from('log_longitudinal_assessments')
-            .select('patient_id, phq9_score, days_post_session')
+            .select('patient_uuid, phq9_score, days_post_session')
             .order('days_post_session', { ascending: true });
 
         if (error || !trajectories) return null;
@@ -79,10 +79,10 @@ export async function ruleIntegrationDropout(siteId: number): Promise<InsightCar
         // Group by patient to find responders/non-responders
         const byPatient: Record<string, { baseline?: number; endpoint?: number }> = {};
         for (const row of trajectories) {
-            if (!byPatient[row.patient_id]) byPatient[row.patient_id] = {};
-            if (row.days_post_session <= 3) byPatient[row.patient_id].baseline = row.phq9_score;
+            if (!byPatient[row.patient_uuid]) byPatient[row.patient_uuid] = {};
+            if (row.days_post_session <= 3) byPatient[row.patient_uuid].baseline = row.phq9_score;
             if (row.days_post_session >= 21 && row.days_post_session <= 90) {
-                byPatient[row.patient_id].endpoint = row.phq9_score;
+                byPatient[row.patient_uuid].endpoint = row.phq9_score;
             }
         }
 
@@ -105,14 +105,14 @@ export async function ruleIntegrationDropout(siteId: number): Promise<InsightCar
         const nonResponderIds = nonResponders.map(([id]) => id);
         const { data: integrationData } = await supabase
             .from('log_integration_sessions')
-            .select('patient_id')
-            .in('patient_id', nonResponderIds);
+            .select('patient_uuid')
+            .in('patient_uuid', nonResponderIds);
 
         if (!integrationData) return null;
 
         const sessionsByPatient: Record<string, number> = {};
         for (const row of integrationData) {
-            sessionsByPatient[row.patient_id] = (sessionsByPatient[row.patient_id] || 0) + 1;
+            sessionsByPatient[row.patient_uuid] = (sessionsByPatient[row.patient_uuid] || 0) + 1;
         }
 
         const avgIntegrationSessions = nonResponderIds.length > 0
@@ -155,7 +155,7 @@ export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | nu
         // Get sessions from > 30 days ago
         const { data: sessions, error } = await supabase
             .from('log_clinical_records')
-            .select('id, patient_link_code, session_date')
+            .select('id, patient_uuid, session_date')
             .eq('site_id', siteId)
             .lt('session_date', cutoffDate.toISOString().split('T')[0])
             .order('session_date', { ascending: false });
@@ -167,7 +167,7 @@ export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | nu
             const { data: followUp } = await supabase
                 .from('log_longitudinal_assessments')
                 .select('id')
-                .eq('patient_id', session.patient_link_code)
+                .eq('patient_uuid', session.patient_uuid)
                 .gte('assessment_date', session.session_date)
                 .limit(1);
 
@@ -177,13 +177,13 @@ export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | nu
                 );
 
                 return {
-                    id: `follow-up-loss-${session.patient_link_code}`,
+                    id: `follow-up-loss-${session.patient_uuid}`,
                     severity: 'SAFETY',
                     category: 'Patient Follow-Up',
-                    headline: `Patient ${session.patient_link_code} has no documented follow-up in ${daysSince} days since their session.`,
-                    body: `Clinical Insight: 30-day reassessment for all dosing sessions. Extended time without follow-up assessment creates a gap in safety monitoring and prevents accurate outcome tracking. Schedule a check-in to maintain continuity of care.`,
+                    headline: `A patient has no documented follow-up in ${daysSince} days since their session.`,
+                    body: `Clinical protocol requires 30-day reassessment for all dosing sessions. Extended time without follow-up assessment creates a gap in safety monitoring and prevents accurate outcome tracking. Schedule a check-in to maintain continuity of care.`,
                     actionLabel: 'Open Patient Journey',
-                    actionRoute: `/wellness-journey?patient=${session.patient_link_code}`,
+                    actionRoute: `/wellness-journey`,
                     sourceNote: `Session date: ${session.session_date} · Single-patient flag — privacy exempt per k-anon policy`,
                     generatedAt: new Date().toISOString(),
                 };
@@ -202,69 +202,13 @@ export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | nu
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function ruleSubstanceMismatch(siteId: number): Promise<InsightCard | null> {
-    try {
-        const { data: sessions, error } = await supabase
-            .from('log_clinical_records')
-            .select(`
-        patient_link_code,
-        substance_id,
-        primary_indication,
-        ref_substances(substance_name)
-      `)
-            .eq('site_id', siteId);
-
-        if (error || !sessions || sessions.length < 10) return null;
-
-        // Group response rates by substance × condition
-        const groups: Record<string, { patients: Set<string>; substanceName: string; condition: string }> = {};
-
-        for (const s of sessions) {
-            if (!s.primary_indication || !s.substance_id) continue;
-            const key = `${s.substance_id}::${s.primary_indication}`;
-            if (!groups[key]) {
-                groups[key] = {
-                    patients: new Set(),
-                    substanceName: (s.ref_substances as { substance_name?: string })?.substance_name ?? `Substance ${s.substance_id}`,
-                    condition: s.primary_indication,
-                };
-            }
-            groups[key].patients.add(s.patient_link_code);
-        }
-
-        // Find any group pair with same condition, different substance, N ≥ 5 each
-        const entries = Object.values(groups).filter(g => g.patients.size >= 5);
-        const conditions = [...new Set(entries.map(e => e.condition))];
-
-        for (const condition of conditions) {
-            const conditionGroups = entries.filter(e => e.condition === condition);
-            if (conditionGroups.length < 2) continue;
-
-            // Sort by patient count as proxy for "success" (full response rate needs follow-up data)
-            conditionGroups.sort((a, b) => b.patients.size - a.patients.size);
-            const top = conditionGroups[0];
-            const bottom = conditionGroups[conditionGroups.length - 1];
-
-            const ratio = top.patients.size / bottom.patients.size;
-            if (ratio < 1.5) continue;
-
-            return {
-                id: `substance-mismatch-${condition}`,
-                severity: 'SIGNAL',
-                category: 'Protocol Optimization',
-                headline: `Your ${top.substanceName} patients with ${condition} represent ${top.patients.size} cases vs. ${bottom.patients.size} for ${bottom.substanceName} — a ${ratio.toFixed(1)}× difference in case volume.`,
-                body: `Significant variation in case volume across substances for the same condition may indicate an emerging clinical pattern. Review outcome data for each group to identify whether one protocol is yielding stronger results for ${condition} in your practice.`,
-                actionLabel: 'View Patient Galaxy',
-                actionRoute: '/analytics',
-                sourceNote: `Based on n=${top.patients.size + bottom.patients.size} patients with complete substance + indication data · k-anon: ≥5 per subgroup enforced`,
-                generatedAt: new Date().toISOString(),
-            };
-        }
-
-        return null;
-    } catch {
-        return null;
-    }
+    // NOTE: primary_indication was removed from log_clinical_records in the schema rebuild.
+    // Indications now live in log_patient_indications (patient-centric, not session-centric).
+    // This rule requires a two-step join that is deferred to the P1 insightEngine rewrite.
+    // TODO (P1): join log_clinical_records → log_patient_indications via patient_uuid.
+    return null;
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Rule 4 — Documentation Quality Decay
@@ -280,14 +224,14 @@ export async function ruleDocumentationDecay(siteId: number): Promise<InsightCar
         const getCompletenessForWindow = async (from: Date, to: Date) => {
             const { data: sessions } = await supabase
                 .from('log_clinical_records')
-                .select('id, patient_link_code, session_date')
+                .select('id, patient_uuid, session_date')
                 .eq('site_id', siteId)
                 .gte('session_date', from.toISOString().split('T')[0])
                 .lt('session_date', to.toISOString().split('T')[0]);
 
             if (!sessions || sessions.length === 0) return null;
 
-            const n = new Set(sessions.map(s => s.patient_link_code)).size;
+            const n = new Set(sessions.map(s => s.patient_uuid)).size;
 
             // k-anon guard
             try { requireKAnonymity(n, 'ruleDocumentationDecay'); } catch { return null; }
@@ -297,9 +241,9 @@ export async function ruleDocumentationDecay(siteId: number): Promise<InsightCar
             for (const session of sessions) {
                 const [vitals, baseline, integration, followUp] = await Promise.all([
                     supabase.from('log_session_vitals').select('id').eq('session_id', session.id).limit(1),
-                    supabase.from('log_baseline_assessments').select('id').eq('patient_id', session.patient_link_code).limit(1),
+                    supabase.from('log_baseline_assessments').select('id').eq('patient_uuid', session.patient_uuid).limit(1),
                     supabase.from('log_integration_sessions').select('id').eq('dosing_session_id', session.id).limit(1),
-                    supabase.from('log_longitudinal_assessments').select('id').eq('patient_id', session.patient_link_code).limit(1),
+                    supabase.from('log_longitudinal_assessments').select('id').eq('patient_uuid', session.patient_uuid).limit(1),
                 ]);
                 if (vitals.data && vitals.data.length > 0) hasVitals++;
                 if (baseline.data && baseline.data.length > 0) hasBaseline++;
@@ -345,17 +289,17 @@ export async function ruleBenchmarkOutperformance(siteId: number): Promise<Insig
     try {
         const { data: trajectories, error } = await supabase
             .from('log_longitudinal_assessments')
-            .select('patient_id, phq9_score, days_post_session')
+            .select('patient_uuid, phq9_score, days_post_session')
             .order('days_post_session', { ascending: true });
 
         if (error || !trajectories) return null;
 
         const byPatient: Record<string, { baseline?: number; endpoint?: number }> = {};
         for (const row of trajectories) {
-            if (!byPatient[row.patient_id]) byPatient[row.patient_id] = {};
-            if (row.days_post_session <= 3) byPatient[row.patient_id].baseline = row.phq9_score;
+            if (!byPatient[row.patient_uuid]) byPatient[row.patient_uuid] = {};
+            if (row.days_post_session <= 3) byPatient[row.patient_uuid].baseline = row.phq9_score;
             if (row.days_post_session >= 21 && row.days_post_session <= 90) {
-                byPatient[row.patient_id].endpoint = row.phq9_score;
+                byPatient[row.patient_uuid].endpoint = row.phq9_score;
             }
         }
 
@@ -408,14 +352,14 @@ export async function ruleSafetySpike(siteId: number): Promise<InsightCard | nul
         const getAECountForWindow = async (from: Date, to: Date) => {
             const { data: sessions } = await supabase
                 .from('log_clinical_records')
-                .select('id, patient_link_code, session_date')
+                .select('id, patient_uuid, session_date')
                 .eq('site_id', siteId)
                 .gte('session_date', from.toISOString().split('T')[0])
                 .lt('session_date', to.toISOString().split('T')[0]);
 
             if (!sessions) return { count: 0, sessions: 0, patients: 0 };
 
-            const patients = new Set(sessions.map(s => s.patient_link_code)).size;
+            const patients = new Set(sessions.map(s => s.patient_uuid)).size;
             const sessionIds = sessions.map(s => s.id);
 
             if (sessionIds.length === 0) return { count: 0, sessions: 0, patients };
@@ -469,7 +413,7 @@ export async function ruleNonResponderCluster(siteId: number): Promise<InsightCa
         const { data: sessions, error } = await supabase
             .from('log_clinical_records')
             .select(`
-        patient_link_code,
+        patient_uuid,
         session_date,
         substance_id,
         ref_substances(substance_name)
@@ -480,15 +424,15 @@ export async function ruleNonResponderCluster(siteId: number): Promise<InsightCa
 
         if (error || !sessions || sessions.length < 5) return null;
 
-        const totalN = new Set(sessions.map(s => s.patient_link_code)).size;
+        const totalN = new Set(sessions.map(s => s.patient_uuid)).size;
         try { requireKAnonymity(totalN, 'ruleNonResponderCluster'); } catch { return null; }
 
         // Get follow-up data for recent patients
-        const recentPatients = sessions.slice(0, 10).map(s => s.patient_link_code);
+        const recentPatients = sessions.slice(0, 10).map(s => s.patient_uuid);
         const { data: followUps } = await supabase
             .from('log_longitudinal_assessments')
-            .select('patient_id, phq9_score, days_post_session')
-            .in('patient_id', recentPatients)
+            .select('patient_uuid, phq9_score, days_post_session')
+            .in('patient_uuid', recentPatients)
             .gte('days_post_session', 14);
 
         if (!followUps || followUps.length === 0) return null;
@@ -496,15 +440,15 @@ export async function ruleNonResponderCluster(siteId: number): Promise<InsightCa
         // Find patients with endpoint data who haven't responded
         const endpointByPatient: Record<string, number> = {};
         for (const f of followUps) {
-            if (!endpointByPatient[f.patient_id] || f.days_post_session > 14) {
-                endpointByPatient[f.patient_id] = f.phq9_score;
+            if (!endpointByPatient[f.patient_uuid] || f.days_post_session > 14) {
+                endpointByPatient[f.patient_uuid] = f.phq9_score;
             }
         }
 
         // Check most recent sessions for consecutive non-responders by substance
         const substanceCounts: Record<string, { name: string; nonResponders: number }> = {};
         for (const s of sessions.slice(0, 6)) {
-            const endpointScore = endpointByPatient[s.patient_link_code];
+            const endpointScore = endpointByPatient[s.patient_uuid];
             if (endpointScore == null) continue;
 
             const substanceName = (s.ref_substances as { substance_name?: string })?.substance_name ?? `Substance ${s.substance_id}`;
@@ -544,12 +488,12 @@ export async function ruleBaselineSeverityMismatch(siteId: number): Promise<Insi
     try {
         const { data: baselines, error } = await supabase
             .from('log_baseline_assessments')
-            .select('patient_id, phq9_score')
+            .select('patient_uuid, phq9_score')
             .not('phq9_score', 'is', null);
 
         if (error || !baselines || baselines.length < 5) return null;
 
-        const n = new Set(baselines.map(b => b.patient_id)).size;
+        const n = new Set(baselines.map(b => b.patient_uuid)).size;
         try { requireKAnonymity(n, 'ruleBaselineSeverityMismatch'); } catch { return null; }
 
         const scores = baselines

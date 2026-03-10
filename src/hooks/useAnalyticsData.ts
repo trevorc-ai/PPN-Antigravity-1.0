@@ -10,79 +10,46 @@ export interface AnalyticsKPIs {
     error: string | null;
 }
 
-export function useAnalyticsData(siteId: number | null): AnalyticsKPIs & { refetch: () => void, lastFetchedAt: Date | null } {
+export function useAnalyticsData(siteId: string | null): AnalyticsKPIs & { refetch: () => void, lastFetchedAt: Date | null } {
     const { data, loading, error, refetch, lastFetchedAt } = useDataCache(
         siteId ? `analytics-data-${siteId}` : 'analytics-data-empty',
         async () => {
             if (!siteId) return { data: null, error: 'No site ID provided' };
 
             try {
-                // Primary: materialized view (fast, single query)
-                const { data: benchmarkData, error: benchmarkError } = await supabase
-                    .from('mv_clinic_benchmarks')
-                    .select('*')
-                    .eq('site_id', siteId);
-
-                if (!benchmarkError && benchmarkData && benchmarkData.length > 0) {
-                    const totalPatients = benchmarkData.reduce((sum, row) => sum + (row.unique_patients || 0), 0);
-                    const totalSessions = benchmarkData.reduce((sum, row) => sum + (row.total_sessions || 0), 0);
-                    const avgSuccessRate = benchmarkData.length > 0
-                        ? benchmarkData.reduce((sum, row) => sum + (row.success_rate || 0), 0) / benchmarkData.length
-                        : 0;
-                    const efficiency = Number.isFinite(avgSuccessRate) ? avgSuccessRate * 100 : 0;
-                    const estimatedSafetyEvents = Math.round(totalSessions * (1 - avgSuccessRate));
-                    const safetyRate = totalSessions > 0 ? (estimatedSafetyEvents / totalSessions) * 100 : 0;
-                    const riskScore = safetyRate < 5 ? 'Low' : safetyRate < 15 ? 'Medium' : 'High';
-
-                    return {
-                        data: {
-                            activeProtocols: totalPatients,
-                            patientAlerts: estimatedSafetyEvents,
-                            networkEfficiency: Number.isFinite(efficiency) ? Math.round(efficiency * 10) / 10 : 0,
-                            riskScore,
-                        },
-                        error: null,
-                    };
-                }
-
-                // Fallback: raw tables (3 queries)
-                const { data: protocolData } = await supabase
+                // Single query: get all sessions for the site with the data we need for KPIs
+                // mv_clinic_benchmarks does not yet exist — querying raw tables directly
+                const { data: allSessions, error: sessionsError } = await supabase
                     .from('log_clinical_records')
-                    .select('patient_link_code')
+                    .select('id, patient_uuid, safety_event_id, session_date')
                     .eq('site_id', siteId);
 
-                const uniquePatients = new Set(protocolData?.map(r => r.patient_link_code) || []);
+                if (sessionsError) throw sessionsError;
 
+                const records = allSessions || [];
+                const uniquePatients = new Set(records.map((r: any) => r.patient_uuid).filter(Boolean));
+                const totalSessions = records.length;
+                const allTimeAdverse = records.filter((s: any) => s.safety_event_id !== null).length;
+                const efficiency = totalSessions > 0
+                    ? ((totalSessions - allTimeAdverse) / totalSessions) * 100 : 0;
+                const safetyRate = totalSessions > 0
+                    ? (allTimeAdverse / totalSessions) * 100 : 0;
+                const riskScore = safetyRate < 5 ? 'Low' : safetyRate < 15 ? 'Medium' : 'High';
+
+                // Recent alerts: adverse events in last 30 days
                 const thirtyDaysAgo = new Date();
                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                const dateString = thirtyDaysAgo.toISOString().split('T')[0];
-
-                const { data: safetyData } = await supabase
-                    .from('log_clinical_records')
-                    .select('safety_event_id')
-                    .eq('site_id', siteId)
-                    .not('safety_event_id', 'is', null)
-                    .gte('session_date', dateString);
-
-                const { data: allSessions } = await supabase
-                    .from('log_clinical_records')
-                    .select('id, safety_event_id')
-                    .eq('site_id', siteId);
-
-                const totalSessionsFb = allSessions?.length || 0;
-                const sessionsWithEvents = allSessions?.filter(s => s.safety_event_id !== null).length || 0;
-                const efficiencyFb = totalSessionsFb > 0
-                    ? ((totalSessionsFb - sessionsWithEvents) / totalSessionsFb) * 100 : 0;
-                const safetyRateFb = totalSessionsFb > 0
-                    ? (sessionsWithEvents / totalSessionsFb) * 100 : 0;
-                const riskScoreFb = safetyRateFb < 5 ? 'Low' : safetyRateFb < 15 ? 'Medium' : 'High';
+                const cutoff = thirtyDaysAgo.toISOString().split('T')[0];
+                const recentAlerts = records.filter((r: any) =>
+                    r.safety_event_id !== null && r.session_date >= cutoff
+                ).length;
 
                 return {
                     data: {
                         activeProtocols: uniquePatients.size,
-                        patientAlerts: safetyData?.length || 0,
-                        networkEfficiency: Number.isFinite(efficiencyFb) ? Math.round(efficiencyFb * 10) / 10 : 0,
-                        riskScore: riskScoreFb,
+                        patientAlerts: recentAlerts,
+                        networkEfficiency: Number.isFinite(efficiency) ? Math.round(efficiency * 10) / 10 : 0,
+                        riskScore,
                     },
                     error: null,
                 };
@@ -104,6 +71,6 @@ export function useAnalyticsData(siteId: number | null): AnalyticsKPIs & { refet
         loading,
         error: error ? String(error) : null,
         refetch,
-        lastFetchedAt
+        lastFetchedAt,
     };
 }

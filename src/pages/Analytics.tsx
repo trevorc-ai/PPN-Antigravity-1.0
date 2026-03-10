@@ -12,6 +12,7 @@ import { PageContainer } from '../components/layouts/PageContainer';
 import { Section } from '../components/layouts/Section';
 import ClinicPerformanceRadar from '../components/analytics/ClinicPerformanceRadar';
 import PatientConstellation from '../components/analytics/PatientConstellation';
+import { MobileAccordion } from '../components/ui/MobileAccordion';
 
 import { GlassmorphicCard } from '../components/ui/GlassmorphicCard';
 import { supabase } from '../supabaseClient';
@@ -22,7 +23,7 @@ import { useSafetyBenchmark } from '../hooks/useSafetyBenchmark';
 import InsightFeedPanel from '../components/analytics/InsightFeedPanel';
 
 const Analytics = () => {
-    const [siteId, setSiteId] = useState<number | null>(null);
+    const [siteId, setSiteId] = useState<string | null>(null);
     const [userEmail, setUserEmail] = useState<string>('');
     const [selectedSubstance, setSelectedSubstance] = useState<string>('all');
     const [selectedDateRange, setSelectedDateRange] = useState<string>('30');
@@ -46,8 +47,7 @@ const Analytics = () => {
                 .from('log_user_sites')
                 .select('site_id')
                 .eq('user_id', user.id)
-                .limit(1)
-                .single();
+                .maybeSingle(); // maybeSingle — won't throw if user has no site yet
 
             if (userSite) setSiteId(userSite.site_id);
         };
@@ -158,10 +158,10 @@ const Analytics = () => {
             {/* ── KPI RIBBON + SAFETY PERFORMANCE, Unified section ─────────── */}
             <Section spacing="tight" className="space-y-0">
 
-                {/* KPI CARDS, 4-up horizontal grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 print:grid-cols-4 print:gap-2 mb-0">
+                {/* KPI CARDS, horizontal carousel on mobile, 4-up on desktop */}
+                <div className="flex overflow-x-auto overflow-y-hidden snap-x touch-pan-x gap-4 pb-4 md:grid md:grid-cols-2 lg:grid-cols-4 w-full scrollbar-hide print:grid-cols-4 print:gap-2 mb-0">
                     {kpiStats.map((stat, i) => (
-                        <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
+                        <div key={i} className="shrink-0 w-[85vw] snap-center md:w-auto md:shrink-1 bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
                             <div className="flex items-center gap-2 mb-2">
                                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
                                 <div className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-slate-500">{stat.label}</div>
@@ -261,32 +261,40 @@ const Analytics = () => {
             <Section spacing="default" className="space-y-8 print:space-y-8">
 
                 {/* ROW 1: Performance Radar, full width, 3-col internal grid */}
-                <div className="print:break-inside-avoid">
-                    <GlassmorphicCard className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '520px' }}>
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 px-6 pt-6 pb-0 z-10 shrink-0">
-                            <div>
-                                <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
-                                <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
+                <MobileAccordion title="Performance Radar" subtitle="Clinic metrics vs Network Average" defaultOpen={true}>
+                    <div className="print:break-inside-avoid">
+                        <div className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '520px' }}>
+                            <div className="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-2 px-6 pt-6 pb-0 z-10 shrink-0">
+                                <div>
+                                    <h3 className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Performance Radar</h3>
+                                    <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Clinic metrics vs Network Average</p>
+                                </div>
+                            </div>
+                            <div className="flex-1 min-h-0 w-full overflow-x-auto overflow-y-hidden touch-pan-x scrollbar-hide pb-6" style={{ minHeight: '460px' }}>
+                                <div style={{ minWidth: '600px', height: '100%' }}>
+                                    <ClinicPerformanceRadar data={filteredData} />
+                                </div>
                             </div>
                         </div>
-                        <div className="flex-1 min-h-0" style={{ minHeight: '460px' }}>
-                            <ClinicPerformanceRadar data={filteredData} />
-                        </div>
-                    </GlassmorphicCard>
-                </div>
+                    </div>
+                </MobileAccordion>
 
                 {/* ROW 2: Patient Galaxy, full width, large scatter + filter controls */}
-                <div className="print:break-inside-avoid">
-                    <GlassmorphicCard className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '620px' }}>
-                        <div className="px-6 pt-6 pb-0 z-10 shrink-0" aria-hidden="true">
-                            <p className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</p>
-                            <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
+                <MobileAccordion title="Patient Galaxy" subtitle="Outcomes clustering analysis">
+                    <div className="print:break-inside-avoid mt-8 md:mt-0">
+                        <div className="relative overflow-hidden print:shadow-none print:border-gray-200 print:bg-white flex flex-col" style={{ minHeight: '620px' }}>
+                            <div className="hidden md:block px-6 pt-6 pb-0 z-10 shrink-0" aria-hidden="true">
+                                <p className="text-lg font-black print:text-black" style={{ color: '#A8B5D1' }}>Patient Galaxy</p>
+                                <p className="text-sm print:text-slate-500" style={{ color: '#8B9DC3' }}>Outcomes clustering analysis</p>
+                            </div>
+                            <div className="flex-1 min-h-0 w-full overflow-x-auto overflow-y-hidden touch-pan-x scrollbar-hide p-2" style={{ minHeight: '540px' }}>
+                                <div style={{ minWidth: '800px', height: '100%' }}>
+                                    <PatientConstellation data={filteredData} hideHeader />
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex-1 min-h-0 p-2" style={{ minHeight: '540px' }}>
-                            <PatientConstellation data={filteredData} hideHeader />
-                        </div>
-                    </GlassmorphicCard>
-                </div>
+                    </div>
+                </MobileAccordion>
 
             </Section>
 
