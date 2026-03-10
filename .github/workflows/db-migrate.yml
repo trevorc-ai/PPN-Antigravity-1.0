@@ -1,0 +1,79 @@
+# ============================================================
+# db-migrate.yml
+# Supabase migration promotion pipeline.
+#
+# Flow:
+#   push → staging branch  →  Preview environment  →  ppn-STAGING DB
+#   push → main branch     →  Production environment (requires approval)  →  PPN Portal DB
+#
+# REQUIRED SECRETS:
+#   Repo-level:
+#     SUPABASE_ACCESS_TOKEN       Personal access token from supabase.com/dashboard/account/tokens
+#
+#   "Preview" GitHub Environment secrets:
+#     SUPABASE_PROJECT_REF        nmdhhlwytxmedipgugkx
+#     SUPABASE_DB_PASSWORD        staging DB password from Supabase dashboard
+#
+#   "Production" GitHub Environment secrets:
+#     SUPABASE_PROJECT_REF        rxwsthatjhnixqsthegf
+#     SUPABASE_DB_PASSWORD        production DB password from Supabase dashboard
+# ============================================================
+
+name: DB Migrations
+
+on:
+  push:
+    branches:
+      - staging
+      - main
+    paths:
+      - 'supabase/migrations/**'
+
+jobs:
+  # ── STAGING ──────────────────────────────────────────────────────────────────
+  migrate-staging:
+    name: Migrate → Staging (Preview)
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    environment: Preview
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Push migrations to staging
+        run: |
+          supabase db push \
+            --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}" \
+            --password "${{ secrets.SUPABASE_DB_PASSWORD }}"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+  # ── PRODUCTION ───────────────────────────────────────────────────────────────
+  migrate-production:
+    name: Migrate → Production
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: Production   # Requires manual approval if protection rules are set
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Push migrations to production
+        run: |
+          supabase db push \
+            --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}" \
+            --password "${{ secrets.SUPABASE_DB_PASSWORD }}"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

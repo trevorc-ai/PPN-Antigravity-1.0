@@ -658,7 +658,7 @@ const TABLE_LOG_SESSION_TIMELINE_EVENTS = 'log_session_timeline_events';
  */
 async function resolveTimelineEventTypeId(data: TimelineEventData): Promise<number | null> {
     if (data.event_type_id != null && Number.isInteger(data.event_type_id)) return data.event_type_id;
-    if (data.event_type_code) return getEventTypeIdByCode(data.event_type_code);
+    if (data.event_type_code) return await getEventTypeIdByCode(data.event_type_code);
     return null;
 }
 

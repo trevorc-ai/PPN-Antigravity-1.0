@@ -27,6 +27,19 @@ const PartnerDemoHub = lazy(() => import('./pages/PartnerDemoHub'));
 const PatientReport = lazy(() => import('./pages/PatientReport'));
 const IntegrationCompass = lazy(() => import('./pages/IntegrationCompass'));
 
+// WO-559-563: Five Audience Front Door Landing Pages
+const ForClinicians = lazy(() => import('./pages/ForClinicians'));
+const ForPayers = lazy(() => import('./pages/ForPayers'));
+const StructuralPrivacy = lazy(() => import('./pages/StructuralPrivacy'));
+const GlobalNetwork = lazy(() => import('./pages/GlobalNetwork'));
+const ForPatients = lazy(() => import('./pages/ForPatients'));
+
+// WO-585: Beta Welcome Screen (public, no auth)
+const BetaWelcome = lazy(() => import('./pages/BetaWelcome'));
+
+// WO-587: VIP Invite Tool (admin-only)
+const AdminInvitePage = lazy(() => import('./pages/AdminInvitePage'));
+
 // ── Tier 2: Post-Auth Entry Points ───────────────────────────────────────────
 const SimpleSearch = lazy(() => import('./pages/SimpleSearch'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -292,7 +305,7 @@ class GlobalErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBound
 }
 
 const AppContent: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, userRole } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showTour, setShowTour] = useState(false);
 
@@ -366,7 +379,7 @@ const AppContent: React.FC = () => {
               <Route path="/patient-form/:formId" element={<PatientFormPage />} />
               <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
               <Route path="/login" element={user ? <Navigate to="/search" replace /> : <Login />} />
-              <Route path="/signup" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/academy" replace />} />
+              <Route path="/signup" element={user ? <Navigate to="/search" replace /> : <SignUp />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/checkout" element={<Checkout />} />
@@ -386,6 +399,16 @@ const AppContent: React.FC = () => {
               <Route path="/deep-dives/workflow-chaos" element={<WorkflowChaosPage />} />
               <Route path="/deep-dives/safety-surveillance" element={<SafetySurveillancePage />} />
               <Route path="/deep-dives/risk-matrix" element={<RiskMatrixPage />} />
+
+              {/* WO-559-563: Five Audience Front Door Landing Pages */}
+              <Route path="/for-clinicians" element={<ForClinicians />} />
+              <Route path="/for-payers" element={<ForPayers />} />
+              <Route path="/structural-privacy" element={<StructuralPrivacy />} />
+              <Route path="/global-network" element={<GlobalNetwork />} />
+              <Route path="/for-patients" element={<ForPatients />} />
+
+              {/* WO-585: Beta Welcome Screen — public, no auth required */}
+              <Route path="/beta-welcome" element={<BetaWelcome />} />
 
               {/* Protected Routes — RequireAuth gates all children behind a valid session */}
               <Route element={<RequireAuth />}>
@@ -432,6 +455,11 @@ const AppContent: React.FC = () => {
                   </Route>
                   <Route path="/notifications" element={<Notifications />} />
                   <Route path="/network-library" element={<AdminSharingLibrary />} />
+                  {/* WO-587: VIP Invite Tool — admin only */}
+                  <Route
+                    path="/admin/invite"
+                    element={userRole === 'admin' ? <AdminInvitePage /> : <Navigate to="/dashboard" replace />}
+                  />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/profile/edit" element={<ProfileEdit />} />
                   <Route path="/data-export" element={<DataExport />} />
