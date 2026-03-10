@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
 import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock, Mic, Music, AlertTriangle, Send } from 'lucide-react';
 import { getTimelineEvents, createTimelineEvent } from '../../services/clinicalLog';
+import { getEventTypeIdByCode } from '../../services/refFlowEventTypes';
 
 export interface TimelineEvent {
     id: string;
@@ -20,6 +21,16 @@ interface LiveSessionTimelineProps {
     /** Hides the quick-action strip (P.Spoke / Music / Decision / Dose + free-text note).
      *  Use when those buttons are lifted to a different part of the layout. */
     hideActions?: boolean;
+    /**
+     * WO-576 Sub-task E: series visibility state lifted from SessionVitalsTrendChart.
+     * When provided, ledger entries are filtered to match the chart's visible series:
+     *   hr/bp/temp=false → hide vital_check entries
+     *   events=false     → hide all non-vital entries
+     * When omitted, no filtering is applied (all entries shown).
+     */
+    visible?: { hr: boolean; bp: boolean; temp: boolean; events: boolean };
+    /** Timestamp (ms since epoch) when the dosing session started. Used to compute T+ header. */
+    sessionStartMs?: number;
 }
 
 // WO-528: exported so SessionVitalsTrendChart can reuse the same palette
@@ -47,17 +58,33 @@ export const QUICK_ACTIONS = [
     { label: 'P. Spoke', type: 'patient_observation', icon: Mic, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30 hover:bg-amber-500/30', desc: 'Patient reported: ' },
     { label: 'Music', type: 'music_change', icon: Music, color: 'text-violet-400 bg-violet-500/20 border-violet-500/30 hover:bg-violet-500/30', desc: 'Playlist changed to: ' },
     { label: 'Decision', type: 'clinical_decision', icon: AlertTriangle, color: 'text-orange-400 bg-orange-500/20 border-orange-500/30 hover:bg-orange-500/30', desc: 'Decision made: ' },
-    { label: 'Dose', type: 'dose_admin', icon: Pill, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30 hover:bg-emerald-500/30', desc: 'Administered additional dose.' },
 ];
 
 function formatTimeAMPM(date: Date): string {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 }
 
-export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, active, hideHeader = false, hideActions = false }) => {
+export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
+    sessionId, active, hideHeader = false, hideActions = false, visible, sessionStartMs
+}) => {
     const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [draftNote, setDraftNote] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // WO-576 Sub-task D: T+ elapsed timer
+    const [tPlus, setTPlus] = useState<string | null>(null);
+    useEffect(() => {
+        if (!sessionStartMs) return;
+        const tick = () => {
+            const diff = Date.now() - sessionStartMs;
+            const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+            const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+            setTPlus(`T+${h}:${m}`);
+        };
+        tick();
+        const id = setInterval(tick, 1000);
+        return () => clearInterval(id);
+    }, [sessionStartMs]);
 
     const handleAddNote = async (e?: React.FormEvent, presetType?: string, presetDesc?: string) => {
         if (e) e.preventDefault();
@@ -78,18 +105,28 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         setEvents(prev => [optimisticEvent, ...prev]);
 
         setIsSubmitting(true);
-        const eventData = {
-            session_id: sessionId,
-            event_timestamp: new Date().toISOString(),
-            event_type: type as any,
-            performed_by: 'Current Clinician',
-            metadata: { event_description: description }
-        };
+        const eventTimestamp = new Date().toISOString();
 
-        await createTimelineEvent(eventData);
+        // WO-576 Sub-task A: async lookup replaces hardcoded FLOW_EVENT_TYPE_CODES.has() check
+        // so chip events (patient_observation, music_change, clinical_decision, general_note)
+        // persist to DB. If the code resolves to null, we log a warning but keep the
+        // optimistic entry in local state so the practitioner's session is not disrupted.
+        const eventTypeId = await getEventTypeIdByCode(type);
+        if (eventTypeId !== null) {
+            await createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: eventTimestamp,
+                event_type_id: eventTypeId,
+                performed_by: 'Current Clinician',
+                metadata: { event_description: description },
+            });
+        } else {
+            console.warn(`[LiveSessionTimeline] event_type_code '${type}' not found in ref_flow_event_types. Entry kept locally only.`);
+        }
+
         // Notify DosingSessionPhase chart listener, zero prop drilling
         window.dispatchEvent(new CustomEvent('ppn:session-event', {
-            detail: { type, label: description, timestamp: eventData.event_timestamp }
+            detail: { type, label: description, timestamp: eventTimestamp }
         }));
         if (!presetDesc) setDraftNote('');
         setIsSubmitting(false);
@@ -107,8 +144,10 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         const result = await getTimelineEvents(sessionId);
         if (result.success && result.data) {
             const mappedEvents: TimelineEvent[] = result.data.map((row: any) => ({
-                id: row.id,
-                type: row.event_type || 'general_note',
+                id: row.id ?? row.timeline_event_id,
+                // WO-584 fix: event_type TEXT column was dropped in migration 079.
+                // getTimelineEvents now JOINs ref_flow_event_types — read from there.
+                type: row.ref_flow_event_types?.event_type_code || 'general_note',
                 timestamp: new Date(row.event_timestamp),
                 description: row.metadata?.event_description || 'No description provided',
                 notes: row.metadata?.notes,
@@ -166,6 +205,18 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
         URL.revokeObjectURL(url);
     };
 
+    // WO-576 Sub-task E: filter ledger entries based on chart visible-series state
+    const filteredEvents = React.useMemo(() => {
+        if (!visible) return events;
+        const isVitalHidden = !visible.hr && !visible.bp && !visible.temp;
+        const areEventsHidden = !visible.events;
+        return events.filter(ev => {
+            if (ev.type === 'vital_check' && isVitalHidden) return false;
+            if (ev.type !== 'vital_check' && areEventsHidden) return false;
+            return true;
+        });
+    }, [events, visible]);
+
     return (
         <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col overflow-hidden shadow-xl">
             {!hideHeader && (
@@ -185,29 +236,35 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({ sessionId, a
                             )}
                         </div>
                     </div>
-                    <button
-                        onClick={handleExportLog}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors"
-                        aria-label="Export session timeline log as text"
-                    >
-                        <Download className="w-3.5 h-3.5" />
-                        Export Log
-                    </button>
+                    <div className="flex items-center gap-3">
+                        {/* WO-576 Sub-task D: T+ elapsed timer */}
+                        {tPlus && (
+                            <span className="text-xs font-mono font-black text-amber-400 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+                                aria-label="Elapsed session time">{tPlus}</span>
+                        )}
+                        <button
+                            onClick={handleExportLog}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors"
+                            aria-label="Export session timeline log as text"
+                        >
+                            <Download className="w-3.5 h-3.5" />
+                            Export Log
+                        </button>
+                    </div>
                 </div>
             )}
 
-
-
-
-            <div className="p-3 max-h-[400px] overflow-y-auto space-y-4">
-                {events.length === 0 ? (
+            <div className="p-3 max-h-[280px] overflow-y-auto space-y-4 scroll-smooth">
+                {filteredEvents.length === 0 ? (
                     <div className="text-center text-slate-500 py-4 text-sm italic">
-                        Session timeline is empty. Record events below to begin building the timeline.
+                        {events.length > 0
+                            ? 'All entries hidden by active filters. Adjust chart toggles to show entries.'
+                            : 'Session timeline is empty. Record events below to begin building the timeline.'}
                     </div>
                 ) : (
-                    events.map((event, index) => {
+                    filteredEvents.map((event, index) => {
                         const conf = EVENT_CONFIG[event.type] || EVENT_CONFIG['general_note'];
-                        const isLast = index === events.length - 1;
+                        const isLast = index === filteredEvents.length - 1;
 
                         return (
                             <div key={event.id} className="relative flex gap-4 text-sm w-full">
