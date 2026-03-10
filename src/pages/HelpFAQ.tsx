@@ -120,7 +120,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
           <button
             id="help-download-center-card"
             onClick={() => navigate('/download-center')}
-            className="w-full group relative flex flex-col sm:flex-row items-start sm:items-center gap-5 p-6 sm:p-8 rounded-3xl border border-indigo-500/40 bg-gradient-to-br from-indigo-600/10 via-indigo-500/5 to-slate-900/40 backdrop-blur-xl hover:border-indigo-500/70 hover:from-indigo-600/15 hover:shadow-[0_0_40px_rgba(99,102,241,0.12)] transition-all duration-300 shadow-lg text-left overflow-hidden"
+            className="w-full group relative flex flex-col items-start gap-5 p-6 sm:p-8 rounded-3xl border border-indigo-500/40 bg-gradient-to-br from-indigo-600/10 via-indigo-500/5 to-slate-900/40 backdrop-blur-xl hover:border-indigo-500/70 hover:from-indigo-600/15 hover:shadow-[0_0_40px_rgba(99,102,241,0.12)] transition-all duration-300 shadow-lg text-left overflow-hidden"
             aria-label="Go to Download Center"
           >
             {/* Glow */}
@@ -149,7 +149,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
         {/* ─── Topic Categories ─── */}
         <section className="mb-10">
           <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 px-1">Browse Topics</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {categories.map((cat, idx) => (
               <div
                 key={idx}

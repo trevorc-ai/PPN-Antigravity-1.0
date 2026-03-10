@@ -15,7 +15,7 @@ import { supabase } from '../supabaseClient';
 
 interface SessionRecord {
   id: string;
-  patient_link_code: string | null;
+  patient_link_code_hash: string | null;
   session_date: string | null;
   session_type_id: number | null;
   substance_id: number | null;
@@ -141,10 +141,10 @@ const ProtocolDetail: React.FC = () => {
       setError(null);
 
       try {
-        // 1. Fetch the primary session
+        // 1. Fetch the primary session (migration 079: patient_link_code dropped → patient_link_code_hash)
         const { data: sessionData, error: sessionErr } = await supabase
           .from('log_clinical_records')
-          .select('id, patient_link_code, session_date, session_type_id, substance_id, site_id, practitioner_id, dosage, route_id, concomitant_med_ids')
+          .select('id, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, dosage, route_id, concomitant_med_ids')
           .eq('id', id)
           .single();
 
@@ -152,9 +152,10 @@ const ProtocolDetail: React.FC = () => {
         if (cancelled) return;
         setSession(sessionData as SessionRecord);
 
-        const patientCode = sessionData.patient_link_code;
+        const patientLinkCodeHash = sessionData.patient_link_code_hash;
 
         // 2. Parallel fetches: substances ref + vitals + safety events + patient sessions
+        // Migration 079: baseline/longitudinal use patient_uuid (not on log_clinical_records); skip those fetches when no patient_uuid
         const [
           substanceResult,
           vitalsResult,
@@ -181,36 +182,21 @@ const ProtocolDetail: React.FC = () => {
             .eq('session_id', id)
             .limit(20),
 
-          // All sessions for the same patient (cumulative history)
-          patientCode
+          // All sessions for the same patient (by patient_link_code_hash; patient_link_code dropped in 079)
+          patientLinkCodeHash
             ? supabase
               .from('log_clinical_records')
               .select('id, session_date, session_type_id, substance_id')
-              .eq('patient_link_code', patientCode)
+              .eq('patient_link_code_hash', patientLinkCodeHash)
               .order('session_date', { ascending: false })
               .limit(20)
             : Promise.resolve({ data: [], error: null }),
 
-          // Baseline assessment for this patient
-          patientCode
-            ? supabase
-              .from('log_baseline_assessments')
-              .select('phq9_score, gad7_score, assessment_date')
-              .eq('patient_id', patientCode)
-              .order('assessment_date', { ascending: false })
-              .limit(1)
-              .single()
-            : Promise.resolve({ data: null, error: null }),
+          // Baseline: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
+          Promise.resolve({ data: null, error: null }),
 
-          // Longitudinal PHQ-9 trajectory
-          patientCode
-            ? supabase
-              .from('log_longitudinal_assessments')
-              .select('assessment_date, phq9_score')
-              .eq('patient_id', patientCode)
-              .order('assessment_date', { ascending: true })
-              .limit(10)
-            : Promise.resolve({ data: [], error: null }),
+          // Longitudinal: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
+          Promise.resolve({ data: [], error: null }),
         ]);
 
         if (cancelled) return;
@@ -259,7 +245,7 @@ const ProtocolDetail: React.FC = () => {
 
   // ─── Derived display values ─────────────────────────────────────────────────
   const sessionLabel = SESSION_TYPE_LABELS[session.session_type_id ?? 0] ?? 'Session';
-  const patientRef = session.patient_link_code ?? session.id.substring(0, 12).toUpperCase();
+  const patientRef = session.patient_link_code_hash ?? session.id.substring(0, 12).toUpperCase();
   const displayDate = session.session_date ?? '—';
   const radarData = buildRadarData(substanceName);
 

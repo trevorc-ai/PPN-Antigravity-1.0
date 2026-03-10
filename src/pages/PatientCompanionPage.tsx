@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react';
-import { createTimelineEvent } from '../services/clinicalLog';
 
 interface PatientLogEvent {
     timestamp: string;
@@ -72,21 +71,7 @@ export default function PatientCompanionPage() {
             detail: { type: eventType, label: eventDescription, timestamp: eventTimestamp }
         }));
 
-        // WO-556: Persist to log_session_timeline_events.
-        // UUID guard: only write when sessionId is a real UUID (not undefined / legacy IDs).
-        const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        if (sessionId && UUID_RE.test(sessionId)) {
-            createTimelineEvent({
-                session_id: sessionId,
-                event_timestamp: eventTimestamp,
-                event_type: eventType as any,
-                performed_by: undefined,
-                metadata: { event_description: eventDescription },
-            }).catch(err => {
-                // Non-critical, companion taps still appear on the chart via CustomEvent
-                console.warn('[WO-556] Companion event write failed (non-critical):', err);
-            });
-        }
+        // Timeline: companion tap eventType has no ref_flow_event_types code; skip DB write.
 
         // Instant-on glow
         if (litTimerRef.current) clearTimeout(litTimerRef.current);
