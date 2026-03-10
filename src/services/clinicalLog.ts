@@ -280,14 +280,13 @@ export async function updateDosingProtocol(
             routeId = routeRow?.route_id ?? null;
         }
 
-        // Schema columns: substance_id, dosage_amount, route_id — NOT dosage_unit or substance
+        // Schema columns: substance_id, dosage_mg, route_id — rebuilt schema uses dosage_mg (not dosage_amount)
         const { error } = await supabase
             .from('log_clinical_records')
             .update({
                 substance_id: substanceId,
-                dosage_amount: data.dosage_amount ?? null,
+                dosage_mg: data.dosage_amount ?? null,   // rebuilt schema: dosage_mg (was dosage_amount in old schema)
                 route_id: routeId,
-                // do not pass dosage_unit or other fields not present in schema
             })
             .eq('id', sessionId);
 
@@ -711,12 +710,16 @@ export async function createTimelineEvent(data: TimelineEventData) {
     }
 }
 
-/** Retrieves historical timeline events for a given session. Maps to log_session_timeline_events. */
+/** Retrieves historical timeline events for a given session. Maps to log_session_timeline_events.
+ *  WO-584 fix: JOIN ref_flow_event_types to return event_type_code alongside each row,
+ *  so LiveSessionTimeline can use it for color-coding. The event_type TEXT column was
+ *  dropped in migration 079, leaving only event_type_id (integer FK).
+ */
 export async function getTimelineEvents(sessionId: string) {
     try {
         const { data, error } = await supabase
             .from('log_session_timeline_events')
-            .select('*')
+            .select('*, ref_flow_event_types(event_type_code)')
             .eq('session_id', sessionId)
             .order('event_timestamp', { ascending: false });
         if (error) throw error;
@@ -951,19 +954,359 @@ export async function createSafetyScreen(data: SafetyScreenData) {
         const { error } = await supabase
             .from('log_phase1_safety_screen')
             .insert([{
-                id: Date.now(),                                              // bigint NOT NULL — no sequence
+                // id: GENERATED ALWAYS AS IDENTITY at DB level — do NOT supply
                 patient_uuid: data.patient_uuid,
                 session_id: data.session_id ?? null,
                 site_id: data.site_id,
                 contraindication_verdict_id: data.contraindication_verdict_id ?? null,
                 ekg_rhythm_id: data.ekg_rhythm_id ?? null,
-                concomitant_med_ids: data.concomitant_med_ids ?? [],        // NOT NULL DEFAULT '{}'
+                concomitant_med_ids: data.concomitant_med_ids ?? [],
                 screened_by: user?.id ?? null,
             }]);
         if (error) throw error;
         return { success: true };
     } catch (error) {
         console.error('[clinicalLog] createSafetyScreen:', error);
+        return { success: false, error };
+    }
+}
+
+// ============================================================================
+// PATIENT PROFILE & INDICATION — new tables from schema rebuild (2026-03-08)
+// ============================================================================
+
+export interface PatientProfileData {
+    patient_uuid: string;
+    site_id: string;
+    session_id?: string;
+    /** Display label — resolved to sex_id FK via ref_sex */
+    sex_label?: string;
+    /** Age in years at intake */
+    age_at_intake?: number;
+    /** Display label — resolved to weight_range_id FK via ref_weight_ranges */
+    weight_label?: string;
+    /** Numeric weight in kg — used to resolve weight_range_id if no label match */
+    weight_kg?: number;
+    /** Display label — resolved to smoking_status_id FK via ref_smoking_status */
+    smoking_label?: string;
+    /** Protocol archetype: 'clinical' | 'ceremonial' | 'custom' */
+    protocol_archetype?: string;
+}
+
+/**
+ * Resolves sex_id (bigint) from a display label via ref_sex.
+ * Labels expected: 'Male', 'Female', 'Non-binary', 'Prefer not to say'
+ */
+async function resolveSexId(label: string): Promise<number | null> {
+    const { data, error } = await supabase
+        .from('ref_sex')
+        .select('sex_id')
+        .ilike('sex_label', label.trim())
+        .maybeSingle();
+    if (error || !data) {
+        console.warn('[clinicalLog] resolveSexId: no match for', label);
+        return null;
+    }
+    return data.sex_id;
+}
+
+/**
+ * Resolves smoking_status_id (bigint) from a display label via ref_smoking_status.
+ * Labels expected: 'Non-smoker', 'Ex-smoker', 'Current smoker', 'Prefer not to say'
+ */
+async function resolveSmokingStatusId(label: string): Promise<number | null> {
+    // ref_smoking_status uses 'status_name' (verified from REBUILT_Schema_STAGING_3-8-26.md line 687)
+    const { data, error } = await supabase
+        .from('ref_smoking_status')
+        .select('smoking_status_id')
+        .ilike('status_name', label.trim())
+        .maybeSingle();
+    if (error || !data) {
+        console.warn('[clinicalLog] resolveSmokingStatusId: no match for', label, error?.message);
+        return null;
+    }
+    return data.smoking_status_id;
+}
+
+/**
+ * Resolves weight_range_id (bigint) from a numeric weight in kg via ref_weight_ranges.
+ * Falls back to label match if kg lookup fails.
+ */
+async function resolveWeightRangeId(weightKg?: number, label?: string): Promise<number | null> {
+    if (weightKg != null) {
+        // ref_weight_ranges uses 'kg_low' and 'kg_high' (verified from REBUILT_Schema_STAGING_3-8-26.md lines 723-724)
+        const { data, error } = await supabase
+            .from('ref_weight_ranges')
+            .select('id')
+            .lte('kg_low', weightKg)
+            .gte('kg_high', weightKg)
+            .maybeSingle();
+        if (!error && data) return data.id;
+        console.warn('[clinicalLog] resolveWeightRangeId: range lookup failed for', weightKg, error?.message);
+    }
+    if (label) {
+        const { data, error } = await supabase
+            .from('ref_weight_ranges')
+            .select('id')
+            .ilike('range_label', `%${label.trim()}%`)
+            .maybeSingle();
+        if (!error && data) return data.id;
+    }
+    return null;
+}
+
+/**
+ * Resolves protocol_archetype_id (bigint) via ref_protocol_archetypes.
+ * Expected values: 'clinical', 'ceremonial', 'custom'
+ */
+async function resolveProtocolArchetypeId(archetype: string): Promise<number | null> {
+    const { data, error } = await supabase
+        .from('ref_protocol_archetypes')
+        .select('id')
+        .ilike('archetype_code', archetype.trim())
+        .maybeSingle();
+    if (error || !data) {
+        console.warn('[clinicalLog] resolveProtocolArchetypeId: no match for', archetype);
+        return null;
+    }
+    return data.id;
+}
+
+/**
+ * Creates a patient demographic profile row. Maps to log_patient_profiles.
+ * Called after createClinicalSession succeeds — patient_uuid is available at that point.
+ *
+ * All display labels are resolved to FK IDs via live ref lookups.
+ * If a ref lookup returns null, the FK column is stored as null (not blocked).
+ */
+export async function createPatientProfile(
+    data: PatientProfileData,
+): Promise<{ success: boolean; error?: unknown }> {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Resolve FKs in parallel
+        const [sex_id, smoking_status_id, weight_range_id, protocol_archetype_id] = await Promise.all([
+            data.sex_label ? resolveSexId(data.sex_label) : Promise.resolve(null),
+            data.smoking_label ? resolveSmokingStatusId(data.smoking_label) : Promise.resolve(null),
+            resolveWeightRangeId(data.weight_kg, data.weight_label),
+            data.protocol_archetype ? resolveProtocolArchetypeId(data.protocol_archetype) : Promise.resolve(null),
+        ]);
+
+        const payload = {
+            patient_uuid: data.patient_uuid,
+            site_id: data.site_id,
+            // session_id: NOT a column in log_patient_profiles (verified from REBUILT_Schema_STAGING_3-8-26.md)
+            sex_id,
+            age_at_intake: data.age_at_intake ?? null,
+            weight_range_id,
+            smoking_status_id,
+            protocol_archetype_id,
+            created_by: user?.id ?? null,
+        };
+
+        console.log('[clinicalLog] createPatientProfile insert:', { table: 'log_patient_profiles', payload: { ...payload, patient_uuid: '[redacted]' } });
+
+        const { error } = await supabase.from('log_patient_profiles').insert([payload]);
+        if (error) throw error;
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] createPatientProfile:', error);
+        return { success: false, error };
+    }
+}
+
+export interface PatientIndicationData {
+    patient_uuid: string;
+    session_id?: string;
+    /** Display label — resolved to indication_id FK via ref_indications */
+    indication_label: string;
+}
+
+/**
+ * Creates a patient indication row. Maps to log_patient_indications.
+ * Called with the condition selected in ProtocolConfiguratorModal (Step 1).
+ */
+export async function createPatientIndication(
+    data: PatientIndicationData,
+): Promise<{ success: boolean; error?: unknown }> {
+    try {
+        // Resolve indication_id via ref_indications using a label/name match
+        const { data: refRow, error: refError } = await supabase
+            .from('ref_indications')
+            .select('indication_id')
+            .ilike('indication_name', `%${data.indication_label.trim()}%`)
+            .maybeSingle();
+
+        if (refError) {
+            console.warn('[clinicalLog] createPatientIndication: ref lookup error', refError);
+        }
+
+        const indication_id = refRow?.indication_id ?? null;
+        if (!indication_id) {
+            console.warn('[clinicalLog] createPatientIndication: no ref match for label', data.indication_label, '— skipping insert to avoid null FK violation');
+            return { success: false, error: `No indication_id found for: ${data.indication_label}` };
+        }
+
+        const { error } = await supabase.from('log_patient_indications').insert([{
+            // id: GENERATED ALWAYS AS IDENTITY — do NOT supply (428C9 error if supplied)
+            patient_uuid: data.patient_uuid,
+            indication_id,
+            is_primary: true,
+        }]);
+        if (error) throw error;
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] createPatientIndication:', error);
+        return { success: false, error };
+    }
+}
+
+export interface SetAndSettingLogData {
+    patient_uuid: string;
+    session_id: string;
+    site_id: string;
+    /** Resolved to mindset_type_id FK via ref_mindset_types (optional — UI may not capture yet) */
+    mindset_type_label?: string;
+    /** Resolved to session_setting_id FK via ref_session_settings (optional) */
+    session_setting_label?: string;
+    /** Resolved to intention_theme_ids int[] via ref_intention_themes */
+    intention_theme_labels?: string[];
+    /** Treatment expectancy score 1–100 (numeric, not a FK) */
+    treatment_expectancy?: number;
+}
+
+/**
+ * Creates a set-and-setting log row. Maps to log_phase1_set_and_setting.
+ * Called on SetAndSettingForm save.
+ *
+ * Note: Current SetAndSettingForm captures treatment_expectancy (scalar) and
+ * observations (free-text selections). The form does NOT yet expose mindset/setting
+ * dropdown FKs. Those will be wired when the form is updated. For now this
+ * function stores what's available (session linkage + expectancy in metadata).
+ */
+export async function createSetAndSettingLog(
+    data: SetAndSettingLogData,
+): Promise<{ success: boolean; error?: unknown }> {
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
+
+        // Resolve optional FKs
+        let mindset_type_id: number | null = null;
+        let session_setting_id: number | null = null;
+        let intention_theme_ids: number[] = [];
+
+        if (data.mindset_type_label) {
+            const { data: row } = await supabase
+                .from('ref_mindset_types')
+                .select('id')
+                .ilike('type_label', data.mindset_type_label.trim())
+                .maybeSingle();
+            mindset_type_id = row?.id ?? null;
+        }
+
+        if (data.session_setting_label) {
+            const { data: row } = await supabase
+                .from('ref_session_settings')
+                .select('id')
+                .ilike('setting_label', data.session_setting_label.trim())
+                .maybeSingle();
+            session_setting_id = row?.id ?? null;
+        }
+
+        if (data.intention_theme_labels?.length) {
+            const { data: rows } = await supabase
+                .from('ref_intention_themes')
+                .select('id')
+                .in('theme_label', data.intention_theme_labels);
+            intention_theme_ids = (rows ?? []).map((r: { id: number }) => r.id);
+        }
+
+        const { error } = await supabase.from('log_phase1_set_and_setting').insert([{
+            // id: GENERATED ALWAYS AS IDENTITY — do NOT supply (428C9 error if supplied)
+            patient_uuid: data.patient_uuid,
+            session_id: data.session_id,
+            site_id: data.site_id,
+            mindset_type_id,
+            session_setting_id,
+            intention_theme_ids,
+            // DB check constraint: treatment_expectancy >= 0 AND <= 10
+            // SetAndSettingForm slider is 1-100, so scale it down to 0-10
+            treatment_expectancy: data.treatment_expectancy != null
+                ? Math.round(data.treatment_expectancy / 10)
+                : null,
+        }]);
+        if (error) throw error;
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] createSetAndSettingLog:', error);
+        return { success: false, error };
+    }
+}
+
+// ============================================================================
+// WO-577: Session State — End vs. Close-Out
+// ============================================================================
+
+/**
+ * Marks the dosing phase as ended by writing session_ended_at = now().
+ * Called when practitioner clicks "End Dosing Session" in Phase 2.
+ * The Wellness Journey stays open — this is NOT the final closeout.
+ */
+export async function endDosingSession(sessionId: string): Promise<{ success: boolean; error?: unknown }> {
+    try {
+        const { error } = await supabase
+            .from('log_clinical_records')
+            .update({ session_ended_at: new Date().toISOString() })
+            .eq('id', sessionId);
+        if (error) throw error;
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] endDosingSession:', error);
+        return { success: false, error };
+    }
+}
+
+/**
+ * Marks the full session as submitted/closed by writing is_submitted = true
+ * and submitted_at = now(). Called from Phase 3 "Close Out Session".
+ * After this call the caller should clear ACTIVE_SESSION_KEY from localStorage.
+ */
+export async function closeOutSession(sessionId: string): Promise<{ success: boolean; error?: unknown }> {
+    try {
+        const { error } = await supabase
+            .from('log_clinical_records')
+            .update({ is_submitted: true, submitted_at: new Date().toISOString() })
+            .eq('id', sessionId);
+        if (error) throw error;
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] closeOutSession:', error);
+        return { success: false, error };
+    }
+}
+
+// ============================================================================
+// WO-578: Substance Context Fix
+// ============================================================================
+
+/**
+ * Writes substance_id to log_clinical_records so Phase 2 HUD can resolve the
+ * substance name on mount even after a page reload.
+ */
+export async function updateSessionSubstance(
+    sessionId: string,
+    substanceId: number | string,
+): Promise<{ success: boolean; error?: unknown }> {
+    try {
+        const { error } = await supabase
+            .from('log_clinical_records')
+            .update({ substance_id: substanceId })
+            .eq('id', sessionId);
+        if (error) throw error;
+        return { success: true };
+    } catch (error) {
+        console.error('[clinicalLog] updateSessionSubstance:', error);
         return { success: false, error };
     }
 }

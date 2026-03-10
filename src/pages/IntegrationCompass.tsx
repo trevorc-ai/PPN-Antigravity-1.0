@@ -108,9 +108,10 @@ const COMPASS_CSS = `
   }
   .compass-slider::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none;
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 48px; height: 48px; border-radius: 50%;
     background: #2dd4bf; cursor: pointer;
-    border: 2px solid rgba(255,255,255,0.15);
+    border: 13px solid transparent;
+    background-clip: padding-box;
     box-shadow: 0 0 0 3px rgba(45,212,191,0.2), 0 0 14px rgba(45,212,191,0.5);
     transition: box-shadow 0.15s, transform 0.1s;
   }
@@ -119,9 +120,10 @@ const COMPASS_CSS = `
     transform: scale(1.1);
   }
   .compass-slider::-moz-range-thumb {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 48px; height: 48px; border-radius: 50%;
     background: #2dd4bf; cursor: pointer;
-    border: 2px solid rgba(255,255,255,0.15);
+    border: 13px solid transparent;
+    background-clip: padding-box;
     box-shadow: 0 0 0 3px rgba(45,212,191,0.2), 0 0 14px rgba(45,212,191,0.5);
   }
   .compass-slider::-webkit-slider-runnable-track {
@@ -199,6 +201,10 @@ const IntegrationCompass: React.FC = () => {
     // Refresh EMA after check-in submitted
     const [emaVersion, setEmaVersion] = useState(0);
     const handleCheckInSubmitted = useCallback(() => setEmaVersion(v => v + 1), []);
+
+    // WO-546 FIX 4: Progressive disclosure — charts collapsed on mobile by default
+    const [spiderOpen, setSpiderOpen] = useState(false);
+    const [waveformOpen, setWaveformOpen] = useState(false);
 
     // ── Loading state
     if (session.isLoading || timeline.isLoading) {
@@ -412,20 +418,44 @@ const IntegrationCompass: React.FC = () => {
                             The space between is your personal story.
                         </p>
 
-                        <CompassSpiderGraph
-                            substanceCategory={substanceCategory}
-                            accentColor={accentColor}
-                            timelineEvents={timeline.events}
-                        />
+                        {/* WO-546 FIX 4: Mobile accordion for Experience Map chart */}
+                        <div>
+                            <button
+                                onClick={() => setSpiderOpen(v => !v)}
+                                aria-expanded={spiderOpen}
+                                aria-controls="spider-graph-panel"
+                                className="md:hidden w-full flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-slate-800/50 border border-slate-700/50 text-sm font-bold text-slate-300 transition-colors"
+                                style={{ minHeight: 48 }}
+                            >
+                                <span>Your Experience Map (Chart)</span>
+                                <span style={{ transition: 'transform 0.2s', transform: spiderOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>&#9662;</span>
+                            </button>
+                            <div id="spider-graph-panel" className={spiderOpen ? 'block' : 'hidden md:block'}>
+                                <CompassSpiderGraph
+                                    substanceCategory={substanceCategory}
+                                    accentColor={accentColor}
+                                    timelineEvents={timeline.events}
+                                />
+                            </div>
+                        </div>
 
+                        {/* WO-546 FIX 5: BrainNetworkMap deferred — Coming Soon glass card */}
                         <div style={{ marginTop: 28 }}>
                             <h3 className="ppn-card-title" style={{ color: accentColor, marginBottom: 16 }}>
                                 Your Brain During the Session
                             </h3>
-                            <BrainNetworkMap
-                                substanceCategory={substanceCategory}
-                                accentColor={accentColor}
-                            />
+                            <div style={{
+                                background: 'rgba(15,25,52,0.60)',
+                                backdropFilter: 'blur(12px)',
+                                border: '1px solid rgba(255,255,255,0.10)',
+                                borderRadius: 32,
+                                padding: '32px 24px',
+                                textAlign: 'center',
+                            }}>
+                                <p style={{ fontSize: 14, color: '#94a3b8', margin: 0 }}>
+                                    Neurological Map · Coming Soon
+                                </p>
+                            </div>
                         </div>
                     </CompassZone>
                 </div>
@@ -458,10 +488,25 @@ const IntegrationCompass: React.FC = () => {
                             Every feeling you experienced during your session is within the normal range.
                             These are the emotional peaks and valleys your Companion recorded.
                         </p>
-                        <EmotionalWaveform
-                            timelineEvents={timeline.events}
-                            sessionDurationMinutes={timeline.sessionDurationMinutes}
-                        />
+                        {/* WO-546 FIX 4: Mobile accordion for Emotional Terrain chart */}
+                        <div>
+                            <button
+                                onClick={() => setWaveformOpen(v => !v)}
+                                aria-expanded={waveformOpen}
+                                aria-controls="waveform-panel"
+                                className="md:hidden w-full flex items-center justify-between px-4 py-3 mb-2 rounded-xl bg-slate-800/50 border border-slate-700/50 text-sm font-bold text-slate-300 transition-colors"
+                                style={{ minHeight: 48 }}
+                            >
+                                <span>Your Emotional Terrain (Chart)</span>
+                                <span style={{ transition: 'transform 0.2s', transform: waveformOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>&#9662;</span>
+                            </button>
+                            <div id="waveform-panel" className={waveformOpen ? 'block' : 'hidden md:block'}>
+                                <EmotionalWaveform
+                                    timelineEvents={timeline.events}
+                                    sessionDurationMinutes={timeline.sessionDurationMinutes}
+                                />
+                            </div>
+                        </div>
                         <div style={{ marginTop: 16 }}>
                             <FeelingWave events={timeline.events} />
                         </div>
@@ -547,7 +592,7 @@ const IntegrationCompass: React.FC = () => {
                                         <p key={i} className="ppn-body" style={{
                                             margin: i === 0 ? '0 0 8px' : '0',
                                         }}>
-                                           , {prompt}
+                                            , {prompt}
                                         </p>
                                     ))}
                                 </div>
