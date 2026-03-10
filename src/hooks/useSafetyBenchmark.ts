@@ -33,7 +33,8 @@ export const useSafetyBenchmark = () => {
                 const { data: practitionerRecords } = await supabase
                     .from('log_clinical_records')
                     .select('id')
-                    .eq('site_id', userSites.site_id);
+                    .eq('site_id', userSites.site_id)
+                    .neq('session_status', 'draft');    // WO-592: exclude stubs
 
                 const { data: practitionerSafetyEvents } = await supabase
                     .from('log_safety_events')
@@ -46,7 +47,8 @@ export const useSafetyBenchmark = () => {
 
                 const { data: allRecords } = await supabase
                     .from('log_clinical_records')
-                    .select('site_id');
+                    .select('site_id')
+                    .neq('session_status', 'draft');    // WO-592: exclude stubs from network avg
 
                 const { data: allSafetyEvents } = await supabase
                     .from('log_safety_events')

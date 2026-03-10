@@ -281,12 +281,15 @@ export async function updateDosingProtocol(
         }
 
         // Schema columns: substance_id, dosage_mg, route_id — rebuilt schema uses dosage_mg (not dosage_amount)
+        // WO-592: Promote stub to 'active' the moment a substance is selected.
+        // 'active' rows are counted by analytics; 'draft' rows are invisible to all reporting.
         const { error } = await supabase
             .from('log_clinical_records')
             .update({
                 substance_id: substanceId,
                 dosage_mg: data.dosage_amount ?? null,   // rebuilt schema: dosage_mg (was dosage_amount in old schema)
                 route_id: routeId,
+                session_status: 'active',                // WO-592: gate — stub becomes a real session
             })
             .eq('id', sessionId);
 

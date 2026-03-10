@@ -68,7 +68,17 @@ export const MyProtocols = () => {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) return { data: [], error: null };
 
-                // Step 1: Parallel fetch — sessions (scoped to this practitioner) + ref tables
+                // WO-592: Resolve site_id first — query scoped to practitioner's clinic
+                const { data: userSite } = await supabase
+                    .from('log_user_sites')
+                    .select('site_id')
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+
+                if (!userSite) return { data: [], error: null };
+                const siteId = userSite.site_id;
+
+                // Step 1: Parallel fetch — sessions (scoped to this site) + ref tables
                 const [
                     sessionResult,
                     substanceResult,
@@ -91,7 +101,8 @@ export const MyProtocols = () => {
                             patient_smoking_status_id,
                             created_at
                         `)
-                        .eq('created_by', user.id)            // created_by = practitioner's user id
+                        .eq('site_id', siteId)                // WO-592: filter by practitioner's clinic
+                        .neq('session_status', 'draft')       // WO-592: exclude stubs
                         .order('created_at', { ascending: false })
                         .limit(100),
                     supabase.from('ref_substances').select('substance_id, substance_name'),

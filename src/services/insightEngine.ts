@@ -157,6 +157,7 @@ export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | nu
             .from('log_clinical_records')
             .select('id, patient_uuid, session_date')
             .eq('site_id', siteId)
+            .neq('session_status', 'draft')        // WO-592: real sessions only
             .lt('session_date', cutoffDate.toISOString().split('T')[0])
             .order('session_date', { ascending: false });
 
@@ -226,6 +227,7 @@ export async function ruleDocumentationDecay(siteId: number): Promise<InsightCar
                 .from('log_clinical_records')
                 .select('id, patient_uuid, session_date')
                 .eq('site_id', siteId)
+                .neq('session_status', 'draft')        // WO-592: real sessions only
                 .gte('session_date', from.toISOString().split('T')[0])
                 .lt('session_date', to.toISOString().split('T')[0]);
 
@@ -354,6 +356,7 @@ export async function ruleSafetySpike(siteId: number): Promise<InsightCard | nul
                 .from('log_clinical_records')
                 .select('id, patient_uuid, session_date')
                 .eq('site_id', siteId)
+                .neq('session_status', 'draft')        // WO-592: real sessions only
                 .gte('session_date', from.toISOString().split('T')[0])
                 .lt('session_date', to.toISOString().split('T')[0]);
 
@@ -419,6 +422,7 @@ export async function ruleNonResponderCluster(siteId: number): Promise<InsightCa
         ref_substances(substance_name)
       `)
             .eq('site_id', siteId)
+            .neq('session_status', 'draft')        // WO-592: real sessions only
             .order('session_date', { ascending: false })
             .limit(20);
 

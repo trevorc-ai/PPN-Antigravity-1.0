@@ -32,6 +32,7 @@ export const usePractitionerProtocols = () => {
 
             // Step 2: Get all clinical records for this site in the last 90 days
             // patient_uuid links to log_patient_indications; substance is joined inline
+            // WO-592: exclude draft stubs — only count active/completed sessions
             const { data: records, error: recordsError } = await supabase
                 .from('log_clinical_records')
                 .select(`
@@ -41,6 +42,7 @@ export const usePractitionerProtocols = () => {
                     ref_substances!inner(substance_name)
                 `)
                 .eq('site_id', userSite.site_id)
+                .neq('session_status', 'draft')          // WO-592: no draft stubs in counts
                 .gte('created_at', ninetyDaysAgo.toISOString())
                 .order('created_at', { ascending: false });
 
