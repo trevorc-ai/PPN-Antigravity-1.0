@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useCallback } from 'react';
 import { Pill, Activity, Mountain, Shield, CheckCircle, Diamond, Download, Clock, Mic, Music, AlertTriangle, Send } from 'lucide-react';
 import { getTimelineEvents, createTimelineEvent } from '../../services/clinicalLog';
-import { getEventTypeIdByCode } from '../../services/refFlowEventTypes';
+import { getEventTypeIdByCode, type FlowEventTypeCode } from '../../services/refFlowEventTypes';
 
 export interface TimelineEvent {
     id: string;
@@ -111,7 +111,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
         // so chip events (patient_observation, music_change, clinical_decision, general_note)
         // persist to DB. If the code resolves to null, we log a warning but keep the
         // optimistic entry in local state so the practitioner's session is not disrupted.
-        const eventTypeId = await getEventTypeIdByCode(type);
+        const eventTypeId = await getEventTypeIdByCode(type as FlowEventTypeCode);
         if (eventTypeId !== null) {
             await createTimelineEvent({
                 session_id: sessionId,

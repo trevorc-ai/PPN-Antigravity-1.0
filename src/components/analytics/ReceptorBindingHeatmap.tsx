@@ -175,7 +175,7 @@ const ReceptorBindingHeatmap: React.FC = () => {
 
     // ─── Cell data helper ────────────────────────────────────────────────────────
     const getCellData = (sub: typeof SUBSTANCES[0], receptor: ReceptorRow) => {
-        const kiProfile = sub.kiProfile as Record<string, number | undefined> | undefined;
+        const kiProfile = sub.kiProfile as unknown as Record<string, number | undefined> | undefined;
         const ki = kiProfile?.[receptor.kiKey];
         const pki = toPKi(ki);
         const dimmed = pki > 0 && pki < threshold;

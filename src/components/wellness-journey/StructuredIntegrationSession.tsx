@@ -139,7 +139,7 @@ export const StructuredIntegrationSession: React.FC<StructuredIntegrationSession
                 integration_session_number: form.integration_session_number,
                 session_date: form.session_date,
                 session_duration_minutes: form.session_duration_minutes,
-                attended: form.attendance_status === 'attended',
+                attendance_status_code: form.attendance_status,
                 insight_integration_rating: form.insight_integration_score,
                 emotional_processing_rating: form.emotional_processing_score,
                 behavioral_application_rating: form.behavioral_application_score,
