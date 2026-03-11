@@ -16,9 +16,37 @@ import { TrendingDown, Info } from 'lucide-react';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    const userScore = payload.find((p: any) => p.name === 'userScore')?.value;
+    const rangeArray = payload.find((p: any) => p.name === 'Confidence Interval')?.value;
+    const lowerBound = rangeArray ? rangeArray[0] : null;
+    const upperBound = rangeArray ? rangeArray[1] : null;
+
+    let status = 'typical';
+    let statusText = 'Typical Response';
+    let statusColor = 'text-blue-400';
+    let insight = null;
+
+    if (userScore !== undefined && lowerBound !== null && upperBound !== null) {
+      if (userScore < lowerBound) {
+        status = 'outperforming';
+        statusText = 'Outperforming Cohort';
+        statusColor = 'text-emerald-400';
+      } else if (userScore > upperBound) {
+        status = 'suboptimal';
+        statusText = 'Sub-Optimal Trajectory';
+        statusColor = 'text-amber-500';
+        insight = 'Patient trajectory regressing beyond the 95% cohort interval. Consider reviewing integration variables, sleep patterns, or environmental stressors.';
+      }
+    }
+
     return (
-      <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md">
-        <p className="text-sm font-black text-slate-500 uppercase tracking-widest mb-2">Day {label}</p>
+      <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md max-w-[280px]">
+        <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Day {label}</p>
+            <span className={`text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-slate-800 ${statusColor}`}>
+              {statusText}
+            </span>
+        </div>
         {payload.map((p: any, i: number) => {
           // Skip the confidence interval array in the tooltip for cleaner UI
           if (p.name === 'Confidence Interval') return null;
@@ -32,9 +60,15 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             </div>
           );
         })}
-        <div className="mt-2 pt-2 border-t border-slate-800">
-           <p className="text-sm text-slate-500">PHQ-9 Severity Index</p>
-        </div>
+        
+        {insight && (
+          <div className="mt-3 pt-3 border-t border-slate-800">
+             <div className="flex items-start gap-2">
+                 <div className="size-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></div>
+                 <p className="text-xs text-slate-400 leading-snug">{insight}</p>
+             </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -50,6 +84,32 @@ const ConfidenceCone: React.FC = () => {
       range: [point.rangeLower, point.rangeUpper] as [number, number]
     }));
   }, []);
+
+  // Calculate current status based on the most recent data point
+  const currentStatus = useMemo(() => {
+    if (chartData.length === 0) return null;
+    const latest = chartData[chartData.length - 1];
+    
+    if (latest.userScore < latest.rangeLower) {
+        return {
+            text: 'Result: Outperforming Cohort (Top 5%)',
+            color: 'text-emerald-500',
+            bg: 'bg-emerald-500'
+        };
+    } else if (latest.userScore > latest.rangeUpper) {
+        return {
+            text: 'Action Required: Trajectory Sub-Optimal',
+            color: 'text-amber-500',
+            bg: 'bg-amber-500'
+        };
+    } else {
+        return {
+            text: 'Result: Typical Cohort Response',
+            color: 'text-blue-500',
+            bg: 'bg-blue-500'
+        };
+    }
+  }, [chartData]);
 
   return (
     <div className="bg-[#0a0c10] border border-slate-800 rounded-[2.5rem] p-6 sm:p-8 shadow-xl flex flex-col h-full relative overflow-hidden group">
@@ -67,8 +127,8 @@ const ConfidenceCone: React.FC = () => {
         </div>
         <div className="group/info relative">
           <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-48 p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50">
-            Gray area represents the 95% Confidence Interval of the responding community cohort.
+          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+            Gray area represents the 95% Confidence Interval of the responding community cohort. Hover over data points for contextual insights.
           </div>
         </div>
       </div>
@@ -155,12 +215,14 @@ const ConfidenceCone: React.FC = () => {
       </div>
 
       {/* Footer Insight */}
-      <div className="mt-4 pt-4 border-t border-slate-800 flex items-center gap-2">
-        <div className="size-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-        <p className="text-sm font-mono text-emerald-500 uppercase tracking-widest">
-          Result: Outperforming 68% of Cohort
-        </p>
-      </div>
+      {currentStatus && (
+        <div className="mt-4 pt-4 border-t border-slate-800 flex items-center gap-2">
+          <div className={`size-1.5 rounded-full ${currentStatus.bg} ${currentStatus.bg === 'bg-amber-500' ? 'animate-pulse' : ''}`}></div>
+          <p className={`text-sm font-mono uppercase tracking-widest ${currentStatus.color}`}>
+            {currentStatus.text}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

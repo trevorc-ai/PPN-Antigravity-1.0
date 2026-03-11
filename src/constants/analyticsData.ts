@@ -131,6 +131,14 @@ export const MOCK_FLOW_DATA: FlowEdge[] = [
 // STANDARDS: CPT Codes for procedures, LOINC for assessments, SNOMED for routes.
 export const MOCK_JOURNEY_DATA: JourneyEvent[] = [
   { 
+    date: '2024-01-20', 
+    type: 'assessment', 
+    label: 'Baseline PHQ-9', 
+    value: 'Score: 22', 
+    details: 'Initial screening assessment. Severe Depression.',
+    status: 'completed'
+  },
+  { 
     date: '2024-02-01', 
     type: 'dose', 
     label: 'Dosing Session 1', 
@@ -168,5 +176,13 @@ export const MOCK_JOURNEY_DATA: JourneyEvent[] = [
     value: '30mg',
     details: 'Dosage Escalation. Protocol Verified.',
     status: 'scheduled'
+  },
+  { 
+    date: '2024-02-28', 
+    type: 'assessment', 
+    label: 'Follow-up PHQ-9', 
+    value: 'Score: 6', 
+    details: 'Significant improvement post-integration. Mild symptoms remaining.',
+    status: 'completed'
   }
 ];

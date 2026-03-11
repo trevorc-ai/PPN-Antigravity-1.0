@@ -18,6 +18,7 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
 
     const [isGenerating, setIsGenerating] = useState(false);
     const [isCopied, setIsCopied] = useState(false);
+    const [isCopiedOnly, setIsCopiedOnly] = useState(false); // WO-601: for dedicated Copy Link button
     const [generatedLink, setGeneratedLink] = useState("");
 
     if (!isOpen) return null;
@@ -206,6 +207,19 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
                                 // AC-1: ppn-body replaces text-sm text-slate-300
                                 className="bg-transparent ppn-body text-slate-300 w-full outline-none select-all"
                             />
+                            {/* WO-601: Explicit Copy Link button (clipboard only, no native share sheet) */}
+                            <button
+                                onClick={() => {
+                                    navigator.clipboard.writeText(generatedLink);
+                                    setIsCopiedOnly(true);
+                                    setTimeout(() => setIsCopiedOnly(false), 3000);
+                                }}
+                                aria-label={isCopiedOnly ? 'Link copied' : 'Copy link to clipboard'}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 ppn-body text-slate-200 rounded-md transition-colors shrink-0 text-sm"
+                            >
+                                {isCopiedOnly ? <Check className="w-4 h-4 text-teal-400" /> : <LinkIcon className="w-4 h-4" />}
+                                {isCopiedOnly ? 'Copied!' : 'Copy'}
+                            </button>
                             <button
                                 onClick={() => {
                                     const shareData = { title: 'Your Integration Compass', url: generatedLink };

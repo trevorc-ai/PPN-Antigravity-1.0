@@ -63,7 +63,9 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
         ].filter(d => d.count > 0);
     }, []);
 
-    const sections = [
+    type NavItem = { label: string; icon: string; path: string; badge?: number; external?: boolean };
+    type NavSection = { title: string; items: NavItem[] };
+    const sections: NavSection[] = [
         {
             title: 'Core',
             items: [

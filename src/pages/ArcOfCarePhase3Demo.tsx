@@ -20,19 +20,19 @@ const ArcOfCarePhase3Demo: React.FC = () => {
 
     // Mock symptom trajectory data (PHQ-9 scores over 6 months)
     const trajectoryData = [
-        { date: '2025-08-16', score: 24, severity: 'severe' },
-        { date: '2025-09-01', score: 21, severity: 'severe' },
-        { date: '2025-09-15', score: 18, severity: 'moderately-severe' },
-        { date: '2025-10-01', score: 14, severity: 'moderate' },
-        { date: '2025-10-15', score: 11, severity: 'moderate' },
-        { date: '2025-11-01', score: 8, severity: 'mild' },
-        { date: '2025-11-15', score: 6, severity: 'mild' },
-        { date: '2025-12-01', score: 4, severity: 'minimal' },
-        { date: '2025-12-15', score: 3, severity: 'minimal' },
-        { date: '2026-01-01', score: 2, severity: 'minimal' },
-        { date: '2026-01-15', score: 2, severity: 'minimal' },
-        { date: '2026-02-01', score: 1, severity: 'minimal' },
-        { date: '2026-02-16', score: 1, severity: 'minimal' }
+        { day: 0, assessmentDate: '2025-08-16', phq9Score: 24 },
+        { day: 16, assessmentDate: '2025-09-01', phq9Score: 21 },
+        { day: 30, assessmentDate: '2025-09-15', phq9Score: 18 },
+        { day: 46, assessmentDate: '2025-10-01', phq9Score: 14 },
+        { day: 60, assessmentDate: '2025-10-15', phq9Score: 11 },
+        { day: 77, assessmentDate: '2025-11-01', phq9Score: 8 },
+        { day: 91, assessmentDate: '2025-11-15', phq9Score: 6 },
+        { day: 107, assessmentDate: '2025-12-01', phq9Score: 4 },
+        { day: 121, assessmentDate: '2025-12-15', phq9Score: 3 },
+        { day: 138, assessmentDate: '2026-01-01', phq9Score: 2 },
+        { day: 152, assessmentDate: '2026-01-15', phq9Score: 2 },
+        { day: 169, assessmentDate: '2026-02-01', phq9Score: 1 },
+        { day: 184, assessmentDate: '2026-02-16', phq9Score: 1 }
     ];
 
     // Mock red alerts

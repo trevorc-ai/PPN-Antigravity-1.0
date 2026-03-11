@@ -114,12 +114,10 @@ export const BehavioralChangeTracker: React.FC<BehavioralChangeTrackerProps> = (
                 patient_id: patientId,
                 session_id: sessionId !== undefined ? String(sessionId) : undefined,
                 change_date: form.change_date,
-                change_type: form.change_type,
                 change_type_ids: form.what_changed_ids,       // ✅ WO-214: integer FK IDs
                 is_positive: ['highly_positive', 'moderately_positive'].includes(form.impact_level),
-                impact_on_wellbeing: form.impact_level,
                 confidence_sustaining: form.confidence_score,
-                related_to_dosing: form.session_relation,
+                // impact_on_wellbeing and related_to_dosing removed — not in BehavioralChangeData interface (rebuilt schema)
             });
             if (!result.success) throw result.error;
             setSaveStatus('saved');

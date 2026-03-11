@@ -39,6 +39,8 @@ const BetaWelcome = lazy(() => import('./pages/BetaWelcome'));
 
 // WO-587: VIP Invite Tool (admin-only)
 const AdminInvitePage = lazy(() => import('./pages/AdminInvitePage'));
+// WO-612: Admin Dashboard Hub (admin-only)
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 
 // ── Tier 2: Post-Auth Entry Points ───────────────────────────────────────────
 const SimpleSearch = lazy(() => import('./pages/SimpleSearch'));
@@ -387,6 +389,9 @@ const AppContent: React.FC = () => {
               <Route path="/partner-demo" element={<PartnerDemoHub />} />
               {/* Patient-facing shareable report — no auth required */}
               <Route path="/patient-report" element={<PatientReport />} />
+              {/* WO-601: Magic link entry point — same page, different path convention.
+                  Renders PatientReport publicly so magic links work regardless of auth state. */}
+              <Route path="/journey/auth" element={<PatientReport />} />
               {/* WO-570: Integration Compass — patient post-session integration tool */}
               <Route path="/integration-compass" element={<IntegrationCompass />} />
 
@@ -459,6 +464,11 @@ const AppContent: React.FC = () => {
                   <Route
                     path="/admin/invite"
                     element={userRole === 'admin' ? <AdminInvitePage /> : <Navigate to="/dashboard" replace />}
+                  />
+                  {/* WO-612: Admin Dashboard Hub */}
+                  <Route
+                    path="/admin/dashboard"
+                    element={userRole === 'admin' ? <AdminDashboard /> : <Navigate to="/dashboard" replace />}
                   />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/profile/edit" element={<ProfileEdit />} />

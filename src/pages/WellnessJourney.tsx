@@ -860,7 +860,8 @@ const WellnessJourneyInternal: React.FC = () => {
                 )}
             </SlideOutPanel>
 
-            <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6">
+            {/* WO-604: pb-20 ensures bottom nav (mobile) cannot overlay the last row of buttons */}
+            <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 pb-20 md:pb-4">
 
                 {/* ─── Page Heading ─── */}
                 <div className="px-1">
@@ -1129,42 +1130,9 @@ const WellnessJourneyInternal: React.FC = () => {
                                                         )}
                                                     </div>
                                                 </div>
-                                                {/* Phase 3, Integration Work (days to weeks) */}
-                                                <div className="mt-8">
-                                                    <p className="text-base font-bold font-manrope text-slate-300 mb-3 px-1">Integration Work · Days to Weeks</p>
-                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                        {config.enabledFeatures.includes('structured-integration') && (
-                                                            <WorkflowActionCard
-                                                                phase={3}
-                                                                status="active"
-                                                                title="Integration Session"
-                                                                description="Log clinical narrative and thematic insights."
-                                                                icon={<span className="material-symbols-outlined text-emerald-400">edit_note</span>}
-                                                                onClick={() => handleOpenForm('structured-integration')}
-                                                            />
-                                                        )}
-                                                        {config.enabledFeatures.includes('behavioral-tracker') && (
-                                                            <WorkflowActionCard
-                                                                phase={3}
-                                                                status="active"
-                                                                title="Behavioral Change Tracker"
-                                                                description="Monitor behavioral modifications over time."
-                                                                icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
-                                                                onClick={() => handleOpenForm('behavioral-tracker')}
-                                                            />
-                                                        )}
-                                                        {config.enabledFeatures.includes('longitudinal-assessment') && (
-                                                            <WorkflowActionCard
-                                                                phase={3}
-                                                                status="active"
-                                                                title="Longitudinal Assessment"
-                                                                description="Detailed milestone check (PHQ-9/GAD-7)."
-                                                                icon={<span className="material-symbols-outlined text-emerald-400">timeline</span>}
-                                                                onClick={() => handleOpenForm('longitudinal-assessment')}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </div>
+                                                {/* WO-602B: Removed redundant "Integration Work" WorkflowActionCard grid.
+                                                    IntegrationPhase above (steps 3-5) already renders
+                                                    structured-integration, behavioral-tracker, and longitudinal-assessment. */}
                                             </>
                                         </Phase2ErrorBoundary>
                                     )}
@@ -1172,9 +1140,8 @@ const WellnessJourneyInternal: React.FC = () => {
 
 
 
-                                {/* Bottom row: disclaimer label + info tooltip | Phase lock | Export Report button
-                                    Hidden during Phase 2 (Cockpit Mode — practitioner is focused on real-time clinical actions) */}
-                                {activePhase !== 2 && (
+                                {/* WO-602E (LEAD): Export Report only in Phase 3 (not Phase 1). */}
+                                {activePhase === 3 && (
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 pb-1 border-t border-slate-700/30 mt-4 sm:mt-8">
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
                                             {/* Disclaimer — icon+title only on mobile, full text on sm+ */}

@@ -255,13 +255,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             onSaved('Mental Health Screening'); // Advance UI even without DB write
             return;
         }
+        // WO-603 Fix 5: always pass null (not undefined) so the column is always included in the payload
         const result = await createBaselineAssessment({
             patient_id: resolvedPatientId,
             site_id: siteId,
-            phq9_score: data.phq9 ?? undefined,
-            gad7_score: data.gad7 ?? undefined,
-            ace_score: data.ace ?? undefined,
-            pcl5_score: data.pcl5 ?? undefined,  // ✅ wired — CHECK 0–80
+            phq9_score: data.phq9 ?? null,
+            gad7_score: data.gad7 ?? null,
+            ace_score: data.ace ?? null,
+            pcl5_score: data.pcl5 ?? null,  // WO-597: CHECK 0–80
         });
         result.success ? onSaved('Mental Health Screening') : onError('Mental Health Screening', result.error);
     }, [patientId, siteId]);

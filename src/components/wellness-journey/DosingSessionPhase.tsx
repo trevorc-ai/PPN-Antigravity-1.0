@@ -22,16 +22,21 @@ interface EBState { hasError: boolean; error: string; }
 export class Phase2ErrorBoundary extends React.Component<EBProps, EBState> {
     public state: EBState = { hasError: false, error: '' };
 
+    constructor(props: EBProps) {
+        super(props);
+        this.handleReset = this.handleReset.bind(this);
+    }
+
     public static getDerivedStateFromError(err: Error): EBState {
         return { hasError: true, error: err?.message ?? 'Unknown error' };
     }
     public componentDidCatch(err: Error, info: React.ErrorInfo) {
         console.error('[Phase2ErrorBoundary]', err, info);
     }
-    private handleReset = () => {
+    public handleReset() {
         this.setState({ hasError: false, error: '' });
         this.props.onReset();
-    };
+    }
 
     public render() {
         if (this.state.hasError) {
@@ -615,7 +620,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     heart_rate: updateHR ? parseInt(updateHR, 10) : undefined,
                     bp_systolic: updateBPSys ? parseInt(updateBPSys, 10) : undefined,
                     bp_diastolic: updateBPDia ? parseInt(updateBPDia, 10) : undefined,
-                    source: 'Session Update Panel',
+                    // source removed — not in SessionVitalData interface
                 });
             } catch (err) {
                 console.warn('[Session Update] Failed to sync clinical vital:', err);

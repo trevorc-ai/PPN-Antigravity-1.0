@@ -693,11 +693,18 @@ export async function createTimelineEvent(data: TimelineEventData) {
             return { success: false, error: new Error(msg) };
         }
 
+        // WO-603 Fix 6: auto-fill performed_by from auth user so it's never NULL
+        let performedBy = data.performed_by ?? null;
+        if (!performedBy) {
+            const { data: { user: authUser } } = await supabase.auth.getUser();
+            performedBy = authUser?.id ?? null;
+        }
+
         const payload: Record<string, unknown> = {
             session_id: data.session_id,
             event_timestamp: data.event_timestamp,
             event_type_id: eventTypeId,
-            performed_by: data.performed_by ?? null,
+            performed_by: performedBy,
             metadata: data.metadata ?? null,
         };
 
@@ -1125,9 +1132,12 @@ export async function createPatientProfile(
             created_by: user?.id ?? null,
         };
 
-        console.log('[clinicalLog] createPatientProfile insert:', { table: 'log_patient_profiles', payload: { ...payload, patient_uuid: '[redacted]' } });
+        console.log('[clinicalLog] createPatientProfile upsert:', { table: 'log_patient_profiles', payload: { ...payload, patient_uuid: '[redacted]' } });
 
-        const { error } = await supabase.from('log_patient_profiles').insert([payload]);
+        // WO-603 Fix 3: upsert prevents duplicate rows when practitioner navigates back and re-submits
+        const { error } = await supabase
+            .from('log_patient_profiles')
+            .upsert([payload], { onConflict: 'patient_uuid', ignoreDuplicates: false });
         if (error) throw error;
         return { success: true };
     } catch (error) {
@@ -1168,12 +1178,15 @@ export async function createPatientIndication(
             return { success: false, error: `No indication_id found for: ${data.indication_label}` };
         }
 
-        const { error } = await supabase.from('log_patient_indications').insert([{
+        // WO-603 Fix 4A+B: upsert prevents duplicates; created_by is populated from auth user
+        const { data: { user: indicationUser } } = await supabase.auth.getUser();
+        const { error } = await supabase.from('log_patient_indications').upsert([{
             // id: GENERATED ALWAYS AS IDENTITY — do NOT supply (428C9 error if supplied)
             patient_uuid: data.patient_uuid,
             indication_id,
             is_primary: true,
-        }]);
+            created_by: indicationUser?.id ?? null,
+        }], { onConflict: 'patient_uuid,indication_id', ignoreDuplicates: false });
         if (error) throw error;
         return { success: true };
     } catch (error) {

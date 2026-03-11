@@ -1,13 +1,18 @@
 /**
- * FeedbackCard.tsx, WO-511
+ * FeedbackCard.tsx, WO-511 + WO-611
  *
  * Instant floating feedback card. Triggered from the TopHeader comment icon.
  * Anchors below the trigger button. Dismisses on outside click.
  *
+ * WO-611 additions:
+ *   - BUG: auto-captures browser/OS/viewport/route metadata on submit
+ *   - FEATURE: renders a 3-field structured form instead of a blank textarea
+ *   - COMMENT: unchanged
+ *
  * Props:
- *   isOpen       , controlled open state
- *   onClose      , called to close the card
- *   triggerRef   , ref to the trigger button for focus-return on close
+ *   isOpen       — controlled open state
+ *   onClose      — called to close the card
+ *   triggerRef   — ref to the trigger button for focus-return on close
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -36,6 +41,12 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ isOpen, onClose, triggerRef
 
     const [type, setType] = useState<FeedbackType>('comment');
     const [message, setMessage] = useState('');
+    // WO-611: structured state for FEATURE mode
+    const [featureFields, setFeatureFields] = useState({
+        problem: '',
+        value: '',
+        context: '',
+    });
     const [submitting, setSubmitting] = useState(false);
     const [sent, setSent] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -79,14 +90,38 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ isOpen, onClose, triggerRef
         // Reset after close animation
         setTimeout(() => {
             setMessage('');
+            setFeatureFields({ problem: '', value: '', context: '' }); // WO-611
             setType('comment');
             setSent(false);
             setError(null);
         }, 200);
     };
 
+    // WO-611: Build metadata JSON for BUG reports
+    const buildMetadata = () => {
+        if (type !== 'bug') return null;
+        return {
+            userAgent: navigator.userAgent,
+            viewport: `${window.innerWidth}x${window.innerHeight}`,
+            route: window.location.hash || window.location.pathname,
+            language: navigator.language,
+            timestamp: new Date().toISOString(),
+        };
+    };
+
+    // WO-611: Build the final message string
+    const buildPayloadMessage = (): string => {
+        if (type !== 'feature') return message.trim().slice(0, 1000);
+        return [
+            `Problem: ${featureFields.problem}`,
+            `Value: ${featureFields.value}`,
+            `Context: ${featureFields.context}`,
+        ].join('\n\n').slice(0, 1000);
+    };
+
     const handleSubmit = async () => {
-        if (!message.trim()) return;
+        // WO-611: validate based on type
+        if (type === 'feature' ? !featureFields.problem.trim() : !message.trim()) return;
         setSubmitting(true);
         setError(null);
 
@@ -96,17 +131,18 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ isOpen, onClose, triggerRef
                 .insert({
                     user_id: user?.id,
                     type,
-                    message: message.trim().slice(0, 1000),
+                    message: buildPayloadMessage(),        // WO-611: structured or plain
                     page_url: window.location.hash || window.location.pathname,
+                    metadata: buildMetadata(),             // WO-611: bug context JSON
                 });
 
             if (insertError) throw insertError;
 
             setSent(true);
             setTimeout(() => handleClose(), 1800);
-        } catch (err: any) {
-            // Graceful degradation, table may not exist yet during migration window
-            console.warn('[FeedbackCard] Insert failed (table may be pending migration):', err?.message);
+        } catch (err: unknown) {
+            // Graceful degradation — table may not exist yet during migration window
+            console.warn('[FeedbackCard] Insert failed (table may be pending migration):', (err as { message?: string })?.message);
             // Still show success to user, feedback was attempted
             setSent(true);
             setTimeout(() => handleClose(), 1800);
@@ -175,33 +211,60 @@ const FeedbackCard: React.FC<FeedbackCardProps> = ({ isOpen, onClose, triggerRef
                         ))}
                     </div>
 
-                    {/* Textarea */}
-                    <textarea
-                        ref={textareaRef}
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value.slice(0, 1000))}
-                        placeholder={
-                            type === 'bug'
-                                ? "Describe what happened and where..."
-                                : type === 'feature'
-                                    ? "What would make this tool better?"
+                    {/* WO-611: Conditional rendering based on feedback type */}
+                    {type === 'feature' ? (
+                        <div className="space-y-3">
+                            {[
+                                { key: 'problem', label: 'What problem are you trying to solve?', placeholder: 'e.g. I cannot find the patient timeline after session close...' },
+                                { key: 'value',   label: 'How would this help you?',             placeholder: 'e.g. I would spend less time searching and more time with patients...' },
+                                { key: 'context', label: 'Any other context?',                   placeholder: 'Optional — screenshots, workarounds, related features...' },
+                            ].map(({ key, label, placeholder }) => (
+                                <div key={key}>
+                                    <label className="ppn-meta text-slate-400 block mb-1">{label}</label>
+                                    <textarea
+                                        value={featureFields[key as keyof typeof featureFields]}
+                                        onChange={(e) => setFeatureFields(prev => ({ ...prev, [key]: e.target.value.slice(0, 400) }))}
+                                        placeholder={placeholder}
+                                        rows={2}
+                                        className="w-full resize-none rounded-xl px-4 py-3 text-sm text-slate-300 placeholder:text-slate-600 bg-slate-900 border border-slate-700 focus:border-indigo-500/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        /* BUG and COMMENT — existing single textarea, unchanged */
+                        <textarea
+                            ref={textareaRef}
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value.slice(0, 1000))}
+                            placeholder={
+                                type === 'bug'
+                                    ? "Describe what happened and where..."
                                     : "Tell us what you're thinking..."
-                        }
-                        aria-label="Feedback message"
-                        rows={4}
-                        className="w-full resize-none rounded-xl px-4 py-3 text-sm text-slate-300 placeholder:text-slate-600 bg-slate-900 border border-slate-700 focus:border-indigo-500/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
-                    />
+                            }
+                            aria-label="Feedback message"
+                            rows={4}
+                            className="w-full resize-none rounded-xl px-4 py-3 text-sm text-slate-300 placeholder:text-slate-600 bg-slate-900 border border-slate-700 focus:border-indigo-500/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all"
+                        />
+                    )}
 
-                    {/* Character count + error */}
-                    <div className="flex items-center justify-between">
-                        <span className="ppn-meta text-slate-600">{message.length}/1000</span>
-                        {error && <span className="ppn-meta text-amber-500">{error}</span>}
-                    </div>
+                    {/* Character count + error (only shown in non-feature modes) */}
+                    {type !== 'feature' && (
+                        <div className="flex items-center justify-between">
+                            <span className="ppn-meta text-slate-600">{message.length}/1000</span>
+                            {error && <span className="ppn-meta text-amber-500">{error}</span>}
+                        </div>
+                    )}
 
                     {/* Submit */}
                     <button
                         onClick={handleSubmit}
-                        disabled={!message.trim() || submitting}
+                        disabled={
+                            submitting ||
+                            (type === 'feature'
+                                ? !featureFields.problem.trim()
+                                : !message.trim())
+                        }
                         className="
               w-full flex items-center justify-center gap-2
               px-4 py-3 rounded-xl

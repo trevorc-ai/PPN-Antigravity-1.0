@@ -636,6 +636,54 @@
                 break-inside: avoid;
             }
         }
+
+        /* ─── WO-588 MOBILE OVERRIDES (@media max-width: 640px) ─────── */
+        @media (max-width: 640px) {
+            .container { padding: 24px 16px 64px; }
+            .header { flex-direction: column; gap: 16px; margin-bottom: 32px; }
+            .brand-name { font-size: 28px; }
+            .header-meta { text-align: left; padding-top: 0; }
+            .quote-block { padding: 20px 18px; margin-bottom: 36px; }
+            .problem-options { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .feature-card.span-2 { grid-column: span 1; }
+            .matrix-table,
+            .matrix-table thead,
+            .matrix-table tbody,
+            .matrix-table th,
+            .matrix-table td,
+            .matrix-table tr { display: block; }
+            .matrix-table thead { display: none; }
+            .matrix-table tbody tr {
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                margin-bottom: 12px;
+                padding: 4px 0;
+                background: var(--bg-card);
+            }
+            .matrix-table td {
+                padding: 10px 14px 10px 110px;
+                position: relative;
+                min-height: 36px;
+            }
+            .matrix-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 14px;
+                top: 10px;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--blue-primary);
+                white-space: nowrap;
+            }
+            .reframe-section { padding: 24px 20px; }
+            .reframe-headline { font-size: 22px; }
+            .footer { grid-template-columns: 1fr; gap: 20px; }
+            .footer-contact { text-align: left; }
+            .visual-break { margin: 24px 0; }
+        }
     </style>
 </head>
 
@@ -895,34 +943,34 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Zero-PHI Architecture</td>
-                        <td><span class="threat">Subpoenas, data breaches, surveillance</span></td>
-                        <td><span class="how">Structural: no identifiable data exists to hand over</span></td>
+                        <td data-label="Feature">Zero-PHI Architecture</td>
+                        <td data-label="Threat"><span class="threat">Subpoenas, data breaches, surveillance</span></td>
+                        <td data-label="Mechanism"><span class="how">Structural: no identifiable data exists to hand over</span></td>
                     </tr>
                     <tr>
-                        <td>Blind Vetting Scanner</td>
-                        <td><span class="threat">Informants, dangerous clients, bad actors</span></td>
-                        <td><span class="how">Salted hashing. Network warns without sharing any PII</span></td>
+                        <td data-label="Feature">Blind Vetting Scanner</td>
+                        <td data-label="Threat"><span class="threat">Informants, dangerous clients, bad actors</span></td>
+                        <td data-label="Mechanism"><span class="how">Salted hashing. Network warns without sharing any PII</span></td>
                     </tr>
                     <tr>
-                        <td>Potency Normalizer</td>
-                        <td><span class="threat">Accidental overdose → 911 → arrest</span></td>
-                        <td><span class="how">Evidence-based dose calculation + documented standard of care</span></td>
+                        <td data-label="Feature">Potency Normalizer</td>
+                        <td data-label="Threat"><span class="threat">Accidental overdose → 911 → arrest</span></td>
+                        <td data-label="Mechanism"><span class="how">Evidence-based dose calculation + documented standard of care</span></td>
                     </tr>
                     <tr>
-                        <td>Crisis Logger</td>
-                        <td><span class="threat">"What did you do for those 20 minutes?"</span></td>
-                        <td><span class="how">Forensic timestamp trail created under physiological stress</span></td>
+                        <td data-label="Feature">Crisis Logger</td>
+                        <td data-label="Threat"><span class="threat">"What did you do for those 20 minutes?"</span></td>
+                        <td data-label="Mechanism"><span class="how">Forensic timestamp trail created under physiological stress</span></td>
                     </tr>
                     <tr>
-                        <td>Zero Free-Text</td>
-                        <td><span class="threat">Self-incriminating clinical narratives</span></td>
-                        <td><span class="how">Structured inputs only. Nothing you'd regret in court</span></td>
+                        <td data-label="Feature">Zero Free-Text</td>
+                        <td data-label="Threat"><span class="threat">Self-incriminating clinical narratives</span></td>
+                        <td data-label="Mechanism"><span class="how">Structured inputs only. Nothing you'd regret in court</span></td>
                     </tr>
                     <tr>
-                        <td>Banking Your Hours</td>
-                        <td><span class="threat">Losing experience when legalization comes</span></td>
-                        <td><span class="how">Anonymized, verified career ledger for future licensing</span></td>
+                        <td data-label="Feature">Banking Your Hours</td>
+                        <td data-label="Threat"><span class="threat">Losing experience when legalization comes</span></td>
+                        <td data-label="Mechanism"><span class="how">Anonymized, verified career ledger for future licensing</span></td>
                     </tr>
                 </tbody>
             </table>
