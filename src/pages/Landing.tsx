@@ -705,8 +705,8 @@ const Landing: React.FC = () => {
                       <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
                     </div>
                   </div>
-                  <div className="bg-[#0a1628] p-4 overflow-x-auto">
-                    <div className="min-w-[500px] pointer-events-none">
+                  <div className="bg-[#0a1628] p-4 overflow-x-auto overflow-y-hidden snap-x touch-pan-x pb-4 custom-scrollbar">
+                    <div className="min-w-[500px] md:min-w-[600px] pointer-events-none pr-4">
                       <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
                         <SafetyRiskMatrixDemo />
                       </Suspense>
@@ -779,8 +779,8 @@ const Landing: React.FC = () => {
                       <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
                     </div>
                   </div>
-                  <div className="bg-[#0a1628] p-4 overflow-x-auto">
-                    <div className="min-w-[500px] pointer-events-none">
+                  <div className="bg-[#0a1628] p-4 overflow-x-auto overflow-y-hidden snap-x touch-pan-x pb-4 custom-scrollbar">
+                    <div className="min-w-[500px] md:min-w-[600px] pointer-events-none pr-4">
                       <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
                         <ClinicRadarDemo />
                       </Suspense>
@@ -811,8 +811,8 @@ const Landing: React.FC = () => {
                       <div className="w-3 h-3 rounded-full bg-slate-600 group-hover:bg-emerald-400 transition-colors delay-150" />
                     </div>
                   </div>
-                  <div className="bg-[#0a1628] p-4 overflow-x-auto pb-4">
-                    <div className="min-w-[500px] pointer-events-none">
+                  <div className="bg-[#0a1628] p-4 overflow-x-auto overflow-y-hidden snap-x touch-pan-x pb-4 custom-scrollbar">
+                    <div className="min-w-[500px] md:min-w-[600px] pointer-events-none pr-4">
                       <Suspense fallback={<div className="animate-pulse bg-slate-800 rounded-xl h-64 w-full" />}>
                         <PatientJourneyDemo />
                       </Suspense>
