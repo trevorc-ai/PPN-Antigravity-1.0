@@ -686,6 +686,10 @@ const WellnessJourneyInternal: React.FC = () => {
     useEffect(() => {
         if (!journey.patientId || journey.patientId === 'PT-RISK9W2P') return; // placeholder, not a real session
         if (!journey.sessionId) return;
+        // WO-599: Practice sessions (TEST- prefix) are ephemeral — do NOT persist to localStorage.
+        // Persisting them caused the "Resume Session" card to show a TEST patient on the
+        // next real session start, making practitioners think TEST mode is the default.
+        if (journey.patientId.startsWith('TEST-')) return;
         const payload = {
             patientId: journey.patientId,
             sessionId: journey.sessionId,

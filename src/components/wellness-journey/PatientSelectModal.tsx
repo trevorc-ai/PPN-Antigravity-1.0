@@ -322,6 +322,13 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                 )}
                             </div>
 
+                            {/* WO-599: Training/Testing separator — visually separates ephemeral Practice Session from real clinical actions */}
+                            <div className="flex items-center gap-3 pt-2">
+                                <div className="flex-1 border-t border-slate-700/60" />
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] whitespace-nowrap">Training &amp; Testing</span>
+                                <div className="flex-1 border-t border-slate-700/60" />
+                            </div>
+
                             {/* Practice Session — all amber/yellow text throughout */}
                             <button
                                 onClick={() => onSelect(testId, true, 'Preparation')}
@@ -331,7 +338,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                     <FlaskConical className="w-6 h-6 text-amber-400" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-base font-bold text-amber-400">Practice Session</p>
+                                    <p className="text-base font-bold text-amber-400">Practice Session <span className="text-xs font-semibold text-amber-500/70 ml-1">(No data saved)</span></p>
                                     <p className="text-sm text-amber-400/70 mt-0.5">Explore the Wellness Journey without creating a real patient record</p>
 
                                 </div>

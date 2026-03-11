@@ -67,14 +67,15 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const [isSaving, setIsSaving] = useState(false);
     const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
     const [submitAttempted, setSubmitAttempted] = useState(false);
+    // WO-596: practitioner must explicitly acknowledge ABSOLUTE contraindications before saving
+    const [contraindicationAcknowledged, setContraindicationAcknowledged] = useState(false);
 
     // Read patient medications (names) from localStorage for contraindication check.
-    // The StructuredSafetyCheckForm writes medication IDs; we also try names from the
-    // 'mock_patient_medications_names' key for the engine (which works on string names).
-    // As a safe fallback, we use the mock medications from the Risk Eligibility panel.
+    // Written by WellnessFormRouter after StructuredSafetyCheckForm save (WO-596).
+    // Falls back to Sertraline/Lisinopril demo values if no safety screen has been saved yet.
     const storedMedNames: string[] = (() => {
         try {
-            const raw = localStorage.getItem('mock_patient_medications_names');
+            const raw = localStorage.getItem('ppn_patient_medications_names');
             if (raw) return JSON.parse(raw);
         } catch { /* ignore */ }
         // Default mock medications matching the demo patient (Sertraline tapering → SSRI flag)
@@ -99,6 +100,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const handleSaveAndExit = () => {
         setSubmitAttempted(true);
         if (!checkValid(data)) return;
+        // WO-596: block save if absolute contraindications are unacknowledged
+        if (hasAbsoluteContraindications && !contraindicationAcknowledged) return;
         if (onSave) {
             setIsSaving(true);
             onSave(data);
@@ -114,6 +117,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const handleSaveAndContinue = () => {
         setSubmitAttempted(true);
         if (!checkValid(data)) return;
+        // WO-596: block save if absolute contraindications are unacknowledged
+        if (hasAbsoluteContraindications && !contraindicationAcknowledged) return;
         if (onSave) {
             setIsSaving(true);
             onSave(data);
@@ -161,9 +166,6 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const selectedSubstance = substances.find(s => s.substance_id === data.substance_id);
     const substanceName = selectedSubstance?.substance_name ?? '';
 
-    // Run local contraindication engine, instant, no DB required
-    // IMPORTANT: substanceName must be lowercased, engine rules use lowercase string matching.
-    // DB substance_name values are title-case (e.g. 'MDMA', 'Psilocybin') and will miss rules without this.
     const contraindicationResult = substanceName
         ? runContraindicationEngine({
             patientId: patientId ?? 'UNKNOWN',
@@ -176,6 +178,7 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
 
     const hasContraindications = contraindicationResult &&
         (contraindicationResult.absoluteFlags.length > 0 || contraindicationResult.relativeFlags.length > 0);
+    const hasAbsoluteContraindications = contraindicationResult && contraindicationResult.absoluteFlags.length > 0;
 
     const isValid = Boolean(
         data.substance_id &&
@@ -343,13 +346,41 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
                 </div>
             )}
 
+
+            {/* WO-596: Acknowledgment gate — required when ABSOLUTE contraindications are present */}
+            {hasAbsoluteContraindications && submitAttempted && !contraindicationAcknowledged && (
+                <div className="flex items-start gap-3 px-4 py-3 bg-red-950/60 border border-red-500/50 rounded-xl animate-in fade-in slide-in-from-top-1 duration-200" role="alert">
+                    <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <p className="text-sm text-red-300 font-semibold">
+                        You must acknowledge the contraindication warning below before saving.
+                    </p>
+                </div>
+            )}
+
+            {/* Acknowledgment checkbox — only shown when ABSOLUTE contraindications are active */}
+            {hasAbsoluteContraindications && (
+                <div className="flex items-start gap-4 p-5 bg-red-950/40 border-2 border-red-500/60 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+                    <input
+                        type="checkbox"
+                        id="contraindication-ack"
+                        checked={contraindicationAcknowledged}
+                        onChange={e => setContraindicationAcknowledged(e.target.checked)}
+                        className="w-5 h-5 mt-0.5 flex-shrink-0 rounded border-red-500 bg-slate-800 text-red-500 focus:ring-2 focus:ring-red-500 cursor-pointer"
+                    />
+                    <label htmlFor="contraindication-ack" className="text-sm text-red-200 cursor-pointer leading-relaxed">
+                        <span className="font-bold block text-red-300 mb-1">Practitioner Override Required</span>
+                        I have reviewed the absolute contraindication(s) listed above. I understand the clinical risks, have documented informed consent, and accept clinical responsibility for proceeding with this dosing session.
+                    </label>
+                </div>
+            )}
+
             <FormFooter
                 onBack={onBack}
                 onSaveAndExit={handleSaveAndExit}
                 onSaveAndContinue={handleSaveAndContinue}
                 isSaving={isSaving}
                 hasChanges={Object.keys(data).length > 0}
-                isValid={isValid}
+                isValid={isValid && (!hasAbsoluteContraindications || contraindicationAcknowledged)}
             />
 
             {/* Modals */}

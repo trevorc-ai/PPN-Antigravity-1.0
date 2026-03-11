@@ -312,16 +312,44 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     const handleSafetyEventSave = useCallback(async (data: SafetyAndAdverseEventData) => {
         if (!sessionId) return; // silent
-        // Pass event_type display label, clinicalLog.ts maps it to safety_event_type_id FK
-        // via SAFETY_EVENT_TYPE_ID lookup table (WO-420 Item 1, migration 071b)
+        // WO-597: Pass ALL available AE fields — was only passing 3 of 7.
+        // NOTE: occurred_at is a PHANTOM COLUMN — removed from log_safety_events in schema rebuild.
+        //       Do NOT pass it. ctcae_grade mirrors severity_grade (CHECK 1–5).
         const result = await createSessionEvent({
             session_id: sessionId,
-            event_type: data.event_type ?? 'Other', // SAFETY_EVENT_TYPE_ID lookup fallback = 13 (OTHER)
-            severity_grade_id: data.severity_grade?.toString(),
+            site_id: siteId ?? undefined,
+            event_type: data.event_type ?? 'Other',            // resolved → safety_event_type_id FK
+            severity_grade_id: data.severity_grade?.toString(), // resolved → severity_grade_id_fk via ref lookup
+            ctcae_grade: data.severity_grade,                   // WO-597: was missing — smallint CHECK 1–5
+            causality_code: 'possible',                         // WO-597: default — form doesn't capture causality yet
             is_resolved: data.resolved,
+            resolved_at: data.resolved_at ?? undefined,         // WO-597: was missing
+            // meddra_code_id / intervention_type_id require live ref table lookups:
+            // The form stores display strings (data.meddra_code is text, data.intervention_type is text).
+            // clinicalLog.ts resolves string→id for event_type; intervention/meddra use IDs directly.
+            // These remain null until the form is upgraded to emit FK IDs. Logged to console for visibility.
         });
+        if (!result.success) {
+            console.warn('[WO-597] createSessionEvent missing optional IDs: meddra_code_id, intervention_type_id (form emits display strings, not FKs yet)');
+        }
+        // Stamp an observation log entry to log_session_observations for each logged observation,
+        // so the observation_log array is synced to the DB in addition to the safety event.
+        if (data.observation_log && data.observation_log.length > 0 && sessionId) {
+            const lastEntry = data.observation_log[data.observation_log.length - 1];
+            // Only stamp latest entry to avoid re-stampng all entries on every save.
+            createTimelineEvent({
+                session_id: sessionId,
+                event_timestamp: lastEntry.timestamp,
+                event_type_code: 'patient_observation',
+                metadata: {
+                    event_description: `Safety observation: ${lastEntry.observations.join(', ')}`,
+                    observation_codes: lastEntry.observations,
+                    note: lastEntry.note,
+                },
+            }).catch(err => console.warn('[WO-597] Safety observation stamp failed (non-fatal):', err));
+        }
         result.success ? onSaved('Safety & Adverse Event') : onError('Safety & Adverse Event', result.error);
-    }, [sessionId]);
+    }, [sessionId, siteId]);
 
     const handleRescueProtocolSave = useCallback(async (data: RescueProtocolData) => {
         if (!sessionId) return; // silent, Rescue form auto-saves immediately, session may not exist yet
@@ -521,15 +549,48 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 const resolvedPatientId = patientUuidProp ?? patientId;
                 const resolvedSiteId = siteId ?? await import('../../services/identity').then(m => m.getCurrentSiteId());
 
+                // WO-596: Resolve contraindication_verdict_id by running the engine.
+                // Map the selected med IDs → medication name strings for the engine's keyword matching.
+                // The CONCOMITANT_MEDICATIONS list in StructuredSafetyCheckForm uses lowercase-compatible names.
+                const MED_ID_TO_NAME: Record<number, string> = {
+                    1: 'lithium', 2: 'phenelzine', 3: 'tranylcypromine', 4: 'selegiline',
+                    5: 'sertraline', 6: 'fluoxetine', 7: 'escitalopram', 8: 'citalopram',
+                    9: 'paroxetine', 10: 'bupropion', 11: 'vortioxetine',
+                    12: 'amphetamine', 13: 'methylphenidate', 14: 'lisdexamfetamine',
+                    15: 'lisinopril', 16: 'metformin', 17: 'atorvastatin',
+                    18: 'levothyroxine', 19: 'amlodipine', 20: 'omeprazole',
+                };
+                const medNames = (data.concomitant_med_ids ?? [])
+                    .map(id => MED_ID_TO_NAME[id])
+                    .filter(Boolean) as string[];
+
+                // Write med names to localStorage so DosingProtocolForm's engine sees real data.
+                try { localStorage.setItem('ppn_patient_medications_names', JSON.stringify(medNames)); } catch (_) { }
+
+                // Run engine at save time (unknown substance — use generic check for all-substance flags).
+                // verdict_id: 1 = CLEAR, 2 = PROCEED_WITH_CAUTION, 3 = DO_NOT_PROCEED
+                // (mirrors ref_contraindication_verdicts ordering)
+                const { runContraindicationEngine } = await import('../../services/contraindicationEngine');
+                const engineResult = runContraindicationEngine({
+                    patientId: resolvedPatientId || 'UNKNOWN',
+                    sessionSubstance: 'psilocybin', // generic check — DosingProtocolForm re-runs with actual substance
+                    medications: medNames,
+                    psychiatricHistory: [],
+                    familyHistory: [],
+                    cssrsScore: data.cssrs_score,
+                });
+                const contraindication_verdict_id =
+                    engineResult.verdict === 'DO_NOT_PROCEED' ? 3 :
+                    engineResult.verdict === 'PROCEED_WITH_CAUTION' ? 2 : 1;
+
                 // Write to log_phase1_safety_screen (new authoritative table for safety screen data)
                 if (resolvedPatientId && resolvedSiteId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(resolvedPatientId)) {
                     createSafetyScreen({
                         patient_uuid: resolvedPatientId,
                         session_id: sessionId ?? undefined,
                         site_id: resolvedSiteId,
-                        // contraindication_verdict_id / ekg_rhythm_id: not yet captured in StructuredSafetyCheckForm UI
-                        // will be wired when form exposes those dropdowns
-                        concomitant_med_ids: [],
+                        contraindication_verdict_id,                    // WO-596: was always null
+                        concomitant_med_ids: data.concomitant_med_ids ?? [], // WO-596: was always []
                     }).catch(err => console.warn('[SAVS-P1A] log_phase1_safety_screen write failed (non-fatal):', err));
                 }
 

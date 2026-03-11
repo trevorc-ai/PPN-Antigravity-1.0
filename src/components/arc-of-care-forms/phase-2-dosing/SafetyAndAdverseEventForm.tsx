@@ -43,6 +43,10 @@ export interface SafetyAndAdverseEventData {
 }
 
 interface SafetyAndAdverseEventFormProps {
+    /** WO-597: callback wired by WellnessFormRouter → handleSafetyEventSave → createSessionEvent.
+     *  Was missing from this interface; form destructures it at line 140 but TS did not surface
+     *  the type mismatch because it was omitted here. All 7 AE fields are now mapped in the router. */
+    onSave?: (data: SafetyAndAdverseEventData) => void;
     initialData?: Partial<SafetyAndAdverseEventData>;
     patientId?: string;
     sessionId?: string;

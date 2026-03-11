@@ -46,7 +46,8 @@ export default function SafetyBenchmark({
         { name: 'Network Avg', value: networkRate, fill: '#64748b' },
     ];
 
-    const deltaVsNetwork = Math.round((1 - practitionerRate / networkRate) * 100);
+    // WO-598: Guard against division by zero — if networkRate is 0 (no network data yet), delta is undefined → 0.
+    const deltaVsNetwork = networkRate > 0 ? Math.round((1 - practitionerRate / networkRate) * 100) : 0;
 
     const statusConfig = {
         excellent: { label: 'Excellent', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30' },
@@ -54,6 +55,9 @@ export default function SafetyBenchmark({
         average: { label: 'Average', color: 'text-slate-300', bg: 'bg-slate-800 border-slate-700' },
         needs_improvement: { label: 'Needs Improvement', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/30' },
     }[status];
+
+    // WO-598: Clamp percentile to [1, 99] — avoids "Top 0%" when practitioner is top of network (100th pctile → 99).
+    const safePercentile = Math.min(Math.max(percentile, 1), 99);
 
     return (
         <div className="space-y-6">
@@ -89,7 +93,7 @@ export default function SafetyBenchmark({
                     <p className={`text-3xl font-black tracking-tight ${statusConfig.color}`}>
                         {statusConfig.label}
                     </p>
-                    <p className="text-sm text-slate-500 mt-1">{percentile}th percentile</p>
+                    <p className="text-sm text-slate-500 mt-1">{safePercentile}th percentile</p>
                 </div>
             </div>
 
@@ -183,7 +187,7 @@ export default function SafetyBenchmark({
                 <div className="flex items-center gap-3 bg-amber-500/8 border border-amber-500/20 rounded-xl px-4 py-3">
                     <Award className="w-5 h-5 text-amber-400 flex-shrink-0" />
                     <p className="text-sm font-bold text-amber-300">
-                        Top {100 - percentile + 1}% nationally
+                        Top {100 - safePercentile}% nationally
                     </p>
                 </div>
             </div>

@@ -232,7 +232,7 @@ export default function Dashboard() {
               value={hasProtocols ? '71%' : '--'}
               change={hasProtocols ? '+3%' : 'No data yet'}
               comparison={hasProtocols ? 'Network avg: 68%' : 'Log your first session to start tracking'}
-              percentile={hasProtocols ? '62nd percentile' : undefined}
+              percentile={undefined /* WO-598: removed hardcoded '62nd percentile' — show once computed from live analytics */}
               icon={Target}
               color="bg-emerald-500"
             />

@@ -148,7 +148,10 @@ const ProtocolDetail: React.FC = () => {
           .eq('id', id)
           .single();
 
-        if (sessionErr || !sessionData) throw new Error('Session not found');
+        if (sessionErr) throw new Error(`DB error: ${sessionErr.message} (code: ${sessionErr.code})`);
+        if (!sessionData) throw new Error(
+          'Session not found. This may be a permissions issue — confirm this session belongs to your clinic. Session ID: ' + id
+        );
         if (cancelled) return;
         setSession(sessionData as SessionRecord);
 

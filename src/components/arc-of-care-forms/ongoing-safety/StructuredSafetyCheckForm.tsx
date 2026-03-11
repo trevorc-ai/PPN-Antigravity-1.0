@@ -22,6 +22,8 @@ export interface StructuredSafetyCheckData {
     action_taken_ids: number[];
     follow_up_required: boolean;
     follow_up_timeframe?: '24_hours' | '3_days' | '1_week';
+    /** FK array → ref_medications.medication_id. Written to log_phase1_safety_screen.concomitant_med_ids. */
+    concomitant_med_ids: number[];
 }
 
 
@@ -62,6 +64,39 @@ const SAFETY_ACTIONS = [
     { id: 4, name: 'Additional therapy session scheduled', urgency: 'urgent' },
 ];
 
+/**
+ * Curated list of medications with IDs matching ref_medications PKs.
+ * Names are lowercase to match contraindicationEngine keyword strings.
+ * Add to this list as ref_medications grows.
+ */
+const CONCOMITANT_MEDICATIONS: Array<{ id: number; name: string; flag?: 'absolute' | 'caution' }> = [
+    // Absolute contraindications (flagged red)
+    { id: 1,  name: 'Lithium',                          flag: 'absolute' },
+    { id: 2,  name: 'Phenelzine (MAOI)',                flag: 'absolute' },
+    { id: 3,  name: 'Tranylcypromine (MAOI)',           flag: 'absolute' },
+    { id: 4,  name: 'Selegiline (MAOI)',                flag: 'absolute' },
+    // Caution (SSRI / serotonergic)
+    { id: 5,  name: 'Sertraline (Zoloft)',              flag: 'caution'  },
+    { id: 6,  name: 'Fluoxetine (Prozac)',              flag: 'caution'  },
+    { id: 7,  name: 'Escitalopram (Lexapro)',           flag: 'caution'  },
+    { id: 8,  name: 'Citalopram (Celexa)',              flag: 'caution'  },
+    { id: 9,  name: 'Paroxetine (Paxil)',               flag: 'caution'  },
+    { id: 10, name: 'Bupropion (Wellbutrin)',           flag: 'caution'  },
+    { id: 11, name: 'Vortioxetine (Trintellix)',        flag: 'caution'  },
+    // Stimulants
+    { id: 12, name: 'Amphetamine (Adderall)',           flag: 'caution'  },
+    { id: 13, name: 'Methylphenidate (Ritalin)',        flag: 'caution'  },
+    { id: 14, name: 'Lisdexamfetamine (Vyvanse)',       flag: 'caution'  },
+    // Other common
+    { id: 15, name: 'Lisinopril',                       flag: undefined  },
+    { id: 16, name: 'Metformin',                        flag: undefined  },
+    { id: 17, name: 'Atorvastatin',                     flag: undefined  },
+    { id: 18, name: 'Levothyroxine',                    flag: undefined  },
+    { id: 19, name: 'Amlodipine',                       flag: undefined  },
+    { id: 20, name: 'Omeprazole',                       flag: undefined  },
+    { id: 0,  name: 'No current medications',           flag: undefined  },
+];
+
 const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
     onSave,
     initialData = {} as Partial<StructuredSafetyCheckData>,
@@ -77,6 +112,7 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
         action_taken_ids: initialData.action_taken_ids ?? [],
         follow_up_required: initialData.follow_up_required ?? false,
         follow_up_timeframe: initialData.follow_up_timeframe,
+        concomitant_med_ids: initialData.concomitant_med_ids ?? [],
     });
 
     React.useEffect(() => {
@@ -198,11 +234,49 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                             ))}
                         </div>
                         {data.cssrs_score >= 3 && (
-                            <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 flex items-start gap-3">
+                            <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 flex items-start gap-3" role="alert" aria-live="assertive">
                                 <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
-                                <div>
-                                    <p className="text-red-400 font-bold text-sm">AUTOMATIC ALERT TRIGGERED</p>
-                                    <p className="text-red-300 text-sm mt-1">Score ≥3 requires immediate clinical review and intervention</p>
+                                <div className="space-y-2">
+                                    <p className="text-red-400 font-bold text-sm uppercase tracking-wide">
+                                        ⛔ DO NOT PROCEED — Automatic Crisis Alert
+                                    </p>
+                                    {data.cssrs_score === 3 ? (
+                                        // WO-599: Score 3 — actionable, prescriptive clinical copy
+                                        <div className="text-red-300 text-sm space-y-1">
+                                            <p className="font-bold">C-SSRS Score 3 — Active Suicidal Ideation with Some Intent.</p>
+                                            <p>The dosing session must NOT proceed until risk is clinically resolved. Required actions:</p>
+                                            <ol className="list-decimal list-inside space-y-0.5 text-red-300/90 pl-1">
+                                                <li>Administer a full C-SSRS structured interview now.</li>
+                                                <li>Document all findings and actions taken in this record.</li>
+                                                <li>Contact your clinical supervisor before any further steps.</li>
+                                                <li>Activate your site's crisis and safety plan protocol.</li>
+                                            </ol>
+                                        </div>
+                                    ) : data.cssrs_score === 4 ? (
+                                        // WO-599: Score 4 — escalated copy with supervisor contact requirement
+                                        <div className="text-red-300 text-sm space-y-1">
+                                            <p className="font-bold">C-SSRS Score 4 — Active Suicidal Ideation with Intent and Plan.</p>
+                                            <p>The dosing session must NOT proceed. Immediate escalation is required. Required actions:</p>
+                                            <ol className="list-decimal list-inside space-y-0.5 text-red-300/90 pl-1">
+                                                <li>Contact your clinical supervisor immediately — do not proceed alone.</li>
+                                                <li>Initiate your site's crisis protocol and safety plan.</li>
+                                                <li>Do not leave patient unattended.</li>
+                                                <li>Document all findings, actions, and supervisor contacts in this record.</li>
+                                            </ol>
+                                        </div>
+                                    ) : (
+                                        // WO-599: Score 5 — emergency copy with 911 instruction
+                                        <div className="text-red-300 text-sm space-y-1">
+                                            <p className="font-bold">C-SSRS Score 5 — Imminent Risk. Recent Attempt or Preparatory Act.</p>
+                                            <p>This is a clinical emergency. The dosing session must NOT proceed. Required actions:</p>
+                                            <ol className="list-decimal list-inside space-y-0.5 text-red-300/90 pl-1">
+                                                <li><span className="font-bold text-red-200">Call 911 (or local emergency services) immediately.</span></li>
+                                                <li>Do not leave the patient unattended under any circumstances.</li>
+                                                <li>Contact patient's emergency contact and clinical supervisor simultaneously.</li>
+                                                <li>Document all findings, times, and actions taken in this record.</li>
+                                            </ol>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -252,6 +326,56 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
             </div>
 
 
+
+            {/* Concomitant Medications */}
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
+                <FormField
+                    label="Concomitant Medications"
+                    tooltip="Select all medications the patient is currently taking. This feeds the contraindication engine and is saved to the clinical record."
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {CONCOMITANT_MEDICATIONS.map((med) => {
+                            const selected = data.concomitant_med_ids.includes(med.id);
+                            return (
+                                <button
+                                    key={med.id}
+                                    type="button"
+                                    onClick={() => toggleArrayItem('concomitant_med_ids' as any, med.id)}
+                                    aria-pressed={selected}
+                                    className={[
+                                        'px-4 py-3 rounded-lg text-left font-medium transition-all border-l-4 text-sm',
+                                        selected
+                                            ? med.flag === 'absolute'
+                                                ? 'bg-red-900/70 border border-red-500/70 border-l-red-400 text-red-300'
+                                                : med.flag === 'caution'
+                                                    ? 'bg-amber-900/60 border border-amber-500/50 border-l-amber-400 text-amber-300'
+                                                    : 'bg-sky-900/60 border border-sky-500/50 border-l-sky-400 text-sky-300'
+                                            : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700/50 border-l-slate-600',
+                                    ].join(' ')}
+                                >
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span>{med.name}</span>
+                                        {med.flag === 'absolute' && (
+                                            <span className="text-xs font-bold text-red-400 uppercase tracking-wide flex-shrink-0">Contraindicated</span>
+                                        )}
+                                        {med.flag === 'caution' && (
+                                            <span className="text-xs font-bold text-amber-400 uppercase tracking-wide flex-shrink-0">Caution</span>
+                                        )}
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+                    {data.concomitant_med_ids.some(id => CONCOMITANT_MEDICATIONS.find(m => m.id === id)?.flag === 'absolute') && (
+                        <div className="mt-3 flex items-start gap-3 p-3 bg-red-900/20 border border-red-500/40 rounded-xl">
+                            <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <p className="text-sm text-red-300 font-medium">
+                                One or more absolute contraindications selected. This will block the Phase 2 dosing session unless acknowledged by the practitioner.
+                            </p>
+                        </div>
+                    )}
+                </FormField>
+            </div>
 
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 space-y-4">
                 <FormField label="Actions Taken" tooltip="Pulls from 'ref_clinical_observations' table. Aligned with standard psychiatric risk mitigation and APA guidelines. Orders by urgency.">
