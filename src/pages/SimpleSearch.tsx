@@ -350,7 +350,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
                 <button
                   onClick={clearSearch}
                   aria-label="Clear search"
-                  className="absolute right-4 p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-all"
+                  className="absolute right-3 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 active:scale-95 transition-all"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -437,10 +437,12 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest">Molecular Pharmacology</h2>
-            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest border border-slate-800 px-2 py-0.5 rounded-md">10 compounds · 8 receptor systems</span>
+            <span className="text-xs font-black text-slate-600 uppercase tracking-widest border border-slate-800 px-2 py-0.5 rounded-md">10 compounds · 8 receptor systems</span>
             <div className="flex-1 h-px bg-slate-800" />
           </div>
-          <ReceptorBindingHeatmap />
+          <div className="overflow-x-auto w-full">
+            <ReceptorBindingHeatmap />
+          </div>
         </div>
       </div>
     </div>
