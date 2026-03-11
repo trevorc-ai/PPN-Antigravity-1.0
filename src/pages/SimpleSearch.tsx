@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatmap';
-import GlobalBenchmarkIntelligence from '../components/analytics/GlobalBenchmarkIntelligence';
+// WO-MOBILE-OPT: GlobalBenchmarkIntelligence moved to analytics page — import removed (was dead code, never rendered)
 
 // ─── Keyword → page map (client-side only, zero network requests) ─────────────
 
@@ -189,7 +189,7 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
       id={`portal-tile-${id}`}
       onClick={() => navigate(path)}
       className={`
-        group relative flex flex-col gap-4 p-6 rounded-3xl text-left
+        group relative flex flex-col gap-3 sm:gap-4 p-4 sm:p-6 rounded-3xl text-left
         bg-gradient-to-br ${gradient}
         border ${border}
         shadow-xl ${glow}
@@ -285,10 +285,11 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
 
   return (
     <div className="min-h-screen animate-in fade-in duration-500">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      {/* WO-MOBILE-OPT: pb-20 md:pb-4 ensures bottom nav (mobile) cannot overlay last section */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 sm:space-y-12 pb-20 md:pb-8">
 
         {/* ── 1. Hero greeting ─────────────────────────────────────────────── */}
-        <div className="text-center space-y-3 pt-4">
+        <div className="text-center space-y-3 pt-2 sm:pt-4">
           {/* Status pill */}
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -429,6 +430,21 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
               <FeatureTile key={tile.id} {...tile} />
             ))}
           </div>
+        </div>
+
+        {/* ── 3b. Quick Links chips (WO-MOBILE-OPT: was defined but never rendered) ── */}
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          {QUICK_LINKS.map(({ label, path, icon: Icon, color }) => (
+            <button
+              key={path}
+              onClick={() => navigate(path)}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-2xl border bg-slate-900/60 backdrop-blur-sm text-sm font-bold transition-all duration-200 active:scale-95 ${color}`}
+              aria-label={`Go to ${label}`}
+            >
+              <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              {label}
+            </button>
+          ))}
         </div>
 
 
