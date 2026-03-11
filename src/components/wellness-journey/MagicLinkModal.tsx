@@ -54,7 +54,9 @@ const MagicLinkModal: React.FC<MagicLinkModalProps> = ({ isOpen, onClose, patien
         setTimeout(() => {
             console.log("Secure Payload saved to Supabase:", payload);
 
-            const newLink = `https://ppnportal.net/journey/auth?token=${payload.magic_link_token}&id=${payload.patient_hash}`;
+            // WO-601 fix: App uses HashRouter. Query params must be inside the hash
+            // segment (#/journey/auth?...) or useSearchParams() never sees them.
+            const newLink = `https://ppnportal.net/#/journey/auth?token=${payload.magic_link_token}&id=${payload.patient_hash}`;
             setGeneratedLink(newLink);
 
             // 3. Share via native share sheet (or clipboard fallback)

@@ -816,8 +816,58 @@ const PatientReport: React.FC = () => {
         } catch (_) { /* best effort */ }
     }, [resolvedSessionId, mood, sleep, connection, anxiety]);
 
+    // ── WO-592: JSON-LD + document.title injection (no react-helmet-async needed) ──
+    useEffect(() => {
+        const substance = data.substanceName ?? 'Psychedelic';
+        const dateStr = data.sessionDate
+            ? new Date(data.sessionDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+            : 'Recent';
+        document.title = `Your Integration Compass | ${substance} Session ${dateStr} | PPN Portal`;
+
+        const jsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'PPN Integration Compass — Patient Journey Report',
+            description: 'A secure, patient-facing Integration Compass from PPN Portal, summarising your psychedelic therapy session outcomes, check-in sliders, and PEMS integration framework.',
+            url: window.location.href,
+            publisher: {
+                '@type': 'Organization',
+                name: 'Precision Psychedelic Network',
+                url: 'https://ppnportal.net',
+            },
+            mainEntity: {
+                '@type': 'MedicalWebPage',
+                audience: {
+                    '@type': 'MedicalAudience',
+                    audienceType: 'Patient',
+                },
+                about: {
+                    '@type': 'MedicalTherapy',
+                    name: `${substance} Psychedelic-Assisted Therapy`,
+                },
+            },
+        };
+
+        // Inject or replace JSON-LD script
+        const id = 'ppn-patient-report-jsonld';
+        let existing = document.getElementById(id) as HTMLScriptElement | null;
+        if (!existing) {
+            existing = document.createElement('script');
+            existing.type = 'application/ld+json';
+            existing.id = id;
+            document.head.appendChild(existing);
+        }
+        existing.textContent = JSON.stringify(jsonLd);
+
+        return () => {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        };
+    }, [data.substanceName, data.sessionDate]);
+
     const sharePractitioner = useCallback(() => {
-        const url = `${window.location.origin}${window.location.pathname}?session=${resolvedSessionId ?? 'preview'}`;
+        // WO-601: HashRouter — hash route must be included in shared URL
+        const url = `${window.location.origin}/#/patient-report?session=${resolvedSessionId ?? 'preview'}`;
         if (navigator.share) {
             navigator.share({ title: 'My Integration Compass', url }).catch(() => { });
         } else {
@@ -827,7 +877,8 @@ const PatientReport: React.FC = () => {
     }, [resolvedSessionId]);
 
     const shareFriend = useCallback(() => {
-        const url = `${window.location.origin}${window.location.pathname}?session=${resolvedSessionId ?? 'preview'}`;
+        // WO-601: HashRouter — hash route must be included in shared URL
+        const url = `${window.location.origin}/#/patient-report?session=${resolvedSessionId ?? 'preview'}`;
         if (navigator.share) {
             navigator.share({ title: 'My Integration Compass', url }).catch(() => {
                 navigator.clipboard.writeText(url).catch(() => { });
@@ -943,37 +994,86 @@ const PatientReport: React.FC = () => {
                         A living record of your healing, updated by you.
                     </p>
 
-                    {/* Phase / status strip */}
+                    {/* Phase / status strip — minimum 14px per WO-592 accessibility rule */}
                     <div style={{
                         display: 'inline-flex', gap: 20, alignItems: 'center',
                         padding: '8px 20px', borderRadius: 9999,
                         background: 'rgba(96,165,250,0.05)',
                         border: '1px solid rgba(96,165,250,0.15)',
                     }}>
-                        <span style={{ fontSize: 12, color: '#475569', fontWeight: 600, letterSpacing: '0.06em' }}>
+                        <span style={{ fontSize: 14, color: '#475569', fontWeight: 600, letterSpacing: '0.06em' }}>
                             PHASE 3 · INTEGRATION
                         </span>
                         <div style={{ width: 1, height: 12, background: 'rgba(96,165,250,0.2)' }} />
-                        <span style={{ fontSize: 12, color: C.blue, fontWeight: 700, letterSpacing: '0.06em' }}>
+                        <span style={{ fontSize: 14, color: C.blue, fontWeight: 700, letterSpacing: '0.06em' }}>
                             HEALING IN PROGRESS
                         </span>
                     </div>
 
-                    {/* Session metadata */}
+                    {/* Session metadata — minimum 14px per WO-592 */}
                     {(data.sessionDate || data.substanceName) && (
                         <div style={{ marginTop: 18, display: 'flex', justifyContent: 'center', gap: 16 }}>
                             {data.sessionDate && (
-                                <span style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>
+                                <span style={{ fontSize: 14, color: C.muted, fontWeight: 600 }}>
                                     Session: {new Date(data.sessionDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                                 </span>
                             )}
                             {data.substanceName && (
-                                <span style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>
+                                <span style={{ fontSize: 14, color: C.muted, fontWeight: 600 }}>
                                     · {data.substanceName}
                                 </span>
                             )}
                         </div>
                     )}
+                </div>
+            </div>
+
+            {/* ── WO-592: Above-the-fold sticky share CTA ───────────────────────── */}
+            <div className="no-print" style={{
+                position: 'sticky', top: 0, zIndex: 40,
+                background: 'rgba(6, 14, 28, 0.85)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderBottom: '1px solid rgba(96,165,250,0.12)',
+                padding: '10px 20px',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
+            }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.01em' }}>
+                    Share your healing journey
+                </span>
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <button
+                        onClick={sharePractitioner}
+                        aria-label="Share with your practitioner"
+                        style={{
+                            padding: '8px 18px', borderRadius: 10, fontSize: 14, fontWeight: 700,
+                            background: `linear-gradient(135deg, ${C.blue} 0%, #4f46e5 100%)`,
+                            border: 'none', color: '#050c1a', cursor: 'pointer',
+                            boxShadow: '0 2px 12px rgba(96,165,250,0.25)',
+                            transition: 'opacity 0.2s',
+                            whiteSpace: 'nowrap',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
+                        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+                    >
+                        Share with Practitioner
+                    </button>
+                    <button
+                        onClick={shareFriend}
+                        aria-label="Share with a friend"
+                        style={{
+                            padding: '8px 18px', borderRadius: 10, fontSize: 14, fontWeight: 700,
+                            background: 'transparent',
+                            border: `1.5px solid rgba(245,158,11,0.4)`,
+                            color: C.gold, cursor: 'pointer',
+                            transition: 'border-color 0.2s',
+                            whiteSpace: 'nowrap',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.7)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)'; }}
+                    >
+                        Share with Friend
+                    </button>
                 </div>
             </div>
 
@@ -1458,10 +1558,10 @@ const PatientReport: React.FC = () => {
                             PPN Portal
                         </span>
                     </div>
-                    <p style={{ fontSize: 11, color: '#334155', lineHeight: 1.6, margin: '0 0 4px' }}>
+                    <p style={{ fontSize: 14, color: '#334155', lineHeight: 1.6, margin: '0 0 4px' }}>
                         Zero PHI · Patient ID: {sessionId?.slice(0, 8).toUpperCase() ?? 'PREVIEW'}
                     </p>
-                    <p style={{ fontSize: 11, color: '#334155', marginTop: 4 }}>
+                    <p style={{ fontSize: 14, color: '#334155', marginTop: 4 }}>
                         Data reflects population averages and personal reflections. This is not medical advice.
                         Always consult your practitioner.
                     </p>

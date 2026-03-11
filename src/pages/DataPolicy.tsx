@@ -16,7 +16,7 @@ const DataPolicy: React.FC = () => {
             {/* Fixed Nav Header */}
             <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#07101e]/90 backdrop-blur-md border-b border-slate-800/60">
                 <button
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate('/dashboard')}
                     className="flex items-center gap-2 text-slate-400 hover:text-[#A8B5D1] transition-colors text-sm font-bold"
                     aria-label="Go back"
                 >
