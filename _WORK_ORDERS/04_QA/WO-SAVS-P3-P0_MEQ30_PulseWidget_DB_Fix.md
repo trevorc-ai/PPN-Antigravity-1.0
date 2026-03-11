@@ -1,11 +1,13 @@
 ---
 id: WO-SAVS-P3-P0
 title: "SAVS Fix: Phase 3 P0 Gaps — MEQ-30 No-Op & Pulse Widget console.log"
-status: READY_FOR_BUILD
+status: 04_QA
+completed_at: 2026-03-11
 owner: BUILDER
 priority: P0
 phase: Phase 3
 skill: inspector-qa-script
+builder_notes: "Both P0 gaps already implemented in prior session: handleMEQ30Save wired to createMEQ30Score + createTimelineEvent (WellnessFormRouter.tsx L448-472); PulseCheckWidget.onSubmit wired to createPulseCheck (IntegrationPhase.tsx L757-771). Verified by source audit 2026-03-11."
 ---
 
 ## Summary

@@ -1,6 +1,7 @@
 ---
 owner: LEAD
-status: 01_TRIAGE
+status: ARCHIVED
+superseded_by: WO-601
 authored_by: PRODDY
 priority: P1
 created: 2026-03-10

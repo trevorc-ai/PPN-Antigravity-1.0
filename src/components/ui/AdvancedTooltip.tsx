@@ -298,7 +298,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
           ${side === 'bottom-left' ? 'top-full right-0 mt-2' : ''}
           ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
           ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
-          ${width || 'w-64'} max-w-[calc(100vw-2rem)]
+          ${width || 'w-80'} max-w-[calc(100vw-2rem)]
         `}>
                     <div className={`
             relative rounded-xl p-3.5
@@ -315,7 +315,8 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                             </div>
                         )}
 
-                        <div className="text-sm text-slate-300 font-medium leading-relaxed">
+                        {/* WO-600-D: max-h + overflow-y-auto prevents long assessment tooltips (PHQ-9/GAD-7) from overflowing */}
+                        <div className="text-sm text-slate-300 font-medium leading-relaxed max-h-48 overflow-y-auto">
                             {content}
                         </div>
 

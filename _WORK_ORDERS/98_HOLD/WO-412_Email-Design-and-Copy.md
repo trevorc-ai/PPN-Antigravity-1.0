@@ -1,6 +1,8 @@
 ---
 id: WO-412
-status: 03_BUILD
+status: 98_HOLD
+held_at: 2026-03-11
+hold_reason: "Owner is MARKETER/DESIGNER. BUILDER does not write email copy or HTML email design. Re-route: MARKETER approves copy → DESIGNER builds HTML → BUILDER swaps into WO-411 Edge Function."
 owner: MARKETER
 cue_verified: true
 cue_note: "Ticket complete. Route: MARKETER (copy approval) → DESIGNER (3 HTML email files) → BUILDER (swap into WO-411 Edge Function). No blockers."

@@ -1,5 +1,5 @@
 # FREEZE.md — Do Not Touch List
-# Last updated: 2026-03-10
+# Last updated: 2026-03-11
 #
 # PURPOSE: This file tells agents which files are off-limits.
 # Any file listed here must NOT be modified without your explicit instruction.
@@ -46,6 +46,15 @@ src/components/wellness-journey/SlideOutPanel.tsx
 src/components/wellness-journey/StructuredIntegrationSession.tsx
 src/components/wellness-journey/WorkflowCards.tsx
 src/components/wellness-journey/index.ts
+
+# ── Phase 2 — Dosing Session (frozen 2026-03-11) ────────────────────────────
+src/components/wellness-journey/DosingSessionPhase.tsx
+src/components/arc-of-care-forms/phase-2-dosing/DosingProtocolForm.tsx
+src/components/arc-of-care-forms/phase-2-dosing/RescueProtocolForm.tsx
+src/components/arc-of-care-forms/phase-2-dosing/SafetyAndAdverseEventForm.tsx
+src/components/arc-of-care-forms/phase-2-dosing/SessionObservationsForm.tsx
+src/components/arc-of-care-forms/phase-2-dosing/SessionTimelineForm.tsx
+src/components/arc-of-care-forms/phase-2-dosing/SessionVitalsForm.tsx
 
 # ── Clinical Components (recently stabilized) ─────────────────────────────────
 src/components/session/ActiveSessionsWidget.tsx

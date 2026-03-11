@@ -68,15 +68,44 @@ export function useSubscription(): UseSubscriptionReturn {
                 return;
             }
 
-            // Fetch subscription from log_user_subscriptions (live table name)
-            const { data, error: fetchError } = await supabase
-                .from('log_user_subscriptions')
-                .select('*')
+            // Step A: Get the user's site_id from log_user_sites
+            // All users (including solos) belong to a site — even solo practitioners
+            // have a personal site created at signup.
+            const { data: siteLink, error: siteLinkError } = await supabase
+                .from('log_user_sites')
+                .select('site_id')
                 .eq('user_id', user.id)
+                .limit(1)
+                .single();
+
+            if (siteLinkError && siteLinkError.code !== 'PGRST116') {
+                throw siteLinkError;
+            }
+
+            if (!siteLink?.site_id) {
+                // User has no site yet (e.g. mid-signup failure) — treat as unsubscribed
+                setSubscription({
+                    tier: null,
+                    status: null,
+                    trialEnd: null,
+                    currentPeriodEnd: null,
+                    cancelAtPeriodEnd: false,
+                    stripeCustomerId: null,
+                    stripeSubscriptionId: null,
+                });
+                setLoading(false);
+                return;
+            }
+
+            // Step B: Fetch subscription for that site from log_subscriptions (site-keyed)
+            const { data, error: fetchError } = await supabase
+                .from('log_subscriptions')
+                .select('*')
+                .eq('site_id', siteLink.site_id)
                 .single();
 
             if (fetchError) {
-                // No subscription found is not an error
+                // No subscription found is not an error — site may be on a free/unset plan
                 if (fetchError.code === 'PGRST116') {
                     setSubscription({
                         tier: null,

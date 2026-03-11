@@ -1,3 +1,10 @@
+---
+owner: BUILDER
+status: 04_QA
+completed_at: 2026-03-11
+builder_notes: "All 6 items addressed: A) HR bounded 40-200 in SessionVitalsForm.tsx L359 (prior session); B) PHQ-9/GAD-7/C-SSRS/PCL-5 use ScoreSelect dropdown in BaselineAssessmentWizard.tsx (prior session); C) MEQ-30 scrollIntoView auto-advance in MEQ30QuestionnaireForm.tsx L98-108 (prior session); D) AdvancedTooltip standard tier widened w-64->w-80 and content body gets max-h-48 overflow-y-auto (2026-03-11); E) Date picker z-index native browser datetime-local is non-overlapping by default — confirmed non-issue on audit; F) LongitudinalAssessmentForm.tsx L124 max={today} (prior session)."
+---
+
 # WO-600 — Input Validation + UX Fixes (Vitals, Assessments, MEQ-30, Date Pickers)
 
 **Status:** 01_TRIAGE

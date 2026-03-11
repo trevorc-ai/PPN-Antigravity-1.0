@@ -1,11 +1,13 @@
 ---
 id: WO-SAVS-P3-P1
 title: "SAVS Fix: Phase 3 P1 Gaps — Dead Action Cards, Discharge Timestamp, Dummy Data"
-status: READY_FOR_BUILD
+status: 04_QA
+completed_at: 2026-03-11
 owner: BUILDER
 priority: P1
 phase: Phase 3
 skill: inspector-qa-script
+builder_notes: "All P1 gaps already implemented: Step 1/2 IntegrationCard onOpen props wired (IntegrationPhase.tsx L476,485); discharge timeline stamped post-downloadDischargeSummary (L380-388); all dummy data replaced with journey.* fields + TODO comments (L335-375). Verified by source audit 2026-03-11."
 ---
 
 ## Summary

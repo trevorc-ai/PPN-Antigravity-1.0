@@ -1,8 +1,10 @@
 ==== PRODDY ====
 ---
-owner: LEAD
-status: 01_TRIAGE
+owner: BUILDER
+status: 98_HOLD
 authored_by: PRODDY
+hold_reason: PRODDY PRD only — no files: list, no BUILDER-ready implementation detail. Needs LEAD to specify exact files and component targets before BUILDER can act.
+held_at: 2026-03-11
 ---
 
 ## PRODDY PRD

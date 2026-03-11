@@ -1,6 +1,6 @@
 ---
-owner: LEAD
-status: 00_INBOX
+owner: DESIGNER
+status: 01_DESIGN
 authored_by: PRODDY
 ---
 

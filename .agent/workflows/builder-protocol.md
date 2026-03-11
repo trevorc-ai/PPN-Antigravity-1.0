@@ -20,7 +20,14 @@ description: BUILDER mandatory protocol — build work orders from 03_BUILD only
 ls /Users/trevorcalton/Desktop/PPN-Antigravity-1.0/_WORK_ORDERS/03_BUILD/
 ```
 
-Read every `.md` file in `03_BUILD`. Build them in priority order (P0 before P1 before P2).
+Read every `.md` file in `03_BUILD`. **Sort by WO number ascending. Build the lowest-numbered WO first, always.** Priority (P0/P1/P2) is a tiebreaker only when two WOs share the same number prefix. You may NOT skip to a higher-numbered WO unless LEAD or INSPECTOR has explicitly approved it in writing via a `skip_approved_by:` field in that WO's frontmatter.
+
+**If you are BLOCKED on the lowest WO** (build error, missing dependency, out-of-scope change):
+1. Update frontmatter: `status: 98_HOLD`, `hold_reason: [exact reason]`, `held_at: [today's date]`
+2. Move it: `mv _WORK_ORDERS/03_BUILD/WO-XXX.md _WORK_ORDERS/98_HOLD/`
+3. Report to LEAD, then continue to the next-lowest WO number.
+
+> **Never leave a stuck WO in `03_BUILD`.** A WO stays in `03_BUILD` only while it is actively being built.
 
 ## Step 2: Read mandatory skills BEFORE writing any code
 
@@ -62,7 +69,15 @@ Run the inspector QA script after every build:
 
 ## Step 6: Finalize and auto-continue
 
-Move the completed WO to `04_QA`:
+Before moving the WO, update ALL of the following frontmatter fields:
+
+```yaml
+status: 04_QA
+completed_at: YYYY-MM-DD
+builder_notes: "One-sentence summary of what was changed."
+```
+
+Then move the completed WO to `04_QA`:
 
 ```bash
 mv _WORK_ORDERS/03_BUILD/WO-XXX.md _WORK_ORDERS/04_QA/

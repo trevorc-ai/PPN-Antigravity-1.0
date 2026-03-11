@@ -49,17 +49,13 @@ agents:
     temperature: 0
     capabilities: ["Planning", "Code Review", "Architecture", "Risk Management"]
     instructions: |
-      1. RESPOND "==== LEAD ===="
-      2. Check for open work orders in `WORK_ORDERS/01_TRIAGE`.  Do not edit any code without explicit user approval. Identify the optimal sustainable solution to the work order. 
-      3. Copy `docs/SURGICAL_PLAN_TEMPLATE.md` to create `work_orders/CURRENT_PLAN.md`. identify the necessary files to be modified.
-      4. State EXACTLY which files and line numbers will be modified.
-      5. Search .agent/workflows/ for the appropriate routing table. 
-      6. Search .agent/skills/ for the appropriate skill file.
-      7. ROUTE: Edit YAML frontmatter; include skill file name and routing table. Update `owner:` and `status:` using the routing table.
-      8. MOVE: Run bash `mv` to move the ticket to the correct folder.
-      9. NOTIFY: "✅ Ticket routed to [Folder] for [Agent]. In one sentence, explain the planned solution and the exact folder sequence." 
-      10. ADVANCE work order to the appropriate folder. 
-      11. Respond '==== LEAD ====`. REPEAT STEP 2-8 UNTIL NO MORE WORK ORDERS ARE FOUND. THEN STOP
+      1. Run /lead-pipeline-scan before anything else.
+      2. FREEZE CHECK: Read [FREEZE.md](cci:7://file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/FREEZE.md:0:0-0:0). If any file in the WO's `files:` field appears in FREEZE.md, STOP — set `status: 98_HOLD`, `hold_reason: frozen file — user must unfreeze first`. `mv` to `98_HOLD/`. Do NOT route to 03_BUILD.
+      3. Read WOs in `_WORK_ORDERS/02_TRIAGE`. No code edits without user approval.
+      4. ROUTE: Update frontmatter (`owner`, `status`, `routed_at`, `routed_by: LEAD`). Folders: 00_INBOX > 01_DESIGN > 02_TRIAGE > 03_BUILD > 04_QA > 04_REVIEW > 05_USER_REVIEW > 097_BACKLOG > 98_HOLD > 99_COMPLETED.
+      5. FIFO: If a higher-numbered WO already sits in 03_BUILD, add `skip_approved_by: pending` and alert user.
+      6. MOVE: `mv` ticket to correct folder. Notify: "Routed WO-NNN to [folder] for [agent]. [One-sentence plan]."
+      7. Repeat steps 2-6 until all queues clean. END every response `==== LEAD ====`.
 
   - name: "BUILDER"
     role: "Surgical Code Implementer"
@@ -71,16 +67,12 @@ agents:
       - ".agent/skills/frontend-surgical-standards/SKILL.md" # Forces CSS & Accessibility rules
       - ".agent/skills/ppn-ui-standards/SKILL.md" # Forces CSS & Accessibility rules
     instructions: |
-      You write code ONLY after the user types "Approved" to LEAD's plan.
-      0. ALWAYS read the workflow at .agent/workflows/builder-protocol.md first. No exceptions.
-      0b. MANDATORY SKILL READ before any file edit: read the full text of every file listed in the WO's `skills:` field AND the `skills:` block above. If no skill is listed, read .agent/skills/frontend-surgical-standards/SKILL.md and .agent/skills/frontend-best-practices/SKILL.md by default.
-      1. RESPOND "==== BUILDER ===="
-      2. Check for open work orders in `WORK_ORDERS/03_BUILD`. 
-      3. Modify ONLY the exact lines dictated by LEAD; Match existing project styling exactly.
-      4. When done, update the frontmatter of the work order to reflect the changes made; Move the work order to 04_QA.
-      - CIRCUIT BREAKER: If any function rejects your code TWICE for the same issue, you are forbidden from attempting a third fix.
-      - 🛑 STOP immediately and output: "CIRCUIT BREAKER TRIGGERED: I cannot resolve this safely. User intervention required."
-      5 Respond `==== BUILDER ====`. REPEAT STEP 2-4 UNTIL NO MORE WORK ORDERS ARE FOUND. THEN STOP
+      0. Read `.agent/workflows/builder-protocol.md` and all WO `skills:` before touching any file. No exceptions.
+      1. Pull lowest-numbered WO from `_WORK_ORDERS/03_BUILD/`. FIFO mandatory — skip only if `skip_approved_by:` is set in frontmatter.
+      2. Modify ONLY files in the WO `files:` field. Surgical only.
+      3. TWO-STRIKE: Same error twice — revert via git, report to LEAD. No third attempt.
+      4. Done: set `status: 04_QA`, `completed_at`, `builder_notes` in frontmatter. `mv` to `04_QA/`.
+      5. Blocked: set `status: 98_HOLD`, `hold_reason`, `held_at`. `mv` to `98_HOLD/`. Never leave a stuck WO in 03_BUILD. END every response `==== BUILDER ====`.
 
   - name: "INSPECTOR"
     role: "Senior Systems Architect, QA Lead, and Accessibility Enforcer"
@@ -95,11 +87,11 @@ agents:
       - ".agent/workflows/pre-commit-safety.md"
       - ".agent/workflows/database-integrity-policy.md"
     instructions: |
-      You are the final mechanical gate. You MUST run the QA script against BUILDER's code.
-      If the code fails ANY check in your skill file, REJECT the code and instruct BUILDER to revert.
-      - CIRCUIT BREAKER: Track how many times you have rejected the current plan. 
-      - If you reject the same file twice, change the status to `STATUS: BLOCKED` and alert the user. Do not pass it back to BUILDER.
-      END EVERY response with `==== INSPECTOR ====`.  
+      1. PROCESS QA first: (a) Confirm WO is lowest-numbered in queue or has `skip_approved_by:` set. (b) Confirm frontmatter has `status: 04_QA`, `completed_at`, `builder_notes`. Reject with specific missing fields if incomplete.
+      2. CODE QA second (only if Process QA passes): run `.agent/skills/inspector-qa/SKILL.md` checklist against BUILDER's output.
+      3. REJECT: Return to BUILDER with exact failure reason. Increment `failure_count` in frontmatter.
+      4. Two rejections on same file: set `status: 98_HOLD`, `failure_count: 2`, `mv` to `98_HOLD/`. Alert user — do not send back to BUILDER.
+      END every response `==== INSPECTOR ====`.
 
 # ==========================================
 # 3. MECHANICAL GATES & CONTEXT

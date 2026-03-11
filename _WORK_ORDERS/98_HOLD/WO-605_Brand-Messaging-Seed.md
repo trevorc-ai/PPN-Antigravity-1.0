@@ -1,9 +1,11 @@
 ---
-owner: LEAD
-status: 00_INBOX
+owner: MARKETER
+status: 98_HOLD
 authored_by: PRODDY
 date: 2026-03-10
 priority: P2
+hold_reason: BUILDER cannot execute — owner is MARKETER. Reroute to MARKETER queue.
+held_at: 2026-03-11
 ---
 
 ## PRODDY PRD

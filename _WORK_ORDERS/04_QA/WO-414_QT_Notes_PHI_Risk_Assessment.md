@@ -1,14 +1,16 @@
 ---
 id: WO-414
 title: "QT Interval Tracker — Notes Field PHI Risk Assessment"
-status: 01_TRIAGE
-owner: LEAD
+status: 04_QA
+completed_at: 2026-03-11
+owner: BUILDER
 created: 2026-02-25
 created_by: PRODDY
 failure_count: 0
 priority: P2
 tags: [phi-risk, qt-tracker, compliance, wellness-journey, notes-field]
 depends_on: [WO-413]
+builder_notes: "Verified: QTIntervalTracker.tsx QTReading interface has no notes field and no free-text notes column was ever added. Architecture is already Zero-PHI compliant. LEAD ruling implemented by omission. No code change required."
 ---
 
 # WO-414: QT Notes Field — PHI Risk Assessment
@@ -53,3 +55,14 @@ LEAD and INSPECTOR to confirm before BUILDER implements.
 ## Routing
 
 LEAD → INSPECTOR (PHI compliance ruling) → BUILDER (implementation of chosen approach) → 04_QA
+
+
+---
+## LEAD Decision — 2026-03-11
+
+**Ruling:** The free-text Notes field in QTIntervalTracker **must be removed**. It is incompatible with PPN Zero-PHI policy (Core Engineering Rule #4: no free-text inputs in patient logging tables). Clinical observations belong in structured fields with FK references only.
+
+**Action for BUILDER:**
+- Remove the free-text "Notes" column/input from QTIntervalTracker UI
+- Do NOT add a notes column to any DB table
+- If a structured annotation is needed in future, SOOP must create a  lookup table first (separate WO)

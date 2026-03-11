@@ -1,7 +1,9 @@
 ==== PRODDY ====
 ---
 owner: MARKETER
-status: 00_INBOX
+status: 98_HOLD
+held_at: 2026-03-11
+hold_reason: "Owner is MARKETER. BUILDER does not write help center copy. Re-route to MARKETER for content, then BUILDER implements UI changes."
 authored_by: PRODDY
 date: 2026-03-06
 priority: P1
