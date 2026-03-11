@@ -21,7 +21,6 @@ interface SessionRecord {
   substance_id: number | null;
   site_id: string | null;
   practitioner_id: string | null;
-  dosage: number | null;
   route_id: number | null;
   concomitant_med_ids: number[] | null;
 }
@@ -144,7 +143,7 @@ const ProtocolDetail: React.FC = () => {
         // 1. Fetch the primary session (migration 079: patient_link_code dropped → patient_link_code_hash)
         const { data: sessionData, error: sessionErr } = await supabase
           .from('log_clinical_records')
-          .select('id, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, dosage, route_id, concomitant_med_ids')
+          .select('id, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids')
           .eq('id', id)
           .single();
 
