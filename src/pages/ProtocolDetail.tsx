@@ -377,8 +377,7 @@ const ProtocolDetail: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <div className="md:col-span-2 h-[300px] w-full min-w-[300px] bg-slate-900/30 rounded-3xl border border-slate-800 p-2">
+                <div className="md:col-span-2 h-[300px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
                       <PolarGrid stroke="#334155" />
@@ -392,7 +391,6 @@ const ProtocolDetail: React.FC = () => {
                       />
                     </RadarChart>
                   </ResponsiveContainer>
-                  </div>
                 </div>
               </div>
             </section>
@@ -412,8 +410,7 @@ const ProtocolDetail: React.FC = () => {
               </div>
 
               {vitalChartData.length > 0 ? (
-                <div className="overflow-x-auto">
-              <div className="h-[220px] w-full min-w-[280px] bg-slate-900/30 rounded-3xl border border-slate-800 p-4">
+                <div className="h-[220px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={vitalChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <defs>
@@ -437,7 +434,6 @@ const ProtocolDetail: React.FC = () => {
                       <Area type="monotone" dataKey="sys" name="Systolic BP (mmHg)" stroke="#ef4444" strokeWidth={2} fill="url(#sysGrad)" dot={{ r: 3, fill: '#ef4444', strokeWidth: 0 }} connectNulls />
                     </AreaChart>
                   </ResponsiveContainer>
-                  </div>
                 </div>
               ) : (
                 <div className="py-12 text-center space-y-3 bg-slate-900/20 rounded-3xl border border-slate-800/50">
