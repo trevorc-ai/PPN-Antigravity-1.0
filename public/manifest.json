@@ -1,0 +1,22 @@
+{
+  "name": "Psych Practitioner Network",
+  "short_name": "PPN Portal",
+  "description": "Clinical documentation and network intelligence for psychedelic therapy practitioners.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1628",
+  "theme_color": "#0a1628",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/molecules/psilocybin.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/molecules/psilocybin.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
