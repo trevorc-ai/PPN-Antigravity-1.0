@@ -1028,10 +1028,10 @@ const PatientReport: React.FC = () => {
                 </div>
             </div>
 
-            {/* ── WO-592: Above-the-fold sticky share CTA ───────────────────────── */}
+            {/* ── WO-592: Pinned share CTA (fixed to viewport — sticky defeated by ancestor overflow) */}
             <div className="no-print" style={{
-                position: 'sticky', top: 0, zIndex: 40,
-                background: 'rgba(6, 14, 28, 0.85)',
+                position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+                background: 'rgba(6, 14, 28, 0.92)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
                 borderBottom: '1px solid rgba(96,165,250,0.12)',
@@ -1076,6 +1076,8 @@ const PatientReport: React.FC = () => {
                     </button>
                 </div>
             </div>
+            {/* Spacer to prevent content from sitting under the fixed bar */}
+            <div className="no-print" style={{ height: 52 }} />
 
             {/* ── Content wrapper ───────────────────────────────────────────────── */}
             <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 20px 48px' }}>
