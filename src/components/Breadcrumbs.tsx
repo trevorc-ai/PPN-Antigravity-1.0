@@ -42,6 +42,8 @@ const Breadcrumbs: React.FC = () => {
     'secure-access-node': 'Node Access'
   };
 
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
   const getLabel = (path: string, index: number) => {
     // Resolve specific clinical entity names from IDs for deep links
     if (index > 0 && pathnames[index - 1] === 'monograph') {
@@ -52,6 +54,12 @@ const Breadcrumbs: React.FC = () => {
     if (index > 0 && pathnames[index - 1] === 'clinician') {
       const clin = CLINICIANS.find(c => c.id === path);
       return clin ? clin.name : path;
+    }
+
+    // UUID segments (e.g. /protocol/:id) — show a human label, not the raw ID
+    if (UUID_RE.test(path)) {
+      if (index > 0 && pathnames[index - 1] === 'protocol') return 'Clinical Record';
+      return 'Record';
     }
 
     return labels[path] || path.charAt(0).toUpperCase() + path.slice(1);
