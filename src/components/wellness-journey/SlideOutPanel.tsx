@@ -90,6 +90,7 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
     // Swipe down to dismiss (mobile)
     const handleTouchStart = (e: React.TouchEvent) => {
         touchStartY.current = e.touches[0].clientY;
+        touchEndY.current = e.touches[0].clientY; // Reset to prevent stale swipe data
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
@@ -98,8 +99,10 @@ export const SlideOutPanel: React.FC<SlideOutPanelProps> = ({
 
     const handleTouchEnd = () => {
         const swipeDistance = touchEndY.current - touchStartY.current;
-        // If swiped down more than 100px, close panel
-        if (swipeDistance > 100) {
+        // Only close if swiped down > 100px AND the scrollable content is at the very top.
+        // This prevents scrolling up within the form from accidentally closing the panel.
+        const isAtTop = contentRef.current ? contentRef.current.scrollTop <= 0 : true;
+        if (swipeDistance > 100 && isAtTop) {
             onClose();
         }
     };
