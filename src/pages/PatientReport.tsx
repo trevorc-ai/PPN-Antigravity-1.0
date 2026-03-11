@@ -723,6 +723,34 @@ const PatientFlightPlanChart: React.FC<{ substanceName?: string }> = ({ substanc
 const PatientReport: React.FC = () => {
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get('session') ?? undefined;
+    // WO-601: also extract magic link params (/journey/auth?token=xxx&id=PT-yyy)
+    const magicToken = searchParams.get('token') ?? undefined;
+    const patientHash = searchParams.get('id') ?? undefined;
+    // Resolve session from patient_hash when no explicit session param (magic link flow)
+    const [resolvedSessionId, setResolvedSessionId] = React.useState<string | undefined>(sessionId);
+    React.useEffect(() => {
+        if (sessionId) { setResolvedSessionId(sessionId); return; }
+        if (!patientHash) return;
+        // Look up most recent session for this patient hash via patient hash → canonical patient → session
+        (async () => {
+            try {
+                const { data: linkRow } = await supabase
+                    .from('log_patient_site_links')
+                    .select('canonical_patient_uuid')
+                    .eq('patient_hash', patientHash)
+                    .maybeSingle();
+                if (!linkRow?.canonical_patient_uuid) return;
+                const { data: sessionRow } = await supabase
+                    .from('log_clinical_records')
+                    .select('id')
+                    .eq('patient_uuid', linkRow.canonical_patient_uuid)
+                    .order('session_date', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+                if (sessionRow?.id) setResolvedSessionId(sessionRow.id);
+            } catch (_) { /* silent — degrades to empty state */ }
+        })();
+    }, [sessionId, patientHash]);
 
     // Check-in slider state
     const [mood, setMood] = useState(6);
@@ -755,13 +783,13 @@ const PatientReport: React.FC = () => {
     }>({});
 
     useEffect(() => {
-        if (!sessionId) return;
+        if (!resolvedSessionId) return;
         (async () => {
             try {
                 const { data: row } = await supabase
                     .from('wellness_sessions')
                     .select('session_date, substance_name, session_events, red_flags, safety_note, integration_sessions_attended, integration_sessions_scheduled')
-                    .eq('id', sessionId)
+                    .eq('id', resolvedSessionId)
                     .maybeSingle();
                 if (row) setData({
                     sessionDate: row.session_date,
@@ -774,32 +802,32 @@ const PatientReport: React.FC = () => {
                 });
             } catch (_) { /* silent — UI degrades gracefully */ }
         })();
-    }, [sessionId]);
+    }, [resolvedSessionId]);
 
     const handleSubmit = useCallback(async () => {
         setSubmitted(true);
-        if (!sessionId) return;
+        if (!resolvedSessionId) return;
         try {
             await supabase.from('patient_checkins').insert({
-                session_id: sessionId,
+                session_id: resolvedSessionId,
                 mood, sleep, connection, anxiety,
                 submitted_at: new Date().toISOString(),
             });
         } catch (_) { /* best effort */ }
-    }, [sessionId, mood, sleep, connection, anxiety]);
+    }, [resolvedSessionId, mood, sleep, connection, anxiety]);
 
     const sharePractitioner = useCallback(() => {
-        const url = `${window.location.origin}${window.location.pathname}?session=${sessionId ?? 'preview'}`;
+        const url = `${window.location.origin}${window.location.pathname}?session=${resolvedSessionId ?? 'preview'}`;
         if (navigator.share) {
             navigator.share({ title: 'My Integration Compass', url }).catch(() => { });
         } else {
             navigator.clipboard.writeText(url).catch(() => { });
             alert('Link copied!');
         }
-    }, [sessionId]);
+    }, [resolvedSessionId]);
 
     const shareFriend = useCallback(() => {
-        const url = `${window.location.origin}${window.location.pathname}?session=${sessionId ?? 'preview'}`;
+        const url = `${window.location.origin}${window.location.pathname}?session=${resolvedSessionId ?? 'preview'}`;
         if (navigator.share) {
             navigator.share({ title: 'My Integration Compass', url }).catch(() => {
                 navigator.clipboard.writeText(url).catch(() => { });
@@ -808,7 +836,7 @@ const PatientReport: React.FC = () => {
             navigator.clipboard.writeText(url).catch(() => { });
             alert('Link copied!');
         }
-    }, [sessionId]);
+    }, [resolvedSessionId]);
 
     const zones = {
         z1: true,

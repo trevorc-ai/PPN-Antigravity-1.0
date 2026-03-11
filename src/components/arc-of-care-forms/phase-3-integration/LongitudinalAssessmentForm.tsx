@@ -38,9 +38,10 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
     onExit,
     onBack
 }) => {
+    const today = new Date().toISOString().slice(0, 10); // WO-600 Fix F: constrain date to today-or-earlier
     const [data, setData] = useState<LongitudinalAssessmentData>({
         ...initialData,
-        assessment_date: initialData.assessment_date || new Date().toISOString().slice(0, 10)
+        assessment_date: initialData.assessment_date || today
     });
     const [isSaving, setIsSaving] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
@@ -120,6 +121,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                             type="date"
                             value={data.assessment_date ?? ''}
                             onChange={(e) => updateField('assessment_date', e.target.value)}
+                            max={today}
                             className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                         />
                     </FormField>

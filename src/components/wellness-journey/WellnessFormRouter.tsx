@@ -232,13 +232,27 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
         // Write session linkage to log_phase1_set_and_setting (new table — schema rebuild)
         if (sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+            // WO-603 Fix 2: Map available observation labels → FK lookup keys so DB is never empty.
+            // motivation_level → mindset_type_label (best-fit mapping to ref_mindset_types)
+            // prior_experience → intention_theme_labels (maps to ref_intention_themes labels)
+            const mindsetLabel = (data.observations as any)?.motivation_level ?? undefined;
+            const experienceLabel = (data.observations as any)?.prior_experience;
+            // Map prior-experience option labels to intention theme labels understood by ref_intention_themes
+            const EXPERIENCE_TO_THEME: Record<string, string[]> = {
+                'None': ['Curiosity'],
+                'Minimal (1-2 times)': ['Curiosity', 'Personal growth'],
+                'Some (3-5 times)': ['Healing', 'Personal growth'],
+                'Experienced (6+)': ['Healing', 'Spiritual exploration'],
+            };
+            const intentionLabels = experienceLabel ? (EXPERIENCE_TO_THEME[experienceLabel] ?? []) : [];
+
             const settingResult = await createSetAndSettingLog({
                 patient_uuid: resolvedPatientId,
                 session_id: sessionId,
                 site_id: siteId,
                 treatment_expectancy: data.treatment_expectancy,
-                // mindset_type_label / session_setting_label: not yet captured in SetAndSettingForm UI
-                // will be wired when form is extended with those dropdowns
+                mindset_type_label: mindsetLabel,          // WO-603 Fix 2: was always undefined
+                intention_theme_labels: intentionLabels,   // WO-603 Fix 2: was always []
             });
             if (!settingResult.success) {
                 console.warn('[WellnessFormRouter] handleSetAndSettingSave: log_phase1_set_and_setting write failed (non-fatal)', settingResult.error);

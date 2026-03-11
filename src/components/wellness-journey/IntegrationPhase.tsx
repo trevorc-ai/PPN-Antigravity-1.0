@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     TrendingUp, CheckCircle, ChevronDown, ChevronUp, Download,
     Heart, Activity, FileText, Shield, Brain, AlertTriangle,
@@ -23,6 +23,7 @@ import type { RiskFlag } from '../../utils/riskCalculator';
 // SAVS P3-C fix: createPulseCheck wired to inline PulseCheckWidget submit
 // SAVS P3-D fix: createTimelineEvent for discharge summary DB timestamp
 import { createPulseCheck, createTimelineEvent } from '../../services/clinicalLog';
+import { supabase } from '../../supabaseClient';
 
 interface IntegrationPhaseProps {
     journey: any;
@@ -246,8 +247,32 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
         return [];
     }, [decayPoints]);
 
-    // ── Safety events (mock, real wiring blocked on Session_ID FK resolution) ──
-    const safetyEvents = journey.session?.adverseEvents ?? [];
+    // WO-602 D: Query log_safety_events filtered by session_id so Safety Event History shows real data.
+    // Previous: journey.session?.adverseEvents which is in-memory only and never populated from DB.
+    const [safetyEvents, setSafetyEvents] = useState<any[]>(journey.session?.adverseEvents ?? []);
+    useEffect(() => {
+        const sid = journey.sessionId;
+        if (!sid || !/^[0-9a-f-]{36}$/i.test(sid)) return;
+        (async () => {
+            try {
+                const { data: rows } = await supabase
+                    .from('log_safety_events')
+                    .select('id, event_type, ctcae_grade, causality_code, resolved_at, created_at, actions_taken, cssrs_score')
+                    .eq('session_id', sid)
+                    .order('created_at', { ascending: true });
+                if (rows && rows.length > 0) {
+                    setSafetyEvents(rows.map(r => ({
+                        id: r.id,
+                        date: r.created_at,
+                        cssrsScore: (r.cssrs_score ?? 0) as any,
+                        actionsTaken: Array.isArray(r.actions_taken)
+                            ? r.actions_taken
+                            : r.actions_taken ? [r.actions_taken] : [],
+                    })));
+                }
+            } catch (_) { /* best-effort: show in-memory events as fallback */ }
+        })();
+    }, [journey.sessionId]);
 
     // ── WO-550 AC: Summary strings for completed integration step cards ──────────
     // Shown as clickable strip beneath each card when the form has been saved.

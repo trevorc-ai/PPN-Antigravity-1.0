@@ -1,6 +1,6 @@
 # WO-592 — Prevent Abandoned Sessions From Polluting Analytics
 
-**Status:** 01_TRIAGE
+**Status:** 04_QA (preliminary) → Manual execution by Trevor
 **Author:** INSPECTOR
 **Date:** 2026-03-10
 **Priority:** HIGH — data integrity
@@ -89,23 +89,20 @@ WHERE session_status = 'draft'
 
 ## LEAD ARCHITECTURE
 
-**Routed by:** LEAD
+**Routed by:** LEAD (updated 2026-03-11)
 **Route date:** 2026-03-10
-**Owner:** SOOP
+**Owner:** INSPECTOR (preliminary QA review) → Trevor (manual SQL execution)
 **Priority:** P1 — Data integrity, blocks accurate analytics
 
-### Routing Decision:
-This ticket requires an additive DB migration (`session_status` column) before BUILDER can add filters. Route to SOOP first.
+### Routing Decision (updated):
+No SOOP. The migration SQL is defined in this ticket. Route to INSPECTOR for review, then Trevor executes manually in the Supabase SQL Editor.
 
-**SOOP execution order:**
-1. Run migration on **staging** first → verify no FK breakage
-2. Apply to production
-3. Verify existing rows correctly default to `'draft'`
-4. Hand back to BUILDER for code changes (steps 1-5 in ticket)
+**Execution order:**
+1. **INSPECTOR:** Review the migration SQL in the "Proposed Solution" section above for correctness, naming conventions, and RLS impact.
+2. **Trevor:** Run the migration SQL manually in **Supabase Dashboard → SQL Editor** on production.
+3. **Trevor:** Verify existing rows default to `'draft'` with: `SELECT session_status, COUNT(*) FROM log_clinical_records GROUP BY 1;`
+4. **BUILDER:** After migration confirmed, add `.neq('session_status', 'draft')` filter to: `usePractitionerProtocols.ts`, `insightEngine.ts`, `useSafetyBenchmark.ts`, and `clinicalLog.ts`.
+5. **LEAD freeze bypass approved for `MyProtocols.tsx`** — scope: add `.neq('session_status', 'draft')` filter only.
 
-**Freeze bypass required:** `MyProtocols.tsx` is frozen. SOOP must add this to the LEAD freeze bypass list before BUILDER touches that file.
-
-**LEAD freeze bypass approved for `MyProtocols.tsx`** — scope: add `.neq('session_status', 'draft')` filter only. No other changes to that file.
-
-**Cleanup policy:** Trevor runs the DELETE query manually in Supabase SQL Editor (weekly). Do NOT automate this without a separate approval.
+**Cleanup policy:** Trevor runs the DELETE query manually in Supabase SQL Editor (weekly). Do NOT automate.
 

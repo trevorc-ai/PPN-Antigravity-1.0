@@ -34,9 +34,10 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
     onExit,
     onBack
 }) => {
+    const today = new Date().toISOString().slice(0, 10); // WO-600 Fix F
     const [data, setData] = useState<DailyPulseCheckData>({
         ...initialData,
-        check_in_date: initialData.check_in_date || new Date().toISOString().slice(0, 10)
+        check_in_date: initialData.check_in_date || today
     });
     const [isSaving, setIsSaving] = useState(false);
 
@@ -90,6 +91,7 @@ const DailyPulseCheckForm: React.FC<DailyPulseCheckFormProps> = ({
                         type="date"
                         value={data.check_in_date ?? ''}
                         onChange={(e) => updateField('check_in_date', e.target.value)}
+                        max={today}
                         className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-slate-300"
                     />
                 </FormField>

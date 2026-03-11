@@ -356,7 +356,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         min="40"
                                         max="200"
                                         value={reading.heart_rate ?? ''}
-                                        onChange={(e) => { if (!e.target.value) { updateReading(index, 'heart_rate', undefined); return; } const v = parseInt(e.target.value); if (!isNaN(v)) updateReading(index, 'heart_rate', Math.min(Math.max(v, 0), 200)); }}
+                                        onChange={(e) => { if (!e.target.value) { updateReading(index, 'heart_rate', undefined); return; } const v = parseInt(e.target.value); if (!isNaN(v)) updateReading(index, 'heart_rate', Math.min(Math.max(v, 40), 200)); }} // WO-600 Fix A: min 40 (was 0) matches DB CHECK
                                         className={`w-full px-4 py-3 bg-slate-950/80 border rounded-lg text-white font-mono text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-600 ${reading.heart_rate ? getStatusColor(hrStatus) : 'border-slate-600'
                                             }`}
                                         placeholder="70"

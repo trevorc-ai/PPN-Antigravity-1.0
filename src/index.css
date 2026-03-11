@@ -838,4 +838,97 @@ select {
     margin: 1.2cm 1.5cm;
     size: letter portrait;
   }
+
+  /* WO-602 C: Clinical document print mode — white background, black text ─── */
+
+  /* Hide all app chrome (nav, sidebar, toolbar, modals, toasts) */
+  nav,
+  aside,
+  header:not(.print-header),
+  footer:not(.print-footer),
+  [role="navigation"],
+  [data-testid="sidebar"],
+  .no-print,
+  [class*="toast"],
+  [class*="modal-overlay"],
+  [class*="slideout"],
+  [class*="SlideOut"],
+  [class*="MobileNav"],
+  [class*="bottom-nav"],
+  button:not(.print-keep),
+  .print-hide {
+    display: none !important;
+  }
+
+  /* Document body — white, black text */
+  body,
+  html {
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+    font-family: 'Georgia', serif;
+  }
+
+  /* Reset dark card backgrounds to clean white paper */
+  [class*="bg-slate-"],
+  [class*="bg-black"],
+  [class*="bg-gray-"],
+  [class*="backdrop-blur"] {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    border-color: #d1d5db !important; /* gray-300 — readable on paper */
+    box-shadow: none !important;
+  }
+
+  /* Reset dark text colors to black for readability on paper */
+  [class*="text-slate-"],
+  [class*="text-gray-"],
+  [class*="text-white"],
+  h1, h2, h3, h4, h5, h6, p, li, td, th, span, div {
+    color: #1a1a1a !important;
+  }
+
+  /* Exception: keep clinical status colors (red/yellow/green for vitals, C-SSRS) */
+  [class*="text-emerald-"],
+  [class*="text-green-"] {
+    color: #166534 !important; /* dark green — visible on white */
+  }
+  [class*="text-amber-"],
+  [class*="text-yellow-"] {
+    color: #92400e !important; /* dark amber */
+  }
+  [class*="text-red-"] {
+    color: #991b1b !important; /* dark red */
+  }
+
+  /* Cards: clean bordered boxes */
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded-xl {
+    border-radius: 0 !important;
+    border: 1px solid #d1d5db !important;
+    padding: 12pt !important;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid;
+  }
+
+  /* Typography tweaks for print */
+  .ppn-page-title  { font-size: 18pt !important; font-weight: bold; }
+  .ppn-section-title { font-size: 14pt !important; font-weight: bold; }
+  .ppn-card-title  { font-size: 12pt !important; font-weight: bold; }
+  .ppn-body        { font-size: 10pt !important; line-height: 1.6 !important; }
+  .ppn-meta        { font-size: 8pt  !important; }
+  .ppn-label       { font-size: 8pt  !important; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Ensure full-width layout (no sidebar column) */
+  .max-w-6xl, .max-w-4xl, .max-w-2xl {
+    max-width: 100% !important;
+  }
+
+  /* Page breaks */
+  h2, h3, .print-break-before {
+    page-break-before: auto;
+  }
+  .print-break-avoid {
+    page-break-inside: avoid;
+  }
 }

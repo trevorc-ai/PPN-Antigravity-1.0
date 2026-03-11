@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Brain, Save, CheckCircle, Award, ChevronDown } from 'lucide-react';
 import { FormFooter } from '../shared/FormFooter';
 
@@ -57,6 +57,8 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     const [data, setData] = useState<MEQ30Data>(initialData);
     const [isSaving, setIsSaving] = useState(false);
     const [isDone, setIsDone] = useState(false);
+    // WO-600 Fix C: ref map for auto-advance scroll-to-next-question
+    const questionRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
     // WO-531 Fix: Navigation callbacks (onExit / onComplete) always fire.
     // onSave is only called when there are actual responses to persist.
@@ -91,9 +93,21 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
     };
 
     const updateResponse = (questionNumber: number, value: number) => {
-        setData(prev => ({
-            responses: { ...prev.responses, [questionNumber]: value },
-        }));
+        setData(prev => {
+            const next = { responses: { ...prev.responses, [questionNumber]: value } };
+            // WO-600 Fix C: scroll to next unanswered question after selection
+            setTimeout(() => {
+                const nextUnanswered = MEQ30_QUESTIONS.find(
+                    q => q.number > questionNumber && next.responses[q.number] === undefined
+                );
+                if (nextUnanswered && questionRefs.current[nextUnanswered.number]) {
+                    questionRefs.current[nextUnanswered.number]!.scrollIntoView({
+                        behavior: 'smooth', block: 'center',
+                    });
+                }
+            }, 80);
+            return next;
+        });
     };
 
     const answeredCount = Object.keys(data.responses).length;
@@ -145,6 +159,7 @@ const MEQ30QuestionnaireForm: React.FC<MEQ30QuestionnaireFormProps> = ({
                     return (
                         <div
                             key={question.number}
+                            ref={(el) => { questionRefs.current[question.number] = el; }}
                             className={`bg-slate-900/60 backdrop-blur-xl border rounded-2xl p-6 transition-all ${isAnswered
                                 ? 'border-emerald-500/50 bg-emerald-500/5'
                                 : 'border-slate-700/50'
