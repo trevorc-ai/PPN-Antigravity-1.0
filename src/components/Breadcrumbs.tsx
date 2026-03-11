@@ -44,6 +44,35 @@ const Breadcrumbs: React.FC = () => {
 
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+  // Resolve dynamic patient refs for protocol pages
+  const [patientRefs, setPatientRefs] = React.useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    async function resolveDynamicLabels() {
+      for (let i = 0; i < pathnames.length; i++) {
+        const path = pathnames[i];
+        if (UUID_RE.test(path) && pathnames[i - 1] === 'protocol' && !patientRefs[path]) {
+          // Prevent multiple fetches in a row
+          setPatientRefs(prev => ({ ...prev, [path]: 'Loading...' }));
+          const { supabase } = await import('../supabaseClient');
+          const { data } = await supabase
+            .from('log_clinical_records')
+            .select('patient_link_code_hash')
+            .eq('id', path)
+            .single();
+
+          if (data?.patient_link_code_hash) {
+            setPatientRefs(prev => ({ ...prev, [path]: data.patient_link_code_hash }));
+          } else {
+            // Fallback generated ID if hash missing
+            setPatientRefs(prev => ({ ...prev, [path]: path.substring(0, 12).toUpperCase() }));
+          }
+        }
+      }
+    }
+    resolveDynamicLabels();
+  }, [pathnames, patientRefs]);
+
   const getLabel = (path: string, index: number) => {
     // Resolve specific clinical entity names from IDs for deep links
     if (index > 0 && pathnames[index - 1] === 'monograph') {
@@ -58,7 +87,9 @@ const Breadcrumbs: React.FC = () => {
 
     // UUID segments (e.g. /protocol/:id) — show a human label, not the raw ID
     if (UUID_RE.test(path)) {
-      if (index > 0 && pathnames[index - 1] === 'protocol') return 'Clinical Record';
+      if (index > 0 && pathnames[index - 1] === 'protocol') {
+        return patientRefs[path] || 'Clinical Record';
+      }
       return 'Record';
     }
 

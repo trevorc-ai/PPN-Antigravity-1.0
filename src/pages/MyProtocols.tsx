@@ -255,7 +255,7 @@ export const MyProtocols = () => {
         <div className="min-h-full p-6 sm:p-10 space-y-10 animate-in fade-in duration-700 max-w-[1800px] mx-auto pb-24">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-4xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>My Protocols</h1>
+                    <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>My Protocols</h1>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -263,19 +263,7 @@ export const MyProtocols = () => {
                         onClick={refetch}
                         disabled={loading}
                         title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Not loaded'}
-                        style={{
-                            background: 'transparent',
-                            border: '1px solid rgba(56,139,253,0.2)',
-                            color: '#6b7a8d',
-                            fontSize: 12,
-                            padding: '4px 10px',
-                            borderRadius: 6,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 4,
-                        }}
-                        className="hover:bg-slate-800/50 transition-colors"
+                        className="min-h-[44px] px-3 flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-transparent text-xs font-bold text-slate-500 hover:bg-slate-800/50 active:scale-95 transition-all"
                     >
                         {loading ? '...' : '↻ Refresh'}
                     </button>
@@ -291,26 +279,66 @@ export const MyProtocols = () => {
 
             <div className="space-y-6">
                 {/* Search */}
-                <div className="relative group max-w-md">
+                <div className="relative group w-full max-w-md">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors" size={18} />
                     <input
                         type="text"
                         placeholder="Search protocols, substances, treatments..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-12 bg-[#0f172a] border border-slate-700 rounded-xl pl-12 pr-6 text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all"
+                        className="w-full min-h-[44px] h-12 bg-[#0f172a] border border-slate-700 rounded-xl pl-12 pr-6 text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:border-primary transition-all"
                         style={{ color: '#8B9DC3' }}
                     />
                 </div>
 
                 {/* Table */}
                 <div className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-xl">
+
+                    {/* ── Mobile card list (< md) ── additive, does not touch desktop table */}
+                    {!loading && (
+                        <div className="md:hidden divide-y divide-slate-800/30">
+                            {filteredProtocols.length === 0 ? (
+                                <div className="py-20 text-center space-y-4">
+                                    <ClipboardList className="mx-auto text-slate-800" size={48} />
+                                    <p className="text-slate-600 font-black uppercase tracking-widest text-sm">Zero Protocol Matches Found</p>
+                                </div>
+                            ) : filteredProtocols.map((p) => (
+                                <button
+                                    key={`mobile-${p.id}`}
+                                    onClick={() => navigate(`/protocol/${p.id}`)}
+                                    className="w-full text-left px-5 py-4 min-h-[72px] flex items-center justify-between gap-4 hover:bg-primary/5 active:bg-primary/10 active:scale-[0.99] transition-all"
+                                >
+                                    <div className="flex-1 min-w-0 space-y-1">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="text-sm font-black font-mono uppercase tracking-tight" style={{ color: '#9DAEC8' }}>
+                                                {p.patient_ref}
+                                            </span>
+                                            <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${p.status === 'Integration' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
+                                                {p.status}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 font-bold flex-wrap">
+                                            <span>{p.substance_name !== '—' ? p.substance_name : ''}</span>
+                                            {p.indication_name !== '—' && <span className="text-slate-700">·</span>}
+                                            {p.indication_name !== '—' && <span className="truncate max-w-[160px]">{p.indication_name}</span>}
+                                            <span className="text-slate-700">·</span>
+                                            <span className="font-mono">{p.session_date}</span>
+                                        </div>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                     {loading ? (
                         <div className="py-20 text-center">
                             <p className="font-black uppercase tracking-widest text-sm" style={{ color: '#8B9DC3' }}>Loading protocols...</p>
                         </div>
-                    ) : (
-                        <div className="overflow-x-auto">
+                    ) : null}
+
+                    {/* ── Desktop table (≥ md) ── untouched ── */}
+                    {!loading && (
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-left min-w-[1100px]">
                                 <thead>
                                     <tr className="text-slate-500 border-b border-slate-800/50">

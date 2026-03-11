@@ -303,7 +303,7 @@ const ProtocolDetail: React.FC = () => {
           </button>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-lg transition-all text-xs font-black uppercase tracking-widest"
+            className="flex items-center gap-2 min-h-[44px] px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-lg transition-all text-xs font-black uppercase tracking-widest"
           >
             <span className="material-symbols-outlined text-lg">print</span>
             Print Record
@@ -314,7 +314,7 @@ const ProtocolDetail: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/5 pb-8">
           <div className="space-y-2">
             <div className="flex items-center gap-4 flex-wrap">
-              <h1 className="text-4xl font-black tracking-tight" style={{ color: '#8BA5D3' }}>
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight" style={{ color: '#8BA5D3' }}>
                 {patientRef}
               </h1>
               <span className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border ${PHASE_COLORS[sessionLabel] ?? 'bg-slate-800 text-slate-300 border-slate-700'}`}>
@@ -377,7 +377,8 @@ const ProtocolDetail: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="md:col-span-2 h-[300px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-2">
+                <div className="overflow-x-auto">
+                  <div className="md:col-span-2 h-[300px] w-full min-w-[300px] bg-slate-900/30 rounded-3xl border border-slate-800 p-2">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
                       <PolarGrid stroke="#334155" />
@@ -391,6 +392,7 @@ const ProtocolDetail: React.FC = () => {
                       />
                     </RadarChart>
                   </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </section>
@@ -410,7 +412,8 @@ const ProtocolDetail: React.FC = () => {
               </div>
 
               {vitalChartData.length > 0 ? (
-                <div className="h-[220px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-4">
+                <div className="overflow-x-auto">
+              <div className="h-[220px] w-full min-w-[280px] bg-slate-900/30 rounded-3xl border border-slate-800 p-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={vitalChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <defs>
@@ -434,6 +437,7 @@ const ProtocolDetail: React.FC = () => {
                       <Area type="monotone" dataKey="sys" name="Systolic BP (mmHg)" stroke="#ef4444" strokeWidth={2} fill="url(#sysGrad)" dot={{ r: 3, fill: '#ef4444', strokeWidth: 0 }} connectNulls />
                     </AreaChart>
                   </ResponsiveContainer>
+                  </div>
                 </div>
               ) : (
                 <div className="py-12 text-center space-y-3 bg-slate-900/20 rounded-3xl border border-slate-800/50">
