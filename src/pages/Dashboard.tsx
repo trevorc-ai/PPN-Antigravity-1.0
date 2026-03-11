@@ -44,7 +44,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
   return (
     <div
       onClick={() => link && navigate(link)}
-      className={`shrink-0 w-[85vw] snap-center md:w-auto md:shrink-1 relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 transition-all group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
+      className={`shrink-0 w-full md:w-auto md:shrink-1 relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 transition-all md:snap-align-none snap-center group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
     >
       {/* Background Hover Glow */}
       <div className={`absolute -top-10 -right-10 w-32 h-32 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none ${styles.bg}`}></div>
@@ -205,7 +205,7 @@ export default function Dashboard() {
                 {protocolsLoading ? '...' : '↻ Refresh'}
               </button>
             </div>
-            <h1 className="ppn-page-title mt-3 md:mt-4" style={{ color: '#A8B5D1' }}>
+            <h1 className="text-3xl sm:text-4xl ppn-page-title mt-3 md:mt-4" style={{ color: '#A8B5D1' }}>
               {getTimeOfDayGreeting()}.
             </h1>
             <p className="ppn-meta text-slate-500 mt-1">{formatCurrentDate()}</p>
@@ -218,7 +218,7 @@ export default function Dashboard() {
             <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
             <span className="text-xs text-slate-500 font-medium">This Month</span>
           </div>
-          <div className="flex overflow-x-auto overflow-y-hidden snap-x touch-pan-x gap-4 pb-4 md:grid md:grid-cols-2 lg:grid-cols-4 w-full scrollbar-hide">
+          <div className="flex flex-col md:flex-row md:overflow-x-auto md:overflow-y-hidden md:snap-x md:touch-pan-x gap-4 md:pb-4 lg:grid lg:grid-cols-4 w-full md:scrollbar-hide">
             <ClinicPerformanceCard
               title="Protocols Logged"
               value={hasProtocols ? String(protocols.length) : '--'}
@@ -264,7 +264,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
 
             {/* Log Protocol — indigo */}
             <button
