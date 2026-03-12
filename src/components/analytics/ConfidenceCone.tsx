@@ -43,7 +43,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md max-w-[280px]">
         <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Day {label}</p>
-            <span className={`text-xs font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-slate-800 ${statusColor}`}>
+            <span className={`text-sm font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-slate-800 ${statusColor}`}>
               {statusText}
             </span>
         </div>
@@ -53,10 +53,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           return (
             <div key={i} className="flex items-center gap-2 mb-1 last:mb-0">
               <div className="size-2 rounded-full" style={{ backgroundColor: p.color }}></div>
-              <span className="text-xs font-bold text-slate-300">
+              <span className="text-sm font-bold text-slate-300">
                 {p.name === 'userScore' ? 'Patient Score' : 'Community Mean'}:
               </span>
-              <span className="text-xs font-mono font-black text-slate-300">{p.value}</span>
+              <span className="text-sm font-mono font-black text-slate-300">{p.value}</span>
             </div>
           );
         })}
@@ -65,7 +65,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="mt-3 pt-3 border-t border-slate-800">
              <div className="flex items-start gap-2">
                  <div className="size-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></div>
-                 <p className="text-xs text-slate-400 leading-snug">{insight}</p>
+                 <p className="text-sm text-slate-400 leading-snug">{insight}</p>
              </div>
           </div>
         )}
@@ -127,7 +127,7 @@ const ConfidenceCone: React.FC = () => {
         </div>
         <div className="group/info relative">
           <Info size={16} className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" />
-          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+          <div className="absolute right-0 top-6 w-56 p-3 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-300 opacity-0 group-hover/info:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
             Gray area represents the 95% Confidence Interval of the responding community cohort. Hover over data points for contextual insights.
           </div>
         </div>
@@ -172,7 +172,7 @@ const ConfidenceCone: React.FC = () => {
                         className={`size-2 rounded-full ${entry.value === 'Confidence Interval' ? 'rounded-sm' : ''}`} 
                         style={{ backgroundColor: entry.color }}
                       ></div>
-                      <span className="text-xs font-black text-slate-300 uppercase tracking-widest">{entry.value}</span>
+                      <span className="text-sm font-black text-slate-300 uppercase tracking-widest">{entry.value}</span>
                     </div>
                   ))}
                 </div>

@@ -32,7 +32,7 @@ const OutcomeTooltip = ({ active, payload, label }: any) => {
                 </div>
             )}
             {trialMin !== undefined && trialMax !== undefined && (
-                <div className="flex justify-between items-center text-slate-400 text-xs">
+                <div className="flex justify-between items-center text-slate-400 text-sm">
                     <span>Phase 3 Cohort Range:</span>
                     <span>{trialMin} – {trialMax}</span>
                 </div>
@@ -52,7 +52,7 @@ const LegendItem: FC<{ color: string; solid?: boolean; dashed?: boolean; label: 
                 strokeDasharray={solid ? undefined : '5 3'}
             />
         </svg>
-        <span className="text-xs text-slate-400 font-medium tracking-wide">{label}</span>
+        <span className="text-sm text-slate-400 font-medium tracking-wide">{label}</span>
     </div>
 );
 
@@ -168,7 +168,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
                     </p>
                 </div>
                 {data.responseAchieved && (
-                    <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                    <div className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-sm font-bold uppercase tracking-wider">
                         <CheckCircle2 className="w-4 h-4" />
                         Response Achieved
                     </div>
@@ -179,7 +179,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
                 {/* CHART 1: Symptom Trajectory (Left 2/3) */}
                 <div className="lg:col-span-2 flex flex-col relative">
-                    <p className="text-xs font-bold text-slate-500 mb-2 tracking-wider uppercase flex justify-between">
+                    <p className="text-sm font-bold text-slate-500 mb-2 tracking-wider uppercase flex justify-between">
                         <span>{data.primaryInstrument} Score Over Time</span>
                         <span>↓ Lower = Better</span>
                     </p>
@@ -224,7 +224,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
                 {/* CHART 2: MEQ-30 Correlation (Right 1/3) */}
                 <div className="flex flex-col border-l border-slate-700/50 pl-8 relative">
-                    <p className="text-xs font-bold text-slate-500 mb-6 tracking-wider uppercase">
+                    <p className="text-sm font-bold text-slate-500 mb-6 tracking-wider uppercase">
                         Experience Depth vs. Outcome
                     </p>
 
@@ -232,14 +232,14 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
                         {/* Vertical marker for patient MEQ */}
                         <div className="absolute top-0 bottom-8 left-[65%] w-px bg-violet-400/50 z-10 border-r border-dashed border-violet-400">
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-violet-500/20 text-violet-300 text-xs font-bold px-2 py-0.5 rounded border border-violet-500/30 whitespace-nowrap">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-violet-500/20 text-violet-300 text-sm font-bold px-2 py-0.5 rounded border border-violet-500/30 whitespace-nowrap">
                                 Pt MEQ: {meq30}
                             </div>
                         </div>
 
                         {/* High Bracket */}
                         <div className={`relative z-0 group ${isHigherMeq ? 'opacity-100' : 'opacity-40'}`}>
-                            <div className="flex justify-between text-xs mb-1.5 font-semibold">
+                            <div className="flex justify-between text-sm mb-1.5 font-semibold">
                                 <span className={isHigherMeq ? 'text-white' : 'text-slate-400'}>High (80-100)</span>
                                 <span className={isHigherMeq ? 'text-emerald-400' : 'text-slate-500'}>92% response</span>
                             </div>
@@ -250,7 +250,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
                         {/* Medium Bracket */}
                         <div className={`relative z-0 group ${isMediumMeq ? 'opacity-100' : 'opacity-40'}`}>
-                            <div className="flex justify-between text-xs mb-1.5 font-semibold">
+                            <div className="flex justify-between text-sm mb-1.5 font-semibold">
                                 <span className={isMediumMeq ? 'text-white' : 'text-slate-400'}>Medium (50-79)</span>
                                 <span className={isMediumMeq ? 'text-amber-400' : 'text-slate-500'}>67% response</span>
                             </div>
@@ -261,7 +261,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
                         {/* Low Bracket */}
                         <div className={`relative z-0 group ${isLowMeq ? 'opacity-100' : 'opacity-40'}`}>
-                            <div className="flex justify-between text-xs mb-1.5 font-semibold">
+                            <div className="flex justify-between text-sm mb-1.5 font-semibold">
                                 <span className={isLowMeq ? 'text-white' : 'text-slate-400'}>Low (&lt;50)</span>
                                 <span className={isLowMeq ? 'text-red-400' : 'text-slate-500'}>34% response</span>
                             </div>

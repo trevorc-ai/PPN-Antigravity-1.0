@@ -185,7 +185,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
             {/* Header: Fixed top timer */}
             <div className="sticky top-0 z-40 bg-[#060d1a]/95 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
                 <div className="flex flex-col">
-                    <span className="text-xs uppercase font-bold tracking-widest text-[#A8B5D1]">Live Session</span>
+                    <span className="text-sm uppercase font-bold tracking-widest text-[#A8B5D1]">Live Session</span>
                     <span className="text-3xl font-black text-white font-mono tracking-tight leading-none">{elapsedTime}</span>
                 </div>
                 <button
@@ -211,14 +211,14 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
                         className="flex flex-col items-center justify-center gap-1.5 p-3 min-h-[64px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-600/50 hover:border-slate-500 rounded-2xl active:scale-95 transition-all duration-300"
                     >
                         <Activity className="w-6 h-6 text-amber-400" />
-                        <span className="text-xs font-bold uppercase tracking-wider">Log Vitals</span>
+                        <span className="text-sm font-bold uppercase tracking-wider">Log Vitals</span>
                     </button>
                     <button
                         onClick={() => onOpenForm('session-observations')}
                         className="flex flex-col items-center justify-center gap-1.5 p-3 min-h-[64px] bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-600/50 hover:border-slate-500 rounded-2xl active:scale-95 transition-all duration-300"
                     >
                         <FileText className="w-6 h-6 text-blue-400" />
-                        <span className="text-xs font-bold uppercase tracking-wider">Clinical Note</span>
+                        <span className="text-sm font-bold uppercase tracking-wider">Clinical Note</span>
                     </button>
                 </div>
 

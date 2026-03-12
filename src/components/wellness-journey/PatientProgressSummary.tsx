@@ -130,17 +130,17 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                     {/* Header */}
                     <div className="flex items-start justify-between border-b-2 border-gray-200 pb-4">
                         <div>
-                            <p className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-1">PPN CLINICAL PROGRESS SUMMARY</p>
+                            <p className="text-sm font-black text-indigo-600 uppercase tracking-widest mb-1">PPN CLINICAL PROGRESS SUMMARY</p>
                             <h1 className="text-2xl font-black text-gray-900">{data.clinicName}</h1>
                             <p className="text-sm text-gray-500 mt-1">Clinician: {data.clinicianName}</p>
                         </div>
                         <div className="text-right">
                             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-200 rounded-lg">
                                 <Shield className="w-3.5 h-3.5 text-indigo-500" />
-                                <span className="text-indigo-700 text-xs font-black">{data.subjectId}</span>
+                                <span className="text-indigo-700 text-sm font-black">{data.subjectId}</span>
                             </div>
-                            <p className="text-xs text-gray-400 mt-2">Prepared: {generatedDate}</p>
-                            {data.sessionDate && <p className="text-xs text-gray-400">Session: {data.sessionDate}</p>}
+                            <p className="text-sm text-gray-400 mt-2">Prepared: {generatedDate}</p>
+                            {data.sessionDate && <p className="text-sm text-gray-400">Session: {data.sessionDate}</p>}
                         </div>
                     </div>
 
@@ -162,7 +162,7 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                                             `}>
                                                 {done ? <CheckCircle className="w-5 h-5" /> : <Clock className="w-4 h-4" />}
                                             </div>
-                                            <span className={`text-xs font-bold text-center leading-tight ${done ? 'text-indigo-700' : 'text-gray-400'}`}>
+                                            <span className={`text-sm font-bold text-center leading-tight ${done ? 'text-indigo-700' : 'text-gray-400'}`}>
                                                 {stage.label}
                                             </span>
                                         </div>
@@ -183,7 +183,7 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                         <div className="grid grid-cols-3 gap-4 mb-5">
                             <div className="text-center">
                                 <p className="text-4xl font-black text-gray-800">{data.baselineScore}<span className="text-lg text-gray-400">/{cmc.max}</span></p>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide mt-1">{cmc.label} Baseline</p>
+                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wide mt-1">{cmc.label} Baseline</p>
                             </div>
                             <div className="text-center flex flex-col items-center justify-center">
                                 <span className="text-2xl font-black text-gray-400">→</span>
@@ -192,7 +192,7 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                                 <p className={`text-4xl font-black ${improved ? 'text-indigo-700' : 'text-gray-800'}`}>
                                     {data.endpointScore}<span className="text-lg text-gray-400">/{cmc.max}</span>
                                 </p>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-wide mt-1">At Week {data.followupWeeks}</p>
+                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wide mt-1">At Week {data.followupWeeks}</p>
                             </div>
                         </div>
 
@@ -201,13 +201,13 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                             <p className={`text-2xl font-black ${improved ? 'text-indigo-700' : 'text-gray-700'}`}>
                                 {improved ? `↓ ${pctChange}% reduction` : `${pctChange}% change`}
                             </p>
-                            <p className="text-xs text-gray-500 font-semibold mt-1">Score change over {data.followupWeeks} weeks</p>
+                            <p className="text-sm text-gray-500 font-semibold mt-1">Score change over {data.followupWeeks} weeks</p>
                         </div>
 
                         {/* Before/after bar visual */}
                         <div className="space-y-2">
                             <div>
-                                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                <div className="flex justify-between text-sm text-gray-500 mb-1">
                                     <span>Starting score</span>
                                     <span>{data.baselineScore}/{cmc.max}</span>
                                 </div>
@@ -216,7 +216,7 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                                 </div>
                             </div>
                             <div>
-                                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                <div className="flex justify-between text-sm text-gray-500 mb-1">
                                     <span>Current score</span>
                                     <span>{data.endpointScore}/{cmc.max}</span>
                                 </div>
@@ -229,13 +229,13 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                         {/* Clinical response status */}
                         <div className={`flex items-center gap-2 mt-4 p-2.5 rounded-lg border ${meetsResponse && improved ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
                             <CheckCircle className={`w-4 h-4 flex-shrink-0 ${meetsResponse && improved ? 'text-emerald-600' : 'text-amber-500'}`} />
-                            <p className={`text-xs font-black ${meetsResponse && improved ? 'text-emerald-700' : 'text-amber-700'}`}>
+                            <p className={`text-sm font-black ${meetsResponse && improved ? 'text-emerald-700' : 'text-amber-700'}`}>
                                 Clinical Response: {meetsResponse && improved ? '[STATUS: ACHIEVED]' : '[STATUS: IN PROGRESS]'}
                             </p>
                         </div>
 
                         {cmc.lowerIsBetter && (
-                            <p className="text-xs text-gray-400 mt-2 italic">
+                            <p className="text-sm text-gray-400 mt-2 italic">
                                 A reduction of {cmc.threshold}+ points on the {data.primaryInstrument} represents a clinically meaningful change per published research criteria.
                             </p>
                         )}
@@ -268,22 +268,22 @@ export const PatientProgressSummary: React.FC<PatientProgressSummaryProps> = ({ 
                     {/* Substance note */}
                     {data.substance && (
                         <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
-                            <p className="text-xs text-slate-600"><span className="font-bold">Treatment modality:</span> {data.substance}-assisted therapy</p>
+                            <p className="text-sm text-slate-600"><span className="font-bold">Treatment modality:</span> {data.substance}-assisted therapy</p>
                         </div>
                     )}
 
                     {/* Footer */}
                     <div className="border-t-2 border-gray-200 pt-4 flex items-start justify-between">
                         <div>
-                            <p className="text-xs text-gray-400 font-black uppercase tracking-wide">CONFIDENTIAL, For Patient Use Only</p>
-                            <p className="text-xs text-gray-300 mt-0.5">
+                            <p className="text-sm text-gray-400 font-black uppercase tracking-wide">CONFIDENTIAL, For Patient Use Only</p>
+                            <p className="text-sm text-gray-300 mt-0.5">
                                 This summary tracks self-reported outcomes and is not a medical diagnosis.
                                 All clinical decisions remain the responsibility of the licensed healthcare provider.
                             </p>
                         </div>
                         <div className="text-right flex-shrink-0">
-                            <p className="text-xs text-gray-400 font-bold">Generated by PPN Portal</p>
-                            <p className="text-xs text-gray-300">ppn.care · {generatedDate}</p>
+                            <p className="text-sm text-gray-400 font-bold">Generated by PPN Portal</p>
+                            <p className="text-sm text-gray-300">ppn.care · {generatedDate}</p>
                         </div>
                     </div>
 

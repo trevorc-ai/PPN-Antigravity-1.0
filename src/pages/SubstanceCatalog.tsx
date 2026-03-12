@@ -49,7 +49,7 @@ const InteractionLink: React.FC<{ interactions: InteractionEntry[], substanceNam
         <span aria-hidden="true">{hasHigh ? '⚠' : '△'}</span>
         {interactions.length} Documented Interaction{interactions.length !== 1 ? 's' : ''}
       </span>
-      <span aria-hidden="true" className="text-xs transition-transform duration-200 hover:translate-x-1">→</span>
+      <span aria-hidden="true" className="text-sm transition-transform duration-200 hover:translate-x-1">→</span>
     </button>
   );
 };
@@ -87,13 +87,13 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
           <div className="flex-1 p-4 flex flex-col gap-2 min-w-0">
             {/* Schedule + class chips */}
             <div className="flex flex-wrap gap-1.5">
-              <span className={`px-2 py-0.5 rounded text-xs font-black uppercase tracking-wider border
+              <span className={`px-2 py-0.5 rounded text-sm font-black uppercase tracking-wider border
                 ${sub.schedule === 'Schedule I'
                   ? 'bg-red-900/60 text-red-200 border-red-700/50'
                   : 'bg-blue-900/60 text-blue-200 border-blue-700/50'}`}>
                 {sub.schedule}
               </span>
-              <span className={`px-2 py-0.5 rounded text-xs font-black uppercase tracking-wider border ${phaseClasses}`}>
+              <span className={`px-2 py-0.5 rounded text-sm font-black uppercase tracking-wider border ${phaseClasses}`}>
                 {sub.phase}
               </span>
             </div>
@@ -102,11 +102,11 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
               {sub.name}
             </h3>
             {/* Class tag */}
-            <span className="text-xs text-slate-500 font-medium">
+            <span className="text-sm text-slate-500 font-medium">
               {sub.class.charAt(0) + sub.class.slice(1).toLowerCase()}
             </span>
             {/* Risk tier */}
-            <div className={`inline-flex items-center gap-1.5 self-start px-2 py-1 rounded-lg border text-xs font-semibold ${riskConfig.classes}`}>
+            <div className={`inline-flex items-center gap-1.5 self-start px-2 py-1 rounded-lg border text-sm font-semibold ${riskConfig.classes}`}>
               <span aria-hidden="true" className="leading-none">{riskConfig.icon}</span>
               <span className="truncate">{riskConfig.label}</span>
             </div>
@@ -159,8 +159,8 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${phaseClasses}`}>{sub.phase}</span>
-            <span className="px-2.5 py-1 rounded-md text-xs font-medium border bg-slate-800/60 text-slate-400 border-slate-700/40">
+            <span className={`px-2.5 py-1 rounded-md text-sm font-semibold border ${phaseClasses}`}>{sub.phase}</span>
+            <span className="px-2.5 py-1 rounded-md text-sm font-medium border bg-slate-800/60 text-slate-400 border-slate-700/40">
               {sub.class.charAt(0) + sub.class.slice(1).toLowerCase()}
             </span>
           </div>
@@ -246,7 +246,7 @@ const SubstanceCatalog: React.FC = () => {
                 <span>Compare Molecular Pharmacology</span>
                 <span className="shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
               </div>
-              <p className="text-xs text-indigo-400/70 font-medium">Receptor heatmaps & affinity matrices</p>
+              <p className="text-sm text-indigo-400/70 font-medium">Receptor heatmaps & affinity matrices</p>
             </button>
           </div>
 

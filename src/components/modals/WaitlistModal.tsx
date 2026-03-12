@@ -107,7 +107,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                 <h2 className="text-2xl font-black text-emerald-400 mb-2">You're on the list.</h2>
 
                                 <div className="text-left bg-[#0c0f14]/80 border border-slate-700/50 rounded-2xl p-5 mb-8 mt-6">
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">What happens next:</p>
+                                    <p className="text-sm font-black uppercase tracking-widest text-slate-400 mb-3">What happens next:</p>
                                     <ul className="space-y-3 text-sm font-medium text-slate-300">
                                         <li className="flex gap-2 items-start"><span className="text-indigo-400">•</span> You'll receive an email confirmation shortly.</li>
                                         <li className="flex gap-2 items-start"><span className="text-indigo-400">•</span> We'll notify you when the pilot opens.</li>
@@ -175,7 +175,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     )}
 
                                     <div>
-                                        <label htmlFor="modal-first-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
+                                        <label htmlFor="modal-first-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
                                         <input
                                             id="modal-first-name"
                                             type="text"
@@ -188,7 +188,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-last-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
+                                        <label htmlFor="modal-last-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
                                         <input
                                             id="modal-last-name"
                                             type="text"
@@ -201,7 +201,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-email" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
+                                        <label htmlFor="modal-email" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
                                         <input
                                             id="modal-email"
                                             type="email"
@@ -214,7 +214,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-practitioner-type" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Practitioner Type</label>
+                                        <label htmlFor="modal-practitioner-type" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Practitioner Type</label>
                                         <select
                                             id="modal-practitioner-type"
                                             required

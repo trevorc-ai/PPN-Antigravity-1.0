@@ -215,7 +215,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
                             <span
                                 key={i}
                                 role="listitem"
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-sm font-semibold"
                             >
                                 <Pill className="w-3 h-3 text-slate-500" aria-hidden="true" />
                                 {med}
@@ -296,12 +296,64 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                   Card title:            text-base font-black         , 16px
                   Description:           text-sm                      , 14px
                   Button text:           text-sm font-semibold+       , 14px
-                  Badge / metadata:      text-xs                      , 12px (acceptable for tags)
+                  Badge / metadata:      text-sm                      , 12px (acceptable for tags)
 
                 Design: no individual card borders, background fills only.
                 Active = indigo fill · Completed = teal tint · Upcoming = slate/dimmed
             ──────────────────────────────────────────────────────────────────── */}
-            <div className={`grid grid-cols-1 sm:grid-cols-${Math.min(activeSteps.length, 4)} gap-2`}>
+            {/* ── MOBILE: compact horizontal list rows ──────────────────────────────────────── */}
+            <div className="sm:hidden flex flex-col gap-2">
+                {activeSteps.map((step, index) => {
+                    const isComplete = completedFormIds.has(step.id);
+                    const isCurrent = index === currentStepIndex;
+                    return (
+                        <div
+                            key={step.id}
+                            className={[
+                                'flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all min-h-[68px]',
+                                isComplete
+                                    ? 'bg-teal-900/20 border-teal-700/40'
+                                    : isCurrent
+                                        ? 'bg-indigo-900/40 border-indigo-600/50 shadow-md shadow-indigo-950/40'
+                                        : 'bg-slate-800/20 border-slate-700/30',
+                            ].join(' ')}
+                        >
+                            {/* Step number badge */}
+                            <div className={[
+                                'w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-sm',
+                                isComplete ? 'bg-teal-800/60 text-teal-300' : isCurrent ? 'bg-indigo-700/60 text-indigo-100' : 'bg-slate-700/40 text-slate-500',
+                            ].join(' ')} aria-hidden="true">
+                                {isComplete ? <CheckCircle2 className="w-4 h-4" /> : index + 1}
+                            </div>
+                            {/* Text */}
+                            <div className="flex-1 min-w-0">
+                                <p className={`text-sm font-black leading-tight ${isComplete ? 'text-teal-200' : isCurrent ? 'text-slate-100' : 'text-slate-400'}`}>{step.label}</p>
+                                <p className="text-sm text-slate-500 mt-0.5">
+                                    {isComplete ? 'Completed' : isCurrent ? 'In progress - tap to continue' : 'Required'}
+                                </p>
+                            </div>
+                            {/* CTA button */}
+                            <button
+                                onClick={() => onStartStep(step.id)}
+                                aria-label={`${isComplete ? 'Amend' : isCurrent ? 'Continue' : 'Open'} ${step.label}`}
+                                className={[
+                                    'flex-shrink-0 px-3 py-2 rounded-xl text-sm font-black transition-all active:scale-95',
+                                    isComplete
+                                        ? 'bg-slate-700/50 text-slate-400 hover:text-slate-200'
+                                        : isCurrent
+                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-900/50'
+                                            : 'bg-slate-700/40 text-slate-500 hover:text-slate-300',
+                                ].join(' ')}
+                            >
+                                {isComplete ? 'Edit' : isCurrent ? 'Continue' : 'Open'}
+                            </button>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* ── DESKTOP: tall card grid (original) ────────────────────────────────────── */}
+            <div className={`hidden sm:grid sm:grid-cols-${Math.min(activeSteps.length, 4)} gap-2`}>
                 {activeSteps.map((step, index) => {
                     const isComplete = completedFormIds.has(step.id);
                     const isCurrent = index === currentStepIndex;

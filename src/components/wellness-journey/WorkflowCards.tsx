@@ -65,19 +65,19 @@ export const WorkflowActionCard: React.FC<WorkflowActionCardProps> = ({
                     }`}>
                     {isComplete ? <CheckCircle className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : icon || <div className="w-3 h-3 rounded-full bg-current opacity-50" />}
                 </div>
-                {isComplete && date && <span className="text-xs font-mono font-bold text-emerald-500/70 bg-emerald-500/10 px-2 py-1 rounded tracking-wider uppercase">{date}</span>}
+                {isComplete && date && <span className="text-sm font-mono font-bold text-emerald-500/70 bg-emerald-500/10 px-2 py-1 rounded tracking-wider uppercase">{date}</span>}
             </div>
             <div>
                 <h3 className={`font-bold text-[15px] ${isComplete ? 'text-emerald-100' : isLocked ? 'text-slate-500' : 'text-[#A8B5D1]'}`}>{title}</h3>
-                {description && <p className={`text-xs mt-1.5 line-clamp-2 leading-relaxed ${isLocked ? 'text-slate-600' : 'text-slate-400'}`}>{description}</p>}
+                {description && <p className={`text-sm mt-1.5 line-clamp-2 leading-relaxed ${isLocked ? 'text-slate-600' : 'text-slate-400'}`}>{description}</p>}
             </div>
             {!isComplete && !isLocked && (
-                <div className={`mt-4 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider ${actionArrowColor}`}>
+                <div className={`mt-4 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider ${actionArrowColor}`}>
                     Action Required <ArrowRight className="w-3.5 h-3.5" />
                 </div>
             )}
             {isLocked && (
-                <div className="mt-4 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
+                <div className="mt-4 flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider text-slate-500">
                     Locked
                 </div>
             )}
@@ -113,13 +113,13 @@ export const WorkflowOutputCard: React.FC<WorkflowOutputCardProps> = ({
                     {icon && <div className="text-slate-400 shrink-0 w-6 h-6">{icon}</div>}
                     <div>
                         <h3 className="text-[14px] font-bold text-[#A8B5D1] uppercase tracking-widest">{title}</h3>
-                        {description && <p className="text-xs text-slate-400 mt-1">{description}</p>}
+                        {description && <p className="text-sm text-slate-400 mt-1">{description}</p>}
                     </div>
                 </div>
                 {actionLabel && onClick && (
                     <button
                         onClick={onClick}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors shrink-0"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-sm font-bold text-slate-300 transition-colors shrink-0"
                     >
                         {actionIcon}
                         {actionLabel}

@@ -154,16 +154,16 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <h3 className="font-bold text-[#A8B5D1] leading-tight text-sm">{doc.label}</h3>
                                         {doc.isReady ? (
-                                            <span className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded flex items-center gap-1">
+                                            <span className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold uppercase tracking-wider rounded flex items-center gap-1">
                                                 <CheckCircle className="w-2.5 h-2.5" /> Ready
                                             </span>
                                         ) : (
-                                            <span className="px-1.5 py-0.5 bg-slate-800 border border-slate-600 text-slate-400 text-xs font-bold uppercase tracking-wider rounded flex items-center gap-1">
+                                            <span className="px-1.5 py-0.5 bg-slate-800 border border-slate-600 text-slate-400 text-sm font-bold uppercase tracking-wider rounded flex items-center gap-1">
                                                 <AlertTriangle className="w-2.5 h-2.5" /> Pending
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-xs text-slate-500">{doc.isReady ? 'Available for export' : doc.requiredLabel}</p>
+                                    <p className="text-sm text-slate-500">{doc.isReady ? 'Available for export' : doc.requiredLabel}</p>
                                 </div>
                             </div>
 
@@ -175,7 +175,7 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                                     type="button"
                                     onClick={doc.onDownload}
                                     disabled={!doc.isReady}
-                                    className={`w-full sm:w-auto py-2.5 px-5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all flex-shrink-0 ${doc.isReady
+                                    className={`w-full sm:w-auto py-2.5 px-5 rounded-xl font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all flex-shrink-0 ${doc.isReady
                                         ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-900/40'
                                         : 'bg-slate-800 text-slate-500 cursor-not-allowed'
                                         }`}

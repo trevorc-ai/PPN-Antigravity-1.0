@@ -89,24 +89,24 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
     const tooltipContent = (
         <div className="space-y-2 max-w-xs">
             <p className="font-black text-white text-sm">🧠 Neuroplasticity Window</p>
-            <p className="text-slate-300 text-xs leading-relaxed">
+            <p className="text-slate-300 text-sm leading-relaxed">
                 Research shows that psilocybin and MDMA promote heightened synaptic plasticity
                 for approximately 2–3 weeks post-session. This window represents the highest
                 opportunity for therapeutic consolidation through integration work.
             </p>
-            <p className="text-slate-400 text-xs leading-relaxed">
+            <p className="text-slate-400 text-sm leading-relaxed">
                 Prioritise integration sessions, journaling, and therapeutic support during
                 this period to maximise long-term treatment gains.
             </p>
             <div className="pt-1 border-t border-slate-700">
-                <p className="text-slate-500 text-xs font-mono">
+                <p className="text-slate-500 text-sm font-mono">
                     Ly et al. (2018) Cell; Castrén &amp; Hen (2013) Nat Rev Neurosci
                 </p>
                 <a
                     href="https://pubmed.ncbi.nlm.nih.gov/29677511/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 text-xs font-semibold mt-0.5 inline-block"
+                    className="text-indigo-400 hover:text-indigo-300 text-sm font-semibold mt-0.5 inline-block"
                 >
                     ↗ View source (PubMed)
                 </a>
@@ -139,11 +139,11 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
                         <span className={`text-sm font-black ${cfg.textColor}`}>
                             {cfg.label}
                         </span>
-                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">
+                        <span className="text-sm uppercase tracking-widest font-bold text-slate-500">
                             in neuroplasticity window
                         </span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">{cfg.sublabel}</p>
+                    <p className="text-sm text-slate-500 mt-0.5">{cfg.sublabel}</p>
                 </div>
 
                 {/* Progress bar */}
@@ -154,7 +154,7 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
                             style={{ width: `${progressPct}%` }}
                         />
                     </div>
-                    <p className="text-xs text-slate-600 mt-0.5 text-right font-mono">
+                    <p className="text-sm text-slate-600 mt-0.5 text-right font-mono">
                         Day {elapsed}/{windowDays}
                     </p>
                 </div>

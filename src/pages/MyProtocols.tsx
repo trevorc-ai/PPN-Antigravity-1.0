@@ -210,7 +210,7 @@ export const MyProtocols = () => {
             onClick={() => handleSort(field)}
         >
             <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black uppercase tracking-[0.15em]">{label}</span>
+                <span className="text-sm font-black uppercase tracking-[0.15em]">{label}</span>
                 {sortField === field && (
                     sortDirection === 'asc'
                         ? <ChevronUp className="w-3 h-3 flex-shrink-0" />
@@ -225,7 +225,7 @@ export const MyProtocols = () => {
     const Cell: React.FC<{ value: string; mono?: boolean; dim?: boolean }> = ({ value, mono, dim }) => (
         <td className="px-4 py-5">
             <span
-                className={`text-sm font-bold ${mono ? 'font-mono text-xs tracking-tight' : ''}`}
+                className={`text-sm font-bold ${mono ? 'font-mono text-sm tracking-tight' : ''}`}
                 style={{ color: dim || value === '—' ? '#4B5563' : '#8B9DC3' }}
             >
                 {value}
@@ -263,13 +263,13 @@ export const MyProtocols = () => {
                         onClick={refetch}
                         disabled={loading}
                         title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Not loaded'}
-                        className="min-h-[44px] px-3 flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-transparent text-xs font-bold text-slate-500 hover:bg-slate-800/50 active:scale-95 transition-all"
+                        className="min-h-[44px] px-3 flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-transparent text-sm font-bold text-slate-500 hover:bg-slate-800/50 active:scale-95 transition-all"
                     >
                         {loading ? '...' : '↻ Refresh'}
                     </button>
                     <button
                         onClick={() => navigate('/wellness-journey')}
-                        className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
+                        className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-black rounded-2xl uppercase tracking-[0.2em] transition-all shadow-xl shadow-primary/20 active:scale-95 flex items-center gap-3"
                     >
                         <PlusCircle size={18} />
                         Create New Protocol
@@ -313,11 +313,11 @@ export const MyProtocols = () => {
                                             <span className="text-sm font-black font-mono uppercase tracking-tight" style={{ color: '#9DAEC8' }}>
                                                 {p.patient_ref}
                                             </span>
-                                            <span className={`text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${p.status === 'Integration' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
+                                            <span className={`text-sm font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${p.status === 'Integration' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
                                                 {p.status}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-xs text-slate-500 font-bold flex-wrap">
+                                        <div className="flex items-center gap-2 text-sm text-slate-500 font-bold flex-wrap">
                                             <span>{p.substance_name !== '—' ? p.substance_name : ''}</span>
                                             {p.indication_name !== '—' && <span className="text-slate-700">·</span>}
                                             {p.indication_name !== '—' && <span className="truncate max-w-[160px]">{p.indication_name}</span>}
@@ -352,7 +352,7 @@ export const MyProtocols = () => {
                                         <SortableHeader field="weight_label" label="Weight" />
                                         <SortableHeader field="session_date" label="Date" />
                                         <SortableHeader field="status" label="Status" />
-                                        <th className="px-4 py-5 text-right text-xs font-black text-slate-500 uppercase tracking-[0.15em] pr-6">Action</th>
+                                        <th className="px-4 py-5 text-right text-sm font-black text-slate-500 uppercase tracking-[0.15em] pr-6">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-800/30">
@@ -372,7 +372,7 @@ export const MyProtocols = () => {
                                                         {p.patient_ref}
                                                     </span>
                                                     {p.substance_name !== '—' && (
-                                                        <span className="text-xs text-slate-600 font-bold mt-0.5 truncate max-w-[160px]">
+                                                        <span className="text-sm text-slate-600 font-bold mt-0.5 truncate max-w-[160px]">
                                                             {p.substance_name}
                                                         </span>
                                                     )}
@@ -412,7 +412,7 @@ export const MyProtocols = () => {
                                             <td className="px-4 py-5">
                                                 <div className="flex items-center gap-2">
                                                     <div className={`size-1.5 rounded-full flex-shrink-0 ${p.status === 'Integration' ? 'bg-clinical-green' : 'bg-primary'}`} />
-                                                    <span className={`text-xs font-black uppercase tracking-widest whitespace-nowrap ${p.status === 'Integration' ? 'text-clinical-green' : 'text-primary'}`}>
+                                                    <span className={`text-sm font-black uppercase tracking-widest whitespace-nowrap ${p.status === 'Integration' ? 'text-clinical-green' : 'text-primary'}`}>
                                                         {p.status}
                                                     </span>
                                                 </div>
@@ -420,7 +420,7 @@ export const MyProtocols = () => {
 
                                             {/* Action */}
                                             <td className="px-4 py-5 pr-6 text-right">
-                                                <span className="text-xs font-black text-primary group-hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-1 ml-auto whitespace-nowrap">
+                                                <span className="text-sm font-black text-primary group-hover:text-slate-300 uppercase tracking-widest transition-colors flex items-center justify-end gap-1 ml-auto whitespace-nowrap">
                                                     Open
                                                     <ChevronRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
                                                 </span>

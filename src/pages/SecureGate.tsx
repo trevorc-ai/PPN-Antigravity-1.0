@@ -13,7 +13,7 @@ const FeatureItem: React.FC<{ text: string; locked?: boolean }> = ({ text, locke
     <span className={`material-symbols-outlined text-lg ${locked ? 'text-slate-600' : 'text-primary font-black'}`}>
       {locked ? 'lock' : 'check_circle'}
     </span>
-    <span className="text-xs font-bold text-slate-300 tracking-tight">{text}</span>
+    <span className="text-sm font-bold text-slate-300 tracking-tight">{text}</span>
   </div>
 );
 
@@ -32,8 +32,8 @@ const PricingCard: React.FC<{
 }> = ({ type, title, price, priceSub, buttonText, buttonClass, features, lockedFeatures, isPrimary, tag, onAction }) => (
   <div className={`flex flex-col bg-[#1c222d]/40 border ${isPrimary ? 'border-primary/50 shadow-2xl shadow-primary/10' : 'border-slate-800'} rounded-[3rem] p-10 sm:p-12 transition-all hover:bg-[#1c222d]/60 group`}>
     <div className="flex justify-between items-start mb-4">
-      <span className="text-xs font-black text-primary tracking-[0.2em]">{type}</span>
-      {tag && <span className="px-3 py-1 rounded-xl bg-accent-amber/10 text-accent-amber border border-accent-amber/20 text-xs font-black tracking-widest">{tag}</span>}
+      <span className="text-sm font-black text-primary tracking-[0.2em]">{type}</span>
+      {tag && <span className="px-3 py-1 rounded-xl bg-accent-amber/10 text-accent-amber border border-accent-amber/20 text-sm font-black tracking-widest">{tag}</span>}
     </div>
     <h3 className="text-3xl font-black text-slate-300 tracking-tight mb-8">{title}</h3>
 
@@ -82,12 +82,12 @@ const Testimonial: React.FC<{ name: string; role: string; quote: string; image: 
 const NewsSnippet: React.FC<{ title: string; category: string; time: string }> = ({ title, category, time }) => (
   <div className="py-4 border-b border-slate-800/40 last:border-none group cursor-pointer hover:bg-white/[0.02] -mx-4 px-4 rounded-2xl transition-colors h-auto">
     <div className="flex items-center gap-3 mb-2">
-      <span className={`px-2 py-1 rounded-lg text-xs font-black tracking-widest ${category === 'Regulatory' ? 'bg-primary/10 text-primary border border-primary/20' :
+      <span className={`px-2 py-1 rounded-lg text-sm font-black tracking-widest ${category === 'Regulatory' ? 'bg-primary/10 text-primary border border-primary/20' :
         'bg-slate-800 text-slate-300 border border-slate-700'
         }`}>
         {category}
       </span>
-      <span className="text-xs font-mono text-slate-600 tracking-widest">{time}</span>
+      <span className="text-sm font-mono text-slate-600 tracking-widest">{time}</span>
     </div>
     <h4 className="text-sm font-medium text-slate-300 group-hover:text-slate-300 transition-colors line-clamp-1 leading-tight tracking-tight">{title}</h4>
   </div>
@@ -120,7 +120,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
           {/* Back to Dashboard Navigation */}
           <button
             onClick={() => navigate('/dashboard')}
-            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-200 transition-colors group self-start"
+            className="flex items-center gap-1.5 text-sm font-black uppercase tracking-widest text-slate-400 hover:text-slate-200 transition-colors group self-start"
           >
             <span className="material-symbols-outlined text-[15px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
             Back to Dashboard
@@ -129,7 +129,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <div className="space-y-6">
               <div className="flex items-center gap-4 text-primary mb-4">
                 <span className="material-symbols-outlined font-black text-xl">verified_user</span>
-                <span className="text-xs font-black tracking-[0.5em]">Verified Practitioner Access</span>
+                <span className="text-sm font-black tracking-[0.5em]">Verified Practitioner Access</span>
               </div>
               <h1 className="text-4xl sm:text-8xl font-black tracking-tighter text-slate-300 leading-[1.0]">
                 Psychedelic <br />
@@ -147,7 +147,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             <div className="bg-slate-900/40 border-l-4 border-[#f59e0b] rounded-r-[3rem] p-10 space-y-6 shadow-2xl backdrop-blur-sm flex flex-col justify-center">
               <div className="flex items-center gap-3 text-[#f59e0b]">
                 <span className="material-symbols-outlined font-black text-2xl">emoji_objects</span>
-                <span className="text-xs font-black tracking-[0.4em]">Institutional Mission</span>
+                <span className="text-sm font-black tracking-[0.4em]">Institutional Mission</span>
               </div>
               <p className="text-xl sm:text-2xl font-medium text-slate-300 italic leading-snug tracking-tight">
                 "Advancing clinical excellence through collaborative research and cross-node data insights."
@@ -158,7 +158,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4 text-primary">
                   <span className="material-symbols-outlined font-black text-2xl">newspaper</span>
-                  <span className="text-xs font-black tracking-[0.4em]">Latest Dispatches</span>
+                  <span className="text-sm font-black tracking-[0.4em]">Latest Dispatches</span>
                 </div>
               </div>
               <div className="space-y-2">
@@ -205,7 +205,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                   <p className="text-slate-500 text-sm font-bold mt-1">Authorized Personnel Only</p>
                 </div>
               </div>
-              <p className="text-slate-300 text-xs font-medium leading-relaxed">
+              <p className="text-slate-300 text-sm font-medium leading-relaxed">
                 Access to the PPN Portal requires a verified practitioner credential. Sessions are logged and audited.
               </p>
               <button
@@ -405,7 +405,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                 <div key={loc} className="space-y-4 group cursor-default">
                   <p className="text-3xl font-black text-slate-300 group-hover:text-primary transition-colors leading-none">{loc}</p>
                   <div className="flex items-center justify-center gap-2.5">
-                    <span className="text-xs font-black text-slate-600 tracking-widest">Founding Region</span>
+                    <span className="text-sm font-black text-slate-600 tracking-widest">Founding Region</span>
                   </div>
                 </div>
               ))}
@@ -509,7 +509,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
             </button>
           </div>
           <div className="flex items-center justify-center gap-10 pt-12 opacity-20 grayscale hover:opacity-50 transition-opacity">
-            <span className="text-xs font-black text-slate-500 tracking-[0.4em]">Compliance Matrix:</span>
+            <span className="text-sm font-black text-slate-500 tracking-[0.4em]">Compliance Matrix:</span>
             <span className="text-2xl font-black text-slate-300 italic tracking-tighter">HIPAA</span>
             <span className="text-2xl font-black text-slate-300 italic tracking-tighter">GDPR</span>
             <span className="text-2xl font-black text-slate-300 italic tracking-tighter">GMP</span>

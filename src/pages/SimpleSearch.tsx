@@ -204,7 +204,7 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-black text-slate-100 leading-tight">{label}</h3>
-          <p className="text-xs text-slate-400 mt-1 leading-relaxed">{description}</p>
+          <p className="text-sm text-slate-400 mt-1 leading-relaxed">{description}</p>
         </div>
         <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0 ml-2" />
       </div>
@@ -217,12 +217,12 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
           <Icon className={`w-6 h-6 ${iconColor}`} aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={`text-xs font-black uppercase tracking-widest ${tagColor} mb-1`}>{tagline}</p>
+          <p className={`text-sm font-black uppercase tracking-widest ${tagColor} mb-1`}>{tagline}</p>
           <h3 className="text-lg font-black text-slate-100 mb-2 leading-snug">{label}</h3>
           <p className="text-sm text-slate-300/80 leading-relaxed line-clamp-3">{description}</p>
         </div>
         <div className="flex items-center justify-end">
-          <span className={`flex items-center gap-1 text-xs font-black ${tagColor} opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 duration-300`}>
+          <span className={`flex items-center gap-1 text-sm font-black ${tagColor} opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 duration-300`}>
             Open <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>

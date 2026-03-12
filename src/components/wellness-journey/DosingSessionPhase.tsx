@@ -279,7 +279,7 @@ const CompanionVideo: React.FC = () => (
     >
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
         <div className="absolute top-5 left-0 right-0 text-center z-20">
-            <p className="text-white/20 text-xs tracking-[0.2em]">
+            <p className="text-white/20 text-sm tracking-[0.2em]">
                 Tap to quietly log your state
             </p>
         </div>
@@ -835,7 +835,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <h2 className="text-2xl font-black text-[#A8B5D1]">Session Closeout</h2>
                             <p className="text-slate-400 mt-1">Complete mandatory post-session documentation.</p>
                         </div>
-                        <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full text-xs font-bold uppercase tracking-wider">
+                        <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full text-sm font-bold uppercase tracking-wider">
                             Phase 2: Closeout
                         </div>
                     </div>
@@ -848,7 +848,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 </div>
                                 <span className="text-[#A8B5D1] font-bold line-through decoration-emerald-500/50 decoration-2">Session End Time Recorded</span>
                             </div>
-                            <span className="text-xs font-mono text-emerald-600 font-bold px-2 py-1 bg-emerald-500/10 rounded">AUTO</span>
+                            <span className="text-sm font-mono text-emerald-600 font-bold px-2 py-1 bg-emerald-500/10 rounded">AUTO</span>
                         </div>
 
                         <button
@@ -869,10 +869,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <span className={assessmentCompleted ? 'text-[#A8B5D1] font-bold line-through opacity-50' : 'text-[#A8B5D1] font-bold'}>
                                         Post-Session Assessments
                                     </span>
-                                    <span className="text-xs text-slate-400">MEQ-30, EDI, CEQ (Standard Battery)</span>
+                                    <span className="text-sm text-slate-400">MEQ-30, EDI, CEQ (Standard Battery)</span>
                                 </div>
                             </div>
-                            {assessmentCompleted && <span className="text-xs font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded border border-emerald-500/20">COMPLETED</span>}
+                            {assessmentCompleted && <span className="text-sm font-bold text-emerald-500 px-2 py-1 bg-emerald-500/10 rounded border border-emerald-500/20">COMPLETED</span>}
                         </button>
 
                         <div className={`p-5 rounded-2xl flex items-center justify-between transition-all ${hasSafetyEvents
@@ -891,7 +891,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     Review Safety Events {hasSafetyEvents ? '' : '(0)'}
                                 </span>
                             </div>
-                            <span className={`text-xs font-bold border px-2 py-1 rounded ${hasSafetyEvents
+                            <span className={`text-sm font-bold border px-2 py-1 rounded ${hasSafetyEvents
                                 ? 'text-amber-400 border-amber-700/40 bg-amber-500/10'
                                 : 'text-slate-600 border-slate-700'
                                 }`}>
@@ -929,7 +929,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         {!assessmentCompleted && (
                             <div className="flex items-center gap-2 mt-4 text-red-400/80 bg-red-950/20 px-3 py-1 rounded-full border border-red-900/30">
                                 <AlertTriangle className="w-3 h-3" />
-                                <span className="text-xs font-bold">Pending: Post-Session Assessments</span>
+                                <span className="text-sm font-bold">Pending: Post-Session Assessments</span>
                             </div>
                         )}
                     </div>
@@ -1027,7 +1027,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         {PHASE2_STEPS.map((step, index) => (
                             <div
                                 key={step.id}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold ${step.isComplete
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-bold ${step.isComplete
                                     ? 'bg-amber-900/30 border-amber-600/40 text-amber-300'
                                     : 'bg-slate-800/40 border-slate-700/40 text-slate-500'
                                     }`}
@@ -1036,7 +1036,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     ? <CheckCircle2 className="w-3 h-3 text-amber-400" aria-hidden="true" />
                                     : <span className="material-symbols-outlined text-[12px]">{step.icon}</span>}
                                 <span>Step {index + 1}</span>
-                                <span className="text-xs opacity-60 hidden sm:inline">{step.label}</span>
+                                <span className="text-sm opacity-60 hidden sm:inline">{step.label}</span>
                             </div>
                         ))}
                     </div>
@@ -1235,7 +1235,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                                 href={link.url}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-900/50 border border-red-600/40 text-red-300 hover:text-white hover:bg-red-800/60 hover:border-red-500/60 transition-colors text-xs font-semibold"
+                                                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-900/50 border border-red-600/40 text-red-300 hover:text-white hover:bg-red-800/60 hover:border-red-500/60 transition-colors text-sm font-semibold"
                                                                 aria-label={`Read source: ${link.label}`}
                                                             >
                                                                 <span className="material-symbols-outlined text-[12px]">open_in_new</span>
@@ -1246,7 +1246,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                 )}
                                                 {/* Fallback: raw citation if no URL matched */}
                                                 {sourceLinks.length === 0 && flag.regulatoryBasis && (
-                                                    <p className="text-red-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>
+                                                    <p className="text-red-500/60 text-sm mt-1 font-mono">{flag.regulatoryBasis}</p>
                                                 )}
                                             </div>
                                         </div>
@@ -1255,9 +1255,9 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             </div>
                             {/* Current meds footer */}
                             <div className="pt-3 border-t border-red-800/40 flex items-center gap-2 flex-wrap">
-                                <span className="text-xs uppercase tracking-widest font-bold text-red-500">Patient Medications:</span>
+                                <span className="text-sm uppercase tracking-widest font-bold text-red-500">Patient Medications:</span>
                                 {patientMeds.map((med, i) => (
-                                    <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-900/40 border border-red-700/40 text-red-300 text-xs font-semibold">
+                                    <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-900/40 border border-red-700/40 text-red-300 text-sm font-semibold">
                                         <Pill className="w-3 h-3" />{med}
                                     </span>
                                 ))}
@@ -1288,7 +1288,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                             href={link.url}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-900/50 border border-amber-600/40 text-amber-300 hover:text-white hover:bg-amber-800/60 hover:border-amber-500/60 transition-colors text-xs font-semibold"
+                                                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-900/50 border border-amber-600/40 text-amber-300 hover:text-white hover:bg-amber-800/60 hover:border-amber-500/60 transition-colors text-sm font-semibold"
                                                             aria-label={`Read source: ${link.label}`}
                                                         >
                                                             <span className="material-symbols-outlined text-[12px]">open_in_new</span>
@@ -1298,16 +1298,16 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                 </div>
                                             )}
                                             {sourceLinks.length === 0 && flag.regulatoryBasis && (
-                                                <p className="text-amber-500/60 text-xs mt-1 font-mono">{flag.regulatoryBasis}</p>
+                                                <p className="text-amber-500/60 text-sm mt-1 font-mono">{flag.regulatoryBasis}</p>
                                             )}
                                         </div>
                                     </div>
                                 );
                             })}
                             <div className="pt-2 border-t border-amber-800/40 flex items-center gap-2 flex-wrap">
-                                <span className="text-xs uppercase tracking-widest font-bold text-amber-500">Current Medications:</span>
+                                <span className="text-sm uppercase tracking-widest font-bold text-amber-500">Current Medications:</span>
                                 {patientMeds.map((med, i) => (
-                                    <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-900/40 border border-amber-700/40 text-amber-300 text-xs font-semibold">
+                                    <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-900/40 border border-amber-700/40 text-amber-300 text-sm font-semibold">
                                         <Pill className="w-3 h-3" />{med}
                                     </span>
                                 ))}
@@ -1318,10 +1318,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     /* ══ ALL CLEAR or no substance yet, compact strip ══ */
                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
+                            <p className="text-sm uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
                             <div className="flex flex-wrap gap-1.5">
                                 {patientMeds.map((med, i) => (
-                                    <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
+                                    <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-sm font-semibold">
                                         <Pill className="w-3 h-3 text-slate-500" />{med}
                                     </span>
                                 ))}
@@ -1329,7 +1329,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
                         <div className="flex-shrink-0">
                             {!contraindicationResults ? (
-                                <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                                <span className="flex items-center gap-1.5 text-sm font-semibold text-slate-500">
                                     <ShieldAlert className="w-4 h-4" /> No substance selected
                                 </span>
                             ) : (
@@ -1351,7 +1351,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         {/* ── Left: Session status + elapsed timer ── */}
                         <div className="flex items-center gap-5">
                             <div>
-                                <p className="text-xs uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-0.5">
+                                <p className="text-sm uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-0.5">
                                     {isLive ? 'Session Active' : 'Session Timer'}
                                 </p>
                                 <p className="text-2xl font-black text-emerald-50/90 font-mono tracking-tight leading-none tabular-nums">
@@ -1370,25 +1370,25 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 return (
                                     <div className="flex items-stretch gap-0 bg-[#040C0E]/60 rounded-xl border border-[#14343B]/40 overflow-hidden">
                                         <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
+                                            <p className="text-sm uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
                                             <div className="flex items-center gap-1 justify-center">
                                                 <Heart className="w-3 h-3 text-rose-500/80 fill-rose-500/30 animate-pulse" />
                                                 <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestHr}</p>
-                                                <p className="text-xs text-slate-600 font-semibold self-end mb-0.5">bpm</p>
+                                                <p className="text-sm text-slate-600 font-semibold self-end mb-0.5">bpm</p>
                                             </div>
                                         </div>
                                         <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
+                                            <p className="text-sm uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
                                             <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestBp}</p>
                                         </div>
                                         <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
+                                            <p className="text-sm uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
                                             <p className={`text-xl font-black leading-none tabular-nums ${latestSpo2 < 95 ? 'text-amber-400' : 'text-emerald-100'
                                                 }`}>{latestSpo2}%</p>
                                         </div>
                                         <div className="px-3 py-2.5 flex flex-col justify-center">
-                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold">Last logged</p>
-                                            <p className="text-xs font-mono text-slate-500 leading-tight mt-0.5">
+                                            <p className="text-sm uppercase tracking-widest text-[#507882] font-semibold">Last logged</p>
+                                            <p className="text-sm font-mono text-slate-500 leading-tight mt-0.5">
                                                 {lastTime ?? '— not yet recorded'}
                                             </p>
                                         </div>
@@ -1417,7 +1417,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <Activity className="w-4 h-4 text-indigo-400" aria-hidden="true" />
                                     <span className="text-sm font-bold text-[#A8B5D1] uppercase tracking-widest">Session Vitals Trend</span>
                                     {activePanel !== 'graph' && (
-                                        <span className="text-xs text-slate-600 font-semibold">— collapsed</span>
+                                        <span className="text-sm text-slate-600 font-semibold">- collapsed</span>
                                     )}
                                 </div>
                                 <ChevronDown
@@ -1477,7 +1477,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         <button
                                             key={key}
                                             onClick={e => { e.stopPropagation(); setChartVisible(prev => ({ ...prev, [key]: !prev[key] })); }}
-                                            className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider transition-colors border ${chartVisible[key]
+                                            className={`px-2 py-0.5 rounded text-sm font-bold uppercase tracking-wider transition-colors border ${chartVisible[key]
                                                 ? key === 'hr' ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
                                                     : key === 'bp' ? 'bg-blue-500/20 border-blue-500/40 text-blue-300'
                                                         : key === 'temp' ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
@@ -1521,7 +1521,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <ClipboardList className="w-4 h-4 text-emerald-400" aria-hidden="true" />
                                     <span className="text-sm font-bold text-emerald-300/80 uppercase tracking-widest">Session Update</span>
                                     {activePanel === 'update' && (
-                                        <span className="text-xs text-slate-500">T+{elapsedTime} · {new Date().toLocaleTimeString()}</span>
+                                        <span className="text-sm text-slate-500">T+{elapsedTime} · {new Date().toLocaleTimeString()}</span>
                                     )}
                                 </div>
                                 <ChevronDown
@@ -1533,7 +1533,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 <div id="cockpit-update" className="border-t border-emerald-500/20 p-4 space-y-4 animate-in slide-in-from-top-1 duration-150">
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                         <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Patient Affect</label>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide mb-1.5">Patient Affect</label>
                                             <select value={updateAffect} onChange={e => setUpdateAffect(e.target.value)}
                                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
                                                 <option value="">— Select —</option>
@@ -1542,7 +1542,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Responsiveness</label>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide mb-1.5">Responsiveness</label>
                                             <select value={updateResponsiveness} onChange={e => setUpdateResponsiveness(e.target.value)}
                                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
                                                 <option value="">— Select —</option>
@@ -1552,7 +1552,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Physical Comfort</label>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide mb-1.5">Physical Comfort</label>
                                             <select value={updateComfort} onChange={e => setUpdateComfort(e.target.value)}
                                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all">
                                                 <option value="">— Select —</option>
@@ -1564,26 +1564,26 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     </div>
                                     <div className="grid grid-cols-3 gap-3">
                                         <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm), optional</label>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide mb-1.5">HR (bpm), optional</label>
                                             <input type="number" min="30" max="220" placeholder="e.g. 88" value={updateHR} onChange={e => setUpdateHR(e.target.value)}
                                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic, optional</label>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide mb-1.5">Systolic, optional</label>
                                             <input type="number" placeholder="e.g. 120" value={updateBPSys} onChange={e => setUpdateBPSys(e.target.value)}
                                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic, optional</label>
+                                            <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide mb-1.5">Diastolic, optional</label>
                                             <input type="number" placeholder="e.g. 80" value={updateBPDia} onChange={e => setUpdateBPDia(e.target.value)}
                                                 className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all" />
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note, optional</label>
+                                        <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note, optional</label>
                                         <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
                                             className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
-                                        <p className="text-xs text-slate-600 mt-1 italic">Affect, responsiveness, and vitals are persisted to the clinical record.</p>
+                                        <p className="text-sm text-slate-600 mt-1 italic">Affect, responsiveness, and vitals are persisted to the clinical record.</p>
                                     </div>
                                     <button onClick={handleSaveUpdate}
                                         className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl transition-all active:scale-95">
@@ -1612,7 +1612,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                             }
                                         }}
                                         aria-label={`Log: ${action.label}`}
-                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold min-h-[36px] transition-colors active:scale-95 ${action.color}`}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-bold min-h-[36px] transition-colors active:scale-95 ${action.color}`}
                                     >
                                         <IconComp className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                                         {action.label}
@@ -1622,7 +1622,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <div className="flex-1" />
                             <button
                                 onClick={() => setShowCompanion(true)}
-                                className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 font-semibold rounded-xl border border-indigo-500/30 transition-colors uppercase tracking-widest text-xs flex items-center gap-1.5"
+                                className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 font-semibold rounded-xl border border-indigo-500/30 transition-colors uppercase tracking-widest text-sm flex items-center gap-1.5"
                                 aria-label="Open patient companion view"
                             >
                                 <Sparkles className="w-3.5 h-3.5" />
@@ -1649,7 +1649,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         onCompletePhase();
                                     }
                                 }}
-                                className="px-5 py-2 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-xs flex items-center gap-2 group"
+                                className="px-5 py-2 bg-[#0A1F24] hover:bg-[#0E292E] text-[#6E9CA8] hover:text-[#A3C7D2] font-semibold rounded-xl border border-[#14343B] transition-colors uppercase tracking-[0.15em] text-sm flex items-center gap-2 group"
                             >
                                 End Dosing Session
                                 <ArrowRight className="w-3.5 h-3.5 opacity-50 group-hover:translate-x-0.5 transition-transform" />
@@ -1732,11 +1732,11 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 {/* Keyboard shortcuts hint */}
                 {isLive && (
                     <div className="flex items-center justify-center gap-4 px-4 py-2.5 bg-slate-900/40 border border-slate-800/50 rounded-xl">
-                        <p className="text-xs font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
+                        <p className="text-sm font-bold uppercase tracking-widest text-slate-600">Quick Keys:</p>
                         {[{ key: 'U', label: 'Update' }, { key: 'V', label: 'Vitals' }, { key: 'A', label: 'Adverse' }].map(({ key, label }) => (
                             <div key={key} className="flex items-center gap-1.5">
-                                <kbd className="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 border border-slate-700 text-xs font-mono font-bold text-slate-400">{key}</kbd>
-                                <span className="text-xs text-slate-600">{label}</span>
+                                <kbd className="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-800 border border-slate-700 text-sm font-mono font-bold text-slate-400">{key}</kbd>
+                                <span className="text-sm text-slate-600">{label}</span>
                             </div>
                         ))}
                     </div>
@@ -1757,7 +1757,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <X className="w-4 h-4" />
                         </button>
                         <div className="absolute top-4 right-16 z-50 flex items-center h-10">
-                            <span className="text-xs font-bold tracking-widest text-white/25 uppercase">Return to session</span>
+                            <span className="text-sm font-bold tracking-widest text-white/25 uppercase">Return to session</span>
                         </div>
 
                         {/* Full-screen flex-col: video fills top, buttons at bottom */}

@@ -68,39 +68,39 @@ const UpdateCredentialsModal: React.FC<{
                 </button>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Title</label>
+                    <label className="text-sm font-black text-slate-500 uppercase tracking-widest ml-1">Title</label>
                     <input
                       type="text"
                       value={cred.title}
                       onChange={(e) => handleChange(i, 'title', e.target.value)}
-                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-xs font-bold text-slate-300 focus:ring-1 focus:ring-primary"
+                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-sm font-bold text-slate-300 focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">ID / Number</label>
+                    <label className="text-sm font-black text-slate-500 uppercase tracking-widest ml-1">ID / Number</label>
                     <input
                       type="text"
                       value={cred.id}
                       onChange={(e) => handleChange(i, 'id', e.target.value)}
-                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-xs font-mono text-slate-300 focus:ring-1 focus:ring-primary"
+                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Expiration</label>
+                    <label className="text-sm font-black text-slate-500 uppercase tracking-widest ml-1">Expiration</label>
                     <input
                       type="text"
                       value={cred.date}
                       onChange={(e) => handleChange(i, 'date', e.target.value)}
-                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-xs font-bold text-slate-300 focus:ring-1 focus:ring-primary"
+                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-sm font-bold text-slate-300 focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Material Icon</label>
+                    <label className="text-sm font-black text-slate-500 uppercase tracking-widest ml-1">Material Icon</label>
                     <input
                       type="text"
                       value={cred.icon}
                       onChange={(e) => handleChange(i, 'icon', e.target.value)}
-                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-xs font-mono text-slate-300 focus:ring-1 focus:ring-primary"
+                      className="w-full bg-slate-900/50 border border-slate-800 rounded-xl h-10 px-4 text-sm font-mono text-slate-300 focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -111,14 +111,14 @@ const UpdateCredentialsModal: React.FC<{
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               onClick={handleAdd}
-              className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-widest transition-all border border-slate-800 flex items-center justify-center gap-2"
+              className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-widest transition-all border border-slate-800 flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined text-lg">add_circle</span>
               Add Credential
             </button>
             <button
               onClick={() => onSave(localCreds)}
-              className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-xs font-black rounded-2xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20"
+              className="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-2xl uppercase tracking-widest transition-all shadow-xl shadow-primary/20"
             >
               Commit Changes
             </button>
@@ -185,12 +185,12 @@ const ClinicianProfile: React.FC = () => {
           <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={() => navigate('/settings')} // /profile/edit not implemented, routes to account settings
-              className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 border border-primary/30 rounded-2xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
+              className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 border border-primary/30 rounded-2xl text-sm font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
             >
               <span className="material-symbols-outlined text-lg">edit</span>
               Edit Profile
             </button>
-            <button className="flex items-center gap-2 px-6 py-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-2xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all">
+            <button className="flex items-center gap-2 px-6 py-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 rounded-2xl text-sm font-black text-slate-300 uppercase tracking-widest transition-all">
               <span className="material-symbols-outlined text-lg">share</span>
               Share Profile
             </button>
@@ -209,7 +209,7 @@ const ClinicianProfile: React.FC = () => {
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-2">
                   <ShieldCheck size={18} className="text-emerald-500" />
-                  <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Network Trust Score</h3>
+                  <h3 className="text-sm font-black text-emerald-400 uppercase tracking-widest">Network Trust Score</h3>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-black text-slate-300">{reputation.score}</span>
@@ -232,17 +232,17 @@ const ClinicianProfile: React.FC = () => {
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-2">
                   <Database size={18} className="text-indigo-500" />
-                  <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest">Data Protocols Shared</h3>
+                  <h3 className="text-sm font-black text-indigo-400 uppercase tracking-widest">Data Protocols Shared</h3>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-black text-slate-300">{reputation.contributions}</span>
                   <span className="text-sm font-bold text-slate-500">Records</span>
                 </div>
                 <div className="flex items-center gap-2 mt-4">
-                  <span className="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-xs font-bold text-indigo-300 uppercase">
+                  <span className="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-sm font-bold text-indigo-300 uppercase">
                     {reputation.tier}
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-xs font-bold text-amber-300 uppercase">
+                  <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-sm font-bold text-amber-300 uppercase">
                     Gold Tier
                   </span>
                 </div>
@@ -257,7 +257,7 @@ const ClinicianProfile: React.FC = () => {
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-2">
                   <Network size={18} className="text-slate-300" />
-                  <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest">Community Impact</h3>
+                  <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">Community Impact</h3>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-black text-slate-300">{reputation.impact}</span>
@@ -287,7 +287,7 @@ const ClinicianProfile: React.FC = () => {
                 <h2 className="text-3xl font-black text-slate-300 tracking-tight leading-none">{clinician.name}</h2>
                 <p className="text-sm font-bold text-slate-500 italic">{clinician.education}, {clinician.role}</p>
                 <div className="pt-2">
-                  <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border transition-colors ${clinician.status === 'Available' ? 'bg-clinical-green/10 text-clinical-green border-clinical-green/20' :
+                  <span className={`px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-widest border transition-colors ${clinician.status === 'Available' ? 'bg-clinical-green/10 text-clinical-green border-clinical-green/20' :
                     clinician.status === 'In Session' ? 'bg-accent-amber/10 text-accent-amber border-accent-amber/20' :
                       'bg-slate-800 text-slate-500 border-slate-700'
                     }`}>
@@ -303,14 +303,14 @@ const ClinicianProfile: React.FC = () => {
               <div className="w-full space-y-4 text-left p-6 bg-slate-900/40 rounded-[2rem] border border-slate-800/60 shadow-inner">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="material-symbols-outlined text-primary text-lg">psychology</span>
-                  <label className="text-xs font-black text-slate-300 uppercase tracking-[0.2em]">Clinical Specialties</label>
+                  <label className="text-sm font-black text-slate-300 uppercase tracking-[0.2em]">Clinical Specialties</label>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/5">
+                  <span className="px-3 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-lg text-sm font-black uppercase tracking-widest shadow-lg shadow-primary/5">
                     {clinician.specialization}
                   </span>
                   {clinician.tags.map(tag => (
-                    <span key={tag} className="px-3 py-1.5 bg-slate-800/80 text-slate-300 border border-slate-700 rounded-lg text-xs font-black uppercase tracking-widest">
+                    <span key={tag} className="px-3 py-1.5 bg-slate-800/80 text-slate-300 border border-slate-700 rounded-lg text-sm font-black uppercase tracking-widest">
                       {tag}
                     </span>
                   ))}
@@ -323,7 +323,7 @@ const ClinicianProfile: React.FC = () => {
                     <span className="material-symbols-outlined text-lg">badge</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-black text-slate-600 uppercase tracking-widest">NPI Number</span>
+                    <span className="text-sm font-black text-slate-600 uppercase tracking-widest">NPI Number</span>
                     <span className="text-sm font-mono font-black text-slate-300 tracking-tight">1234567890</span>
                   </div>
                 </div>
@@ -333,7 +333,7 @@ const ClinicianProfile: React.FC = () => {
                     <span className="material-symbols-outlined text-lg">mail</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Email Address</span>
+                    <span className="text-sm font-black text-slate-600 uppercase tracking-widest">Email Address</span>
                     <span className="text-sm font-bold text-slate-300 lowercase">{clinician.name.toLowerCase().replace(' ', '.').replace('dr.', '')}@ppnportal.net</span>
                   </div>
                 </div>
@@ -343,14 +343,14 @@ const ClinicianProfile: React.FC = () => {
                     <span className="material-symbols-outlined text-lg">location_on</span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Location</span>
+                    <span className="text-sm font-black text-slate-600 uppercase tracking-widest">Location</span>
                     <span className="text-sm font-bold text-slate-300">{clinician.location}</span>
                   </div>
                 </div>
               </div>
 
               <div className="w-full pt-4 space-y-3">
-                <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest">
+                <div className="flex justify-between items-center text-sm font-black uppercase tracking-widest">
                   <span className="text-slate-500">Profile Completeness</span>
                   <span className="text-primary">85%</span>
                 </div>
@@ -368,7 +368,7 @@ const ClinicianProfile: React.FC = () => {
                     <span className="material-symbols-outlined text-primary text-2xl">verified_user</span>
                     <h3 className="text-xl font-black text-slate-300 tracking-tight">Credentials</h3>
                   </div>
-                  <span className="px-3 py-1 bg-clinical-green/10 text-clinical-green border border-clinical-green/20 rounded-lg text-xs font-black uppercase tracking-widest">All Active</span>
+                  <span className="px-3 py-1 bg-clinical-green/10 text-clinical-green border border-clinical-green/20 rounded-lg text-sm font-black uppercase tracking-widest">All Active</span>
                 </div>
 
                 <div className="space-y-4 flex-1">
@@ -380,10 +380,10 @@ const ClinicianProfile: React.FC = () => {
                         </div>
                         <div className="flex flex-col">
                           <h4 className="text-sm font-black text-slate-300 leading-tight mb-1">{cred.title}</h4>
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{cred.id}</span>
+                          <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">{cred.id}</span>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs font-black text-slate-700 uppercase tracking-tighter">Valid Until</span>
-                            <span className="text-xs font-mono font-black text-slate-300 bg-slate-800 px-2 py-0.5 rounded">{cred.date}</span>
+                            <span className="text-sm font-black text-slate-700 uppercase tracking-tighter">Valid Until</span>
+                            <span className="text-sm font-mono font-black text-slate-300 bg-slate-800 px-2 py-0.5 rounded">{cred.date}</span>
                           </div>
                         </div>
                       </div>
@@ -400,7 +400,7 @@ const ClinicianProfile: React.FC = () => {
                 <div className="mt-auto pt-10">
                   <button
                     onClick={() => setIsUpdateModalOpen(true)}
-                    className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-xs font-black rounded-[1.5rem] uppercase tracking-[0.25em] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group active:scale-95"
+                    className="w-full py-5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-slate-300 text-sm font-black rounded-[1.5rem] uppercase tracking-[0.25em] transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group active:scale-95"
                   >
                     <span className="material-symbols-outlined text-lg group-hover:rotate-12 transition-transform">edit_note</span>
                     Update credentials
@@ -419,15 +419,15 @@ const ClinicianProfile: React.FC = () => {
 
                 <div className="space-y-8">
                   <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Focus Areas</label>
+                    <label className="text-sm font-black text-slate-500 uppercase tracking-widest">Focus Areas</label>
                     <div className="flex flex-wrap gap-2">
                       {clinician.tags.map(tag => (
-                        <span key={tag} className="px-3 py-1 bg-slate-900 text-slate-300 border border-slate-800 rounded-full text-xs font-black uppercase tracking-widest hover:border-primary/50 cursor-default transition-all">
+                        <span key={tag} className="px-3 py-1 bg-slate-900 text-slate-300 border border-slate-800 rounded-full text-sm font-black uppercase tracking-widest hover:border-primary/50 cursor-default transition-all">
                           {tag}
                         </span>
                       ))}
                       {['Depression', 'PTSD'].filter(t => !clinician.tags.includes(t)).map(tag => (
-                        <span key={tag} className="px-3 py-1 bg-slate-900 text-slate-300 border border-slate-800 rounded-full text-xs font-black uppercase tracking-widest">
+                        <span key={tag} className="px-3 py-1 bg-slate-900 text-slate-300 border border-slate-800 rounded-full text-sm font-black uppercase tracking-widest">
                           {tag}
                         </span>
                       ))}
@@ -438,8 +438,8 @@ const ClinicianProfile: React.FC = () => {
 
                   <div className="space-y-5">
                     <div className="flex items-center justify-between">
-                      <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Recent Publications</label>
-                      <button className="text-xs font-black text-primary uppercase tracking-widest hover:underline">View All</button>
+                      <label className="text-sm font-black text-slate-500 uppercase tracking-widest">Recent Publications</label>
+                      <button className="text-sm font-black text-primary uppercase tracking-widest hover:underline">View All</button>
                     </div>
 
                     <div className="space-y-4">
@@ -449,7 +449,7 @@ const ClinicianProfile: React.FC = () => {
                             <span className="material-symbols-outlined text-lg">article</span>
                           </div>
                           <div className="min-w-0">
-                            <h5 className="text-xs font-black text-slate-300 leading-tight group-hover:text-slate-300 transition-colors line-clamp-2">{pub.title}</h5>
+                            <h5 className="text-sm font-black text-slate-300 leading-tight group-hover:text-slate-300 transition-colors line-clamp-2">{pub.title}</h5>
                             <p className="text-sm font-bold text-slate-600 mt-1 uppercase tracking-widest truncate">{pub.source} • {pub.year}</p>
                           </div>
                         </div>

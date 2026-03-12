@@ -852,7 +852,7 @@ const WellnessJourneyInternal: React.FC = () => {
                         {activePhase === 3 && 'Phase 3 — Integration: Post-session monitoring and outcome tracking.'}
                     </p>
                     {/* Mobile: one-line phase indicator instead of full subtitle */}
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1 sm:hidden">
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-1 sm:hidden">
                         {activePhase === 1 && 'Phase 1 · Preparation'}
                         {activePhase === 2 && 'Phase 2 · Dosing Session'}
                         {activePhase === 3 && 'Phase 3 · Integration'}
@@ -871,12 +871,12 @@ const WellnessJourneyInternal: React.FC = () => {
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
                                 </span>
-                                <span className="text-xs font-black text-amber-400 uppercase tracking-widest">Session Live</span>
-                                <span className="text-xs text-slate-500 font-semibold ml-1">{journey.patientId}</span>
+                                <span className="text-sm font-black text-amber-400 uppercase tracking-widest">Session Live</span>
+                                <span className="text-sm text-slate-500 font-semibold ml-1">{journey.patientId}</span>
                             </div>
                             <button
                                 onClick={() => setPatientBarCollapsed(false)}
-                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wide"
+                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-sm sm:text-sm font-bold text-slate-400 uppercase tracking-wide"
                                 aria-label="Expand patient context bar"
                             >
                                 <ChevronDown className="w-4 h-4" /> Patient
@@ -896,11 +896,11 @@ const WellnessJourneyInternal: React.FC = () => {
                             }} />
                             <div className="flex items-center gap-2 flex-nowrap shrink-0">
                                 {/* Patient ID */}
-                                <span className="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
+                                <span className="text-sm sm:text-sm font-semibold text-slate-500 uppercase tracking-wide shrink-0">Patient</span>
                                 <span className="text-sm sm:text-2xl font-bold sm:font-black text-white font-mono tracking-wide shrink-0">{journey.patientId}</span>
                                 {/* TEST MODE badge */}
                                 {journey.patientId.startsWith('TEST-') && (
-                                    <span className="inline-flex min-h-[36px] items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-xs sm:text-sm font-semibold text-amber-400 tracking-wide uppercase shrink-0">
+                                    <span className="inline-flex min-h-[36px] items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 text-sm sm:text-sm font-semibold text-amber-400 tracking-wide uppercase shrink-0">
                                         🧪 TEST MODE
                                     </span>
                                 )}
@@ -926,7 +926,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                 ))}
                                 {/* Condition pill */}
                                 {journey.condition && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-xs sm:text-sm font-semibold shadow-sm shrink-0">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-sm sm:text-sm font-semibold shadow-sm shrink-0">
                                         <span className="text-indigo-400 font-normal">Treating</span>
                                         <span className="text-indigo-200 font-bold">{journey.condition}</span>
                                     </span>
@@ -942,7 +942,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                             setShowPatientModal(true);
                                         }
                                     }}
-                                    className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-slate-800/50 rounded-xl border border-slate-600/50 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm shrink-0"
+                                    className="inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2 bg-slate-800/50 rounded-xl border border-slate-600/50 text-sm sm:text-sm font-semibold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700/50 transition-all shadow-sm shrink-0"
                                     aria-label={activePhase === 1 ? 'Edit demographics config' : 'Lookup existing patient'}
                                 >
                                     {activePhase === 1 ? 'Edit Config' : 'Lookup'}
@@ -965,7 +965,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                                 type: 'success'
                                             });
                                         }}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-xs sm:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group shrink-0"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-sm sm:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group shrink-0"
                                         title="QA Tool: Auto-complete Phase 1 & 2 forms and jump to Phase 3"
                                     >
                                         <span className="material-symbols-outlined text-sm group-hover:animate-pulse">fast_forward</span>
@@ -973,7 +973,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                     </button>
                                 )}
                             </div>
-                            <p className="text-xs sm:text-sm mt-0 sm:mt-0.5 shrink-0 hidden sm:block" style={{ color: '#8B9DC3' }}>
+                            <p className="text-sm sm:text-sm mt-0 sm:mt-0.5 shrink-0 hidden sm:block" style={{ color: '#8B9DC3' }}>
                                 {activePhase === 1 && 'Pre-treatment preparation, complete baseline assessments before session'}
                                 {activePhase === 2 && `Dosing session in progress · ${journey.sessionDate} · Session #${journey.session.sessionNumber}`}
                                 {activePhase === 3 && `Integration phase · ${journey.daysPostSession} days post-session · Monitoring recovery`}
@@ -1001,7 +1001,7 @@ const WellnessJourneyInternal: React.FC = () => {
                         {patientBarCollapsed === false && activePhase === 2 && (
                             <button
                                 onClick={() => setPatientBarCollapsed(true)}
-                                className="flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center gap-2 mt-2 mx-auto px-4 py-2 rounded-xl bg-slate-700/30 border border-slate-700/40 text-xs font-bold text-slate-400 uppercase tracking-wide w-full"
+                                className="flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center gap-2 mt-2 mx-auto px-4 py-2 rounded-xl bg-slate-700/30 border border-slate-700/40 text-sm font-bold text-slate-400 uppercase tracking-wide w-full"
                                 aria-label="Collapse patient context bar"
                             >
                                 <ChevronUp className="w-4 h-4" /> Collapse Context
@@ -1127,7 +1127,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                             <div className="flex gap-2 items-center sm:items-start sm:gap-3 max-w-xl bg-slate-900/60 border border-slate-700/50 px-3 py-2 sm:p-4 rounded-xl shadow-inner">
                                                 <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500 flex-shrink-0 mt-0 sm:mt-0.5" />
                                                 <div>
-                                                    <h4 className="text-xs sm:text-base font-bold text-slate-300 uppercase tracking-wider">Clinical Decision Support Disclaimer</h4>
+                                                    <h4 className="text-sm sm:text-base font-bold text-slate-300 uppercase tracking-wider">Clinical Decision Support Disclaimer</h4>
                                                     {/* Full disclaimer text — hidden on mobile */}
                                                     <p className="hidden sm:block text-sm text-slate-400 leading-relaxed mt-1">
                                                         This system provides statistical data and historical patterns for informational purposes only. It does not provide medical advice, diagnosis, or treatment recommendations. All clinical decisions remain the sole responsibility of the licensed healthcare provider.
@@ -1139,7 +1139,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                             {!isPhaseUnlocked(activePhase + 1 as 1 | 2 | 3) && activePhase < 3 && (
                                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/40 border border-slate-700/40 rounded-lg shadow-sm">
                                                     <Lock className="w-4 h-4 text-slate-500 flex-shrink-0" />
-                                                    <span className="text-xs sm:text-sm text-slate-400 font-medium">
+                                                    <span className="text-sm sm:text-sm text-slate-400 font-medium">
                                                         Phase {activePhase + 1} unlocks after Phase {activePhase}.
                                                     </span>
                                                 </div>

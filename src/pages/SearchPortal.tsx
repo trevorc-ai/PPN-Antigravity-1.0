@@ -50,14 +50,14 @@ const PatientCard: React.FC<{ res: PatientRecord }> = ({ res }) => {
           <h4 className="text-xl font-black tracking-tight leading-tight" style={{ color: '#8B9DC3' }}>
             {condition} • {res.protocol.substance}
           </h4>
-          <p className="text-xs font-medium text-slate-400">{routeName} • {res.protocol.dosage}{res.protocol.dosageUnit || 'mg'}</p>
+          <p className="text-sm font-medium text-slate-400">{routeName} • {res.protocol.dosage}{res.protocol.dosageUnit || 'mg'}</p>
         </div>
-        <span className="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-xs font-mono font-bold text-slate-400">{res.id}</span>
+        <span className="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-sm font-mono font-bold text-slate-400">{res.id}</span>
       </div>
 
       <div className="space-y-3 relative z-10">
         <div className="flex justify-between items-end">
-          <span className="text-xs font-medium text-slate-400">Efficacy ({outcomeType})</span>
+          <span className="text-sm font-medium text-slate-400">Efficacy ({outcomeType})</span>
           <span className={`text-2xl font-black ${isResponder ? 'text-clinical-green' : 'text-slate-300'}`}>▼ {delta} pts</span>
         </div>
         <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -71,18 +71,18 @@ const PatientCard: React.FC<{ res: PatientRecord }> = ({ res }) => {
             <span className={`material-symbols-outlined text-base ${hasSafetyEvent ? 'text-red-500 animate-pulse' : 'text-clinical-green'}`}>
               {hasSafetyEvent ? 'warning' : 'check_circle'}
             </span>
-            <span className={`text-xs font-medium ${hasSafetyEvent ? 'text-red-400' : 'text-slate-300'}`}>
+            <span className={`text-sm font-medium ${hasSafetyEvent ? 'text-red-400' : 'text-slate-300'}`}>
               {hasSafetyEvent ? 'Adverse Event' : 'Safety Nominal'}
             </span>
           </div>
           {hasSafetyEvent && (
-            <span className="text-xs font-mono text-red-500 border border-red-500/30 px-1.5 rounded bg-red-500/10 font-bold">Action Req.</span>
+            <span className="text-sm font-mono text-red-500 border border-red-500/30 px-1.5 rounded bg-red-500/10 font-bold">Action Req.</span>
           )}
         </div>
         {isUnderbooked && (
           <div className="flex items-center gap-2 text-accent-amber bg-accent-amber/5 px-2.5 py-1.5 rounded-lg border border-accent-amber/10">
             <span className="material-symbols-outlined text-sm">schedule</span>
-            <span className="text-xs font-medium">Low Integration Hours</span>
+            <span className="text-sm font-medium">Low Integration Hours</span>
           </div>
         )}
       </div>
@@ -98,8 +98,8 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
       className="group bg-gradient-to-br from-purple-900/30 to-slate-900/70 border-2 border-purple-700/40 hover:border-purple-500/70 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-xl hover:shadow-purple-500/30 cursor-pointer relative overflow-hidden h-full"
     >
       <div className="flex items-center justify-between relative z-10">
-        <div className="px-2 py-1 rounded-lg text-xs font-bold border bg-purple-500/10 text-purple-400 border-purple-500/20">Substance</div>
-        <span className="text-xs font-medium text-slate-400">{sub.schedule}</span>
+        <div className="px-2 py-1 rounded-lg text-sm font-bold border bg-purple-500/10 text-purple-400 border-purple-500/20">Substance</div>
+        <span className="text-sm font-medium text-slate-400">{sub.schedule}</span>
       </div>
       <div className="flex items-center gap-4 relative z-10">
         <div className="size-16 rounded-2xl bg-black/80 border border-slate-700 flex items-center justify-center shrink-0 overflow-hidden shadow-md group-hover:scale-105 transition-transform p-2">
@@ -111,14 +111,14 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
         </div>
         <div className="min-w-0">
           <h4 className="text-lg font-black text-slate-300 truncate group-hover:text-primary transition-colors">{sub.name}</h4>
-          <p className="text-xs text-slate-400 font-medium truncate">{sub.class}</p>
+          <p className="text-sm text-slate-400 font-medium truncate">{sub.class}</p>
         </div>
       </div>
       <div className="pt-3 mt-auto">
         <div className="w-full h-px bg-slate-800/50 mb-3" />
         <div className="flex justify-between items-center">
-          <span className="text-xs font-medium text-slate-400">Efficacy</span>
-          <span className="text-xs font-mono font-bold text-clinical-green">{(sub.efficacy * 100).toFixed(0)}%</span>
+          <span className="text-sm font-medium text-slate-400">Efficacy</span>
+          <span className="text-sm font-mono font-bold text-clinical-green">{(sub.efficacy * 100).toFixed(0)}%</span>
         </div>
       </div>
     </div>
@@ -133,7 +133,7 @@ const ClinicianCard: React.FC<{ clin: Clinician }> = ({ clin }) => {
       className="group bg-gradient-to-br from-blue-900/30 to-slate-900/70 border-2 border-blue-700/40 hover:border-blue-500/70 rounded-[2rem] p-6 transition-all duration-300 flex flex-col gap-4 shadow-xl hover:shadow-blue-500/30 cursor-pointer relative overflow-hidden h-full"
     >
       <div className="flex items-center justify-between relative z-10">
-        <div className="px-2 py-1 rounded-lg text-xs font-bold border bg-blue-500/10 text-blue-400 border-blue-500/20">Clinician</div>
+        <div className="px-2 py-1 rounded-lg text-sm font-bold border bg-blue-500/10 text-blue-400 border-blue-500/20">Clinician</div>
         <span className="material-symbols-outlined text-slate-600 text-sm">verified</span>
       </div>
       <div className="flex items-center gap-4 relative z-10">
@@ -146,12 +146,12 @@ const ClinicianCard: React.FC<{ clin: Clinician }> = ({ clin }) => {
         </div>
         <div className="min-w-0">
           <h4 className="text-lg font-black text-slate-300 truncate group-hover:text-primary transition-colors">{clin.name}</h4>
-          <p className="text-xs text-slate-400 font-medium truncate">{clin.role}</p>
+          <p className="text-sm text-slate-400 font-medium truncate">{clin.role}</p>
         </div>
       </div>
       <div className="flex gap-2 pt-2 relative z-10 mt-auto">
-        <span className="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-xs font-bold text-slate-300">Verified Node</span>
-        <span className="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-xs font-bold text-slate-300">Active</span>
+        <span className="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-sm font-bold text-slate-300">Verified Node</span>
+        <span className="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-sm font-bold text-slate-300">Active</span>
       </div>
     </div>
   );
@@ -352,14 +352,14 @@ const SearchPortal: React.FC = () => {
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => handleCategoryChange(cat.label)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all border flex items-center gap-2 ${isActive
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all border flex items-center gap-2 ${isActive
                     ? 'bg-slate-800 text-slate-300 border-slate-600 shadow-lg'
                     : 'bg-transparent text-slate-500 border-transparent hover:bg-slate-900 hover:text-slate-300'
                     }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">{cat.icon}</span>
                   {cat.label}
-                  <span className={`px-1.5 py-0.5 rounded text-xs font-mono font-bold ${isActive ? 'bg-slate-700 text-slate-300' : 'bg-slate-900 text-slate-500'}`}>
+                  <span className={`px-1.5 py-0.5 rounded text-sm font-mono font-bold ${isActive ? 'bg-slate-700 text-slate-300' : 'bg-slate-900 text-slate-500'}`}>
                     {counts[cat.label]}
                   </span>
                 </button>
@@ -370,12 +370,12 @@ const SearchPortal: React.FC = () => {
           {/* Inline efficacy filter, only when Patients/Safety active */}
           {(activeCategory === 'Patients' || activeCategory === 'Safety') && (
             <div className="flex flex-wrap justify-center gap-2 animate-in fade-in duration-200" role="group" aria-label="Efficacy filter">
-              <span className="text-xs font-bold text-slate-500 self-center">Min efficacy:</span>
+              <span className="text-sm font-bold text-slate-500 self-center">Min efficacy:</span>
               {EFFICACY_OPTIONS.map(opt => (
                 <button
                   key={opt}
                   onClick={() => setMinEfficacy(opt)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${minEfficacy === opt
+                  className={`px-3 py-1.5 rounded-full text-sm font-bold border transition-all ${minEfficacy === opt
                     ? 'bg-primary/20 border-primary text-slate-300'
                     : 'bg-transparent border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300'
                     }`}
@@ -405,13 +405,13 @@ const SearchPortal: React.FC = () => {
                     <div className="size-8 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
                       <span className="material-symbols-outlined text-lg animate-pulse">psychology</span>
                     </div>
-                    <span className="text-xs font-bold text-indigo-300">Neural Copilot</span>
+                    <span className="text-sm font-bold text-indigo-300">Neural Copilot</span>
                   </div>
                   {isAiLoading ? (
                     <div className="space-y-3">
                       <div className="h-1.5 bg-indigo-500/10 rounded-full w-3/4 animate-pulse" />
                       <div className="h-1.5 bg-indigo-500/10 rounded-full w-1/2 animate-pulse" />
-                      <p className="text-xs font-medium text-indigo-400/60 mt-2">Querying global research nodes...</p>
+                      <p className="text-sm font-medium text-indigo-400/60 mt-2">Querying global research nodes...</p>
                     </div>
                   ) : (
                     <div className="space-y-4" aria-live="polite">
@@ -426,9 +426,9 @@ const SearchPortal: React.FC = () => {
                               href={chunk.web!.uri}
                               target="_blank"
                               rel="noreferrer"
-                              className="px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-xs font-black text-indigo-300 tracking-widest flex items-center gap-2 hover:bg-indigo-500/20 transition-all"
+                              className="px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-sm font-black text-indigo-300 tracking-widest flex items-center gap-2 hover:bg-indigo-500/20 transition-all"
                             >
-                              <span className="material-symbols-outlined text-xs">link</span>
+                              <span className="material-symbols-outlined text-sm">link</span>
                               {chunk.web!.title?.slice(0, 20) || 'Source'}...
                             </a>
                           ))}

@@ -207,8 +207,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                         <h2 className="text-2xl font-black text-slate-300">{config.name}</h2>
                         <p className="text-slate-300 text-base mt-1">{config.description}</p>
                         <div className="mt-4 hidden md:inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
-                            <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/20 px-2 py-0.5 rounded">Pro Tip</span>
-                            <span className="text-xs text-indigo-300/80">Use your keyboard numbers (1-5) to quickly answer questions.</span>
+                            <span className="text-sm font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/20 px-2 py-0.5 rounded">Pro Tip</span>
+                            <span className="text-sm text-indigo-300/80">Use your keyboard numbers (1-5) to quickly answer questions.</span>
                         </div>
                     </div>
                     {isSaving && (
@@ -309,7 +309,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                                                 }`}
                                         >
                                             <span className="text-base font-black mb-0.5">{option.value}</span>
-                                            <span className={`text-xs font-medium text-center leading-tight ${responses[question.id] === option.value ? 'text-white/90' : 'text-slate-400'}`}>
+                                            <span className={`text-sm font-medium text-center leading-tight ${responses[question.id] === option.value ? 'text-white/90' : 'text-slate-400'}`}>
                                                 {option.label}
                                             </span>
                                         </button>
@@ -369,7 +369,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({
                         {onSkip && (
                             <button
                                 onClick={handleSkip}
-                                className="text-xs text-slate-500 hover:text-slate-300 underline underline-offset-2 transition-colors"
+                                className="text-sm text-slate-500 hover:text-slate-300 underline underline-offset-2 transition-colors"
                             >
                                 Skip this assessment
                             </button>

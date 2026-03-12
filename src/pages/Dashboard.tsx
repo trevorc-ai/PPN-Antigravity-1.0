@@ -55,13 +55,13 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
         </div>
         {percentile && (
           <div className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-inner">
-            <span className="text-xs font-black text-emerald-400 tracking-wide">{percentile}</span>
+            <span className="text-sm font-black text-emerald-400 tracking-wide">{percentile}</span>
           </div>
         )}
       </div>
 
       <div className="relative z-10">
-        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{title}</h3>
+        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">{title}</h3>
         <div className={`text-2xl sm:text-4xl font-black tracking-tighter mb-2 ${styles.text}`}>{value}</div>
 
         <div className="flex flex-wrap items-center gap-2 text-sm mb-1">
@@ -70,7 +70,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
           </span>
           <span className="text-slate-500 font-medium tracking-wide">vs last month</span>
         </div>
-        <div className="text-xs font-bold text-slate-600 uppercase tracking-widest">
+        <div className="text-sm font-bold text-slate-600 uppercase tracking-widest">
           {comparison}
         </div>
       </div>
@@ -137,7 +137,7 @@ const MetricPill: React.FC<MetricPillProps> = ({ icon: Icon, label, value, color
       <Icon className={`w-5 h-5 text-${color}-500`} />
     </div>
     <div>
-      <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</div>
+      <div className="text-sm font-bold text-slate-500 uppercase tracking-widest">{label}</div>
       <div className="text-xl font-black text-slate-300">{value}</div>
     </div>
   </div>
@@ -194,13 +194,13 @@ export default function Dashboard() {
             <div className="flex items-center gap-3 mb-2">
               <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
+                <span className="text-sm font-bold text-emerald-400 uppercase tracking-wide">System Online</span>
               </span>
               <button
                 onClick={refetch}
                 disabled={protocolsLoading}
                 title={lastFetchedAt ? `Last updated: ${lastFetchedAt.toLocaleTimeString()}` : 'Refresh data'}
-                className="min-h-[44px] min-w-[44px] px-3 flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-transparent text-xs font-bold text-slate-500 hover:bg-slate-800/50 active:scale-95 transition-all"
+                className="min-h-[44px] min-w-[44px] px-3 flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-transparent text-sm font-bold text-slate-500 hover:bg-slate-800/50 active:scale-95 transition-all"
               >
                 {protocolsLoading ? '...' : '↻ Refresh'}
               </button>
@@ -216,7 +216,7 @@ export default function Dashboard() {
         <Section spacing="tight">
           <div className="flex items-center justify-between mb-3 sm:mb-6">
             <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
-            <span className="text-xs text-slate-500 font-medium">This Month</span>
+            <span className="text-sm text-slate-500 font-medium">This Month</span>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <ClinicPerformanceCard
@@ -283,7 +283,7 @@ export default function Dashboard() {
               </div>
               <div className="text-center relative z-10">
                 <p className="text-sm font-black text-indigo-200 leading-tight">Log Protocol</p>
-                <p className="text-xs text-indigo-400/70 mt-0.5 hidden sm:block">New session</p>
+                <p className="text-sm text-indigo-400/70 mt-0.5 hidden sm:block">New session</p>
               </div>
             </button>
 
@@ -303,7 +303,7 @@ export default function Dashboard() {
               </div>
               <div className="text-center relative z-10">
                 <p className="text-sm font-black text-blue-200 leading-tight">Analytics</p>
-                <p className="text-xs text-blue-400/70 mt-0.5 hidden sm:block">Outcomes</p>
+                <p className="text-sm text-blue-400/70 mt-0.5 hidden sm:block">Outcomes</p>
               </div>
             </button>
 
@@ -324,7 +324,7 @@ export default function Dashboard() {
               </div>
               <div className="text-center relative z-10">
                 <p className="text-sm font-black text-amber-200 leading-tight">Interactions</p>
-                <p className="text-xs text-amber-400/70 mt-0.5 hidden sm:block">Drug checker</p>
+                <p className="text-sm text-amber-400/70 mt-0.5 hidden sm:block">Drug checker</p>
               </div>
             </button>
 
@@ -344,7 +344,7 @@ export default function Dashboard() {
               </div>
               <div className="text-center relative z-10">
                 <p className="text-sm font-black text-emerald-200 leading-tight">Export Data</p>
-                <p className="text-xs text-emerald-400/70 mt-0.5 hidden sm:block">CSV / PDF</p>
+                <p className="text-sm text-emerald-400/70 mt-0.5 hidden sm:block">CSV / PDF</p>
               </div>
             </button>
 
@@ -364,7 +364,7 @@ export default function Dashboard() {
               </div>
               <div className="text-center relative z-10">
                 <p className="text-sm font-black text-purple-200 leading-tight">Benchmarks</p>
-                <p className="text-xs text-purple-400/70 mt-0.5 hidden sm:block">Peer network</p>
+                <p className="text-sm text-purple-400/70 mt-0.5 hidden sm:block">Peer network</p>
               </div>
             </button>
 
@@ -384,7 +384,7 @@ export default function Dashboard() {
               </div>
               <div className="text-center relative z-10">
                 <p className="text-sm font-black text-rose-200 leading-tight">Share PPN</p>
-                <p className="text-xs text-rose-400/70 mt-0.5 hidden sm:block">Invite network</p>
+                <p className="text-sm text-rose-400/70 mt-0.5 hidden sm:block">Invite network</p>
               </div>
             </button>
 
@@ -410,7 +410,7 @@ export default function Dashboard() {
         <Section spacing="tight" className="hidden">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Network Activity</h2>
-            <span className="text-xs text-slate-500 font-medium">Peer Network</span>
+            <span className="text-sm text-slate-500 font-medium">Peer Network</span>
           </div>
           <div className="card-glass rounded-3xl p-10 flex flex-col items-center justify-center gap-4 text-center border border-dashed border-slate-700/50">
             <Map className="w-8 h-8 text-slate-600" />

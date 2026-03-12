@@ -216,10 +216,10 @@ const AdaptiveAssessmentPage: React.FC<AdaptiveAssessmentPageProps> = ({ onCompl
                                         </span>
                                         <div className="flex-1">
                                             <p className="font-bold text-base">{a.label}</p>
-                                            <p className={`text-xs mt-0.5 ${isSelected ? 'text-indigo-400/70' : 'text-slate-600'}`}>{a.sublabel}</p>
+                                            <p className={`text-sm mt-0.5 ${isSelected ? 'text-indigo-400/70' : 'text-slate-600'}`}>{a.sublabel}</p>
                                         </div>
                                         {a.required && (
-                                            <span className="text-xs font-bold uppercase tracking-widest text-indigo-500/60 border border-indigo-500/20 px-2 py-0.5 rounded">Required</span>
+                                            <span className="text-sm font-bold uppercase tracking-widest text-indigo-500/60 border border-indigo-500/20 px-2 py-0.5 rounded">Required</span>
                                         )}
                                     </button>
                                 );

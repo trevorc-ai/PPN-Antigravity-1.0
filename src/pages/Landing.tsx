@@ -156,7 +156,7 @@ const Landing: React.FC = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6 w-full"
             >
-              <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-xs sm:text-sm font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
+              <div className="inline-flex items-center gap-2 px-5 py-3 bg-primary/15 border-2 border-blue-500/60 rounded-full text-sm sm:text-sm font-black tracking-wide text-blue-300 shadow-lg shadow-primary/20">
                 <span className="material-symbols-outlined text-lg">grid_view</span>
                 Augmented Intelligence for Psychedelic Therapy
               </div>
@@ -236,7 +236,7 @@ const Landing: React.FC = () => {
                 <span className="material-symbols-outlined text-emerald-400 text-lg">verified</span>
                 <div>
                   <p className="text-sm font-black text-slate-300">Purpose-Built Infrastructure</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Clinical-grade data architecture. Structured, encrypted, and site-isolated.</p>
+                  <p className="text-sm text-slate-500 mt-0.5">Clinical-grade data architecture. Structured, encrypted, and site-isolated.</p>
                 </div>
               </div>
             </motion.div>
@@ -262,7 +262,7 @@ const Landing: React.FC = () => {
                   <div className="w-3.5 h-3.5 rounded-full bg-slate-700 hover:bg-emerald-400 transition-colors cursor-pointer" />
                 </div>
                 <div className="mx-auto flex-1 max-w-[300px] h-7 bg-slate-950/50 rounded-lg border border-white/5 flex items-center justify-center shadow-inner">
-                  <span className="flex items-center gap-2 text-xs font-black tracking-widest text-slate-500 uppercase">
+                  <span className="flex items-center gap-2 text-sm font-black tracking-widest text-slate-500 uppercase">
                     <span className="material-symbols-outlined text-[12px] text-indigo-400">lock</span>
                     ppnportal.net
                   </span>
@@ -278,11 +278,11 @@ const Landing: React.FC = () => {
                 <div className="flex justify-between items-end relative z-10 border-b border-slate-800/80 pb-6">
                   <div>
                     <h2 className="text-3xl font-black text-[#A8B5D1] tracking-tight">Clinical Intelligence</h2>
-                    <p className="text-xs text-slate-500 font-black uppercase tracking-widest mt-2">Live Outcomes Radar</p>
+                    <p className="text-sm text-slate-500 font-black uppercase tracking-widest mt-2">Live Outcomes Radar</p>
                   </div>
                   <div className="px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
                     <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-                    <span className="text-xs font-black text-indigo-400 tracking-widest uppercase">Sync Active</span>
+                    <span className="text-sm font-black text-indigo-400 tracking-widest uppercase">Sync Active</span>
                   </div>
                 </div>
 
@@ -290,23 +290,23 @@ const Landing: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5 relative z-10">
                   {/* Demo data label */}
                   <div className="sm:col-span-3 flex items-center gap-1.5 mb-1">
-                    <span className="text-xs font-black text-slate-600 uppercase tracking-widest">Illustrative demo data</span>
+                    <span className="text-sm font-black text-slate-600 uppercase tracking-widest">Illustrative demo data</span>
                   </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Network Efficacy</span>
+                    <span className="text-sm font-black text-slate-500 uppercase tracking-widest">Network Efficacy</span>
                     <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter group-hover:text-indigo-400 transition-colors">+42<span className="text-xl">%</span></span>
-                    <span className="text-xs text-slate-600 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">trending_up</span> Illustrative only</span>
+                    <span className="text-sm text-slate-600 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">trending_up</span> Illustrative only</span>
                   </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 relative overflow-hidden group hover:border-red-500/50 hover:-translate-y-1 transition-all">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 blur-[20px] rounded-full pointer-events-none group-hover:bg-red-500/20 transition-colors" />
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest relative z-10">Safety Alerts</span>
+                    <span className="text-sm font-black text-slate-500 uppercase tracking-widest relative z-10">Safety Alerts</span>
                     <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter relative z-10 group-hover:text-red-400 transition-colors">03</span>
-                    <span className="text-xs text-red-400 font-bold flex items-center gap-1 relative z-10"><span className="material-symbols-outlined text-[12px]">warning</span> Immediate review</span>
+                    <span className="text-sm text-red-400 font-bold flex items-center gap-1 relative z-10"><span className="material-symbols-outlined text-[12px]">warning</span> Immediate review</span>
                   </div>
                   <div className="p-5 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col gap-3 group hover:border-slate-500 hover:-translate-y-1 transition-all">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Active Protocols</span>
+                    <span className="text-sm font-black text-slate-500 uppercase tracking-widest">Active Protocols</span>
                     <span className="text-4xl font-black text-[#A8B5D1] tracking-tighter">—</span>
-                    <span className="text-xs text-slate-600 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">share</span> Growing network</span>
+                    <span className="text-sm text-slate-600 font-bold flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">share</span> Growing network</span>
                   </div>
                 </div>
 
@@ -337,9 +337,9 @@ const Landing: React.FC = () => {
                     ))}
                   </div>
                   <div className="flex justify-between items-center mt-6 pt-6 border-t border-slate-800/80">
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Baseline</span>
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Integration</span>
-                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Follow-up</span>
+                    <span className="text-sm font-black text-slate-500 uppercase tracking-widest">Baseline</span>
+                    <span className="text-sm font-black text-slate-500 uppercase tracking-widest">Integration</span>
+                    <span className="text-sm font-black text-slate-500 uppercase tracking-widest">Follow-up</span>
                   </div>
                 </div>
               </div>
@@ -367,7 +367,7 @@ const Landing: React.FC = () => {
           ]).flat().map((item, i) => (
             <div key={i} className="flex items-center gap-2 text-slate-500">
               <span className="material-symbols-outlined text-sm text-primary/70">{item.icon}</span>
-              <span className="text-xs font-black uppercase tracking-[0.2em]">{item.text}</span>
+              <span className="text-sm font-black uppercase tracking-[0.2em]">{item.text}</span>
             </div>
           ))}
         </motion.div>
@@ -408,7 +408,7 @@ const Landing: React.FC = () => {
                 <span className="size-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
                 <p className="text-sm font-bold text-slate-300">Join the waitlist for founding practitioner access — <button onClick={() => setIsWaitlistModalOpen(true)} className="text-primary hover:text-blue-400 underline underline-offset-2">Join Waitlist</button></p>
               </div>
-              <p className="text-xs text-slate-600 font-medium italic max-w-md">
+              <p className="text-sm text-slate-600 font-medium italic max-w-md">
                 As our alliance grows, participating cities will be listed here — updated from the verified registry.
               </p>
             </div>
@@ -484,7 +484,7 @@ const Landing: React.FC = () => {
               viewport={{ once: true, margin: "-100px" }}
               className="space-y-6"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-xs font-black text-slate-400 uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm font-black text-slate-400 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">inventory_2</span>
                 Structured Workflows
               </div>
@@ -498,7 +498,7 @@ const Landing: React.FC = () => {
               viewport={{ once: true, margin: "-100px" }}
               className="space-y-6"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-clinical-green/10 border border-clinical-green/20 rounded-full text-xs font-black text-clinical-green uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-clinical-green/10 border border-clinical-green/20 rounded-full text-sm font-black text-clinical-green uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">handshake</span>
                 Radical Interoperability
               </div>
@@ -535,15 +535,15 @@ const Landing: React.FC = () => {
                 <div className="w-full grid grid-cols-3 gap-2 sm:gap-6 items-center translate-y-4 group-hover:-translate-y-2 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]">
                   <div className="px-2 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-2 sm:gap-3 shadow-xl backdrop-blur-xl">
                     <span className="material-symbols-outlined text-emerald-400 text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">vital_signs</span>
-                    <span className="text-xs sm:text-xs font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Vitals</span>
+                    <span className="text-sm sm:text-sm font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Vitals</span>
                   </div>
                   <div className="px-2 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-2 sm:gap-3 shadow-xl backdrop-blur-xl -translate-y-4 sm:-translate-y-6 group-hover:-translate-y-6 sm:group-hover:-translate-y-8 transition-transform duration-1000">
                     <span className="material-symbols-outlined text-indigo-400 text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]">clinical_notes</span>
-                    <span className="text-xs sm:text-xs font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Protocols</span>
+                    <span className="text-sm sm:text-sm font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Protocols</span>
                   </div>
                   <div className="px-2 sm:px-5 py-3 sm:py-4 bg-slate-900/80 border border-slate-700/80 rounded-2xl flex flex-col items-center justify-center gap-2 sm:gap-3 shadow-xl backdrop-blur-xl">
                     <span className="material-symbols-outlined text-purple-400 text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">psychiatry</span>
-                    <span className="text-xs sm:text-xs font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Outcomes</span>
+                    <span className="text-sm sm:text-sm font-black text-slate-300 uppercase tracking-widest text-center truncate w-full">Outcomes</span>
                   </div>
                 </div>
 
@@ -573,10 +573,10 @@ const Landing: React.FC = () => {
                           </p>
                           <div className="space-y-3 border-t border-slate-700/50 pt-4 text-left">
                             <div>
-                              <h5 className="text-xs font-black text-emerald-400 uppercase tracking-wider mb-1">
+                              <h5 className="text-sm font-black text-emerald-400 uppercase tracking-wider mb-1">
                                 Structural Protection
                               </h5>
-                              <p className="text-xs text-slate-400 leading-relaxed font-normal">
+                              <p className="text-sm text-slate-400 leading-relaxed font-normal">
                                 By using hashed Subject IDs, year-only dates (HIPAA Safe Harbor), and structured clinical inputs only—with no free-text narratives—PPN ensures you cannot produce records you do not have.
                               </p>
                             </div>
@@ -584,7 +584,7 @@ const Landing: React.FC = () => {
                         </div>
                       }
                     >
-                      <span className="text-xs font-black text-indigo-400/80 uppercase tracking-widest flex items-center gap-1.5 cursor-help hover:text-indigo-300 transition-colors">
+                      <span className="text-sm font-black text-indigo-400/80 uppercase tracking-widest flex items-center gap-1.5 cursor-help hover:text-indigo-300 transition-colors">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" /> Zero-PHI Compliant
                       </span>
                     </AdvancedTooltip>
@@ -718,7 +718,7 @@ const Landing: React.FC = () => {
 
             {/* Text Right */}
             <div className="space-y-6 order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-xs font-black text-red-400 uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-sm font-black text-red-400 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">security</span>
                 Safety Surveillance
               </div>
@@ -748,7 +748,7 @@ const Landing: React.FC = () => {
           >
             {/* Text Left */}
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-xs font-black text-primary uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-sm font-black text-primary uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">query_stats</span>
                 Alliance Benchmarking
               </div>
@@ -824,7 +824,7 @@ const Landing: React.FC = () => {
 
             {/* Text Right */}
             <div className="space-y-6 order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs font-black text-emerald-400 uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm font-black text-emerald-400 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-sm">timeline</span>
                 Patient Outcomes
               </div>
@@ -870,22 +870,22 @@ const Landing: React.FC = () => {
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="material-symbols-outlined text-4xl text-primary">inventory_2</span>
                     <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Structured Clinical Records</p>
-                    <p className="text-xs text-slate-600">Built for scale from day one</p>
+                    <p className="text-sm text-slate-600">Built for scale from day one</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="material-symbols-outlined text-4xl text-clinical-green">share</span>
                     <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Multi-Site Architecture</p>
-                    <p className="text-xs text-slate-600">Network-ready from launch</p>
+                    <p className="text-sm text-slate-600">Network-ready from launch</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="material-symbols-outlined text-4xl text-primary">query_stats</span>
                     <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Longitudinal Outcomes</p>
-                    <p className="text-xs text-slate-600">PHQ-9, GAD-7, MEQ-30 tracking</p>
+                    <p className="text-sm text-slate-600">PHQ-9, GAD-7, MEQ-30 tracking</p>
                   </div>
                   <div className="p-6 bg-black/40 border border-slate-800 rounded-[2rem] space-y-3">
                     <span className="material-symbols-outlined text-4xl text-accent-amber">shield</span>
                     <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Zero Compromise Security</p>
-                    <p className="text-xs text-slate-600">RLS + encryption by default</p>
+                    <p className="text-sm text-slate-600">RLS + encryption by default</p>
                   </div>
                 </div>
               </div>
@@ -902,7 +902,7 @@ const Landing: React.FC = () => {
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-300 leading-[1.5]">
               Clinical <span className="text-gradient-primary inline-block pb-3">Intelligence</span> Infrastructure
             </h2>
-            <p className="text-xs text-slate-500 font-black uppercase tracking-[0.4em]">Structured. Secure. Built for Clinical Scale.</p>
+            <p className="text-sm text-slate-500 font-black uppercase tracking-[0.4em]">Structured. Secure. Built for Clinical Scale.</p>
           </div>
 
           <BentoGrid>
@@ -923,7 +923,7 @@ const Landing: React.FC = () => {
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-500 font-mono">Structured Data Capture</span>
+                    <span className="text-sm font-black uppercase tracking-widest text-slate-500 font-mono">Structured Data Capture</span>
                     <div className="h-px flex-1 bg-slate-800"></div>
                   </div>
                 </div>
@@ -952,7 +952,7 @@ const Landing: React.FC = () => {
                         transition={{ duration: 2, repeat: Infinity }}
                         className="size-1.5 bg-indigo-400 rounded-full"
                       ></motion.span>
-                      <span className="text-xs font-black uppercase text-indigo-300">Cohort Comparisons</span>
+                      <span className="text-sm font-black uppercase text-indigo-300">Cohort Comparisons</span>
                     </div>
                   </div>
                 </div>
@@ -974,7 +974,7 @@ const Landing: React.FC = () => {
                     </p>
                   </div>
                   <div className="p-4 bg-black/40 rounded-2xl border border-red-500/10">
-                    <p className="text-xs font-mono text-red-400/80 font-bold uppercase tracking-widest">Safety Monitoring Active</p>
+                    <p className="text-sm font-mono text-red-400/80 font-bold uppercase tracking-widest">Safety Monitoring Active</p>
                   </div>
                 </div>
               </motion.div>
@@ -1032,7 +1032,7 @@ const Landing: React.FC = () => {
               <div className="flex flex-col items-center">
                 <p className="text-4xl font-black text-indigo-400 mb-2">67%</p>
                 <p className="text-sm font-bold text-slate-500 uppercase tracking-widest text-center">Phase 3 Trial<br />Remission Rate</p>
-                <p className="text-xs text-slate-600 mt-1 text-center max-w-[120px]">Mitchell et al., NEJM 2021<br />(MAPS Phase 3)</p>
+                <p className="text-sm text-slate-600 mt-1 text-center max-w-[120px]">Mitchell et al., NEJM 2021<br />(MAPS Phase 3)</p>
               </div>
               <div className="w-px h-16 bg-slate-800 hidden sm:block"></div>
               <div className="flex flex-col items-center">

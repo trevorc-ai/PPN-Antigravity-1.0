@@ -37,9 +37,9 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
             </p>
             <button
               onClick={() => alert("Opening Vocabulary Request Form (WO-119 Integration)")}
-              className="text-xs font-black text-indigo-400 uppercase tracking-widest hover:text-indigo-300 transition-colors flex items-center gap-1.5"
+              className="text-sm font-black text-indigo-400 uppercase tracking-widest hover:text-indigo-300 transition-colors flex items-center gap-1.5"
             >
-              Submit Vocabulary Request <span className="material-symbols-outlined text-xs">arrow_forward</span>
+              Submit Vocabulary Request <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
           </div>
         </div>
@@ -133,14 +133,14 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-1.5">
                 <h3 className="text-lg font-black text-[#A8B5D1] tracking-tight group-hover:text-white transition-colors">Download Center</h3>
-                <span className="text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400">New</span>
+                <span className="text-sm font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400">New</span>
               </div>
               <p className="text-sm text-slate-400 leading-snug">
                 Export patient records, compliance logs, wellness summaries, blank clinical forms, and patient-facing reports, all from one place.
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-indigo-400 text-xs font-black uppercase tracking-widest shrink-0 group-hover:gap-3 transition-all">
+            <div className="flex items-center gap-2 text-indigo-400 text-sm font-black uppercase tracking-widest shrink-0 group-hover:gap-3 transition-all">
               Open <ArrowRight size={14} />
             </div>
           </button>
@@ -148,7 +148,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
 
         {/* ─── Topic Categories ─── */}
         <section className="mb-10">
-          <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 px-1">Browse Topics</h4>
+          <h4 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-4 px-1">Browse Topics</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {categories.map((cat, idx) => (
               <div
@@ -208,7 +208,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
                     {activeFAQ === idx && (
                       <div className="px-8 pb-8 text-sm text-slate-300 leading-relaxed border-t border-slate-800/50 pt-6">
                         <div className="mb-4">
-                          <span className="text-xs font-black text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
+                          <span className="text-sm font-black text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
                             {faq.category}
                           </span>
                         </div>
@@ -245,13 +245,13 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               <p className="text-sm text-slate-400 mb-8 leading-relaxed font-medium relative z-10">Our team is available 24/7 for clinical emergencies and node assistance.</p>
 
               <div className="space-y-3 relative z-10">
-                <button className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-700/80 text-slate-300 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border border-slate-700 hover:border-slate-500 shadow-md">
+                <button className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-700/80 text-slate-300 py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest transition-all border border-slate-700 hover:border-slate-500 shadow-md">
                   <MessageSquare size={16} /> Live Chat
                 </button>
-                <button className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-700/80 text-slate-300 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border border-slate-700 hover:border-slate-500 shadow-md">
+                <button className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-700/80 text-slate-300 py-3.5 rounded-2xl text-sm font-black uppercase tracking-widest transition-all border border-slate-700 hover:border-slate-500 shadow-md">
                   <Mail size={16} /> Email Support
                 </button>
-                <button className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white py-4 mt-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-500/20 border border-indigo-500/50 active:scale-95">
+                <button className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white py-4 mt-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-500/20 border border-indigo-500/50 active:scale-95">
                   <Calendar size={16} /> Schedule Tech Demo
                 </button>
               </div>
@@ -272,7 +272,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
 
               <button
                 onClick={() => alert("Opening Vocabulary Request Form (WO-119 Integration)")}
-                className="w-full flex items-center justify-between gap-3 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 py-3.5 px-5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border border-indigo-500/30 hover:border-indigo-500/50"
+                className="w-full flex items-center justify-between gap-3 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 py-3.5 px-5 rounded-2xl text-sm font-black uppercase tracking-widest transition-all border border-indigo-500/30 hover:border-indigo-500/50"
               >
                 <span>Request Addition</span>
                 <span className="material-symbols-outlined text-sm">open_in_new</span>
@@ -286,7 +286,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
               </div>
               <div className="flex flex-col">
                 <div className="text-sm font-black text-[#A8B5D1] tracking-tight">All Systems Operational</div>
-                <div className="text-xs font-black text-slate-500 mt-1 uppercase tracking-widest flex items-center gap-2">
+                <div className="text-sm font-black text-slate-500 mt-1 uppercase tracking-widest flex items-center gap-2">
                   <span>Latency: <span className="text-slate-400">24ms</span></span>
                   <span className="w-1 h-1 rounded-full bg-slate-700" />
                   <span>Updated: <span className="text-slate-400">Just now</span></span>

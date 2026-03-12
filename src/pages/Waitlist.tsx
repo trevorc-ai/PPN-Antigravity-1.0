@@ -113,7 +113,7 @@ export const Waitlist: FC = () => {
                 </div>
                 <button
                     onClick={() => navigate('/')}
-                    className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-2"
+                    className="text-sm font-bold uppercase tracking-widest text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-2"
                 >
                     <span className="material-symbols-outlined text-base">close</span>
                     Close
@@ -129,7 +129,7 @@ export const Waitlist: FC = () => {
                     {/* Eyebrow */}
                     <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 mb-8 self-start">
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-                        <span className="text-xs font-black uppercase tracking-widest text-indigo-400">Limited Beta — Founding Cohort</span>
+                        <span className="text-sm font-black uppercase tracking-widest text-indigo-400">Limited Beta — Founding Cohort</span>
                     </div>
 
                     <h1 className="text-4xl xl:text-5xl 2xl:text-6xl font-black tracking-tight text-slate-100 mb-6 leading-[1.1]">
@@ -162,7 +162,7 @@ export const Waitlist: FC = () => {
                     <div className="flex items-center gap-3 mt-10">
                         <div className="flex -space-x-2">
                             {['JA', 'TC', 'JB'].map((initials) => (
-                                <div key={initials} className="w-8 h-8 rounded-full bg-indigo-700/50 border border-indigo-500/40 flex items-center justify-center text-xs font-black text-indigo-300">
+                                <div key={initials} className="w-8 h-8 rounded-full bg-indigo-700/50 border border-indigo-500/40 flex items-center justify-center text-sm font-black text-indigo-300">
                                     {initials}
                                 </div>
                             ))}
@@ -186,7 +186,7 @@ export const Waitlist: FC = () => {
                                 <p className="text-slate-400 font-medium mb-10">We'll be in touch when the pilot opens.</p>
 
                                 <div className="text-left bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 mb-8">
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">What happens next</p>
+                                    <p className="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">What happens next</p>
                                     <ul className="space-y-3">
                                         {[
                                             "You'll receive an email confirmation shortly.",
@@ -242,7 +242,7 @@ export const Waitlist: FC = () => {
                                 <form onSubmit={handleSubmit} className="space-y-5">
                                     {/* First Name */}
                                     <div>
-                                        <label htmlFor="first-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="first-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             First Name
                                         </label>
                                         <input
@@ -258,7 +258,7 @@ export const Waitlist: FC = () => {
 
                                     {/* Last Name */}
                                     <div>
-                                        <label htmlFor="last-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="last-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             Last Name
                                         </label>
                                         <input
@@ -274,7 +274,7 @@ export const Waitlist: FC = () => {
 
                                     {/* Email */}
                                     <div>
-                                        <label htmlFor="email" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="email" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             Email Address
                                         </label>
                                         <input
@@ -290,7 +290,7 @@ export const Waitlist: FC = () => {
 
                                     {/* Practitioner Type */}
                                     <div>
-                                        <label htmlFor="practitioner-type" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="practitioner-type" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             Practitioner Type
                                         </label>
                                         <select
@@ -330,7 +330,7 @@ export const Waitlist: FC = () => {
                                     {/* Reassurance */}
                                     <div className="flex items-center justify-center gap-2 pt-1">
                                         <ShieldCheck className="w-3.5 h-3.5 text-slate-600" />
-                                        <p className="text-xs font-bold text-slate-600 tracking-wide">
+                                        <p className="text-sm font-bold text-slate-600 tracking-wide">
                                             No spam. No payments. Just early access.
                                         </p>
                                     </div>

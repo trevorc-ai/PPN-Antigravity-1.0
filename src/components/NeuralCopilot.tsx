@@ -88,7 +88,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
             <Brain className="size-5 animate-pulse" />
           </div>
           <div>
-            <h4 className="text-xs font-black text-indigo-300 uppercase tracking-[0.2em] leading-none mb-1">Neural Copilot</h4>
+            <h4 className="text-sm font-black text-indigo-300 uppercase tracking-[0.2em] leading-none mb-1">Neural Copilot</h4>
             <p className="text-sm font-mono text-indigo-500/70 uppercase tracking-[0.3em]">Node_Status: Encrypted</p>
           </div>
         </div>
@@ -97,7 +97,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
           onClick={() => setOptimizationMode(!optimizationMode)}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-all"
         >
-          <span className={`text-xs font-black uppercase tracking-widest ${optimizationMode ? 'text-primary' : 'text-slate-500'}`}>
+          <span className={`text-sm font-black uppercase tracking-widest ${optimizationMode ? 'text-primary' : 'text-slate-500'}`}>
             {optimizationMode ? 'Deep Matrix' : 'Standard'}
           </span>
           {optimizationMode ? <ToggleRight className="text-primary size-5" /> : <ToggleLeft className="text-slate-700 size-5" />}
@@ -111,17 +111,17 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
             <div className="w-full max-w-[85%] bg-black/40 border border-primary/20 rounded-2xl p-8 shadow-2xl space-y-3 font-mono">
               <div className="flex items-center gap-2 mb-4 text-primary">
                 <Terminal size={14} className="animate-pulse" />
-                <span className="text-xs font-black uppercase tracking-[0.2em]">Neural Trace Active</span>
+                <span className="text-sm font-black uppercase tracking-[0.2em]">Neural Trace Active</span>
               </div>
               {terminalLogs.map((log, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs text-primary/80 animate-in slide-in-from-left-1 font-mono">
+                <div key={i} className="flex items-center gap-2 text-sm text-primary/80 animate-in slide-in-from-left-1 font-mono">
                   <ChevronRight size={10} className="shrink-0" />
                   <span>{log}</span>
                 </div>
               ))}
               <div className="flex items-center gap-2 animate-pulse mt-4">
                 <div className="size-1 bg-indigo-600 hover:bg-indigo-500 rounded-full"></div>
-                <span className="text-xs text-primary/40 uppercase tracking-widest italic font-mono">Calculating...</span>
+                <span className="text-sm text-primary/40 uppercase tracking-widest italic font-mono">Calculating...</span>
               </div>
             </div>
           </div>
@@ -129,7 +129,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
           <>
             {chatHistory.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-                <div className={`max-w-[95%] p-5 rounded-[1.5rem] text-xs font-medium leading-relaxed shadow-lg relative ${msg.role === 'user'
+                <div className={`max-w-[95%] p-5 rounded-[1.5rem] text-sm font-medium leading-relaxed shadow-lg relative ${msg.role === 'user'
                     ? 'bg-primary/20 text-slate-300 border border-primary/25 rounded-tr-none'
                     : msg.type === 'warning'
                       ? 'bg-amber-500/5 border-l-4 border-amber-500 border-y border-r border-amber-500/20 text-amber-100 rounded-tl-none'
@@ -138,7 +138,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
                   {msg.type === 'warning' && (
                     <div className="flex items-center gap-2 mb-3 text-amber-500">
                       <ShieldAlert size={14} strokeWidth={3} />
-                      <span className="text-xs font-black uppercase tracking-[0.2em]">PREEMPTIVE SAFETY FLAG</span>
+                      <span className="text-sm font-black uppercase tracking-[0.2em]">PREEMPTIVE SAFETY FLAG</span>
                     </div>
                   )}
 
@@ -146,10 +146,10 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
 
                   {msg.type === 'warning' && (
                     <div className="mt-5 flex gap-2">
-                      <button className="flex-1 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl text-xs font-black text-amber-500 uppercase tracking-widest transition-all">
+                      <button className="flex-1 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl text-sm font-black text-amber-500 uppercase tracking-widest transition-all">
                         View Peer Record
                       </button>
-                      <button className="flex-1 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl text-xs font-black text-amber-500 uppercase tracking-widest transition-all">
+                      <button className="flex-1 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl text-sm font-black text-amber-500 uppercase tracking-widest transition-all">
                         Re-Evaluate
                       </button>
                     </div>
@@ -174,7 +174,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
             onChange={(e) => setQuery(e.target.value)}
             disabled={isAnalyzing}
             placeholder="Search global research ledger..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-xs text-slate-300 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-800 font-mono transition-all pr-14 shadow-inner disabled:opacity-50"
+            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-sm text-slate-300 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-800 font-mono transition-all pr-14 shadow-inner disabled:opacity-50"
           />
           <button
             type="submit"
@@ -189,9 +189,9 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
           <p className="text-sm font-black text-slate-600 uppercase tracking-[0.2em] leading-relaxed">
             Neural Copilot uses anonymized peer data (Client IDs). No PHI is processed in this node.
           </p>
-          <div className="flex items-center justify-center gap-4 text-xs font-mono font-bold text-slate-800 uppercase tracking-widest border-t border-white/5 pt-2">
-            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-xs">shield</span> AES_256_ACTIVE</span>
-            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-xs">sync_alt</span> NODE_SYNCED</span>
+          <div className="flex items-center justify-center gap-4 text-sm font-mono font-bold text-slate-800 uppercase tracking-widest border-t border-white/5 pt-2">
+            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">shield</span> AES_256_ACTIVE</span>
+            <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">sync_alt</span> NODE_SYNCED</span>
           </div>
         </div>
       </div>

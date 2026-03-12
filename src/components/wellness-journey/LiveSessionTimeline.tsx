@@ -242,7 +242,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                         <div>
                             <h3 className="text-base font-bold text-[#A8B5D1] uppercase tracking-widest">Live Session Timeline</h3>
                             {active && (
-                                <span className="text-xs uppercase font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
+                                <span className="text-sm uppercase font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
                                     <span className="relative flex h-2 w-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -255,12 +255,12 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                     <div className="flex items-center gap-3">
                         {/* WO-576 Sub-task D: T+ elapsed timer */}
                         {tPlus && (
-                            <span className="text-xs font-mono font-black text-amber-400 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+                            <span className="text-sm font-mono font-black text-amber-400 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-lg"
                                 aria-label="Elapsed session time">{tPlus}</span>
                         )}
                         <button
                             onClick={handleExportLog}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors"
+                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-sm font-bold text-slate-300 transition-colors"
                             aria-label="Export session timeline log as text"
                         >
                             <Download className="w-3.5 h-3.5" />
@@ -290,7 +290,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                                 )}
 
                                 {/* Time */}
-                                <div className="text-xs font-mono font-bold text-slate-500 mt-1 whitespace-nowrap w-[54px] text-right shrink-0">
+                                <div className="text-sm font-mono font-bold text-slate-500 mt-1 whitespace-nowrap w-[54px] text-right shrink-0">
                                     {formatTimeAMPM(event.timestamp)}
                                 </div>
 
@@ -306,8 +306,8 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                                         {event.description}
                                     </p>
                                     {event.notes && (
-                                        <div className="mt-1.5 p-2 bg-slate-800/40 rounded border border-slate-700/30 text-slate-400 text-xs leading-relaxed">
-                                            <span className="font-bold text-slate-500 mr-2 uppercase text-xs tracking-wider">Notes</span>
+                                        <div className="mt-1.5 p-2 bg-slate-800/40 rounded border border-slate-700/30 text-slate-400 text-sm leading-relaxed">
+                                            <span className="font-bold text-slate-500 mr-2 uppercase text-sm tracking-wider">Notes</span>
                                             {event.notes}
                                         </div>
                                     )}
@@ -332,7 +332,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                                 aria-label={`Log: ${action.label}`}
                                 className={[
                                     'flex items-center gap-1 px-2 py-1 rounded-lg border',
-                                    'text-xs font-bold tracking-wide',
+                                    'text-sm font-bold tracking-wide',
                                     'min-h-[32px] transition-colors active:scale-95',
                                     action.color,
                                     isSubmitting ? 'opacity-50 cursor-not-allowed' : '',

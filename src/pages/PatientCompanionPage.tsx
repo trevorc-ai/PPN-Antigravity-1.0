@@ -134,7 +134,7 @@ export default function PatientCompanionPage() {
                         </svg>
                     )}
                 </button>
-                <span className="text-xs font-bold tracking-widest text-white/25 uppercase">
+                <span className="text-sm font-bold tracking-widest text-white/25 uppercase">
                     {lockHoldProgress > 0 ? 'Hold…' : 'Return'}
                 </span>
             </div>
@@ -151,7 +151,7 @@ export default function PatientCompanionPage() {
             <div className="relative flex-1 overflow-hidden pointer-events-none" aria-hidden="true">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10" />
                 <div className="absolute top-5 left-0 right-0 text-center z-20">
-                    <p className="text-white/20 text-xs tracking-[0.2em]">
+                    <p className="text-white/20 text-sm tracking-[0.2em]">
                         Tap to quietly log your state
                     </p>
                 </div>

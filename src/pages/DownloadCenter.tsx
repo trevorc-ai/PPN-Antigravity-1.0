@@ -256,7 +256,7 @@ const DownloadCenter: React.FC = () => {
                                 <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
                                     <Download className="w-6 h-6 text-indigo-400" />
                                 </div>
-                                <span className="text-xs font-black uppercase tracking-widest text-indigo-400/70">Resource Hub</span>
+                                <span className="text-sm font-black uppercase tracking-widest text-indigo-400/70">Resource Hub</span>
                             </div>
                             <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-[#A8B5D1]">Download Center</h1>
                             <p className="hidden sm:block text-lg text-slate-400 mt-2 max-w-2xl">
@@ -297,7 +297,7 @@ const DownloadCenter: React.FC = () => {
                             >
                                 <div className="text-left">
                                     <h2 className="text-base sm:text-xl font-black text-slate-200">{category.title}</h2>
-                                    <p className="hidden sm:block text-xs font-medium text-slate-500 mt-0.5">{category.description}</p>
+                                    <p className="hidden sm:block text-sm font-medium text-slate-500 mt-0.5">{category.description}</p>
                                 </div>
                                 <ChevronDown className={`w-5 h-5 text-slate-500 shrink-0 transition-transform duration-200 ${isCollapsed ? '' : 'rotate-180'}`} />
                             </button>
@@ -320,7 +320,7 @@ const DownloadCenter: React.FC = () => {
                                             `}
                                             >
                                                 {item.badge && (
-                                                    <div className={`absolute top-3 right-3 px-2 py-0.5 rounded text-xs font-black uppercase tracking-widest ${item.bgColor} ${item.textColor} border ${item.borderColor}`}>
+                                                    <div className={`absolute top-3 right-3 px-2 py-0.5 rounded text-sm font-black uppercase tracking-widest ${item.bgColor} ${item.textColor} border ${item.borderColor}`}>
                                                         {item.badge}
                                                     </div>
                                                 )}
@@ -334,7 +334,7 @@ const DownloadCenter: React.FC = () => {
                                                     {item.description}
                                                 </p>
                                                 <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 mt-auto">
-                                                    <span className={`text-xs font-black uppercase tracking-widest px-2 py-1 rounded border ${item.bgColor} ${item.borderColor} ${item.textColor}`}>
+                                                    <span className={`text-sm font-black uppercase tracking-widest px-2 py-1 rounded border ${item.bgColor} ${item.borderColor} ${item.textColor}`}>
                                                         {item.format}
                                                     </span>
                                                     <AdvancedTooltip
@@ -344,7 +344,7 @@ const DownloadCenter: React.FC = () => {
                                                         <button
                                                             onClick={() => handleAction(item)}
                                                             disabled={isDisabled || isDownloading}
-                                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all border focus:outline-none focus:ring-2 focus:ring-indigo-500 active:scale-95 disabled:cursor-not-allowed
+                                                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-black uppercase tracking-wider transition-all border focus:outline-none focus:ring-2 focus:ring-indigo-500 active:scale-95 disabled:cursor-not-allowed
                                                             ${isDone
                                                                 ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
                                                                 : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white hover:border-slate-500'
