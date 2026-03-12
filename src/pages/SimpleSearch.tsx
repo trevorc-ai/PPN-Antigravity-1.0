@@ -30,8 +30,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatmap';
 // WO-MOBILE-OPT: GlobalBenchmarkIntelligence moved to analytics page — import removed (was dead code, never rendered)
+// NOTE: ReceptorBindingHeatmap removed — Molecular Pharmacology section removed from SimpleSearch (unauthorized).
 
 // ─── Keyword → page map (client-side only, zero network requests) ─────────────
 
@@ -123,8 +123,9 @@ const FEATURE_TILES = [
     glow: 'shadow-teal-900/40',
     iconColor: 'text-teal-300',
     iconBg: 'bg-teal-500/20',
-    tagColor: 'text-teal-400',
+    tagColor: 'text-white/70',
     accentBar: 'bg-teal-500',
+    mobileBorderColor: 'border-teal-500',
   },
   {
     id: 'interaction-checker',
@@ -138,8 +139,9 @@ const FEATURE_TILES = [
     glow: 'shadow-amber-900/40',
     iconColor: 'text-amber-300',
     iconBg: 'bg-amber-500/20',
-    tagColor: 'text-amber-400',
+    tagColor: 'text-white/70',
     accentBar: 'bg-amber-500',
+    mobileBorderColor: 'border-amber-500',
   },
   {
     id: 'substance-catalog',
@@ -153,8 +155,9 @@ const FEATURE_TILES = [
     glow: 'shadow-indigo-900/40',
     iconColor: 'text-indigo-300',
     iconBg: 'bg-indigo-500/20',
-    tagColor: 'text-indigo-400',
+    tagColor: 'text-white/70',
     accentBar: 'bg-indigo-500',
+    mobileBorderColor: 'border-indigo-500',
   },
   {
     id: 'analytics',
@@ -168,8 +171,9 @@ const FEATURE_TILES = [
     glow: 'shadow-violet-900/40',
     iconColor: 'text-violet-300',
     iconBg: 'bg-violet-500/20',
-    tagColor: 'text-violet-400',
+    tagColor: 'text-white/70',
     accentBar: 'bg-violet-500',
+    mobileBorderColor: 'border-violet-500',
   },
 ] as const;
 
@@ -177,7 +181,7 @@ const FEATURE_TILES = [
 
 const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
   id, label, tagline, description, path, icon: Icon,
-  gradient, border, glow, iconColor, iconBg, tagColor, accentBar,
+  gradient, border, glow, iconColor, iconBg, tagColor, accentBar, mobileBorderColor,
 }) => {
   const navigate = useNavigate();
   return (
@@ -192,7 +196,7 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
       `}
     >
       {/* ── MOBILE: horizontal list row (matches ppn_portal_condensed_layout mockup) ── */}
-      <div className={`sm:hidden flex items-center gap-4 p-4 rounded-2xl bg-slate-900/60 border-l-4 ${accentBar} border border-slate-800/60 min-h-[68px]`}>
+      <div className={`sm:hidden flex items-center gap-4 p-4 rounded-2xl bg-slate-900/60 border-l-4 ${mobileBorderColor} border border-slate-800/60 min-h-[68px]`}>
         <div className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
           <Icon className={`w-5 h-5 ${iconColor}`} aria-hidden="true" />
         </div>
@@ -212,8 +216,8 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
         </div>
         <div className="flex-1 min-w-0">
           <p className={`text-xs font-black uppercase tracking-widest ${tagColor} mb-1`}>{tagline}</p>
-          <h3 className="text-lg font-black text-slate-200 mb-2 leading-snug">{label}</h3>
-          <p className="text-sm text-slate-400 leading-relaxed line-clamp-3">{description}</p>
+          <h3 className="text-lg font-black text-slate-100 mb-2 leading-snug">{label}</h3>
+          <p className="text-sm text-slate-300/80 leading-relaxed line-clamp-3">{description}</p>
         </div>
         <div className="flex items-center justify-end">
           <span className={`flex items-center gap-1 text-xs font-black ${tagColor} opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 duration-300`}>
@@ -430,17 +434,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
 
 
 
-        {/* ── 4. Receptor Binding Affinity Matrix ──────────────────────────── */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest">Molecular Pharmacology</h2>
-            <span className="text-xs font-black text-slate-600 uppercase tracking-widest border border-slate-800 px-2 py-0.5 rounded-md">10 compounds · 8 receptor systems</span>
-            <div className="flex-1 h-px bg-slate-800" />
-          </div>
-          <div className="overflow-x-auto w-full">
-            <ReceptorBindingHeatmap />
-          </div>
-        </div>
+
       </div>
     </div>
   );
