@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-    ResponsiveContainer, Legend
+    ResponsiveContainer, Legend, Tooltip,
 } from 'recharts';
 import {
-    Download, Calendar, TrendingUp, AlertCircle,
-    CheckCircle2, FileText, Share2
+    AlertCircle,
+    CheckCircle2, FileText,
 } from 'lucide-react';
 import { ChartSkeleton } from './ChartSkeleton';
-import { CustomTooltip } from './CustomTooltip';
 
 // --- MOCK DATA ---
 const DATA_QUARTER = [
@@ -51,12 +50,53 @@ const METRIC_DEFINITIONS: Record<string, string> = {
     'Compliance': 'Documentation Completeness (Audit Score)'
 };
 
-// Replaced by CustomTooltip component
+// ─── Custom Tooltip ────────────────────────────────────────────────────────────
+// Pinned to top-left via position prop on <Tooltip>; content still updates
+// dynamically as Recharts fires hover events internally.
+const RadarTooltipContent = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
+    const pt = payload?.[0]?.payload;
+
+    return (
+        <div
+            className={`bg-[#0a0c12]/95 border rounded-xl p-3 min-w-[180px] transition-opacity duration-150 ${
+                active && pt
+                    ? 'border-indigo-500/40 shadow-lg shadow-indigo-500/10 opacity-100'
+                    : 'border-slate-800/60 opacity-60'
+            }`}
+        >
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-2">
+                {pt?.subject ?? 'Hover a point'} Insight
+            </span>
+            {pt ? (
+                <>
+                    <div className="flex justify-between items-center mb-1">
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                            <span className="text-xs font-bold text-slate-300">My Clinic</span>
+                        </div>
+                        <span className="text-xs font-black text-indigo-400">{pt.A}</span>
+                    </div>
+                    <div className="flex justify-between items-center mb-2">
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                            <span className="text-xs font-bold text-slate-300">Network Avg</span>
+                        </div>
+                        <span className="text-xs font-black text-slate-400">{pt.B}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 leading-snug border-t border-slate-800 pt-2 italic">
+                        {METRIC_DEFINITIONS[pt.subject as string] ?? ''}
+                    </p>
+                </>
+            ) : (
+                <p className="text-[10px] text-slate-600 italic">Move over a data point</p>
+            )}
+        </div>
+    );
+};
 
 export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
     const [timeRange, setTimeRange] = useState<'quarter' | 'year'>('quarter');
     const [chartReady, setChartReady] = useState(false);
-    const [hoveredPoint, setHoveredPoint] = useState<{ subject: string; A: number; B: number } | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setChartReady(true), 100);
@@ -70,9 +110,7 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
         <div className="w-full h-full flex flex-col p-6 print:p-0 print:bg-white">
             {/* Header Controls */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 mt-12 md:mt-0">
-                <div className="flex-1">
-                    {/* Title removed here as it is handled by the parent card */}
-                </div>
+                <div className="flex-1" />
                 <div className="flex items-center gap-2 print:hidden z-10">
                     <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
                         <button
@@ -94,9 +132,13 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
             </div>
 
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-0">
-                {/* Radar Chart Section - Added min-h-0 to prevent flex item overflow */}
-                <div className="lg:col-span-2 relative min-h-[300px]" role="img" aria-label="Radar chart showing clinic performance vs network average across safety, efficacy, retention, speed, revenue, and compliance.">
-                    {/* Sample data badge — visible when no real session data is available */}
+                {/* Radar Chart Section */}
+                <div
+                    className="lg:col-span-2 relative min-h-[300px]"
+                    role="img"
+                    aria-label="Radar chart showing clinic performance vs network average across safety, efficacy, retention, speed, revenue, and compliance."
+                >
+                    {/* Sample data badge */}
                     {!data && (
                         <div className="absolute top-0 right-0 z-20 pointer-events-none">
                             <span className="text-[10px] font-black uppercase tracking-widest bg-slate-800/80 border border-slate-700/60 text-slate-500 rounded-lg px-2 py-1">
@@ -107,89 +149,54 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
                     {!chartReady ? (
                         <ChartSkeleton height="100%" />
                     ) : (
-                        <div className="relative w-full h-full min-h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart cx="50%" cy="50%" outerRadius="65%" data={currentData}>
+                                <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
+                                <PolarAngleAxis
+                                    dataKey="subject"
+                                    tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
+                                />
+                                <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
 
-                            {/* Fixed hover panel — top-left of chart, never follows cursor */}
-                            <div className="absolute top-2 left-2 z-20 pointer-events-none">
-                                <div className={`bg-[#0a0c12]/95 border rounded-xl p-3 min-w-[170px] transition-opacity duration-150 ${
-                                    hoveredPoint
-                                        ? 'border-indigo-500/40 shadow-lg shadow-indigo-500/10 opacity-100'
-                                        : 'border-slate-800/60 opacity-70'
-                                }`}>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-2">
-                                        {hoveredPoint ? hoveredPoint.subject : 'Efficacy'} Insight
-                                    </span>
-                                    {(() => {
-                                        const pt = hoveredPoint ?? (currentData[0] as any);
-                                        return (
-                                            <>
-                                                <div className="flex justify-between items-center mb-1">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                                                        <span className="text-xs font-bold text-slate-300">My Clinic</span>
-                                                    </div>
-                                                    <span className="text-xs font-black text-indigo-400">{pt.A}</span>
-                                                </div>
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                                                        <span className="text-xs font-bold text-slate-300">Network Avg</span>
-                                                    </div>
-                                                    <span className="text-xs font-black text-slate-400">{pt.B}</span>
-                                                </div>
-                                                <p className="text-[10px] text-slate-500 leading-snug border-t border-slate-800 pt-2 italic">
-                                                    {METRIC_DEFINITIONS[pt.subject as string] ?? ''}
-                                                </p>
-                                            </>
-                                        );
-                                    })()}
-                                </div>
-                            </div>
+                                <Radar
+                                    name="My Clinic"
+                                    dataKey="A"
+                                    stroke="#6366f1"
+                                    strokeWidth={3}
+                                    fill="#6366f1"
+                                    fillOpacity={0.4}
+                                    dot={{ r: 4, fill: '#6366f1', strokeWidth: 0 }}
+                                    activeDot={{ r: 6, fill: '#818cf8', strokeWidth: 2, stroke: '#fff' }}
+                                />
+                                <Radar
+                                    name="Network Avg"
+                                    dataKey="B"
+                                    stroke="#94a3b8"
+                                    strokeWidth={2}
+                                    fill="#94a3b8"
+                                    fillOpacity={0.15}
+                                    strokeDasharray="5 3"
+                                    dot={{ r: 3, fill: '#94a3b8', strokeWidth: 0 }}
+                                    activeDot={{ r: 5, fill: '#cbd5e1', strokeWidth: 1, stroke: '#fff' }}
+                                />
 
-                            <ResponsiveContainer width="100%" height="100%">
-                                <RadarChart
-                                    cx="50%" cy="50%" outerRadius="65%" data={currentData}
-                                    onMouseMove={(e: any) => {
-                                        const payload = e?.activePayload?.[0]?.payload;
-                                        if (payload) setHoveredPoint(payload);
-                                    }}
-                                    onMouseLeave={() => setHoveredPoint(null)}
-                                >
-                                    <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
-                                    <PolarAngleAxis
-                                        dataKey="subject"
-                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 700 }}
-                                    />
-                                    <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
+                                {/* Pinned tooltip — position fixes it top-left, content still updates on hover */}
+                                <Tooltip
+                                    position={{ x: 8, y: 8 }}
+                                    cursor={false}
+                                    content={<RadarTooltipContent />}
+                                />
 
-                                    <Radar
-                                        name="My Clinic"
-                                        dataKey="A"
-                                        stroke="#6366f1"
-                                        strokeWidth={3}
-                                        fill="#6366f1"
-                                        fillOpacity={0.4}
-                                    />
-                                    <Radar
-                                        name="Network Avg"
-                                        dataKey="B"
-                                        stroke="#94a3b8"
-                                        strokeWidth={2}
-                                        fill="#94a3b8"
-                                        fillOpacity={0.15}
-                                        strokeDasharray="5 3"
-                                    />
-                                    <Legend
-                                        wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
-                                        iconType="circle"
-                                    />
-                                </RadarChart>
-                            </ResponsiveContainer>
-                        </div>
+                                <Legend
+                                    wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
+                                    iconType="circle"
+                                />
+                            </RadarChart>
+                        </ResponsiveContainer>
                     )}
                 </div>
 
-                {/* Insights Panel - Scrollable if content overflows */}
+                {/* Insights Panel */}
                 <div className="flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar max-h-[400px]">
                     <div className="flex items-center gap-2 mb-2 sticky top-0 bg-[#0f1218]/90 backdrop-blur pb-2 z-10 print:bg-white">
                         <FileText className="w-4 h-4 text-slate-300" />
