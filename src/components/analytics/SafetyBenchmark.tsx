@@ -12,6 +12,8 @@ interface SafetyBenchmarkProps {
     practitionerRate?: number;
     /** Network average rate (%). */
     networkRate?: number;
+    /** Literature average AE rate from ref_benchmark_cohorts (%). Always shown as reference. */
+    literatureRate?: number | null;
     /** Total sessions logged. */
     totalSessions?: number;
     /** Raw adverse events count. */
@@ -29,6 +31,7 @@ const ALERT_THRESHOLD = 20; // events per 100 sessions, hard safety limit
 export default function SafetyBenchmark({
     practitionerRate = 4.2,
     networkRate = 12.8,
+    literatureRate,
     totalSessions = 72,
     adverseEvents = 3,
     percentile = 91,
@@ -44,7 +47,14 @@ export default function SafetyBenchmark({
     const chartData = [
         { name: 'Your Node', value: practitionerRate, fill: '#10b981' },
         { name: 'Network Avg', value: networkRate, fill: '#64748b' },
+        ...(literatureRate != null
+            ? [{ name: 'Lit. Avg', value: Math.round(literatureRate * 10) / 10, fill: '#6366f1' }]
+            : []),
     ];
+
+    // Dynamic XAxis max — accommodate literature AE rates (some trials report 90%+ any-AE)
+    const maxValue = Math.max(practitionerRate, networkRate, literatureRate ?? 0, ALERT_THRESHOLD);
+    const xAxisMax = Math.ceil(maxValue / 10) * 10 + 10;
 
     // WO-598: Guard against division by zero — if networkRate is 0 (no network data yet), delta is undefined → 0.
     const deltaVsNetwork = networkRate > 0 ? Math.round((1 - practitionerRate / networkRate) * 100) : 0;
@@ -112,9 +122,9 @@ export default function SafetyBenchmark({
                                 layout="vertical"
                                 margin={{ top: 4, right: 60, left: 90, bottom: 4 }}
                             >
-                                <XAxis
+                             <XAxis
                                     type="number"
-                                    domain={[0, 25]}
+                                    domain={[0, xAxisMax]}
                                     tick={{ fill: '#475569', fontSize: 12 }}
                                     axisLine={false}
                                     tickLine={false}

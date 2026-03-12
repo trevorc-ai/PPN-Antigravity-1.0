@@ -199,6 +199,7 @@ const Analytics = () => {
                         <SafetyBenchmark
                             practitionerRate={benchmark.practitioner_adverse_event_rate}
                             networkRate={benchmark.network_average_rate}
+                            literatureRate={benchmark.literature_adverse_event_rate}
                             totalSessions={benchmark.total_sessions}
                             adverseEvents={benchmark.adverse_events}
                             percentile={benchmark.percentile}

@@ -5,6 +5,7 @@ import { useDataCache } from './useDataCache';
 interface SafetyBenchmark {
     practitioner_adverse_event_rate: number;
     network_average_rate: number;
+    literature_adverse_event_rate: number | null;
     percentile: number;
     total_sessions: number;
     adverse_events: number;
@@ -99,9 +100,24 @@ export const useSafetyBenchmark = () => {
                     status = 'needs_improvement'; comparison = 'below_average';
                 }
 
+                // ── Literature baseline from published cohorts ──────────────────
+                const { data: litCohorts } = await supabase
+                    .from('ref_benchmark_cohorts')
+                    .select('adverse_event_rate_pct')
+                    .not('adverse_event_rate_pct', 'is', null);
+
+                const litRates = (litCohorts || [])
+                    .map((c: any) => c.adverse_event_rate_pct as number)
+                    .filter((r) => r !== null && r >= 0 && r <= 100);
+
+                const literatureAdverseEventRate = litRates.length > 0
+                    ? litRates.reduce((a, b) => a + b, 0) / litRates.length
+                    : null;
+
                 const result: SafetyBenchmark = {
                     practitioner_adverse_event_rate: practitionerRate,
                     network_average_rate: networkAverageRate,
+                    literature_adverse_event_rate: literatureAdverseEventRate,
                     percentile: Math.round(percentile),
                     total_sessions: totalSessions,
                     adverse_events: adverseEvents,
