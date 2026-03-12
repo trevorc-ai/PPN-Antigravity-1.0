@@ -1,1496 +1,360 @@
 <!DOCTYPE html>
-<!-- saved from url=(0082)file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/vip-invite-flow.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>VIP Beta Invite Flow — PPN</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com/">
-    <link href="./vip-invite-flow_files/css2" rel="stylesheet">
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        :root {
-            --bg: #0a1628;
-            --card: rgba(12, 26, 50, 0.95);
-            --blue: #388bfd;
-            --indigo: #6366f1;
-            --cyan: #39d0d8;
-            --green: #3fb950;
-            --emerald: #10b981;
-            --purple: #a855f7;
-            --amber: #f0a500;
-            --red: #f85149;
-            --text: #94a3b8;
-            --text-bright: #cbd5e1;
-            --muted: #64748b;
-            --border: rgba(99, 102, 241, 0.18);
-        }
-
-        html,
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ── NAV ── */
-        .nav {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(10, 22, 40, 0.97);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .nav-brand {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--indigo);
-            letter-spacing: 0.04em;
-        }
-
-        .nav-title {
-            font-size: 12px;
-            color: var(--muted);
-            font-weight: 600;
-        }
-
-        .nav-badge {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 3px 10px;
-            border-radius: 100px;
-            background: rgba(99, 102, 241, 0.12);
-            color: var(--indigo);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
-
-        /* ── LAYOUT ── */
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 24px 16px 100px;
-        }
-
-        .page-header {
-            text-align: center;
-            padding: 28px 0 24px;
-            margin-bottom: 8px;
-        }
-
-        .page-header h1 {
-            font-size: 26px;
-            font-weight: 900;
-            color: #e2e8f0;
-            letter-spacing: -0.03em;
-            line-height: 1.2;
-        }
-
-        .page-header p {
-            font-size: 14px;
-            color: var(--muted);
-            margin-top: 8px;
-            line-height: 1.6;
-        }
-
-        /* ── FLOW STEP TABS ── */
-        .flow-nav {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-bottom: 24px;
-        }
-
-        .flow-tab {
-            padding: 10px 4px;
-            border-radius: 10px;
-            border: 1px solid transparent;
-            background: rgba(255, 255, 255, 0.03);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .flow-tab:hover {
-            border-color: var(--border);
-        }
-
-        .flow-tab.active {
-            background: rgba(99, 102, 241, 0.12);
-            border-color: rgba(99, 102, 241, 0.4);
-        }
-
-        .flow-tab .tab-icon {
-            font-size: 20px;
-        }
-
-        .flow-tab .tab-num {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--muted);
-        }
-
-        .flow-tab.active .tab-num {
-            color: var(--indigo);
-        }
-
-        .flow-tab .tab-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-bright);
-        }
-
-        /* ── SCREEN PANELS ── */
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        /* ── PHONE SHELL ── */
-        .phone-shell {
-            max-width: 340px;
-            margin: 0 auto 24px;
-            background: #0f172a;
-            border: 2px solid rgba(255, 255, 255, 0.08);
-            border-radius: 40px;
-            overflow: hidden;
-            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
-        }
-
-        .phone-notch {
-            height: 36px;
-            background: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .notch-pill {
-            width: 100px;
-            height: 10px;
-            background: #000;
-            border-radius: 100px;
-        }
-
-        .phone-screen {
-            padding: 16px;
-            min-height: 520px;
-        }
-
-        /* ── SCREEN 1: ADMIN TOOL ── */
-        .tool-header {
-            margin-bottom: 20px;
-        }
-
-        .tool-header h2 {
-            font-size: 22px;
-            font-weight: 900;
-            color: #e2e8f0;
-            letter-spacing: -0.02em;
-        }
-
-        .tool-header p {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 3px;
-        }
-
-        .invite-card {
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: border-color 0.2s;
-        }
-
-        .invite-card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .card-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 3px 10px;
-            border-radius: 100px;
-            margin-bottom: 10px;
-        }
-
-        .badge-indigo {
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
-
-        .badge-emerald {
-            background: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .badge-purple {
-            background: rgba(168, 85, 247, 0.15);
-            color: #c084fc;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-        }
-
-        .invite-card h3 {
-            font-size: 14px;
-            font-weight: 800;
-            color: #e2e8f0;
-            margin-bottom: 4px;
-            line-height: 1.3;
-        }
-
-        .invite-card p {
-            font-size: 11px;
-            color: var(--muted);
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .link-input {
-            width: 100%;
-            padding: 10px 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            font-size: 16px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            margin-bottom: 8px;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .link-input::placeholder {
-            color: var(--muted);
-        }
-
-        .share-btn-card {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: opacity 0.15s, transform 0.1s;
-        }
-
-        .share-btn-card:active {
-            transform: scale(0.97);
-        }
-
-        .btn-indigo {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            color: #fff;
-        }
-
-        .btn-emerald {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #fff;
-        }
-
-        .btn-purple {
-            background: linear-gradient(135deg, #a855f7, #7c3aed);
-            color: #fff;
-        }
-
-        /* ── SCREEN 2: MESSAGE ── */
-        .message-app {
-            background: #1c1c1e;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .message-header {
-            background: #2c2c2e;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .message-to {
-            font-weight: 700;
-            color: #e2e8f0;
-            font-size: 13px;
-        }
-
-        .message-via {
-            font-size: 10px;
-            color: var(--muted);
-        }
-
-        .message-body {
-            padding: 14px;
-        }
-
-        .message-bubble {
-            background: #3a3a3c;
-            border-radius: 14px 14px 14px 4px;
-            padding: 12px 14px;
-        }
-
-        .message-text {
-            font-size: 12px;
-            color: #e2e8f0;
-            line-height: 1.65;
-        }
-
-        .message-link {
-            display: inline-block;
-            margin-top: 8px;
-            color: #388bfd;
-            font-size: 11px;
-            text-decoration: none;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .message-sender {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 8px;
-        }
-
-        .share-sheet {
-            margin-top: 16px;
-            padding: 14px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-        }
-
-        .share-sheet-label {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--muted);
-            margin-bottom: 10px;
-        }
-
-        .share-sheet-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .share-app {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-        .share-app-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .share-app-label {
-            font-size: 9px;
-            color: var(--muted);
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* ── SCREEN 3: BETA WELCOME ── */
-        .welcome-bg {
-            background: radial-gradient(ellipse at 50% 30%, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
-            padding: 12px;
-        }
-
-        .founding-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .founding-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(99, 102, 241, 0.15);
-            border: 1px solid rgba(99, 102, 241, 0.35);
-            color: #818cf8;
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-
-        .welcome-card {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 28px;
-            padding: 24px;
-        }
-
-        .network-icon-box {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin-bottom: 16px;
-        }
-
-        .welcome-label {
-            font-size: 13px;
-            color: var(--muted);
-            font-weight: 500;
-        }
-
-        .welcome-name {
-            font-size: 32px;
-            font-weight: 900;
-            color: #f1f5f9;
-            letter-spacing: -0.03em;
-            margin-bottom: 12px;
-        }
-
-        .welcome-body {
-            font-size: 12px;
-            color: var(--text);
-            line-height: 1.65;
-            margin-bottom: 16px;
-        }
-
-        .stat-block {
-            background: rgba(99, 102, 241, 0.08);
-            border: 1px solid rgba(99, 102, 241, 0.15);
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .stat-icon {
-            font-size: 22px;
-        }
-
-        .stat-number {
-            font-size: 28px;
-            font-weight: 900;
-            color: #e2e8f0;
-            letter-spacing: -0.03em;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
-            line-height: 1.4;
-        }
-
-        .social-proof {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        .cta-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            color: #fff;
-            font-size: 14px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 12px 28px rgba(99, 102, 241, 0.45);
-        }
-
-        .access-note {
-            text-align: center;
-            font-size: 10px;
-            color: var(--muted);
-            margin-top: 10px;
-        }
-
-        .wordmark {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 11px;
-            color: #334155;
-            letter-spacing: 0.04em;
-        }
-
-        /* ── SCREEN 4: ANALYTICS ── */
-        .analytics-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .analytics-header h2 {
-            font-size: 16px;
-            font-weight: 900;
-            color: #e2e8f0;
-        }
-
-        .live-badge {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 3px 8px;
-            border-radius: 100px;
-            background: rgba(16, 185, 129, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .stat-card {
-            padding: 12px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-        }
-
-        .stat-card .sc-num {
-            font-size: 22px;
-            font-weight: 900;
-            color: #e2e8f0;
-            letter-spacing: -0.02em;
-        }
-
-        .stat-card .sc-label {
-            font-size: 10px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
-        .stat-card .sc-trend {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--green);
-            margin-top: 4px;
-        }
-
-        .stat-card.teal-accent {
-            border-color: rgba(57, 208, 216, 0.15);
-        }
-
-        .stat-card.teal-accent .sc-num {
-            color: var(--cyan);
-        }
-
-        .stat-card.purple-accent {
-            border-color: rgba(168, 85, 247, 0.15);
-        }
-
-        .stat-card.purple-accent .sc-num {
-            color: #c084fc;
-        }
-
-        .chart-area {
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 12px;
-            margin-bottom: 8px;
-        }
-
-        .chart-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 8px;
-        }
-
-        .chart-svg {
-            width: 100%;
-            height: 80px;
-        }
-
-        .bar-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .bar-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .bar-name {
-            font-size: 9px;
-            color: var(--muted);
-            width: 72px;
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        .bar-track {
-            flex: 1;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: 4px;
-        }
-
-        /* ── INFO PANEL (below phone) ── */
-        .info-panel {
-            border-radius: 16px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            margin-bottom: 16px;
-        }
-
-        .info-panel h3 {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--text-bright);
-            margin-bottom: 8px;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-icon {
-            font-size: 13px;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .info-text {
-            font-size: 12px;
-            color: var(--text);
-            line-height: 1.5;
-        }
-
-        .info-key {
-            font-weight: 700;
-            color: var(--text-bright);
-        }
-
-        /* ── STICKY CTA ── */
-        .sticky-cta {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(10, 22, 40, 0.97);
-            backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border);
-            padding: 12px 16px;
-            display: flex;
-            gap: 8px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .sticky-inner {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .btn-nav {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            background: rgba(99, 102, 241, 0.08);
-            color: var(--indigo);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .btn-nav:hover {
-            background: rgba(99, 102, 241, 0.15);
-        }
-
-        .btn-nav-prev {
-            color: var(--muted);
-            background: transparent;
-            border-color: rgba(255, 255, 255, 0.06);
-        }
-
-        .btn-nav-prev:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        /* TOAST */
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(16px);
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            color: #34d399;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 7px 18px;
-            border-radius: 100px;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.25s;
-            z-index: 999;
-            white-space: nowrap;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* STEP DOTS */
-        .step-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            transition: all 0.2s;
-        }
-
-        .dot.active {
-            background: var(--indigo);
-            width: 20px;
-            border-radius: 3px;
-        }
-
-        /* ── PERSONA CARDS ── */
-        .persona-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            background: rgba(255, 255, 255, 0.02);
-            cursor: pointer;
-            transition: border-color 0.15s, background 0.15s;
-        }
-
-        .persona-card:hover {
-            border-color: rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .persona-card.active-card {
-            border-color: rgba(99, 102, 241, 0.4);
-            background: rgba(99, 102, 241, 0.08);
-        }
-
-        /* ── LOADING SPINNER ── */
-        .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            vertical-align: middle;
-            margin-right: 6px;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ─── Mobile Responsive (≤ 520px) ──────────────────────────── */
-        @media (max-width: 520px) {
-            .flow-nav { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-            .share-sheet-row { grid-template-columns: repeat(2, 1fr); }
-            .stat-grid { grid-template-columns: 1fr; }
-            .phone-shell { max-width: 100%; border-radius: 24px; }
-            .welcome-name { font-size: 24px; }
-            .page-header h1 { font-size: 22px; }
-            .container { padding: 16px 12px 100px; }
-        }
-    </style>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>PPN Invite Tool</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a1628;
+      color: #94a3b8;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(10,22,40,0.97);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(99,102,241,0.15);
+      padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { font-size: 13px; font-weight: 800; color: #6366f1; letter-spacing: 0.06em; }
+    .nav-title  { font-size: 12px; font-weight: 600; color: #64748b; }
+    .nav-badge  {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 100px;
+      background: rgba(99,102,241,0.12); color: #6366f1;
+      border: 1px solid rgba(99,102,241,0.3);
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 480px; margin: 0 auto; padding: 32px 20px 80px; }
+
+    .page-title {
+      font-size: 26px; font-weight: 900; color: #e2e8f0;
+      letter-spacing: -0.03em; margin-bottom: 4px;
+    }
+    .page-sub { font-size: 14px; color: #64748b; margin-bottom: 32px; }
+
+    /* ── CARD ── */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    /* ── FORM ── */
+    .field-label {
+      display: block;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #64748b; margin-bottom: 6px;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      font-size: 16px; /* 16px prevents iOS auto-zoom */
+      font-family: 'Inter', sans-serif;
+      color: #e2e8f0;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      margin-bottom: 16px;
+      transition: border-color 0.15s;
+    }
+    .field-input:focus { border-color: rgba(99,102,241,0.5); }
+    .field-input::placeholder { color: #475569; }
+
+    /* ── PERSONA ── */
+    .persona-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+    .persona-btn {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      width: 100%; text-align: left;
+    }
+    .persona-btn:hover { border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.04); }
+    .persona-btn.selected { border-color: rgba(99,102,241,0.45); background: rgba(99,102,241,0.08); }
+
+    .persona-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 100px; white-space: nowrap; flex-shrink: 0;
+    }
+    .badge-indigo { background: rgba(99,102,241,0.2); color: #818cf8; border: 1px solid rgba(99,102,241,0.35); }
+    .badge-emerald { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.35); }
+    .badge-purple  { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.35); }
+
+    .persona-desc { font-size: 13px; color: #64748b; line-height: 1.4; }
+
+    /* ── SEND BUTTON ── */
+    .send-btn {
+      width: 100%; padding: 14px;
+      border-radius: 10px; border: none;
+      font-size: 15px; font-weight: 800;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .send-btn:active { transform: scale(0.98); }
+    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-indigo  { background: linear-gradient(135deg,#6366f1,#4f46e5); color: #fff; }
+    .btn-emerald { background: linear-gradient(135deg,#10b981,#059669); color: #fff; }
+    .btn-purple  { background: linear-gradient(135deg,#a855f7,#7c3aed); color: #fff; }
+
+    .error-msg { font-size: 13px; color: #f87171; margin-bottom: 12px; display: none; }
+
+    /* ── STATUS ── */
+    .status-box {
+      border-radius: 10px; padding: 14px 16px;
+      font-size: 14px; font-weight: 600; text-align: center;
+      display: none;
+    }
+    .status-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #34d399; }
+    .status-error   { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: #f87171; }
+
+    /* ── SUPABASE SHORTCUT ── */
+    .shortcut-card { display: none; } /* shown after send */
+    .shortcut-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #6366f1; margin-bottom: 8px;
+    }
+    .shortcut-email-row { display: flex; gap: 8px; align-items: center; }
+    .shortcut-email {
+      flex: 1; padding: 10px 12px;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+      font-size: 14px; font-family: monospace; color: #94a3b8;
+    }
+    .copy-btn {
+      padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(99,102,241,0.1); color: #818cf8;
+      font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;
+    }
+    .shortcut-steps {
+      margin-top: 10px; font-size: 12px; color: #64748b; line-height: 1.6;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-title { font-size: 13px; font-weight: 700; color: #cbd5e1; margin-bottom: 12px; }
+    .how-row { display: flex; gap: 10px; padding: 6px 0; align-items: flex-start; }
+    .how-num {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);
+      font-size: 10px; font-weight: 800; color: #818cf8;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .how-text { font-size: 13px; color: #64748b; line-height: 1.5; }
+    .how-text strong { color: #94a3b8; }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
-
 <body>
 
-    <nav class="nav">
-        <div class="nav-brand">PPN</div>
-        <div class="nav-title">VIP Invite Flow Preview</div>
-        <div class="nav-badge">Internal</div>
-    </nav>
+  <div class="nav">
+    <span class="nav-brand">PPN</span>
+    <span class="nav-title">Invite Tool</span>
+    <span class="nav-badge">Internal</span>
+  </div>
 
-    <div class="container">
+  <div class="container">
 
-        <div class="page-header">
-            <h1>The Invite Flow</h1>
-            <p>What you send. What they see. What they enter.</p>
-        </div>
+    <div class="page-title">Send an Invite</div>
+    <div class="page-sub">Fill in their details. Tap Send. Done.</div>
 
-        <!-- STEP TAB NAV -->
-        <div class="flow-nav">
-            <div class="flow-tab active" onclick="goTo(0)">
-                <div class="tab-icon">📱</div>
-                <div class="tab-num">Step 1</div>
-                <div class="tab-label">Your Tool</div>
-            </div>
-            <div class="flow-tab" onclick="goTo(1)">
-                <div class="tab-icon">✉️</div>
-                <div class="tab-num">Step 2</div>
-                <div class="tab-label">Their Message</div>
-            </div>
-            <div class="flow-tab" onclick="goTo(2)">
-                <div class="tab-icon">🌐</div>
-                <div class="tab-num">Step 3</div>
-                <div class="tab-label">They Land</div>
-            </div>
-            <div class="flow-tab" onclick="goTo(3)">
-                <div class="tab-icon">📊</div>
-                <div class="tab-num">Step 4</div>
-                <div class="tab-label">They Enter</div>
-            </div>
-        </div>
+    <!-- INVITE FORM -->
+    <div class="card">
 
-        <div class="step-dots">
-            <div class="dot active" id="dot-0"></div>
-            <div class="dot" id="dot-1"></div>
-            <div class="dot" id="dot-2"></div>
-            <div class="dot" id="dot-3"></div>
-        </div>
+      <label class="field-label" for="invite-name">First Name</label>
+      <input class="field-input" type="text" id="invite-name" placeholder="e.g. Jason" autocomplete="given-name">
 
-        <!-- ══════════════════════════════════════════════ -->
-        <!-- SCREEN 0: ADMIN INVITE TOOL                   -->
-        <!-- ══════════════════════════════════════════════ -->
-        <div class="screen active" id="screen-0">
-            <div class="phone-shell">
-                <div class="phone-notch">
-                    <div class="notch-pill"></div>
-                </div>
-                <div class="phone-screen">
-                    <div class="tool-header">
-                        <h2>VIP Invite Tool</h2>
-                        <p>Fill in their details. Tap Send.</p>
-                    </div>
+      <label class="field-label" for="invite-email">Email Address</label>
+      <input class="field-input" type="email" id="invite-email" placeholder="e.g. jason@example.com" autocomplete="email">
 
-                    <!-- NAME + EMAIL -->
-                    <div style="margin-bottom:14px;">
-                        <div style="margin-bottom:8px;">
-                            <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;">First Name</label>
-                            <input id="invite-name" type="text" placeholder="e.g. Jason" autocomplete="off"
-                                oninput="updatePreview()"
-                                style="width:100%;padding:9px 11px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.1);border-radius:9px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none;"
-                            >
-                        </div>
-                        <div>
-                            <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;">Email Address</label>
-                            <input id="invite-email" type="email" placeholder="e.g. jason@example.com" autocomplete="off"
-                                style="width:100%;padding:9px 11px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.1);border-radius:9px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none;"
-                            >
-                        </div>
-                    </div>
+      <label class="field-label">Persona</label>
+      <div class="persona-grid">
+        <button class="persona-btn selected" id="btn-partner" onclick="selectPersona('partner')">
+          <span class="persona-badge badge-indigo">Partner / Advisor</span>
+          <span class="persona-desc">First look at 1,500+ real clinical records.</span>
+        </button>
+        <button class="persona-btn" id="btn-clinician" onclick="selectPersona('clinician')">
+          <span class="persona-badge badge-emerald">Clinician</span>
+          <span class="persona-desc">Clinical-grade documentation. No setup required.</span>
+        </button>
+        <button class="persona-btn" id="btn-privacy" onclick="selectPersona('privacy')">
+          <span class="persona-badge badge-purple">Privacy / Compliance</span>
+          <span class="persona-desc">Zero-PHI by design. Phantom Shield protects every record.</span>
+        </button>
+      </div>
 
-                    <!-- PERSONA SELECTOR -->
-                    <div style="margin-bottom:14px;">
-                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Persona</div>
-                        <div style="display:flex;flex-direction:column;gap:7px;">
-                            <label id="card-partner" class="persona-card active-card" onclick="selectPersona('partner')">
-                                <input type="radio" name="persona" value="partner" checked style="display:none;">
-                                <span class="card-badge badge-indigo" style="margin-bottom:0;">Partner / Advisor</span>
-                                <span style="font-size:11px;color:var(--muted);">First look at 1,500+ real clinical records.</span>
-                            </label>
-                            <label id="card-clinician" class="persona-card" onclick="selectPersona('clinician')">
-                                <input type="radio" name="persona" value="clinician" style="display:none;">
-                                <span class="card-badge badge-emerald" style="margin-bottom:0;">Clinician</span>
-                                <span style="font-size:11px;color:var(--muted);">Clinical-grade documentation. No setup required.</span>
-                            </label>
-                            <label id="card-privacy" class="persona-card" onclick="selectPersona('privacy')">
-                                <input type="radio" name="persona" value="privacy" style="display:none;">
-                                <span class="card-badge badge-purple" style="margin-bottom:0;">Privacy / Compliance</span>
-                                <span style="font-size:11px;color:var(--muted);">Zero-PHI by design. Phantom Shield protects every record.</span>
-                            </label>
-                        </div>
-                    </div>
+      <div class="error-msg" id="error-msg">Please enter a name and email address.</div>
 
-                    <!-- SEND BUTTON -->
-                    <button id="send-invite-btn" class="share-btn-card btn-indigo" onclick="doShare()" style="margin-top:4px;">
-                        📤 Send Invite
-                    </button>
-                    <div id="invite-error" style="display:none;margin-top:7px;font-size:11px;color:#f85149;text-align:center;">Please enter a first name and email address.</div>
-                </div>
+      <button class="send-btn btn-indigo" id="send-btn" onclick="doSend()">
+        📨 Send Invite
+      </button>
 
-            </div>
-
-            <div class="info-panel">
-                <h3>How this works</h3>
-                <div class="info-row">
-                    <div class="info-icon">1️⃣</div>
-                    <div class="info-text">Enter their <span class="info-key">first name</span> and <span class="info-key">email</span>. Pick the persona that matches them.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">2️⃣</div>
-                    <div class="info-text">Tap <span class="info-key">Send Invite</span>. A pre-written, personalized message opens in your share sheet — Messages, WhatsApp, Email, or LinkedIn.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">3️⃣</div>
-                    <div class="info-text">Open <span class="info-key">Supabase → Authentication → Users → Invite User</span>. Enter the email below — they'll receive a secure account setup link.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">🔒</div>
-                    <div class="info-text">Zero PHI. Name and email are typed locally, never stored. Their Supabase setup link is cryptographically unique and single-use.</div>
-                </div>
-            </div>
-
-            <!-- SUPABASE SHORTCUT PANEL -->
-            <div class="info-panel" style="border-color:rgba(99,102,241,0.2);background:rgba(99,102,241,0.05);">
-                <h3 style="color:#818cf8;">⚡ Supabase Shortcut</h3>
-                <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Once you hit Send Invite, use this to set up their account in Supabase:</div>
-                <div style="display:flex;gap:8px;align-items:center;">
-                    <div id="supabase-email-display" style="flex:1;padding:8px 10px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:12px;color:var(--text-bright);font-family:'JetBrains Mono',monospace;word-break:break-all;">Enter email above…</div>
-                    <button onclick="copySupabaseEmail()" style="padding:8px 12px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);border-radius:8px;color:#818cf8;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Copy</button>
-                </div>
-                <div style="margin-top:10px;font-size:11px;color:var(--muted);">Then: <strong style="color:var(--text-bright);">Supabase → Authentication → Users → Invite User</strong> → paste → Invite user.</div>
-            </div>
-
-
-        <!-- ══════════════════════════════════════════════ -->
-        <!-- SCREEN 1: OUTBOUND MESSAGE                    -->
-        <!-- ══════════════════════════════════════════════ -->
-        <div class="screen" id="screen-1">
-            <div class="phone-shell">
-                <div class="phone-notch">
-                    <div class="notch-pill"></div>
-                </div>
-                <div class="phone-screen" style="padding:12px;">
-                    <div class="message-app">
-                        <div class="message-header">
-                            <div class="message-avatar">JA</div>
-                            <div>
-                                <div class="message-to">Dr. Jason Allen</div>
-                                <div class="message-via">via iMessage</div>
-                            </div>
-                        </div>
-                    <div class="message-body">
-                            <div class="message-bubble">
-                                <div class="message-text">
-                                    <span id="preview-name">Jason</span>,<br><br>
-                                    I want to give you a private first look at PPN Portal before we open to the broader
-                                    network.<br><br>
-                                    You are seeing 1,500+ real anonymized clinical outcome records from active
-                                    psychedelic therapy sessions. The first database of its kind.<br><br>
-                                    Your access is ready. No setup required — accept your invite from the email I just sent:
-                                </div>
-                                <a class="message-link" href="#">Check your email for your PPN access link →</a>
-                                <div class="message-sender"><br>— Trevor<br>Psychedelic Practitioner Network</div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="share-sheet">
-                        <div class="share-sheet-label">Share via</div>
-                        <div class="share-sheet-row">
-                            <div class="share-app">
-                                <div class="share-app-icon" style="background:#1c8ef9;">💬</div>
-                                <div class="share-app-label">Messages</div>
-                            </div>
-                            <div class="share-app">
-                                <div class="share-app-icon" style="background:#25d366;">📱</div>
-                                <div class="share-app-label">WhatsApp</div>
-                            </div>
-                            <div class="share-app">
-                                <div class="share-app-icon" style="background:#ea4335;">📧</div>
-                                <div class="share-app-label">Email</div>
-                            </div>
-                            <div class="share-app">
-                                <div class="share-app-icon" style="background:#0a66c2;">💼</div>
-                                <div class="share-app-label">LinkedIn</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="info-panel">
-                <h3>What the message contains</h3>
-                <div class="info-row">
-                    <div class="info-icon">✅</div>
-                    <div class="info-text"><span class="info-key">Pre-written body.</span> You never type a word. The
-                        message is fully composed before the share sheet opens.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">✅</div>
-                    <div class="info-text"><span class="info-key">Personalized name.</span> You add
-                        <code>?name=Jason</code> to the magic link URL so they see their name on the welcome screen.
-                    </div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">✅</div>
-                    <div class="info-text"><span class="info-key">Zero PHI.</span> No patient data, no account details.
-                        Just a signed one-time token URL.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">⏱️</div>
-                    <div class="info-text">Total time from opening the tool to hitting Send: <span class="info-key">under 60 seconds.</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════ -->
-        <!-- SCREEN 2: BETA WELCOME PAGE                   -->
-        <!-- ══════════════════════════════════════════════ -->
-        <div class="screen" id="screen-2">
-            <div class="phone-shell">
-                <div class="phone-notch">
-                    <div class="notch-pill"></div>
-                </div>
-                <div class="phone-screen" style="padding:0;">
-                    <div class="welcome-bg">
-                        <div class="founding-badge">
-                            <div class="founding-pill">🛡️ Founding Member Access</div>
-                        </div>
-                        <div class="welcome-card">
-                            <div class="network-icon-box">🔗</div>
-                            <div class="welcome-label">Welcome,</div>
-                            <div class="welcome-name">Jason.</div>
-                            <div class="welcome-body">You are seeing the PPN Portal before anyone else. This is the
-                                first clinical documentation and network intelligence platform built for psychedelic
-                                therapy practitioners. The data you are about to see is real.</div>
-                            <div class="stat-block">
-                                <div class="stat-icon">📊</div>
-                                <div>
-                                    <div class="stat-number">1,500+</div>
-                                    <div class="stat-label">anonymized clinical outcome records, live in the network
-                                        now.</div>
-                                </div>
-                            </div>
-                            <div class="social-proof">
-                                👥 <span>You are among the first practitioners to see the network.</span>
-                            </div>
-                            <button class="cta-btn" onclick="goTo(3)">
-                                Enter the Network →
-                            </button>
-                            <div class="access-note">Your access is active. No setup required.</div>
-                        </div>
-                        <div class="wordmark">Psychedelic Practitioner Network</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="info-panel">
-                <h3>What they see when the link opens</h3>
-                <div class="info-row">
-                    <div class="info-icon">🌐</div>
-                    <div class="info-text">Route: <span class="info-key">ppnportal.net/#/beta-welcome?name=Jason</span>
-                        — public, no auth required to render.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">🏆</div>
-                    <div class="info-text"><span class="info-key">Founding Member Access</span> badge sets the frame
-                        immediately. They know this is exclusive before they read a word.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">📊</div>
-                    <div class="info-text">The <span class="info-key">1,500+</span> stat is the first number they see.
-                        Real data. Makes it concrete before they click anything.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">➡️</div>
-                    <div class="info-text">Single CTA: <span class="info-key">Enter the Network</span> routes to
-                        <code>/analytics</code>. No nav, no sidebar. Nowhere else to go but in.</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════ -->
-        <!-- SCREEN 3: ANALYTICS                           -->
-        <!-- ══════════════════════════════════════════════ -->
-        <div class="screen" id="screen-3">
-            <div class="phone-shell">
-                <div class="phone-notch">
-                    <div class="notch-pill"></div>
-                </div>
-                <div class="phone-screen">
-                    <div class="analytics-header">
-                        <h2>Network Intelligence</h2>
-                        <span class="live-badge">LIVE</span>
-                    </div>
-
-                    <div class="stat-grid">
-                        <div class="stat-card">
-                            <div class="sc-num">1,547</div>
-                            <div class="sc-label">Clinical Records</div>
-                            <div class="sc-trend">↑ 15.5% this month</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="sc-num">94.3%</div>
-                            <div class="sc-label">Treatment Response</div>
-                            <div class="sc-trend">↑ 16.3% this month</div>
-                        </div>
-                        <div class="stat-card teal-accent">
-                            <div class="sc-num">12</div>
-                            <div class="sc-label">Modalities Documented</div>
-                        </div>
-                        <div class="stat-card purple-accent">
-                            <div class="sc-num">38</div>
-                            <div class="sc-label">Practitioners Global</div>
-                        </div>
-                    </div>
-
-                    <div class="chart-area">
-                        <div class="chart-label">Clinical Outcomes Over Time</div>
-                        <svg class="chart-svg" viewBox="0 0 288 80" preserveAspectRatio="none">
-                            <defs>
-                                <lineargradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#6366f1" stop-opacity="0.4"></stop>
-                                    <stop offset="100%" stop-color="#6366f1" stop-opacity="0"></stop>
-                                </lineargradient>
-                                <lineargradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"></stop>
-                                    <stop offset="100%" stop-color="#10b981" stop-opacity="0"></stop>
-                                </lineargradient>
-                            </defs>
-                            <!-- Grid lines -->
-                            <line x1="0" y1="20" x2="288" y2="20" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>
-                            <line x1="0" y1="40" x2="288" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>
-                            <line x1="0" y1="60" x2="288" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>
-                            <!-- Fill indigo -->
-                            <path d="M0,65 C30,60 50,50 80,40 S120,25 150,20 S200,15 230,10 S260,8 288,5 L288,80 L0,80Z" fill="url(#g1)"></path>
-                            <!-- Line indigo -->
-                            <path d="M0,65 C30,60 50,50 80,40 S120,25 150,20 S200,15 230,10 S260,8 288,5" fill="none" stroke="#6366f1" stroke-width="2"></path>
-                            <!-- Fill emerald -->
-                            <path d="M0,72 C30,68 60,62 90,55 S130,45 160,38 S210,30 240,22 S268,16 288,14 L288,80 L0,80Z" fill="url(#g2)"></path>
-                            <!-- Line emerald -->
-                            <path d="M0,72 C30,68 60,62 90,55 S130,45 160,38 S210,30 240,22 S268,16 288,14" fill="none" stroke="#10b981" stroke-width="2"></path>
-                        </svg>
-                    </div>
-
-                    <div class="chart-area">
-                        <div class="chart-label">Top Modalities</div>
-                        <div class="bar-chart">
-                            <div class="bar-row">
-                                <div class="bar-name">MDMA-AT</div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width:85%;background:linear-gradient(90deg,#6366f1,#818cf8);"></div>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <div class="bar-name">Psilocybin-AT</div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width:72%;background:linear-gradient(90deg,#10b981,#34d399);"></div>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <div class="bar-name">Ketamine-AT</div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width:55%;background:linear-gradient(90deg,#06b6d4,#22d3ee);"></div>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <div class="bar-name">Cannabis-AT</div>
-                                <div class="bar-track">
-                                    <div class="bar-fill" style="width:38%;background:linear-gradient(90deg,#a855f7,#c084fc);"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="info-panel">
-                <h3>What they land on</h3>
-                <div class="info-row">
-                    <div class="info-icon">🎯</div>
-                    <div class="info-text"><span class="info-key">First view is Analytics.</span> No onboarding wizard,
-                        no empty states. Live network data, immediately.</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">🔐</div>
-                    <div class="info-text">They are already authenticated by the magic link. All they did was tap a link
-                        in their phone. <span class="info-key">Zero password, zero setup.</span></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">📊</div>
-                    <div class="info-text">The 1,500+ records they saw on the welcome screen are now visible as real
-                        charts. <span class="info-key">The promise is immediately kept.</span></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-icon">⚡</div>
-                    <div class="info-text">Total time from receiving your message to seeing the network data: <span class="info-key">under 30 seconds.</span></div>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /container -->
-
-    <!-- STICKY NAV -->
-    <div style="position:fixed;bottom:0;left:0;right:0;background:rgba(10,22,40,0.97);backdrop-filter:blur(16px);border-top:1px solid rgba(99,102,241,0.15);padding:12px 16px;z-index:100;">
-        <div class="sticky-inner" style="max-width:468px;margin:0 auto;">
-            <button class="btn-nav btn-nav-prev" onclick="prev()" id="btn-prev" style="display: none;">← Back</button>
-            <button class="btn-nav" onclick="next()" id="btn-next" style="flex:1;">Next Step →</button>
-        </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- STATUS (shown after send) -->
+    <div class="status-box status-success" id="status-success">
+      ✓ Invite sent. They'll receive an email from PPN Portal shortly.
+    </div>
+    <div class="status-box status-error" id="status-error"></div>
 
-    <script>
-        let current = 0;
-        const total = 4;
-        let selectedPersona = 'partner';
+    <!-- SUPABASE SHORTCUT (always shown after send, as backup) -->
+    <div class="card shortcut-card" id="shortcut-card">
+      <div class="shortcut-label">⚡ Supabase Shortcut</div>
+      <p style="font-size:13px;color:#64748b;margin-bottom:10px;">If no email arrives in 2 minutes, manually trigger it:</p>
+      <div class="shortcut-email-row">
+        <div class="shortcut-email" id="shortcut-email-display"></div>
+        <button class="copy-btn" onclick="copyEmail()">Copy</button>
+      </div>
+      <div class="shortcut-steps">
+        Supabase → Authentication → Users → Add user → Send invitation → paste → Invite user.
+      </div>
+    </div>
 
-        function selectPersona(p) {
-            selectedPersona = p;
-            ['partner','clinician','privacy'].forEach(id => {
-                document.getElementById('card-' + id).classList.toggle('active-card', id === p);
-            });
-            // update send button color
-            const btn = document.getElementById('send-invite-btn');
-            btn.className = 'share-btn-card ' + (p === 'partner' ? 'btn-indigo' : p === 'clinician' ? 'btn-emerald' : 'btn-purple');
+    <!-- HOW IT WORKS -->
+    <div class="card">
+      <div class="how-title">How it works</div>
+      <div class="how-row">
+        <div class="how-num">1</div>
+        <div class="how-text">Enter their <strong>first name</strong> and <strong>email</strong>. Pick the persona that matches them.</div>
+      </div>
+      <div class="how-row">
+        <div class="how-num">2</div>
+        <div class="how-text">Tap <strong>Send Invite</strong>. Their account is created and the branded PPN email is sent via Resend.</div>
+      </div>
+      <div class="how-row">
+        <div class="how-num">3</div>
+        <div class="how-text">Your share sheet opens with a <strong>personalised outreach message</strong> — send it however you like.</div>
+      </div>
+      <div class="how-row">
+        <div class="how-num">🔒</div>
+        <div class="how-text">Zero PHI. Name and email are never stored by this tool. Their link is single-use and expires in 24 hours.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const EDGE_FN_URL = 'https://nmdhhlwytxmedipgugkx.supabase.co/functions/v1/generate-invite';
+
+    let selectedPersona = 'partner';
+
+    function selectPersona(p) {
+      selectedPersona = p;
+      ['partner', 'clinician', 'privacy'].forEach(id => {
+        document.getElementById('btn-' + id).classList.toggle('selected', id === p);
+      });
+      const btn = document.getElementById('send-btn');
+      btn.className = 'send-btn ' + (p === 'partner' ? 'btn-indigo' : p === 'clinician' ? 'btn-emerald' : 'btn-purple');
+    }
+
+    function copyEmail() {
+      const email = document.getElementById('invite-email').value.trim();
+      navigator.clipboard.writeText(email).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      });
+    }
+
+    const shareMessages = {
+      partner: (name) => `${name},\n\nI want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymised clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nYour access is ready. Check your email for the invite link.\n\n— Trevor\nPPN Portal`,
+      clinician: (name) => `${name},\n\nI want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions.\n\nCheck your email for your access link.\n\n— Trevor\nPPN Portal`,
+      privacy: (name) => `${name},\n\nBefore you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready from day one.\n\nCheck your email for your access link.\n\n— Trevor\nPPN Portal`,
+    };
+
+    async function doSend() {
+      const name  = document.getElementById('invite-name').value.trim();
+      const email = document.getElementById('invite-email').value.trim();
+      const errEl = document.getElementById('error-msg');
+      const btn   = document.getElementById('send-btn');
+
+      // Validation
+      if (!name || !email) {
+        errEl.style.display = 'block';
+        setTimeout(() => errEl.style.display = 'none', 3000);
+        return;
+      }
+      errEl.style.display = 'none';
+
+      // Hide previous status
+      document.getElementById('status-success').style.display = 'none';
+      document.getElementById('status-error').style.display = 'none';
+
+      // Loading
+      const origHTML = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner"></span> Sending\u2026';
+      btn.disabled = true;
+
+      let edgeFnWorked = false;
+
+      try {
+        const res = await fetch(EDGE_FN_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name, persona: selectedPersona }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error ?? `HTTP ${res.status}`);
         }
 
-        function updatePreview() {
-            const name = document.getElementById('invite-name').value.trim() || 'Jason';
-            const email = document.getElementById('invite-email').value.trim();
-            // Update Screen 1 preview name
-            const el = document.getElementById('preview-name');
-            if (el) el.textContent = name;
-            // Update Supabase shortcut panel
-            const emailDisplay = document.getElementById('supabase-email-display');
-            if (emailDisplay) emailDisplay.textContent = email || 'Enter email above\u2026';
-        }
+        await res.json(); // consume response
+        edgeFnWorked = true;
 
-        function copySupabaseEmail() {
-            const email = document.getElementById('invite-email').value.trim();
-            if (!email) { showToast('\u26a0\ufe0f Enter an email first'); return; }
-            navigator.clipboard.writeText(email).then(() => showToast('\u2713 Email copied'));
-        }
+        document.getElementById('status-success').style.display = 'block';
 
-        function goTo(n) {
-            // Use inline styles directly — more reliable than class toggling across all browsers
-            document.querySelectorAll('.screen').forEach((s, i) => {
-                s.style.display = i === n ? 'block' : 'none';
-            });
-            document.querySelectorAll('.dot').forEach((d, i) => {
-                d.classList.toggle('active', i === n);
-            });
-            document.querySelectorAll('.flow-tab').forEach((t, i) => {
-                t.classList.toggle('active', i === n);
-            });
+      } catch (e) {
+        console.error('[PPN invite] Edge Function error:', e.message);
+        const errBox = document.getElementById('status-error');
+        errBox.textContent = `\u26a0\ufe0f Could not send automatically (${e.message}). Use the Supabase shortcut below.`;
+        errBox.style.display = 'block';
+      } finally {
+        btn.innerHTML = origHTML;
+        btn.disabled = false;
+      }
 
-            current = n;
+      // Always show Supabase shortcut as backup
+      document.getElementById('shortcut-email-display').textContent = email;
+      document.getElementById('shortcut-card').style.display = 'block';
 
-            document.getElementById('btn-prev').style.display = n === 0 ? 'none' : 'block';
-            document.getElementById('btn-next').textContent = n === total - 1 ? '\u21a9 Back to Start' : 'Next Step \u2192';
+      // Open share sheet with personalised message
+      const text = shareMessages[selectedPersona]?.(name) ?? shareMessages.partner(name);
+      if (navigator.share) {
+        navigator.share({ title: 'PPN Portal Invitation', text })
+          .catch(() => { navigator.clipboard.writeText(text); });
+      } else {
+        navigator.clipboard.writeText(text);
+      }
+    }
+  </script>
 
-            window.scrollTo(0, 0);
-        }
-
-        function next() {
-            if (current === total - 1) { goTo(0); } else { goTo(current + 1); }
-        }
-        function prev() { if (current > 0) { goTo(current - 1); } }
-
-        // Initialize screen display immediately (script is at end of body, DOM is ready)
-        goTo(0);
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2500);
-        }
-
-        // ── Edge Function URL ──────────────────────────────────────────
-        // Replace with your actual Supabase project reference.
-        // Format: https://<ref>.supabase.co/functions/v1/generate-invite
-        const EDGE_FN_URL = 'https://nmdhhlwytxmedipgugkx.supabase.co/functions/v1/generate-invite';
-
-        function buildMessage(name, persona, inviteUrl) {
-            const linkLine = inviteUrl
-                ? `\n\nTap your personal access link:\n${inviteUrl}`
-                : `\n\nYour invite will arrive by email shortly.`;
-
-            const bodies = {
-                partner: `${name},\n\nI want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymized clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nYour access is ready. No setup required.${linkLine}\n\n\u2014 Trevor\nPPN Portal`,
-                clinician: `${name},\n\nI want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions. No setup required.${linkLine}\n\n\u2014 Trevor\nPPN Portal`,
-                privacy: `${name},\n\nBefore you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready from day one.${linkLine}\n\n\u2014 Trevor\nPPN Portal`
-            };
-            return bodies[persona] ?? bodies.partner;
-        }
-
-        const titles = {
-            partner: 'PPN Portal \u2014 Founding Member Access',
-            clinician: 'PPN Portal \u2014 Built for Sessions Like Yours',
-            privacy: 'PPN Portal \u2014 Zero-PHI by Design'
-        };
-
-        function shareMessage(name, persona, inviteUrl) {
-            const text = buildMessage(name, persona, inviteUrl);
-            if (navigator.share) {
-                navigator.share({ title: titles[persona], text, url: inviteUrl ?? undefined })
-                    .then(() => showToast('\u2713 Shared successfully'))
-                    .catch(() => { navigator.clipboard.writeText(text); showToast('\u2713 Copied to clipboard'); });
-            } else {
-                navigator.clipboard.writeText(text);
-                showToast('\u2713 Message copied to clipboard');
-            }
-        }
-
-        async function doShare() {
-            const name = document.getElementById('invite-name').value.trim();
-            const email = document.getElementById('invite-email').value.trim();
-            const errEl = document.getElementById('invite-error');
-            const btn = document.getElementById('send-invite-btn');
-
-            if (!name || !email) {
-                errEl.style.display = 'block';
-                setTimeout(() => errEl.style.display = 'none', 3000);
-                return;
-            }
-            errEl.style.display = 'none';
-            updatePreview();
-
-            // Loading state
-            const origLabel = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner"></span> Creating invite\u2026';
-            btn.disabled = true;
-
-            try {
-                const res = await fetch(EDGE_FN_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, name, persona: selectedPersona }),
-                });
-
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({}));
-                    throw new Error(err.error ?? 'Edge Function error');
-                }
-
-                const { sent } = await res.json();
-
-                showToast('\u2713 Invite sent!');
-                shareMessage(name, selectedPersona, null);
-
-            } catch (e) {
-                console.error('[generate-invite] Error:', e.message, e);
-                showToast('\u26a0\ufe0f Using manual invite mode');
-                shareMessage(name, selectedPersona, null);
-            } finally {
-                btn.innerHTML = origLabel;
-                btn.disabled = false;
-            }
-        }
-    </script>
-
-
-</body></html>
+</body>
+</html>
