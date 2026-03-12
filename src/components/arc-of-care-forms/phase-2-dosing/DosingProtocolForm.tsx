@@ -105,6 +105,9 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         if (onSave) {
             setIsSaving(true);
             onSave(data);
+            // WO-559: fire ppn:dosing-saved on commit (not just on field change via updateField)
+            // so DosingSessionPhase can stamp the chart pin even when no fields were edited.
+            window.dispatchEvent(new CustomEvent('ppn:dosing-saved', { detail: data }));
             setTimeout(() => {
                 setIsSaving(false);
                 if (onExit) onExit();
@@ -122,6 +125,9 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         if (onSave) {
             setIsSaving(true);
             onSave(data);
+            // WO-559: fire ppn:dosing-saved on commit so DosingSessionPhase stamps the chart pin
+            // even when no fields were edited (pre-filled values, user just confirms).
+            window.dispatchEvent(new CustomEvent('ppn:dosing-saved', { detail: data }));
             setTimeout(() => {
                 setIsSaving(false);
                 if (onComplete) onComplete();

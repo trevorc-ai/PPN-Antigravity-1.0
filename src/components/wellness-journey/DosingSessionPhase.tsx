@@ -278,51 +278,74 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // handleDosingUpdated reads this to emit additional_dose instead of dose_admin.
     const isLiveRedoseRef = useRef(false);
 
-    // Re-evaluate contraindications + stamp DOSE event pin when dosing protocol saved
+    // Re-evaluate contraindications when any dosing field changes
     useEffect(() => {
         const bump = () => setContraindicationKey(k => k + 1);
         const handleStorage = (e: StorageEvent) => {
             if (e.key === 'ppn_dosing_protocol' || e.key === 'mock_patient_medications_names') bump();
         };
-        // When dosing protocol is saved while live, push the appropriate event pin.
-        // If isLiveRedoseRef is set the save originated from the Additional Dose button —
-        // emit additional_dose (amber/orange). Otherwise it is the initial dose_admin (emerald).
-        const handleDosingUpdated = () => {
+
+        // ppn:dosing-updated → fires on every field change in updateField().
+        // Purpose: re-evaluate contraindication warnings only. Never stamp an event pin
+        // here — the pin fires from ppn:dosing-saved (commit event) below.
+        const handleDosingUpdated = () => bump();
+
+        // ppn:dosing-saved → fires ONCE when the practitioner clicks Save & Continue / Save & Exit.
+        // This is the correct moment to stamp the chart pin and timeline entry.
+        const handleDosingSaved = () => {
             bump();
             const isRedose = isLiveRedoseRef.current;
             isLiveRedoseRef.current = false; // clear flag regardless
+            const elSec = getElapsedSec();
+            const eventType = isRedose ? 'additional_dose' : 'dose_admin';
+            const eventLabel = isRedose ? 'Additional Dose' : 'Dose Admin';
+
+            // 1. Stamp chart event pin
             setEventLog(prev => [
                 ...prev,
                 {
                     id: `dose-${Date.now()}`,
-                    elapsedSec: getElapsedSec(),
-                    type: isRedose ? 'additional_dose' : 'dose_admin',
-                    label: isRedose ? 'Additional Dose' : 'Dose Admin',
+                    elapsedSec: elSec,
+                    type: eventType,
+                    label: eventLabel,
                 } satisfies SessionEventPin,
             ]);
-            // WO-559: persist additional_dose to log_session_timeline_events
+
+            // 2. Notify LiveSessionTimeline via ppn:dose-registered so it can add an
+            //    optimistic entry immediately (before the next 30-sec DB poll).
+            window.dispatchEvent(new CustomEvent('ppn:dose-registered', {
+                detail: { type: eventType, label: eventLabel, elapsedSec: elSec }
+            }));
+
+            // 3. Persist to log_session_timeline_events if we have a real session UUID
             if (isRedose) {
                 const UUID_RE_D = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
                 const sid = (journey.sessionId ?? journey.session?.sessionId) as string | undefined;
                 if (sid && UUID_RE_D.test(sid)) {
-                    // Compute elapsed HH:MM:SS at the moment of the event (no stale closure)
-                    const elSec = getElapsedSec();
                     const eH = Math.floor(elSec / 3600).toString().padStart(2, '0');
                     const eM = Math.floor((elSec % 3600) / 60).toString().padStart(2, '0');
                     const eS = Math.floor(elSec % 60).toString().padStart(2, '0');
-                    const elStr = `${eH}:${eM}:${eS}`;
-                    // Timeline: no ref_flow_event_types code for additional_dose; skip DB write.
+                    createTimelineEvent({
+                        session_id: sid,
+                        event_timestamp: new Date().toISOString(),
+                        event_type_code: 'additional_dose' as any,
+                        metadata: { event_description: `Additional dose administered at T+${eH}:${eM}:${eS}` },
+                    }).catch(err => console.warn('[WO-559] additional_dose timeline write failed:', err));
                 }
             }
         };
+
         window.addEventListener('storage', handleStorage);
         window.addEventListener('ppn:dosing-updated', handleDosingUpdated);
+        window.addEventListener('ppn:dosing-saved', handleDosingSaved);
         return () => {
             window.removeEventListener('storage', handleStorage);
             window.removeEventListener('ppn:dosing-updated', handleDosingUpdated);
+            window.removeEventListener('ppn:dosing-saved', handleDosingSaved);
         };
         // getElapsedSec is stable (useCallback), safe to include
     }, [getElapsedSec, journey]);
+
 
     // Mirror every LiveSessionTimeline quick-action onto the chart as an event pin
     useEffect(() => {

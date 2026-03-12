@@ -184,6 +184,27 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
         return () => clearInterval(interval);
     }, [fetchLocalEvents, active]);
 
+    // WO-559: listen for dose-registered events from DosingSessionPhase so the
+    // timeline shows the Additional Dose (and initial dose_admin) immediately
+    // as an optimistic entry, without waiting for the 30-sec DB poll.
+    useEffect(() => {
+        const handleDoseRegistered = (e: Event) => {
+            const { type, label } = (e as CustomEvent).detail ?? {};
+            if (!type) return;
+            const optimistic: TimelineEvent = {
+                id: `dose-reg-${Date.now()}`,
+                type,
+                timestamp: new Date(),
+                description: label ?? type,
+                author: 'Clinician',
+            };
+            setEvents(prev => [optimistic, ...prev]);
+        };
+        window.addEventListener('ppn:dose-registered', handleDoseRegistered);
+        return () => window.removeEventListener('ppn:dose-registered', handleDoseRegistered);
+    }, []);
+
+
     const handleExportLog = () => {
         const lines = [
             'SESSION TIMELINE                                [Export Log]',
