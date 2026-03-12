@@ -195,16 +195,18 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
         sm:bg-gradient-to-br sm:${gradient} sm:${border} sm:${glow}
       `}
     >
-      {/* ── MOBILE: horizontal list row (matches ppn_portal_condensed_layout mockup) ── */}
-      <div className={`sm:hidden flex items-center gap-4 p-4 rounded-2xl bg-slate-900/60 border-l-4 ${mobileBorderColor} border border-slate-800/60 min-h-[68px]`}>
+      {/* ── MOBILE: horizontal list row ── */}
+      <div className="sm:hidden relative flex items-center gap-4 pl-5 pr-4 py-4 rounded-2xl bg-slate-900/60 border border-slate-800/50 min-h-[72px] overflow-hidden">
+        {/* Left accent bar — uses bg-* class on its own element, zero cascade conflict */}
+        <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${accentBar} rounded-l-2xl`} />
         <div className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
           <Icon className={`w-5 h-5 ${iconColor}`} aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-black text-slate-100 leading-tight">{label}</h3>
-          <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{description}</p>
+          <p className="text-xs text-slate-400 mt-1 leading-relaxed">{description}</p>
         </div>
-        <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
+        <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0 ml-2" />
       </div>
 
       {/* ── DESKTOP: tall card (original layout) ── */}
