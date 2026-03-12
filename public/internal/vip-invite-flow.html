@@ -1399,8 +1399,8 @@
         }
         function prev() { if (current > 0) { goTo(current - 1); } }
 
-        // Force-initialize screen visibility with inline styles on load
-        window.addEventListener('DOMContentLoaded', () => goTo(0));
+        // Initialize screen display immediately (script is at end of body, DOM is ready)
+        goTo(0);
 
         function showToast(msg) {
             const t = document.getElementById('toast');
