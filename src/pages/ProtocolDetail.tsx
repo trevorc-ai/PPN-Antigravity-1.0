@@ -10,6 +10,7 @@ import { Info, ChevronRight, Loader2, AlertCircle, Activity, Calendar, FlaskConi
 import { PageContainer } from '../components/layouts/PageContainer';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { supabase } from '../supabaseClient';
+import PractitionerProtocolBenchmark from '../features/practitioner-analytics/PractitionerProtocolBenchmark';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -463,7 +464,7 @@ const ProtocolDetail: React.FC = () => {
             </section>
 
             {/* PHQ-9 Efficacy Trajectory */}
-            <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-8 sm:p-10 shadow-2xl">
+            <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-8 sm:p-10 shadow-2xl" id="phq9-trajectory">
               <div className="flex items-center gap-4 mb-8">
                 <div className="size-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                   <span className="material-symbols-outlined text-2xl">monitoring</span>
@@ -513,6 +514,15 @@ const ProtocolDetail: React.FC = () => {
                 </div>
               )}
             </section>
+
+            {/* WO-EPIC-606: Treatment Trend Forecast */}
+            <PractitionerProtocolBenchmark
+              sessionId={session.id}
+              substanceName={substanceName}
+              phqChartData={phqChartData}
+              patientLinkCodeHash={session.patient_link_code_hash}
+            />
+
           </div>
 
           {/* RIGHT PANEL */}
