@@ -110,7 +110,7 @@ const NavItem: React.FC<{ item: NavItem }> = ({ item }) => (
     <NavLink
         to={item.path}
         aria-label={item.label}
-        className="flex flex-col items-center gap-0.5 pt-2 pb-1 px-4 min-w-[56px] relative"
+        className="flex-1 flex flex-col items-center gap-0.5 pt-2 pb-1 px-1 min-w-0 relative"
     >
         {({ isActive }) => (
             <>
@@ -134,7 +134,7 @@ const NavItem: React.FC<{ item: NavItem }> = ({ item }) => (
                 </motion.span>
 
                 <span
-                    className={`text-[10px] font-bold tracking-wide transition-colors ${isActive ? ACTIVE_LABEL : IDLE_LABEL
+                    className={`text-[10px] font-bold tracking-wide transition-colors truncate max-w-full text-center ${isActive ? ACTIVE_LABEL : IDLE_LABEL
                         }`}
                 >
                     {item.label}
