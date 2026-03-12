@@ -95,10 +95,6 @@ export const MyProtocols = () => {
                             session_date,
                             session_type_id,
                             substance_id,
-                            patient_sex_id,
-                            patient_age_years,
-                            weight_range_id,
-                            patient_smoking_status_id,
                             created_at
                         `)
                         .eq('site_id', siteId)                // WO-592: filter by practitioner's clinic
@@ -114,18 +110,32 @@ export const MyProtocols = () => {
 
                 if (sessionResult.error) throw sessionResult.error;
 
-                // Step 2: Fetch indications for all patients in this result set
-                // indication_id lives in log_patient_indications, not log_clinical_records
+                // Step 2: Fetch indications + patient profiles for all patients in this result set
+                // indication_id lives in log_patient_indications, demographics in log_patient_profiles
                 const patientUuids = [
                     ...new Set((sessionResult.data ?? []).map((r: any) => r.patient_uuid).filter(Boolean))
                 ];
 
-                const { data: indicationsRaw } = patientUuids.length > 0
-                    ? await supabase
-                        .from('log_patient_indications')
-                        .select('patient_uuid, indication_id, is_primary')
-                        .in('patient_uuid', patientUuids)
-                    : { data: [] };
+                const [{ data: indicationsRaw }, { data: profilesRaw }] = await Promise.all([
+                    patientUuids.length > 0
+                        ? supabase
+                            .from('log_patient_indications')
+                            .select('patient_uuid, indication_id, is_primary')
+                            .in('patient_uuid', patientUuids)
+                        : Promise.resolve({ data: [] }),
+                    patientUuids.length > 0
+                        ? supabase
+                            .from('log_patient_profiles')
+                            .select('patient_uuid, sex_id, age_at_intake, weight_range_id, smoking_status_id')
+                            .in('patient_uuid', patientUuids)
+                        : Promise.resolve({ data: [] }),
+                ]);
+
+                // Build patient → demographics map (from log_patient_profiles)
+                const profileMap = new Map<string, any>();
+                for (const p of (profilesRaw || []) as any[]) {
+                    profileMap.set(p.patient_uuid, p);
+                }
 
                 // Build patient → primary indication_id map
                 const patientIndicationMap = new Map<string, number>();
@@ -139,12 +149,15 @@ export const MyProtocols = () => {
                 // Step 3: Build client-side lookup maps from ref tables
                 const substanceMap = buildMap(substanceResult.data, 'substance_id', 'substance_name');
                 const indicationMap = buildMap(indicationResult.data, 'indication_id', 'indication_name');
-                const sexMap = buildMap(sexResult.data, 'id', 'sex_label');
+                // FIX: ref_sex uses 'sex_id' as PK, not 'id'
+                const sexMap = buildMap(sexResult.data, 'sex_id', 'sex_label');
                 const weightMap = buildMap(weightResult.data, 'id', 'range_label');
                 const smokingMap = buildMap(smokingResult.data, 'smoking_status_id', 'status_name');
 
                 const formattedData: Protocol[] = (sessionResult.data ?? []).map((record: any) => {
                     const indicationId = patientIndicationMap.get(record.patient_uuid) ?? null;
+                    // Demographics come from log_patient_profiles (not log_clinical_records)
+                    const profile = profileMap.get(record.patient_uuid);
                     return {
                         id: record.id,
                         patient_ref: record.id
@@ -156,10 +169,10 @@ export const MyProtocols = () => {
                         session_type_id: record.session_type_id ?? null,
                         status: SESSION_TYPE_LABELS[record.session_type_id as number] ?? 'In Progress',
                         indication_name: indicationId ? (indicationMap[indicationId] ?? '—') : '—',
-                        sex_label: sexMap[record.patient_sex_id] ?? '—',
-                        patient_age: record.patient_age_years != null ? `${record.patient_age_years}` : '—',
-                        smoking_status: smokingMap[record.patient_smoking_status_id] ?? '—',
-                        weight_label: weightMap[record.weight_range_id] ?? '—',
+                        sex_label: profile?.sex_id ? (sexMap[profile.sex_id] ?? '—') : '—',
+                        patient_age: profile?.age_at_intake != null ? `${profile.age_at_intake}` : '—',
+                        smoking_status: profile?.smoking_status_id ? (smokingMap[profile.smoking_status_id] ?? '—') : '—',
+                        weight_label: profile?.weight_range_id ? (weightMap[profile.weight_range_id] ?? '—') : '—',
                     };
                 });
 
