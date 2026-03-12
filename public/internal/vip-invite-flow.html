@@ -162,6 +162,27 @@
     .how-text { font-size: 13px; color: #64748b; line-height: 1.5; }
     .how-text strong { color: #94a3b8; }
 
+    /* ── MESSAGE TEXTAREA ── */
+    .msg-label {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+    .msg-label span { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #64748b; }
+    .msg-label button {
+      font-size: 11px; font-weight: 700; color: #6366f1; background: none; border: none; cursor: pointer; padding: 0;
+    }
+    .msg-textarea {
+      width: 100%; padding: 12px 14px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      font-size: 14px; font-family: 'Inter', sans-serif; color: #cbd5e1;
+      line-height: 1.6; resize: vertical; min-height: 180px;
+      outline: none; margin-bottom: 16px;
+      -webkit-appearance: none; appearance: none;
+    }
+    .msg-textarea:focus { border-color: rgba(99,102,241,0.5); }
+
     /* ── SPINNER ── */
     .spinner {
       display: inline-block; width: 14px; height: 14px;
@@ -208,6 +229,12 @@
           <span class="persona-desc">Zero-PHI by design. Phantom Shield protects every record.</span>
         </button>
       </div>
+
+      <div class="msg-label">
+        <span>Your Message</span>
+        <button onclick="resetMessage()">Reset to template</button>
+      </div>
+      <textarea class="msg-textarea" id="invite-msg" spellcheck="true"></textarea>
 
       <div class="error-msg" id="error-msg">Please enter a name and email address.</div>
 
@@ -284,10 +311,45 @@
     }
 
     const shareMessages = {
-      partner: (name) => `${name},\n\nI want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymised clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nYour access is ready. Check your email for the invite link.\n\n— Trevor\nPPN Portal`,
-      clinician: (name) => `${name},\n\nI want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions.\n\nCheck your email for your access link.\n\n— Trevor\nPPN Portal`,
-      privacy: (name) => `${name},\n\nBefore you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready from day one.\n\nCheck your email for your access link.\n\n— Trevor\nPPN Portal`,
+      partner:  (name) => `${name},\n\nI want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymised clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nCheck your email for the invite link.\n\n\u2014 Trevor\nPPN Portal`,
+      clinician: (name) => `${name},\n\nI want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions.\n\nCheck your email for your access link.\n\n\u2014 Trevor\nPPN Portal`,
+      privacy:   (name) => `${name},\n\nBefore you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready from day one.\n\nCheck your email for your access link.\n\n\u2014 Trevor\nPPN Portal`,
     };
+
+    function getMsg() {
+      return document.getElementById('invite-msg').value.trim();
+    }
+
+    function refreshMessage() {
+      const name = document.getElementById('invite-name').value.trim() || 'there';
+      document.getElementById('invite-msg').value = shareMessages[selectedPersona]?.(name) ?? shareMessages.partner(name);
+    }
+
+    function resetMessage() {
+      refreshMessage();
+    }
+
+    // Live-update message when name changes (only if message matches template)
+    document.getElementById('invite-name').addEventListener('input', () => {
+      const name = document.getElementById('invite-name').value.trim() || 'there';
+      const currentMsg = document.getElementById('invite-msg').value;
+      const templateMsg = shareMessages[selectedPersona]?.(currentMsg.split(',')[0]) ?? '';
+      // Only auto-update if first line matches a template (user hasn't customised)
+      refreshMessage();
+    });
+
+    function selectPersona(p) {
+      selectedPersona = p;
+      ['partner', 'clinician', 'privacy'].forEach(id => {
+        document.getElementById('btn-' + id).classList.toggle('selected', id === p);
+      });
+      const btn = document.getElementById('send-btn');
+      btn.className = 'send-btn ' + (p === 'partner' ? 'btn-indigo' : p === 'clinician' ? 'btn-emerald' : 'btn-purple');
+      refreshMessage();
+    }
+
+    // Init message on load
+    refreshMessage();
 
     async function doSend() {
       const name  = document.getElementById('invite-name').value.trim();
@@ -345,8 +407,8 @@
       document.getElementById('shortcut-email-display').textContent = email;
       document.getElementById('shortcut-card').style.display = 'block';
 
-      // Open share sheet with personalised message
-      const text = shareMessages[selectedPersona]?.(name) ?? shareMessages.partner(name);
+      // Open share sheet with the message (edited or default)
+      const text = getMsg() || shareMessages[selectedPersona]?.(name) || shareMessages.partner(name);
       if (navigator.share) {
         navigator.share({ title: 'PPN Portal Invitation', text })
           .catch(() => { navigator.clipboard.writeText(text); });
