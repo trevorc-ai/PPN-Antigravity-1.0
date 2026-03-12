@@ -10,6 +10,20 @@ const SESSION_TYPE_LABELS: Record<number, string> = {
     3: 'Integration',
 };
 
+// ─── Substance color palette ──────────────────────────────────────────────────
+const SUBSTANCE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+    'Psilocybin':  { bg: 'rgba(139,92,246,0.12)', text: '#a78bfa', border: 'rgba(139,92,246,0.35)' },
+    'MDMA':        { bg: 'rgba(244,63,94,0.12)',  text: '#fb7185', border: 'rgba(244,63,94,0.35)' },
+    'Ketamine':    { bg: 'rgba(6,182,212,0.12)',   text: '#22d3ee', border: 'rgba(6,182,212,0.35)' },
+    'Ibogaine':    { bg: 'rgba(245,158,11,0.12)',  text: '#fbbf24', border: 'rgba(245,158,11,0.35)' },
+    'LSD':         { bg: 'rgba(99,102,241,0.12)',  text: '#818cf8', border: 'rgba(99,102,241,0.35)' },
+    'Mescaline':   { bg: 'rgba(16,185,129,0.12)',  text: '#34d399', border: 'rgba(16,185,129,0.35)' },
+    'Cannabis':    { bg: 'rgba(132,204,22,0.12)',  text: '#a3e635', border: 'rgba(132,204,22,0.35)' },
+    'Ayahuasca':   { bg: 'rgba(217,119,6,0.12)',   text: '#f59e0b', border: 'rgba(217,119,6,0.35)' },
+    '5-MeO-DMT':   { bg: 'rgba(236,72,153,0.12)',  text: '#f472b6', border: 'rgba(236,72,153,0.35)' },
+};
+const DEFAULT_SUBSTANCE_COLOR = { bg: 'rgba(100,116,139,0.12)', text: '#94a3b8', border: 'rgba(100,116,139,0.35)' };
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Protocol {
@@ -94,11 +108,14 @@ export const MyProtocols = () => {
                             patient_uuid,
                             session_date,
                             session_type_id,
+                            session_status,
                             substance_id,
+                            is_submitted,
+                            session_ended_at,
                             created_at
                         `)
-                        .eq('site_id', siteId)                // WO-592: filter by practitioner's clinic
-                        .neq('session_status', 'draft')       // WO-592: exclude stubs
+                        .eq('site_id', siteId)
+                        .neq('session_status', 'draft')
                         .order('created_at', { ascending: false })
                         .limit(100),
                     supabase.from('ref_substances').select('substance_id, substance_name'),
@@ -116,7 +133,7 @@ export const MyProtocols = () => {
                     ...new Set((sessionResult.data ?? []).map((r: any) => r.patient_uuid).filter(Boolean))
                 ];
 
-                const [{ data: indicationsRaw }, { data: profilesRaw }] = await Promise.all([
+                const [{ data: indicationsRaw }, { data: profilesRaw }, { data: linkCodesRaw }] = await Promise.all([
                     patientUuids.length > 0
                         ? supabase
                             .from('log_patient_indications')
@@ -129,7 +146,19 @@ export const MyProtocols = () => {
                             .select('patient_uuid, sex_id, age_at_intake, weight_range_id, smoking_status_id')
                             .in('patient_uuid', patientUuids)
                         : Promise.resolve({ data: [] }),
+                    patientUuids.length > 0
+                        ? supabase
+                            .from('log_patient_site_links')
+                            .select('patient_uuid, patient_link_code')
+                            .in('patient_uuid', patientUuids)
+                        : Promise.resolve({ data: [] }),
                 ]);
+
+                // Build patient → link code map (for PT-XXXXXXXXXX display)
+                const linkCodeMap = new Map<string, string>();
+                for (const l of (linkCodesRaw || []) as any[]) {
+                    if (l.patient_link_code) linkCodeMap.set(l.patient_uuid, l.patient_link_code);
+                }
 
                 // Build patient → demographics map (from log_patient_profiles)
                 const profileMap = new Map<string, any>();
@@ -156,18 +185,33 @@ export const MyProtocols = () => {
 
                 const formattedData: Protocol[] = (sessionResult.data ?? []).map((record: any) => {
                     const indicationId = patientIndicationMap.get(record.patient_uuid) ?? null;
-                    // Demographics come from log_patient_profiles (not log_clinical_records)
                     const profile = profileMap.get(record.patient_uuid);
+                    const linkCode = linkCodeMap.get(record.patient_uuid);
+
+                    // Derive status: prefer submitted > integration > session_type_id > active
+                    let derivedStatus: string;
+                    if (record.is_submitted) {
+                        derivedStatus = 'Completed';
+                    } else if (record.session_ended_at) {
+                        derivedStatus = 'Integration';
+                    } else if (record.session_type_id === 2) {
+                        derivedStatus = 'Dosing';
+                    } else if (record.session_type_id === 1) {
+                        derivedStatus = 'Preparation';
+                    } else if (record.session_type_id === 3) {
+                        derivedStatus = 'Integration';
+                    } else {
+                        derivedStatus = 'Active';
+                    }
+
                     return {
                         id: record.id,
-                        patient_ref: record.id
-                            ? `SID-${record.id.substring(0, 8).toUpperCase()}`
-                            : '—',
+                        patient_ref: linkCode ?? `SID-${record.id.substring(0, 8).toUpperCase()}`,
                         substance_name: substanceMap[record.substance_id] ?? (record.substance_id ? `Substance #${record.substance_id}` : '—'),
                         session_date: record.session_date || '—',
                         submitted_at: record.created_at ?? null,
                         session_type_id: record.session_type_id ?? null,
-                        status: SESSION_TYPE_LABELS[record.session_type_id as number] ?? 'In Progress',
+                        status: derivedStatus,
                         indication_name: indicationId ? (indicationMap[indicationId] ?? '—') : '—',
                         sex_label: profile?.sex_id ? (sexMap[profile.sex_id] ?? '—') : '—',
                         patient_age: profile?.age_at_intake != null ? `${profile.age_at_intake}` : '—',
@@ -392,8 +436,22 @@ export const MyProtocols = () => {
                                                 </div>
                                             </td>
 
-                                            {/* Substance */}
-                                            <Cell value={p.substance_name} />
+                                            {/* Substance — color pill */}
+                                            <td className="px-4 py-5">
+                                                {p.substance_name === '—' ? (
+                                                    <span className="text-sm font-bold" style={{ color: '#374151' }}>—</span>
+                                                ) : (() => {
+                                                    const sc = SUBSTANCE_COLORS[p.substance_name] ?? DEFAULT_SUBSTANCE_COLOR;
+                                                    return (
+                                                        <span
+                                                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black tracking-wide border"
+                                                            style={{ background: sc.bg, color: sc.text, borderColor: sc.border }}
+                                                        >
+                                                            {p.substance_name}
+                                                        </span>
+                                                    );
+                                                })()}
+                                            </td>
 
                                             {/* Treatment (Indication) */}
                                             <td className="px-4 py-5 max-w-[140px]">
@@ -421,11 +479,21 @@ export const MyProtocols = () => {
                                             {/* Date */}
                                             <Cell value={p.session_date} mono />
 
-                                            {/* Status */}
+                                            {/* Status — 4-state color-coded */}
                                             <td className="px-4 py-5">
                                                 <div className="flex items-center gap-2">
-                                                    <div className={`size-1.5 rounded-full flex-shrink-0 ${p.status === 'Integration' ? 'bg-clinical-green' : 'bg-primary'}`} />
-                                                    <span className={`text-xs font-black uppercase tracking-widest whitespace-nowrap ${p.status === 'Integration' ? 'text-clinical-green' : 'text-primary'}`}>
+                                                    <div className={`size-1.5 rounded-full flex-shrink-0 ${
+                                                        p.status === 'Completed'   ? 'bg-emerald-400'
+                                                        : p.status === 'Integration' ? 'bg-indigo-400'
+                                                        : p.status === 'Dosing'      ? 'bg-amber-400'
+                                                        : 'bg-primary'
+                                                    }`} />
+                                                    <span className={`text-xs font-black uppercase tracking-widest whitespace-nowrap ${
+                                                        p.status === 'Completed'   ? 'text-emerald-400'
+                                                        : p.status === 'Integration' ? 'text-indigo-400'
+                                                        : p.status === 'Dosing'      ? 'text-amber-400'
+                                                        : 'text-primary'
+                                                    }`}>
                                                         {p.status}
                                                     </span>
                                                 </div>
