@@ -29,7 +29,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
     { label: 'Search', path: '/search', icon: 'search' },
     { label: 'Dashboard', path: '/dashboard', icon: 'dashboard' },
-    // center slot — rendered separately as raised pill
+    { label: 'Wellness', path: '/wellness-journey', icon: 'spa' },
     { label: 'Analytics', path: '/analytics', icon: 'insights' },
     { label: 'Protocols', path: '/protocols', icon: 'assignment' },
 ];
@@ -54,50 +54,8 @@ export const MobileBottomNav: React.FC = () => {
             {/* Glass bar */}
             <div className="relative bg-[#0a1628]/92 backdrop-blur-xl border-t border-slate-800/80 flex items-end justify-around pb-[env(safe-area-inset-bottom,0px)]">
 
-                {/* Left two items: Search + Dashboard */}
-                {NAV_ITEMS.slice(0, 2).map((item) => (
-                    <NavItem key={item.path} item={item} />
-                ))}
-
-                {/* Center: Wellness Journey — raised pill */}
-                <div className="relative -top-3 flex flex-col items-center">
-                    <NavLink
-                        to="/wellness-journey"
-                        aria-label="Wellness Journey"
-                        className="flex flex-col items-center gap-1"
-                    >
-                        <motion.div
-                            whileTap={{ scale: 0.88 }}
-                            transition={SPRING}
-                            className={[
-                                'w-[56px] h-[56px] rounded-full flex items-center justify-center',
-                                // Glass pill — dim but clearly primary
-                                'bg-[rgba(99,102,241,0.12)] border border-[rgba(99,102,241,0.32)]',
-                                'shadow-[0_0_20px_rgba(99,102,241,0.22)]',
-                                wellnessActive
-                                    ? 'border-[rgba(99,102,241,0.60)] bg-[rgba(99,102,241,0.22)]'
-                                    : '',
-                            ].join(' ')}
-                        >
-                            <span
-                                className={`material-symbols-outlined text-2xl ${wellnessActive ? 'text-indigo-300' : 'text-slate-400'
-                                    }`}
-                                aria-hidden="true"
-                            >
-                                spa
-                            </span>
-                        </motion.div>
-                        <span
-                            className={`text-[10px] font-bold tracking-wide pb-1 ${wellnessActive ? 'text-indigo-300' : 'text-slate-600'
-                                }`}
-                        >
-                            Wellness
-                        </span>
-                    </NavLink>
-                </div>
-
-                {/* Right two items: Analytics + Protocols */}
-                {NAV_ITEMS.slice(2).map((item) => (
+            {/* All 5 nav items rendered uniformly */}
+                {NAV_ITEMS.map((item) => (
                     <NavItem key={item.path} item={item} />
                 ))}
             </div>
