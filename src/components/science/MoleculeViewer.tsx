@@ -42,8 +42,15 @@ const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
     const viewerRef = useRef<any>(null);
 
     // Intersection Observer to prevent off-screen rendering
+    // Guard: IntersectionObserver is not available in older iOS Safari — fall back to always-in-view
     useEffect(() => {
         if (!containerRef.current) return;
+
+        if (typeof IntersectionObserver === 'undefined') {
+            // Older iOS Safari: skip observer, treat as always in view
+            setIsInView(true);
+            return;
+        }
 
         const observer = new IntersectionObserver(
             ([entry]) => {
