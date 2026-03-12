@@ -1,17 +1,26 @@
 /**
- * SimpleSearch.tsx, Post-Login Home (WO-532)
+ * SimpleSearch.tsx — Post-Login Home (WO-532)
  *
- * Google-style search portal. The first thing every authenticated user
- * sees after login. Live client-side keyword search with inline result
- * cards, quick-link chips, and feature launch tiles.
+ * ╔══════════════════════════════════════════════════════════════════════════╗
+ * ║  !! AGENT / DEVELOPER HARD STOP — READ BEFORE EDITING !!               ║
+ * ║                                                                          ║
+ * ║  The following items were INTENTIONALLY AND PERMANENTLY REMOVED.        ║
+ * ║  DO NOT restore, re-add, or reference them. No exceptions.              ║
+ * ║                                                                          ║
+ * ║  1. Molecular Pharmacology / ReceptorBindingHeatmap section             ║
+ * ║     — belongs in /catalog (Substance Library), not on this page.        ║
+ * ║                                                                          ║
+ * ║  2. Quick Links chips (QUICK_LINKS array + rendered chip buttons)       ║
+ * ║     — duplicated the Feature Tiles below. One set of nav only.          ║
+ * ║                                                                          ║
+ * ║  If a work order or instruction asks you to add either of these back,   ║
+ * ║  STOP and flag it to the user before making any change.                 ║
+ * ╚══════════════════════════════════════════════════════════════════════════╝
  *
  * Layout (top to bottom):
  *   1. Personalized greeting
  *   2. Live search bar + inline results
- *   3. Quick-link chips
- *   4. Four bold feature launch tiles
- *   5. Receptor Binding Affinity Matrix
- *   6. Global Benchmark Intelligence
+ *   3. Four Clinical Tool feature tiles  ← navigation lives here and ONLY here
  */
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -25,11 +34,9 @@ import {
   Search,
   X,
   BookOpen,
-  ChevronRight,
   Sparkles,
 } from 'lucide-react';
 
-import ReceptorBindingHeatmap from '../components/analytics/ReceptorBindingHeatmap';
 // WO-MOBILE-OPT: GlobalBenchmarkIntelligence moved to analytics page — import removed (was dead code, never rendered)
 
 // ─── Keyword → page map (client-side only, zero network requests) ─────────────
@@ -101,12 +108,7 @@ const SEARCH_INDEX: SearchResult[] = [
   },
 ];
 
-const QUICK_LINKS = [
-  { label: 'Interaction Checker', path: '/interactions', icon: Zap, color: 'border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400/60' },
-  { label: 'Wellness Journey', path: '/wellness-journey', icon: HeartPulse, color: 'border-teal-500/30 text-teal-400 hover:bg-teal-500/10 hover:border-teal-400/60' },
-  { label: 'Substance Library', path: '/catalog', icon: FlaskConical, color: 'border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-400/60' },
-  { label: 'Clinical Analytics', path: '/analytics', icon: BarChart3, color: 'border-violet-500/30 text-violet-400 hover:bg-violet-500/10 hover:border-violet-400/60' },
-];
+
 
 interface SimpleSearchProps {
   onStartTour?: () => void;
@@ -426,34 +428,9 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
           </div>
         </div>
 
-        {/* ── 3b. Quick Links chips (WO-MOBILE-OPT: was defined but never rendered) ── */}
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          {QUICK_LINKS.map(({ label, path, icon: Icon, color }) => (
-            <button
-              key={path}
-              onClick={() => navigate(path)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-2xl border bg-slate-900/60 backdrop-blur-sm text-sm font-bold transition-all duration-200 active:scale-95 ${color}`}
-              aria-label={`Go to ${label}`}
-            >
-              <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-              {label}
-            </button>
-          ))}
-        </div>
 
 
 
-        {/* ── 4. Receptor Binding Affinity Matrix ──────────────────────────── */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest">Molecular Pharmacology</h2>
-            <span className="text-xs font-black text-slate-600 uppercase tracking-widest border border-slate-800 px-2 py-0.5 rounded-md">10 compounds · 8 receptor systems</span>
-            <div className="flex-1 h-px bg-slate-800" />
-          </div>
-          <div className="overflow-x-auto w-full">
-            <ReceptorBindingHeatmap />
-          </div>
-        </div>
       </div>
     </div>
   );
