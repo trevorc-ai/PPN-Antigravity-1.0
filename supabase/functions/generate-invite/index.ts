@@ -1,0 +1,107 @@
+// supabase/functions/generate-invite/index.ts
+// Generates a Supabase invite link via the Admin API and returns the raw URL.
+// Called by public/internal/vip-invite-flow.html — internal tool only.
+//
+// Deploy: supabase functions deploy generate-invite
+// Secrets needed:
+//   supabase secrets set SUPABASE_URL=https://<your-ref>.supabase.co
+//   supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
+// (SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are auto-injected in hosted projects)
+
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+
+// Only Trevor's known IP origins should be able to call this.
+// Set ALLOWED_ORIGIN in secrets if you want to lock it down further.
+const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN') ?? '*';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
+serve(async (req) => {
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  if (req.method !== 'POST') {
+    return new Response('Method not allowed', { status: 405, headers: corsHeaders });
+  }
+
+  try {
+    const { email, name, persona } = await req.json();
+
+    if (!email || typeof email !== 'string') {
+      return new Response(JSON.stringify({ error: 'email is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+      console.error('[generate-invite] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+      return new Response(JSON.stringify({ error: 'Server misconfiguration' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    // Generate the invite link — this creates the user in auth.users immediately
+    // and returns the raw one-time URL (expires in 24h by default, configurable in Dashboard).
+    const { data, error } = await adminClient.auth.admin.generateLink({
+      type: 'invite',
+      email: email.trim().toLowerCase(),
+      options: {
+        // Pass name + persona as user metadata so the welcome page can read them
+        data: {
+          invited_name: name ?? '',
+          invited_persona: persona ?? 'partner',
+          invited_by: 'trevor',
+        },
+        // Redirect to the beta welcome route after they set their password
+        redirectTo: `https://ppnportal.net/beta-welcome`,
+      },
+    });
+
+    if (error) {
+      console.error('[generate-invite] generateLink error:', error.message);
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const inviteUrl = data?.properties?.action_link ?? data?.properties?.hashed_token;
+
+    console.log(`[generate-invite] Invite created for ${email} (persona: ${persona ?? 'partner'})`);
+
+    return new Response(
+      JSON.stringify({
+        inviteUrl,
+        email: email.trim().toLowerCase(),
+        name: name ?? '',
+        persona: persona ?? 'partner',
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  } catch (e) {
+    console.error('[generate-invite] Unexpected error:', e);
+    return new Response(JSON.stringify({ error: 'Internal error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});
