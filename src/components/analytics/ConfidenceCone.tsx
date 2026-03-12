@@ -43,7 +43,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       <div className="bg-[#0f172a] border border-slate-700 p-3 rounded-xl shadow-2xl backdrop-blur-md max-w-[280px]">
         <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Day {label}</p>
-            <span className={`text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-slate-800 ${statusColor}`}>
+            <span className={`text-xs font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-md bg-slate-800 ${statusColor}`}>
               {statusText}
             </span>
         </div>

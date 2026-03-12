@@ -134,7 +134,7 @@ export default function PatientCompanionPage() {
                         </svg>
                     )}
                 </button>
-                <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">
+                <span className="text-xs font-bold tracking-widest text-white/25 uppercase">
                     {lockHoldProgress > 0 ? 'Hold…' : 'Return'}
                 </span>
             </div>

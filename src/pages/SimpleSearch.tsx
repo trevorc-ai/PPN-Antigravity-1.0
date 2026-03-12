@@ -197,8 +197,8 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
           <Icon className={`w-5 h-5 ${iconColor}`} aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className={`text-[10px] font-bold uppercase tracking-widest ${tagColor} mb-0.5`}>{tagline}</p>
           <h3 className="text-sm font-black text-slate-100 leading-tight">{label}</h3>
+          <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{description}</p>
         </div>
         <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
       </div>

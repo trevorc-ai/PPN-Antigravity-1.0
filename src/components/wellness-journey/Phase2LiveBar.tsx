@@ -100,11 +100,11 @@ export const Phase2LiveBar: React.FC<Phase2LiveBarProps> = ({
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
                         </span>
-                        <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">
+                        <span className="text-xs font-black text-amber-400 uppercase tracking-widest">
                             Live · T+{elapsedTime}
                         </span>
                     </div>
-                    <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Quick Log</span>
+                    <span className="text-xs text-slate-600 font-bold uppercase tracking-widest">Quick Log</span>
                 </div>
 
                 {/* Action grid — flex so items wrap on very narrow viewports */}
@@ -174,7 +174,7 @@ const ActionButton: React.FC<{
         className={[
             'flex flex-col items-center justify-center gap-0.5',
             'min-h-[52px] rounded-xl border',
-            'text-[10px] font-bold tracking-wide',
+            'text-xs font-bold tracking-wide',
             'transition-colors active:scale-95',
             color,
             loading ? 'opacity-50' : '',

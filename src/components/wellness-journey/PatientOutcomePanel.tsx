@@ -232,7 +232,7 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
 
                         {/* Vertical marker for patient MEQ */}
                         <div className="absolute top-0 bottom-8 left-[65%] w-px bg-violet-400/50 z-10 border-r border-dashed border-violet-400">
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-violet-500/20 text-violet-300 text-[10px] font-bold px-2 py-0.5 rounded border border-violet-500/30 whitespace-nowrap">
+                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-violet-500/20 text-violet-300 text-xs font-bold px-2 py-0.5 rounded border border-violet-500/30 whitespace-nowrap">
                                 Pt MEQ: {meq30}
                             </div>
                         </div>

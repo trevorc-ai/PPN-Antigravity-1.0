@@ -320,7 +320,7 @@ const DownloadCenter: React.FC = () => {
                                             `}
                                             >
                                                 {item.badge && (
-                                                    <div className={`absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${item.bgColor} ${item.textColor} border ${item.borderColor}`}>
+                                                    <div className={`absolute top-3 right-3 px-2 py-0.5 rounded text-xs font-black uppercase tracking-widest ${item.bgColor} ${item.textColor} border ${item.borderColor}`}>
                                                         {item.badge}
                                                     </div>
                                                 )}
@@ -334,7 +334,7 @@ const DownloadCenter: React.FC = () => {
                                                     {item.description}
                                                 </p>
                                                 <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 mt-auto">
-                                                    <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded border ${item.bgColor} ${item.borderColor} ${item.textColor}`}>
+                                                    <span className={`text-xs font-black uppercase tracking-widest px-2 py-1 rounded border ${item.bgColor} ${item.borderColor} ${item.textColor}`}>
                                                         {item.format}
                                                     </span>
                                                     <AdvancedTooltip

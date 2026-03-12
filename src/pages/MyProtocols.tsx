@@ -313,7 +313,7 @@ export const MyProtocols = () => {
                                             <span className="text-sm font-black font-mono uppercase tracking-tight" style={{ color: '#9DAEC8' }}>
                                                 {p.patient_ref}
                                             </span>
-                                            <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${p.status === 'Integration' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
+                                            <span className={`text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${p.status === 'Integration' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
                                                 {p.status}
                                             </span>
                                         </div>

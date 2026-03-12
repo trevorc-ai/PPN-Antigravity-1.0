@@ -322,7 +322,7 @@ const SignUp = () => {
                         <div className="space-y-1 mb-5">
                             <div className="flex justify-between items-center">
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Display Handle (Pseudonym)</label>
-                                <span className="text-[10px] uppercase font-black tracking-widest text-indigo-400 bg-indigo-500/10 px-2 rounded-full py-0.5 border border-indigo-500/20">Privacy Guard On</span>
+                                <span className="text-xs uppercase font-black tracking-widest text-indigo-400 bg-indigo-500/10 px-2 rounded-full py-0.5 border border-indigo-500/20">Privacy Guard On</span>
                             </div>
                             <div className="relative">
                                 <EyeOff className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
@@ -388,7 +388,7 @@ const SignUp = () => {
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className={`p-2 rounded-lg ${formData.affiliation_route === 'invite' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'}`}><Mail className="w-5 h-5" /></div>
                                     <h3 className="text-sm font-bold text-slate-200">I have an Invite</h3>
-                                    <span className="ml-auto text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">Soon</span>
+                                    <span className="ml-auto text-xs font-black uppercase tracking-widest text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full border border-slate-700">Soon</span>
                                 </div>
                                 <p className="text-xs text-slate-500 font-medium">Use an encrypted token provided by your site administrator.</p>
                             </label>

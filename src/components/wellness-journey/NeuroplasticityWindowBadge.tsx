@@ -99,14 +99,14 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
                 this period to maximise long-term treatment gains.
             </p>
             <div className="pt-1 border-t border-slate-700">
-                <p className="text-slate-500 text-[10px] font-mono">
+                <p className="text-slate-500 text-xs font-mono">
                     Ly et al. (2018) Cell; Castrén &amp; Hen (2013) Nat Rev Neurosci
                 </p>
                 <a
                     href="https://pubmed.ncbi.nlm.nih.gov/29677511/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 text-[10px] font-semibold mt-0.5 inline-block"
+                    className="text-indigo-400 hover:text-indigo-300 text-xs font-semibold mt-0.5 inline-block"
                 >
                     ↗ View source (PubMed)
                 </a>
@@ -139,11 +139,11 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
                         <span className={`text-sm font-black ${cfg.textColor}`}>
                             {cfg.label}
                         </span>
-                        <span className="text-[10px] uppercase tracking-widest font-bold text-slate-500">
+                        <span className="text-xs uppercase tracking-widest font-bold text-slate-500">
                             in neuroplasticity window
                         </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5">{cfg.sublabel}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{cfg.sublabel}</p>
                 </div>
 
                 {/* Progress bar */}
@@ -154,7 +154,7 @@ export const NeuroplasticityWindowBadge: React.FC<NeuroplasticityWindowBadgeProp
                             style={{ width: `${progressPct}%` }}
                         />
                     </div>
-                    <p className="text-[10px] text-slate-600 mt-0.5 text-right font-mono">
+                    <p className="text-xs text-slate-600 mt-0.5 text-right font-mono">
                         Day {elapsed}/{windowDays}
                     </p>
                 </div>

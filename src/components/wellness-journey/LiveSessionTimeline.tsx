@@ -242,7 +242,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                         <div>
                             <h3 className="text-base font-bold text-[#A8B5D1] uppercase tracking-widest">Live Session Timeline</h3>
                             {active && (
-                                <span className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
+                                <span className="text-xs uppercase font-bold text-emerald-400 flex items-center gap-1.5 mt-0.5">
                                     <span className="relative flex h-2 w-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -307,7 +307,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                                     </p>
                                     {event.notes && (
                                         <div className="mt-1.5 p-2 bg-slate-800/40 rounded border border-slate-700/30 text-slate-400 text-xs leading-relaxed">
-                                            <span className="font-bold text-slate-500 mr-2 uppercase text-[10px] tracking-wider">Notes</span>
+                                            <span className="font-bold text-slate-500 mr-2 uppercase text-xs tracking-wider">Notes</span>
                                             {event.notes}
                                         </div>
                                     )}
@@ -332,7 +332,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                                 aria-label={`Log: ${action.label}`}
                                 className={[
                                     'flex items-center gap-1 px-2 py-1 rounded-lg border',
-                                    'text-[10px] font-bold tracking-wide',
+                                    'text-xs font-bold tracking-wide',
                                     'min-h-[32px] transition-colors active:scale-95',
                                     action.color,
                                     isSubmitting ? 'opacity-50 cursor-not-allowed' : '',

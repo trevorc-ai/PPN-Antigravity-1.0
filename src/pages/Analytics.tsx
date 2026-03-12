@@ -159,9 +159,9 @@ const Analytics = () => {
             <Section spacing="tight" className="space-y-0">
 
                 {/* KPI CARDS, horizontal carousel on mobile, 4-up on desktop */}
-                <div className="flex overflow-x-auto overflow-y-hidden snap-x touch-pan-x gap-4 pb-4 md:grid md:grid-cols-2 lg:grid-cols-4 w-full scrollbar-hide print:grid-cols-4 print:gap-2 mb-0">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-0">
                     {kpiStats.map((stat, i) => (
-                        <div key={i} className="shrink-0 w-[85vw] snap-center md:w-auto md:shrink-1 bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
+                        <div key={i} className="bg-[#0a0c12]/50 border border-slate-800/50 p-4 rounded-2xl flex flex-col justify-between print:bg-white print:border-gray-200 print:shadow-none" style={{ minHeight: '100px' }}>
                             <div className="flex items-center gap-2 mb-2">
                                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
                                 <div className="text-xs font-black text-slate-500 uppercase tracking-widest print:text-slate-500">{stat.label}</div>

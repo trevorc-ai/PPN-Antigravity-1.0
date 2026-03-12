@@ -185,7 +185,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
             {/* Header: Fixed top timer */}
             <div className="sticky top-0 z-40 bg-[#060d1a]/95 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
                 <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#A8B5D1]">Live Session</span>
+                    <span className="text-xs uppercase font-bold tracking-widest text-[#A8B5D1]">Live Session</span>
                     <span className="text-3xl font-black text-white font-mono tracking-tight leading-none">{elapsedTime}</span>
                 </div>
                 <button

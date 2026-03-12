@@ -175,7 +175,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     )}
 
                                     <div>
-                                        <label htmlFor="modal-first-name" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
+                                        <label htmlFor="modal-first-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
                                         <input
                                             id="modal-first-name"
                                             type="text"
@@ -188,7 +188,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-last-name" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
+                                        <label htmlFor="modal-last-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
                                         <input
                                             id="modal-last-name"
                                             type="text"
@@ -201,7 +201,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-email" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
+                                        <label htmlFor="modal-email" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
                                         <input
                                             id="modal-email"
                                             type="email"
@@ -214,7 +214,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-practitioner-type" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Practitioner Type</label>
+                                        <label htmlFor="modal-practitioner-type" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Practitioner Type</label>
                                         <select
                                             id="modal-practitioner-type"
                                             required

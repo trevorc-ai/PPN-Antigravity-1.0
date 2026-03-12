@@ -1036,7 +1036,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     ? <CheckCircle2 className="w-3 h-3 text-amber-400" aria-hidden="true" />
                                     : <span className="material-symbols-outlined text-[12px]">{step.icon}</span>}
                                 <span>Step {index + 1}</span>
-                                <span className="text-[10px] opacity-60 hidden sm:inline">{step.label}</span>
+                                <span className="text-xs opacity-60 hidden sm:inline">{step.label}</span>
                             </div>
                         ))}
                     </div>
@@ -1255,7 +1255,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             </div>
                             {/* Current meds footer */}
                             <div className="pt-3 border-t border-red-800/40 flex items-center gap-2 flex-wrap">
-                                <span className="text-[10px] uppercase tracking-widest font-bold text-red-500">Patient Medications:</span>
+                                <span className="text-xs uppercase tracking-widest font-bold text-red-500">Patient Medications:</span>
                                 {patientMeds.map((med, i) => (
                                     <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-900/40 border border-red-700/40 text-red-300 text-xs font-semibold">
                                         <Pill className="w-3 h-3" />{med}
@@ -1305,7 +1305,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 );
                             })}
                             <div className="pt-2 border-t border-amber-800/40 flex items-center gap-2 flex-wrap">
-                                <span className="text-[10px] uppercase tracking-widest font-bold text-amber-500">Current Medications:</span>
+                                <span className="text-xs uppercase tracking-widest font-bold text-amber-500">Current Medications:</span>
                                 {patientMeds.map((med, i) => (
                                     <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-900/40 border border-amber-700/40 text-amber-300 text-xs font-semibold">
                                         <Pill className="w-3 h-3" />{med}
@@ -1318,7 +1318,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     /* ══ ALL CLEAR or no substance yet, compact strip ══ */
                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/40">
                         <div className="flex-1 min-w-0">
-                            <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
+                            <p className="text-xs uppercase tracking-widest font-bold text-slate-500 mb-2">Current Medications</p>
                             <div className="flex flex-wrap gap-1.5">
                                 {patientMeds.map((med, i) => (
                                     <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800/60 border border-slate-700/50 text-slate-300 text-xs font-semibold">
@@ -1351,7 +1351,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         {/* ── Left: Session status + elapsed timer ── */}
                         <div className="flex items-center gap-5">
                             <div>
-                                <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-0.5">
+                                <p className="text-xs uppercase tracking-[0.2em] text-emerald-600/80 font-bold mb-0.5">
                                     {isLive ? 'Session Active' : 'Session Timer'}
                                 </p>
                                 <p className="text-2xl font-black text-emerald-50/90 font-mono tracking-tight leading-none tabular-nums">
@@ -1370,25 +1370,25 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 return (
                                     <div className="flex items-stretch gap-0 bg-[#040C0E]/60 rounded-xl border border-[#14343B]/40 overflow-hidden">
                                         <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
+                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold mb-1">HR</p>
                                             <div className="flex items-center gap-1 justify-center">
                                                 <Heart className="w-3 h-3 text-rose-500/80 fill-rose-500/30 animate-pulse" />
                                                 <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestHr}</p>
-                                                <p className="text-[10px] text-slate-600 font-semibold self-end mb-0.5">bpm</p>
+                                                <p className="text-xs text-slate-600 font-semibold self-end mb-0.5">bpm</p>
                                             </div>
                                         </div>
                                         <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
+                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold mb-1">BP</p>
                                             <p className="text-xl font-black text-emerald-100 leading-none tabular-nums">{latestBp}</p>
                                         </div>
                                         <div className="px-4 py-2.5 text-center border-r border-[#14343B]/40">
-                                            <p className="text-[10px] uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
+                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold mb-1">SpO2</p>
                                             <p className={`text-xl font-black leading-none tabular-nums ${latestSpo2 < 95 ? 'text-amber-400' : 'text-emerald-100'
                                                 }`}>{latestSpo2}%</p>
                                         </div>
                                         <div className="px-3 py-2.5 flex flex-col justify-center">
-                                            <p className="text-[9px] uppercase tracking-widest text-[#507882] font-semibold">Last logged</p>
-                                            <p className="text-[11px] font-mono text-slate-500 leading-tight mt-0.5">
+                                            <p className="text-xs uppercase tracking-widest text-[#507882] font-semibold">Last logged</p>
+                                            <p className="text-xs font-mono text-slate-500 leading-tight mt-0.5">
                                                 {lastTime ?? '— not yet recorded'}
                                             </p>
                                         </div>
@@ -1417,7 +1417,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <Activity className="w-4 h-4 text-indigo-400" aria-hidden="true" />
                                     <span className="text-sm font-bold text-[#A8B5D1] uppercase tracking-widest">Session Vitals Trend</span>
                                     {activePanel !== 'graph' && (
-                                        <span className="text-[10px] text-slate-600 font-semibold">— collapsed</span>
+                                        <span className="text-xs text-slate-600 font-semibold">— collapsed</span>
                                     )}
                                 </div>
                                 <ChevronDown
@@ -1477,7 +1477,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         <button
                                             key={key}
                                             onClick={e => { e.stopPropagation(); setChartVisible(prev => ({ ...prev, [key]: !prev[key] })); }}
-                                            className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider transition-colors border ${chartVisible[key]
+                                            className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider transition-colors border ${chartVisible[key]
                                                 ? key === 'hr' ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
                                                     : key === 'bp' ? 'bg-blue-500/20 border-blue-500/40 text-blue-300'
                                                         : key === 'temp' ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
@@ -1521,7 +1521,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                     <ClipboardList className="w-4 h-4 text-emerald-400" aria-hidden="true" />
                                     <span className="text-sm font-bold text-emerald-300/80 uppercase tracking-widest">Session Update</span>
                                     {activePanel === 'update' && (
-                                        <span className="text-[10px] text-slate-500">T+{elapsedTime} · {new Date().toLocaleTimeString()}</span>
+                                        <span className="text-xs text-slate-500">T+{elapsedTime} · {new Date().toLocaleTimeString()}</span>
                                     )}
                                 </div>
                                 <ChevronDown
@@ -1757,7 +1757,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             <X className="w-4 h-4" />
                         </button>
                         <div className="absolute top-4 right-16 z-50 flex items-center h-10">
-                            <span className="text-[10px] font-bold tracking-widest text-white/25 uppercase">Return to session</span>
+                            <span className="text-xs font-bold tracking-widest text-white/25 uppercase">Return to session</span>
                         </div>
 
                         {/* Full-screen flex-col: video fills top, buttons at bottom */}

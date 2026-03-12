@@ -65,7 +65,7 @@ export const WorkflowActionCard: React.FC<WorkflowActionCardProps> = ({
                     }`}>
                     {isComplete ? <CheckCircle className="w-5 h-5" /> : isLocked ? <Lock className="w-4 h-4" /> : icon || <div className="w-3 h-3 rounded-full bg-current opacity-50" />}
                 </div>
-                {isComplete && date && <span className="text-[10px] font-mono font-bold text-emerald-500/70 bg-emerald-500/10 px-2 py-1 rounded tracking-wider uppercase">{date}</span>}
+                {isComplete && date && <span className="text-xs font-mono font-bold text-emerald-500/70 bg-emerald-500/10 px-2 py-1 rounded tracking-wider uppercase">{date}</span>}
             </div>
             <div>
                 <h3 className={`font-bold text-[15px] ${isComplete ? 'text-emerald-100' : isLocked ? 'text-slate-500' : 'text-[#A8B5D1]'}`}>{title}</h3>

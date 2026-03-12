@@ -59,7 +59,7 @@ const InstantConnectModal: React.FC<InstantConnectModalProps> = ({ isOpen, onClo
                     <span className="material-symbols-outlined text-[#388bfd] text-[20px] mt-0.5">add_to_home_screen</span>
                     <div>
                         <p className="text-xs font-bold text-[#9fb0be]">Progressive Web App</p>
-                        <p className="text-[11px] text-[#889aab] mt-1 leading-relaxed">
+                        <p className="text-xs text-[#889aab] mt-1 leading-relaxed">
                             Upon scanning, tap <strong>"Add to Home Screen"</strong> on your device for a 1-click native app experience.
                         </p>
                     </div>

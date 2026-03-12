@@ -154,11 +154,11 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <h3 className="font-bold text-[#A8B5D1] leading-tight text-sm">{doc.label}</h3>
                                         {doc.isReady ? (
-                                            <span className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-bold uppercase tracking-wider rounded flex items-center gap-1">
+                                            <span className="px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded flex items-center gap-1">
                                                 <CheckCircle className="w-2.5 h-2.5" /> Ready
                                             </span>
                                         ) : (
-                                            <span className="px-1.5 py-0.5 bg-slate-800 border border-slate-600 text-slate-400 text-[9px] font-bold uppercase tracking-wider rounded flex items-center gap-1">
+                                            <span className="px-1.5 py-0.5 bg-slate-800 border border-slate-600 text-slate-400 text-xs font-bold uppercase tracking-wider rounded flex items-center gap-1">
                                                 <AlertTriangle className="w-2.5 h-2.5" /> Pending
                                             </span>
                                         )}

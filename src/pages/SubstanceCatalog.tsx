@@ -87,13 +87,13 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
           <div className="flex-1 p-4 flex flex-col gap-2 min-w-0">
             {/* Schedule + class chips */}
             <div className="flex flex-wrap gap-1.5">
-              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border
+              <span className={`px-2 py-0.5 rounded text-xs font-black uppercase tracking-wider border
                 ${sub.schedule === 'Schedule I'
                   ? 'bg-red-900/60 text-red-200 border-red-700/50'
                   : 'bg-blue-900/60 text-blue-200 border-blue-700/50'}`}>
                 {sub.schedule}
               </span>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border ${phaseClasses}`}>
+              <span className={`px-2 py-0.5 rounded text-xs font-black uppercase tracking-wider border ${phaseClasses}`}>
                 {sub.phase}
               </span>
             </div>

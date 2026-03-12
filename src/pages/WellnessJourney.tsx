@@ -871,8 +871,8 @@ const WellnessJourneyInternal: React.FC = () => {
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
                                 </span>
-                                <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Session Live</span>
-                                <span className="text-[10px] text-slate-500 font-semibold ml-1">{journey.patientId}</span>
+                                <span className="text-xs font-black text-amber-400 uppercase tracking-widest">Session Live</span>
+                                <span className="text-xs text-slate-500 font-semibold ml-1">{journey.patientId}</span>
                             </div>
                             <button
                                 onClick={() => setPatientBarCollapsed(false)}
@@ -926,7 +926,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                 ))}
                                 {/* Condition pill */}
                                 {journey.condition && (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-[11px] sm:text-sm font-semibold shadow-sm shrink-0">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-xs sm:text-sm font-semibold shadow-sm shrink-0">
                                         <span className="text-indigo-400 font-normal">Treating</span>
                                         <span className="text-indigo-200 font-bold">{journey.condition}</span>
                                     </span>

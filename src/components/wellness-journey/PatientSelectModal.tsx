@@ -325,7 +325,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                             {/* WO-599: Training/Testing separator — visually separates ephemeral Practice Session from real clinical actions */}
                             <div className="flex items-center gap-3 pt-2">
                                 <div className="flex-1 border-t border-slate-700/60" />
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] whitespace-nowrap">Training &amp; Testing</span>
+                                <span className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] whitespace-nowrap">Training &amp; Testing</span>
                                 <div className="flex-1 border-t border-slate-700/60" />
                             </div>
 
@@ -375,7 +375,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                                     Open Scanner
                                                 </p>
                                                 <p className="text-sm text-slate-300 mt-0.5">Point camera at wristband or chart to generate ID</p>
-                                                <div className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/40 border border-teal-500/30 text-[11px] text-teal-400 font-medium tracking-wide">
+                                                <div className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/40 border border-teal-500/30 text-xs text-teal-400 font-medium tracking-wide">
                                                     <Lock className="w-3 h-3" /> No data leaves your device
                                                 </div>
                                             </div>
@@ -536,7 +536,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                             {patient.sessionType && (
                                                 <>
                                                     <span className="text-slate-600 hidden sm:inline">·</span>
-                                                    <span className="px-1.5 py-0.5 rounded-md bg-slate-700/60 border border-slate-600/40 text-[10px] sm:text-xs truncate max-w-[120px] inline-block align-middle">
+                                                    <span className="px-1.5 py-0.5 rounded-md bg-slate-700/60 border border-slate-600/40 text-xs sm:text-xs truncate max-w-[120px] inline-block align-middle">
                                                         {patient.sessionType}
                                                     </span>
                                                 </>
@@ -544,7 +544,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ onSelect
                                             {patient.substance && (
                                                 <>
                                                     <span className="text-slate-600 hidden sm:inline">·</span>
-                                                    <span className="text-[10px] sm:text-xs text-indigo-300 font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 truncate max-w-[120px] inline-block align-middle">
+                                                    <span className="text-xs sm:text-xs text-indigo-300 font-semibold px-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 truncate max-w-[120px] inline-block align-middle">
                                                         {patient.substance}
                                                     </span>
                                                 </>

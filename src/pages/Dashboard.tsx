@@ -54,7 +54,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
           <Icon className={`w-6 h-6 ${styles.text}`} />
         </div>
         {percentile && (
-          <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-inner">
+          <div className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 shadow-inner">
             <span className="text-xs font-black text-emerald-400 tracking-wide">{percentile}</span>
           </div>
         )}
@@ -64,7 +64,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{title}</h3>
         <div className={`text-2xl sm:text-4xl font-black tracking-tighter mb-2 ${styles.text}`}>{value}</div>
 
-        <div className="flex items-center gap-2 text-sm mb-1">
+        <div className="flex flex-wrap items-center gap-2 text-sm mb-1">
           <span className={`font-bold px-2 py-0.5 rounded-md ${change.startsWith('+') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-300'}`}>
             {change}
           </span>
@@ -264,7 +264,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Quick Actions</h2>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
 
             {/* Log Protocol — indigo */}
             <button

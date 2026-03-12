@@ -162,7 +162,7 @@ export const Waitlist: FC = () => {
                     <div className="flex items-center gap-3 mt-10">
                         <div className="flex -space-x-2">
                             {['JA', 'TC', 'JB'].map((initials) => (
-                                <div key={initials} className="w-8 h-8 rounded-full bg-indigo-700/50 border border-indigo-500/40 flex items-center justify-center text-[10px] font-black text-indigo-300">
+                                <div key={initials} className="w-8 h-8 rounded-full bg-indigo-700/50 border border-indigo-500/40 flex items-center justify-center text-xs font-black text-indigo-300">
                                     {initials}
                                 </div>
                             ))}

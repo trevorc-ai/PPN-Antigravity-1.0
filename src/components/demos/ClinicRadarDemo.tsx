@@ -152,10 +152,10 @@ const ClinicRadarDemo: React.FC = () => {
                 <div className="absolute bottom-[5%] right-0 md:right-[5%] z-10 pointer-events-none fill-mode-both">
                     <div className="bg-[#0f1218]/95 backdrop-blur-md border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-2xl p-4 min-w-[150px] flex flex-col items-center relative overflow-hidden group transition-all duration-300">
                         <div className="absolute -inset-1 bg-indigo-500/5 blur-md pointer-events-none" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1 relative z-10 text-center">{activeData.metric}</span>
+                        <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-1 relative z-10 text-center">{activeData.metric}</span>
                         <div className="flex items-baseline gap-1.5 relative z-10">
                             <span className="text-3xl font-black text-indigo-400">{activeData.yourClinic}</span>
-                            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">/ 100</span>
+                            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">/ 100</span>
                         </div>
                     </div>
                 </div>

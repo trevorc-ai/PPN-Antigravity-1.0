@@ -133,7 +133,7 @@ const HelpFAQ: React.FC<HelpFAQProps> = ({ onStartTour }) => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-1.5">
                 <h3 className="text-lg font-black text-[#A8B5D1] tracking-tight group-hover:text-white transition-colors">Download Center</h3>
-                <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400">New</span>
+                <span className="text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400">New</span>
               </div>
               <p className="text-sm text-slate-400 leading-snug">
                 Export patient records, compliance logs, wellness summaries, blank clinical forms, and patient-facing reports, all from one place.
