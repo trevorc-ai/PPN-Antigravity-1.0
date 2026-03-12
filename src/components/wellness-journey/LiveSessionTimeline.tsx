@@ -111,20 +111,25 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
         // so chip events (patient_observation, music_change, clinical_decision, general_note)
         // persist to DB. If the code resolves to null, we log a warning but keep the
         // optimistic entry in local state so the practitioner's session is not disrupted.
-        const eventTypeId = await getEventTypeIdByCode(type as FlowEventTypeCode);
-        if (eventTypeId !== null) {
-            await createTimelineEvent({
-                session_id: sessionId,
-                event_timestamp: eventTimestamp,
-                event_type_id: eventTypeId,
-                performed_by: 'Current Clinician',
-                metadata: { event_description: description },
-            });
-        } else {
-            console.warn(`[LiveSessionTimeline] event_type_code '${type}' not found in ref_flow_event_types. Entry kept locally only.`);
+        try {
+            const eventTypeId = await getEventTypeIdByCode(type as FlowEventTypeCode);
+            if (eventTypeId !== null) {
+                await createTimelineEvent({
+                    session_id: sessionId,
+                    event_timestamp: eventTimestamp,
+                    event_type_id: eventTypeId,
+                    performed_by: 'Current Clinician',
+                    metadata: { event_description: description },
+                });
+            } else {
+                console.warn(`[LiveSessionTimeline] event_type_code '${type}' not found in ref_flow_event_types. Entry kept locally only.`);
+            }
+        } catch (err) {
+            // TEST session (FK violation) or network error — optimistic event preserved, skip DB write
+            console.warn('[LiveSessionTimeline] DB write skipped (TEST session or transient error):', err);
         }
 
-        // Notify DosingSessionPhase chart listener, zero prop drilling
+        // Always fire these regardless of DB write outcome
         window.dispatchEvent(new CustomEvent('ppn:session-event', {
             detail: { type, label: description, timestamp: eventTimestamp }
         }));
@@ -154,14 +159,15 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                 author: row.performed_by || 'Unknown Clinician'
             }));
 
-            // Show real events if we have them, otherwise show empty state (no mock data)
+            // Show real events if we have them. For TEST sessions or first real sessions,
+            // DB returns empty — don't wipe optimistic/local events already in state.
             if (mappedEvents.length > 0) {
                 // Most recent first
                 setEvents(mappedEvents.reverse());
-            } else {
-                // Empty state — do NOT show hardcoded 2025 mock events
-                setEvents([]);
             }
+            // Intentionally NOT calling setEvents([]) for empty result:
+            // preserves optimistic events for TEST sessions and new sessions
+            // with no DB records yet.
         }
     }, [sessionId]);
 
