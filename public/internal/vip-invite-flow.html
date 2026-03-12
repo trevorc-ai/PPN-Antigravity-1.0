@@ -235,7 +235,7 @@
         .card-badge {
             display: inline-flex;
             align-items: center;
-            gap-5px;
+            gap: 5px;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -868,6 +868,44 @@
             border-radius: 3px;
         }
 
+        /* ── PERSONA CARDS ── */
+        .persona-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .persona-card:hover {
+            border-color: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .persona-card.active-card {
+            border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        /* ── LOADING SPINNER ── */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         /* ─── Mobile Responsive (≤ 520px) ──────────────────────────── */
         @media (max-width: 520px) {
             .flow-nav { grid-template-columns: repeat(2, 1fr); gap: 6px; }
@@ -898,12 +936,12 @@
 
         <!-- STEP TAB NAV -->
         <div class="flow-nav">
-            <div class="flow-tab" onclick="goTo(0)">
+            <div class="flow-tab active" onclick="goTo(0)">
                 <div class="tab-icon">📱</div>
                 <div class="tab-num">Step 1</div>
                 <div class="tab-label">Your Tool</div>
             </div>
-            <div class="flow-tab active" onclick="goTo(1)">
+            <div class="flow-tab" onclick="goTo(1)">
                 <div class="tab-icon">✉️</div>
                 <div class="tab-num">Step 2</div>
                 <div class="tab-label">Their Message</div>
@@ -921,8 +959,8 @@
         </div>
 
         <div class="step-dots">
-            <div class="dot" id="dot-0"></div>
-            <div class="dot active" id="dot-1"></div>
+            <div class="dot active" id="dot-0"></div>
+            <div class="dot" id="dot-1"></div>
             <div class="dot" id="dot-2"></div>
             <div class="dot" id="dot-3"></div>
         </div>
@@ -930,7 +968,7 @@
         <!-- ══════════════════════════════════════════════ -->
         <!-- SCREEN 0: ADMIN INVITE TOOL                   -->
         <!-- ══════════════════════════════════════════════ -->
-        <div class="screen" id="screen-0">
+        <div class="screen active" id="screen-0">
             <div class="phone-shell">
                 <div class="phone-notch">
                     <div class="notch-pill"></div>
@@ -938,73 +976,93 @@
                 <div class="phone-screen">
                     <div class="tool-header">
                         <h2>VIP Invite Tool</h2>
-                        <p>Tap a card. Paste link. Share.</p>
+                        <p>Fill in their details. Tap Send.</p>
                     </div>
 
-                    <!-- Card 1: Partner -->
-                    <div class="invite-card">
-                        <div class="card-badge badge-indigo">Partner / Advisor</div>
-                        <h3>First look at 1,500+ real clinical records.</h3>
-                        <p>Built for the people shaping psychedelic medicine.</p>
-                        <input class="link-input" type="url" placeholder="Paste magic link here…" id="link-partner">
-                        <button class="share-btn-card btn-indigo" onclick="doShare(&#39;partner&#39;)">
-                            📤 Share
-                        </button>
+                    <!-- NAME + EMAIL -->
+                    <div style="margin-bottom:14px;">
+                        <div style="margin-bottom:8px;">
+                            <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;">First Name</label>
+                            <input id="invite-name" type="text" placeholder="e.g. Jason" autocomplete="off"
+                                oninput="updatePreview()"
+                                style="width:100%;padding:9px 11px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.1);border-radius:9px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none;"
+                            >
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;">Email Address</label>
+                            <input id="invite-email" type="email" placeholder="e.g. jason@example.com" autocomplete="off"
+                                style="width:100%;padding:9px 11px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.1);border-radius:9px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none;"
+                            >
+                        </div>
                     </div>
 
-                    <!-- Card 2: Clinician -->
-                    <div class="invite-card">
-                        <div class="card-badge badge-emerald">Clinician</div>
-                        <h3>Built for sessions like yours.</h3>
-                        <p>Clinical-grade documentation. No setup required.</p>
-                        <input class="link-input" type="url" placeholder="Paste magic link here…" id="link-clinician">
-                        <button class="share-btn-card btn-emerald" onclick="doShare(&#39;clinician&#39;)">
-                            📤 Share
-                        </button>
+                    <!-- PERSONA SELECTOR -->
+                    <div style="margin-bottom:14px;">
+                        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">Persona</div>
+                        <div style="display:flex;flex-direction:column;gap:7px;">
+                            <label id="card-partner" class="persona-card active-card" onclick="selectPersona('partner')">
+                                <input type="radio" name="persona" value="partner" checked style="display:none;">
+                                <span class="card-badge badge-indigo" style="margin-bottom:0;">Partner / Advisor</span>
+                                <span style="font-size:11px;color:var(--muted);">First look at 1,500+ real clinical records.</span>
+                            </label>
+                            <label id="card-clinician" class="persona-card" onclick="selectPersona('clinician')">
+                                <input type="radio" name="persona" value="clinician" style="display:none;">
+                                <span class="card-badge badge-emerald" style="margin-bottom:0;">Clinician</span>
+                                <span style="font-size:11px;color:var(--muted);">Clinical-grade documentation. No setup required.</span>
+                            </label>
+                            <label id="card-privacy" class="persona-card" onclick="selectPersona('privacy')">
+                                <input type="radio" name="persona" value="privacy" style="display:none;">
+                                <span class="card-badge badge-purple" style="margin-bottom:0;">Privacy / Compliance</span>
+                                <span style="font-size:11px;color:var(--muted);">Zero-PHI by design. Phantom Shield protects every record.</span>
+                            </label>
+                        </div>
                     </div>
 
-                    <!-- Card 3: Privacy -->
-                    <div class="invite-card">
-                        <div class="card-badge badge-purple">Privacy / Compliance</div>
-                        <h3>Zero-PHI by design.</h3>
-                        <p>Phantom Shield protects every record. Always.</p>
-                        <input class="link-input" type="url" placeholder="Paste magic link here…" id="link-privacy">
-                        <button class="share-btn-card btn-purple" onclick="doShare(&#39;privacy&#39;)">
-                            📤 Share
-                        </button>
-                    </div>
+                    <!-- SEND BUTTON -->
+                    <button id="send-invite-btn" class="share-btn-card btn-indigo" onclick="doShare()" style="margin-top:4px;">
+                        📤 Send Invite
+                    </button>
+                    <div id="invite-error" style="display:none;margin-top:7px;font-size:11px;color:#f85149;text-align:center;">Please enter a first name and email address.</div>
                 </div>
+
             </div>
 
             <div class="info-panel">
                 <h3>How this works</h3>
                 <div class="info-row">
                     <div class="info-icon">1️⃣</div>
-                    <div class="info-text">Go to <span class="info-key">Supabase Dashboard → Authentication → Users →
-                            Invite User</span>. Enter their email. Copy the magic link it generates.</div>
+                    <div class="info-text">Enter their <span class="info-key">first name</span> and <span class="info-key">email</span>. Pick the persona that matches them.</div>
                 </div>
                 <div class="info-row">
                     <div class="info-icon">2️⃣</div>
-                    <div class="info-text">Pick the card that matches who you're inviting. Paste their magic link into
-                        the input field.</div>
+                    <div class="info-text">Tap <span class="info-key">Send Invite</span>. A pre-written, personalized message opens in your share sheet — Messages, WhatsApp, Email, or LinkedIn.</div>
                 </div>
                 <div class="info-row">
                     <div class="info-icon">3️⃣</div>
-                    <div class="info-text">Tap <span class="info-key">Share</span>. iOS native share sheet opens. Choose
-                        Messages, WhatsApp, Email, or LinkedIn. Done in under 60 seconds.</div>
+                    <div class="info-text">Open <span class="info-key">Supabase → Authentication → Users → Invite User</span>. Enter the email below — they'll receive a secure account setup link.</div>
                 </div>
                 <div class="info-row">
                     <div class="info-icon">🔒</div>
-                    <div class="info-text">Zero PHI in the message. The magic link token is cryptographically unique and
-                        single-use. Expires in 72 hours.</div>
+                    <div class="info-text">Zero PHI. Name and email are typed locally, never stored. Their Supabase setup link is cryptographically unique and single-use.</div>
                 </div>
             </div>
-        </div>
+
+            <!-- SUPABASE SHORTCUT PANEL -->
+            <div class="info-panel" style="border-color:rgba(99,102,241,0.2);background:rgba(99,102,241,0.05);">
+                <h3 style="color:#818cf8;">⚡ Supabase Shortcut</h3>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Once you hit Send Invite, use this to set up their account in Supabase:</div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <div id="supabase-email-display" style="flex:1;padding:8px 10px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:12px;color:var(--text-bright);font-family:'JetBrains Mono',monospace;word-break:break-all;">Enter email above…</div>
+                    <button onclick="copySupabaseEmail()" style="padding:8px 12px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);border-radius:8px;color:#818cf8;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Copy</button>
+                </div>
+                <div style="margin-top:10px;font-size:11px;color:var(--muted);">Then: <strong style="color:var(--text-bright);">Supabase → Authentication → Users → Invite User</strong> → paste → Invite user.</div>
+            </div>
+
 
         <!-- ══════════════════════════════════════════════ -->
         <!-- SCREEN 1: OUTBOUND MESSAGE                    -->
         <!-- ══════════════════════════════════════════════ -->
-        <div class="screen active" id="screen-1">
+        <div class="screen" id="screen-1">
             <div class="phone-shell">
                 <div class="phone-notch">
                     <div class="notch-pill"></div>
@@ -1018,20 +1076,21 @@
                                 <div class="message-via">via iMessage</div>
                             </div>
                         </div>
-                        <div class="message-body">
+                    <div class="message-body">
                             <div class="message-bubble">
                                 <div class="message-text">
-                                    Jason,<br><br>
+                                    <span id="preview-name">Jason</span>,<br><br>
                                     I want to give you a private first look at PPN Portal before we open to the broader
                                     network.<br><br>
                                     You are seeing 1,500+ real anonymized clinical outcome records from active
                                     psychedelic therapy sessions. The first database of its kind.<br><br>
-                                    Your access is ready. No setup required. Tap the link:
+                                    Your access is ready. No setup required — accept your invite from the email I just sent:
                                 </div>
-                                <a class="message-link" href="file:///Users/trevorcalton/Desktop/PPN-Antigravity-1.0/public/vip-invite-flow.html#">https://ppnportal.net/magic?token=a3f9…</a>
+                                <a class="message-link" href="#">Check your email for your PPN access link →</a>
                                 <div class="message-sender"><br>— Trevor<br>Psychedelic Practitioner Network</div>
                             </div>
                         </div>
+
                     </div>
 
                     <div class="share-sheet">
@@ -1283,6 +1342,34 @@
     <script>
         let current = 0;
         const total = 4;
+        let selectedPersona = 'partner';
+
+        function selectPersona(p) {
+            selectedPersona = p;
+            ['partner','clinician','privacy'].forEach(id => {
+                document.getElementById('card-' + id).classList.toggle('active-card', id === p);
+            });
+            // update send button color
+            const btn = document.getElementById('send-invite-btn');
+            btn.className = 'share-btn-card ' + (p === 'partner' ? 'btn-indigo' : p === 'clinician' ? 'btn-emerald' : 'btn-purple');
+        }
+
+        function updatePreview() {
+            const name = document.getElementById('invite-name').value.trim() || 'Jason';
+            const email = document.getElementById('invite-email').value.trim();
+            // Update Screen 1 preview name
+            const el = document.getElementById('preview-name');
+            if (el) el.textContent = name;
+            // Update Supabase shortcut panel
+            const emailDisplay = document.getElementById('supabase-email-display');
+            if (emailDisplay) emailDisplay.textContent = email || 'Enter email above\u2026';
+        }
+
+        function copySupabaseEmail() {
+            const email = document.getElementById('invite-email').value.trim();
+            if (!email) { showToast('\u26a0\ufe0f Enter an email first'); return; }
+            navigator.clipboard.writeText(email).then(() => showToast('\u2713 Email copied'));
+        }
 
         function goTo(n) {
             document.getElementById('screen-' + current).classList.remove('active');
@@ -1296,7 +1383,7 @@
             document.querySelectorAll('.flow-tab')[current].classList.add('active');
 
             document.getElementById('btn-prev').style.display = current === 0 ? 'none' : 'block';
-            document.getElementById('btn-next').textContent = current === total - 1 ? '↩ Back to Start' : 'Next Step →';
+            document.getElementById('btn-next').textContent = current === total - 1 ? '\u21a9 Back to Start' : 'Next Step \u2192';
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1313,36 +1400,93 @@
             setTimeout(() => t.classList.remove('show'), 2500);
         }
 
-        function doShare(card) {
-            const linkEl = document.getElementById('link-' + card);
-            const url = linkEl.value.trim() || 'https://ppnportal.net/magic?token=demo';
+        // ── Edge Function URL ──────────────────────────────────────────
+        // Replace with your actual Supabase project reference.
+        // Format: https://<ref>.supabase.co/functions/v1/generate-invite
+        const EDGE_FN_URL = 'https://mdhhteyturne6ogpajk.supabase.co/functions/v1/generate-invite';
 
-            const messages = {
-                partner: `I want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymized clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nYour access is ready. No setup required:\n${url}\n\n— Trevor, Psychedelic Practitioner Network`,
-                clinician: `I want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions. No setup required.\n\nYour access:\n${url}\n\n— Trevor, Psychedelic Practitioner Network`,
-                privacy: `Before you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready.\n\nYour access:\n${url}\n\n— Trevor, Psychedelic Practitioner Network`
+        function buildMessage(name, persona, inviteUrl) {
+            const linkLine = inviteUrl
+                ? `\n\nTap your personal access link:\n${inviteUrl}`
+                : `\n\nYour invite will arrive by email shortly.`;
+
+            const bodies = {
+                partner: `${name},\n\nI want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymized clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nYour access is ready. No setup required.${linkLine}\n\n— Trevor\nPsychedelic Practitioner Network`,
+                clinician: `${name},\n\nI want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions. No setup required.${linkLine}\n\n— Trevor\nPsychedelic Practitioner Network`,
+                privacy: `${name},\n\nBefore you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready from day one.${linkLine}\n\n— Trevor\nPsychedelic Practitioner Network`
             };
+            return bodies[persona] ?? bodies.partner;
+        }
 
-            const titles = {
-                partner: 'PPN Portal — Founding Member Access',
-                clinician: 'PPN Portal — Built for Sessions Like Yours',
-                privacy: 'PPN Portal — Zero-PHI by Design'
-            };
+        const titles = {
+            partner: 'PPN Portal \u2014 Founding Member Access',
+            clinician: 'PPN Portal \u2014 Built for Sessions Like Yours',
+            privacy: 'PPN Portal \u2014 Zero-PHI by Design'
+        };
 
+        function shareMessage(name, persona, inviteUrl) {
+            const text = buildMessage(name, persona, inviteUrl);
             if (navigator.share) {
-                navigator.share({ title: titles[card], text: messages[card], url: url })
-                    .then(() => showToast('✓ Shared successfully'))
-                    .catch(() => {
-                        navigator.clipboard.writeText(messages[card]);
-                        showToast('✓ Message copied to clipboard');
-                    });
+                navigator.share({ title: titles[persona], text, url: inviteUrl ?? undefined })
+                    .then(() => showToast('\u2713 Shared successfully'))
+                    .catch(() => { navigator.clipboard.writeText(text); showToast('\u2713 Copied to clipboard'); });
             } else {
-                navigator.clipboard.writeText(messages[card]);
-                showToast('✓ Message copied to clipboard');
+                navigator.clipboard.writeText(text);
+                showToast('\u2713 Message copied to clipboard');
+            }
+        }
+
+        async function doShare() {
+            const name = document.getElementById('invite-name').value.trim();
+            const email = document.getElementById('invite-email').value.trim();
+            const errEl = document.getElementById('invite-error');
+            const btn = document.getElementById('send-invite-btn');
+
+            if (!name || !email) {
+                errEl.style.display = 'block';
+                setTimeout(() => errEl.style.display = 'none', 3000);
+                return;
+            }
+            errEl.style.display = 'none';
+            updatePreview();
+
+            // Loading state
+            const origLabel = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Creating invite\u2026';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(EDGE_FN_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, name, persona: selectedPersona }),
+                });
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.error ?? 'Edge Function error');
+                }
+
+                const { inviteUrl } = await res.json();
+
+                // Update the preview link on Screen 1
+                const previewLink = document.querySelector('.message-link');
+                if (previewLink && inviteUrl) previewLink.href = inviteUrl;
+
+                showToast('\u2713 Invite created!');
+                shareMessage(name, selectedPersona, inviteUrl);
+
+            } catch (e) {
+                console.warn('[generate-invite] Falling back to email-only mode:', e.message);
+                // Graceful fallback: share without the link (Edge Fn not deployed yet)
+                showToast('\u26a0\ufe0f Using email-only mode');
+                shareMessage(name, selectedPersona, null);
+            } finally {
+                btn.innerHTML = origLabel;
+                btn.disabled = false;
             }
         }
     </script>
-
 
 
 </body></html>
