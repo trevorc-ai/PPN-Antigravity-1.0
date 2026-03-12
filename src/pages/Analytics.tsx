@@ -66,28 +66,30 @@ const Analytics = () => {
         {
             label: 'Active Protocols',
             value: analytics.loading ? '...' : analytics.activeProtocols.toString(),
-            trend: '+12%',
+            // Only show trend when there are actual protocols to trend on
+            trend: (!analytics.loading && analytics.activeProtocols > 0) ? '+12%' : '—',
             icon: Activity,
             color: 'text-blue-400 print:text-blue-700'
         },
         {
             label: 'Patient Alerts',
             value: analytics.loading ? '...' : analytics.patientAlerts.toString(),
-            trend: analytics.patientAlerts > 0 ? `${analytics.patientAlerts}` : '0',
+            trend: analytics.patientAlerts > 0 ? `${analytics.patientAlerts} active` : '—',
             icon: AlertTriangle,
             color: 'text-amber-400 print:text-amber-700'
         },
         {
             label: 'Network Efficiency',
             value: analytics.loading ? '...' : `${analytics.networkEfficiency}%`,
-            trend: '+0.8%',
+            // Only show trend when efficiency has real data
+            trend: (!analytics.loading && analytics.networkEfficiency > 0) ? '+0.8%' : '—',
             icon: TrendingUp,
             color: 'text-emerald-400 print:text-emerald-700'
         },
         {
             label: 'Risk Score',
             value: analytics.loading ? '...' : analytics.riskScore,
-            trend: 'Stable',
+            trend: analytics.riskScore === 'Unknown' ? 'No sessions yet' : 'Stable',
             icon: ShieldCheck,
             color: analytics.riskScore === 'Low' ? 'text-emerald-400 print:text-emerald-700' : analytics.riskScore === 'Medium' ? 'text-amber-400 print:text-amber-700' : 'text-red-400 print:text-red-700'
         }

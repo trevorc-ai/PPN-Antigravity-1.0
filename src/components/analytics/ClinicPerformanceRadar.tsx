@@ -96,6 +96,14 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 min-h-0">
                 {/* Radar Chart Section - Added min-h-0 to prevent flex item overflow */}
                 <div className="lg:col-span-2 relative min-h-[300px]" role="img" aria-label="Radar chart showing clinic performance vs network average across safety, efficacy, retention, speed, revenue, and compliance.">
+                    {/* Sample data badge — visible when no real session data is available */}
+                    {!data && (
+                        <div className="absolute top-0 right-0 z-20 pointer-events-none">
+                            <span className="text-[10px] font-black uppercase tracking-widest bg-slate-800/80 border border-slate-700/60 text-slate-500 rounded-lg px-2 py-1">
+                                Sample Data
+                            </span>
+                        </div>
+                    )}
                     {!chartReady ? (
                         <ChartSkeleton height="100%" />
                     ) : (

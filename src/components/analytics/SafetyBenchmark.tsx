@@ -3,9 +3,16 @@ import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
     ReferenceLine, LabelList, Cell
 } from 'recharts';
-import { ShieldCheck, TrendingDown, Award } from 'lucide-react';
+import { ShieldCheck, TrendingDown, Award, BookOpen, Clipboard } from 'lucide-react';
 import { ChartSkeleton } from './ChartSkeleton';
 import { CustomTooltip } from './CustomTooltip';
+
+/** Returns correct ordinal suffix: 1st, 2nd, 3rd, 4th… */
+function ordinal(n: number): string {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] ?? s[v] ?? s[0]);
+}
 
 interface SafetyBenchmarkProps {
     /** Adverse event rate for this practitioner (%). Defaults to live mock. */
@@ -69,6 +76,10 @@ export default function SafetyBenchmark({
     // WO-598: Clamp percentile to [1, 99] — avoids "Top 0%" when practitioner is top of network (100th pctile → 99).
     const safePercentile = Math.min(Math.max(percentile, 1), 99);
 
+    // Determine zero-state: practitioner has no sessions yet
+    const hasNoSessions = totalSessions === 0;
+    const hasNoPeerData = networkRate === 0;
+
     return (
         <div className="space-y-6">
             {/* ── KPI STAT CARDS ─────────────────────────────────────────── */}
@@ -92,18 +103,26 @@ export default function SafetyBenchmark({
                         Network Average
                     </p>
                     <p className="text-3xl font-black tracking-tight" style={{ color: '#9DAEC8' }}>
-                        {networkRate.toFixed(1)}%
+                        {hasNoPeerData ? '—' : `${networkRate.toFixed(1)}%`}
                     </p>
-                    <p className="text-sm text-slate-500 mt-1">All sites with N ≥ 10</p>
+                    <p className="text-sm text-slate-500 mt-1">
+                        {hasNoPeerData
+                            ? 'No peer sites with N ≥ 10 yet'
+                            : 'All sites with N ≥ 10'}
+                    </p>
                 </div>
 
                 {/* Status */}
                 <div className={`rounded-2xl p-5 border ${statusConfig.bg}`}>
                     <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Status</p>
                     <p className={`text-3xl font-black tracking-tight ${statusConfig.color}`}>
-                        {statusConfig.label}
+                        {hasNoSessions ? 'New' : statusConfig.label}
                     </p>
-                    <p className="text-sm text-slate-500 mt-1">{safePercentile}th percentile</p>
+                    <p className="text-sm text-slate-500 mt-1">
+                        {hasNoSessions
+                            ? 'Log sessions to build your score'
+                            : `${ordinal(safePercentile)} percentile`}
+                    </p>
                 </div>
             </div>
 
@@ -180,27 +199,82 @@ export default function SafetyBenchmark({
                 </div>
             </div>
 
-            {/* ── INSIGHT CARDS ──────────────────────────────────────────── */}
+            {/* ── INSIGHT CHIPS — contextual to data state ─────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="flex items-center gap-3 bg-emerald-500/8 border border-emerald-500/20 rounded-xl px-4 py-3">
-                    <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                    <p className="text-sm font-bold text-emerald-300">
-                        {deltaVsNetwork}% below network average
-                    </p>
-                </div>
-                <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-3">
-                    <TrendingDown className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                    <p className="text-sm font-bold text-slate-300">
-                        Trending ↓ vs last 90 days
-                    </p>
-                </div>
-                <div className="flex items-center gap-3 bg-amber-500/8 border border-amber-500/20 rounded-xl px-4 py-3">
-                    <Award className="w-5 h-5 text-amber-400 flex-shrink-0" />
-                    <p className="text-sm font-bold text-amber-300">
-                        Top {100 - safePercentile}% nationally
-                    </p>
-                </div>
+                {hasNoSessions ? (
+                    /* Zero-session state: onboarding guidance */
+                    <>
+                        <div className="sm:col-span-2 flex items-center gap-3 bg-indigo-500/8 border border-indigo-500/20 rounded-xl px-4 py-3">
+                            <Clipboard className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-indigo-300">
+                                Log your first session to start building your safety benchmark
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-3">
+                            <BookOpen className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-slate-400">
+                                {literatureRate != null
+                                    ? `${Math.round(literatureRate)}% lit. median available`
+                                    : '38 published cohorts available'}
+                            </p>
+                        </div>
+                    </>
+                ) : hasNoPeerData ? (
+                    /* Has sessions, but no peer network yet */
+                    <>
+                        <div className="flex items-center gap-3 bg-emerald-500/8 border border-emerald-500/20 rounded-xl px-4 py-3">
+                            <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-emerald-300">
+                                {literatureRate != null
+                                    ? `${Math.abs(Math.round(practitionerRate - literatureRate))}% ${practitionerRate < literatureRate ? 'below' : 'above'} literature average`
+                                    : `${adverseEvents} adverse event${adverseEvents !== 1 ? 's' : ''} in ${totalSessions} sessions`}
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-3">
+                            <TrendingDown className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-slate-400">
+                                Peer network building (need N ≥ 10)
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3 bg-indigo-500/8 border border-indigo-500/20 rounded-xl px-4 py-3">
+                            <BookOpen className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-indigo-300">
+                                Benchmarked vs 1,566 global trials
+                            </p>
+                        </div>
+                    </>
+                ) : (
+                    /* Full data — original chips with corrected ordinal */
+                    <>
+                        <div className="flex items-center gap-3 bg-emerald-500/8 border border-emerald-500/20 rounded-xl px-4 py-3">
+                            <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-emerald-300">
+                                {deltaVsNetwork}% below network average
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3 bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-3">
+                            <TrendingDown className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-slate-300">
+                                Trending ↓ vs last 90 days
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-3 bg-amber-500/8 border border-amber-500/20 rounded-xl px-4 py-3">
+                            <Award className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                            <p className="text-sm font-bold text-amber-300">
+                                Top {100 - safePercentile}% nationally
+                            </p>
+                        </div>
+                    </>
+                )}
             </div>
+
+            {/* Lit. Avg methodology footnote */}
+            {literatureRate != null && (
+                <p className="text-[11px] text-slate-600 italic leading-snug">
+                    † Lit. Avg = mean adverse event rate across 38 published clinical trials (any AE per participant).
+                    Your rate = confirmed events per 100 sessions. Scales differ; use as directional context only.
+                </p>
+            )}
         </div>
     );
 }
