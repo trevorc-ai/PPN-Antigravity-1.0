@@ -264,7 +264,7 @@ const Landing: React.FC = () => {
                 <div className="mx-auto flex-1 max-w-[300px] h-7 bg-slate-950/50 rounded-lg border border-white/5 flex items-center justify-center shadow-inner">
                   <span className="flex items-center gap-2 text-[10px] font-black tracking-widest text-slate-500 uppercase">
                     <span className="material-symbols-outlined text-[12px] text-indigo-400">lock</span>
-                    app.ppnportal.net
+                    ppnportal.net
                   </span>
                 </div>
               </div>
