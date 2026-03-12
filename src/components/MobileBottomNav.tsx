@@ -59,42 +59,43 @@ export const MobileBottomNav: React.FC = () => {
                     <NavItem key={item.path} item={item} />
                 ))}
 
-                {/* Center: Wellness Journey — raised pill */}
-                <div className="relative -top-3 flex flex-col items-center">
-                    <NavLink
-                        to="/wellness-journey"
-                        aria-label="Wellness Journey"
-                        className="flex flex-col items-center gap-1"
-                    >
+                {/* Center: Wellness Journey — flat, aligned with other tabs */}
+                <NavLink
+                    to="/wellness-journey"
+                    aria-label="Wellness Journey"
+                    className="flex flex-col items-center gap-0.5 pt-2 pb-1 px-4 min-w-[56px] relative"
+                >
+                    {wellnessActive && (
                         <motion.div
-                            whileTap={{ scale: 0.88 }}
+                            layoutId="mobile-nav-dot"
                             transition={SPRING}
-                            className={[
-                                'w-[56px] h-[56px] rounded-full flex items-center justify-center',
-                                // Glass pill — primary color token
-                                'bg-primary/10 border border-primary/30',
-                                'shadow-[0_0_20px_rgba(43,108,238,0.22)]',
-                                wellnessActive
-                                    ? 'border-primary/60 bg-primary/20'
-                                    : '',
-                            ].join(' ')}
-                        >
-                            <span
-                                className={`material-symbols-outlined text-2xl ${wellnessActive ? 'text-primary' : 'text-slate-400'
-                                    }`}
-                                aria-hidden="true"
-                            >
-                                spa
-                            </span>
-                        </motion.div>
+                            className="absolute top-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-primary"
+                        />
+                    )}
+                    <motion.div
+                        whileTap={{ scale: 0.82 }}
+                        transition={SPRING}
+                        className={[
+                            'w-10 h-10 rounded-full flex items-center justify-center',
+                            'border transition-colors',
+                            wellnessActive
+                                ? 'bg-primary/15 border-primary/50'
+                                : 'bg-transparent border-transparent',
+                        ].join(' ')}
+                    >
                         <span
-                            className={`text-xs font-bold tracking-wide pb-1 ${wellnessActive ? 'text-primary' : 'text-slate-500'
-                                }`}
+                            className={`material-symbols-outlined text-2xl transition-colors ${wellnessActive ? 'text-primary' : 'text-slate-500'}`}
+                            aria-hidden="true"
                         >
-                            Wellness
+                            spa
                         </span>
-                    </NavLink>
-                </div>
+                    </motion.div>
+                    <span
+                        className={`text-xs font-bold tracking-wide transition-colors ${wellnessActive ? 'text-primary' : 'text-slate-500'}`}
+                    >
+                        Wellness
+                    </span>
+                </NavLink>
 
                 {/* Right two items: Analytics + Protocols */}
                 {NAV_ITEMS.slice(2).map((item) => (

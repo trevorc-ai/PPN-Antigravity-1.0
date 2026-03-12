@@ -9,7 +9,7 @@ import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 import { WorkflowActionCard } from './WorkflowCards';
 import AdaptiveAssessmentPage from '../../pages/AdaptiveAssessmentPage';
 import { WellnessFormId } from './WellnessFormRouter';
-import { LiveSessionTimeline, QUICK_ACTIONS } from './LiveSessionTimeline';
+import { LiveSessionTimeline, QUICK_ACTIONS, TimelineEvent } from './LiveSessionTimeline';
 import { SessionVitalsTrendChart, VitalsSnapshot, SessionEventPin } from './SessionVitalsTrendChart';
 import { useToast } from '../../contexts/ToastContext';
 import { useProtocol } from '../../contexts/ProtocolContext';
@@ -150,6 +150,62 @@ const COMPANION_FEELINGS = [
     { id: 'fearful', label: 'Fearful', rest: 'bg-red-600/15 border-red-600/30 text-red-300/80', glow: 'bg-red-600/60 border-red-500/70 text-red-200' },
     { id: 'nauseous', label: 'Nauseous', rest: 'bg-yellow-700/15 border-yellow-700/30 text-yellow-300/80', glow: 'bg-yellow-600/60 border-yellow-500/70 text-yellow-200' },
     { id: 'need_support', label: 'Need Support', rest: 'bg-pink-600/20 border-pink-500/40 text-pink-300/80 ring-1 ring-pink-500/20', glow: 'bg-pink-500/65 border-pink-400/70 text-pink-200 ring-1 ring-pink-400/50' },
+];
+
+// ── TEST MODE: UUID guard + synthetic seed data ───────────────────────────────
+// When the sessionId is not a real UUID (demo / test flow), the DB guards in
+// LiveSessionTimeline and SessionVitalsTrendChart would leave both panels empty.
+// These constants inject realistic-looking data so the cockpit is always
+// visually populated during test drives. They are NEVER written to the DB.
+const UUID_RE_MOCK = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Synthetic vitals snapshots shown in test mode. Simulates a 12-min session arc. */
+const MOCK_VITALS_SNAPSHOTS: VitalsSnapshot[] = [
+    { id: 'mock-v0', elapsedSec: 0,   heartRate: 72,  bpSystolic: 118 },
+    { id: 'mock-v1', elapsedSec: 180, heartRate: 78,  bpSystolic: 125 },
+    { id: 'mock-v2', elapsedSec: 360, heartRate: 88,  bpSystolic: 134 },
+    { id: 'mock-v3', elapsedSec: 540, heartRate: 85,  bpSystolic: 130 },
+    { id: 'mock-v4', elapsedSec: 720, heartRate: 79,  bpSystolic: 122 },
+];
+
+/** Synthetic event pins shown in the chart in test mode. */
+const MOCK_EVENT_PINS: SessionEventPin[] = [
+    { id: 'mock-e0', elapsedSec: 0,   type: 'dose_admin',          label: 'Initial Dose' },
+    { id: 'mock-e1', elapsedSec: 240, type: 'patient_observation', label: 'Patient reported: Feeling warmth, visuals beginning' },
+    { id: 'mock-e2', elapsedSec: 480, type: 'session_update',      label: 'Update: Calm' },
+    { id: 'mock-e3', elapsedSec: 660, type: 'vital_check',         label: 'Vitals Recorded' },
+];
+
+/** Synthetic timeline ledger entries shown in LiveSessionTimeline in test mode. */
+const MOCK_TIMELINE_EVENTS: TimelineEvent[] = [
+    {
+        id: 'mock-tl0',
+        type: 'dose_admin',
+        timestamp: new Date(Date.now() - 12 * 60000),
+        description: 'Initial dose administered',
+        author: 'Clinician',
+    },
+    {
+        id: 'mock-tl1',
+        type: 'patient_observation',
+        timestamp: new Date(Date.now() - 8 * 60000),
+        description: 'Patient reported: Feeling warmth, visuals beginning',
+        author: 'Clinician',
+    },
+    {
+        id: 'mock-tl2',
+        type: 'session_update',
+        timestamp: new Date(Date.now() - 4 * 60000),
+        description: 'Update: Calm — HR 85, BP 130/82',
+        author: 'Clinician',
+    },
+    {
+        id: 'mock-tl3',
+        type: 'vital_check',
+        timestamp: new Date(Date.now() - 2 * 60000),
+        description: 'Vitals Recorded — within normal range',
+        author: 'Clinician',
+    },
 ];
 
 /**
@@ -540,10 +596,17 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         }
     }, []);
 
+    // TEST MODE detection: true when the session has no real UUID (demo / test flow)
+    const isMockSession = useMemo(() => {
+        const sid = journey.sessionId ?? journey.session?.sessionId;
+        return !sid || !UUID_RE_MOCK.test(sid);
+    }, [journey]);
+
     // WO-528: derive VitalsSnapshot[] from updateLog entries that contain HR or BP data.
     // Each entry is mapped to an elapsed-time X value so the chart uses a consistent timeline.
+    // In TEST MODE (no real UUID), fall back to MOCK_VITALS_SNAPSHOTS so the chart is visible.
     const vitalsChartData: VitalsSnapshot[] = useMemo(() => {
-        return updateLog
+        const realData = updateLog
             .filter(e => e.hr || e.bp)
             .map((e, i) => ({
                 id: `upd-${i}`,
@@ -555,7 +618,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 temperatureF: e.tempF ?? undefined, // no default, only plot when explicitly recorded
             }))
             .sort((a, b) => a.elapsedSec - b.elapsedSec);
-    }, [updateLog]);
+        // Fall back to synthetic data only when live and no real entries yet
+        if (isLive && isMockSession && realData.length === 0) return MOCK_VITALS_SNAPSHOTS;
+        return realData;
+    }, [updateLog, isLive, isMockSession]);
 
     // WO-528: parse elapsedTime HH:MM:SS string to seconds to drive the chart x-axis domain.
     // The chart uses this to grow the domain even when no new vitals are logged.
@@ -1338,8 +1404,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                 {isLive && (
                     <div className="space-y-1">
 
-                        {/* ── Panel A: Session Vitals Graph ── */}
-                        <div className="rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-900/60">
+                        {/* ── Panel A: Session Vitals Trend — amber/gold border ── */}
+                        <div className="rounded-2xl overflow-hidden border border-amber-500/40 bg-slate-900/60">
                             {/* Header — always visible, click to toggle */}
                             <button
                                 onClick={() => setActivePanel(p => p === 'graph' ? 'graph' : 'graph')}
@@ -1361,7 +1427,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             </button>
                             {/* Content */}
                             {activePanel === 'graph' && (
-                                <div id="cockpit-graph" className="border-t border-slate-700/40">
+                                <div id="cockpit-graph" className="border-t border-amber-500/20">
                                     {config.enabledFeatures.includes('session-vitals') ? (
                                         <SessionVitalsTrendChart
                                             sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
@@ -1375,7 +1441,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                 });
                                             }}
                                             data={vitalsChartData}
-                                            events={eventLog}
+                                            events={isMockSession && isLive && eventLog.length === 0 ? MOCK_EVENT_PINS : eventLog}
                                             sessionDurationSec={sessionDurationSec}
                                             onVisibilityChange={v => setChartVisible(v as { hr: boolean; bp: boolean; temp: boolean; events: boolean })}
                                         />
@@ -1386,8 +1452,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                             )}
                         </div>
 
-                        {/* ── Panel B: Live Session Timeline ── */}
-                        <div className="rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-900/60">
+                        {/* ── Panel B: Live Session Timeline — indigo/blue border ── */}
+                        <div className="rounded-2xl overflow-hidden border border-indigo-500/40 bg-slate-900/60">
                             <div
                                 role="button"
                                 tabIndex={0}
@@ -1429,7 +1495,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 </div>
                             </div>
                             {activePanel === 'timeline' && (
-                                <div id="cockpit-timeline" className="border-t border-slate-700/40">
+                                <div id="cockpit-timeline" className="border-t border-indigo-500/20">
                                     <LiveSessionTimeline
                                         sessionId={journey.sessionId || journey.session?.sessionNumber?.toString() || '1'}
                                         active={true}
@@ -1437,13 +1503,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         sessionStartMs={sessionStartMs}
                                         hideHeader={true}
                                         hideActions={true}
+                                        mockEvents={isMockSession ? MOCK_TIMELINE_EVENTS : undefined}
                                     />
                                 </div>
                             )}
                         </div>
 
-                        {/* ── Panel C: Session Update ── */}
-                        <div className="rounded-2xl overflow-hidden border border-emerald-900/40 bg-slate-900/60">
+                        {/* ── Panel C: Session Update — emerald border ── */}
+                        <div className="rounded-2xl overflow-hidden border border-emerald-500/40 bg-slate-900/60">
                             <button
                                 onClick={() => setActivePanel(p => p === 'update' ? 'graph' : 'update')}
                                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-emerald-950/20 transition-colors"
@@ -1463,7 +1530,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 />
                             </button>
                             {activePanel === 'update' && (
-                                <div id="cockpit-update" className="border-t border-emerald-900/30 p-4 space-y-4 animate-in slide-in-from-top-1 duration-150">
+                                <div id="cockpit-update" className="border-t border-emerald-500/20 p-4 space-y-4 animate-in slide-in-from-top-1 duration-150">
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                         <div>
                                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Patient Affect</label>

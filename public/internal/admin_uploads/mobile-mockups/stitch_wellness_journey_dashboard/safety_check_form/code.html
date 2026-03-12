@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Safety Check Form</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --teal-accent: #2dd4bf;
+            --amber-accent: #f59e0b;
+            --red-accent: #ef4444;
+            --ios-bg: #0f172a;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #1e293b, #0f172a);
+            color: white;
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+        }
+        .segmented-control {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px;
+            border-radius: 12px;
+            display: flex;
+        }
+        .segmented-item {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .segmented-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .chip {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .chip-teal { border-color: rgba(45, 212, 191, 0.3); background: rgba(45, 212, 191, 0.05); }
+        .chip-amber { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); }
+        .chip-red { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+        .c-ssrs-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+        }
+        .c-ssrs-btn.active {
+            border-color: var(--amber-accent);
+            color: var(--amber-accent);
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .ios-tab-bar {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 4px;
+            display: flex;
+        }
+        .ios-tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .ios-tab-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="p-4 flex flex-col min-h-screen">
+<header class="flex items-center justify-between mb-6 pt-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-md">
+<span class="material-symbols-outlined text-white">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight">Safety Check Form</h1>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-md">
+<span class="material-symbols-outlined text-white">close</span>
+</button>
+</header>
+<main class="flex-1 glass-panel p-5 overflow-y-auto mb-20">
+<div class="flex gap-3 mb-6">
+<div class="flex-1 relative">
+<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-white/40 text-lg">calendar_today</span>
+</div>
+<input class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-white/40 focus:ring-1 focus:ring-white/30 focus:border-white/30 outline-none" placeholder="Monitoring Date" type="text"/>
+</div>
+<button class="bg-white/10 border border-white/10 rounded-xl px-5 font-medium text-sm">Today</button>
+</div>
+<div class="mb-8">
+<div class="flex items-center gap-1.5 mb-4">
+<h2 class="text-sm font-semibold text-white/90">C-SSRS Score (0-5)</h2>
+<span class="material-symbols-outlined text-sm text-white/40">help</span>
+</div>
+<div class="flex justify-between items-center px-1">
+<button class="c-ssrs-btn text-white/50">0</button>
+<button class="c-ssrs-btn text-white/50">1</button>
+<button class="c-ssrs-btn active">2</button>
+<button class="c-ssrs-btn text-white/50">3</button>
+<button class="c-ssrs-btn text-white/50">4</button>
+<button class="c-ssrs-btn text-white/50">5</button>
+</div>
+</div>
+<div class="ios-tab-bar mb-6">
+<button class="ios-tab-btn active">Safety Concerns</button>
+<button class="ios-tab-btn">Actions Taken</button>
+</div>
+<div class="tab-content active mb-8">
+<div class="grid grid-cols-2 gap-3">
+<div class="chip chip-teal flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Medication non-compliance</span>
+<span class="material-symbols-outlined text-xs text-teal-400">pill</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-teal-400 font-semibold">Moderate</span>
+</div>
+</div>
+<div class="chip chip-teal flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Social isolation increase</span>
+<span class="material-symbols-outlined text-xs text-teal-400">group</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-teal-400 font-semibold">Moderate</span>
+</div>
+</div>
+<div class="chip chip-amber flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Substance use relapse</span>
+<span class="material-symbols-outlined text-xs text-amber-400">liquor</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">High</span>
+</div>
+</div>
+<div class="chip chip-red flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Suicidal ideation increase</span>
+<span class="material-symbols-outlined text-xs text-red-400">warning</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-red-400 font-semibold">Critical</span>
+</div>
+</div>
+<div class="chip chip-red flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Self-harm behavior</span>
+<span class="material-symbols-outlined text-xs text-red-400">front_hand</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-red-400 font-semibold">Critical</span>
+</div>
+</div>
+<div class="chip chip-red flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Psychotic symptoms</span>
+<span class="material-symbols-outlined text-xs text-red-400">visibility</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-red-400 font-semibold">Critical</span>
+</div>
+</div>
+</div>
+</div>
+<div class="tab-content mb-8">
+<div class="grid grid-cols-2 gap-3">
+<div class="chip chip-red flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Hospitalization recommended</span>
+<span class="material-symbols-outlined text-xs text-red-400">emergency</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-red-400 font-semibold">Immediate</span>
+</div>
+</div>
+<div class="chip chip-red flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Emergency contact notified</span>
+<span class="material-symbols-outlined text-xs text-red-400">call</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-red-400 font-semibold">Immediate</span>
+</div>
+</div>
+<div class="chip chip-amber flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Referred to psychiatrist</span>
+<span class="material-symbols-outlined text-xs text-amber-400">psychiatry</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">Urgent</span>
+</div>
+</div>
+<div class="chip chip-amber flex flex-col justify-between h-20">
+<div class="flex items-start justify-between">
+<span class="text-[11px] font-medium leading-tight">Increased check-in frequency</span>
+<span class="material-symbols-outlined text-xs text-amber-400">event_repeat</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+<span class="text-[10px] uppercase tracking-wider text-amber-400 font-semibold">Urgent</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<h3 class="text-sm font-semibold text-white/90 mb-3">Follow-Up Required?</h3>
+<div class="segmented-control p-1 bg-black/30">
+<button class="segmented-item active">Yes</button>
+<button class="segmented-item text-white/50">No</button>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-white/90 mb-3">Schedule Follow-Up Within</h3>
+<div class="segmented-control p-1 bg-black/30">
+<button class="segmented-item text-white/50 text-xs">24 hours</button>
+<button class="segmented-item text-white/50 text-xs">3 days</button>
+<button class="segmented-item active text-xs">1 week</button>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 p-4 pb-8 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/90 to-transparent">
+<div class="flex gap-3">
+<button class="flex-1 bg-white/10 border border-white/10 rounded-2xl py-4 font-semibold text-sm">Save &amp; Exit</button>
+<button class="flex-[1.5] bg-indigo-600 rounded-2xl py-4 font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20">
+                Save &amp; Continue
+                <span class="material-symbols-outlined text-lg">check_circle</span>
+</button>
+</div>
+</div>
+
+</body></html>

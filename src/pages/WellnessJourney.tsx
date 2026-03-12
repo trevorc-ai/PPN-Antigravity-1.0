@@ -18,7 +18,6 @@ import { useBenchmarkReadiness } from '../hooks/useBenchmarkReadiness';
 import { RiskIndicators } from '../components/risk';
 import { useRiskDetection } from '../hooks/useRiskDetection';
 import { SafetyTimeline, type SafetyEvent } from '../components/safety';
-import { ArcOfCareOnboarding } from '../components/arc-of-care';
 import { Phase1Tour, Phase2Tour, Phase3Tour, CompassTourButton } from '../components/arc-of-care/PhaseTours';
 import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport, type PatientReportData } from '../services/reportGenerator';
@@ -171,9 +170,6 @@ const WellnessJourneyInternal: React.FC = () => {
     const [showTour1, setShowTour1] = useState(false);
     const [showTour2, setShowTour2] = useState(false);
     const [showTour3, setShowTour3] = useState(false);
-
-    // Onboarding state
-    const [showOnboarding, setShowOnboarding] = useState(false);
 
     // Patient selection gate — skipped automatically if a valid in-progress session exists
     const _initialStoredSession = readStoredSession();
@@ -524,14 +520,6 @@ const WellnessJourneyInternal: React.FC = () => {
         handleOpenForm(formId as WellnessFormId);
     }, [handleOpenForm]);
 
-    // Check if user has seen onboarding
-    useEffect(() => {
-        const hasSeenOnboarding = localStorage.getItem('arcOfCareOnboardingSeen');
-        if (!hasSeenOnboarding) {
-            setShowOnboarding(true);
-        }
-    }, []);
-
     // Phase locking: only allow switching to unlocked phases
     const isPhaseUnlocked = useCallback((phase: number) => {
         if (phase === 1) return true;
@@ -578,7 +566,6 @@ const WellnessJourneyInternal: React.FC = () => {
             if (e.altKey && e.key === '1') { e.preventDefault(); handlePhaseChange(1); }
             else if (e.altKey && e.key === '2') { e.preventDefault(); handlePhaseChange(2); }
             else if (e.altKey && e.key === '3') { e.preventDefault(); handlePhaseChange(3); }
-            else if (e.altKey && e.key === 'h') { e.preventDefault(); setShowOnboarding(true); }
         };
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
@@ -810,14 +797,6 @@ const WellnessJourneyInternal: React.FC = () => {
                             }
                         }
                     }}
-                />
-            )}
-
-            {/* Onboarding Modal */}
-            {showOnboarding && (
-                <ArcOfCareOnboarding
-                    onClose={() => navigate(-1)}
-                    onGetStarted={() => { setShowOnboarding(false); setActivePhase(1); }}
                 />
             )}
 

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(43, 108, 238, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
+        .glass-button:hover {
+            background: rgba(43, 108, 238, 0.15);
+            border-color: rgba(43, 108, 238, 0.4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-hidden">
+<div class="relative flex h-screen w-full flex-col max-w-md mx-auto overflow-hidden">
+<!-- Decorative Background Element -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<!-- Top App Bar -->
+<header class="relative z-10 flex items-center justify-between p-4 pt-6">
+<button class="flex items-center justify-center size-10 rounded-full glass-panel text-slate-100">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h2 class="text-lg font-bold tracking-tight text-center flex-1">Challenge Check</h2>
+<div class="size-10"></div>
+</header>
+<!-- Progress Section -->
+<div class="relative z-10 flex flex-col gap-3 px-6 py-4">
+<div class="flex justify-between items-end">
+<p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Progress</p>
+<p class="text-primary text-sm font-bold">Question 2 of 3</p>
+</div>
+<div class="h-2 w-full rounded-full bg-slate-800/50 overflow-hidden">
+<div class="h-full rounded-full bg-primary shadow-[0_0_15px_rgba(43,108,238,0.5)]" style="width: 66%;"></div>
+</div>
+</div>
+<!-- Question Content -->
+<main class="relative z-10 flex-1 flex flex-col px-6 justify-center">
+<div class="glass-panel rounded-xl p-6 mb-8 text-center">
+<h3 class="text-slate-100 text-2xl font-bold leading-tight">"I experienced grief."</h3>
+</div>
+<!-- Vertical Likert Scale -->
+<div class="flex flex-col gap-3">
+<button class="glass-button flex items-center justify-between w-full h-14 px-5 rounded-xl text-slate-100 font-medium group">
+<span class="flex items-center gap-4">
+<span class="flex items-center justify-center size-8 rounded-lg bg-primary/20 text-primary font-bold">5</span>
+<span>Strongly Agree</span>
+</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100">check_circle</span>
+</button>
+<button class="glass-button flex items-center justify-between w-full h-14 px-5 rounded-xl text-slate-100 font-medium group border-primary/40 bg-primary/10">
+<span class="flex items-center gap-4">
+<span class="flex items-center justify-center size-8 rounded-lg bg-primary text-white font-bold">4</span>
+<span>Agree</span>
+</span>
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</button>
+<button class="glass-button flex items-center justify-between w-full h-14 px-5 rounded-xl text-slate-100 font-medium group">
+<span class="flex items-center gap-4">
+<span class="flex items-center justify-center size-8 rounded-lg bg-primary/20 text-primary font-bold">3</span>
+<span>Neutral</span>
+</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100">check_circle</span>
+</button>
+<button class="glass-button flex items-center justify-between w-full h-14 px-5 rounded-xl text-slate-100 font-medium group">
+<span class="flex items-center gap-4">
+<span class="flex items-center justify-center size-8 rounded-lg bg-primary/20 text-primary font-bold">2</span>
+<span>Disagree</span>
+</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100">check_circle</span>
+</button>
+<button class="glass-button flex items-center justify-between w-full h-14 px-5 rounded-xl text-slate-100 font-medium group">
+<span class="flex items-center gap-4">
+<span class="flex items-center justify-center size-8 rounded-lg bg-primary/20 text-primary font-bold">1</span>
+<span>Strongly Disagree</span>
+</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100">check_circle</span>
+</button>
+<button class="glass-button flex items-center justify-between w-full h-14 px-5 rounded-xl text-slate-400 font-medium group italic">
+<span class="flex items-center gap-4">
+<span class="flex items-center justify-center size-8 rounded-lg bg-slate-800 text-slate-500 font-bold">0</span>
+<span>Not Applicable</span>
+</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100">check_circle</span>
+</button>
+</div>
+</main>
+<!-- Footer Navigation -->
+<footer class="relative z-10 flex gap-4 p-6 bg-background-dark/80 backdrop-blur-md">
+<button class="flex-1 flex items-center justify-center gap-2 h-14 rounded-xl glass-button text-slate-300 font-semibold">
+<span class="material-symbols-outlined text-sm">arrow_back_ios</span>
+                Previous
+            </button>
+<button class="flex-[2] flex items-center justify-center gap-2 h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/20 transition-all">
+                Next Question
+                <span class="material-symbols-outlined">arrow_forward_ios</span>
+</button>
+</footer>
+</div>
+</body></html>

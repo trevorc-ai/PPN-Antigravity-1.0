@@ -31,6 +31,12 @@ interface LiveSessionTimelineProps {
     visible?: { hr: boolean; bp: boolean; temp: boolean; events: boolean };
     /** Timestamp (ms since epoch) when the dosing session started. Used to compute T+ header. */
     sessionStartMs?: number;
+    /**
+     * TEST MODE: synthetic events to display when sessionId is not a real UUID
+     * and fetchLocalEvents bails out. Allows the live cockpit to look populated
+     * in demo / test flows without any DB writes.
+     */
+    mockEvents?: TimelineEvent[];
 }
 
 // WO-528: exported so SessionVitalsTrendChart can reuse the same palette
@@ -65,7 +71,7 @@ function formatTimeAMPM(date: Date): string {
 }
 
 export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
-    sessionId, active, hideHeader = false, hideActions = false, visible, sessionStartMs
+    sessionId, active, hideHeader = false, hideActions = false, visible, sessionStartMs, mockEvents
 }) => {
     const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [draftNote, setDraftNote] = useState('');
@@ -162,6 +168,9 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                 // Empty state — do NOT show hardcoded 2025 mock events
                 setEvents([]);
             }
+        } else if (mockEvents && mockEvents.length > 0) {
+            // TEST MODE: UUID check failed — show caller-supplied synthetic events
+            setEvents(mockEvents);
         }
     }, [sessionId]);
 
@@ -206,16 +215,23 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
     };
 
     // WO-576 Sub-task E: filter ledger entries based on chart visible-series state
+    // Also merge mockEvents as a fallback display layer when live events are empty
+    const displayEvents = React.useMemo(() => {
+        if (events.length > 0) return events;
+        if (mockEvents && mockEvents.length > 0) return mockEvents;
+        return events;
+    }, [events, mockEvents]);
+
     const filteredEvents = React.useMemo(() => {
-        if (!visible) return events;
+        if (!visible) return displayEvents;
         const isVitalHidden = !visible.hr && !visible.bp && !visible.temp;
         const areEventsHidden = !visible.events;
-        return events.filter(ev => {
+        return displayEvents.filter(ev => {
             if (ev.type === 'vital_check' && isVitalHidden) return false;
             if (ev.type !== 'vital_check' && areEventsHidden) return false;
             return true;
         });
-    }, [events, visible]);
+    }, [displayEvents, visible]);
 
     return (
         <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl flex flex-col overflow-hidden shadow-xl">

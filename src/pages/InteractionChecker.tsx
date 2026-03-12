@@ -282,7 +282,7 @@ const InteractionChecker: React.FC = () => {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)] pointer-events-none z-0" />
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none opacity-50 z-0" />
 
-      <PageContainer width="wide" className="relative z-10 !max-w-[1600px] p-4 sm:p-10 space-y-8 mt-4 animate-in fade-in duration-700">
+      <PageContainer width="wide" className="relative z-10 !max-w-[1600px] p-3 sm:p-10 space-y-4 sm:space-y-8 mt-2 sm:mt-4 animate-in fade-in duration-700">
 
         {/* Back Button */}
         <button
@@ -293,22 +293,22 @@ const InteractionChecker: React.FC = () => {
           <span className="text-sm font-black uppercase tracking-widest">Return to Catalog</span>
         </button>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 sm:gap-6">
           <div className="space-y-1">
             <div className="flex items-center gap-4">
               <div className="size-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-xl">
                 <span className="material-symbols-outlined text-3xl">security</span>
               </div>
               <div>
-                <h1 className="text-4xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Interaction Checker</h1>
-                <p className="text-slate-300 text-sm font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
+                <h1 className="text-2xl sm:text-4xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>Interaction Checker</h1>
+                <p className="hidden sm:block text-slate-300 text-sm font-black uppercase tracking-[0.3em]">Knowledge Graph Cross-Reference v1.4</p>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={handleClear}
-              className="px-6 py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-xl text-sm font-black uppercase tracking-widest transition-all"
+              className="px-3 sm:px-6 py-2 sm:py-3 bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-300 rounded-xl text-sm font-black uppercase tracking-widest transition-all"
             >
               Reset Analysis
             </button>
@@ -319,7 +319,7 @@ const InteractionChecker: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* Input: Psychedelic (Primary Agent) */}
-          <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedPsychedelic ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
+          <section className={`rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedPsychedelic ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
             <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1" htmlFor="combo-psychedelic">
               Primary Agent (Psychedelic)
             </label>
@@ -338,7 +338,7 @@ const InteractionChecker: React.FC = () => {
           </section>
 
           {/* Input: Medication (Secondary Agent) */}
-          <section className={`rounded-[2.5rem] p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedMedication ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
+          <section className={`rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl space-y-4 transition-all duration-300 ${selectedMedication ? 'bg-primary/5 border-2 border-primary/40 shadow-primary/10' : 'bg-slate-900/40 border border-slate-800'}`}>
             <label className="text-sm font-black text-slate-300 uppercase tracking-widest ml-1" htmlFor="combo-medication">
               Secondary Agent (Medication/Condition)
             </label>
@@ -377,7 +377,7 @@ const InteractionChecker: React.FC = () => {
           ) : (
             <div
               key={`${selectedPsychedelic}-${selectedMedication}`}
-              className={`flex-1 ${styles?.bg} border-2 ${styles?.border} rounded-[3rem] p-10 sm:p-14 ${styles?.glow} animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all overflow-hidden relative group`}
+              className={`flex-1 ${styles?.bg} border-2 ${styles?.border} rounded-3xl sm:rounded-[3rem] p-5 sm:p-14 ${styles?.glow} animate-in fade-in slide-in-from-bottom-4 duration-500 transition-all overflow-hidden relative group`}
             >
               <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
                 <span className="material-symbols-outlined text-[160px]">{styles?.icon}</span>
@@ -386,7 +386,7 @@ const InteractionChecker: React.FC = () => {
               <div className="relative z-10 flex flex-col h-full">
 
                 {/* Combination Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-white/10 pb-8 mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-6 border-b border-white/10 pb-4 sm:pb-8 mb-4 sm:mb-8">
                   <div>
                     <h2 className="text-3xl font-black tracking-tight flex items-center flex-wrap gap-2" style={{ color: '#9DAEC8' }}>
                       {analysisResult.substance}
@@ -404,7 +404,7 @@ const InteractionChecker: React.FC = () => {
                 </div>
 
                 {/* Status & Risk Badges */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-4 sm:mb-12">
                   <div className="flex items-center gap-4">
                     <div className={`size-16 rounded-[1.5rem] bg-black/40 border ${styles?.border} flex items-center justify-center ${styles?.text}`}>
                       <span className="material-symbols-outlined text-4xl">{styles?.icon}</span>
@@ -418,7 +418,7 @@ const InteractionChecker: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12">
                   <div className="lg:col-span-7 space-y-8">
                     <div className="space-y-4">
                       <h3 className="text-sm font-black uppercase tracking-[0.3em]" style={{ color: '#A8B5D1' }}>Clinical Description</h3>

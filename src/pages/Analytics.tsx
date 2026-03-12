@@ -94,17 +94,17 @@ const Analytics = () => {
     ];
 
     return (
-        <PageContainer className="!max-w-7xl space-y-8 animate-in fade-in duration-700 pb-20 pt-8 print:p-0 print:space-y-4 print:bg-white">
+        <PageContainer className="!max-w-7xl space-y-4 sm:space-y-8 animate-in fade-in duration-700 pb-20 pt-4 sm:pt-8 print:p-0 print:space-y-4 print:bg-white">
 
             {/* HEADER - Hide on Print */}
             <Section spacing="tight" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 print:hidden">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-3xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
+                        <h1 className="text-2xl sm:text-5xl font-black tracking-tighter" style={{ color: '#8BA5D3' }}>
                             Clinical Intelligence
                         </h1>
                     </div>
-                    <p className="text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed mt-4" style={{ color: '#8B9DC3' }}>
+                    <p className="hidden sm:block text-xl sm:text-2xl font-medium max-w-4xl leading-relaxed mt-4" style={{ color: '#8B9DC3' }}>
                         Real-time network insights and safety metrics.
                     </p>
                 </div>
@@ -302,7 +302,7 @@ const Analytics = () => {
 
             {/* ── EXPORT REPORT, Bottom of page, prominently placed ─────────── */}
             <Section spacing="tight" className="print:hidden">
-                <div className="bg-[#0a0c12]/80 border border-slate-800/50 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="bg-[#0a0c12]/80 border border-slate-800/50 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
                         <h3 className="text-base font-black" style={{ color: '#A8B5D1' }}>Export Clinical Intelligence Report</h3>
                         <p className="text-sm mt-1" style={{ color: '#8B9DC3' }}>

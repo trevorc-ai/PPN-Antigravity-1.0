@@ -44,12 +44,12 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
   return (
     <div
       onClick={() => link && navigate(link)}
-      className={`shrink-0 w-full md:w-auto md:shrink-1 relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 transition-all md:snap-align-none snap-center group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
+      className={`relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl p-4 sm:p-6 transition-all group ${link ? 'cursor-pointer hover:border-slate-600 hover:shadow-2xl hover:-translate-y-1' : ''}`}
     >
       {/* Background Hover Glow */}
       <div className={`absolute -top-10 -right-10 w-32 h-32 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none ${styles.bg}`}></div>
 
-      <div className="flex items-start justify-between mb-4 relative z-10">
+      <div className="flex items-start justify-between mb-2 sm:mb-4 relative z-10">
         <div className={`p-3 rounded-2xl ${styles.glow} bg-opacity-20 border border-slate-700/50 group-hover:border-slate-600 transition-colors`}>
           <Icon className={`w-6 h-6 ${styles.text}`} />
         </div>
@@ -62,7 +62,7 @@ const ClinicPerformanceCard: React.FC<ClinicPerformanceCardProps> = ({
 
       <div className="relative z-10">
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{title}</h3>
-        <div className={`text-4xl font-black tracking-tighter mb-2 ${styles.text}`}>{value}</div>
+        <div className={`text-2xl sm:text-4xl font-black tracking-tighter mb-2 ${styles.text}`}>{value}</div>
 
         <div className="flex items-center gap-2 text-sm mb-1">
           <span className={`font-bold px-2 py-0.5 rounded-md ${change.startsWith('+') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-300'}`}>
@@ -186,7 +186,7 @@ export default function Dashboard() {
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)] pointer-events-none z-0" />
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none opacity-50 z-0" />
 
-      <PageContainer className="relative z-10 flex flex-col gap-8 pt-8">
+      <PageContainer className="relative z-10 flex flex-col gap-4 sm:gap-8 pt-4 sm:pt-8">
 
         {/* HEADER SECTION */}
         <Section spacing="tight" data-tour="dashboard-header" className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-800/80 pb-4 md:pb-8">
@@ -214,11 +214,11 @@ export default function Dashboard() {
 
         {/* YOUR CLINIC PERFORMANCE (PRIMARY SECTION) */}
         <Section spacing="tight">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-3 sm:mb-6">
             <h2 className="text-2xl font-black tracking-tight" style={{ color: '#A8B5D1' }}>Your Clinic Performance</h2>
             <span className="text-xs text-slate-500 font-medium">This Month</span>
           </div>
-          <div className="flex flex-col md:flex-row md:overflow-x-auto md:overflow-y-hidden md:snap-x md:touch-pan-x gap-4 md:pb-4 lg:grid lg:grid-cols-4 w-full md:scrollbar-hide">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <ClinicPerformanceCard
               title="Protocols Logged"
               value={hasProtocols ? String(protocols.length) : '--'}

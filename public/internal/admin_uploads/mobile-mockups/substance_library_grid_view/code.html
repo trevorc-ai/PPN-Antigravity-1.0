@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Substance Library - Glassmorphism 2.0</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0a0f18",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(25, 34, 51, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .inner-glow {
+            box-shadow: inset 0 0 12px rgba(43, 108, 238, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-50 px-6 pt-8 pb-4 bg-background-dark/80 backdrop-blur-md flex items-center justify-between">
+<div class="flex flex-col">
+<h1 class="text-2xl font-bold tracking-tight text-slate-100">Substance Library</h1>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-widest mt-1">Research Database 2026</p>
+</div>
+<button class="w-10 h-10 rounded-full glass-card flex items-center justify-center text-slate-100">
+<span class="material-symbols-outlined text-2xl">search</span>
+</button>
+</header>
+<!-- Categories Horizontal Scroll -->
+<div class="flex gap-3 px-6 py-4 overflow-x-auto no-scrollbar">
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-5 text-white shadow-lg shadow-primary/20">
+<span class="text-sm font-semibold">All</span>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full glass-card px-5 text-slate-300">
+<span class="text-sm font-medium">Psychedelics</span>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full glass-card px-5 text-slate-300">
+<span class="text-sm font-medium">Dissociatives</span>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full glass-card px-5 text-slate-300">
+<span class="text-sm font-medium">Empathogens</span>
+</button>
+</div>
+<!-- Main Content List -->
+<main class="flex-1 px-6 pb-24 space-y-4">
+<!-- Card: Ketamine -->
+<div class="glass-card rounded-2xl p-5 flex flex-col gap-4 inner-glow">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest">Dissociative</span>
+<h2 class="text-xl font-bold text-white tracking-tight">Ketamine</h2>
+<div class="inline-flex items-center px-2 py-0.5 rounded bg-slate-800/50 border border-slate-700/50">
+<span class="text-[10px] font-semibold text-slate-400">Schedule III</span>
+</div>
+</div>
+<div class="w-20 h-20 glass-card rounded-xl overflow-hidden flex items-center justify-center p-2">
+<img class="w-full h-full object-contain opacity-80 contrast-125 invert dark:invert-0" data-alt="Molecular structure diagram of Ketamine molecule" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGsMNkLThZAPcxrAzyk0DnaaQFPb0QzEbYPv9itqSOsZhCxdy73PqdyFFNjWVGEtX5D47LjEdQILZwfYZTrbdyAgfEAs5zYW8jMzgeQSJkniLaHwAnR7mmnCiPeTBrzJ0BCHZEr6sQDLeKGow_o-khQnxogxu0Jc5idDng2nEoMhZXzlpE6cTdETF8GqjGcuSeT_T4SUBkB2hjhjMG4GKZ3_CdGr4qBeDemwt_CCEj21grgJqgAjnf3990g6moys28VGslvsdVeY2g"/>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white rounded-xl h-12 flex items-center justify-center gap-2 font-bold text-sm transition-all shadow-lg shadow-primary/20">
+<span>View Full Monograph</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+<!-- Card: MDMA -->
+<div class="glass-card rounded-2xl p-5 flex flex-col gap-4 inner-glow">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest">Empathogen</span>
+<h2 class="text-xl font-bold text-white tracking-tight">MDMA</h2>
+<div class="inline-flex items-center px-2 py-0.5 rounded bg-red-900/20 border border-red-500/30">
+<span class="text-[10px] font-semibold text-red-400">Schedule I</span>
+</div>
+</div>
+<div class="w-20 h-20 glass-card rounded-xl overflow-hidden flex items-center justify-center p-2">
+<img class="w-full h-full object-contain opacity-80 contrast-125 invert dark:invert-0" data-alt="Molecular structure diagram of MDMA molecule" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA2p4radIchqN1qG9nCPJPN1x2kjwZrfJLtAEw2XlP_3H23wJPmH_XVSuJLrvYLhH73y0RkpsnIDvHY58WwTaX8ipz6F1gBhciLNpwocHqWiYk-whP2ogfC6gu3XNPGCX0WA4b86C5vdJpuolNamMb2LvBgS1wYaMaW0NetYQfnLBCCUm8bAn-8AlF_RYjMSEZlyljsAHuHFBy_vF84Iis5f8tq_GNnYB3ep7sT84fA89ysvAu5sC-opKlxL1A1Gi57--0YBbvI8tI"/>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white rounded-xl h-12 flex items-center justify-center gap-2 font-bold text-sm transition-all shadow-lg shadow-primary/20">
+<span>View Full Monograph</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+<!-- Card: Psilocybin -->
+<div class="glass-card rounded-2xl p-5 flex flex-col gap-4 inner-glow">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest">Psychedelic</span>
+<h2 class="text-xl font-bold text-white tracking-tight">Psilocybin</h2>
+<div class="inline-flex items-center px-2 py-0.5 rounded bg-red-900/20 border border-red-500/30">
+<span class="text-[10px] font-semibold text-red-400">Schedule I</span>
+</div>
+</div>
+<div class="w-20 h-20 glass-card rounded-xl overflow-hidden flex items-center justify-center p-2">
+<img class="w-full h-full object-contain opacity-80 contrast-125 invert dark:invert-0" data-alt="Molecular structure diagram of Psilocybin molecule" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKJ73SmL0ZqzOdp-Hn4YTgHWO8nQ3mds5VI0zyIR4_I_WJHA7_wYDqIhQKqYz9Y3wdeMRviHXZPZe3HrwXe0iiBjTxMAH8crJvrRlVgDix7b51Q-s3TrYj5wHU5CUktYY4KFh1PMaru18LcB45quYTl9YfRJuBIMgrwX0OrEo2hxFVrsj4_ZC-r2-W_XK1Aceb86c2AJqOXRrFT-WdBkwxrr0YvgmEN8nCK4iiCzCYmGpmmz7bUNKln7NYpBcEwy6DQU3KjltbZ2TV"/>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white rounded-xl h-12 flex items-center justify-center gap-2 font-bold text-sm transition-all shadow-lg shadow-primary/20">
+<span>View Full Monograph</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full glass-card border-t border-white/5 px-6 pb-6 pt-3 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[28px] font-variation-fill">menu_book</span>
+<span class="text-[10px] font-bold">Library</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined text-[28px]">biotech</span>
+<span class="text-[10px] font-bold">Research</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined text-[28px]">shield_with_heart</span>
+<span class="text-[10px] font-bold">Safety</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined text-[28px]">account_circle</span>
+<span class="text-[10px] font-bold">Profile</span>
+</a>
+</nav>
+<style>
+        /* Custom variations for Material Symbols */
+        .font-variation-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

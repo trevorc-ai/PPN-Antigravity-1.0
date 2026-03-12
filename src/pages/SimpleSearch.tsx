@@ -8,10 +8,11 @@
  * Layout (top to bottom):
  *   1. Personalized greeting
  *   2. Live search bar + inline results
- *   3. Quick-link chips
- *   4. Four bold feature launch tiles
- *   5. Receptor Binding Affinity Matrix
- *   6. Global Benchmark Intelligence
+ *   3. Four bold feature launch tiles
+ *   4. Receptor Binding Affinity Matrix
+ *
+ * NOTE: Quick-link chips were REMOVED (unauthorized — do not re-add).
+ * NOTE: Global Benchmark Intelligence moved to the Analytics page.
  */
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -22,10 +23,10 @@ import {
   FlaskConical,
   BarChart3,
   ArrowRight,
+  ChevronRight,
   Search,
   X,
   BookOpen,
-  ChevronRight,
   Sparkles,
 } from 'lucide-react';
 
@@ -101,12 +102,7 @@ const SEARCH_INDEX: SearchResult[] = [
   },
 ];
 
-const QUICK_LINKS = [
-  { label: 'Interaction Checker', path: '/interactions', icon: Zap, color: 'border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400/60' },
-  { label: 'Wellness Journey', path: '/wellness-journey', icon: HeartPulse, color: 'border-teal-500/30 text-teal-400 hover:bg-teal-500/10 hover:border-teal-400/60' },
-  { label: 'Substance Library', path: '/catalog', icon: FlaskConical, color: 'border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 hover:border-indigo-400/60' },
-  { label: 'Clinical Analytics', path: '/analytics', icon: BarChart3, color: 'border-violet-500/30 text-violet-400 hover:bg-violet-500/10 hover:border-violet-400/60' },
-];
+
 
 interface SimpleSearchProps {
   onStartTour?: () => void;
@@ -189,36 +185,41 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
       id={`portal-tile-${id}`}
       onClick={() => navigate(path)}
       className={`
-        group relative flex flex-col gap-3 sm:gap-4 p-4 sm:p-6 rounded-3xl text-left
-        bg-gradient-to-br ${gradient}
-        border ${border}
-        shadow-xl ${glow}
-        transition-all duration-300
-        hover:-translate-y-1 hover:shadow-2xl
-        active:scale-[0.98]
-        overflow-hidden
+        group relative w-full text-left
+        active:scale-[0.98] transition-all duration-200
+        sm:flex-col sm:gap-4 sm:p-6 sm:rounded-3xl sm:border sm:shadow-xl sm:overflow-hidden
+        sm:bg-gradient-to-br sm:${gradient} sm:${border} sm:${glow}
       `}
     >
-      {/* Accent top bar */}
-      <div className={`absolute top-0 left-6 right-6 h-[2px] ${accentBar} rounded-b-full opacity-60 group-hover:opacity-100 transition-opacity`} />
-
-      {/* Icon */}
-      <div className={`w-12 h-12 rounded-2xl ${iconBg} flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 duration-300`}>
-        <Icon className={`w-6 h-6 ${iconColor}`} aria-hidden="true" />
+      {/* ── MOBILE: horizontal list row (matches ppn_portal_condensed_layout mockup) ── */}
+      <div className={`sm:hidden flex items-center gap-4 p-4 rounded-2xl bg-slate-900/60 border-l-4 ${accentBar} border border-slate-800/60 min-h-[68px]`}>
+        <div className={`w-11 h-11 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
+          <Icon className={`w-5 h-5 ${iconColor}`} aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className={`text-[10px] font-bold uppercase tracking-widest ${tagColor} mb-0.5`}>{tagline}</p>
+          <h3 className="text-sm font-black text-slate-100 leading-tight">{label}</h3>
+        </div>
+        <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />
       </div>
 
-      {/* Text */}
-      <div className="flex-1 min-w-0">
-        <p className={`text-xs font-black uppercase tracking-widest ${tagColor} mb-1`}>{tagline}</p>
-        <h3 className="text-lg font-black text-slate-200 mb-2 leading-snug">{label}</h3>
-        <p className="text-sm text-slate-400 leading-relaxed line-clamp-3">{description}</p>
-      </div>
-
-      {/* Arrow */}
-      <div className="flex items-center justify-end">
-        <span className={`flex items-center gap-1 text-xs font-black ${tagColor} opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 duration-300`}>
-          Open <ArrowRight className="w-3.5 h-3.5" />
-        </span>
+      {/* ── DESKTOP: tall card (original layout) ── */}
+      <div className="hidden sm:flex flex-col gap-4 h-full">
+        {/* Accent top bar */}
+        <div className={`absolute top-0 left-6 right-6 h-[2px] ${accentBar} rounded-b-full opacity-60 group-hover:opacity-100 transition-opacity`} />
+        <div className={`w-12 h-12 rounded-2xl ${iconBg} flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 duration-300`}>
+          <Icon className={`w-6 h-6 ${iconColor}`} aria-hidden="true" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className={`text-xs font-black uppercase tracking-widest ${tagColor} mb-1`}>{tagline}</p>
+          <h3 className="text-lg font-black text-slate-200 mb-2 leading-snug">{label}</h3>
+          <p className="text-sm text-slate-400 leading-relaxed line-clamp-3">{description}</p>
+        </div>
+        <div className="flex items-center justify-end">
+          <span className={`flex items-center gap-1 text-xs font-black ${tagColor} opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 duration-300`}>
+            Open <ArrowRight className="w-3.5 h-3.5" />
+          </span>
+        </div>
       </div>
     </button>
   );
@@ -419,27 +420,13 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
             <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest">Clinical Tools</h2>
             <div className="flex-1 h-px bg-slate-800" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
             {FEATURE_TILES.map((tile) => (
               <FeatureTile key={tile.id} {...tile} />
             ))}
           </div>
         </div>
 
-        {/* ── 3b. Quick Links chips (WO-MOBILE-OPT: was defined but never rendered) ── */}
-        <div className="flex flex-wrap gap-2 sm:gap-3">
-          {QUICK_LINKS.map(({ label, path, icon: Icon, color }) => (
-            <button
-              key={path}
-              onClick={() => navigate(path)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-2xl border bg-slate-900/60 backdrop-blur-sm text-sm font-bold transition-all duration-200 active:scale-95 ${color}`}
-              aria-label={`Go to ${label}`}
-            >
-              <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-              {label}
-            </button>
-          ))}
-        </div>
 
 
 

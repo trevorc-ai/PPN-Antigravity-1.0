@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detailed Session Log - Clinical Wellness</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#0a0f1a",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="sticky top-0 z-50 glass-card border-b border-white/10 px-4 py-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">Detailed Session Log</h1>
+</div>
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+</header>
+<main class="flex-1 overflow-hidden flex flex-col pb-24">
+<div class="p-4 flex-shrink-0">
+<div class="glass-card rounded-xl p-5 flex items-center justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full -mr-16 -mt-16"></div>
+<div class="space-y-4">
+<div>
+<p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Session Summary</p>
+<h2 class="text-xl font-bold mt-1">Evening Neuro-Analysis</h2>
+</div>
+<div class="flex gap-6">
+<div class="flex flex-col">
+<span class="text-xs text-slate-400">Start Time</span>
+<span class="text-sm font-medium">09:30 AM</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-400">Total Duration</span>
+<span class="text-sm font-medium text-primary">45m 22s</span>
+</div>
+</div>
+</div>
+<div class="hidden sm:block">
+<div class="size-16 rounded-xl bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">clinical_notes</span>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 py-2 flex-1 flex flex-col min-h-0">
+<div class="flex items-center justify-between mb-4 px-1">
+<h3 class="text-sm font-semibold text-slate-400 uppercase tracking-widest">Comparative Metrics</h3>
+<div class="flex items-center gap-1 text-[10px] text-slate-500 font-bold uppercase">
+<span class="material-symbols-outlined text-xs">swipe_left</span>
+                Swipe to compare
+            </div>
+</div>
+<div class="flex-1 overflow-x-auto hide-scrollbar snap-x snap-mandatory flex gap-4 pb-6">
+<div class="snap-center shrink-0 w-[85%] sm:w-[320px] h-full flex flex-col">
+<div class="glass-card rounded-xl flex flex-col h-full overflow-hidden border-t-2 border-t-primary/40">
+<div class="p-4 bg-white/5 flex justify-between items-center border-b border-white/5">
+<div>
+<span class="text-[10px] font-bold text-primary block">T+00:00:00</span>
+<h4 class="font-bold text-sm truncate">Baseline Recorded</h4>
+</div>
+<span class="px-2 py-0.5 rounded bg-slate-500/10 text-[9px] font-bold uppercase text-slate-400">Initial</span>
+</div>
+<div class="p-4 space-y-4 flex-1">
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Affect</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">mood</span>
+<span class="text-sm font-semibold">Calm</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Heart Rate</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">favorite</span>
+<span class="text-sm font-semibold">72 bpm</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3 opacity-50">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Blood Pressure</span>
+<span class="text-sm font-semibold italic text-slate-500">Not recorded</span>
+</div>
+<div class="bg-white/5 rounded-lg p-3 opacity-50">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Responsiveness</span>
+<span class="text-sm font-semibold italic text-slate-500">Not recorded</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-[85%] sm:w-[320px] h-full flex flex-col">
+<div class="glass-card rounded-xl flex flex-col h-full overflow-hidden">
+<div class="p-4 bg-white/5 flex justify-between items-center border-b border-white/5">
+<div>
+<span class="text-[10px] font-bold text-slate-400 block">T+00:04:22</span>
+<h4 class="font-bold text-sm truncate">Session Update</h4>
+</div>
+<span class="px-2 py-0.5 rounded bg-blue-500/10 text-[9px] font-bold uppercase text-blue-400">Regular</span>
+</div>
+<div class="p-4 space-y-4 flex-1">
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Affect</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">psychology</span>
+<span class="text-sm font-semibold">Stable</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Heart Rate</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">favorite</span>
+<span class="text-sm font-semibold">78 bpm</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Blood Pressure</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">blood_pressure</span>
+<span class="text-sm font-semibold">122/80</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Responsiveness</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">speed</span>
+<span class="text-sm font-semibold">94% High</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-[85%] sm:w-[320px] h-full flex flex-col">
+<div class="glass-card rounded-xl flex flex-col h-full overflow-hidden border-l-4 border-l-primary">
+<div class="p-4 bg-primary/10 flex justify-between items-center border-b border-white/5">
+<div>
+<span class="text-[10px] font-bold text-primary block">T+00:15:10</span>
+<h4 class="font-bold text-sm truncate">Vitals Peak</h4>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary text-[9px] font-bold uppercase text-white">Critical</span>
+</div>
+<div class="p-4 space-y-4 flex-1">
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Affect</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">psychology</span>
+<span class="text-sm font-semibold">Anxious</span>
+</div>
+</div>
+<div class="bg-primary/20 rounded-lg p-3 border border-primary/20">
+<span class="text-[10px] text-primary uppercase font-bold block mb-1">Heart Rate</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-red-400 text-lg">pulse_alert</span>
+<span class="text-sm font-bold text-red-400">108 bpm</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Blood Pressure</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">blood_pressure</span>
+<span class="text-sm font-semibold">145/95</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Responsiveness</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">speed</span>
+<span class="text-sm font-semibold">82% Mid</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="snap-center shrink-0 w-[85%] sm:w-[320px] h-full flex flex-col">
+<div class="glass-card rounded-xl flex flex-col h-full overflow-hidden">
+<div class="p-4 bg-white/5 flex justify-between items-center border-b border-white/5">
+<div>
+<span class="text-[10px] font-bold text-slate-400 block">T+00:45:22</span>
+<h4 class="font-bold text-sm truncate">Session Termination</h4>
+</div>
+<span class="px-2 py-0.5 rounded bg-green-500/10 text-[9px] font-bold uppercase text-green-400">End</span>
+</div>
+<div class="p-4 space-y-4 flex-1">
+<div class="grid grid-cols-1 gap-4">
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Affect</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">mood</span>
+<span class="text-sm font-semibold">Calm</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Heart Rate</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">favorite</span>
+<span class="text-sm font-semibold">74 bpm</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Blood Pressure</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">blood_pressure</span>
+<span class="text-sm font-semibold">118/78</span>
+</div>
+</div>
+<div class="bg-white/5 rounded-lg p-3">
+<span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Responsiveness</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">speed</span>
+<span class="text-sm font-semibold">98% Optimal</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 w-full glass-card border-t border-white/10 px-4 pb-6 pt-3 flex items-center justify-around z-50">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">home</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="text-[10px] font-medium text-primary">Logs</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">group</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">Patients</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">settings</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">Settings</span>
+</a>
+</nav>
+
+</body></html>

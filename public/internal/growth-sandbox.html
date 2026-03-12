@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PPN Growth Sandbox — Pipeline Review Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg:           #020408;
+      --surface-1:    rgba(15,23,42,0.7);
+      --surface-2:    rgba(30,41,59,0.6);
+      --border:       rgba(255,255,255,0.07);
+      --border-glow:  rgba(99,102,241,0.3);
+      --text:         #f1f5f9;
+      --text-muted:   #94a3b8;
+      --text-dim:     #475569;
+      --indigo:       #6366f1;
+      --indigo-glow:  rgba(99,102,241,0.15);
+      --amber:        #f59e0b;
+      --amber-glow:   rgba(245,158,11,0.12);
+      --green:        #22c55e;
+      --green-glow:   rgba(34,197,94,0.12);
+      --cyan:         #06b6d4;
+      --cyan-glow:    rgba(6,182,212,0.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Subtle radial bg glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .page { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 20px 80px; }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .wordmark { display: flex; align-items: center; gap: 10px; }
+    .wordmark-dot {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--indigo), #818cf8);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+    }
+    .wordmark-text { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+    .wordmark-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+    .ts { font-size: 11px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+    /* ── PIPELINE BAR ── */
+    .pipeline-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 36px;
+    }
+    .stage-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface-1);
+      backdrop-filter: blur(8px);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      white-space: nowrap;
+      transition: border-color 0.2s;
+    }
+    .stage-pill .count {
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-2);
+    }
+    .stage-pill.needs-review {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: var(--amber-glow);
+    }
+    .stage-pill.needs-review .count {
+      background: rgba(245,158,11,0.25);
+      color: var(--amber);
+    }
+    .stage-pill.done {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-glow);
+    }
+    .stage-pill.done .count { background: rgba(34,197,94,0.2); color: var(--green); }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 36px 0 16px;
+    }
+    .section-label h2 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .section-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    /* ── CARD GRID ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-1px); }
+
+    .card-header {
+      padding: 18px 20px 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-id {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--indigo);
+      font-variant-numeric: tabular-nums;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+    .card-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-start; }
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .badge-content    { background: rgba(99,102,241,0.2); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+    .badge-design     { background: rgba(6,182,212,0.15); color: #67e8f9; border: 1px solid rgba(6,182,212,0.3); }
+    .badge-wireframe  { background: rgba(168,85,247,0.15); color: #c4b5fd; border: 1px solid rgba(168,85,247,0.3); }
+    .badge-tooling    { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-epic       { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+    .badge-p0 { background: rgba(239,68,68,0.2); color: #f87171; }
+    .badge-p1 { background: rgba(245,158,11,0.18); color: #fbbf24; }
+    .badge-p2 { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+    .card-meta {
+      padding: 0 20px 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    /* Preview area */
+    .card-preview {
+      margin: 0 16px 14px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #0a0e1a;
+    }
+    .card-preview iframe {
+      width: 100%;
+      height: 220px;
+      display: block;
+      border: none;
+      transform-origin: top left;
+    }
+    .card-preview-text {
+      padding: 12px 14px;
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      line-height: 1.6;
+      max-height: 120px;
+      overflow: hidden;
+    }
+    .md-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      color: var(--text-dim);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Card footer */
+    .card-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .card-owner { font-size: 11px; color: var(--text-dim); }
+    .card-owner strong { color: var(--text-muted); font-weight: 600; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 99px;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.85; transform: scale(0.98); }
+    .btn-indigo { background: var(--indigo); color: #fff; }
+    .btn-ghost  { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+
+    /* stage bar stripe */
+    .card[data-stage="04_VISUAL_REVIEW"] { border-top: 2px solid var(--amber); }
+    .card[data-stage="06_QA"]            { border-top: 2px solid var(--indigo); }
+    .card[data-stage="05_IMPLEMENTATION"]{ border-top: 2px solid var(--green); }
+    .card[data-stage="03_MOCKUP_SANDBOX"]{ border-top: 2px solid var(--cyan); }
+    .card[data-stage="01_DRAFTING"]      { border-top: 2px solid #8b5cf6; }
+    .card[data-stage="00_BACKLOG"]       { border-top: 2px solid #334155; }
+
+    /* ── STATUS LEGEND ── */
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+      padding: 12px 16px;
+      background: var(--surface-1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 10px; height: 3px; border-radius: 2px; }
+
+    /* ── EMPTY STATE ── */
+    .empty { padding: 32px; text-align: center; color: var(--text-dim); font-size: 13px; grid-column: 1/-1; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .top-bar { flex-direction: column; align-items: flex-start; }
+      .card-grid { grid-template-columns: 1fr; }
+      .pipeline-bar { gap: 6px; }
+      .stage-pill { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="wordmark">
+      <div class="wordmark-dot">G</div>
+      <div>
+        <div class="wordmark-text">Growth Sandbox</div>
+        <div class="wordmark-sub">Psychedelic Practitioner Network — Internal Review Hub</div>
+      </div>
+    </div>
+    <div class="ts">Internal tool · Not for distribution · Updated 2026-03-12</div>
+  </div>
+
+  <!-- PIPELINE STATUS BAR -->
+  <div class="pipeline-bar">
+    <div class="stage-pill">
+      <span>00 Backlog</span>
+      <span class="count">4</span>
+    </div>
+    <div class="stage-pill">
+      <span>01 Drafting</span>
+      <span class="count">5</span>
+    </div>
+    <div class="stage-pill needs-review">
+      <span>⚠ 03 Sandbox</span>
+      <span class="count">3</span>
+    </div>
+    <div class="stage-pill needs-review">
+      <span>⚠ 04 Visual Review</span>
+      <span class="count">1</span>
+    </div>
+    <div class="stage-pill needs-review">
+      <span>⚠ 05 Implementation</span>
+      <span class="count">0</span>
+    </div>
+    <div class="stage-pill needs-review">
+      <span>⚠ 06 QA</span>
+      <span class="count">0</span>
+    </div>
+    <div class="stage-pill done">
+      <span>✓ 99 Published</span>
+      <span class="count">—</span>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Awaiting your review</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> In implementation / QA</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div> In mockup / design</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> Drafting</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#334155"></div> Backlog</div>
+  </div>
+
+
+  <!-- ──────────────────────────────────────────── -->
+  <!-- STAGE 04 — VISUAL REVIEW (needs your eyes)  -->
+  <!-- ──────────────────────────────────────────── -->
+  <div class="section-label">
+    <h2>04 · Visual Review</h2>
+    <div class="section-badge" style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.3)">⚠ Awaiting layout approval</div>
+    <div class="section-label-line"></div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card" data-stage="04_VISUAL_REVIEW">
+      <div class="card-header">
+        <div>
+          <div class="card-id">GO-591 · VAR 1</div>
+          <div class="card-title">Front Door: Clinical Audience — Layout Wireframe</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-wireframe">Wireframe</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        Evaluate: section order, 3-col benefit layout, CTA placement above fold.
+        Colors and fonts are NOT final — structure only.
+      </div>
+      <div class="card-preview">
+        <iframe src="../_GROWTH_ORDERS/04_VISUAL_REVIEW/Clinical_Front_Door_Wireframe.html" title="Clinical Front Door Wireframe" loading="lazy"></iframe>
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Owner: <strong>BUILDER</strong> after approval</div>
+        <a class="btn btn-indigo" href="../_GROWTH_ORDERS/04_VISUAL_REVIEW/Clinical_Front_Door_Wireframe.html" target="_blank">Open Full Screen ↗</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ──────────────────────────────────────────── -->
+  <!-- STAGE 03 — MOCKUP SANDBOX                   -->
+  <!-- ──────────────────────────────────────────── -->
+  <div class="section-label">
+    <h2>03 · Mockup Sandbox</h2>
+    <div class="section-badge" style="background:rgba(6,182,212,0.12);color:#67e8f9;border:1px solid rgba(6,182,212,0.25)">Design + content review</div>
+    <div class="section-label-line"></div>
+  </div>
+
+  <div class="card-grid">
+
+    <!-- GO-585 Content Matrix -->
+    <div class="card" data-stage="03_MOCKUP_SANDBOX">
+      <div class="card-header">
+        <div>
+          <div class="card-id">GO-585</div>
+          <div class="card-title">Beta Welcome Screen — Content Matrix &amp; Copy Rewrite</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-content">Content Matrix</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        Full copy rewrite for <code>BetaWelcome.tsx</code>. Fixes 10 violations:
+        em dashes, ppn-meta font-size, glass card pattern, passive voice, missing JSON-LD schema.
+        Content approved → BUILDER implements.
+      </div>
+      <div class="card-preview">
+        <div class="md-label">📄 Content Document (Markdown)</div>
+        <div class="card-preview-text">
+          Badge: "Founding Member Access" · Greeting: "Welcome, [FirstName]." ·
+          Orientation: "You are seeing the PPN Portal before anyone else. This is the first clinical
+          documentation and network intelligence platform built for psychedelic therapy practitioners -
+          and the data you are about to see is real." · Stat: 1,500+ anonymized clinical outcome records.
+          CTA: "Enter the Network"
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Owner: <strong>MARKETER → BUILDER</strong></div>
+        <a class="btn btn-ghost" href="../_GROWTH_ORDERS/03_MOCKUP_SANDBOX/GO-585_BetaWelcome_Content_Matrix.md" target="_blank">View Matrix ↗</a>
+      </div>
+    </div>
+
+    <!-- GO-585 Design Spec -->
+    <div class="card" data-stage="03_MOCKUP_SANDBOX">
+      <div class="card-header">
+        <div>
+          <div class="card-id">GO-585 · Design</div>
+          <div class="card-title">Beta Welcome Screen — Layout + Violation Fix Spec</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-design">Design Spec</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        ASCII layout diagram with 10-item violation fix checklist. Paired with the content matrix.
+        BUILDER implements both together as a single commit.
+      </div>
+      <div class="card-preview">
+        <div class="md-label">📄 Design Spec (Markdown)</div>
+        <div class="card-preview-text">
+          ┌─ [Shield] FOUNDING MEMBER ACCESS ─ ppn-body indigo pill ─┐
+          │  bg-slate-900/60 backdrop-blur-md border-white/10 rounded-[2rem] p-6  │
+          │  Welcome, Trevor. (h1 ppn-page-title 36px)                │
+          │  [1,500+] anonymized records · [Enter the Network →]      │
+          └──────────────────────────────────────────────────────────┘
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Owner: <strong>BUILDER</strong></div>
+        <a class="btn btn-ghost" href="../_GROWTH_ORDERS/03_MOCKUP_SANDBOX/GO-585_BetaWelcome_Design.md" target="_blank">View Spec ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ──────────────────────────────────────────── -->
+  <!-- STAGE 01 — DRAFTING                         -->
+  <!-- ──────────────────────────────────────────── -->
+  <div class="section-label">
+    <h2>01 · Drafting</h2>
+    <div class="section-badge" style="background:rgba(139,92,246,0.12);color:#c4b5fd;border:1px solid rgba(139,92,246,0.25)">MARKETER in progress</div>
+    <div class="section-label-line"></div>
+  </div>
+
+  <div class="card-grid">
+
+    <div class="card" data-stage="01_DRAFTING">
+      <div class="card-header">
+        <div>
+          <div class="card-id">WO-559 · Var 1</div>
+          <div class="card-title">Front Door: Clinical Audience — Content Matrix</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-content">Content Matrix</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        Complete copy for all 5 sections of the Clinical landing page.
+        Wireframe approved → this matrix feeds BUILDER for implementation.
+      </div>
+      <div class="card-preview">
+        <div class="md-label">📄 Content Document (Markdown)</div>
+        <div class="card-preview-text">
+          H1: "Elevate Your Practice with Zero-PHI Clinical Intelligence." ·
+          H2: "The first documentation and network intelligence platform..." ·
+          3 Benefit blocks · Trust quote · Footer CTA: "Create Your Zero-PHI Account Now"
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Owner: <strong>BUILDER</strong> (wireframe approved)</div>
+        <a class="btn btn-ghost" href="../_GROWTH_ORDERS/01_DRAFTING/WO-559_Variation_1_Clinical_Matrix.md" target="_blank">View Matrix ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-stage="01_DRAFTING">
+      <div class="card-header">
+        <div>
+          <div class="card-id">WO-559 · Var 2-5</div>
+          <div class="card-title">Front Door: Insurance, Privacy, Global, Patient Variations</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-epic">Epic</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        4 remaining content variations. MARKETER drafts serially after Variation 1 ships.
+        All 4 reuse the same React blueprint — no new layout work required.
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Owner: <strong>MARKETER</strong> (blocked on Var 1 ship)</div>
+        <a class="btn btn-ghost" href="../_GROWTH_ORDERS/00_BACKLOG/GO-591_Front_Door_Epic.md" target="_blank">View Epic ↗</a>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ──────────────────────────────────────────── -->
+  <!-- STAGE 00 — BACKLOG                          -->
+  <!-- ──────────────────────────────────────────── -->
+  <div class="section-label">
+    <h2>00 · Backlog</h2>
+    <div class="section-badge" style="background:rgba(51,65,85,0.5);color:#64748b;border:1px solid #334155">Pending routing to MARKETER</div>
+    <div class="section-label-line"></div>
+  </div>
+
+  <div class="card-grid">
+
+    <div class="card" data-stage="00_BACKLOG">
+      <div class="card-header">
+        <div>
+          <div class="card-id">GO-574</div>
+          <div class="card-title">Help Center — Copy Audit &amp; Content Alignment</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-content">Content</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        5 deliverables: heading alignment, Regulatory subpage, Troubleshooting subpage,
+        Session Reporting copy update, pre-launch section housekeeping.
+        Fast-lane eligible for Deliverables 1, 4, 5.
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Owner: <strong>MARKETER</strong></div>
+        <a class="btn btn-ghost" href="../_GROWTH_ORDERS/00_BACKLOG/GO-574_Help_Center_Copy_Audit.md" target="_blank">View Brief ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-stage="00_BACKLOG">
+      <div class="card-header">
+        <div>
+          <div class="card-id">GO-589</div>
+          <div class="card-title">Phantom Shield Page — Mobile Optimization + Inline SVGs</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-design">Design</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        Track A: mobile CSS fix (horizontal overflow at 375px).
+        Track B: 6 inline SVG visual break graphics at strategic cognitive load points.
+        Process tracks serially.
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Owner: <strong>MARKETER</strong></div>
+        <a class="btn btn-ghost" href="../_GROWTH_ORDERS/00_BACKLOG/GO-589_Phantom_Shield_Page_Optimization.md" target="_blank">View Brief ↗</a>
+      </div>
+    </div>
+
+    <div class="card" data-stage="00_BACKLOG">
+      <div class="card-header">
+        <div>
+          <div class="card-id">GO-590</div>
+          <div class="card-title">Growth Sandbox (This Page) — Pipeline Review Hub</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-tooling">Tooling</span>
+          <span class="badge badge-p1">P1</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        Built. You are here. This page surfaces all growth order assets in one tap.
+        Open questions resolved: /public/internal, unrestricted iframes, pipeline-flow ordering.
+      </div>
+      <div class="card-footer">
+        <div class="card-owner">Status: <strong>✓ Implemented</strong></div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -79,80 +79,114 @@ const SubstanceCard: React.FC<{ sub: Substance }> = ({ sub }) => {
   return (
     <article className="group bg-[#0a0d14] border border-slate-800/50 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:border-slate-700/70 hover:shadow-xl shadow-md h-full">
 
-      {/* Molecule image, pure black, 3D image floats */}
-      <div className="h-60 bg-black relative flex items-center justify-center overflow-hidden shrink-0">
-        <img
-          src={sub.imageUrl}
-          alt={`${sub.name} molecular structure, 3D ball-and-stick model`}
-          loading="eager"
-          className="w-52 h-52 object-contain transition-transform duration-500 group-hover:-translate-y-2"
-        />
-        {/* Schedule badge */}
-        <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-sm font-semibold border
-          ${sub.schedule === 'Schedule I'
-            ? 'bg-red-900/70 text-red-200 border-red-700/60'
-            : 'bg-blue-900/70 text-blue-200 border-blue-700/60'}`}
-        >
-          {sub.schedule}
-        </span>
-      </div>
-
-      {/* Card body */}
-      <div className="p-6 flex flex-col gap-4 flex-1">
-
-        {/* Name + chemical name (revealed on hover) */}
-        <div className="min-h-[3.5rem] space-y-1.5">
-          <h3 className="text-3xl font-bold text-[#A8B5D1] group-hover:text-[#A8B5D1] transition-colors leading-tight">
-            {sub.name}
-          </h3>
-          <p className="text-base text-slate-500 leading-snug line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-h-[1.5rem]">
-            {sub.chemicalName}
-          </p>
-        </div>
-
-        {/* Class + Phase chips */}
-        <div className="flex flex-wrap gap-2">
-          <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${phaseClasses}`}>
-            {sub.phase}
-          </span>
-          <span className="px-2.5 py-1 rounded-md text-xs font-medium border bg-slate-800/60 text-slate-400 border-slate-700/40">
-            {sub.class.charAt(0) + sub.class.slice(1).toLowerCase()}
-          </span>
-        </div>
-
-        {/* Risk tier chip, icon + label, high contrast */}
-        <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium ${riskConfig.classes}`}>
-          <span aria-hidden="true" className="text-lg leading-none">{riskConfig.icon}</span>
-          <span>{riskConfig.label}</span>
-        </div>
-
-        {/* Efficacy bar */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-slate-400">Aggregate Efficacy</span>
-            <span className="text-sm font-semibold text-slate-300">
-              {(sub.efficacy * 100).toFixed(0)}%
+      {/* ── MOBILE: horizontal row layout (image right, content left) ── */}
+      <div className="flex sm:hidden flex-col">
+        {/* Top row: content left + thumbnail right */}
+        <div className="flex items-stretch gap-0">
+          {/* Content */}
+          <div className="flex-1 p-4 flex flex-col gap-2 min-w-0">
+            {/* Schedule + class chips */}
+            <div className="flex flex-wrap gap-1.5">
+              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border
+                ${sub.schedule === 'Schedule I'
+                  ? 'bg-red-900/60 text-red-200 border-red-700/50'
+                  : 'bg-blue-900/60 text-blue-200 border-blue-700/50'}`}>
+                {sub.schedule}
+              </span>
+              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border ${phaseClasses}`}>
+                {sub.phase}
+              </span>
+            </div>
+            {/* Name */}
+            <h3 className="text-xl font-bold text-[#A8B5D1] leading-tight">
+              {sub.name}
+            </h3>
+            {/* Class tag */}
+            <span className="text-xs text-slate-500 font-medium">
+              {sub.class.charAt(0) + sub.class.slice(1).toLowerCase()}
             </span>
+            {/* Risk tier */}
+            <div className={`inline-flex items-center gap-1.5 self-start px-2 py-1 rounded-lg border text-xs font-semibold ${riskConfig.classes}`}>
+              <span aria-hidden="true" className="leading-none">{riskConfig.icon}</span>
+              <span className="truncate">{riskConfig.label}</span>
+            </div>
           </div>
-          <div className="w-full bg-slate-800/60 h-1.5 rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-700"
-              style={{ width: `${sub.efficacy * 100}%`, background: sub.color || '#64748b' }}
+          {/* Thumbnail right */}
+          <div className="w-24 shrink-0 bg-black flex items-center justify-center">
+            <img
+              src={sub.imageUrl}
+              alt={`${sub.name} molecular structure`}
+              loading="eager"
+              className="w-20 h-20 object-contain"
             />
           </div>
         </div>
-
-
+        {/* CTA full-width */}
+        <div className="px-4 pb-4">
+          <button
+            onClick={() => navigate(`/monograph/${sub.id}`)}
+            className="w-full py-2.5 bg-blue-700 hover:bg-blue-600 text-[#A8B5D1] text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md shadow-blue-900/30"
+          >
+            View Full Monograph →
+          </button>
+        </div>
       </div>
 
-      {/* CTA button, blue */}
-      <div className="px-6 pb-6 mt-auto">
-        <button
-          onClick={() => navigate(`/monograph/${sub.id}`)}
-          className="w-full py-3 bg-blue-700 hover:bg-blue-600 text-[#A8B5D1] text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md shadow-blue-900/30"
-        >
-          View Full Monograph →
-        </button>
+      {/* ── SM+: original vertical card layout ── */}
+      <div className="hidden sm:flex flex-col flex-1">
+        {/* Molecule image */}
+        <div className="h-60 bg-black relative flex items-center justify-center overflow-hidden shrink-0">
+          <img
+            src={sub.imageUrl}
+            alt={`${sub.name} molecular structure, 3D ball-and-stick model`}
+            loading="eager"
+            className="w-52 h-52 object-contain transition-transform duration-500 group-hover:-translate-y-2"
+          />
+          <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-md text-sm font-semibold border
+            ${sub.schedule === 'Schedule I'
+              ? 'bg-red-900/70 text-red-200 border-red-700/60'
+              : 'bg-blue-900/70 text-blue-200 border-blue-700/60'}`}
+          >
+            {sub.schedule}
+          </span>
+        </div>
+        {/* Card body */}
+        <div className="p-6 flex flex-col gap-4 flex-1">
+          <div className="min-h-[3.5rem] space-y-1.5">
+            <h3 className="text-3xl font-bold text-[#A8B5D1] leading-tight">{sub.name}</h3>
+            <p className="text-base text-slate-500 leading-snug line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 min-h-[1.5rem]">
+              {sub.chemicalName}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${phaseClasses}`}>{sub.phase}</span>
+            <span className="px-2.5 py-1 rounded-md text-xs font-medium border bg-slate-800/60 text-slate-400 border-slate-700/40">
+              {sub.class.charAt(0) + sub.class.slice(1).toLowerCase()}
+            </span>
+          </div>
+          <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium ${riskConfig.classes}`}>
+            <span aria-hidden="true" className="text-lg leading-none">{riskConfig.icon}</span>
+            <span>{riskConfig.label}</span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-slate-400">Aggregate Efficacy</span>
+              <span className="text-sm font-semibold text-slate-300">{(sub.efficacy * 100).toFixed(0)}%</span>
+            </div>
+            <div className="w-full bg-slate-800/60 h-1.5 rounded-full overflow-hidden">
+              <div className="h-full rounded-full transition-all duration-700"
+                style={{ width: `${sub.efficacy * 100}%`, background: sub.color || '#64748b' }} />
+            </div>
+          </div>
+        </div>
+        <div className="px-6 pb-6 mt-auto">
+          <button
+            onClick={() => navigate(`/monograph/${sub.id}`)}
+            className="w-full py-3 bg-blue-700 hover:bg-blue-600 text-[#A8B5D1] text-sm font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] shadow-md shadow-blue-900/30"
+          >
+            View Full Monograph →
+          </button>
+        </div>
       </div>
     </article>
   );
@@ -189,16 +223,16 @@ const SubstanceCatalog: React.FC = () => {
 
   return (
     <div className="min-h-full bg-gradient-to-b from-[#0d1526] via-[#0b1220] to-[#091018] animate-in fade-in duration-500">
-      <PageContainer className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8 space-y-10">
-        <Section spacing="default" className="space-y-8">
+      <PageContainer className="max-w-7xl mx-auto px-4 py-4 sm:py-10 sm:px-6 lg:px-8 space-y-4 sm:space-y-10">
+        <Section spacing="default" className="space-y-4 sm:space-y-8">
 
           {/* Page header and Molecular Pharmacology Link */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-2 border-b border-white/5">
             <div className="space-y-2">
-              <h1 className="text-4xl font-bold tracking-tight text-slate-300">
+              <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-slate-300">
                 Substance Library
               </h1>
-              <p className="text-base text-slate-500">
+              <p className="hidden sm:block text-base text-slate-500">
                 {SUBSTANCES.length} substances indexed · Clinical-grade pharmacological reference
               </p>
             </div>
@@ -240,7 +274,7 @@ const SubstanceCatalog: React.FC = () => {
                     key={filter.value}
                     onClick={() => setActiveFilter(filter.value)}
                     aria-pressed={isActive}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-base font-medium transition-all border
+                    className={`inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-sm md:text-base font-medium transition-all border
                       ${isActive
                         ? filter.activeClasses
                         : 'bg-slate-900/40 border-slate-700/40 text-slate-400 hover:bg-slate-800/60 hover:text-slate-300 hover:border-slate-600/60'}`}

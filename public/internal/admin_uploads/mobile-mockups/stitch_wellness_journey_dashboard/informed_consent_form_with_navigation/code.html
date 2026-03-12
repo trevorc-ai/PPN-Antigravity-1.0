@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#0f172a", 
+                    },
+                    fontFamily: {
+                        "sans": ["Public Sans", "sans-serif"],
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1.25rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .inner-glow {
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.02);
+        }
+        .nav-item {
+            min-width: 44px;
+            min-height: 44px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 glass-panel border-b border-white/10 px-4 py-3 flex items-center justify-between">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px]">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">Informed Consent</h1>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors text-primary min-h-[44px] min-w-[44px]">
+<span class="material-symbols-outlined">history_edu</span>
+</button>
+</header>
+<main class="flex-1 p-4 space-y-6 pb-40">
+<!-- Patient ID Card -->
+<section class="glass-panel rounded-2xl p-4 flex gap-4 items-center">
+<div class="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/20">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/40 to-indigo-600/40"></div>
+<img alt="Patient Profile" class="h-full w-full object-cover" data-alt="Professional headshot of a male patient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXFQ-UYicObIh6lAgKMvPiJ2XGpOAWoJk0au9EPx5aYv3Y7hNT9fhvkQp9pSUsI0Do21Md-7KovOrgVOtpW8Dyy1frSLhFkDjR_Uhxq_dHxLT3q4jSICufPeS_RulPHafqR-yKcgFpafC8SE4oo8DpdpFO6jxGfwZ73tnmodo1onowIr3Gnm6iWH90YARI3-_HuynyVcnBEmlqhgR7-ci210Oku8j8E1dHCOKr-BOQR0jzUfMuC9xLoCQKdL1tKZkebAVR1gtbzpQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<h2 class="text-white text-base font-bold truncate">Alex Johnson</h2>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-slate-400 text-xs font-medium uppercase tracking-wider">ID: #8829-XKL</span>
+<button class="flex items-center gap-1 bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded-lg transition-all border border-white/5 active:scale-95 min-h-[44px]">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+<span class="text-[10px] font-bold">COPY</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Consent Types Grid -->
+<section class="space-y-3">
+<p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-1">Scope of Consent</p>
+<div class="grid grid-cols-2 gap-3">
+<div class="glass-panel p-3 rounded-xl flex items-center gap-2 border-l-4 border-green-500/50">
+<span class="material-symbols-outlined text-green-400 text-xl">check_circle</span>
+<span class="text-sm font-medium">Informed</span>
+</div>
+<div class="glass-panel p-3 rounded-xl flex items-center gap-2 border-l-4 border-amber-500/50">
+<span class="material-symbols-outlined text-amber-400 text-xl">check_circle</span>
+<span class="text-sm font-medium">HIPAA</span>
+</div>
+<div class="glass-panel p-3 rounded-xl flex items-center gap-2 border-l-4 border-purple-500/50">
+<span class="material-symbols-outlined text-purple-400 text-xl">check_circle</span>
+<span class="text-sm font-medium">Research</span>
+</div>
+<div class="glass-panel p-3 rounded-xl flex items-center gap-2 border-l-4 border-teal-500/50">
+<span class="material-symbols-outlined text-teal-400 text-xl">check_circle</span>
+<span class="text-sm font-medium">Photo</span>
+</div>
+</div>
+</section>
+<!-- Core Confirmation Checkbox -->
+<section class="py-2">
+<label class="group relative flex items-start gap-4 glass-panel inner-glow p-5 rounded-2xl cursor-pointer border-white/10 hover:border-primary/30 transition-all active:scale-[0.98] min-h-[44px]">
+<div class="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 border-white/30 bg-white/5 group-hover:border-primary/50 transition-colors">
+<input class="peer absolute inset-0 opacity-0 cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined text-primary scale-0 transition-transform peer-checked:scale-100">done</span>
+</div>
+<div class="space-y-1">
+<p class="text-base font-semibold leading-snug">I confirm that informed consent has been obtained.</p>
+<p class="text-xs text-slate-400">By checking this, you verify the patient has signed all legal addendums.</p>
+</div>
+</label>
+</section>
+<!-- Native Picker Style Trigger -->
+<section class="space-y-3">
+<p class="text-xs font-semibold text-slate-400 uppercase tracking-widest px-1">Timestamp</p>
+<div class="space-y-2">
+<button class="w-full glass-panel p-4 rounded-xl flex items-center justify-between active:bg-white/10 transition-colors min-h-[44px]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<span class="text-sm font-medium">Date of Authorization</span>
+</div>
+<span class="text-sm text-slate-300">Oct 24, 2023</span>
+</button>
+<button class="w-full glass-panel p-4 rounded-xl flex items-center justify-between active:bg-white/10 transition-colors min-h-[44px]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<span class="text-sm font-medium">Verification Time</span>
+</div>
+<span class="text-sm text-slate-300">14:32 PM</span>
+</button>
+</div>
+</section>
+<!-- Info Card -->
+<div class="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 flex gap-3">
+<span class="material-symbols-outlined text-blue-400">info</span>
+<p class="text-xs text-blue-200/80 leading-relaxed">
+                Documentation will be encrypted and stored in the secure health vault. This action cannot be undone once submitted.
+            </p>
+</div>
+<div class="pt-4">
+<button class="w-full min-h-[44px] bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 transition-all active:scale-95 mb-10">
+<span class="material-symbols-outlined">verified_user</span>
+        Save Consent Documentation
+    </button>
+</div></main>
+<!-- Sticky Footer CTA -->
+<footer class="fixed bottom-0 left-0 right-0 z-50 glass-panel border-t border-white/10 px-6 py-2 pb-6">
+<nav class="flex items-center justify-around max-w-lg mx-auto">
+<button class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</button>
+<button class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-medium">Progress</span>
+</button>
+<button class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined">description</span>
+<span class="text-[10px] font-medium">Reports</span>
+</button>
+<button class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors min-w-[44px] min-h-[44px]">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</nav>
+</footer>
+</body></html>

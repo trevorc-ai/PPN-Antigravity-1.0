@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Detailed Session Log - Clinical Wellness</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#0a0f1a", // Deep navy adjustment for clinical dark mode
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .timeline-line {
+            background: linear-gradient(180deg, #ec5b13 0%, rgba(236, 91, 19, 0.1) 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 glass-card border-b border-white/10 px-4 py-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">Detailed Session Log</h1>
+</div>
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto pb-24">
+<!-- Summary Card -->
+<div class="p-4">
+<div class="glass-card rounded-xl p-5 flex items-center justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full -mr-16 -mt-16"></div>
+<div class="space-y-4">
+<div>
+<p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Session Summary</p>
+<h2 class="text-xl font-bold mt-1">Evening Neuro-Analysis</h2>
+</div>
+<div class="flex gap-6">
+<div class="flex flex-col">
+<span class="text-xs text-slate-400">Start Time</span>
+<span class="text-sm font-medium">09:30 AM</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-slate-400">Total Duration</span>
+<span class="text-sm font-medium text-primary">45m 22s</span>
+</div>
+</div>
+</div>
+<div class="hidden sm:block">
+<div class="size-16 rounded-xl bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl">clinical_notes</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Timeline Section -->
+<div class="px-4 py-2">
+<h3 class="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-6 px-1">Session Timeline</h3>
+<div class="relative">
+<!-- Vertical Line -->
+<div class="absolute left-[19px] top-2 bottom-0 w-0.5 timeline-line opacity-30"></div>
+<!-- Log Entry 1 -->
+<div class="relative pl-12 pb-8">
+<div class="absolute left-0 top-1 size-10 rounded-full bg-background-dark border-2 border-primary flex items-center justify-center z-10 shadow-[0_0_15px_rgba(236,91,19,0.3)]">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+</div>
+<div class="glass-card rounded-xl p-4 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-xs font-bold text-primary block">T+00:00:00</span>
+<h4 class="font-bold text-base">Baseline Recorded</h4>
+</div>
+<span class="px-2 py-1 rounded bg-slate-500/10 text-[10px] font-bold uppercase text-slate-400">Initial</span>
+</div>
+<div class="grid grid-cols-2 gap-3 pt-2 border-t border-white/5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-sm">mood</span>
+<span class="text-sm">Affect: Calm</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-sm">favorite</span>
+<span class="text-sm">HR: 72 bpm</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Log Entry 2 -->
+<div class="relative pl-12 pb-8">
+<div class="absolute left-0 top-1 size-10 rounded-full bg-background-dark border-2 border-slate-700 flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-slate-400 text-sm">monitoring</span>
+</div>
+<div class="glass-card rounded-xl p-4 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-xs font-bold text-slate-400 block">T+00:04:22</span>
+<h4 class="font-bold text-base">Session Update</h4>
+</div>
+<span class="px-2 py-1 rounded bg-blue-500/10 text-[10px] font-bold uppercase text-blue-400">Regular</span>
+</div>
+<div class="space-y-2 pt-2 border-t border-white/5">
+<p class="text-sm text-slate-300">Patient showed slight cognitive load increase during stimulus phase.</p>
+<div class="flex flex-wrap gap-4 mt-2">
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-500 uppercase">Responsiveness</span>
+<span class="text-sm font-medium">94% High</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-slate-500 uppercase">Blood Pressure</span>
+<span class="text-sm font-medium">122/80</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Log Entry 3 -->
+<div class="relative pl-12 pb-8">
+<div class="absolute left-0 top-1 size-10 rounded-full bg-background-dark border-2 border-primary/50 flex items-center justify-center z-10 shadow-[0_0_10px_rgba(236,91,19,0.2)]">
+<span class="material-symbols-outlined text-primary text-sm">bolt</span>
+</div>
+<div class="glass-card rounded-xl p-4 space-y-3 border-l-4 border-l-primary">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-xs font-bold text-primary block">T+00:15:10</span>
+<h4 class="font-bold text-base">Vitals Peak</h4>
+</div>
+<span class="px-2 py-1 rounded bg-primary/10 text-[10px] font-bold uppercase text-primary">Critical</span>
+</div>
+<div class="grid grid-cols-2 gap-3 pt-2 border-t border-white/5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-400 text-sm">psychology</span>
+<span class="text-sm">Affect: Anxious</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-red-400 text-sm">pulse_alert</span>
+<span class="text-sm text-red-400 font-bold">HR: 108 bpm</span>
+</div>
+</div>
+<div class="w-full bg-white/5 h-2 rounded-full overflow-hidden mt-2">
+<div class="bg-primary h-full w-[85%] rounded-full"></div>
+</div>
+<p class="text-xs text-slate-500 italic">Immediate intervention applied via breathing guidance.</p>
+</div>
+</div>
+<!-- Log Entry 4 -->
+<div class="relative pl-12">
+<div class="absolute left-0 top-1 size-10 rounded-full bg-background-dark border-2 border-slate-700 flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-slate-400 text-sm">settings_backup_restore</span>
+</div>
+<div class="glass-card rounded-xl p-4 space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<span class="text-xs font-bold text-slate-400 block">T+00:45:22</span>
+<h4 class="font-bold text-base">Session Termination</h4>
+</div>
+<span class="px-2 py-1 rounded bg-green-500/10 text-[10px] font-bold uppercase text-green-400">End</span>
+</div>
+<p class="text-sm text-slate-300">Recovery phase complete. All vitals returned to baseline +/- 5%.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full glass-card border-t border-white/10 px-4 pb-6 pt-3 flex items-center justify-around z-50">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">home</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="text-[10px] font-medium text-primary">Logs</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">group</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">Patients</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">settings</span>
+<span class="text-[10px] font-medium text-slate-400 group-hover:text-primary">Settings</span>
+</a>
+</nav>
+</body></html>

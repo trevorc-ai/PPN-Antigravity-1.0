@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(25, 34, 51, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md mx-auto border-x border-slate-200 dark:border-slate-800">
+<!-- Header Section -->
+<header class="flex items-center justify-between p-4 pt-6 bg-background-light dark:bg-background-dark">
+<button class="flex size-11 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">QT Interval Tracker</h1>
+<button class="flex size-11 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">info</span>
+</button>
+</header>
+<!-- Status Card -->
+<div class="px-4 py-2">
+<div class="glass p-5 rounded-xl flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium uppercase tracking-wider text-slate-400">Current Status</span>
+<span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold">420<span class="text-lg font-medium text-slate-400"> ms</span></p>
+<span class="text-emerald-500 text-sm font-semibold flex items-center">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                        +2%
+                    </span>
+</div>
+<p class="text-sm text-slate-400 mt-1">Normal rhythm detected</p>
+</div>
+</div>
+<!-- History List -->
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+<div class="flex items-center justify-between px-1">
+<h3 class="text-sm font-semibold text-slate-400 uppercase tracking-widest">Historical Readings</h3>
+<button class="text-xs font-semibold text-primary px-3 py-1 rounded-full bg-primary/10">View Trends</button>
+</div>
+<!-- Reading Entry 1 -->
+<div class="glass p-4 rounded-xl flex items-center gap-4 border-l-4 border-amber-500/50">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">ecg_heart</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<p class="font-bold text-slate-100">445 ms</p>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-500 uppercase">Divergence</span>
+</div>
+<p class="text-xs text-slate-400 truncate mt-0.5">High (+15ms) • Oct 24, 2023 at 14:30</p>
+</div>
+</div>
+<!-- Reading Entry 2 -->
+<div class="glass p-4 rounded-xl flex items-center gap-4">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">ecg_heart</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<p class="font-bold text-slate-100">412 ms</p>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500 uppercase">Stable</span>
+</div>
+<p class="text-xs text-slate-400 truncate mt-0.5">Normal • Oct 23, 2023 at 09:15</p>
+</div>
+</div>
+<!-- Reading Entry 3 -->
+<div class="glass p-4 rounded-xl flex items-center gap-4 border-l-4 border-rose-500/50">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary">
+<span class="material-symbols-outlined">ecg_heart</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<p class="font-bold text-slate-100">460 ms</p>
+<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 uppercase">Critical</span>
+</div>
+<p class="text-xs text-slate-400 truncate mt-0.5">High (+30ms) • Oct 22, 2023 at 18:45</p>
+</div>
+</div>
+<!-- Add Another Reading Button -->
+<button class="w-full h-[56px] flex items-center justify-center gap-2 border-2 border-dashed border-slate-700 rounded-xl text-slate-400 hover:text-slate-100 hover:border-slate-500 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-medium">Add Another Reading</span>
+</button>
+</div>
+<!-- Footer Actions -->
+<div class="glass border-t-0 p-4 space-y-4 pb-8">
+<div class="flex items-center justify-between glass px-4 py-3 rounded-xl">
+<div class="flex flex-col">
+<span class="text-[10px] uppercase font-bold text-slate-500">Recorded At</span>
+<span class="text-sm font-medium">Today, 2:45 PM</span>
+</div>
+<button class="bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-bold active:scale-95 transition-transform">
+                    NOW
+                </button>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 h-12 flex items-center justify-center rounded-xl bg-slate-800 text-slate-100 font-bold active:scale-95 transition-transform">
+                    Back
+                </button>
+<button class="flex-[2] h-12 flex items-center justify-center rounded-xl bg-primary text-white font-bold active:scale-95 transition-transform shadow-lg shadow-primary/20">
+                    Save &amp; Continue
+                </button>
+</div>
+</div>
+<!-- Tab Bar Navigation -->
+<nav class="flex h-20 items-center justify-around bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 px-2 pb-2">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined !text-[28px] fill-1">favorite</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Tracker</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined !text-[28px]">history</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">History</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined !text-[28px]">bar_chart</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Trends</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined !text-[28px]">person</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter">Profile</span>
+</a>
+</nav>
+</div>
+</body></html>

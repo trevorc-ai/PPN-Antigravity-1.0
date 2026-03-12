@@ -243,8 +243,8 @@ const SessionExportCenter: React.FC = () => {
         : 0;
 
     return (
-        <div className="min-h-screen bg-[#0a1628] p-6 sm:p-10">
-            <div className="max-w-6xl mx-auto space-y-8">
+        <div className="min-h-screen bg-[#0a1628] p-3 sm:p-10">
+            <div className="max-w-6xl mx-auto space-y-4 sm:space-y-8">
 
                 {/* ── Page Header ──────────────────────────────────────────── */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -255,8 +255,8 @@ const SessionExportCenter: React.FC = () => {
                             </div>
                             <span className="text-xs font-black uppercase tracking-widest text-blue-400/70">Session Export Center</span>
                         </div>
-                        <h1 className="text-4xl font-black tracking-tight text-[#A8B5D1]">Export Clinical Record</h1>
-                        <p className="text-lg text-slate-400 mt-2 max-w-xl">
+                        <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-[#A8B5D1]">Export Clinical Record</h1>
+                        <p className="hidden sm:block text-lg text-slate-400 mt-2 max-w-xl">
                             Download a complete, structured record of this patient's treatment series, formatted for legal defense, insurance billing, or research contribution.
                         </p>
                     </div>
@@ -407,7 +407,7 @@ const SessionExportCenter: React.FC = () => {
                             return (
                                 <div
                                     key={pkg.id}
-                                    className={`relative bg-slate-900/60 backdrop-blur-xl border rounded-3xl p-6 transition-all group
+                                    className={`relative bg-slate-900/60 backdrop-blur-xl border rounded-3xl p-4 sm:p-6 transition-all group
                                         ${isDone ? 'border-emerald-500/40' : pkg.borderColor}
                                         ${isDisabled ? 'opacity-50' : 'hover:bg-slate-900/80'}
                                     `}
@@ -431,7 +431,7 @@ const SessionExportCenter: React.FC = () => {
                                     </div>
 
                                     {/* Description */}
-                                    <p className="text-sm text-slate-400 mb-5 leading-relaxed">{pkg.description}</p>
+                                    <p className="hidden sm:block text-sm text-slate-400 mb-5 leading-relaxed">{pkg.description}</p>
 
                                     {/* Includes list */}
                                     <div className="space-y-1.5 mb-6">

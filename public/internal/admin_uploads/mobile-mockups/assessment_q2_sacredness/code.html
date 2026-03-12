@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(43, 108, 238, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s ease;
+        }
+        .glass-button:active {
+            background: rgba(43, 108, 238, 0.2);
+            border-color: rgba(43, 108, 238, 0.4);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-slate-100">
+<div class="relative flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark">
+<!-- Background Decorative Elements -->
+<div class="absolute top-[-10%] left-[-10%] w-[50%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-5%] right-[-5%] w-[40%] h-[30%] bg-primary/5 rounded-full blur-[100px]"></div>
+<!-- Top Navigation -->
+<div class="relative z-10 flex items-center p-4 justify-between">
+<button class="text-slate-900 dark:text-slate-100 flex size-12 shrink-0 items-center justify-center rounded-full glass-button">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Assessment Wizard</h2>
+<div class="size-12"></div> <!-- Spacer for symmetry -->
+</div>
+<!-- Progress Section -->
+<div class="relative z-10 flex flex-col gap-3 p-6 mx-4 mb-4 rounded-xl glass-panel">
+<div class="flex gap-6 justify-between items-center">
+<p class="text-primary text-base font-semibold leading-normal">40% completed</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal uppercase tracking-wider">Question 2 of 5</p>
+</div>
+<div class="rounded-full bg-slate-200 dark:bg-slate-800 h-2 overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 40%;"></div>
+</div>
+</div>
+<!-- Question Content -->
+<div class="relative z-10 flex flex-col flex-1 px-6 justify-center text-center">
+<h3 class="text-slate-900 dark:text-slate-100 tracking-tight text-3xl font-bold leading-tight pb-3">
+                Feeling that you experienced something profoundly sacred and holy.
+            </h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal italic">
+                Ref: Barrett et al., 2015
+            </p>
+</div>
+<!-- Response Scale -->
+<div class="relative z-10 flex flex-col gap-3 px-6 py-6 overflow-y-auto max-h-[45vh]">
+<button class="flex w-full cursor-pointer items-center justify-start rounded-xl h-14 px-6 glass-button hover:bg-primary/10">
+<span class="text-primary font-bold mr-4">0</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">None</span>
+</button>
+<button class="flex w-full cursor-pointer items-center justify-start rounded-xl h-14 px-6 glass-button hover:bg-primary/10">
+<span class="text-primary font-bold mr-4">1</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Slight</span>
+</button>
+<button class="flex w-full cursor-pointer items-center justify-start rounded-xl h-14 px-6 glass-button hover:bg-primary/10 border-primary/40 bg-primary/10">
+<span class="text-primary font-bold mr-4">2</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Moderate</span>
+<span class="material-symbols-outlined ml-auto text-primary">check_circle</span>
+</button>
+<button class="flex w-full cursor-pointer items-center justify-start rounded-xl h-14 px-6 glass-button hover:bg-primary/10">
+<span class="text-primary font-bold mr-4">3</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Strong</span>
+</button>
+<button class="flex w-full cursor-pointer items-center justify-start rounded-xl h-14 px-6 glass-button hover:bg-primary/10">
+<span class="text-primary font-bold mr-4">4</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Extreme</span>
+</button>
+</div>
+<!-- Footer Actions -->
+<div class="relative z-10 grid grid-cols-2 gap-4 p-6 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md border-t border-slate-200 dark:border-slate-800">
+<button class="flex items-center justify-center rounded-xl h-12 px-6 glass-button text-slate-900 dark:text-slate-100 font-semibold gap-2">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                Previous
+            </button>
+<button class="flex items-center justify-center rounded-xl h-12 px-6 bg-primary text-white font-semibold gap-2 shadow-lg shadow-primary/25">
+                Next
+                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Assessment Complete</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#111827",
+                        "card-dark": "rgba(31, 41, 55, 0.7)",
+                        "card-dark-solid": "#1F2937",
+                        success: "#10B981",
+                        "success-bg": "rgba(16, 185, 129, 0.1)",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(31, 41, 55, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white font-display min-h-screen flex flex-col antialiased h-screen overflow-hidden">
+<div class="relative pt-4 px-4 flex justify-end z-10">
+<button class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+<span class="material-icons text-sm">close</span>
+</button>
+</div>
+<main class="flex-grow flex flex-col px-4 pb-4 space-y-3 overflow-y-auto">
+<div class="glass-panel rounded-xl p-4 flex flex-col items-center text-center relative overflow-hidden shrink-0">
+<div class="absolute inset-0 bg-success-bg opacity-30 pointer-events-none"></div>
+<div class="w-12 h-12 rounded-full bg-success-bg flex items-center justify-center text-success mb-2 z-10">
+<span class="material-icons text-3xl">check_circle</span>
+</div>
+<h1 class="text-xl font-bold text-success mb-1 z-10">Assessment Complete!</h1>
+<p class="text-sm text-gray-600 dark:text-gray-300 z-10">Thank you for sharing about your experience</p>
+</div>
+<div class="glass-panel rounded-xl p-4 flex flex-col shrink-0">
+<div class="flex flex-col items-center text-center mb-4">
+<span class="material-icons text-success mb-1">trending_up</span>
+<h2 class="text-base font-semibold text-success mb-1">Your responses have been recorded</h2>
+<p class="text-xs text-gray-600 dark:text-gray-400 max-w-[280px]">
+                    Your practitioner will review your assessment and use it to guide your integration support.
+                    Every response helps shape a more personalised care plan.
+                </p>
+</div>
+<hr class="border-gray-200 dark:border-gray-700/50 mb-3 w-4/5 mx-auto"/>
+<div>
+<h3 class="text-sm font-semibold mb-3">Next Steps</h3>
+<div class="space-y-3">
+<div class="flex items-start">
+<div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">1</div>
+<div>
+<h4 class="text-sm font-medium">Continue Integration Protocol</h4>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Daily pulse checks (1-tap, 30 seconds) to track your progress</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">2</div>
+<div>
+<h4 class="text-sm font-medium">Follow-up Assessments</h4>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">PHQ-9 at Days 7, 14, 30, 60, 90, 180 to monitor symptom reduction</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-xs font-bold shrink-0 mr-3 mt-0.5">3</div>
+<div>
+<h4 class="text-sm font-medium">Integration Sessions</h4>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Schedule weekly therapy to process insights and build new patterns</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="p-4 pt-2 bg-background-light dark:bg-background-dark shrink-0 pb-6">
+<button class="w-full py-3.5 px-4 bg-primary text-white rounded-xl font-medium shadow-lg shadow-primary/30 hover:bg-blue-600 transition-colors flex flex-col items-center justify-center">
+<span>Close Assessment &amp; Return to</span>
+<span>Journey</span>
+</button>
+</div>
+<script>
+        // Force dark mode for this specific design requirement based on screenshot
+        document.documentElement.classList.add('dark');
+    </script>
+
+</body></html>

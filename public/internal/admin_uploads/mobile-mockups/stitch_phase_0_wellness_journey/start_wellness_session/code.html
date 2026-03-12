@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Start a Wellness Session</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<style data-purpose="custom-styles">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b1320;
+      background-image: radial-gradient(circle at 50% 30%, #1a365d 0%, #0b1320 60%);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 414px;
+      height: 100vh;
+      max-height: 896px;
+      background: rgba(11, 19, 32, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 40px 40px 0 0;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Modal Handle */
+    .modal-handle {
+      width: 40px;
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      margin: 16px auto;
+    }
+
+    /* Header Divider */
+    .header-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1) 50%, transparent);
+      margin-bottom: 24px;
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .glass-card.active {
+      background: rgba(37, 99, 235, 0.1);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.2), inset 0 0 10px rgba(59, 130, 246, 0.1);
+    }
+
+    .glass-card.disabled {
+      opacity: 0.5;
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      margin-right: 16px;
+    }
+
+    .active .icon-box {
+      background: rgba(30, 58, 138, 0.5);
+      color: #93c5fd;
+    }
+
+    .disabled .icon-box {
+      background: rgba(255, 255, 255, 0.05);
+      color: #9ca3af;
+    }
+
+    /* Primary Buttons */
+    .btn-primary {
+      background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+      border: 1px solid rgba(96, 165, 250, 0.5);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      padding: 16px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(180deg, #2dd4bf 0%, #0f766e 100%);
+      border: 1px solid rgba(45, 212, 191, 0.5);
+      box-shadow: 0 4px 14px rgba(15, 118, 110, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      padding: 16px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Practice Session Elements */
+    .practice-btn {
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      background: rgba(245, 158, 11, 0.1);
+      color: #fcd34d;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: underline;
+      text-decoration-color: rgba(252, 211, 77, 0.5);
+      text-underline-offset: 4px;
+    }
+
+    .tooltip {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #f8fafc;
+      position: absolute;
+      bottom: calc(100% + 12px);
+      right: 0;
+      width: 260px;
+      text-align: center;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 40px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: rgba(30, 41, 59, 0.95) transparent transparent transparent;
+      filter: drop-shadow(0 2px 2px rgba(245, 158, 11, 0.2));
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body>
+<!-- BEGIN: Main App Container -->
+<div class="app-container pt-2 px-6 pb-8 relative">
+<!-- BEGIN: Header -->
+<div class="modal-handle"></div>
+<div class="text-center mb-6 mt-2"><h1 class="text-4xl font-bold tracking-tight mb-2">Start a Wellness Session</h1>
+<p class="text-gray-400 text-xl">Select a patient context.</p></div>
+<div class="header-divider"></div>
+<!-- END: Header -->
+<!-- BEGIN: Content Options -->
+<div class="flex-1 flex flex-col gap-4">
+<!-- Existing Patient Card -->
+<button class="glass-card active w-full text-left focus:outline-none"><div class="icon-box bg-blue-900/50 rounded-2xl w-14 h-14 flex items-center justify-center mr-4">
+<i class="fas fa-search text-2xl text-blue-200"></i>
+</div>
+<div class="flex-1">
+<h2 class="text-2xl font-semibold">Existing Patient</h2>
+</div>
+<i class="fas fa-chevron-right text-gray-400 text-xl"></i></button>
+<!-- Most Recent Card (Disabled) -->
+<button class="glass-card disabled w-full text-left focus:outline-none cursor-not-allowed"><div class="icon-box bg-white/5 rounded-2xl w-14 h-14 flex items-center justify-center mr-4">
+<i class="far fa-clock text-2xl text-gray-500"></i>
+</div>
+<div class="flex-1">
+<h2 class="text-2xl font-semibold text-gray-500">Most Recent</h2>
+<p class="text-gray-600 text-lg">No prior sessions</p>
+</div></button>
+</div>
+<!-- END: Content Options -->
+<!-- BEGIN: Bottom Actions -->
+<div class="mt-auto pt-6 flex flex-col gap-4">
+<button class="btn-primary w-full text-xl py-5">
+        New Patient
+        <i class="fas fa-chevron-right absolute right-6"></i>
+</button>
+<div class="relative flex flex-col items-end">
+<button class="btn-secondary w-full text-xl py-5 gap-3">
+<i class="fas fa-camera text-2xl"></i>
+        Scan Patient
+      </button>
+<div class="mt-4 relative">
+<div class="tooltip z-10 w-[180px] absolute bottom-full right-0 mb-3 border border-orange-500/60 shadow-[0_0_10px_rgba(255,165,0,0.3)]">
+            Practice mode records no data to the patient chart and is for training purposes only.
+          </div>
+<button class="practice-btn mt-2">
+<i class="fas fa-flask"></i>
+            Practice Session
+          </button>
+</div>
+</div>
+</div>
+<!-- END: Bottom Actions -->
+</div>
+<!-- END: Main App Container -->
+</body></html>
