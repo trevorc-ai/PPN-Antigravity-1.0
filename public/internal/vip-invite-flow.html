@@ -1375,20 +1375,23 @@
         }
 
         function goTo(n) {
-            document.getElementById('screen-' + current).classList.remove('active');
-            document.getElementById('dot-' + current).classList.remove('active');
-            document.querySelectorAll('.flow-tab')[current].classList.remove('active');
+            // Use inline styles directly — more reliable than class toggling across all browsers
+            document.querySelectorAll('.screen').forEach((s, i) => {
+                s.style.display = i === n ? 'block' : 'none';
+            });
+            document.querySelectorAll('.dot').forEach((d, i) => {
+                d.classList.toggle('active', i === n);
+            });
+            document.querySelectorAll('.flow-tab').forEach((t, i) => {
+                t.classList.toggle('active', i === n);
+            });
 
             current = n;
 
-            document.getElementById('screen-' + current).classList.add('active');
-            document.getElementById('dot-' + current).classList.add('active');
-            document.querySelectorAll('.flow-tab')[current].classList.add('active');
+            document.getElementById('btn-prev').style.display = n === 0 ? 'none' : 'block';
+            document.getElementById('btn-next').textContent = n === total - 1 ? '\u21a9 Back to Start' : 'Next Step \u2192';
 
-            document.getElementById('btn-prev').style.display = current === 0 ? 'none' : 'block';
-            document.getElementById('btn-next').textContent = current === total - 1 ? '\u21a9 Back to Start' : 'Next Step \u2192';
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo(0, 0);
         }
 
         function next() {
@@ -1414,9 +1417,9 @@
                 : `\n\nYour invite will arrive by email shortly.`;
 
             const bodies = {
-                partner: `${name},\n\nI want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymized clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nYour access is ready. No setup required.${linkLine}\n\n— Trevor\nPsychedelic Practitioner Network`,
-                clinician: `${name},\n\nI want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions. No setup required.${linkLine}\n\n— Trevor\nPsychedelic Practitioner Network`,
-                privacy: `${name},\n\nBefore you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready from day one.${linkLine}\n\n— Trevor\nPsychedelic Practitioner Network`
+                partner: `${name},\n\nI want to give you a private first look at PPN Portal before we open to the broader network.\n\nYou are seeing 1,500+ real anonymized clinical outcome records from active psychedelic therapy sessions. The first database of its kind.\n\nYour access is ready. No setup required.${linkLine}\n\n\u2014 Trevor\nPPN Portal`,
+                clinician: `${name},\n\nI want to show you something built specifically for practitioners like you.\n\nPPN Portal gives you clinical-grade documentation, real-time safety checks, and global outcome benchmarks from 1,500+ sessions. No setup required.${linkLine}\n\n\u2014 Trevor\nPPN Portal`,
+                privacy: `${name},\n\nBefore you look at any clinical platform, you should know how ours handles your clients.\n\nPhantom Shield: Zero-PHI by structural design. No patient names ever stored. Audit-ready from day one.${linkLine}\n\n\u2014 Trevor\nPPN Portal`
             };
             return bodies[persona] ?? bodies.partner;
         }
@@ -1480,9 +1483,8 @@
                 shareMessage(name, selectedPersona, inviteUrl);
 
             } catch (e) {
-                console.warn('[generate-invite] Falling back to email-only mode:', e.message);
-                // Graceful fallback: share without the link (Edge Fn not deployed yet)
-                showToast('\u26a0\ufe0f Using email-only mode');
+                console.error('[generate-invite] Error:', e.message, e);
+                showToast('\u26a0\ufe0f Using manual invite mode');
                 shareMessage(name, selectedPersona, null);
             } finally {
                 btn.innerHTML = origLabel;
