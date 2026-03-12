@@ -1399,6 +1399,9 @@
         }
         function prev() { if (current > 0) { goTo(current - 1); } }
 
+        // Force-initialize screen visibility with inline styles on load
+        window.addEventListener('DOMContentLoaded', () => goTo(0));
+
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg;
@@ -1473,14 +1476,10 @@
                     throw new Error(err.error ?? 'Edge Function error');
                 }
 
-                const { inviteUrl } = await res.json();
+                const { sent } = await res.json();
 
-                // Update the preview link on Screen 1
-                const previewLink = document.querySelector('.message-link');
-                if (previewLink && inviteUrl) previewLink.href = inviteUrl;
-
-                showToast('\u2713 Invite created!');
-                shareMessage(name, selectedPersona, inviteUrl);
+                showToast('\u2713 Invite sent!');
+                shareMessage(name, selectedPersona, null);
 
             } catch (e) {
                 console.error('[generate-invite] Error:', e.message, e);

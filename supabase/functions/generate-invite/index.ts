@@ -56,41 +56,36 @@ serve(async (req) => {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // Generate the invite link — this creates the user in auth.users immediately
-    // and returns the raw one-time URL (expires in 24h by default, configurable in Dashboard).
-    const { data, error } = await adminClient.auth.admin.generateLink({
-      type: 'invite',
-      email: email.trim().toLowerCase(),
-      options: {
-        // Pass name + persona as user metadata so the welcome page can read them
+    // inviteUserByEmail creates the user AND sends the branded "You're in." email
+    // via the configured Resend SMTP. generateLink does NOT send email.
+    const { data, error } = await adminClient.auth.admin.inviteUserByEmail(
+      email.trim().toLowerCase(),
+      {
         data: {
           invited_name: name ?? '',
           invited_persona: persona ?? 'partner',
           invited_by: 'trevor',
         },
-        // Redirect to the beta welcome route after they set their password
-        redirectTo: `https://ppnportal.net/beta-welcome`,
-      },
-    });
+        redirectTo: 'https://ppnportal.net/#/beta-welcome',
+      }
+    );
 
     if (error) {
-      console.error('[generate-invite] generateLink error:', error.message);
+      console.error('[generate-invite] inviteUserByEmail error:', error.message);
       return new Response(JSON.stringify({ error: error.message }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const inviteUrl = data?.properties?.action_link ?? data?.properties?.hashed_token;
-
-    console.log(`[generate-invite] Invite created for ${email} (persona: ${persona ?? 'partner'})`);
+    console.log(`[generate-invite] Invite sent for ${email} (persona: ${persona ?? 'partner'})`);
 
     return new Response(
       JSON.stringify({
-        inviteUrl,
         email: email.trim().toLowerCase(),
         name: name ?? '',
         persona: persona ?? 'partner',
+        sent: true,
       }),
       {
         status: 200,
