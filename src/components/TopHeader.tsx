@@ -70,7 +70,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
-  const { signOut } = useAuth();
+  const { signOut, userRole } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -428,6 +428,20 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                       <MessageSquarePlus className="w-[18px] h-[18px]" aria-hidden="true" />
                       Leave Feedback
                     </button>
+
+                    {/* Admin Console — only visible to admin users */}
+                    {userRole === 'admin' && (
+                      <>
+                        <div className="h-px bg-white/5 my-2" />
+                        <button
+                          onClick={() => { navigate('/admin/dashboard'); setIsMenuOpen(false); }}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-amber-400 hover:text-amber-300 hover:bg-amber-400/5 transition-all text-sm font-bold"
+                        >
+                          <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
+                          Admin Console
+                        </button>
+                      </>
+                    )}
 
                     <div className="h-px bg-white/5 my-2"></div>
 

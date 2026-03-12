@@ -3,22 +3,46 @@ name: ppn-ui-standards
 description: MANDATORY CSS, Tailwind, and Accessibility rules for the Psychedelic Practitioner Network.
 ---
 
-# PPN UI STANDARDS & ACCESSIBILITY PROTOCOL
+# PPN UI Standards
 
-🚨 FATAL VIOLATION WARNING: You must check every line of UI code against these 4 rules. Failure to comply breaks the application for our color-blind lead designer and our clinical users.
+> **MANDATORY** - Read every rule before writing any UI code. These rules protect our color-blind lead designer and clinical users.
 
-## 1. THE COLOR-BLINDNESS MANDATE
-* NEVER rely purely on color to convey meaning, status, or alerts. 
-* If you use a color class (e.g., `text-red-500`, `bg-green-500`), you MUST include an accompanying Lucide React icon (e.g., `<AlertTriangle />`, `<CheckCircle />`) OR explicit text.
+---
 
-## 2. THE TYPOGRAPHY RULE
-* The absolute minimum font size for the entire application is 14px (`text-sm`). 
-* You are strictly FORBIDDEN from using the Tailwind class `text-xs`. 
+## Rule 1: Color-Blindness Mandate
 
-## 3. THE CLINICAL SCI-FI AESTHETIC
-* **Backgrounds:** Never use flat black. Use Deep Slate (`#020408` or Tailwind equivalent `bg-slate-950`).
-* **Containers:** Standard panels must use the PPN Glass effect: `bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-[2rem] p-6`.
-* **Forms:** NO free-text `<textarea>` inputs. 
+**Never use color alone to convey meaning.**
 
-## 4. THE EM DASH BAN
-* You are strictly forbidden from using the em dash character (—). Use a standard hyphen (-) or colon (:) instead.
+Every color indicator MUST be paired with either a Lucide React icon OR explicit text.
+
+| OK | NOT OK |
+|---|---|
+| `<AlertTriangle /> text-red-500` | `text-red-500` alone |
+| `<CheckCircle /> text-green-500` | `bg-green-500` alone |
+
+---
+
+## Rule 2: Minimum Font Size
+
+**The smallest allowed font size is `text-sm` (14px).**
+
+- `text-xs` is strictly forbidden throughout the entire application.
+- No exceptions.
+
+---
+
+## Rule 3: Clinical Aesthetic
+
+| Element | Required style |
+|---|---|
+| **Backgrounds** | Deep Slate only: `#020408` or `bg-slate-950`. Never flat black. |
+| **Panels / containers** | `bg-slate-900/60 backdrop-blur-md border border-white/10 rounded-[2rem] p-6` |
+| **Form inputs** | No free-text `<textarea>` inputs. Use structured selects or defined fields. |
+
+---
+
+## Rule 4: Em Dash Ban
+
+**The em dash character (—) is forbidden.**
+
+Use a hyphen `-` or colon `:` instead.
