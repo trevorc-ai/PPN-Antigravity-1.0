@@ -687,12 +687,17 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             // warnings from stale localStorage, the fallback is safe here.
             let medications: string[] = [];
             try {
-                const cachedMeds = localStorage.getItem('mock_patient_medications_names');
-                if (cachedMeds) {
-                    const parsed = JSON.parse(cachedMeds);
+                // ppn_patient_medications_names: authoritative key (written by StructuredSafetyCheckForm)
+                // mock_patient_medications_names: legacy/demo fallback
+                const medsRaw =
+                    localStorage.getItem('ppn_patient_medications_names') ||
+                    localStorage.getItem('mock_patient_medications_names');
+                if (medsRaw) {
+                    const parsed = JSON.parse(medsRaw);
                     if (Array.isArray(parsed) && parsed.length) medications = parsed;
                 }
             } catch (_) { }
+
             if (!substanceName) return null;
             const engineInput: import('../../services/contraindicationEngine').IntakeScreeningData = {
                 patientId: 'demo',

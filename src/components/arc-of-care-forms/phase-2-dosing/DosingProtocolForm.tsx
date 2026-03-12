@@ -105,8 +105,22 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         if (onSave) {
             setIsSaving(true);
             onSave(data);
-            // WO-559: fire ppn:dosing-saved on commit (not just on field change via updateField)
-            // so DosingSessionPhase can stamp the chart pin even when no fields were edited.
+            // WO-559 / P0 safety fix: write authoritative substance_name at save time.
+            // updateField preserves the name on field changes, but we do a final write here
+            // as the single source of truth so the contraindication checker always has it.
+            if (data.substance_id) {
+                const substance = substances.find(s => s.substance_id === data.substance_id);
+                if (substance?.substance_name) {
+                    try {
+                        localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
+                            substance_id: data.substance_id,
+                            substance_name: substance.substance_name,
+                            dosage_amount: data.dosage_amount,
+                            route_of_administration: data.route_of_administration,
+                        }));
+                    } catch (_) { /* quota */ }
+                }
+            }
             window.dispatchEvent(new CustomEvent('ppn:dosing-saved', { detail: data }));
             setTimeout(() => {
                 setIsSaving(false);
@@ -125,8 +139,20 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         if (onSave) {
             setIsSaving(true);
             onSave(data);
-            // WO-559: fire ppn:dosing-saved on commit so DosingSessionPhase stamps the chart pin
-            // even when no fields were edited (pre-filled values, user just confirms).
+            // WO-559 / P0 safety fix: write authoritative substance_name at save time.
+            if (data.substance_id) {
+                const substance = substances.find(s => s.substance_id === data.substance_id);
+                if (substance?.substance_name) {
+                    try {
+                        localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
+                            substance_id: data.substance_id,
+                            substance_name: substance.substance_name,
+                            dosage_amount: data.dosage_amount,
+                            route_of_administration: data.route_of_administration,
+                        }));
+                    } catch (_) { /* quota */ }
+                }
+            }
             window.dispatchEvent(new CustomEvent('ppn:dosing-saved', { detail: data }));
             setTimeout(() => {
                 setIsSaving(false);
@@ -140,13 +166,32 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     const updateField = (field: keyof DosingProtocolData, value: any) => {
         setData(prev => {
             const next = { ...prev, [field]: value };
-            // Persist to localStorage so DosingSessionPhase can read substance name
-            // for its real-time contraindication indicator.
+            // --- Substance name resolution (CRITICAL SAFETY) ---
+            // Only look up substance_name when the substance_id field itself changes.
+            // For other field changes (dosage, route...) we MUST preserve the existing
+            // substance_name — otherwise changing dosage while substance_id is not yet
+            // set in this form instance (e.g. Additional Dose reopening form fresh)
+            // would overwrite the correctly-stored name with ''.
+            let substanceNameToWrite = '';
+            if (field === 'substance_id') {
+                const substance = substances.find(s => s.substance_id === value);
+                substanceNameToWrite = substance?.substance_name ?? '';
+            } else {
+                // Preserve whatever name is already in localStorage
+                try {
+                    const cached = JSON.parse(localStorage.getItem('ppn_dosing_protocol') || '{}');
+                    substanceNameToWrite = cached.substance_name || '';
+                } catch { substanceNameToWrite = ''; }
+                // Also check current form state in case substance was selected this session
+                if (!substanceNameToWrite && next.substance_id) {
+                    const substance = substances.find(s => s.substance_id === next.substance_id);
+                    substanceNameToWrite = substance?.substance_name ?? '';
+                }
+            }
             try {
-                const substance = substances.find(s => s.substance_id === next.substance_id);
                 localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
                     substance_id: next.substance_id,
-                    substance_name: substance?.substance_name ?? '',
+                    substance_name: substanceNameToWrite,
                     dosage_amount: next.dosage_amount,
                     route_of_administration: next.route_of_administration,
                 }));
