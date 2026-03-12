@@ -117,8 +117,8 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
         return (
             <div className="flex flex-col min-h-screen bg-[#060d1a] pb-24">
                 <div className="flex-1 p-6 flex flex-col items-center justify-center text-center">
-                    <div className="w-20 h-20 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
-                        <Play className="w-10 h-10 text-indigo-400 ml-1" />
+                    <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
+                        <Play className="w-10 h-10 text-primary ml-1" />
                     </div>
                     <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Ready to Begin</h2>
                     <p className="text-slate-400 mb-8 max-w-sm">
@@ -132,7 +132,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
                             : 'bg-slate-800 border border-slate-700 text-white shadow-lg'
                             }`}
                     >
-                        {isDosingProtocolComplete ? <CheckCircle2 className="w-6 h-6" /> : <Pill className="w-6 h-6 text-indigo-400" />}
+                        {isDosingProtocolComplete ? <CheckCircle2 className="w-6 h-6" /> : <Pill className="w-6 h-6 text-primary" />}
                         {isDosingProtocolComplete ? 'Dosing Protocol Confirmed' : 'Confirm Dosing Protocol'}
                     </button>
 
@@ -140,7 +140,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
                         disabled={!isDosingProtocolComplete}
                         onClick={handleStartSession}
                         className={`w-full max-w-sm min-h-[60px] rounded-2xl flex items-center justify-center font-black text-xl transition-all duration-300 active:scale-95 ${isDosingProtocolComplete
-                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-500'
+                            ? 'bg-primary text-white shadow-lg shadow-primary/30 border border-primary/80'
                             : 'bg-slate-800/50 text-slate-500 border border-slate-700/50 cursor-not-allowed'
                             }`}
                     >
@@ -181,12 +181,12 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
 
     // LIVE MODE: Cockpit
     return (
-        <div className="flex flex-col min-h-screen bg-[#060d1a] selection:bg-indigo-500/30 pb-[280px]">
+        <div className="flex flex-col min-h-screen bg-[#060d1a] selection:bg-primary/20 pb-[280px]">
             {/* Header: Fixed top timer */}
             <div className="sticky top-0 z-40 bg-[#060d1a]/95 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
                 <div className="flex flex-col">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-[#A8B5D1]">Live Session</span>
-                    <span className="text-3xl font-black text-white font-mono tracking-tight leading-none text-glow-indigo">{elapsedTime}</span>
+                    <span className="text-3xl font-black text-white font-mono tracking-tight leading-none">{elapsedTime}</span>
                 </div>
                 <button
                     onClick={handleEndSession}
@@ -204,7 +204,7 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
             {/* THE THUMB-ZONE: Fixed Bottom Action Bar */}
             <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-2xl border-t border-slate-700/60 pb-safe shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.5)]">
 
-                {/* Secondary Actions (Forms that require slide-outs) */}
+                {/* Secondary Actions: form slide-outs (Log Vitals + Clinical Note) */}
                 <div className="grid grid-cols-2 gap-3 px-4 py-4 border-b border-slate-800/60">
                     <button
                         onClick={() => onOpenForm('session-vitals')}
@@ -222,22 +222,35 @@ export const MobileCockpit: React.FC<MobileCockpitProps> = ({ journey, completed
                     </button>
                 </div>
 
-                {/* Primary Actions: Massive FABs for instantaneous logging */}
-                <div className="p-4 space-y-3">
+                {/* Primary Quick-Tap Actions: 2×2 grid of clinical micro-actions */}
+                <div className="grid grid-cols-2 gap-3 px-4 py-4">
                     <button
-                        onClick={() => logQuickIntervention('clinical_decision', 'Protocol Adjusted')}
-                        className="w-full flex items-center justify-center gap-3 min-h-[60px] bg-indigo-600 hover:bg-indigo-500 text-white font-black text-lg rounded-2xl shadow-lg shadow-indigo-600/20 border border-indigo-500 active:scale-95 transition-all duration-300"
+                        onClick={() => logQuickIntervention('patient_communication', 'Spoke')}
+                        className="flex flex-col items-center justify-center gap-1.5 min-h-[60px] bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 rounded-2xl active:scale-95 transition-all duration-300 font-black text-sm uppercase tracking-wider"
                     >
-                        <Plus className="w-6 h-6" />
-                        Quick Action: Protocol
+                        <Plus className="w-5 h-5" />
+                        Spoke
                     </button>
-
                     <button
-                        onClick={() => logQuickIntervention('patient_observation', 'Patient Supported')}
-                        className="w-full flex items-center justify-center gap-3 min-h-[60px] bg-teal-600/20 text-teal-300 border border-teal-500/30 hover:bg-teal-600/30 font-bold text-lg rounded-2xl active:scale-95 transition-all duration-300"
+                        onClick={() => logQuickIntervention('medicine_administration', 'Dosed')}
+                        className="flex flex-col items-center justify-center gap-1.5 min-h-[60px] bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-2xl active:scale-95 transition-all duration-300 font-black text-sm uppercase tracking-wider"
                     >
-                        <CheckCircle2 className="w-6 h-6" />
-                        Quick Action: Support
+                        <Pill className="w-5 h-5" />
+                        Dosed
+                    </button>
+                    <button
+                        onClick={() => logQuickIntervention('grounding_technique', 'Grounded')}
+                        className="flex flex-col items-center justify-center gap-1.5 min-h-[60px] bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-2xl active:scale-95 transition-all duration-300 font-black text-sm uppercase tracking-wider"
+                    >
+                        <CheckCircle2 className="w-5 h-5" />
+                        Grounded
+                    </button>
+                    <button
+                        onClick={() => logQuickIntervention('clinical_decision', 'Redirected')}
+                        className="flex flex-col items-center justify-center gap-1.5 min-h-[60px] bg-violet-500/10 hover:bg-violet-500/20 text-violet-400 border border-violet-500/30 rounded-2xl active:scale-95 transition-all duration-300 font-black text-sm uppercase tracking-wider"
+                    >
+                        <Activity className="w-5 h-5" />
+                        Redirected
                     </button>
                 </div>
             </div>

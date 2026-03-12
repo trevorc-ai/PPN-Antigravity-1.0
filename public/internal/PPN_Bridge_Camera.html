@@ -532,6 +532,13 @@
             border-radius: 10px;
             border: 1px solid var(--border);
         }
+
+        /* ─── Mobile Responsive (≤ 380px very small devices) ───────── */
+        @media (max-width: 380px) {
+            .fields-grid { grid-template-columns: 1fr; }
+            .result__value { font-size: 22px; }
+            .app { padding: 16px 12px 40px; }
+        }
     </style>
 </head>
 

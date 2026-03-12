@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { ChevronDown, ChevronUp, Edit3, CheckCircle2, HeartPulse, ClipboardCheck, FileText, Pill } from 'lucide-react';
+import { ChevronDown, ChevronUp, Edit3, CheckCircle2, HeartPulse, ClipboardCheck, FileText, Pill, ArrowRight } from 'lucide-react';
 import type { WellnessFormId } from './WellnessFormRouter';
 import { useProtocol } from '../../contexts/ProtocolContext';
 
@@ -274,10 +274,10 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                     Preparation · {activeSteps.length} Steps
                 </h2>
                 <div className="flex items-center gap-3">
-                    <div className="w-28 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="flex-1 max-w-[112px] h-1.5 bg-slate-800 rounded-full overflow-hidden">
                         <div
                             className="h-full bg-gradient-to-r from-indigo-700 to-indigo-400 rounded-full transition-all duration-700"
-                            style={{ width: `${(completedCount / Math.max(1, activeSteps.length)) * 100}% ` }}
+                            style={{ width: `${(completedCount / Math.max(1, activeSteps.length)) * 100}%` }}
                             role="progressbar"
                             aria-valuenow={completedCount}
                             aria-valuemax={activeSteps.length}
@@ -388,7 +388,7 @@ export const Phase1StepGuide: React.FC<Phase1StepGuideProps> = ({
                                             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600/40 hover:bg-indigo-600/60 text-indigo-100 font-black text-sm md:text-base rounded-xl transition-all active:scale-95 shadow-md shadow-indigo-950/50 group"
                                         >
                                             Continue
-                                            <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
+                                            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                                         </button>
                                     ) : (
                                         <button

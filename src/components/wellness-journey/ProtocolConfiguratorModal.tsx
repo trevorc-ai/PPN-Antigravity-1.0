@@ -255,7 +255,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
                         {/* Steps 2 & 3, Gender + Smoking Status (combined row) */}
                         <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.gender && stepDone.smoking ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                 {/* Gender */}
                                 <div>
                                     <div className="flex items-center gap-2.5 mb-3">
@@ -309,7 +309,7 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
 
                         {/* Steps 4 & 5, Age + Weight (combined row) */}
                         <div className={`rounded-2xl border p-4 transition-all duration-200 ${stepDone.age && stepDone.weight ? 'border-indigo-500/50 bg-indigo-950/20' : 'border-slate-700/50 bg-slate-900/40'}`}>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                 {/* Age */}
                                 <div>
                                     <div className="flex items-center gap-2.5 mb-3">

@@ -406,6 +406,16 @@
             align-items: center;
             justify-content: center
         }
+
+        /* ─── Mobile Responsive (≤ 520px) ──────────────────────────── */
+        @media (max-width: 520px) {
+            .stat-row { grid-template-columns: 1fr 1fr; }
+            .dl-grid { grid-template-columns: 1fr; }
+            .lc-t { white-space: normal; }
+            .lc-s { white-space: normal; }
+            .dl-t { white-space: normal; }
+            .wrap { padding: 12px 12px 80px; }
+        }
     </style>
 </head>
 
