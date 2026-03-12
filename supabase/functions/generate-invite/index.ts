@@ -66,7 +66,7 @@ serve(async (req) => {
           invited_persona: persona ?? 'partner',
           invited_by: 'trevor',
         },
-        redirectTo: 'https://ppnportal.net/#/beta-welcome',
+        redirectTo: 'https://ppnportal.net/#/reset-password',
       }
     );
 
