@@ -253,8 +253,11 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const results = useSearch(query);
 
-  // Auto-focus on mount so users arriving via sidebar nav can type immediately
+  // Auto-focus on mount — desktop only. On mobile/tablet this triggers the keyboard
+  // immediately which crushes the layout and creates a terrible first impression.
   useEffect(() => {
+    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (isTouchDevice) return;
     const t = setTimeout(() => inputRef.current?.focus(), 50);
     return () => clearTimeout(t);
   }, []);
@@ -286,7 +289,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
   return (
     <div className="min-h-screen animate-in fade-in duration-500">
       {/* WO-MOBILE-OPT: pb-20 md:pb-4 ensures bottom nav (mobile) cannot overlay last section */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 sm:space-y-12 pb-20 md:pb-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 sm:space-y-12 pb-28 md:pb-8">
 
         {/* ── 1. Hero greeting ─────────────────────────────────────────────── */}
         <div className="text-center space-y-3 pt-2 sm:pt-4">
