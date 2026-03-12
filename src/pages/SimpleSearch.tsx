@@ -293,16 +293,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
 
         {/* ── 1. Hero greeting ─────────────────────────────────────────────── */}
         <div className="text-center space-y-3 pt-2 sm:pt-4">
-          {/* Status pill */}
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-              <span className="text-xs font-black text-emerald-400 uppercase tracking-wide">System Online</span>
-            </span>
-            <span className="px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-black text-indigo-400 uppercase tracking-wide">
-              Beta Access
-            </span>
-          </div>
+
           <h1 className="ppn-page-title">
             Welcome to the PPN Portal
           </h1>
