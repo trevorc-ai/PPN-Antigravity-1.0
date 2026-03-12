@@ -90,7 +90,9 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#05070a] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#05070a] flex flex-col justify-start sm:justify-center py-8 px-4 relative overflow-x-hidden"
+      style={{ paddingTop: 'max(2rem, env(safe-area-inset-top))', paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+    >
 
       {/* Background orbs — deeper, matching Pricing dark base */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -140,7 +142,7 @@ const Login: React.FC = () => {
           {/* Indigo glow ring */}
           <div className="absolute -inset-0.5 bg-indigo-500/10 blur-md opacity-60 rounded-[2.5rem]" />
 
-          <div className="relative bg-[#1c222d]/50 border border-slate-800 rounded-[2.5rem] p-8 sm:p-10 backdrop-blur-sm">
+          <div className="relative bg-[#1c222d]/50 border border-slate-800 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-sm">
             <form onSubmit={handleLogin} className="space-y-6">
 
               {/* Error */}
