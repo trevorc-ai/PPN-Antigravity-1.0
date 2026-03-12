@@ -35,10 +35,21 @@ serve(async (req) => {
   }
 
   try {
-    const { email, name, persona } = await req.json();
+    const { email, firstName, lastName, name, persona } = await req.json();
+
+    // Support both new (firstName/lastName) and legacy (name) field names
+    const resolvedFirst = (firstName ?? name ?? '').trim();
+    const resolvedLast  = (lastName ?? '').trim();
 
     if (!email || typeof email !== 'string') {
       return new Response(JSON.stringify({ error: 'email is required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!resolvedFirst) {
+      return new Response(JSON.stringify({ error: 'firstName is required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -62,7 +73,8 @@ serve(async (req) => {
       email.trim().toLowerCase(),
       {
         data: {
-          invited_name: name ?? '',
+          invited_first_name: resolvedFirst,
+          invited_last_name:  resolvedLast,
           invited_persona: persona ?? 'partner',
           invited_by: 'trevor',
         },

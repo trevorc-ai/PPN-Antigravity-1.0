@@ -138,9 +138,11 @@ const ResetPassword: React.FC = () => {
             if (error) throw error;
 
             setSuccess(true);
-            // Redirect to /search (the correct post-login home, WO-510)
+            // Invited users must complete the registration wizard before using the app.
+            // ?invited=true tells SignUp.tsx to allow an already-authenticated user through
+            // and to pre-populate their name fields from invite metadata.
             setTimeout(() => {
-                navigate('/search');
+                navigate('/signup?invited=true');
             }, 2500);
         } catch (err: any) {
             setError(err.message || 'Failed to reset password. Please try again.');

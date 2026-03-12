@@ -32,8 +32,10 @@ const SignUp = () => {
         is_profile_public: false,
         npi_number: '',
 
-        // Step 2: Routing Setup
-        affiliation_route: '' as 'invite' | 'existing' | 'solo' | 'new',
+    // Step 2: Routing Setup
+        affiliation_route: new URLSearchParams(window.location.search).get('invited') === 'true'
+            ? 'solo'
+            : '' as 'invite' | 'existing' | 'solo' | 'new',
         invite_code: '', // If 'invite'
         selected_site_id: '', // If 'existing'
 
@@ -64,7 +66,7 @@ const SignUp = () => {
             const { data, error } = await supabase
                 .from('log_sites')
                 .select('site_id, site_name, region')
-                .eq('is_active', true) // Fix 1: removed non-existent is_discoverable column
+                .eq('is_active', true)
                 .order('site_name');
 
             if (!error && data) {
@@ -72,6 +74,24 @@ const SignUp = () => {
             }
         };
         fetchSites();
+    }, []);
+
+    // Pre-populate fields from VIP invite metadata (runs when invited user arrives after password setup)
+    useEffect(() => {
+        const prefillFromInvite = async () => {
+            const isInvited = new URLSearchParams(window.location.search).get('invited') === 'true';
+            if (!isInvited) return;
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+            const meta = user.user_metadata ?? {};
+            setFormData(prev => ({
+                ...prev,
+                first_name: meta.invited_first_name || prev.first_name,
+                last_name:  meta.invited_last_name  || prev.last_name,
+                email:      user.email              || prev.email,
+            }));
+        };
+        prefillFromInvite();
     }, []);
 
     // Form Navigation
@@ -167,8 +187,10 @@ const SignUp = () => {
                 finalIsActive = true; // Clinic creators approve themselves
             }
             else if (formData.affiliation_route === 'invite') {
-                // Simple invite routing map here
-                throw new Error("Invite codes are not configured globally yet. Please select an existing clinic manually.");
+                // VIP-invited users: treat as solo practitioner until the code-based
+                // invite system is formally built. They already have a Supabase account
+                // created by the Edge Function — just finalize the profile + site.
+                submitRegistration();
             }
 
             // 2. Auth Creation

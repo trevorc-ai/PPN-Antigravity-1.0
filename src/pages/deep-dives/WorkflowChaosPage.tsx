@@ -104,7 +104,7 @@ const WorkflowChaosPage: React.FC = () => {
 
                             <div className="pt-4">
                                 <button
-                                    onClick={() => navigate('/signup')}
+                                    onClick={() => navigate('/waitlist')}
                                     className="px-8 py-4 bg-white text-slate-900 font-black rounded-xl uppercase tracking-widest hover:bg-slate-200 transition-colors flex items-center gap-2"
                                 >
                                     Request Early Access

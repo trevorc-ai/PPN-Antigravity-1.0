@@ -188,7 +188,7 @@ const ProtectedLayout: React.FC<{
   };
 
   return (
-    <div className="flex h-screen overflow-clip bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 selection:bg-primary/30 selection:text-slate-300">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-b from-[#0a1628] via-[#0d1b2a] to-[#05070a] text-slate-300 selection:bg-primary/30 selection:text-slate-300">
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -202,7 +202,7 @@ const ProtectedLayout: React.FC<{
           onStartTour={() => setShowTour(true)}
         />
         <Breadcrumbs />
-        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent pb-20 lg:pb-0">
+        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent pb-28 lg:pb-0">
           {showTour && <GuidedTour onComplete={completeTour} />}
           <Outlet />
           <Footer />
@@ -243,6 +243,22 @@ const RequireAuth: React.FC = () => {
   }
 
   return <Outlet />;
+};
+
+/**
+ * SignUpGuard — Handles two distinct user states on /signup:
+ *   1. Invited users (session exists + ?invited=true) → allow through to complete wizard
+ *   2. Already-registered users (session exists, no invite param) → bounce to /search
+ *   3. No session → normal self-signup flow
+ */
+const SignUpGuard: React.FC = () => {
+  const { user } = useAuth();
+  const location = useLocation();
+  const isInvited = new URLSearchParams(location.search).get('invited') === 'true';
+
+  if (user && isInvited) return <SignUp />;
+  if (user && !isInvited) return <Navigate to="/search" replace />;
+  return <SignUp />;
 };
 
 interface ErrorBoundaryProps {
@@ -380,7 +396,7 @@ const AppContent: React.FC = () => {
               <Route path="/patient-form/:formId" element={<PatientFormPage />} />
               <Route path="/assessment" element={<AdaptiveAssessmentPage />} />
               <Route path="/login" element={user ? <Navigate to="/search" replace /> : <Login />} />
-              <Route path="/signup" element={user ? <Navigate to="/search" replace /> : <SignUp />} />
+              <Route path="/signup" element={<SignUpGuard />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/checkout" element={<Checkout />} />

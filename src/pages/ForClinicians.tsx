@@ -68,7 +68,7 @@ const ForClinicians: React.FC = () => {
               How It Works
             </a>
             <button
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/waitlist')}
               aria-label="Sign in to PPN Portal"
               className="px-5 py-2 rounded-full bg-slate-800 border border-slate-700 text-slate-200 text-sm font-medium hover:bg-slate-700 transition-all"
             >
@@ -97,7 +97,7 @@ const ForClinicians: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/waitlist')}
               aria-label="Join the Psychedelic Practitioner Network"
               className="px-8 py-3.5 rounded-full bg-indigo-600 text-white font-medium text-base transition-all hover:scale-[1.02] hover:bg-indigo-500 active:scale-[0.98] shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2"
             >
@@ -167,7 +167,7 @@ const ForClinicians: React.FC = () => {
             Get instant access to the clinical tools, outcome tracking, and global benchmark intelligence — built for practitioners ready to lead.
           </p>
           <button
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/waitlist')}
             aria-label="Create your zero-PHI account"
             className="px-10 py-4 rounded-full bg-indigo-600 text-white font-medium text-base transition-all hover:scale-[1.02] hover:bg-indigo-500 active:scale-[0.98] shadow-lg shadow-indigo-600/20 inline-flex items-center gap-2"
           >
