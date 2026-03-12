@@ -405,8 +405,6 @@ export const MyProtocols = () => {
                                         <SortableHeader field="indication_name" label="Treatment" />
                                         <SortableHeader field="sex_label" label="Gender" />
                                         <SortableHeader field="patient_age" label="Age" />
-                                        <SortableHeader field="smoking_status" label="Smoking" />
-                                        <SortableHeader field="weight_label" label="Weight" />
                                         <SortableHeader field="session_date" label="Date" />
                                         <SortableHeader field="status" label="Status" />
                                         <th className="px-4 py-5 text-right text-xs font-black text-slate-500 uppercase tracking-[0.15em] pr-6">Action</th>
@@ -470,11 +468,7 @@ export const MyProtocols = () => {
                                             {/* Age */}
                                             <Cell value={p.patient_age !== '—' ? `${p.patient_age} yrs` : '—'} />
 
-                                            {/* Smoking */}
-                                            <Cell value={abbreviateSmoking(p.smoking_status)} dim={p.smoking_status === '—'} />
 
-                                            {/* Weight */}
-                                            <Cell value={abbreviateWeight(p.weight_label)} dim={p.weight_label === '—'} />
 
                                             {/* Date */}
                                             <Cell value={p.session_date} mono />

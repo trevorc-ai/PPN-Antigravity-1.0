@@ -17,36 +17,58 @@ export function useAnalyticsData(siteId: string | null): AnalyticsKPIs & { refet
             if (!siteId) return { data: null, error: 'No site ID provided' };
 
             try {
-                // Single query: get all sessions for the site with the data we need for KPIs
-                // mv_clinic_benchmarks does not yet exist — querying raw tables directly
+                // Step 1: Fetch all sessions for this site
+                // NOTE: safety_event_id was removed — safety events live in log_safety_events, not as a FK on log_clinical_records
                 const { data: allSessions, error: sessionsError } = await supabase
                     .from('log_clinical_records')
-                    .select('id, patient_uuid, safety_event_id, session_date')
-                    .eq('site_id', siteId);
+                    .select('id, patient_uuid, session_date')
+                    .eq('site_id', siteId)
+                    .neq('session_status', 'draft');
 
                 if (sessionsError) throw sessionsError;
 
                 const records = allSessions || [];
-                const uniquePatients = new Set(records.map((r: any) => r.patient_uuid).filter(Boolean));
                 const totalSessions = records.length;
-                const allTimeAdverse = records.filter((s: any) => s.safety_event_id !== null).length;
+                const uniquePatients = new Set(records.map((r: any) => r.patient_uuid).filter(Boolean));
+
+                // Step 2: Count adverse events from log_safety_events (the proper table)
+                const sessionIds = records.map((r: any) => r.id).filter(Boolean);
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const cutoff = thirtyDaysAgo.toISOString().split('T')[0];
+
+                let allTimeAdverse = 0;
+                let recentAlerts = 0;
+
+                if (sessionIds.length > 0) {
+                    const { data: safetyData, error: safetyErr } = await supabase
+                        .from('log_safety_events')
+                        .select('ae_id, session_id')
+                        .in('session_id', sessionIds);
+
+                    if (!safetyErr && safetyData) {
+                        allTimeAdverse = safetyData.length;
+                        // Recent alerts: sessions in last 30 days that had adverse events
+                        const recentSessionIds = new Set(
+                            records
+                                .filter((r: any) => r.session_date >= cutoff)
+                                .map((r: any) => r.id)
+                        );
+                        recentAlerts = safetyData.filter((s: any) => recentSessionIds.has(s.session_id)).length;
+                    }
+                }
+
                 const efficiency = totalSessions > 0
                     ? ((totalSessions - allTimeAdverse) / totalSessions) * 100 : 0;
                 const safetyRate = totalSessions > 0
                     ? (allTimeAdverse / totalSessions) * 100 : 0;
-                const riskScore = safetyRate < 5 ? 'Low' : safetyRate < 15 ? 'Medium' : 'High';
-
-                // Recent alerts: adverse events in last 30 days
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                const cutoff = thirtyDaysAgo.toISOString().split('T')[0];
-                const recentAlerts = records.filter((r: any) =>
-                    r.safety_event_id !== null && r.session_date >= cutoff
-                ).length;
+                const riskScore = totalSessions === 0
+                    ? 'Unknown'
+                    : safetyRate < 5 ? 'Low' : safetyRate < 15 ? 'Medium' : 'High';
 
                 return {
                     data: {
-                        activeProtocols: uniquePatients.size,
+                        activeProtocols: totalSessions,   // Show total sessions (matches My Protocols row count)
                         patientAlerts: recentAlerts,
                         networkEfficiency: Number.isFinite(efficiency) ? Math.round(efficiency * 10) / 10 : 0,
                         riskScore,
@@ -54,6 +76,7 @@ export function useAnalyticsData(siteId: string | null): AnalyticsKPIs & { refet
                     error: null,
                 };
             } catch (err: any) {
+                console.error('[useAnalyticsData] query failed:', err.message); // allow-console
                 return {
                     data: { activeProtocols: 0, patientAlerts: 0, networkEfficiency: 0, riskScore: 'Unknown' },
                     error: err.message || 'Failed to load analytics',
