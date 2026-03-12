@@ -182,7 +182,7 @@ const ClinicianProfile: React.FC = () => {
             <h1 className="text-4xl sm:text-6xl font-black text-slate-300 tracking-tighter leading-none">Practitioner Profile</h1>
             <p className="text-slate-500 font-medium text-sm sm:text-lg">Manage professional identity, credentials, and research output.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={() => navigate('/settings')} // /profile/edit not implemented, routes to account settings
               className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 border border-primary/30 rounded-2xl text-xs font-black text-slate-300 uppercase tracking-widest transition-all shadow-lg shadow-primary/20"
@@ -449,7 +449,7 @@ const ClinicianProfile: React.FC = () => {
                             <span className="material-symbols-outlined text-lg">article</span>
                           </div>
                           <div className="min-w-0">
-                            <h5 className="text-[12px] font-black text-slate-300 leading-tight group-hover:text-slate-300 transition-colors line-clamp-2">{pub.title}</h5>
+                            <h5 className="text-xs font-black text-slate-300 leading-tight group-hover:text-slate-300 transition-colors line-clamp-2">{pub.title}</h5>
                             <p className="text-sm font-bold text-slate-600 mt-1 uppercase tracking-widest truncate">{pub.source} • {pub.year}</p>
                           </div>
                         </div>

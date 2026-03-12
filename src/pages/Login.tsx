@@ -90,7 +90,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#05070a] flex flex-col justify-start sm:justify-center py-8 px-4 relative overflow-x-hidden"
+    <div className="min-h-screen bg-[#05070a] flex flex-col justify-start sm:justify-center items-center py-8 px-4 relative overflow-x-hidden"
       style={{ paddingTop: 'max(2rem, env(safe-area-inset-top))', paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
     >
 
@@ -101,7 +101,7 @@ const Login: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-900/8 rounded-full blur-[100px] opacity-20" />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-md mx-auto relative z-10">
 
         {/* Redirect context banner */}
         {wasRedirected && (

@@ -111,7 +111,7 @@ export const MobilePhaseBar: React.FC<MobilePhaseBarProps> = ({
                             onClick={() => unlocked && onPhaseChange(phase.id)}
                             className={[
                                 'flex-1 flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl',
-                                'border transition-all text-[12px] font-bold tracking-wide',
+                                'border transition-all text-xs font-bold tracking-wide',
                                 'min-h-[44px]',
                                 isActive
                                     ? `${phase.color.activeBg} ${phase.color.activeBorder} ${phase.color.active}`

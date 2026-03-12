@@ -205,7 +205,7 @@ const SecureGate: React.FC<SecureGateProps> = () => {
                   <p className="text-slate-500 text-sm font-bold mt-1">Authorized Personnel Only</p>
                 </div>
               </div>
-              <p className="text-slate-300 text-[12px] font-medium leading-relaxed">
+              <p className="text-slate-300 text-xs font-medium leading-relaxed">
                 Access to the PPN Portal requires a verified practitioner credential. Sessions are logged and audited.
               </p>
               <button

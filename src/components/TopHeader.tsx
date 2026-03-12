@@ -43,7 +43,7 @@ const NavIconButton: React.FC<{
     {/* Tooltip implementation */}
     <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
       <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
-      <span className="text-[12px] font-black text-slate-300 tracking-[0.15em] relative z-10">{tooltip}</span>
+      <span className="text-xs font-black text-slate-300 tracking-[0.15em] relative z-10">{tooltip}</span>
     </div>
   </div>
 );
@@ -280,7 +280,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                 <button
                   key={link.label}
                   onClick={() => scrollToSection(link.id)}
-                  className="text-[12px] font-black text-slate-300 hover:text-slate-300 tracking-[0.25em] transition-all relative group"
+                  className="text-xs font-black text-slate-300 hover:text-slate-300 tracking-[0.25em] transition-all relative group"
                 >
                   {link.label}
                   <div className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-indigo-600 hover:bg-indigo-500 transition-all group-hover:w-full opacity-50"></div>
@@ -339,7 +339,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   {/* Tooltip */}
                   <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-[#0c0f16] border border-white/10 rounded-lg shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-[100] whitespace-nowrap pointer-events-none scale-90 group-hover/tooltip:scale-100">
                     <div className="absolute -top-1 left-1/2 -translate-x-1/2 size-2 bg-[#0c0f16] border-t border-l border-white/10 rotate-45"></div>
-                    <span className="text-[12px] font-black text-teal-300 tracking-[0.15em] relative z-10">Leave Feedback</span>
+                    <span className="text-xs font-black text-teal-300 tracking-[0.15em] relative z-10">Leave Feedback</span>
                   </div>
                   {/* Feedback card anchored here */}
                   <FeedbackCard
@@ -386,11 +386,11 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                     <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-clinical-green border-2 border-[#0a0c12] rounded-full"></div>
                   </div>
                   <div className="hidden lg:flex flex-col">
-                    <p className="text-[12px] font-black text-slate-300 leading-none mb-1 group-hover:text-primary transition-colors">
+                    <p className="text-xs font-black text-slate-300 leading-none mb-1 group-hover:text-primary transition-colors">
                       {loading ? 'Loading...' : (userProfile?.display_name || userProfile?.email?.split('@')[0] || 'User')}
                     </p>
                     <div className="flex items-center gap-1">
-                      <span className="text-[12px] text-slate-300 font-bold tracking-widest leading-none">Practitioner</span>
+                      <span className="text-xs text-slate-300 font-bold tracking-widest leading-none">Practitioner</span>
                       <span className="material-symbols-outlined text-[15px] text-slate-300 group-hover:text-slate-300 transition-transform duration-300" style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'none' }}>expand_more</span>
                     </div>
                   </div>
@@ -400,7 +400,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                 {isMenuOpen && (
                   <div className="absolute right-0 mt-3 w-56 bg-[#0c0f16] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 backdrop-blur-3xl">
                     <div className="px-4 py-3 border-b border-white/5 mb-2">
-                      <p className="text-[12px] font-black text-slate-300 tracking-widest leading-none mb-1">Signed In As</p>
+                      <p className="text-xs font-black text-slate-300 tracking-widest leading-none mb-1">Signed In As</p>
                       <p className="text-sm font-bold text-slate-300 truncate">{userProfile?.email || 'user@ppnportal.net'}</p>
                     </div>
 
@@ -445,7 +445,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
           ) : (
             <button
               onClick={handleAuthAction}
-              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-white text-[12px] font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
+              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 hover:bg-blue-600 text-white text-xs font-black rounded-2xl tracking-widest transition-all shadow-[0_0_15px_rgba(43,116,243,0.3)] active:scale-95"
             >
               Login
             </button>

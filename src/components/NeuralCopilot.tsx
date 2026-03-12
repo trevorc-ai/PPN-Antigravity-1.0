@@ -174,7 +174,7 @@ const NeuralCopilot: React.FC<NeuralCopilotProps> = ({ context }) => {
             onChange={(e) => setQuery(e.target.value)}
             disabled={isAnalyzing}
             placeholder="Search global research ledger..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-[12px] text-slate-300 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-800 font-mono transition-all pr-14 shadow-inner disabled:opacity-50"
+            className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-5 py-4 text-xs text-slate-300 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-800 font-mono transition-all pr-14 shadow-inner disabled:opacity-50"
           />
           <button
             type="submit"

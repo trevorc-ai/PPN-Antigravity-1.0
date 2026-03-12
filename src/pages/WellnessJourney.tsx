@@ -876,7 +876,7 @@ const WellnessJourneyInternal: React.FC = () => {
                             </div>
                             <button
                                 onClick={() => setPatientBarCollapsed(false)}
-                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-[12px] sm:text-[14px] font-bold text-slate-400 uppercase tracking-wide"
+                                className="flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-700/40 border border-slate-600/40 text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-wide"
                                 aria-label="Expand patient context bar"
                             >
                                 <ChevronDown className="w-4 h-4" /> Patient
@@ -965,7 +965,7 @@ const WellnessJourneyInternal: React.FC = () => {
                                                 type: 'success'
                                             });
                                         }}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-[12px] sm:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group shrink-0"
+                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-fuchsia-500/20 rounded-lg border border-fuchsia-500/50 text-xs sm:text-sm font-bold text-fuchsia-300 hover:text-white hover:border-fuchsia-400 hover:bg-fuchsia-600/40 transition-all shadow-sm group shrink-0"
                                         title="QA Tool: Auto-complete Phase 1 & 2 forms and jump to Phase 3"
                                     >
                                         <span className="material-symbols-outlined text-sm group-hover:animate-pulse">fast_forward</span>
