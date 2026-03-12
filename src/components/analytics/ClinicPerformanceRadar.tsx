@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-    ResponsiveContainer, Tooltip, Legend
+    ResponsiveContainer, Legend
 } from 'recharts';
 import {
     Download, Calendar, TrendingUp, AlertCircle,
@@ -56,6 +56,7 @@ const METRIC_DEFINITIONS: Record<string, string> = {
 export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
     const [timeRange, setTimeRange] = useState<'quarter' | 'year'>('quarter');
     const [chartReady, setChartReady] = useState(false);
+    const [hoveredPoint, setHoveredPoint] = useState<{ subject: string; A: number; B: number } | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setChartReady(true), 100);
@@ -99,8 +100,53 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
                         <ChartSkeleton height="100%" />
                     ) : (
                         <div className="relative w-full h-full min-h-[300px]">
+
+                            {/* Fixed hover panel — top-left of chart, never follows cursor */}
+                            <div className="absolute top-2 left-2 z-20 pointer-events-none">
+                                <div className={`bg-[#0a0c12]/95 border rounded-xl p-3 min-w-[170px] transition-opacity duration-150 ${
+                                    hoveredPoint
+                                        ? 'border-indigo-500/40 shadow-lg shadow-indigo-500/10 opacity-100'
+                                        : 'border-slate-800/60 opacity-70'
+                                }`}>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-2">
+                                        {hoveredPoint ? hoveredPoint.subject : 'Efficacy'} Insight
+                                    </span>
+                                    {(() => {
+                                        const pt = hoveredPoint ?? (currentData[0] as any);
+                                        return (
+                                            <>
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                                        <span className="text-xs font-bold text-slate-300">My Clinic</span>
+                                                    </div>
+                                                    <span className="text-xs font-black text-indigo-400">{pt.A}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                                        <span className="text-xs font-bold text-slate-300">Network Avg</span>
+                                                    </div>
+                                                    <span className="text-xs font-black text-slate-400">{pt.B}</span>
+                                                </div>
+                                                <p className="text-[10px] text-slate-500 leading-snug border-t border-slate-800 pt-2 italic">
+                                                    {METRIC_DEFINITIONS[pt.subject as string] ?? ''}
+                                                </p>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                            </div>
+
                             <ResponsiveContainer width="100%" height="100%">
-                                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={currentData}>
+                                <RadarChart
+                                    cx="50%" cy="50%" outerRadius="65%" data={currentData}
+                                    onMouseMove={(e: any) => {
+                                        const payload = e?.activePayload?.[0]?.payload;
+                                        if (payload) setHoveredPoint(payload);
+                                    }}
+                                    onMouseLeave={() => setHoveredPoint(null)}
+                                >
                                     <PolarGrid gridType="polygon" stroke="#334155" strokeOpacity={0.5} />
                                     <PolarAngleAxis
                                         dataKey="subject"
@@ -125,46 +171,12 @@ export default function ClinicPerformanceRadar({ data }: { data?: any[] }) {
                                         fillOpacity={0.15}
                                         strokeDasharray="5 3"
                                     />
-                                    <Tooltip
-                                        content={({ active, payload, label }) => (
-                                            <CustomTooltip
-                                                active={active}
-                                                payload={payload}
-                                                label={label}
-                                                clinicalContext={METRIC_DEFINITIONS[label as string]}
-                                            />
-                                        )}
-                                    />
                                     <Legend
                                         wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
                                         iconType="circle"
                                     />
                                 </RadarChart>
                             </ResponsiveContainer>
-
-                            {/* Persistent Tooltip over "Efficacy" (Top Spoke) */}
-                            <div className="absolute top-[18%] left-1/2 -translate-x-1/2 -translate-y-full z-10 pointer-events-none hidden sm:block animate-in fade-in zoom-in duration-1000 delay-700 fill-mode-both">
-                                <div className="bg-[#0f1218] border border-indigo-500/30 shadow-2xl shadow-indigo-500/20 rounded-xl p-3 min-w-[150px] flex flex-col">
-                                    <span className="text-xs font-black uppercase tracking-widest text-slate-500 mb-1.5 border-b border-slate-800 pb-1">Efficacy Insight</span>
-
-                                    <div className="flex justify-between items-center mb-1">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div>
-                                            <span className="text-xs font-bold text-slate-300">My Clinic</span>
-                                        </div>
-                                        <span className="text-xs font-black text-indigo-400">{currentData[0].A}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
-                                            <span className="text-xs font-bold text-slate-300">Network Avg</span>
-                                        </div>
-                                        <span className="text-xs font-black text-slate-400">{currentData[0].B}</span>
-                                    </div>
-
-                                    <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0f1218] border-b border-r border-indigo-500/30 rotate-45"></div>
-                                </div>
-                            </div>
                         </div>
                     )}
                 </div>
