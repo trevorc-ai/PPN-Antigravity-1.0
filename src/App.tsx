@@ -34,8 +34,7 @@ const StructuralPrivacy = lazy(() => import('./pages/StructuralPrivacy'));
 const GlobalNetwork = lazy(() => import('./pages/GlobalNetwork'));
 const ForPatients = lazy(() => import('./pages/ForPatients'));
 
-// WO-585: Beta Welcome Screen (public, no auth)
-const BetaWelcome = lazy(() => import('./pages/BetaWelcome'));
+
 
 // WO-587: VIP Invite Tool (admin-only)
 const AdminInvitePage = lazy(() => import('./pages/AdminInvitePage'));
@@ -412,8 +411,7 @@ const AppContent: React.FC = () => {
               <Route path="/global-network" element={<GlobalNetwork />} />
               <Route path="/for-patients" element={<ForPatients />} />
 
-              {/* WO-585: Beta Welcome Screen — public, no auth required */}
-              <Route path="/beta-welcome" element={<BetaWelcome />} />
+
 
               {/* Protected Routes — RequireAuth gates all children behind a valid session */}
               <Route element={<RequireAuth />}>
