@@ -135,7 +135,7 @@ export const HelpInteractionChecker = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="security" label="Safety Shield" color="red" />
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Using the Interaction Checker</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Interaction Checker</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 The Interaction Checker validates clinical combinations against a 13-point safety matrix. Think of it as a spell-checker for medicine, it looks at the substance you plan to use and compares it against the medications your patient is already taking.
             </p>
@@ -225,7 +225,7 @@ export const HelpSessionReporting = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="summarize" label="Session Reporting" color="indigo" />
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Session Reporting & Exports</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Session Reporting</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 Every session you log creates a structured de-identified record. You can export these as PDF clinical summaries or CSV datasets for insurance, billing, or research purposes.
             </p>
@@ -247,7 +247,7 @@ export const HelpSessionReporting = () => (
         <div className="space-y-4">
             <FAQItem
                 q="How do I export a session report?"
-                a="Navigate to My Protocols and click the session you want. On the session detail page, click the Export PDF button. The report includes session date, protocol details, dosage, and outcome scores, with all PHI replaced by the anonymous Subject ID."
+                a="Navigate to the Download Center via the sidebar and select the Patient &amp; Clinical Records tab. From there you can export any session as a PDF clinical summary or CSV dataset. The Download Center is the recommended workflow — it gives you access to all export types in one place."
             />
             <FAQItem
                 q="What is a Subject ID?"
@@ -325,7 +325,7 @@ export const HelpDevices = () => (
                 <span className="material-symbols-outlined text-sm">schedule</span>
                 Coming Soon
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Device Syncing & Integrations</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Device Syncing</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 PPN is designed to work across desktop, tablet, and mobile. All data syncs in real-time via your secure Supabase-backed account, no manual export or import needed between devices.
             </p>
@@ -355,7 +355,7 @@ export const HelpSettings = () => (
     <div className="space-y-10">
         <div>
             <SectionBadge icon="settings" label="Account Setup" color="slate" />
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Account Settings</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-200 tracking-tight">Settings</h2>
             <p className="text-slate-400 text-base leading-relaxed max-w-3xl mt-3">
                 Manage your profile, notification preferences, and data export settings from the Settings page. Access it anytime via the sidebar or top-right menu.
             </p>
