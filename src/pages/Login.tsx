@@ -10,12 +10,25 @@ const Login: React.FC = () => {
   const from = (location.state as { from?: string })?.from || '/dashboard';
   const wasRedirected = !!(location.state as { from?: string })?.from;
 
-  // Human-readable page name from path
-  const redirectedPageName = from
-    .replace('#/', '')
-    .replace('/', '')
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase()) || 'your page';
+  // Detect Supabase OTP / invite-link errors surfaced in the URL hash.
+  // Supabase appends error params like: #error=access_denied&error_code=otp_expired
+  // The HashRouter sees these as part of the hash and passes them through.
+  const hashParams = new URLSearchParams(
+    typeof window !== 'undefined' ? window.location.hash.replace(/^#\/?[^?]*\?/, '') : ''
+  );
+  const otpError = hashParams.get('error') === 'access_denied' ||
+    hashParams.get('error_code') === 'otp_expired' ||
+    from.toLowerCase().includes('otp_expired') ||
+    from.toLowerCase().includes('access_denied');
+
+  // Human-readable page name — only shown when it's a real page redirect, not an error
+  const redirectedPageName = !otpError
+    ? from
+        .replace('#/', '')
+        .replace('/', '')
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase()) || 'your page'
+    : '';
 
   const [email, setEmail] = useState(() => {
     // BUG-518-12: Pre-populate email from localStorage on return visits.
@@ -103,8 +116,21 @@ const Login: React.FC = () => {
 
       <div className="w-full max-w-md mx-auto relative z-10">
 
-        {/* Redirect context banner */}
-        {wasRedirected && (
+        {/* OTP / invite link expired error */}
+        {otpError && (
+          <div className="mb-5 flex items-start gap-3 px-4 py-3 bg-red-500/10 border border-red-500/25 rounded-2xl">
+            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-red-300">Invite link expired</p>
+              <p className="text-sm text-red-400/80 mt-0.5">
+                This invite link is no longer valid. Please contact your PPN administrator for a new invitation.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Redirect context banner — only shown for valid page redirects */}
+        {wasRedirected && !otpError && (
           <div className="mb-5 flex items-start gap-3 px-4 py-3 bg-amber-500/10 border border-amber-500/25 rounded-2xl">
             <Info className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-amber-300/90">
