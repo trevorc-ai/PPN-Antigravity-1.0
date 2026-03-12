@@ -377,9 +377,15 @@
       let edgeFnWorked = false;
 
       try {
+        const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tZGhobHd5dHhtZWRpcGd1Z2t4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0OTY4MjUsImV4cCI6MjA4ODA3MjgyNX0.a7adx2OfrP7N4ySi-rHB4ab-SYGFvEHYjfIt18vYAqY';
+
         const res = await fetch(EDGE_FN_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${ANON_KEY}`,
+            'apikey': ANON_KEY,
+          },
           body: JSON.stringify({ email, name, persona: selectedPersona }),
         });
 
