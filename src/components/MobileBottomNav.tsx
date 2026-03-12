@@ -36,11 +36,11 @@ const NAV_ITEMS: NavItem[] = [
 
 const SPRING = { type: 'spring', stiffness: 360, damping: 28 } as const;
 
-// Shared active colours matching the existing sidebar active style
-const ACTIVE_ICON = 'text-indigo-400';
-const ACTIVE_LABEL = 'text-indigo-300';
+// Shared active colours — aligned with mockup primary (#2b6cee)
+const ACTIVE_ICON = 'text-primary';
+const ACTIVE_LABEL = 'text-primary';
 const IDLE_ICON = 'text-slate-500';
-const IDLE_LABEL = 'text-slate-600';
+const IDLE_LABEL = 'text-slate-500';
 
 export const MobileBottomNav: React.FC = () => {
     const location = useLocation();
@@ -52,7 +52,7 @@ export const MobileBottomNav: React.FC = () => {
             className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
         >
             {/* Glass bar */}
-            <div className="relative bg-[#0a1628]/92 backdrop-blur-xl border-t border-slate-800/80 flex items-end justify-around pb-[env(safe-area-inset-bottom,0px)]">
+            <div className="relative bg-[#0a1628]/92 backdrop-blur-xl border-t border-slate-800/80 flex items-end justify-around min-h-[56px] pb-[env(safe-area-inset-bottom,0px)]">
 
                 {/* Left two items: Search + Dashboard */}
                 {NAV_ITEMS.slice(0, 2).map((item) => (
@@ -71,16 +71,16 @@ export const MobileBottomNav: React.FC = () => {
                             transition={SPRING}
                             className={[
                                 'w-[56px] h-[56px] rounded-full flex items-center justify-center',
-                                // Glass pill — dim but clearly primary
-                                'bg-[rgba(99,102,241,0.12)] border border-[rgba(99,102,241,0.32)]',
-                                'shadow-[0_0_20px_rgba(99,102,241,0.22)]',
+                                // Glass pill — primary color token
+                                'bg-primary/10 border border-primary/30',
+                                'shadow-[0_0_20px_rgba(43,108,238,0.22)]',
                                 wellnessActive
-                                    ? 'border-[rgba(99,102,241,0.60)] bg-[rgba(99,102,241,0.22)]'
+                                    ? 'border-primary/60 bg-primary/20'
                                     : '',
                             ].join(' ')}
                         >
                             <span
-                                className={`material-symbols-outlined text-2xl ${wellnessActive ? 'text-indigo-300' : 'text-slate-400'
+                                className={`material-symbols-outlined text-2xl ${wellnessActive ? 'text-primary' : 'text-slate-400'
                                     }`}
                                 aria-hidden="true"
                             >
@@ -88,7 +88,7 @@ export const MobileBottomNav: React.FC = () => {
                             </span>
                         </motion.div>
                         <span
-                            className={`text-[10px] font-bold tracking-wide pb-1 ${wellnessActive ? 'text-indigo-300' : 'text-slate-600'
+                            className={`text-xs font-bold tracking-wide pb-1 ${wellnessActive ? 'text-primary' : 'text-slate-500'
                                 }`}
                         >
                             Wellness
@@ -134,7 +134,7 @@ const NavItem: React.FC<{ item: NavItem }> = ({ item }) => (
                 </motion.span>
 
                 <span
-                    className={`text-[10px] font-bold tracking-wide transition-colors ${isActive ? ACTIVE_LABEL : IDLE_LABEL
+                    className={`text-xs font-bold tracking-wide transition-colors ${isActive ? ACTIVE_LABEL : IDLE_LABEL
                         }`}
                 >
                     {item.label}

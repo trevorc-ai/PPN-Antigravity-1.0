@@ -203,7 +203,7 @@ const ProtectedLayout: React.FC<{
           onStartTour={() => setShowTour(true)}
         />
         <Breadcrumbs />
-        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent pb-20 lg:pb-0">
+        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent pb-[calc(80px+env(safe-area-inset-bottom,0px))] lg:pb-0">
           {showTour && <GuidedTour onComplete={completeTour} />}
           <Outlet />
           <Footer />
