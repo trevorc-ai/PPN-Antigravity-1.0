@@ -216,8 +216,8 @@ const FeatureTile: React.FC<typeof FEATURE_TILES[number]> = ({
         <p className="text-sm text-slate-400 leading-relaxed line-clamp-3">{description}</p>
       </div>
 
-      {/* Arrow */}
-      <div className="flex items-center justify-end">
+      {/* Arrow — hidden on mobile (no hover on touch devices), visible on sm+ */}
+      <div className="hidden sm:flex items-center justify-end">
         <span className={`flex items-center gap-1 text-xs font-black ${tagColor} opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 duration-300`}>
           Open <ArrowRight className="w-3.5 h-3.5" />
         </span>
@@ -326,7 +326,7 @@ const SimpleSearch: React.FC<SimpleSearchProps> = ({ onStartTour }) => {
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setTimeout(() => setIsFocused(false), 150)}
                 onKeyDown={handleKeyDown}
-                placeholder="Search substances, protocols, interactions, analytics..."
+                placeholder="Search substances, protocols, interactions..."
                 aria-label="Search the PPN portal"
                 aria-autocomplete="list"
                 aria-controls={showResults ? 'search-results' : undefined}
