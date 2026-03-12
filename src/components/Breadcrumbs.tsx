@@ -44,6 +44,12 @@ const Breadcrumbs: React.FC = () => {
 
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+  // Override hrefs for route segments where the plural route differs from the path segment
+  // e.g. /protocol/:id → segment 'protocol' should link to /protocols (MyProtocols page), not /protocol
+  const hrefOverrides: Record<string, string> = {
+    protocol: '/protocols',
+  };
+
   // Resolve dynamic patient refs for protocol pages
   const [patientRefs, setPatientRefs] = React.useState<Record<string, string>>({});
 
@@ -130,7 +136,7 @@ const Breadcrumbs: React.FC = () => {
         {/* Handle Path Segments */}
         {pathnames.map((value, index) => {
           const last = index === pathnames.length - 1 && !hash;
-          const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+          const to = hrefOverrides[value] ?? `/${pathnames.slice(0, index + 1).join('/')}`;
           const label = getLabel(value, index);
 
           // Skip internal routing keys that are part of a compound path but not meaningful labels on their own
