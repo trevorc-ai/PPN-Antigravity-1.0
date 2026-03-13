@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Info, AlertTriangle, ShieldAlert, Activity, Microscope, CheckCircle, HelpCircle, X, ExternalLink, BookOpen } from 'lucide-react';
 
 // --- TYPES ---
@@ -17,6 +18,7 @@ interface AdvancedTooltipProps {
     width?: string; // e.g. "w-64" or "w-[400px]"
     delay?: number; // ms, default 300 for standard
     glossaryTerm?: string; // Optional link to glossary
+    learnMoreUrl?: string; // e.g. "/help/interaction-checker" or "/help/faq#benchmark-hidden"
 }
 
 // --- CONFIGURATION ---
@@ -77,8 +79,20 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
     title,
     width,
     delay = 500,
-    glossaryTerm
+    glossaryTerm,
+    learnMoreUrl
 }) => {
+    const navigate = useNavigate();
+    const isInternal = (url: string) => url.startsWith('/');
+
+    const handleLearnMore = (e: React.MouseEvent, url: string) => {
+        e.stopPropagation();
+        if (isInternal(url)) {
+            navigate(url);
+        } else {
+            window.open(url, '_blank', 'noreferrer');
+        }
+    };
     const [isVisible, setIsVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false); // For Tier 3 click
@@ -164,6 +178,18 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
             ${config.glow}
           `}>
                         {content}
+                        {/* Micro: learn more icon-only */}
+                        {learnMoreUrl && (
+                            <button
+                                onClick={(e) => handleLearnMore(e, learnMoreUrl)}
+                                aria-label={`Learn more about ${title || 'this topic'}`}
+                                className="ml-1.5 inline-flex items-center text-slate-400 hover:text-blue-400 transition-colors"
+                            >
+                                {isInternal(learnMoreUrl)
+                                    ? <BookOpen size={11} />
+                                    : <ExternalLink size={11} />}
+                            </button>
+                        )}
                         {/* Micro-arrow */}
                         <div className={`
                absolute w-2 h-2 bg-slate-900 border-slate-700 rotate-45
@@ -243,14 +269,28 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                             </div>
 
                             {/* Footer / Meta */}
-                            {(glossaryTerm || type === 'critical') && (
+                            {(glossaryTerm || learnMoreUrl || type === 'critical') && (
                                 <div className="px-5 py-3 border-t border-slate-800/50 bg-black/20 flex justify-between items-center text-xs">
-                                    {glossaryTerm && (
-                                        <button className="flex items-center gap-1.5 text-slate-300 hover:text-primary transition-colors font-bold uppercase tracking-wider">
-                                            <BookOpen size={12} />
-                                            {glossaryTerm}
-                                        </button>
-                                    )}
+                                    <div className="flex items-center gap-3">
+                                        {glossaryTerm && (
+                                            <button className="flex items-center gap-1.5 text-slate-300 hover:text-primary transition-colors font-bold uppercase tracking-wider">
+                                                <BookOpen size={12} />
+                                                {glossaryTerm}
+                                            </button>
+                                        )}
+                                        {learnMoreUrl && (
+                                            <button
+                                                onClick={(e) => handleLearnMore(e, learnMoreUrl)}
+                                                aria-label={`Learn more about ${title || 'this topic'}`}
+                                                className="flex items-center gap-1.5 text-slate-400 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider"
+                                            >
+                                                {isInternal(learnMoreUrl)
+                                                    ? <BookOpen size={12} />
+                                                    : <ExternalLink size={12} />}
+                                                Learn more
+                                            </button>
+                                        )}
+                                    </div>
                                     {type === 'critical' && (
                                         <span className="flex items-center gap-1.5 text-red-400 font-bold uppercase tracking-wider">
                                             <ShieldAlert size={12} />
@@ -319,6 +359,19 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
                         <div className="text-sm text-slate-300 font-medium leading-relaxed max-h-48 overflow-y-auto">
                             {content}
                         </div>
+                        {/* Standard tier: learn more link below content */}
+                        {learnMoreUrl && (
+                            <button
+                                onClick={(e) => handleLearnMore(e, learnMoreUrl)}
+                                aria-label={`Learn more about ${title || 'this topic'}`}
+                                className="mt-2 flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider"
+                            >
+                                {isInternal(learnMoreUrl)
+                                    ? <BookOpen size={11} />
+                                    : <ExternalLink size={11} />}
+                                Learn more
+                            </button>
+                        )}
 
                         {/* Micro-arrow */}
                         <div className={`
