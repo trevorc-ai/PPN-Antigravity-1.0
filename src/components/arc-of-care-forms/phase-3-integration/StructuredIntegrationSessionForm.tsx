@@ -65,7 +65,7 @@ export const THERAPIST_OBSERVATIONS = [
     { id: 7, name: 'Strong therapeutic alliance', valence: 'positive' }
 ];
 
-const StarRating: React.FC<{ value: number; onChange: (value: number) => void; label: string }> = ({ value, onChange, label }) => {
+const StarRating: React.FC<{ value: number; onChange: (value: 1 | 2 | 3 | 4 | 5) => void; label: string }> = ({ value, onChange, label }) => {
     return (
         <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300">{label}</label>
@@ -285,22 +285,22 @@ const StructuredIntegrationSessionForm: React.FC<StructuredIntegrationSessionFor
                     <StarRating
                         label="Insight Integration"
                         value={data.insight_integration_rating}
-                        onChange={(value) => updateField('insight_integration_rating', value)}
+                        onChange={(value) => updateField('insight_integration_rating', value as 1 | 2 | 3 | 4 | 5)}
                     />
                     <StarRating
                         label="Emotional Processing"
                         value={data.emotional_processing_rating}
-                        onChange={(value) => updateField('emotional_processing_rating', value)}
+                        onChange={(value) => updateField('emotional_processing_rating', value as 1 | 2 | 3 | 4 | 5)}
                     />
                     <StarRating
                         label="Behavioral Application"
                         value={data.behavioral_application_rating}
-                        onChange={(value) => updateField('behavioral_application_rating', value)}
+                        onChange={(value) => updateField('behavioral_application_rating', value as 1 | 2 | 3 | 4 | 5)}
                     />
                     <StarRating
                         label="Engagement Level"
                         value={data.engagement_level_rating}
-                        onChange={(value) => updateField('engagement_level_rating', value)}
+                        onChange={(value) => updateField('engagement_level_rating', value as 1 | 2 | 3 | 4 | 5)}
                     />
                 </div>
             </div>

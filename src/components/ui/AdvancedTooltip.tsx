@@ -96,7 +96,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
     const [isVisible, setIsVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false); // For Tier 3 click
-    const timeoutRef = useRef<NodeJS.Timeout>();
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const config = TYPE_CONFIG[type];
     const Icon = config.icon;

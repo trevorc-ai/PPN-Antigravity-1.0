@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 interface BentoGridProps {
     children: React.ReactNode;
@@ -18,7 +18,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ children, className = '' }) => {
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Animation variants for container
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: prefersReducedMotion ? 1 : 0 },
         show: {
             opacity: 1,
@@ -30,7 +30,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ children, className = '' }) => {
     };
 
     // Animation variants for individual items
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: {
             opacity: prefersReducedMotion ? 1 : 0,
             y: prefersReducedMotion ? 0 : 20,

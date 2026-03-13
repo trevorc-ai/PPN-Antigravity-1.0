@@ -14,7 +14,7 @@ export const GlassmorphicCard: React.FC<GlassmorphicCardProps> = ({
     return (
         <div className={`glassmorphic-card ${hoverable ? 'hoverable' : ''} ${className}`}>
             {children}
-            <style jsx>{`
+            <style>{`
         .glassmorphic-card {
           background: rgba(45, 36, 56, 0.6);
           backdrop-filter: blur(20px);

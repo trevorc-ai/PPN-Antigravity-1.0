@@ -22,7 +22,7 @@ export const BentoGrid: React.FC<BentoGridProps> = ({ children, className = '' }
         <div className={`bento-grid ${className}`}>
             {children}
 
-            <style jsx>{`
+            <style>{`
         .bento-grid {
           display: grid;
           grid-template-columns: repeat(12, 1fr);
@@ -67,7 +67,7 @@ export const BentoCard: React.FC<BentoCardProps> = ({
         <div className={`bento-card ${glassStyles} ${className}`} data-span={span}>
             {children}
 
-            <style jsx>{`
+            <style>{`
         .bento-card {
           grid-column: span ${span};
           border-radius: 1rem;

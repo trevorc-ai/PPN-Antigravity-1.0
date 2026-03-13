@@ -38,7 +38,7 @@ const CHANGE_TYPES = [
     { id: 8, name: 'Released resentment/anger', category: 'relationship' }
 ];
 
-const StarRating: React.FC<{ value: number; onChange: (value: number) => void; label: string }> = ({ value, onChange, label }) => {
+const StarRating: React.FC<{ value: number; onChange: (value: 1 | 2 | 3 | 4 | 5) => void; label: string }> = ({ value, onChange, label }) => {
     return (
         <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300">{label}</label>
@@ -256,7 +256,7 @@ const BehavioralChangeTrackerForm: React.FC<BehavioralChangeTrackerFormProps> = 
                 <StarRating
                     label="Confidence in Sustaining Change"
                     value={data.confidence_sustaining}
-                    onChange={(value) => updateField('confidence_sustaining', value)}
+                    onChange={(value) => updateField('confidence_sustaining', value as 1 | 2 | 3 | 4 | 5)}
                 />
             </div>
 
