@@ -126,7 +126,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         />
                     </FormField>
 
-                    <FormField label="PHQ-9 Score" tooltip="Patient Health Questionnaire-9 (PHQ-9). Measures depression severity. Score 0-27: 0-4 minimal, 5-9 mild, 10-14 moderate, 15-19 moderately severe, 20-27 severe.">
+                    <FormField label="PHQ-9 Score" tooltip="The PHQ-9 measures how severe your patient's depression symptoms are, on a scale from 0 to 27. Lower scores are better. Compare to the baseline score recorded in Phase 1 to see how much has changed.">
                         <div className="space-y-2">
                             <NumberInput
                                 value={data.phq9_score}
@@ -144,7 +144,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         </div>
                     </FormField>
 
-                    <FormField label="GAD-7 Score" tooltip="Generalized Anxiety Disorder-7 (GAD-7). Measures anxiety severity. Score 0-21: 0-4 minimal, 5-9 mild, 10-14 moderate, 15-21 severe.">
+                    <FormField label="GAD-7 Score" tooltip="The GAD-7 measures anxiety severity from 0 to 21. Lower scores are better. Use this alongside the PHQ-9 to get a full picture of your patient's mental health at this stage.">
                         <div className="space-y-2">
                             <NumberInput
                                 value={data.gad7_score}
@@ -162,7 +162,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         </div>
                     </FormField>
 
-                    <FormField label="WHOQOL Score" tooltip="World Health Organization Quality of Life (WHOQOL) measure. Higher scores indicate better quality of life across physical, psychological, social, and environmental domains. Range 0-100.">
+                    <FormField label="WHOQOL Score" tooltip="The WHOQOL measures your patient's quality of life across four areas: physical health, mental and emotional health, social relationships, and living environment. Higher scores mean better overall quality of life. Scale is 0 to 100.">
                         <NumberInput
                             value={data.whoqol_score}
                             onChange={(val) => updateField('whoqol_score', val)}
@@ -172,7 +172,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         />
                     </FormField>
 
-                    <FormField label="PSQI Score" tooltip="Pittsburgh Sleep Quality Index (PSQI). Assesses sleep quality over the past month. Score 0-21: 0-4 good sleep, 5 or above indicates poor sleep quality requiring clinical attention.">
+                    <FormField label="PSQI Score" tooltip="The PSQI measures how well your patient has been sleeping over the past month. Scale is 0 to 21. Scores of 4 or below indicate good sleep. Scores of 5 or above indicate poor sleep quality and may need follow-up.">
                         <NumberInput
                             value={data.psqi_score}
                             onChange={(val) => updateField('psqi_score', val)}
@@ -182,7 +182,7 @@ const LongitudinalAssessmentForm: React.FC<LongitudinalAssessmentFormProps> = ({
                         />
                     </FormField>
 
-                    <FormField label="C-SSRS Score" tooltip="Columbia Suicide Severity Rating Scale (C-SSRS). Mandatory field. Score 0-5: 1-2 ideation only, 3+ ideation with intent or plan. Scores 3 or above trigger an immediate clinical alert." required>
+                    <FormField label="C-SSRS Score" tooltip="The C-SSRS measures suicidal thinking and behavior on a scale of 0 to 5. This field is required. Scores of 1 or 2 indicate passive thoughts. Scores of 3 or above indicate thoughts with intent or a plan, and will trigger an immediate clinical alert." required>
                         <NumberInput
                             value={data.cssrs_score}
                             onChange={(val) => updateField('cssrs_score', val)}
