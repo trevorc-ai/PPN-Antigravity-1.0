@@ -346,7 +346,7 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black uppercase tracking-[0.2em]" style={{ color: '#A8B5D1' }}>Receptor Affinity Profile</h3>
-                  <AdvancedTooltip content="Shows how strongly this substance binds to key receptors in the brain and body, compared to the normal baseline. Each point on the chart is a different biological target." side="top">
+                  <AdvancedTooltip content="Shows how strongly this substance binds to key receptors in the brain and body, compared to the normal baseline. Each point on the chart is a different biological target." side="top" learnMoreUrl="/help/overview">
                     <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
@@ -404,7 +404,7 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black uppercase tracking-[0.2em]" style={{ color: '#A8B5D1' }}>Session Vitals</h3>
-                  <AdvancedTooltip content="Heart rate and blood pressure readings logged during this session. Each point on the chart is one recorded reading." side="top">
+                  <AdvancedTooltip content="Heart rate and blood pressure readings logged during this session. Each point on the chart is one recorded reading." side="top" learnMoreUrl="/help/overview">
                     <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
@@ -471,7 +471,7 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black uppercase tracking-[0.2em]" style={{ color: '#A8B5D1' }}>Efficacy Trajectory (PHQ-9)</h3>
-                  <AdvancedTooltip content="Your patient's PHQ-9 depression scores over time. Lower scores mean less depression. The dashed green line marks the remission threshold (score of 5 or below)." side="top">
+                  <AdvancedTooltip content="Your patient's PHQ-9 depression scores over time. Lower scores mean less depression. The dashed green line marks the remission threshold (score of 5 or below)." side="top" learnMoreUrl="/help/overview">
                     <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
@@ -534,7 +534,7 @@ const ProtocolDetail: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Protocol</label>
-                    <AdvancedTooltip content="The substance, session type, date, and dosage logged for this protocol record." side="top">
+                    <AdvancedTooltip content="The substance, session type, date, and dosage logged for this protocol record." side="top" learnMoreUrl="/help/overview">
                       <Info className="text-slate-600 hover:text-indigo-400 transition-colors cursor-help print:hidden" size={14} />
                     </AdvancedTooltip>
                   </div>
@@ -601,7 +601,7 @@ const ProtocolDetail: React.FC = () => {
                 <span className="material-symbols-outlined text-3xl text-red-400">medical_services</span>
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Safety Monitor</h3>
-                  <AdvancedTooltip content="Any adverse events logged during this session, including their severity grade and whether they were resolved." side="bottom">
+                  <AdvancedTooltip content="Any adverse events logged during this session, including their severity grade and whether they were resolved." side="bottom" learnMoreUrl="/help/overview">
                     <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={14} />
                   </AdvancedTooltip>
                 </div>

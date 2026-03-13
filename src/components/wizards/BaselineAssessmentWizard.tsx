@@ -332,7 +332,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
                 <div className="flex items-center justify-between">
                     <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
                         Psychometric Scores
-                        <AdvancedTooltip content="Total composite scores from standardized assessments. PHQ-9 screens for depression severity (0–27), GAD-7 for anxiety (0–21), ACE for adverse childhood experiences (0–10), PCL-5 for PTSD symptom severity (0–80). At least one score is required to save." tier="standard" side="bottom">
+                        <AdvancedTooltip content="Total composite scores from standardized assessments. PHQ-9 screens for depression severity (0–27), GAD-7 for anxiety (0–21), ACE for adverse childhood experiences (0–10), PCL-5 for PTSD symptom severity (0–80). At least one score is required to save." tier="standard" side="bottom" learnMoreUrl="/help/wellness-journey">
                             <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About psychometric scores" />
                         </AdvancedTooltip>
                         <span className="text-slate-600 font-normal text-sm ml-0.5">optional (for testing)</span>
@@ -357,7 +357,7 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             <section className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-4 space-y-3">
                 <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
                     Baseline Physiology
-                    <AdvancedTooltip content="Optional pre-session physiological readings. Heart Rate Variability (HRV in ms) reflects autonomic nervous system state, higher values indicate parasympathetic dominance and readiness. Systolic and diastolic blood pressure document baseline cardiovascular status. These measurements are not required to save." tier="standard">
+                    <AdvancedTooltip content="Optional pre-session physiological readings. Heart Rate Variability (HRV in ms) reflects autonomic nervous system state, higher values indicate parasympathetic dominance and readiness. Systolic and diastolic blood pressure document baseline cardiovascular status. These measurements are not required to save." tier="standard" learnMoreUrl="/help/wellness-journey">
                         <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About baseline physiology" />
                     </AdvancedTooltip>
                     <span className="text-slate-600 font-normal text-sm ml-0.5">optional</span>

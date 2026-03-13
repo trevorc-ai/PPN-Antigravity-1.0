@@ -167,6 +167,7 @@ export const RiskEligibilityReport: React.FC<RiskEligibilityReportProps> = ({
                             content="Review of absolute and relative contraindications algorithmically determined from patient history and intended substance."
                             tier="standard"
                             side="top"
+                            learnMoreUrl="/help/wellness-journey"
                         >
                             <Info className="w-4 h-4 text-slate-500 hover:text-white transition-colors cursor-help print:hidden" />
                         </AdvancedTooltip>
