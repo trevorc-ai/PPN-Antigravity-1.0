@@ -762,10 +762,11 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                                             patient_id: journey.patientId,
                                             session_id: journey.session?.sessionId ?? journey.sessionId,
                                             check_date: new Date().toISOString().split('T')[0],
-                                            connection_level: data.connection_level ?? 3,
-                                            sleep_quality: data.sleep_quality ?? 3,
-                                            mood_level: data.mood_level,
-                                            anxiety_level: data.anxiety_level,
+                                            // PulseCheckWidget uses camelCase; map to snake_case for DB
+                                            connection_level: (data as any).connectionLevel ?? (data as any).connection_level ?? 3,
+                                            sleep_quality: (data as any).sleepQuality ?? (data as any).sleep_quality ?? 3,
+                                            mood_level: (data as any).moodLevel ?? (data as any).mood_level,
+                                            anxiety_level: (data as any).anxietyLevel ?? (data as any).anxiety_level,
                                         });
                                         if (!result.success) {
                                             console.warn('[SAVS-P3C] Pulse check widget DB write failed:', result.error);

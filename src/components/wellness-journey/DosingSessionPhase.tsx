@@ -232,7 +232,7 @@ const CompanionVideo: React.FC = () => (
             </p>
         </div>
         <video
-            src="/video/spherecules.mp4"
+            src="/internal/admin_uploads/video/spherecules.mp4"
             autoPlay
             loop
             muted
@@ -1112,7 +1112,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                     </span>
                                                     {!isStart && (
                                                         <button
-                                                            onClick={() => onOpenForm(step.id)}
+                                                            onClick={() => onOpenForm(step.id as import('./WellnessFormRouter').WellnessFormId)}
                                                             className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-amber-300 transition-all"
                                                             aria-label={`Amend ${step.label}`}
                                                         >
@@ -1151,14 +1151,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                 </button>
                                             ) : isCurrent ? (
                                                 <button
-                                                    onClick={() => onOpenForm(step.id)}
+                                                    onClick={() => onOpenForm(step.id as import('./WellnessFormRouter').WellnessFormId)}
                                                     className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-amber-600/40 hover:bg-amber-600/60 text-amber-100 font-black text-sm rounded-xl transition-all active:scale-95 shadow-md shadow-amber-950/50"
                                                 >
                                                     Open
                                                 </button>
                                             ) : (
                                                 <button
-                                                    onClick={() => onOpenForm(step.id)}
+                                                    onClick={() => onOpenForm(step.id as import('./WellnessFormRouter').WellnessFormId)}
                                                     className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-700/50 bg-slate-800/30 text-sm font-semibold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 hover:border-slate-600/50 transition-all"
                                                 >
                                                     Open

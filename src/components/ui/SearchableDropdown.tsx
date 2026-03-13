@@ -85,7 +85,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
                     </div>
                 </div>
             )}
-            <style jsx>{`
+            <style>{`
         .searchable-dropdown {
           position: relative;
           width: 100%;

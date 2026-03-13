@@ -24,6 +24,8 @@ interface NeuroplasticityWindowBadgeProps {
     sessionDate: string | Date;
     /** Total window length in days. Defaults to 21 per Ly et al. (2018). */
     windowDays?: number;
+    /** When false (demo data), suppresses misleading 'closed' state. */
+    hasRealSession?: boolean;
 }
 
 function getDaysRemaining(sessionDate: string | Date, windowDays: number): number {
