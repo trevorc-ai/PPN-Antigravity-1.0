@@ -115,35 +115,57 @@ const ResetPassword: React.FC = () => {
         e.preventDefault();
         setError('');
 
-        // Validate password
         const passwordError = validatePassword(password);
-        if (passwordError) {
-            setError(passwordError);
-            return;
-        }
-
-        // Check passwords match
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }
+        if (passwordError) { setError(passwordError); return; }
+        if (password !== confirmPassword) { setError('Passwords do not match'); return; }
 
         setLoading(true);
 
         try {
-            const { error } = await supabase.auth.updateUser({
-                password: password
-            });
-
+            const { error } = await supabase.auth.updateUser({ password });
             if (error) throw error;
 
+            // Detect invited users by presence of invite metadata
+            const { data: { user } } = await supabase.auth.getUser();
+            const meta = user?.user_metadata ?? {};
+            const isInvited = !!meta.invited_first_name;
+
             setSuccess(true);
-            // Invited users must complete the registration wizard before using the app.
-            // ?invited=true tells SignUp.tsx to allow an already-authenticated user through
-            // and to pre-populate their name fields from invite metadata.
-            setTimeout(() => {
-                navigate('/signup?invited=true');
-            }, 2500);
+
+            if (isInvited) {
+                // ── VIP Invite path ─────────────────────────────────────────
+                // User already has a Supabase account (created by the Edge Fn).
+                // Provision their profile + solo workspace here, then go straight
+                // to the dashboard — no signup wizard, no second email/password.
+                const firstName = (meta.invited_first_name as string) || '';
+                const lastName  = (meta.invited_last_name  as string) || '';
+
+                await supabase.from('log_user_profiles').upsert({
+                    user_id:         user!.id,
+                    user_first_name: firstName,
+                    user_last_name:  lastName,
+                });
+
+                const { data: site } = await supabase
+                    .from('log_sites')
+                    .insert([{ site_name: `${firstName}'s Workspace`, is_active: true }])
+                    .select('site_id')
+                    .single();
+
+                if (site) {
+                    await supabase.from('log_user_sites').insert({
+                        user_id:   user!.id,
+                        site_id:   site.site_id,
+                        role:      'clinician',
+                        is_active: true,
+                    });
+                }
+
+                setTimeout(() => navigate('/dashboard'), 2000);
+            } else {
+                // Standard password reset — return to login
+                setTimeout(() => navigate('/login'), 2500);
+            }
         } catch (err: any) {
             setError(err.message || 'Failed to reset password. Please try again.');
         } finally {
@@ -171,20 +193,20 @@ const ResetPassword: React.FC = () => {
 
     if (!validToken && error) {
         return (
-            <div className="min-h-screen bg-[#05070a] flex items-center justify-center p-6">
-                <div className="card-glass p-8 rounded-3xl border border-slate-800 max-w-md w-full text-center">
+            <div className="min-h-screen bg-[#0c1220] flex items-center justify-center p-6">
+                <div className="bg-slate-900 border border-slate-700 p-8 rounded-3xl max-w-md w-full text-center shadow-2xl">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 mb-4">
                         <AlertCircle className="w-8 h-8 text-red-400" />
                     </div>
-                    <h2 className="text-2xl font-black tracking-tight text-slate-300 mb-3">
+                    <h2 className="text-2xl font-black tracking-tight text-slate-100 mb-3">
                         Invalid Recovery Link
                     </h2>
-                    <p className="text-slate-300 text-sm font-medium mb-6">
+                    <p className="text-slate-400 text-sm font-medium mb-6">
                         {error}
                     </p>
                     <button
                         onClick={() => navigate('/forgot-password')}
-                        className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 hover:bg-primary/90 text-slate-300 font-black text-sm uppercase tracking-widest rounded-xl transition-all"
+                        className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-sm uppercase tracking-widest rounded-xl transition-all"
                     >
                         Request New Link
                     </button>
@@ -194,26 +216,26 @@ const ResetPassword: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#05070a] flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-[#0c1220] flex items-center justify-center p-6 relative overflow-hidden">
             {/* Background gradient effects */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5"></div>
-            <div className="absolute top-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/10 via-transparent to-purple-900/10"></div>
+            <div className="absolute top-20 left-20 w-96 h-96 bg-indigo-700/15 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-700/10 rounded-full blur-3xl"></div>
 
             {/* Main card */}
             <div className="relative w-full max-w-md">
-                <div className="card-glass p-8 rounded-3xl border border-slate-800 shadow-2xl">
+                <div className="bg-slate-900 border border-slate-700 p-8 rounded-3xl shadow-2xl">
                     {!success ? (
                         <>
                             {/* Header */}
                             <div className="text-center mb-8">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 mb-4">
-                                    <Lock className="w-8 h-8 text-primary" />
+                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 mb-4">
+                                    <Lock className="w-8 h-8 text-indigo-400" />
                                 </div>
-                                <h1 className="text-3xl font-black tracking-tight text-slate-300 mb-2">
+                                <h1 className="text-3xl font-black tracking-tight text-slate-100 mb-2">
                                     Create Your Password
                                 </h1>
-                                <p className="text-slate-300 text-sm font-medium">
+                                <p className="text-slate-400 text-sm font-medium">
                                     Choose a strong password. You'll use this to log in from any device.
                                 </p>
                             </div>
@@ -230,7 +252,7 @@ const ResetPassword: React.FC = () => {
 
                                 {/* New password field */}
                                 <div className="space-y-2">
-                                    <label htmlFor="password" className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                    <label htmlFor="password" className="block text-xs font-bold text-slate-300 uppercase tracking-widest">
                                         New Password
                                     </label>
                                     <div className="relative">
@@ -241,7 +263,7 @@ const ResetPassword: React.FC = () => {
                                             onChange={(e) => setPassword(e.target.value)}
                                             placeholder="Enter new password"
                                             required
-                                            className="w-full px-4 py-3 pr-12 bg-slate-900/50 border border-slate-700 rounded-xl text-slate-300 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 pr-12 bg-slate-800 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                                         />
                                         <button
                                             type="button"
@@ -292,7 +314,7 @@ const ResetPassword: React.FC = () => {
 
                                 {/* Confirm password field */}
                                 <div className="space-y-2">
-                                    <label htmlFor="confirmPassword" className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+                                    <label htmlFor="confirmPassword" className="block text-xs font-bold text-slate-300 uppercase tracking-widest">
                                         Confirm Password
                                     </label>
                                     <div className="relative">
@@ -303,7 +325,7 @@ const ResetPassword: React.FC = () => {
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             placeholder="Confirm new password"
                                             required
-                                            className="w-full px-4 py-3 pr-12 bg-slate-900/50 border border-slate-700 rounded-xl text-slate-300 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 pr-12 bg-slate-800 border border-slate-600 rounded-xl text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                                         />
                                         <button
                                             type="button"
@@ -345,13 +367,13 @@ const ResetPassword: React.FC = () => {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mb-4">
                                     <CheckCircle className="w-8 h-8 text-emerald-400" />
                                 </div>
-                                <h2 className="text-2xl font-black tracking-tight text-slate-300 mb-3">
-                                    Password Set!
+                                <h2 className="text-2xl font-black tracking-tight text-slate-100 mb-3">
+                                    You're in.
                                 </h2>
-                                <p className="text-slate-300 text-sm font-medium mb-6">
-                                    Your password is saved. Taking you into the portal now.
+                                <p className="text-slate-400 text-sm font-medium mb-6">
+                                    Password saved. Setting up your workspace...
                                 </p>
-                                <div className="inline-flex items-center gap-2 text-xs text-slate-500 font-medium">
+                                <div className="inline-flex items-center gap-2 text-xs text-slate-400 font-medium">
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                     Entering the portal...
                                 </div>
@@ -362,7 +384,7 @@ const ResetPassword: React.FC = () => {
 
                 {/* Security notice */}
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-slate-600 font-medium">
+                    <p className="text-sm text-slate-500 font-medium">
                         🔒 HIPAA-compliant · End-to-end encrypted
                     </p>
                 </div>

@@ -3,16 +3,30 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { Loader2, AlertCircle, Activity, ShieldCheck, Info, Eye, EyeOff } from 'lucide-react';
 
+// ── Helper: extract Supabase token params from any string ──────────────────
+function extractSupabaseTokens(src: string): { accessToken: string; refreshToken: string } | null {
+  if (!src.includes('access_token')) return null;
+  const paramStr = src.substring(src.indexOf('access_token'));
+  const p = new URLSearchParams(paramStr);
+  const accessToken  = p.get('access_token');
+  const refreshToken = p.get('refresh_token');
+  if (accessToken && refreshToken) return { accessToken, refreshToken };
+  return null;
+}
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // If redirected here by RequireAuth, go back to the page they were trying to reach
   const from = (location.state as { from?: string })?.from || '/dashboard';
-  const wasRedirected = !!(location.state as { from?: string })?.from;
+
+  // Does the URL / from-state contain raw Supabase auth tokens?
+  // This happens when the invite link redirects to /#/login instead of /#/reset-password.
+  const hasInviteTokens = from.includes('access_token') || window.location.hash.includes('access_token');
+
+  const wasRedirected = !!(location.state as { from?: string })?.from && !hasInviteTokens;
 
   // Detect Supabase OTP / invite-link errors surfaced in the URL hash.
-  // Supabase appends error params like: #error=access_denied&error_code=otp_expired
-  // The HashRouter sees these as part of the hash and passes them through.
   const hashParams = new URLSearchParams(
     typeof window !== 'undefined' ? window.location.hash.replace(/^#\/?[^?]*\?/, '') : ''
   );
@@ -31,8 +45,6 @@ const Login: React.FC = () => {
     : '';
 
   const [email, setEmail] = useState(() => {
-    // BUG-518-12: Pre-populate email from localStorage on return visits.
-    // Practitioner B2B context only — not patient PHI.
     return localStorage.getItem('ppn_last_email') || '';
   });
   const [password, setPassword] = useState('');
@@ -43,6 +55,33 @@ const Login: React.FC = () => {
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetSuccess, setResetSuccess] = useState(false);
+
+  // ── INVITE TOKEN INTERCEPTOR ─────────────────────────────────────────────
+  // When Supabase routes an invited user to /#/login (instead of /#/reset-password)
+  // the access_token + refresh_token land in the URL / from-state.
+  // We silently establish the session and redirect to the password-creation page.
+  useEffect(() => {
+    if (!hasInviteTokens) return;
+    const tokens =
+      extractSupabaseTokens(from) ||
+      extractSupabaseTokens(window.location.hash);
+    if (!tokens) return;
+
+    setLoading(true);
+    supabase.auth
+      .setSession({ access_token: tokens.accessToken, refresh_token: tokens.refreshToken })
+      .then(({ error }) => {
+        if (error) {
+          setLoading(false);
+          setError('Your invite link has expired. Please contact your PPN administrator for a new one.');
+        } else {
+          // Clean tokens from URL before navigating
+          window.history.replaceState(null, '', window.location.pathname + '#/reset-password');
+          navigate('/reset-password', { replace: true });
+        }
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,15 +142,15 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#05070a] flex flex-col items-center justify-start sm:justify-center py-8 px-4 relative overflow-x-hidden"
+    <div className="min-h-screen bg-[#0c1220] flex flex-col items-center justify-start sm:justify-center py-8 px-4 relative overflow-x-hidden"
       style={{ paddingTop: 'max(2rem, env(safe-area-inset-top))', paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
     >
 
-      {/* Background orbs — deeper, matching Pricing dark base */}
+      {/* Background orbs */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-indigo-900/15 rounded-full blur-[140px] opacity-50" />
-        <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-indigo-900/10 rounded-full blur-[140px] opacity-35" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-900/8 rounded-full blur-[100px] opacity-20" />
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-indigo-800/20 rounded-full blur-[140px] opacity-60" />
+        <div className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-indigo-900/15 rounded-full blur-[140px] opacity-50" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-800/10 rounded-full blur-[100px] opacity-30" />
       </div>
 
       <div className="w-full max-w-md mx-auto relative z-10">
@@ -155,10 +194,10 @@ const Login: React.FC = () => {
               <Activity className="text-indigo-400 w-7 h-7" />
             </div>
           </div>
-          <h1 className="text-4xl font-black tracking-tighter text-slate-300">
-            PPN <span className="text-primary">Portal</span>
+          <h1 className="text-4xl font-black tracking-tighter text-slate-100">
+            PPN <span className="text-indigo-400">Portal</span>
           </h1>
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">
+          <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-2">
             Secure Clinical Intelligence Network
           </p>
         </div>
@@ -166,9 +205,9 @@ const Login: React.FC = () => {
         {/* Card — Pricing aesthetic: rounded-[2.5rem], glow ring */}
         <div className="relative">
           {/* Indigo glow ring */}
-          <div className="absolute -inset-0.5 bg-indigo-500/10 blur-md opacity-60 rounded-[2.5rem]" />
+          <div className="absolute -inset-0.5 bg-indigo-500/15 blur-md opacity-70 rounded-[2.5rem]" />
 
-          <div className="relative bg-[#1c222d]/50 border border-slate-800 rounded-[2.5rem] p-6 sm:p-10 backdrop-blur-sm">
+          <div className="relative bg-slate-900 border border-slate-700 rounded-[2.5rem] p-6 sm:p-10">
             <form onSubmit={handleLogin} className="space-y-6">
 
               {/* Error */}
@@ -181,7 +220,7 @@ const Login: React.FC = () => {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="login-email" className="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+                <label htmlFor="login-email" className="block text-xs font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
                   Email
                 </label>
                 <input
@@ -189,7 +228,7 @@ const Login: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                  className="w-full px-5 py-3.5 bg-slate-800 border border-slate-600 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
                   placeholder="your@email.com"
                   required
                   disabled={loading}
@@ -198,7 +237,7 @@ const Login: React.FC = () => {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="login-password" className="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+                <label htmlFor="login-password" className="block text-xs font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
                   Password
                 </label>
                 <div className="relative">
@@ -207,7 +246,8 @@ const Login: React.FC = () => {
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-5 py-3.5 pr-12 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleLogin(e as any); } }}
+                    className="w-full px-5 py-3.5 pr-12 bg-slate-800 border border-slate-600 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
                     placeholder="••••••••"
                     required
                     disabled={loading}
@@ -254,12 +294,12 @@ const Login: React.FC = () => {
 
 
               {/* Invitation-only notice — replaces dead Sign Up link (BUG-518-03) */}
-              <div className="text-center pt-2 border-t border-slate-800/60">
-                <p className="text-sm text-slate-500 font-medium">
+              <div className="text-center pt-2 border-t border-slate-700/60">
+                <p className="text-sm text-slate-400 font-medium">
                   PPN Portal is{' '}
-                  <span className="text-slate-400 font-bold">invitation-only.</span>
+                  <span className="text-slate-300 font-bold">invitation-only.</span>
                 </p>
-                <p className="text-xs text-slate-600 font-medium mt-1">
+                <p className="text-xs text-slate-500 font-medium mt-1">
                   Access is granted by your PPN administrator via email invitation.
                 </p>
               </div>
@@ -268,7 +308,7 @@ const Login: React.FC = () => {
         </div>
 
         {/* Security Badge */}
-        <div className="mt-6 flex items-center justify-center gap-2 text-slate-600 text-xs">
+        <div className="mt-6 flex items-center justify-center gap-2 text-slate-500 text-xs">
           <ShieldCheck className="w-4 h-4" />
           <span className="font-black uppercase tracking-widest">HIPAA Compliant • End-to-End Encrypted</span>
         </div>
@@ -279,8 +319,8 @@ const Login: React.FC = () => {
         showResetModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="relative w-full max-w-md">
-              <div className="absolute -inset-0.5 bg-indigo-500/10 blur-md opacity-60 rounded-[2.5rem]" />
-              <div className="relative bg-[#1c222d]/80 border border-slate-800 rounded-[2.5rem] p-8 sm:p-10 backdrop-blur-sm">
+              <div className="absolute -inset-0.5 bg-indigo-500/15 blur-md opacity-70 rounded-[2.5rem]" />
+              <div className="relative bg-slate-900 border border-slate-700 rounded-[2.5rem] p-8 sm:p-10">
                 <button
                   onClick={() => {
                     setShowResetModal(false);
@@ -293,8 +333,8 @@ const Login: React.FC = () => {
                   <span className="material-symbols-outlined">close</span>
                 </button>
 
-                <h2 className="text-3xl font-black tracking-tighter text-slate-300 mb-1">Reset Password</h2>
-                <p className="text-sm text-slate-500 font-medium mb-8 uppercase tracking-widest">
+                <h2 className="text-3xl font-black tracking-tighter text-slate-100 mb-1">Reset Password</h2>
+                <p className="text-sm text-slate-400 font-medium mb-8 uppercase tracking-widest">
                   We'll send a secure link to your email.
                 </p>
 
@@ -318,7 +358,7 @@ const Login: React.FC = () => {
                     )}
 
                     <div>
-                      <label htmlFor="reset-email" className="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
+                      <label htmlFor="reset-email" className="block text-xs font-black text-slate-300 uppercase tracking-[0.2em] mb-2">
                         Email Address
                       </label>
                       <input
@@ -326,7 +366,7 @@ const Login: React.FC = () => {
                         type="email"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
-                        className="w-full px-5 py-3.5 bg-[#0c0f14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                        className="w-full px-5 py-3.5 bg-slate-800 border border-slate-600 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all"
                         placeholder="your@email.com"
                         required
                         disabled={resetLoading}
