@@ -186,6 +186,7 @@ export const PotencyNormalizerCard: React.FC<PotencyNormalizerCardProps> = ({
                         <AdvancedTooltip
                             content="1.0 = Standard potency. 2.0 = Twice as strong. Auto-filled from strain database. Edit to override with your own test results."
                             tier="standard"
+                            learnMoreUrl="/help/interaction-checker"
                         >
                             <div className="flex items-center gap-3 cursor-help">
                                 <input

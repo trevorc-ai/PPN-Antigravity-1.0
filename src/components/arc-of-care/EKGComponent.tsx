@@ -254,10 +254,11 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                 </div>
                 <AdvancedTooltip
                     content="QTc is auto-calculated using the Bazett formula (QTc = QT / √RR) from the Heart Rate entered in this reading. QTc thresholds: <440ms Normal · 440–470ms Borderline · >470ms Prolonged · >500ms Red Flag (Torsades risk). Critical for ibogaine safety monitoring per Dr. Allen's research."
-                    tier="detailed"
+                    tier="guide"
                     type="info"
                     title="EKG Monitoring"
                     side="bottom-left"
+                    learnMoreUrl="/help/interaction-checker"
                 >
                     <button
                         type="button"
@@ -380,6 +381,7 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                             <AdvancedTooltip
                                 content="Normal PR interval: 120–200 ms. Prolonged PR (>200 ms) = First-degree AV block. Short PR (<120 ms) may indicate pre-excitation (WPW)."
                                 tier="micro"
+                                learnMoreUrl="/help/interaction-checker"
                             >
                                 <span className="ml-1 text-slate-500 cursor-help">ⓘ</span>
                             </AdvancedTooltip>
@@ -426,6 +428,7 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                             <AdvancedTooltip
                                 content="Normal QRS duration: 60–100 ms. Wide QRS (>120 ms) = Bundle branch block or ventricular conduction defect."
                                 tier="micro"
+                                learnMoreUrl="/help/interaction-checker"
                             >
                                 <span className="ml-1 text-slate-500 cursor-help">ⓘ</span>
                             </AdvancedTooltip>
@@ -472,6 +475,7 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                             <AdvancedTooltip
                                 content="Enter the raw, uncorrected QT interval measured from the EKG. QTc will be auto-calculated using Bazett formula from the Heart Rate entered above."
                                 tier="micro"
+                                learnMoreUrl="/help/interaction-checker"
                             >
                                 <span className="ml-1 text-slate-500 cursor-help">ⓘ</span>
                             </AdvancedTooltip>
@@ -556,6 +560,7 @@ export const EKGComponent: React.FC<EKGComponentProps> = ({ heartRate, onChange 
                             <AdvancedTooltip
                                 content="Select all observed waveform abnormalities. Multiple selections allowed. Each finding will be recorded for clinical review."
                                 tier="micro"
+                                learnMoreUrl="/help/interaction-checker"
                             >
                                 <span className="ml-1 text-slate-500 cursor-help">ⓘ</span>
                             </AdvancedTooltip>

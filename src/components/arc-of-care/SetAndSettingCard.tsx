@@ -76,8 +76,9 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                     <AdvancedTooltip
                         content="Set & Setting refers to the patient's mindset (set) and environment (setting) before treatment. These factors significantly influence therapeutic outcomes."
                         type="info"
-                        tier="standard"
+                        tier="guide"
                         side="left"
+                        learnMoreUrl="/help/wellness-journey"
                     >
                         <div className="p-2 hover:bg-slate-800/50 rounded-lg transition-colors cursor-help">
                             <Shield className="w-5 h-5 text-slate-300" />
@@ -97,9 +98,10 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <AdvancedTooltip
                             content="Treatment expectancy measures how much the patient believes the therapy will help them. Higher belief (>70) correlates with 25% better outcomes due to positive placebo effects."
                             type="info"
-                            tier="detailed"
+                            tier="guide"
                             title="Why Expectancy Matters"
                             side="top"
+                            learnMoreUrl="/help/wellness-journey"
                         >
                             <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -119,9 +121,10 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <AdvancedTooltip
                             content="Adverse Childhood Experiences (ACE) score measures childhood trauma (0-10). Higher scores indicate lower baseline resilience and may require additional integration support."
                             type="warning"
-                            tier="detailed"
+                            tier="guide"
                             title="Understanding ACE"
                             side="top"
+                            learnMoreUrl="/help/wellness-journey"
                         >
                             <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -141,9 +144,10 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <AdvancedTooltip
                             content="Generalized Anxiety Disorder scale (0-21). Scores >10 predict a 45% likelihood of challenging experiences during the session. Anxiolytic support may be beneficial."
                             type="warning"
-                            tier="detailed"
+                            tier="guide"
                             title="GAD-7 Clinical Significance"
                             side="top"
+                            learnMoreUrl="/help/wellness-journey"
                         >
                             <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -163,9 +167,10 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <AdvancedTooltip
                             content="Based on baseline risk factors (ACE, GAD-7, Expectancy), this algorithm forecasts the optimal number and frequency of integration sessions for sustained benefit."
                             type="info"
-                            tier="detailed"
+                            tier="guide"
                             title="Integration Prediction Algorithm"
                             side="top"
+                            learnMoreUrl="/help/wellness-journey"
                         >
                             <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -190,9 +195,10 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <AdvancedTooltip
                             content="Patient Health Questionnaire-9 (0-27). Scores ≥10 indicate clinically significant depression. Scores ≥20 require psychiatric consultation before dosing."
                             type="warning"
-                            tier="detailed"
+                            tier="guide"
                             title="PHQ-9 Clinical Significance"
                             side="top"
+                            learnMoreUrl="/help/wellness-journey"
                         >
                             <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -213,9 +219,10 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                             <AdvancedTooltip
                                 content="PTSD Checklist for DSM-5 (0-80). Scores ≥33 correlate with probable PTSD diagnosis. Trauma-informed care protocols should be activated for scores ≥33."
                                 type="warning"
-                                tier="detailed"
+                                tier="guide"
                                 title="PCL-5 Clinical Significance"
                                 side="top"
+                                learnMoreUrl="/help/wellness-journey"
                             >
                                 <div className="text-slate-300 hover:text-slate-300 cursor-help">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

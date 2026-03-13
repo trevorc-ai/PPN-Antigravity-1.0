@@ -60,6 +60,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                     <AdvancedTooltip
                         content="Clinical definition and diagnostic criteria for this indication. Select the primary condition being treated in this session."
                         tier="standard"
+                        learnMoreUrl="/help/overview"
                     >
                         <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
                     </AdvancedTooltip>
@@ -96,6 +97,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                     <AdvancedTooltip
                         content="Mechanism of action, receptor affinity profile, and pharmacokinetics. Choose the psychedelic substance being administered."
                         tier="standard"
+                        learnMoreUrl="/help/overview"
                     >
                         <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
                     </AdvancedTooltip>
@@ -132,6 +134,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                     <AdvancedTooltip
                         content="Therapeutic range: 20-30mg. High dose: 31-50mg. Dangerous: 51+mg. Adjust based on patient weight, prior experience, and clinical indication. Contraindications: cardiovascular disease, severe hypertension."
                         tier="standard"
+                        learnMoreUrl="/help/overview"
                     >
                         <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
                     </AdvancedTooltip>
@@ -156,6 +159,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                     <AdvancedTooltip
                         content="Onset time: 30-60min (oral). Peak: 2-3hrs. Duration: 4-6hrs. Bioavailability: 50-60% (oral). Choose route based on clinical protocol and patient preference."
                         tier="standard"
+                        learnMoreUrl="/help/overview"
                     >
                         <Info className="w-4 h-4 text-[#94a3b8] hover:text-[#f8fafc] cursor-help transition-colors" />
                     </AdvancedTooltip>

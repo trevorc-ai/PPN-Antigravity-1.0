@@ -134,8 +134,8 @@ const SessionMonitoringDashboard: React.FC<SessionMonitoringDashboardProps> = ({
                     <div className="text-right">
                         <AdvancedTooltip
                             content="Time since dose was administered. Peak intensity typically occurs 1-3 hours post-dose for psilocybin."
-                            type="info"
                             tier="standard"
+                            learnMoreUrl="/help/wellness-journey"
                             side="left"
                         >
                             <div className="flex items-center gap-2 cursor-help">

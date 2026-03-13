@@ -101,6 +101,7 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
                     <h3 className="text-lg font-semibold text-slate-300">How connected do you feel today?</h3>
                     <AdvancedTooltip
                         content="How connected do you feel to yourself, others, and the world? This tracks your sense of meaning and purpose."
+                        learnMoreUrl="/help/wellness-journey"
                         type="info"
                         tier="standard"
                         side="top"
@@ -144,7 +145,8 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
                     <AdvancedTooltip
                         content="Sleep is the 'canary in the coal mine' for mental health. Declining sleep quality often precedes depression relapse by 2-3 weeks."
                         type="info"
-                        tier="detailed"
+                        tier="guide"
+                        learnMoreUrl="/help/wellness-journey"
                         title="Why Sleep Matters"
                         side="top"
                     >
