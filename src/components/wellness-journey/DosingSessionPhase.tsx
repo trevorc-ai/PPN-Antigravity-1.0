@@ -19,7 +19,7 @@ import { createSessionVital, createTimelineEvent, endDosingSession } from '../..
 // Prevents the entire WellnessJourney page from going blank on a sub-component error.
 interface EBProps { onReset: () => void; children: React.ReactNode; }
 interface EBState { hasError: boolean; error: string; }
-export class Phase2ErrorBoundary extends Component<EBProps, EBState> {
+export class Phase2ErrorBoundary extends React.Component<EBProps, EBState> {
     public state: EBState = { hasError: false, error: '' };
 
     constructor(props: EBProps) {
