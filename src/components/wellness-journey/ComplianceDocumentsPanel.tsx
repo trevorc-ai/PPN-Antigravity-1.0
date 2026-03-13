@@ -133,6 +133,7 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                             content="Automatically generated legal and operational documents required for regulatory compliance."
                             tier="standard"
                             side="top"
+                            learnMoreUrl="/help/reports"
                         >
                             <Info className="w-4 h-4 text-slate-500 hover:text-white transition-colors cursor-help print:hidden" />
                         </AdvancedTooltip>
@@ -170,6 +171,7 @@ export const ComplianceDocumentsPanel: FC<ComplianceDocumentsPanelProps> = ({ pa
                             <AdvancedTooltip
                                 content={doc.isReady ? 'Download compliant PDF export' : `Complete ${doc.requiredLabel} to unlock`}
                                 tier="micro"
+                                learnMoreUrl="/help/reports"
                             >
                                 <button
                                     type="button"

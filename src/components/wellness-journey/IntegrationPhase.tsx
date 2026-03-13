@@ -71,6 +71,7 @@ const SessionSnapshotStrip: React.FC<{ journey: any; phase2Assessment: any | nul
                     <AdvancedTooltip
                         content="MEQ-30 = mystical depth of the experience. CEQ = how challenging it was. Both together shape what integration requires."
                         tier="micro"
+                        learnMoreUrl="/help/wellness-journey"
                     >
                         <Info className="inline ml-1 w-3 h-3 text-slate-600 cursor-help" />
                     </AdvancedTooltip>
@@ -424,7 +425,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 <div className="flex items-center gap-2 shrink-0">
                     {isDemo !== undefined && <DemoDataBadge isDemo={isDemo} />}
                     {/* WO-550 Defect #22: side='left' prevents right-edge clipping */}
-                    <AdvancedTooltip content={tooltip} tier="guide" side="left">
+                    <AdvancedTooltip content={tooltip} tier="guide" side="left" learnMoreUrl="/help/wellness-journey">
                         <Info className="w-4 h-4 text-slate-600 hover:text-slate-300 cursor-help transition-colors" />
                     </AdvancedTooltip>
                 </div>
@@ -671,7 +672,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                         </div>
                         <div className="flex items-center gap-2">
                             <DemoDataBadge isDemo={!phase3.hasRealPulseData} />
-                            <AdvancedTooltip content="Export 7-day pulse check trend as CSV for integration session review." tier="micro">
+                            <AdvancedTooltip content="Export 7-day pulse check trend as CSV for integration session review." tier="micro" learnMoreUrl="/help/wellness-journey">
                                 <button
                                     onClick={handleExportTrend}
                                     className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-400 hover:text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
@@ -801,7 +802,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 flex-1">
                     {/* Pulse Check Compliance */}
                     <div className="space-y-2" role="group" aria-label="Daily Pulse compliance">
-                        <AdvancedTooltip content="Percentage of days since the session on which the patient logged a Daily Pulse check-in." tier="micro" side="bottom">
+                        <AdvancedTooltip content="Percentage of days since the session on which the patient logged a Daily Pulse check-in." tier="micro" side="bottom" learnMoreUrl="/help/wellness-journey">
                             <div className="flex items-center justify-between ppn-meta font-bold uppercase tracking-wider text-slate-500 cursor-help">
                                 <span>Daily Pulse <Info className="inline w-3 h-3 ml-1" /></span>
                                 <span className={pulseCompliance >= 80 ? 'text-teal-400' : 'text-amber-400'}>{pulseCompliance}%</span>
@@ -814,7 +815,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
 
                     {/* PHQ-9 Compliance */}
                     <div className="space-y-2" role="group" aria-label="Weekly PHQ-9 compliance">
-                        <AdvancedTooltip content="Percentage of expected weekly PHQ-9 assessments that have been completed since the session." tier="micro" side="bottom">
+                        <AdvancedTooltip content="Percentage of expected weekly PHQ-9 assessments that have been completed since the session." tier="micro" side="bottom" learnMoreUrl="/help/wellness-journey">
                             <div className="flex items-center justify-between ppn-meta font-bold uppercase tracking-wider text-slate-500 cursor-help">
                                 <span>Weekly PHQ-9 <Info className="inline w-3 h-3 ml-1" /></span>
                                 <span className={phq9Compliance >= 90 ? 'text-teal-400' : 'text-amber-400'}>{phq9Compliance}%</span>
@@ -826,7 +827,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                     </div>
 
                     {/* Integration Sessions counter */}
-                    <AdvancedTooltip content="Number of integration therapy sessions completed vs. scheduled for this patient." tier="micro" side="bottom">
+                    <AdvancedTooltip content="Number of integration therapy sessions completed vs. scheduled for this patient." tier="micro" side="bottom" learnMoreUrl="/help/wellness-journey">
                         <div className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl text-center cursor-help" role="group" aria-label={`Integration sessions attended: ${intAttended} of ${intScheduled}`}>
                             <div className="text-3xl font-black text-teal-400 mb-1" aria-hidden="true">
                                 {intAttended}<span className="text-xl text-slate-500 font-normal">/{intScheduled}</span>

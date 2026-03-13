@@ -128,7 +128,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                         <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
                         <div className="flex-1 space-y-2">
                             <div className="flex items-center gap-2">
-                                <AdvancedTooltip content={tooltips.safetyShield.severityScore}>
+                                <AdvancedTooltip content={tooltips.safetyShield.severityScore} learnMoreUrl="/help/interaction-checker">
                                     <span className="text-xs font-black text-red-500 uppercase tracking-wider">
                                         Contraindicated
                                     </span>
@@ -140,7 +140,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                             <p className="text-sm text-slate-300 leading-relaxed">
                                 <strong>Risk:</strong> {interaction.risk_description}
                             </p>
-                            <AdvancedTooltip content={tooltips.safetyShield.mechanism}>
+                            <AdvancedTooltip content={tooltips.safetyShield.mechanism} learnMoreUrl="/help/interaction-checker">
                                 <p className="text-sm text-slate-300 leading-relaxed">
                                     <strong>Mechanism:</strong> {interaction.mechanism}
                                 </p>
@@ -192,7 +192,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                         <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
                         <div className="flex-1 space-y-2">
                             <div className="flex items-center gap-2">
-                                <AdvancedTooltip content={tooltips.safetyShield.severityScore}>
+                                <AdvancedTooltip content={tooltips.safetyShield.severityScore} learnMoreUrl="/help/interaction-checker">
                                     <span className="text-xs font-black text-yellow-500 uppercase tracking-wider">
                                         Caution
                                     </span>
@@ -204,7 +204,7 @@ export const InteractionChecker: React.FC<InteractionCheckerProps> = ({
                             <p className="text-sm text-slate-300 leading-relaxed">
                                 <strong>Risk:</strong> {interaction.risk_description}
                             </p>
-                            <AdvancedTooltip content={tooltips.safetyShield.mechanism}>
+                            <AdvancedTooltip content={tooltips.safetyShield.mechanism} learnMoreUrl="/help/interaction-checker">
                                 <p className="text-sm text-slate-300 leading-relaxed">
                                     <strong>Mechanism:</strong> {interaction.mechanism}
                                 </p>
