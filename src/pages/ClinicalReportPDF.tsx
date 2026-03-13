@@ -175,6 +175,79 @@ const RadarChart: React.FC = () => {
     );
 };
 
+
+// ─── WO-602: Inline static PK curve (canvas-free, print-safe) ─────────────────
+const PDF_PK_CURVES: Record<string, [number, number][]> = {
+    psilocybin: [[0,0],[20,1.5],[45,4],[75,7],[105,9.2],[135,9.8],[165,9.5],[210,8.5],[270,7],[330,5],[390,3],[450,1.5],[480,0.5]],
+    ketamine:   [[0,0],[5,4.5],[10,8.5],[20,9.8],[30,9.5],[45,8],[60,6],[90,4],[120,2.5],[150,1],[180,0.2]],
+    mdma:       [[0,0],[30,2],[60,5.5],[90,8.5],[120,9.8],[150,9.5],[180,9],[240,8],[300,6],[360,4],[420,2],[480,0.5]],
+    ayahuasca:  [[0,0],[20,1.5],[40,4.5],[60,7.5],[80,9],[100,9.5],[130,8.5],[160,8],[200,7],[260,5],[320,3.5],[380,2],[450,0.5]],
+    unknown:    [[0,0],[30,2],[90,7],[150,9.5],[210,9],[270,7],[330,4],[390,1.5],[420,0]],
+};
+const PDF_PK_PHASES: Record<string, Record<string, [number,number]>> = {
+    psilocybin: { onset:[0,75], peak:[75,210], integration:[210,360], afterglow:[360,480] },
+    ketamine:   { onset:[0,15], peak:[15,60],  integration:[60,120],  afterglow:[120,180] },
+    mdma:       { onset:[0,90], peak:[90,270], integration:[270,420], afterglow:[420,480] },
+    ayahuasca:  { onset:[0,60], peak:[60,160], integration:[160,320], afterglow:[320,450] },
+    unknown:    { onset:[0,60], peak:[60,210], integration:[210,360], afterglow:[360,420] },
+};
+const PDF_PHASE_COLORS: Record<string, string> = {
+    onset:'rgba(167,139,250,0.12)', peak:'rgba(45,212,191,0.12)',
+    integration:'rgba(245,158,11,0.10)', afterglow:'rgba(251,113,133,0.09)',
+};
+const PDF_PHASE_LABELS: Record<string, string> = { onset:'ONSET', peak:'PEAK', integration:'INTEGRATION', afterglow:'AFTERGLOW' };
+
+const PKChart: React.FC<{ substance: string; accent: string }> = ({ substance, accent }) => {
+    const W = 540; const H = 160;
+    const pad = { t: 22, r: 16, b: 36, l: 36 };
+    const cW = W - pad.l - pad.r; const cH = H - pad.t - pad.b;
+    const curve = PDF_PK_CURVES[substance] ?? PDF_PK_CURVES.unknown;
+    const totalMin = curve[curve.length - 1][0];
+    const phases = PDF_PK_PHASES[substance] ?? PDF_PK_PHASES.unknown;
+    const toX = (m: number) => (m / totalMin) * cW;
+    const toY = (i: number) => cH - (i / 10) * cH;
+    const linePath = curve.map(([m,i]: [number,number], idx: number) => `${idx===0?'M':'L'}${toX(m).toFixed(1)},${toY(i).toFixed(1)}`).join(' ');
+    const areaPath = linePath + ` L${toX(totalMin).toFixed(1)},${cH} L0,${cH} Z`;
+    const gradId = `pk-grad-${substance}`;
+    return (
+        <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow:'visible' }}>
+            <defs>
+                <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor={accent} stopOpacity="0.30" />
+                    <stop offset="100%" stopColor={accent} stopOpacity="0.02" />
+                </linearGradient>
+            </defs>
+            <g transform={`translate(${pad.l},${pad.t})`}>
+                {(Object.entries(phases) as [string,[number,number]][]).map(([ph,[s,e]]) => (
+                    <rect key={ph} x={toX(s)} y={0} width={toX(e)-toX(s)} height={cH}
+                        fill={PDF_PHASE_COLORS[ph] ?? 'rgba(100,100,100,0.08)'} />
+                ))}
+                {(Object.entries(phases) as [string,[number,number]][]).map(([ph,[s,e]]) => (
+                    <text key={`l${ph}`} x={(toX(s)+toX(e))/2} y={9}
+                        textAnchor="middle" fill="#64748b" fontSize={7} fontWeight={800} letterSpacing="0.10em">
+                        {PDF_PHASE_LABELS[ph] ?? ph.toUpperCase()}
+                    </text>
+                ))}
+                <path d={areaPath} fill={`url(#${gradId})`} />
+                <path d={linePath} fill="none" stroke={accent} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                {[2,5,8].map(v => (
+                    <g key={v}>
+                        <line x1={0} y1={toY(v)} x2={cW} y2={toY(v)} stroke="#e2e8f0" strokeWidth={1} />
+                        <text x={-6} y={toY(v)+4} textAnchor="end" fill="#94a3b8" fontSize={7}>{v}</text>
+                    </g>
+                ))}
+                {curve.filter((_: any, i: number) => i % Math.ceil(curve.length/6) === 0).map(([m]: [number,number], i: number) => (
+                    <text key={i} x={toX(m)} y={cH+14} textAnchor="middle" fill="#64748b" fontSize={7}>
+                        {m < 60 ? `${m}m` : `${Math.round(m/60)}h`}
+                    </text>
+                ))}
+                <line x1={0} y1={cH} x2={cW} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
+                <line x1={0} y1={0} x2={0} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
+            </g>
+        </svg>
+    );
+};
+
 // ─── Layout Primitives ────────────────────────────────────────────────────────
 
 const PageShell: React.FC<{ children: React.ReactNode; pageNum: number; total: number; reportId: string; exportDate: string }> = ({ children, pageNum, total, reportId, exportDate }) => (
@@ -241,7 +314,7 @@ const ClinicalReportPDF: React.FC = () => {
         ? `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${sessionId.slice(0, 8).toUpperCase()}`
         : 'RPT-PREVIEW';
 
-    const TOTAL = 7;
+    const TOTAL = 8;
 
     // Derived values with safe fallbacks
     const baseline = data.baselinePhq9;
@@ -312,11 +385,15 @@ const ClinicalReportPDF: React.FC = () => {
                     </div>
 
                     <SectionTitle>Executive Summary</SectionTitle>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px', marginBottom: '8px' }}>
                         <MetricCell label="PHQ-9 Improvement" value={phq9Pct != null ? `${phq9Pct}%` : 'Awaiting data'} sub={baseline && current ? `${baseline} → ${current}` : undefined} accent="#10b981" />
                         <MetricCell label="Pulse Compliance" value={pulsePct != null ? `${pulsePct}%` : 'Awaiting data'} accent="#f59e0b" />
                         <MetricCell label="Integration Sessions" value={data.integrationSessionsAttended != null ? `${data.integrationSessionsAttended}/${data.integrationSessionsScheduled ?? '?'}` : 'Awaiting data'} accent="#3b82f6" />
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px', marginBottom: '20px' }}>
                         <MetricCell label="Vitals Logged" value={data.vitalsData ? data.vitalsData.length : 'Awaiting data'} accent="#8b5cf6" />
+                        <MetricCell label="Substance" value={data.substanceName ?? 'Unknown'} accent="#2dd4bf" />
+                        <MetricCell label="Dose" value={data.doseMg != null ? `${data.doseMg} mg` : 'Awaiting data'} sub={data.doseMgPerKg != null ? `${data.doseMgPerKg.toFixed(2)} mg/kg` : undefined} accent="#2dd4bf" />
                     </div>
 
                     <SectionTitle accent="#10b981">Key Clinical Notes</SectionTitle>
@@ -506,41 +583,139 @@ const ClinicalReportPDF: React.FC = () => {
                             Awaiting data, no session events have been logged for this session yet.
                         </div>
                     )}
+                    {/* WO-602 Change D: QTc / EKG explanation callout */}
+                    <div style={{ marginTop: '16px', padding: '10px 14px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: '14px', flexShrink: 0 }}>⚡</span>
+                        <p style={{ fontSize: '9px', color: '#92400e', margin: 0, lineHeight: 1.6 }}>
+                            <strong>EKG / QTc Monitoring:</strong> QTc is auto-calculated during dosing sessions using the Bazett formula.
+                            When EKG data is submitted, a QTc log table (Rhythm · PR · QRS · QT · QTc flag) will populate this section.
+                            Reference thresholds: &lt;440ms Normal · 440–470ms Borderline · &gt;470ms Prolonged · &gt;500ms Red Flag (Torsades risk — ibogaine protocol critical).
+                        </p>
+                    </div>
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 5, EXPERIENCE QUALITY (MEQ-30 / CEQ / EDI)
+                    PAGE 5, PHARMACOKINETIC FLIGHT PLAN (WO-602)
                 ════════════════════════════════════════════════════════ */}
                 <PageShell pageNum={5} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                    <SectionTitle accent="#2dd4bf">Pharmacokinetic Flight Plan</SectionTitle>
+                    <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 14px' }}>
+                        Predicted intensity curve for {data.substanceName ?? 'the administered substance'}.
+                        Phase bands show expected onset, peak, integration, and afterglow windows.
+                        Curve represents population averages for this substance class; individual timelines vary with metabolism and dose.
+                    </p>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '16px' }}>
+                        <MetricCell label="Substance" value={data.substanceName ?? 'Unknown'} accent={data.accentColor} />
+                        <MetricCell label="Dose" value={data.doseMg != null ? `${data.doseMg} mg` : '—'} sub={data.doseMgPerKg != null ? `${data.doseMgPerKg.toFixed(2)} mg/kg` : undefined} accent={data.accentColor} />
+                        <MetricCell label="Session Date" value={data.sessionDate ? new Date(data.sessionDate).toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'}) : '—'} accent="#3b82f6" />
+                        <MetricCell label="Days Post-Session" value={data.sessionDate ? Math.max(0,Math.floor((Date.now()-new Date(data.sessionDate).getTime())/86_400_000)) : '—'} accent="#8b5cf6" />
+                    </div>
+
+                    <div style={{ backgroundColor: '#fafafa', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', marginBottom: '14px' }}>
+                        <PKChart substance={data.substanceCategory} accent={data.accentColor} />
+                    </div>
+
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px', marginBottom: '14px' }}>
+                        <thead>
+                            <tr style={{ backgroundColor: '#1e3a5f', color: 'white' }}>
+                                {['Phase', 'Window', 'Clinical Note'].map(h => (
+                                    <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {(Object.entries(PDF_PK_PHASES[data.substanceCategory] ?? PDF_PK_PHASES.unknown) as [string,[number,number]][]).map(([ph,[s,e]], i) => (
+                                <tr key={ph} style={{ backgroundColor: i % 2 === 0 ? '#f8fafc' : 'white', borderBottom: '1px solid #e2e8f0' }}>
+                                    <td style={{ padding: '7px 10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '9px', color: '#475569' }}>{ph}</td>
+                                    <td style={{ padding: '7px 10px', fontFamily: 'monospace', color: '#1e293b' }}>
+                                        {s < 60 ? `${s}m` : `${Math.round(s/60)}h`} – {e < 60 ? `${e}m` : `${Math.round(e/60)}h`}
+                                    </td>
+                                    <td style={{ padding: '7px 10px', color: '#475569', fontSize: '9px' }}>{
+                                        ph === 'onset' ? 'Physical sensations common. Not a sign of danger.' :
+                                        ph === 'peak' ? 'Deepest part of the journey. Surrender, don\'t steer.' :
+                                        ph === 'integration' ? 'Experience begins to integrate. New perspectives emerge.' :
+                                        'Clarity and gentle re-entry. Consolidation window.'
+                                    }</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    <div style={{ padding: '8px 12px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px' }}>
+                        <p style={{ fontSize: '9px', color: '#1e40af', margin: 0 }}>
+                            <strong>Clinical Note:</strong> The neuroplasticity window (~2–4 weeks post-dosing) is the optimal period for integration work.
+                            Schedule integration sessions within this window to maximise therapeutic benefit.
+                        </p>
+                    </div>
+                </PageShell>
+
+                {/* ════════════════════════════════════════════════════════
+                    PAGE 6, EXPERIENCE QUALITY (MEQ-30 / CEQ / EDI)
+                ════════════════════════════════════════════════════════ */}
+                <PageShell pageNum={6} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle accent="#8b5cf6">Experience Quality Assessment</SectionTitle>
                     <p style={{ fontSize: '10px', color: '#64748b', margin: '-8px 0 16px' }}>
                         Mystical experience, ego dissolution, and emotional breakthrough scores logged post-session.
                     </p>
 
-                    {/* MEQ-30 placeholder, real data integration in WO-554+ scope */}
-                    <SectionTitle accent="#8b5cf6">MEQ-30, Mystical Experience Questionnaire</SectionTitle>
-                    <div style={{ backgroundColor: '#faf5ff', border: '1px solid #ddd6fe', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-                        <AwaitingData label="MEQ-30 score, available in live view once post-session assessment is completed" />
-                        <p style={{ fontSize: '9px', color: '#7c3aed', marginTop: '8px', textAlign: 'center' }}>
-                            Complete the "Quick Experience Check" assessment after each dosing session to populate this chart.
-                        </p>
+                    {/* WO-602 Change C: MEQ-30 structured 4-subscale table */}
+                    <SectionTitle accent="#8b5cf6">MEQ-30 – Mystical Experience Questionnaire</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#64748b', margin: '-10px 0 10px' }}>
+                        Scoring: each subscale 0–45 · Total 0–150 · Interpretation: &lt;75 Minimal · 75–149 Moderate · ≥50% of max = Complete Mystical Experience
+                    </p>
+                    <div style={{ backgroundColor: '#faf5ff', border: '1px solid #ddd6fe', borderRadius: '8px', padding: '4px', marginBottom: '20px' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px' }}>
+                            <thead>
+                                <tr style={{ backgroundColor: '#6d28d9', color: 'white' }}>
+                                    {['Subscale', 'Items', 'Max Score', 'Score', 'Interpretation'].map(h => (
+                                        <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {[
+                                    { name: 'Mystical / Unity', items: 'Q1–Q9', max: 45, note: 'Sense of oneness and transcendence' },
+                                    { name: 'Positive Mood', items: 'Q10–Q18', max: 45, note: 'Joy, awe, gratitude' },
+                                    { name: 'Time / Space Transcendence', items: 'Q19–Q25', max: 35, note: 'Dissolution of time and space' },
+                                    { name: 'Ineffability / Paradoxicality', items: 'Q26–Q30', max: 25, note: 'Beyond words, deeply meaningful' },
+                                ].map((row, i) => (
+                                    <tr key={row.name} style={{ backgroundColor: i % 2 === 0 ? '#faf5ff' : 'white', borderBottom: '1px solid #ede9fe' }}>
+                                        <td style={{ padding: '8px 10px', fontWeight: 700, color: '#6d28d9' }}>{row.name}</td>
+                                        <td style={{ padding: '8px 10px', fontFamily: 'monospace', fontSize: '9px', color: '#475569' }}>{row.items}</td>
+                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>{row.max}</td>
+                                        <td style={{ padding: '8px 10px', textAlign: 'center', fontStyle: 'italic', color: '#94a3b8', fontSize: '9px' }}>Awaiting data</td>
+                                        <td style={{ padding: '8px 10px', fontSize: '9px', color: '#64748b' }}>{row.note}</td>
+                                    </tr>
+                                ))}
+                                <tr style={{ backgroundColor: '#ede9fe', borderTop: '2px solid #7c3aed' }}>
+                                    <td colSpan={2} style={{ padding: '8px 10px', fontWeight: 900, color: '#4c1d95', fontSize: '10px' }}>TOTAL MEQ-30 SCORE</td>
+                                    <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 900, color: '#4c1d95' }}>150</td>
+                                    <td style={{ padding: '8px 10px', textAlign: 'center', fontStyle: 'italic', color: '#94a3b8', fontSize: '9px' }}>Awaiting data</td>
+                                    <td style={{ padding: '8px 10px', fontSize: '9px', color: '#4c1d95', fontWeight: 600 }}>≥75 = Complete Mystical Experience</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
+                    <p style={{ fontSize: '9px', color: '#7c3aed', textAlign: 'center', marginBottom: '20px' }}>
+                        Complete the “Quick Experience Check” assessment after each dosing session to populate MEQ-30 scores.
+                    </p>
 
-                    <SectionTitle accent="#6366f1">CEQ, Challenging Experience Questionnaire</SectionTitle>
+                    <SectionTitle accent="#6366f1">CEQ – Challenging Experience Questionnaire</SectionTitle>
                     <div style={{ backgroundColor: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '8px', padding: '16px', marginBottom: '20px' }}>
-                        <AwaitingData label="CEQ score, available in live view once post-session assessment is completed" />
+                        <AwaitingData label="CEQ score, available once post-session assessment is completed" />
                     </div>
 
-                    <SectionTitle accent="#ec4899">EDI, Emotional Breakthrough Index</SectionTitle>
+                    <SectionTitle accent="#ec4899">EDI – Emotional Breakthrough Index</SectionTitle>
                     <div style={{ backgroundColor: '#fdf2f8', border: '1px solid #f5d0fe', borderRadius: '8px', padding: '16px' }}>
-                        <AwaitingData label="EDI score, available in live view once post-session assessment is completed" />
+                        <AwaitingData label="EDI score, available once post-session assessment is completed" />
                     </div>
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 6, INTEGRATION + SAFETY
+                    PAGE 7, INTEGRATION + SAFETY
                 ════════════════════════════════════════════════════════ */}
-                <PageShell pageNum={6} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                <PageShell pageNum={7} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle>Integration Phase Summary</SectionTitle>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '20px' }}>
                         <MetricCell label="Sessions Attended" value={data.integrationSessionsAttended ?? '—'} sub={data.integrationSessionsScheduled ? `of ${data.integrationSessionsScheduled} scheduled` : undefined} accent="#3b82f6" />
@@ -617,9 +792,9 @@ const ClinicalReportPDF: React.FC = () => {
                 </PageShell>
 
                 {/* ════════════════════════════════════════════════════════
-                    PAGE 7, NETWORK BENCHMARKING + CERTIFICATION
+                    PAGE 8, NETWORK BENCHMARKING + CERTIFICATION
                 ════════════════════════════════════════════════════════ */}
-                <PageShell pageNum={7} total={TOTAL} reportId={reportId} exportDate={exportDate}>
+                <PageShell pageNum={8} total={TOTAL} reportId={reportId} exportDate={exportDate}>
                     <SectionTitle accent="#3b82f6">Network Benchmarking</SectionTitle>
                     <p style={{ fontSize: '9px', color: '#94a3b8', margin: '-8px 0 12px', fontStyle: 'italic' }}>
                         Reference Cohort (N=14k published data), benchmark bands are static aggregate data from peer-reviewed psychedelic therapy outcome studies.

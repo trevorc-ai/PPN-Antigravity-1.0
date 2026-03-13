@@ -3,6 +3,25 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
+export type SubstanceCategory = 'psilocybin' | 'ketamine' | 'mdma' | 'ayahuasca' | 'unknown';
+
+export function getSubstanceCategory(name: string | null | undefined): SubstanceCategory {
+    if (!name) return 'unknown';
+    const n = name.toLowerCase();
+    if (n.includes('psilocybin') || n.includes('mushroom') || n.includes('psilocybe')) return 'psilocybin';
+    if (n.includes('ketamine') || n.includes('esketamine') || n.includes('spravato')) return 'ketamine';
+    if (n.includes('mdma') || n.includes('3,4-methylenedioxy')) return 'mdma';
+    if (n.includes('ayahuasca') || n.includes('dmt') || n.includes('harmaline')) return 'ayahuasca';
+    return 'unknown';
+}
+
+export const SUBSTANCE_ACCENT: Record<SubstanceCategory, string> = {
+    psilocybin: '#2dd4bf',
+    ketamine: '#a78bfa',
+    mdma: '#fb7185',
+    ayahuasca: '#f59e0b',
+    unknown: '#2dd4bf',
+};
 
 export interface Phase3DecayPoint {
     day: number;
@@ -61,6 +80,14 @@ export interface Phase3Data {
     hasRealComplianceData: boolean;
     hasRealIntegrationData: boolean;
 
+    // WO-602: Session metadata for PK Flight Plan PDF page
+    substanceName: string | null;
+    substanceCategory: SubstanceCategory;
+    accentColor: string;
+    doseMg: number | null;
+    doseMgPerKg: number | null;
+    sessionDate: string | null;
+
     // Loading / error
     isLoading: boolean;
     error: string | null;
@@ -113,6 +140,12 @@ export function usePhase3Data(
         hasRealPulseData: false,
         hasRealComplianceData: false,
         hasRealIntegrationData: false,
+        substanceName: null,
+        substanceCategory: 'unknown',
+        accentColor: SUBSTANCE_ACCENT.unknown,
+        doseMg: null,
+        doseMgPerKg: null,
+        sessionDate: null,
         isLoading: true,
         error: null,
     });
@@ -141,6 +174,12 @@ export function usePhase3Data(
                 hasRealPulseData: false,
                 hasRealComplianceData: false,
                 hasRealIntegrationData: false,
+                substanceName: null,
+                substanceCategory: 'unknown',
+                accentColor: SUBSTANCE_ACCENT.unknown,
+                doseMg: null,
+                doseMgPerKg: null,
+                sessionDate: null,
                 isLoading: false,
                 error: null,
             }));
@@ -314,6 +353,27 @@ export function usePhase3Data(
                     }));
                 }
 
+                // ── 8. WO-602: Session metadata for PK Flight Plan PDF page ───────────
+                const { data: doseRows } = await supabase
+                    .from('log_dose_events')
+                    .select('substance_id, dose_mg, dose_mg_per_kg')
+                    .eq('session_id', sessionId)
+                    .order('occurred_at', { ascending: true })
+                    .limit(1);
+
+                const dose = doseRows?.[0] ?? null;
+                let substanceName: string | null = null;
+                if (dose?.substance_id) {
+                    const { data: sub } = await supabase
+                        .from('ref_substances')
+                        .select('name')
+                        .eq('id', dose.substance_id)
+                        .single();
+                    substanceName = sub?.name ?? null;
+                }
+                const substanceCategory = getSubstanceCategory(substanceName);
+                const sessionDate = sessionRow?.created_at ?? null;
+
                 if (!cancelled) {
                     setState({
                         decayPoints,
@@ -332,6 +392,12 @@ export function usePhase3Data(
                         hasRealPulseData,
                         hasRealComplianceData,
                         hasRealIntegrationData,
+                        substanceName,
+                        substanceCategory,
+                        accentColor: SUBSTANCE_ACCENT[substanceCategory],
+                        doseMg: dose?.dose_mg ?? null,
+                        doseMgPerKg: dose?.dose_mg_per_kg ?? null,
+                        sessionDate,
                         isLoading: false,
                         error: null,
                     });
@@ -357,6 +423,12 @@ export function usePhase3Data(
                         hasRealPulseData: false,
                         hasRealComplianceData: false,
                         hasRealIntegrationData: false,
+                        substanceName: null,
+                        substanceCategory: 'unknown',
+                        accentColor: SUBSTANCE_ACCENT.unknown,
+                        doseMg: null,
+                        doseMgPerKg: null,
+                        sessionDate: null,
                         isLoading: false,
                         error: 'Live data unavailable.',
                     });
