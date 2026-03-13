@@ -347,22 +347,65 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         if (!result.success) {
             console.warn('[WO-597] createSessionEvent missing optional IDs: meddra_code_id, intervention_type_id (form emits display strings, not FKs yet)');
         }
-        // Stamp an observation log entry to log_session_observations for each logged observation,
-        // so the observation_log array is synced to the DB in addition to the safety event.
+
+        // Ledger Gap Fix — P1: stamp EVERY observation log entry, not just the last.
+        // Previous code only stamped the final entry, silently dropping earlier ones in a multi-entry session.
         if (data.observation_log && data.observation_log.length > 0 && sessionId) {
-            const lastEntry = data.observation_log[data.observation_log.length - 1];
-            // Only stamp latest entry to avoid re-stampng all entries on every save.
-            createTimelineEvent({
-                session_id: sessionId,
-                event_timestamp: lastEntry.timestamp,
-                event_type_code: 'patient_observation',
-                metadata: {
-                    event_description: `Safety observation: ${lastEntry.observations.join(', ')}`,
-                    observation_codes: lastEntry.observations,
-                    note: lastEntry.note,
-                },
-            }).catch(err => console.warn('[WO-597] Safety observation stamp failed (non-fatal):', err));
+            const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            if (UUID_RE.test(sessionId)) {
+                for (const entry of data.observation_log) {
+                    // Build human-readable description: observation labels + optional per-entry note
+                    const obsLabels = entry.observations.join(', ');
+                    const descParts = [`Safety observation: ${obsLabels}`];
+                    if (entry.note) descParts.push(`Note: ${entry.note}`);
+                    createTimelineEvent({
+                        session_id: sessionId,
+                        event_timestamp: entry.timestamp,
+                        event_type_code: 'patient_observation',
+                        metadata: {
+                            event_description: descParts.join(' · '),
+                            observation_codes: entry.observations,
+                            note: entry.note,
+                        },
+                    }).catch(err => console.warn('[WO-597] Safety observation stamp failed (non-fatal):', err));
+                }
+            }
         }
+
+        // Ledger Gap Fix — P0: stamp the formal AE Report fields to the ledger.
+        // Previously, event_type, severity grade, intervention, resolution, and follow-up plan
+        // were written to log_safety_events only — completely invisible in the timeline ledger.
+        if (data.event_type && sessionId) {
+            const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            if (UUID_RE.test(sessionId)) {
+                const gradeLabels: Record<number, string> = {
+                    1: 'Grade 1 (Mild)', 2: 'Grade 2 (Moderate)',
+                    3: 'Grade 3 (Severe)', 4: 'Grade 4 (Life-Threatening)', 5: 'Grade 5 (Fatal)',
+                };
+                const aeParts: string[] = [`AE reported: ${data.event_type}`];
+                if (data.severity_grade) aeParts.push(gradeLabels[data.severity_grade] ?? `Grade ${data.severity_grade}`);
+                if (data.intervention_type) aeParts.push(`Intervention: ${data.intervention_type}`);
+                if (data.resolved) aeParts.push('Resolved');
+                else if (data.follow_up_plan) aeParts.push(`Follow-up: ${data.follow_up_plan}`);
+
+                createTimelineEvent({
+                    session_id: sessionId,
+                    event_timestamp: data.occurred_at
+                        ? new Date(data.occurred_at).toISOString()
+                        : new Date().toISOString(),
+                    event_type_code: 'safety_event', // valid DB code; renders as [ADVERSE EVENT] via EVENT_CONFIG detection
+                    metadata: {
+                        event_description: aeParts.join(' · '),
+                        event_type: data.event_type,
+                        severity_grade: data.severity_grade,
+                        intervention_type: data.intervention_type,
+                        is_resolved: data.resolved,
+                        follow_up_plan: data.follow_up_plan,
+                    },
+                }).catch(err => console.warn('[WO-597] AE Report timeline stamp failed (non-fatal):', err));
+            }
+        }
+
         result.success ? onSaved('Safety & Adverse Event') : onError('Safety & Adverse Event', result.error);
     }, [sessionId, siteId]);
 
@@ -377,14 +420,26 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             event_type: data.intervention_type ?? 'rescue',  // live ref lookup → safety_event_type_id
         });
         if (result.success) {
-            // Also stamp session timeline so the rescue appears on the session arc
+            // Ledger Gap Fix — P1: enrich the rescue protocol ledger entry with start time and duration.
+            // Previously only intervention_type was visible in the ledger; start time and duration were dropped.
             if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+                const rescueParts: string[] = [`Rescue protocol: ${data.intervention_type ?? 'unspecified'}`];
+                if (data.start_time) {
+                    const startFmt = new Date(data.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    rescueParts.push(`Started: ${startFmt}`);
+                }
+                if (data.duration_minutes !== undefined && data.duration_minutes >= 0) {
+                    rescueParts.push(`Duration: ${data.duration_minutes} min`);
+                } else if (data.end_time) {
+                    const endFmt = new Date(data.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    rescueParts.push(`Ended: ${endFmt}`);
+                }
                 createTimelineEvent({
                     session_id: sessionId,
                     event_timestamp: data.start_time ?? new Date().toISOString(),
-                    event_type_code: 'session_completed', // closest valid code; rescue protocol is an in-session event
+                    event_type_code: 'session_completed', // closest valid DB code for rescue entries
                     metadata: {
-                        event_description: `Rescue protocol: ${data.intervention_type ?? 'unspecified'}.`,
+                        event_description: rescueParts.join(' · '),
                         intervention_type: data.intervention_type,
                         duration_minutes: data.duration_minutes,
                     },

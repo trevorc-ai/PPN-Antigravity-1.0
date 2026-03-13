@@ -46,12 +46,54 @@ export const EVENT_CONFIG: Record<string, { icon: React.ReactNode, color: string
     safety_event: { icon: <Shield className="w-4 h-4" />, color: 'text-red-400 bg-red-500/20 border-red-500/30', symbol: '⚠', label: '[SAFETY]' },
     touch_consent: { icon: <CheckCircle className="w-4 h-4" />, color: 'text-pink-400 bg-pink-500/20 border-pink-500/30', symbol: '✓', label: '[CONSENT]' },
     general_note: { icon: <Activity className="w-4 h-4" />, color: 'text-slate-400 bg-slate-500/20 border-slate-500/30', symbol: '-', label: '[NOTE]' },
+    // UX Polish: Session Update button → emerald to match button color
+    session_update: { icon: <Activity className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '✎', label: '[SESSION UPDATE]' },
+    // UX Polish: Rescue Protocol button → purple to match button color
+    'rescue-protocol': { icon: <Shield className="w-4 h-4" />, color: 'text-purple-400 bg-purple-500/20 border-purple-500/30', symbol: '*', label: '[RESCUE PROTOCOL]' },
+    rescue_protocol: { icon: <Shield className="w-4 h-4" />, color: 'text-purple-400 bg-purple-500/20 border-purple-500/30', symbol: '*', label: '[RESCUE PROTOCOL]' },
+    // session_completed is the DB code used by WellnessFormRouter for rescue entries
+    session_completed: { icon: <Shield className="w-4 h-4" />, color: 'text-purple-400 bg-purple-500/20 border-purple-500/30', symbol: '*', label: '[RESCUE PROTOCOL]' },
+    // UX Polish: Adverse Event button → red to match button color; description decoded separately
+    'safety-and-adverse-event': { icon: <AlertTriangle className="w-4 h-4" />, color: 'text-red-400 bg-red-500/20 border-red-500/30', symbol: '⚠', label: '[ADVERSE EVENT]' },
     OBSERVATION: { icon: <Activity className="w-4 h-4" />, color: 'text-sky-400 bg-sky-500/20 border-sky-500/30', symbol: '○', label: '[OBSERVATION]' },
     PEAK: { icon: <Diamond className="w-4 h-4 text-fuchsia-400 fill-fuchsia-400" />, color: 'text-fuchsia-400 bg-fuchsia-500/20 border-fuchsia-500/30', symbol: '◆', label: '[PEAK]' },
     INTERVENTION: { icon: <Mountain className="w-4 h-4" />, color: 'text-amber-400 bg-amber-500/20 border-amber-500/30', symbol: '△', label: '[INTERVENTION]' },
     SAFETY: { icon: <Shield className="w-4 h-4" />, color: 'text-rose-400 bg-rose-500/20 border-rose-500/30', symbol: '⚠', label: '[SAFETY]' },
     CLOSE: { icon: <CheckCircle className="w-4 h-4" />, color: 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30', symbol: '✓', label: '[CLOSE]' },
 };
+
+/**
+ * Decodes raw observation/intervention/resolution codes from the Adverse Event form
+ * into human-readable labels for display in the timeline ledger.
+ */
+const OBSERVATION_CODE_LABELS: Record<string, string> = {
+    // Physiological observations
+    OBS_STABLE:        'Vitals Stable',
+    OBS_HR_ELEVATED:   'HR Elevated',
+    OBS_BP_ELEVATED:   'BP Elevated',
+    OBS_SPO2_LOW:      'SpO₂ Low',
+    // Behavioural / emotional observations
+    OBS_CALM:          'Calm / Settled',
+    OBS_DISTRESS_MILD: 'Mild Distress',
+    OBS_DISTRESS_MOD:  'Moderate Distress',
+    OBS_DISTRESS_SEV:  'Severe Distress',
+    // Interventions
+    INT_VERBAL:        'Verbal Reassurance',
+    INT_MOVEMENT:      'Repositioned',
+    INT_BREATHING:     'Guided Breathing',
+    INT_TOUCH:         'Physical Touch',
+    // Resolution status
+    RES_RESOLVED:      'Resolved',
+    RES_ONGOING:       'Ongoing',
+    RES_ESCALATED:     'Escalated',
+};
+
+/** Replaces all OBS_, INT_, and RES_ prefixed tokens in a description with human-readable labels. */
+function decodeObservationCodes(description: string): string {
+    return description.replace(/\b(OBS|INT|RES)_[A-Z_]+\b/g, (code) =>
+        OBSERVATION_CODE_LABELS[code] ?? code
+    );
+}
 
 // Exported so DosingSessionPhase can render these buttons alongside its own action grid
 export const QUICK_ACTIONS = [
@@ -290,7 +332,21 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                     </div>
                 ) : (
                     filteredEvents.map((event, index) => {
-                        const conf = EVENT_CONFIG[event.type] || EVENT_CONFIG['general_note'];
+                        // UX Polish: two types of entries from the Adverse Event form should
+                        // show [ADVERSE EVENT] in red:
+                        // 1. patient_observation with "Safety observation:" prefix (observation log entries)
+                        // 2. safety_event with "AE reported:" prefix (AE Report section entries from WellnessFormRouter)
+                        const isAdverseObs =
+                            (event.type === 'patient_observation' && event.description.startsWith('Safety observation')) ||
+                            (event.type === 'safety_event' && event.description.startsWith('AE reported:'));
+
+                        const conf = isAdverseObs
+                            ? EVENT_CONFIG['safety-and-adverse-event']
+                            : (EVENT_CONFIG[event.type] || EVENT_CONFIG['general_note']);
+
+                        // Decode raw observation/intervention/resolution codes in the description
+                        const displayDescription = decodeObservationCodes(event.description);
+
                         const isLast = index === filteredEvents.length - 1;
 
                         return (
@@ -314,7 +370,7 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                                 <div className="flex-1 pb-1">
                                     <p className="font-semibold text-slate-300">
                                         <span className={`mr-2 font-bold ${conf.color.split(' ')[0]}`}>{conf.label}</span>
-                                        {event.description}
+                                        {displayDescription}
                                     </p>
                                     {event.notes && (
                                         <div className="mt-1.5 p-2 bg-slate-800/40 rounded border border-slate-700/30 text-slate-400 text-xs leading-relaxed">

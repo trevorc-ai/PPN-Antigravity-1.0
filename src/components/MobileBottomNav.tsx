@@ -40,7 +40,7 @@ const SPRING = { type: 'spring', stiffness: 360, damping: 28 } as const;
 const ACTIVE_ICON = 'text-indigo-400';
 const ACTIVE_LABEL = 'text-indigo-300';
 const IDLE_ICON = 'text-slate-500';
-const IDLE_LABEL = 'text-slate-600';
+const IDLE_LABEL = 'text-slate-400';
 
 export const MobileBottomNav: React.FC = () => {
     const location = useLocation();

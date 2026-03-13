@@ -1028,56 +1028,7 @@ const PatientReport: React.FC = () => {
                 </div>
             </div>
 
-            {/* ── WO-592: Pinned share CTA (fixed to viewport — sticky defeated by ancestor overflow) */}
-            <div className="no-print" style={{
-                position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-                background: 'rgba(6, 14, 28, 0.92)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderBottom: '1px solid rgba(96,165,250,0.12)',
-                padding: '10px 20px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12,
-            }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#94a3b8', letterSpacing: '0.01em' }}>
-                    Share your healing journey
-                </span>
-                <div style={{ display: 'flex', gap: 10 }}>
-                    <button
-                        onClick={sharePractitioner}
-                        aria-label="Share with your practitioner"
-                        style={{
-                            padding: '8px 18px', borderRadius: 10, fontSize: 14, fontWeight: 700,
-                            background: `linear-gradient(135deg, ${C.blue} 0%, #4f46e5 100%)`,
-                            border: 'none', color: '#050c1a', cursor: 'pointer',
-                            boxShadow: '0 2px 12px rgba(96,165,250,0.25)',
-                            transition: 'opacity 0.2s',
-                            whiteSpace: 'nowrap',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
-                        onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-                    >
-                        Share with Practitioner
-                    </button>
-                    <button
-                        onClick={shareFriend}
-                        aria-label="Share with a friend"
-                        style={{
-                            padding: '8px 18px', borderRadius: 10, fontSize: 14, fontWeight: 700,
-                            background: 'transparent',
-                            border: `1.5px solid rgba(245,158,11,0.4)`,
-                            color: C.gold, cursor: 'pointer',
-                            transition: 'border-color 0.2s',
-                            whiteSpace: 'nowrap',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.7)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)'; }}
-                    >
-                        Share with Friend
-                    </button>
-                </div>
-            </div>
-            {/* Spacer to prevent content from sitting under the fixed bar */}
-            <div className="no-print" style={{ height: 52 }} />
+
 
             {/* ── Content wrapper ───────────────────────────────────────────────── */}
             <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 20px 48px' }}>

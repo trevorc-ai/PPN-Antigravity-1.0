@@ -325,11 +325,28 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     const eH = Math.floor(elSec / 3600).toString().padStart(2, '0');
                     const eM = Math.floor((elSec % 3600) / 60).toString().padStart(2, '0');
                     const eS = Math.floor(elSec % 60).toString().padStart(2, '0');
+
+                    // P2 Ledger Gap Fix: read substance/dosage from ppn_dosing_protocol localStorage
+                    // (written by DosingProtocolForm at save time, always fresh at this point).
+                    let dosingDesc = `Additional dose administered at T+${eH}:${eM}:${eS}`;
+                    try {
+                        const cached = JSON.parse(localStorage.getItem('ppn_dosing_protocol') || '{}');
+                        const parts: string[] = ['Additional Dose'];
+                        if (cached.dosage_amount && cached.dosage_unit)
+                            parts.push(`${cached.dosage_amount}${cached.dosage_unit}`);
+                        else if (cached.dosage_amount)
+                            parts.push(`${cached.dosage_amount}`);
+                        if (cached.substance_name) parts.push(cached.substance_name);
+                        if (cached.route_of_administration) parts.push(cached.route_of_administration);
+                        parts.push(`T+${eH}:${eM}:${eS}`);
+                        if (parts.length > 1) dosingDesc = parts.join(' · ');
+                    } catch { /* localStorage unavailable, keep default */ }
+
                     createTimelineEvent({
                         session_id: sid,
                         event_timestamp: new Date().toISOString(),
                         event_type_code: 'additional_dose' as any,
-                        metadata: { event_description: `Additional dose administered at T+${eH}:${eM}:${eS}` },
+                        metadata: { event_description: dosingDesc },
                     }).catch(err => console.warn('[WO-559] additional_dose timeline write failed:', err));
                 }
             }
@@ -620,14 +637,22 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         const resolvedSessionId = journey.sessionId ?? journey.session?.sessionId;
 
-        // WO-576 Sub-task B: persist free-text note from Session Update pop-out
-        // to the Live Session Timeline via createTimelineEvent with 'general_note'.
-        if (updateNote.trim() && resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
+        // Ledger Gap Fix — P1: build a rich description from ALL qualitative fields.
+        // Previously only the free-text note was stamped; Affect, Responsiveness, and Comfort
+        // were saved to local state only and never appeared in the timeline ledger.
+        const descParts: string[] = [];
+        if (updateAffect)          descParts.push(`Affect: ${updateAffect}`);
+        if (updateResponsiveness)  descParts.push(`Responsiveness: ${updateResponsiveness}`);
+        if (updateComfort)         descParts.push(`Comfort: ${updateComfort}`);
+        if (updateNote.trim())     descParts.push(updateNote.trim());
+        const sessionUpdateDesc = descParts.join(' · ') || 'Session update logged';
+
+        if (resolvedSessionId && UUID_RE.test(resolvedSessionId)) {
             createTimelineEvent({
                 session_id: resolvedSessionId,
                 event_timestamp: new Date().toISOString(),
-                event_type_code: 'general_note' as any, // cast: DB lookup handles type resolution
-                metadata: { event_description: updateNote.trim() },
+                event_type_code: 'session_update' as any,
+                metadata: { event_description: sessionUpdateDesc },
             }).catch(err => console.warn('[WO-576] Session Update note timeline write failed:', err));
         }
 
