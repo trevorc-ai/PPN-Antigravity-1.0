@@ -96,7 +96,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <Heart className="w-4 h-4 text-blue-400" />
                         <h4 className="text-slate-300 text-sm font-medium">Treatment Expectancy</h4>
                         <AdvancedTooltip
-                            content="Treatment expectancy measures how much the patient believes the therapy will help them. Higher belief (>70) correlates with 25% better outcomes due to positive placebo effects."
+                            content="This score reflects how strongly your patient believes the therapy will help. Research shows that patients who expect a benefit tend to report better outcomes. A score above 70 is associated with higher engagement during integration."
                             type="info"
                             tier="guide"
                             title="Why Expectancy Matters"
@@ -142,7 +142,7 @@ const SetAndSettingCard: React.FC<SetAndSettingCardProps> = ({
                         <Brain className="w-4 h-4 text-purple-400" />
                         <h4 className="text-slate-300 text-sm font-medium">Anxiety Severity (GAD-7)</h4>
                         <AdvancedTooltip
-                            content="Generalized Anxiety Disorder scale (0-21). Scores >10 predict a 45% likelihood of challenging experiences during the session. Anxiolytic support may be beneficial."
+                            content="The GAD-7 measures anxiety severity on a scale of 0 to 21. Scores above 10 indicate moderate to severe anxiety. Higher scores are associated with more challenging session experiences. Review your session support plan for patients in this range."
                             type="warning"
                             tier="guide"
                             title="GAD-7 Clinical Significance"

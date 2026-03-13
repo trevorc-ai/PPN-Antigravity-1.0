@@ -95,7 +95,7 @@ const ExpectancyScaleGauge: React.FC<ExpectancyScaleGaugeProps> = ({ score }) =>
                 <p className="text-slate-300 text-sm leading-relaxed">
                     {clampedScore >= 71 && (
                         <>
-                            <span className="font-semibold text-emerald-400">Excellent expectancy.</span> Patients with high belief in therapy show 25% better outcomes due to positive placebo effects.
+                            <span className="font-semibold text-emerald-400">Excellent expectancy.</span> Patients who believe in the therapy tend to engage more deeply in integration and report stronger outcomes. Reinforce this positive mindset before the session.
                         </>
                     )}
                     {clampedScore >= 41 && clampedScore < 71 && (

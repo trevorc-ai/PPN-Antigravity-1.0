@@ -14,7 +14,7 @@ interface GAD7SeverityZonesProps {
  * - 10-14: Moderate (Amber)
  * - 15-21: Severe (Red)
  * 
- * Scores >10 predict 45% likelihood of challenging experiences.
+ * Scores above 10 indicate moderate to severe anxiety.
  */
 const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
     // Clamp score to valid range
@@ -40,15 +40,15 @@ const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
             label: 'Moderate',
             color: 'amber',
             icon: AlertTriangle,
-            risk: '45% likelihood of challenging experience',
-            recommendation: 'Anxiolytic support may be beneficial'
+            risk: 'Elevated anxiety — associated with more challenging session experiences',
+            recommendation: 'Review session support plan and grounding techniques before dosing'
         };
         return {
             label: 'Severe',
             color: 'red',
             icon: ShieldAlert,
-            risk: 'High risk of panic or severe anxiety',
-            recommendation: 'Pre-medication with anxiolytic strongly indicated'
+            risk: 'Severe anxiety — high likelihood of distress during session',
+            recommendation: 'Discuss additional support options with your clinical team before proceeding'
         };
     };
 
@@ -173,7 +173,7 @@ const GAD7SeverityZones: React.FC<GAD7SeverityZonesProps> = ({ score }) => {
                     {clampedScore >= 10 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/30">
                             <p className="text-slate-300 text-sm">
-                                <span className="font-semibold">Note:</span> Consider benzodiazepine pre-medication (e.g., Lorazepam 0.5-1mg) 30 minutes before dosing to reduce anxiety and improve session quality.
+                                <span className="font-semibold">Note:</span> Scores in this range are associated with more challenging session experiences. Review your session support plan and ensure extra grounding resources are ready before dosing.
                             </p>
                         </div>
                     )}

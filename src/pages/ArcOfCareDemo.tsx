@@ -115,10 +115,10 @@ const ArcOfCareDemo: React.FC = () => {
                                     Treatment Expectancy: <span className="text-emerald-400 font-bold">{expectancyScale}</span>
                                 </label>
                                 <AdvancedTooltip
-                                    content="Measures the patient's belief that the treatment will help them. Patients with high expectancy (>70) show 25% better outcomes due to positive placebo effects. Set this based on pre-session intake interviews."
+                                    content="This score reflects how strongly your patient believes the therapy will help. Research shows that patients who expect a benefit tend to report better outcomes. A score above 70 is associated with higher engagement during integration. Set this based on pre-session intake interviews."
                                     title="Treatment Expectancy"
                                     type="info"
-                                    tier="detailed"
+                                    tier="guide"
                                     side="right"
                                 >
                                     <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
@@ -142,7 +142,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     content="Adverse Childhood Experiences (ACE) score measures childhood trauma on a 0–10 scale. Scores above 4 are associated with lower baseline resilience and may require additional integration sessions. Source: CDC-Kaiser Permanente ACE Study."
                                     title="ACE Score (Childhood Trauma)"
                                     type="warning"
-                                    tier="detailed"
+                                    tier="guide"
                                     side="right"
                                 >
                                     <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
@@ -163,10 +163,10 @@ const ArcOfCareDemo: React.FC = () => {
                                     GAD-7 Score: <span className="text-purple-400 font-bold">{gad7Score}</span>
                                 </label>
                                 <AdvancedTooltip
-                                    content="Generalized Anxiety Disorder 7-item scale (0–21). Scores ≥10 predict a 45% likelihood of challenging session experiences and may warrant anxiolytic support. Mild: 5–9 · Moderate: 10–14 · Severe: 15–21."
+                                    content="The GAD-7 measures anxiety severity on a scale of 0 to 21. Scores above 10 indicate moderate to severe anxiety. Higher scores are associated with more challenging session experiences. Review your session support plan for patients in this range. Mild: 5-9 · Moderate: 10-14 · Severe: 15-21."
                                     title="GAD-7 (Anxiety Severity)"
                                     type="warning"
-                                    tier="detailed"
+                                    tier="guide"
                                     side="right"
                                 >
                                     <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
@@ -190,7 +190,7 @@ const ArcOfCareDemo: React.FC = () => {
                                     content="Patient Health Questionnaire-9 (0–27) measures depression severity. Scores ≥10 indicate clinically significant depression. Scores ≥20 require psychiatric consultation before proceeding. Mild: 5–9 · Moderate: 10–14 · Mod-Severe: 15–19 · Severe: 20–27."
                                     title="PHQ-9 (Depression Severity)"
                                     type="warning"
-                                    tier="detailed"
+                                    tier="guide"
                                     side="right"
                                 >
                                     <span className="text-slate-500 hover:text-slate-300 cursor-help text-base">ⓘ</span>
