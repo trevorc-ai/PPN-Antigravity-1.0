@@ -89,11 +89,11 @@ const GlobalFilterBar: React.FC<GlobalFilterBarProps> = ({ filters, onChange, cl
                     .select('protocol_id, protocol_name')
                     .order('protocol_name');
 
-                setSites(sitesData || []);
+                setSites((sitesData ?? []).map(s => ({ id: s.site_id, name: s.site_name })));
                 setSubstances(substancesData || []);
                 setRoutes(routesData || []);
                 setSupportModalities(modalitiesData || []);
-                setProtocols(protocolsData || []);
+                setProtocols((protocolsData ?? []).map(p => ({ id: p.protocol_id, name: p.protocol_name })));
             } catch (error) {
                 console.error('Error loading filter options:', error);
             } finally {

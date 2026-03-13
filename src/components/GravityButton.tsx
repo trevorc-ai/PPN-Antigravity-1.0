@@ -73,7 +73,7 @@ export const GravityButton: React.FC<GravityButtonProps> = ({ children, onClick 
                 <span className="gravity-button-text">{children}</span>
             </div>
 
-            <style jsx>{`
+            <style>{`
         .gravity-button {
           position: relative;
           padding: 0;

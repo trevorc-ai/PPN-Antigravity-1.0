@@ -34,7 +34,7 @@ export const NetworkIntelligence: React.FC<NetworkIntelligenceProps> = ({ stats 
             <div className="disclaimer">
                 ℹ️ Observational data only. Clinical decisions remain with practitioner.
             </div>
-            <style jsx>{`
+            <style>{`
         .network-intelligence {
           background: rgba(139, 92, 246, 0.1);
           border-radius: 8px;

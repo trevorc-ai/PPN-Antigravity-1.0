@@ -71,7 +71,7 @@ export const GlassInput: React.FC<GlassInputProps> = ({
                 </p>
             )}
 
-            <style jsx>{`
+            <style>{`
         .glass-input-wrapper input::placeholder {
           color: rgba(148, 163, 184, 0.6);
         }

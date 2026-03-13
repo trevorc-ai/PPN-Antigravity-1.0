@@ -286,7 +286,7 @@ const ReceptorBindingHeatmap: React.FC = () => {
                     {/* ── Column headers ── */}
                     <div role="columnheader" aria-label="Receptor" className="pb-1" />
                     {filteredSubstances.map(sub => (
-                        <div key={sub.id} role="columnheader" scope="col"
+                        <div key={sub.id} role="columnheader" aria-label={`Column: ${sub.name}`}
                             className="flex flex-col items-center justify-end pb-2 gap-1">
                             {/* Substance color dot */}
                             <div className="size-2 rounded-full" style={{ backgroundColor: sub.color || '#64748b' }} aria-hidden="true" />
@@ -304,7 +304,7 @@ const ReceptorBindingHeatmap: React.FC = () => {
                     {filteredReceptors.map(receptor => (
                         <React.Fragment key={receptor.label}>
                             {/* Row header */}
-                            <div role="rowheader" scope="row"
+                            <div role="rowheader" aria-label={`Row: ${receptor.label}`}
                                 className="flex items-center justify-end pr-3 py-1">
                                 <div className="text-right">
                                     <p className="text-sm font-black text-slate-400 leading-none">{receptor.label}</p>
