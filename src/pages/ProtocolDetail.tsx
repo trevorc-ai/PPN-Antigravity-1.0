@@ -6,7 +6,7 @@ import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip,
 } from 'recharts';
-import { Info, ChevronRight, Loader2, AlertCircle, Activity, Calendar, FlaskConical, ClipboardList } from 'lucide-react';
+import { Info, ChevronRight, Loader2, AlertCircle, Activity, Calendar, FlaskConical, ClipboardList, CheckCircle, AlertTriangle, Minus } from 'lucide-react';
 import { PageContainer } from '../components/layouts/PageContainer';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 import { supabase } from '../supabaseClient';
@@ -24,6 +24,7 @@ interface SessionRecord {
   practitioner_id: string | null;
   route_id: number | null;
   concomitant_med_ids: number[] | null;
+  dosage_mg: number | null;
 }
 
 interface Vital {
@@ -51,6 +52,7 @@ interface BaselineAssessment {
 interface LongitudinalPoint {
   assessment_date: string;
   phq9_score: number | null;
+  gad7_score: number | null;
 }
 
 interface PatientSession {
@@ -74,6 +76,32 @@ const PHASE_COLORS: Record<string, string> = {
   Treatment: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
   Integration: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
 };
+
+// AC #2 — Route labels
+const ROUTE_LABELS: Record<number, string> = {
+  1: 'IV (Intravenous)',
+  2: 'IM (Intramuscular)',
+  3: 'Oral / Sublingual',
+  4: 'Intranasal',
+  5: 'Transdermal',
+};
+
+// AC #4 — PHQ-9 severity bands (CANMAT / APA consensus)
+function phq9Severity(score: number): { label: string; color: string } {
+  if (score >= 20) return { label: 'Severe', color: 'text-red-400' };
+  if (score >= 15) return { label: 'Mod-Severe', color: 'text-orange-400' };
+  if (score >= 10) return { label: 'Moderate', color: 'text-amber-400' };
+  if (score >= 5)  return { label: 'Mild', color: 'text-yellow-400' };
+  return { label: 'None', color: 'text-emerald-400' };
+}
+
+// AC #4 — GAD-7 severity bands
+function gad7Severity(score: number): { label: string; color: string } {
+  if (score >= 15) return { label: 'Severe', color: 'text-red-400' };
+  if (score >= 10) return { label: 'Moderate', color: 'text-amber-400' };
+  if (score >= 5)  return { label: 'Mild', color: 'text-yellow-400' };
+  return { label: 'None', color: 'text-emerald-400' };
+}
 
 // ─── Radar data builder ───────────────────────────────────────────────────────
 
@@ -144,7 +172,7 @@ const ProtocolDetail: React.FC = () => {
         // 1. Fetch the primary session (migration 079: patient_link_code dropped → patient_link_code_hash)
         const { data: sessionData, error: sessionErr } = await supabase
           .from('log_clinical_records')
-          .select('id, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids')
+          .select('id, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids, dosage_mg')
           .eq('id', id)
           .single();
 
@@ -195,9 +223,11 @@ const ProtocolDetail: React.FC = () => {
               .limit(20)
             : Promise.resolve({ data: [], error: null }),
 
+          // TODO WO-630: patient_uuid not available on log_clinical_records — trajectory blocked
           // Baseline: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
           Promise.resolve({ data: null, error: null }),
 
+          // TODO WO-630: patient_uuid not available on log_clinical_records — trajectory blocked
           // Longitudinal: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
           Promise.resolve({ data: [], error: null }),
         ]);
@@ -266,12 +296,38 @@ const ProtocolDetail: React.FC = () => {
     phqChartData.push({ date: displayDate, score: null });
   }
 
-  // Vitals as chart data for a mini HR trend
+  // AC #1 — Vitals chart data including diastolic
   const vitalChartData = vitals.map((v, i) => ({
     t: i + 1,
     hr: v.heart_rate,
     sys: v.bp_systolic,
-  })).filter(v => v.hr || v.sys);
+    dia: v.bp_diastolic,
+  })).filter(v => v.hr || v.sys || v.dia);
+
+  // AC #2 — Route label derived value
+  const routeLabel = session.route_id ? (ROUTE_LABELS[session.route_id] ?? `Route #${session.route_id}`) : null;
+
+  // AC #3 — Session series position ("Session X of Y")
+  const sortedSessions = [...patientSessions].sort((a, b) =>
+    (a.session_date ?? '').localeCompare(b.session_date ?? '')
+  );
+  const sessionSeriesIndex = sortedSessions.findIndex(s => s.id === session.id) + 1;
+  const sessionSeriesTotal = patientSessions.length;
+  const seriesLabel = sessionSeriesTotal > 0
+    ? `Session ${sessionSeriesIndex} of ${sessionSeriesTotal}`
+    : null;
+
+  // AC #5 — Pre-Session Clearance: BP from latest vitals
+  const latestVitals = vitals.length > 0 ? vitals[vitals.length - 1] : null;
+  const lastSys = latestVitals?.bp_systolic ?? null;
+  const lastDia = latestVitals?.bp_diastolic ?? null;
+  const bpStatus: 'green' | 'amber' | 'red' | 'grey' =
+    lastSys == null ? 'grey'
+    : lastSys > 160 ? 'red'
+    : lastSys >= 140 ? 'amber'
+    : 'green';
+  const medCount = (session.concomitant_med_ids ?? []).length;
+  const safetyEventCount = safetyEvents.length;
 
   const otherSessions = patientSessions.filter(s => s.id !== session.id);
 
@@ -410,8 +466,9 @@ const ProtocolDetail: React.FC = () => {
                 </div>
               </div>
 
+              {/* AC #1 — Vitals chart with diastolic + CANMAT SBP reference lines */}
               {vitalChartData.length > 0 ? (
-                <div className="h-[220px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-4">
+                <div className="h-[240px] w-full bg-slate-900/30 rounded-3xl border border-slate-800 p-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={vitalChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <defs>
@@ -423,6 +480,10 @@ const ProtocolDetail: React.FC = () => {
                           <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
                           <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                         </linearGradient>
+                        <linearGradient id="diaGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#f97316" stopOpacity={0.25} />
+                          <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                        </linearGradient>
                       </defs>
                       <CartesianGrid stroke="#334155" strokeDasharray="3 3" vertical={false} opacity={0.1} />
                       <XAxis dataKey="t" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} tickLine={false} label={{ value: 'Reading #', fill: '#475569', fontSize: 10, position: 'insideBottom', offset: -5 }} />
@@ -431,8 +492,16 @@ const ProtocolDetail: React.FC = () => {
                         contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f1f5f9', borderRadius: '12px' }}
                         itemStyle={{ color: '#fff', fontWeight: 'bold' }}
                       />
+                      {/* CANMAT SBP thresholds */}
+                      <ReferenceLine y={140} stroke="#f59e0b" strokeDasharray="4 3" strokeWidth={1.5}
+                        label={{ value: 'Do Not Start (SBP)', fill: '#f59e0b', fontSize: 9, position: 'insideTopRight' }}
+                      />
+                      <ReferenceLine y={160} stroke="#ef4444" strokeDasharray="4 3" strokeWidth={1.5}
+                        label={{ value: 'Pause / Stop (SBP)', fill: '#ef4444', fontSize: 9, position: 'insideTopRight' }}
+                      />
                       <Area type="monotone" dataKey="hr" name="Heart Rate (bpm)" stroke="#f59e0b" strokeWidth={2} fill="url(#hrGrad)" dot={{ r: 3, fill: '#f59e0b', strokeWidth: 0 }} connectNulls />
                       <Area type="monotone" dataKey="sys" name="Systolic BP (mmHg)" stroke="#ef4444" strokeWidth={2} fill="url(#sysGrad)" dot={{ r: 3, fill: '#ef4444', strokeWidth: 0 }} connectNulls />
+                      <Area type="monotone" dataKey="dia" name="Diastolic BP (mmHg)" stroke="#f97316" strokeWidth={2} fill="url(#diaGrad)" dot={{ r: 3, fill: '#f97316', strokeWidth: 0 }} connectNulls />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -443,15 +512,15 @@ const ProtocolDetail: React.FC = () => {
                 </div>
               )}
 
-              {/* Latest vitals summary */}
+              {/* AC #1 — Latest vitals summary with Avg Diastolic */}
               {vitals.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
-                  {[
-                    { label: 'Avg HR', value: Math.round(vitals.filter(v => v.heart_rate).reduce((a, v) => a + (v.heart_rate ?? 0), 0) / vitals.filter(v => v.heart_rate).length || 0), unit: 'bpm', color: 'text-amber-400' },
-                    { label: 'Avg Systolic', value: Math.round(vitals.filter(v => v.bp_systolic).reduce((a, v) => a + (v.bp_systolic ?? 0), 0) / vitals.filter(v => v.bp_systolic).length || 0), unit: 'mmHg', color: 'text-red-400' },
-                    { label: 'Avg O₂ Sat', value: Math.round(vitals.filter(v => v.oxygen_saturation).reduce((a, v) => a + (v.oxygen_saturation ?? 0), 0) / vitals.filter(v => v.oxygen_saturation).length || 0), unit: '%', color: 'text-emerald-400' },
-                    { label: 'Readings', value: vitals.length, unit: 'total', color: 'text-indigo-400' },
-                  ].map(stat => (
+                  {([
+                    { label: 'Avg HR', value: Math.round(vitals.filter(v => v.heart_rate).reduce((a, v) => a + (v.heart_rate ?? 0), 0) / (vitals.filter(v => v.heart_rate).length || 1)), unit: 'bpm', color: 'text-amber-400' },
+                    { label: 'Avg Systolic', value: Math.round(vitals.filter(v => v.bp_systolic).reduce((a, v) => a + (v.bp_systolic ?? 0), 0) / (vitals.filter(v => v.bp_systolic).length || 1)), unit: 'mmHg', color: 'text-red-400' },
+                    { label: 'Avg Diastolic', value: Math.round(vitals.filter(v => v.bp_diastolic).reduce((a, v) => a + (v.bp_diastolic ?? 0), 0) / (vitals.filter(v => v.bp_diastolic).length || 1)), unit: 'mmHg', color: 'text-orange-400' },
+                    { label: 'Avg O₂ Sat', value: Math.round(vitals.filter(v => v.oxygen_saturation).reduce((a, v) => a + (v.oxygen_saturation ?? 0), 0) / (vitals.filter(v => v.oxygen_saturation).length || 1)), unit: '%', color: 'text-emerald-400' },
+                  ] as { label: string; value: number; unit: string; color: string }[]).map(stat => (
                     stat.value > 0 && (
                       <div key={stat.label} className="p-4 bg-slate-900/40 border border-slate-800 rounded-2xl">
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{stat.label}</p>
@@ -551,9 +620,26 @@ const ProtocolDetail: React.FC = () => {
                     <span className="text-base font-mono font-bold text-slate-300">{displayDate}</span>
                   </div>
 
+                  {/* AC #2 — Route of administration */}
+                  {routeLabel && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Route</span>
+                      <span className="text-base font-bold text-slate-300">{routeLabel}</span>
+                    </div>
+                  )}
+
+                  {/* AC #2 — Dosage (dosage_mg verified present on log_clinical_records) */}
+                  {session.dosage_mg != null && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Dosage</span>
+                      <span className="text-base font-bold text-amber-300">{session.dosage_mg} mg</span>
+                    </div>
+                  )}
+
+                  {/* AC #3 — Session series ("Session X of Y") */}
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Total Sessions</span>
-                    <span className="text-base font-bold text-indigo-400">{patientSessions.length}</span>
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Session Series</span>
+                    <span className="text-base font-bold text-indigo-400">{seriesLabel ?? `${sessionSeriesTotal} on record`}</span>
                   </div>
                 </div>
 
@@ -564,27 +650,93 @@ const ProtocolDetail: React.FC = () => {
                   </div>
                 </div>
 
+                {/* AC #4 — Baseline Assessments with severity band labels */}
                 {baseline && (
                   <div className="pt-4 border-t border-slate-800/50 space-y-3">
                     <label className="text-xs font-bold text-slate-600 uppercase tracking-widest block">Baseline Assessments</label>
-                    {baseline.phq9_score != null && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">PHQ-9</span>
-                        <span className={`text-base font-black ${baseline.phq9_score >= 15 ? 'text-red-400' : baseline.phq9_score >= 10 ? 'text-amber-400' : 'text-emerald-400'}`}>
-                          {baseline.phq9_score}/27
-                        </span>
-                      </div>
-                    )}
-                    {baseline.gad7_score != null && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">GAD-7</span>
-                        <span className={`text-base font-black ${baseline.gad7_score >= 10 ? 'text-red-400' : baseline.gad7_score >= 8 ? 'text-amber-400' : 'text-emerald-400'}`}>
-                          {baseline.gad7_score}/21
-                        </span>
-                      </div>
-                    )}
+                    {baseline.phq9_score != null && (() => {
+                      const sev = phq9Severity(baseline.phq9_score!);
+                      return (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">PHQ-9</span>
+                          <div className="text-right">
+                            <span className={`text-base font-black ${sev.color}`}>{baseline.phq9_score}/27</span>
+                            <span className={`block text-xs font-bold ${sev.color} opacity-80`}>{sev.label}</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    {baseline.gad7_score != null && (() => {
+                      const sev = gad7Severity(baseline.gad7_score!);
+                      return (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">GAD-7</span>
+                          <div className="text-right">
+                            <span className={`text-base font-black ${sev.color}`}>{baseline.gad7_score}/21</span>
+                            <span className={`block text-xs font-bold ${sev.color} opacity-80`}>{sev.label}</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
+              </div>
+            </section>
+
+            {/* AC #5 — Pre-Session Clearance Checklist Strip (read-only, display-only, no DB writes) */}
+            <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-6 shadow-2xl">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="material-symbols-outlined text-2xl text-indigo-400">checklist</span>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Session Clearance</h3>
+                  <AdvancedTooltip content="Read-only safety snapshot at time of review. BP threshold: CANMAT guideline (do not start above 140/90 mmHg, pause or stop above 160 mmHg systolic)." side="bottom" learnMoreUrl="/help/overview">
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={13} />
+                  </AdvancedTooltip>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {/* BP Pre-Dose row */}
+                <div className="flex items-center gap-3 py-2 border-b border-slate-800/50">
+                  {bpStatus === 'green' && <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />}
+                  {bpStatus === 'amber' && <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />}
+                  {bpStatus === 'red'   && <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />}
+                  {bpStatus === 'grey'  && <Minus className="w-4 h-4 text-slate-600 shrink-0" />}
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest flex-1">BP Pre-Dose</span>
+                  {lastSys != null ? (
+                    <span className={`text-sm font-black ${
+                      bpStatus === 'green' ? 'text-emerald-400' :
+                      bpStatus === 'amber' ? 'text-amber-400' : 'text-red-400'
+                    }`}>{lastSys}{lastDia != null ? `/${lastDia}` : ''} mmHg</span>
+                  ) : (
+                    <span className="text-sm font-bold text-slate-600">No data</span>
+                  )}
+                </div>
+                {/* Concomitant Meds row */}
+                <div className="flex items-center gap-3 py-2 border-b border-slate-800/50">
+                  {medCount > 0
+                    ? <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                    : <Minus className="w-4 h-4 text-slate-600 shrink-0" />}
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest flex-1">Concomitant Meds</span>
+                  {medCount > 0
+                    ? <span className="text-sm font-black text-amber-400">{medCount} listed</span>
+                    : <span className="text-sm font-bold text-slate-600">None</span>}
+                </div>
+                {/* Safety Events row */}
+                <div className="flex items-center gap-3 py-2 border-b border-slate-800/50">
+                  {safetyEventCount === 0
+                    ? <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                    : <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />}
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest flex-1">Safety Events</span>
+                  {safetyEventCount === 0
+                    ? <span className="text-sm font-black text-emerald-400">None</span>
+                    : <span className="text-sm font-black text-red-400">{safetyEventCount} logged</span>}
+                </div>
+                {/* Session Series row */}
+                <div className="flex items-center gap-3 py-2">
+                  <Minus className="w-4 h-4 text-slate-500 shrink-0" />
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest flex-1">Sessions on Record</span>
+                  <span className="text-sm font-bold text-indigo-400">{seriesLabel ?? `${sessionSeriesTotal} total`}</span>
+                </div>
               </div>
             </section>
 

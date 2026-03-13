@@ -4,7 +4,7 @@ title: "Protocol Detail — Clinical Decision-Support Enhancements"
 owner: BUILDER
 authored_by: LEAD
 routed_by: LEAD
-status: 03_BUILD
+status: 04_QA
 priority: P1
 created: 2026-03-11
 routed_at: ""
@@ -13,8 +13,8 @@ skip_approved_by: ""
 hold_reason: ""
 held_at: ""
 failure_count: 0
-completed_at: ""
-builder_notes: ""
+completed_at: "2026-03-13"
+builder_notes: "All 5 ACs shipped: diastolic BP as 3rd Area series + CANMAT SBP reference lines (140/160); route_id→ROUTE_LABELS + dosage_mg displayed in Protocol Card; session series 'X of Y' replaces bare count; PHQ-9/GAD-7 severity band labels added; pre-session clearance strip (BP/meds/safety/series) inserted between Protocol Card and Safety Monitor. patient_uuid NOT on log_clinical_records — TODO WO-630 comments added to stubs. dosage_mg confirmed present via SCHEMA_SNAPSHOT. Zero TS errors, browser verified."
 skills:
   - ".agent/skills/frontend-best-practices/SKILL.md"
   - ".agent/skills/frontend-surgical-standards/SKILL.md"
