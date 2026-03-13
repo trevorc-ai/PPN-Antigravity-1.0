@@ -31,7 +31,7 @@ import { runInsightEngine, type InsightCard, type InsightSeverity } from '../../
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface InsightFeedPanelProps {
-    siteId: number | null;
+    siteId: string | null;
 }
 
 const SEVERITY_CONFIG: Record<InsightSeverity, {

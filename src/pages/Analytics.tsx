@@ -217,7 +217,7 @@ const Analytics = () => {
             {/* ── CLINICAL INTELLIGENCE FEED ─────────────────────────────────────── */}
             <Section spacing="tight" className="print:hidden">
                 <div className="bg-[#0a0c12]/50 border border-indigo-500/10 rounded-2xl p-6">
-                    <InsightFeedPanel siteId={siteId ?? ''} />
+                    <InsightFeedPanel siteId={siteId} />
                 </div>
             </Section>
 

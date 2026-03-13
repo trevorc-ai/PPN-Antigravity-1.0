@@ -35,9 +35,8 @@ const ArcOfCarePhase2Demo: React.FC = () => {
     const [events, setEvents] = useState([
         {
             id: 1,
-            timestamp: '10:00 AM',
-            type: 'Session Start',
-            severity: 'info',
+            timestamp: new Date(),
+            eventType: 'milestone' as const,
             description: 'Baseline vitals recorded. Patient comfortable and ready.'
         }
     ]);
@@ -93,16 +92,12 @@ const ArcOfCarePhase2Demo: React.FC = () => {
         addEvent('Session End', 'info', 'Session completed. Final vitals recorded.');
     };
 
-    const addEvent = (type: string, severity: string, description: string) => {
-        const now = new Date();
-        const timestamp = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
+    const addEvent = (type: string, _severity: string, description: string) => {
         setEvents(prev => [{
             id: prev.length + 1,
-            timestamp,
-            type,
-            severity,
-            description
+            timestamp: new Date(),
+            eventType: 'milestone' as const,
+            description: `${type}: ${description}`
         }, ...prev]);
     };
 
@@ -181,19 +176,19 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                     <>
                         <SessionMonitoringDashboard
                             sessionId={sessionId}
-                            elapsedMinutes={elapsedMinutes}
-                            currentPhase={elapsedMinutes < 30 ? 'onset' : elapsedMinutes < 120 ? 'peak' : 'integration'}
+                            patientId="DEMO-PATIENT"
+                            doseAdministeredAt={sessionStartTime ?? new Date()}
                         />
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             {/* Real-Time Vitals */}
                             <RealTimeVitalsPanel
-                                heartRate={Math.round(vitals.heartRate)}
-                                hrv={Math.round(vitals.hrv)}
-                                bloodPressure={`${Math.round(vitals.bloodPressureSystolic)}/${Math.round(vitals.bloodPressureDiastolic)}`}
-                                respiratoryRate={Math.round(vitals.respiratoryRate)}
-                                oxygenSaturation={Math.round(vitals.oxygenSaturation)}
-                                lastUpdated={new Date().toLocaleTimeString()}
+                                vitals={{
+                                    heartRate: Math.round(vitals.heartRate),
+                                    hrv: Math.round(vitals.hrv),
+                                    bloodPressure: `${Math.round(vitals.bloodPressureSystolic)}/${Math.round(vitals.bloodPressureDiastolic)}`,
+                                    timestamp: new Date(),
+                                }}
                             />
 
                             {/* Session Timeline */}
@@ -209,7 +204,7 @@ const ArcOfCarePhase2Demo: React.FC = () => {
                                     <p className="text-red-200 text-sm">Emergency interventions for challenging experiences</p>
                                 </div>
                             </div>
-                            <RescueProtocolChecklist onInterventionUsed={handleRescueProtocol} />
+                            <RescueProtocolChecklist sessionId={sessionId} onInterventionUsed={handleRescueProtocol} />
                         </div>
                     </>
                 )}

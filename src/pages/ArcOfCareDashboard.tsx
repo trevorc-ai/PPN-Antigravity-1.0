@@ -79,12 +79,12 @@ const ArcOfCareDashboard: React.FC = () => {
     const [alerts] = useState([
         {
             id: 1,
-            type: 'suicidal-ideation',
-            severity: 'critical',
+            alertType: 'cssrs_spike' as const,
+            severity: 'critical' as const,
             message: 'Patient reported passive suicidal ideation on C-SSRS',
-            timestamp: '2026-02-14 10:30 AM',
-            acknowledged: false,
-            resolved: false
+            triggeredAt: '2026-02-14T10:30:00',
+            isAcknowledged: false,
+            isResolved: false
         }
     ]);
 
@@ -365,7 +365,8 @@ const ArcOfCareDashboard: React.FC = () => {
                                     <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" />
                                     <h3 className="text-red-300 text-lg sm:text-xl font-bold">Red Alerts</h3>
                                 </div>
-                                <RedAlertPanel
+                        <RedAlertPanel
+                                    patientId="DEMO-PATIENT"
                                     alerts={alerts}
                                     onAcknowledge={() => { }}
                                     onResolve={() => { }}
@@ -374,7 +375,7 @@ const ArcOfCareDashboard: React.FC = () => {
                         )}
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <PulseCheckWidget onSubmit={() => { }} />
+                            <PulseCheckWidget patientId="DEMO-PATIENT" sessionId={1} onSubmit={() => { }} />
 
                             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 sm:p-6">
                                 <h3 className="text-slate-300 text-lg font-semibold mb-4">Progress Stats</h3>
@@ -391,7 +392,12 @@ const ArcOfCareDashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        <SymptomDecayCurveChart data={trajectoryData} />
+                        <SymptomDecayCurveChart
+                            patientId="DEMO-PATIENT"
+                            sessionId={1}
+                            sessionDate={new Date('2025-08-16')}
+                            data={trajectoryData}
+                        />
                     </div>
                 )}
             </div>

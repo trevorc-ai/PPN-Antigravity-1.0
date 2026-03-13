@@ -39,21 +39,21 @@ const ArcOfCarePhase3Demo: React.FC = () => {
     const [alerts, setAlerts] = useState([
         {
             id: 1,
-            type: 'suicidal-ideation',
-            severity: 'critical',
+            alertType: 'cssrs_spike' as const,
+            severity: 'critical' as const,
             message: 'Patient reported passive suicidal ideation on C-SSRS',
-            timestamp: '2026-02-14 10:30 AM',
-            acknowledged: false,
-            resolved: false
+            triggeredAt: '2026-02-14T10:30:00',
+            isAcknowledged: false,
+            isResolved: false
         },
         {
             id: 2,
-            type: 'missed-sessions',
-            severity: 'high',
+            alertType: 'missed_assessments' as const,
+            severity: 'moderate' as const,
             message: 'Patient missed 2 consecutive integration sessions',
-            timestamp: '2026-02-10 3:00 PM',
-            acknowledged: true,
-            resolved: false
+            triggeredAt: '2026-02-10T15:00:00',
+            isAcknowledged: true,
+            isResolved: false
         }
     ]);
 
@@ -67,13 +67,13 @@ const ArcOfCarePhase3Demo: React.FC = () => {
 
     const handleAcknowledgeAlert = (alertId: number) => {
         setAlerts(prev => prev.map(alert =>
-            alert.id === alertId ? { ...alert, acknowledged: true } : alert
+            alert.id === alertId ? { ...alert, isAcknowledged: true } : alert
         ));
     };
 
     const handleResolveAlert = (alertId: number) => {
         setAlerts(prev => prev.map(alert =>
-            alert.id === alertId ? { ...alert, resolved: true } : alert
+            alert.id === alertId ? { ...alert, isResolved: true } : alert
         ));
     };
 
@@ -100,7 +100,7 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                 </div>
 
                 {/* Red Alerts - Top Priority */}
-                {alerts.some(a => !a.resolved) && (
+                    {alerts.some(a => !a.isResolved) && (
                     <div className="bg-red-500/10 border-2 border-red-500/30 rounded-2xl p-6">
                         <div className="flex items-center gap-3 mb-6">
                             <AlertTriangle className="w-6 h-6 text-red-400" />
@@ -110,6 +110,7 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                             </div>
                         </div>
                         <RedAlertPanel
+                            patientId="DEMO-PATIENT"
                             alerts={alerts}
                             onAcknowledge={handleAcknowledgeAlert}
                             onResolve={handleResolveAlert}
@@ -128,7 +129,7 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                             </div>
                         </div>
 
-                        <PulseCheckWidget onSubmit={handlePulseCheckSubmit} />
+                        <PulseCheckWidget patientId="DEMO-PATIENT" sessionId={1} onSubmit={handlePulseCheckSubmit} />
 
                         {pulseCheckSubmitted && lastPulseCheck && (
                             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex items-start gap-3">
