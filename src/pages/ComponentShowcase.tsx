@@ -123,7 +123,7 @@ const ComponentShowcase: React.FC = () => {
                         </p>
                     </div>
                     <div className="bg-black border border-slate-800 rounded-2xl p-8">
-                        <DosageCalculator sessionId={mockSessionId} />
+                        <DosageCalculator sessionId={mockSessionId} patientId="DEMO-PATIENT" patientWeightKg={70} />
                     </div>
                 </div>
 
@@ -139,7 +139,7 @@ const ComponentShowcase: React.FC = () => {
                     <div className="bg-black border border-slate-800 rounded-2xl p-8">
                         <CrisisLogger
                             sessionId={mockSessionId}
-                            sessionStartTime={mockSessionStartTime}
+                            doseAdministeredAt={mockSessionStartTime}
                         />
                     </div>
                 </div>

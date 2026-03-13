@@ -66,7 +66,7 @@ const BENCHMARKS = {
 // Population-level: k-anon required
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleIntegrationDropout(siteId: number): Promise<InsightCard | null> {
+export async function ruleIntegrationDropout(siteId: string): Promise<InsightCard | null> {
     try {
         // Get non-responders: patients with baseline + follow-up PHQ-9, change < 50%
         const { data: trajectories, error } = await supabase
@@ -147,7 +147,7 @@ export async function ruleIntegrationDropout(siteId: number): Promise<InsightCar
 // Returns the FIRST flagged patient only (most overdue)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | null> {
+export async function ruleFollowUpLoss(siteId: string): Promise<InsightCard | null> {
     try {
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - 30);
@@ -202,7 +202,7 @@ export async function ruleFollowUpLoss(siteId: number): Promise<InsightCard | nu
 // Population-level: k-anon required (N ≥ 5 per subgroup)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleSubstanceMismatch(siteId: number): Promise<InsightCard | null> {
+export async function ruleSubstanceMismatch(siteId: string): Promise<InsightCard | null> {
     // NOTE: primary_indication was removed from log_clinical_records in the schema rebuild.
     // Indications now live in log_patient_indications (patient-centric, not session-centric).
     // This rule requires a two-step join that is deferred to the P1 insightEngine rewrite.
@@ -216,7 +216,7 @@ export async function ruleSubstanceMismatch(siteId: number): Promise<InsightCard
 // Population-level: k-anon required
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleDocumentationDecay(siteId: number): Promise<InsightCard | null> {
+export async function ruleDocumentationDecay(siteId: string): Promise<InsightCard | null> {
     try {
         const now = new Date();
         const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
@@ -287,7 +287,7 @@ export async function ruleDocumentationDecay(siteId: number): Promise<InsightCar
 // Population-level: k-anon required
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleBenchmarkOutperformance(siteId: number): Promise<InsightCard | null> {
+export async function ruleBenchmarkOutperformance(siteId: string): Promise<InsightCard | null> {
     try {
         const { data: trajectories, error } = await supabase
             .from('log_longitudinal_assessments')
@@ -345,7 +345,7 @@ export async function ruleBenchmarkOutperformance(siteId: number): Promise<Insig
 // Population-level: k-anon required
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleSafetySpike(siteId: number): Promise<InsightCard | null> {
+export async function ruleSafetySpike(siteId: string): Promise<InsightCard | null> {
     try {
         const now = new Date();
         const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -411,7 +411,7 @@ export async function ruleSafetySpike(siteId: number): Promise<InsightCard | nul
 // Population-level: k-anon required (N ≥ 5 total)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleNonResponderCluster(siteId: number): Promise<InsightCard | null> {
+export async function ruleNonResponderCluster(siteId: string): Promise<InsightCard | null> {
     try {
         const { data: sessions, error } = await supabase
             .from('log_clinical_records')
@@ -488,7 +488,7 @@ export async function ruleNonResponderCluster(siteId: number): Promise<InsightCa
 // Population-level: k-anon required
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function ruleBaselineSeverityMismatch(siteId: number): Promise<InsightCard | null> {
+export async function ruleBaselineSeverityMismatch(siteId: string): Promise<InsightCard | null> {
     try {
         const { data: baselines, error } = await supabase
             .from('log_baseline_assessments')
@@ -542,7 +542,7 @@ const SEVERITY_ORDER: Record<InsightSeverity, number> = {
     REVIEW: 3,
 };
 
-export async function runInsightEngine(siteId: number): Promise<InsightCard[]> {
+export async function runInsightEngine(siteId: string): Promise<InsightCard[]> {
     const results = await Promise.allSettled([
         ruleFollowUpLoss(siteId),           // SAFETY first
         ruleSafetySpike(siteId),            // SAFETY

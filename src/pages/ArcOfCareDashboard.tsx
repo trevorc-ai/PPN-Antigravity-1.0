@@ -67,13 +67,13 @@ const ArcOfCareDashboard: React.FC = () => {
 
     // Phase 3 state
     const trajectoryData = [
-        { date: '2025-08-16', score: 24, severity: 'severe' },
-        { date: '2025-09-01', score: 21, severity: 'severe' },
-        { date: '2025-10-01', score: 14, severity: 'moderate' },
-        { date: '2025-11-01', score: 8, severity: 'mild' },
-        { date: '2025-12-01', score: 4, severity: 'minimal' },
-        { date: '2026-01-01', score: 2, severity: 'minimal' },
-        { date: '2026-02-16', score: 1, severity: 'minimal' }
+        { day: 0, phq9Score: 24, assessmentDate: '2025-08-16' },
+        { day: 16, phq9Score: 21, assessmentDate: '2025-09-01' },
+        { day: 46, phq9Score: 14, assessmentDate: '2025-10-01' },
+        { day: 77, phq9Score: 8, assessmentDate: '2025-11-01' },
+        { day: 107, phq9Score: 4, assessmentDate: '2025-12-01' },
+        { day: 138, phq9Score: 2, assessmentDate: '2026-01-01' },
+        { day: 184, phq9Score: 1, assessmentDate: '2026-02-16' }
     ];
 
     const [alerts] = useState([
@@ -359,7 +359,7 @@ const ArcOfCareDashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        {alerts.some(a => !a.resolved) && (
+                        {alerts.some(a => !a.isResolved) && (
                             <div className="bg-red-500/10 border-2 border-red-500/30 rounded-2xl p-4 sm:p-6">
                                 <div className="flex items-center gap-3 mb-4">
                                     <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" />

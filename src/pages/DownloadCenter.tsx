@@ -204,11 +204,11 @@ const DownloadCenter: React.FC = () => {
         try {
             if (item.actionType === 'function' && item.actionTarget === 'exportAllData') {
                 await exportAllData();
-                addToast('System Audit Logs exported successfully.', 'success');
+                addToast({ type: 'success', message: 'System Audit Logs exported successfully.' });
             } else if (item.actionType === 'simulated') {
                 // Simulate download delay
                 await new Promise(r => setTimeout(r, 1500));
-                addToast(`${item.title} downloaded.`, 'success');
+                addToast({ type: 'success', message: `${item.title} downloaded.` });
             }
 
             setDone(prev => new Set([...prev, item.id]));
@@ -220,7 +220,7 @@ const DownloadCenter: React.FC = () => {
 
         } catch (error) {
             console.error('Download failed:', error);
-            addToast('Download failed. Please try again.', 'error');
+            addToast({ type: 'error', message: 'Download failed. Please try again.' });
         } finally {
             setDownloading(null);
         }

@@ -194,7 +194,12 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                         </div>
                     </div>
 
-                    <SymptomDecayCurveChart data={trajectoryData} />
+                    <SymptomDecayCurveChart
+                        patientId="DEMO-PATIENT"
+                        sessionId={1}
+                        sessionDate={new Date('2025-08-16')}
+                        data={trajectoryData}
+                    />
 
                     <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
                         <p className="text-blue-300 text-sm font-medium mb-2">Clinical Interpretation</p>
