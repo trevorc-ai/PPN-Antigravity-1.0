@@ -161,9 +161,9 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                     </p>
                 </div>
                 <AdvancedTooltip
-                    content={`Tracks QT interval readings from two devices simultaneously. A [STATUS: DIVERGENCE] flag appears when the two readings differ by ≥${divergenceThresholdMs}ms. Ibogaine-specific: mandatory cardiac monitoring. Threshold pending Dr. Allen confirmation.`}
-                    tier="detailed"
-                    type="info"
+                    content={`Tracks QT readings from two devices at the same time. If the two readings differ by ${divergenceThresholdMs}ms or more, a divergence flag appears. This monitoring is required for ibogaine sessions and should continue throughout the dosing period.`}
+                    tier="guide"
+                    type="warning"
                     title="QT Interval Tracker"
                     side="bottom-left"
                 >
@@ -317,8 +317,8 @@ export const QTIntervalTracker: React.FC<QTIntervalTrackerProps> = ({
                                         <span className="ppn-meta text-slate-600 text-center leading-tight">—</span>
                                     ) : isDivergent ? (
                                         <AdvancedTooltip
-                                            content={`Delta (${delta}ms) ≥ ${divergenceThresholdMs}ms threshold. Two devices are reporting meaningfully different QT values. Verify device leads, patient position, and calculation method before clinical decision-making.`}
-                                            tier="detailed"
+                                            content={`The two QT readings differ by ${delta}ms, which is above the safety threshold. This gap is large enough to affect your decision. Before acting, check that both devices are connected correctly and that the patient has not moved.`}
+                                            tier="guide"
                                             type="warning"
                                             title="QT Divergence"
                                             side="bottom-left"

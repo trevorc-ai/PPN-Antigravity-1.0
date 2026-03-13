@@ -92,7 +92,7 @@ export default function MolecularPharmacology() {
         <div className="w-full bg-[#0f1218] p-6 rounded-2xl border border-slate-800 shadow-2xl flex flex-col gap-8 h-full overflow-y-auto custom-scrollbar">
             {/* Header & Tabs */}
             <div className="flex flex-col items-start gap-4">
-                <div title="Visualizing receptor binding potential ($K_i$ affinity) across target sites">
+                <div aria-label="Visualizing receptor binding strength across key biological targets for the selected substance">
                     <h2 className="text-xl font-black text-slate-300 tracking-tighter flex items-center gap-2">
                         <Dna className="text-indigo-500" />
                         Molecular Bridge
@@ -205,7 +205,7 @@ export default function MolecularPharmacology() {
                         </p>
 
                         <div className="mt-4 pt-4 border-t border-slate-800">
-                            <div className="flex items-start gap-2" title="Important clinical considerations">
+                            <div className="flex items-start gap-2" aria-label="Clinical consideration for this substance">
                                 <Info className="w-3 h-3 text-indigo-400 mt-0.5 shrink-0" />
                                 <p className="text-sm text-slate-500 leading-tight">
                                     <strong className="text-slate-300">Clinical Note:</strong> {data.id === 'MDMA' ? 'Check cardiac history.' : data.id === 'KET' ? 'Monitor blood pressure.' : 'Screen for psychosis history.'}

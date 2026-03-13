@@ -131,7 +131,7 @@ const RescueProtocolChecklist: React.FC<RescueProtocolChecklistProps> = ({
                             key={protocol.code}
                             content={protocol.tooltipContent}
                             type={protocol.category === 'chemical' ? 'warning' : 'info'}
-                            tier="detailed"
+                            tier="guide"
                             title={protocol.name}
                             side="right"
                         >

@@ -179,7 +179,7 @@ const RedAlertPanel: React.FC<RedAlertPanelProps> = ({
                                                         <AdvancedTooltip
                                                             content={config.tooltip}
                                                             type="warning"
-                                                            tier="detailed"
+                                                            tier="guide"
                                                             title={config.label}
                                                             side="top"
                                                         >

@@ -346,8 +346,8 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black uppercase tracking-[0.2em]" style={{ color: '#A8B5D1' }}>Receptor Affinity Profile</h3>
-                  <AdvancedTooltip content="Comparative binding affinity logic based on substance class. Target vs. Endogenous baseline.">
-                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" size={16} />
+                  <AdvancedTooltip content="Shows how strongly this substance binds to key receptors in the brain and body, compared to the normal baseline. Each point on the chart is a different biological target." side="top">
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
               </div>
@@ -404,8 +404,8 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black uppercase tracking-[0.2em]" style={{ color: '#A8B5D1' }}>Session Vitals</h3>
-                  <AdvancedTooltip content="Heart rate and blood pressure readings recorded during this session.">
-                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" size={16} />
+                  <AdvancedTooltip content="Heart rate and blood pressure readings logged during this session. Each point on the chart is one recorded reading." side="top">
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
               </div>
@@ -471,8 +471,8 @@ const ProtocolDetail: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xl font-black uppercase tracking-[0.2em]" style={{ color: '#A8B5D1' }}>Efficacy Trajectory (PHQ-9)</h3>
-                  <AdvancedTooltip content="Longitudinal PHQ-9 outcome scores for this patient across all sessions.">
-                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" size={16} />
+                  <AdvancedTooltip content="Your patient's PHQ-9 depression scores over time. Lower scores mean less depression. The dashed green line marks the remission threshold (score of 5 or below)." side="top">
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={16} />
                   </AdvancedTooltip>
                 </div>
               </div>
@@ -534,8 +534,8 @@ const ProtocolDetail: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <label className="text-sm font-bold text-slate-500 uppercase tracking-widest">Protocol</label>
-                    <AdvancedTooltip content="Core pharmacological parameters from the recorded session.">
-                      <Info className="text-slate-600 hover:text-indigo-400 transition-colors cursor-help" size={14} />
+                    <AdvancedTooltip content="The substance, session type, date, and dosage logged for this protocol record." side="top">
+                      <Info className="text-slate-600 hover:text-indigo-400 transition-colors cursor-help print:hidden" size={14} />
                     </AdvancedTooltip>
                   </div>
                   <p className="text-3xl font-black tracking-tight" style={{ color: '#9DAEC8' }}>{substanceName}</p>
@@ -594,15 +594,15 @@ const ProtocolDetail: React.FC = () => {
             </section>
 
             {/* Safety Monitor */}
-            <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
+            <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-8 shadow-2xl relative">
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-[50px] pointer-events-none" />
 
               <div className="flex items-center gap-3 mb-6 relative z-10">
                 <span className="material-symbols-outlined text-3xl text-red-400">medical_services</span>
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-black uppercase tracking-widest" style={{ color: '#A8B5D1' }}>Safety Monitor</h3>
-                  <AdvancedTooltip content="Adverse events recorded for this session." side="bottom">
-                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help" size={14} />
+                  <AdvancedTooltip content="Any adverse events logged during this session, including their severity grade and whether they were resolved." side="bottom">
+                    <Info className="text-slate-600 hover:text-slate-300 transition-colors cursor-help print:hidden" size={14} />
                   </AdvancedTooltip>
                 </div>
               </div>

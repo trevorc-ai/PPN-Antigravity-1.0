@@ -185,8 +185,8 @@ const PractitionerProtocolBenchmark: React.FC<PractitionerProtocolBenchmarkProps
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h2 id="ppb-heading" className="ppn-section-title">Treatment Trend Forecast</h2>
-            <AdvancedTooltip content="Patient PHQ-9 arc vs. community median trajectory from matched benchmark cohorts. IQR band shows ±1 SD around published endpoint mean.">
-              <button type="button" aria-label="About this chart" className="text-slate-600 hover:text-slate-300 transition-colors">
+            <AdvancedTooltip content="Your patient's depression score over time, compared to the typical path of similar patients in published studies. The shaded band shows the range where most outcomes fall.">
+              <button type="button" aria-label="About this chart" className="text-slate-600 hover:text-slate-300 transition-colors print:hidden">
                 <Info className="w-4 h-4" aria-hidden="true" />
               </button>
             </AdvancedTooltip>

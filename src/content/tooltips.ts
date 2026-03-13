@@ -10,9 +10,9 @@
 export const tooltips = {
     // 🛡️ Safety Shield (Drug Interaction Checker)
     safetyShield: {
-        interactionCheck: "We scan this combination against the FDA database to check for dangerous reactions.",
-        mechanism: "The biological reason why these two drugs clash (e.g., they both compete for the same receptor).",
-        severityScore: "Red = High Risk (Stop). Yellow = Caution (Monitor closely)."
+        interactionCheck: "We check this combination against a clinical reference database for known dangerous reactions.",
+        mechanism: "The biological reason why these two drugs interact - for example, they may compete for the same receptor or both raise serotonin levels.",
+        severityScore: "The shield color and icon show the risk level. Red with a stop icon: High Risk - do not proceed. Yellow with a caution icon: Monitor closely. Green with a check icon: No known conflicts detected."
     },
 
     // 📝 Legacy Importer
@@ -45,8 +45,8 @@ export const tooltips = {
 
     // 📊 Research Dashboard
     researchDashboard: {
-        sparkline: "A mini-view of progress. Downward slope = Symptoms improving.",
-        efficacyScore: "The percentage of patients who saw a significant benefit from this substance.",
+        sparkline: "A mini chart of progress over time. A line going down means symptoms are getting better - lower scores mean less distress.",
+        efficacyScore: "The percentage of patients who saw a significant benefit from this substance in published clinical studies.",
         verifiedNode: "This clinician has verified their license and identity with PPN."
     }
 } as const;
