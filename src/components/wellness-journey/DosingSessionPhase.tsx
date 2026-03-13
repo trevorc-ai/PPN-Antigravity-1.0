@@ -22,17 +22,21 @@ interface EBState { hasError: boolean; error: string; }
 export class Phase2ErrorBoundary extends Component<EBProps, EBState> {
     public state: EBState = { hasError: false, error: '' };
 
+    constructor(props: EBProps) {
+        super(props);
+        this.handleReset = this.handleReset.bind(this);
+    }
+
     public static getDerivedStateFromError(err: Error): EBState {
         return { hasError: true, error: err?.message ?? 'Unknown error' };
     }
     public componentDidCatch(err: Error, info: React.ErrorInfo) {
         console.error('[Phase2ErrorBoundary]', err, info);
     }
-    public handleReset: () => void = () => {
-        // eslint-disable-next-line react/no-direct-mutation-state
-        (this as Component<EBProps, EBState>).setState({ hasError: false, error: '' });
-        (this as Component<EBProps, EBState>).props.onReset();
-    };
+    public handleReset() {
+        this.setState({ hasError: false, error: '' });
+        this.props.onReset();
+    }
 
     public render() {
         if (this.state.hasError) {
