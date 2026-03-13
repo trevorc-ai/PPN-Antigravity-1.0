@@ -19,15 +19,39 @@ export interface PatientIntakeData {
     smoking: string;
 }
 
-const CONDITIONS = [
-    'PTSD',
-    'Depression',
-    'Anxiety / GAD',
-    'Addiction / SUD',
-    'End-of-Life Distress',
-    'Spiritual / Ceremonial',
-    'Chronic Pain',
-    'Other',
+const CONDITIONS: { label: string; tooltip: string }[] = [
+    {
+        label: 'PTSD',
+        tooltip: 'Post-Traumatic Stress Disorder (PTSD) — ICD-10: F43.1. A trauma-related psychiatric disorder characterised by intrusive re-experiencing, avoidance, negative cognitions, and hyperarousal following exposure to a life-threatening or severely distressing event.'
+    },
+    {
+        label: 'Depression',
+        tooltip: 'Major Depressive Disorder (MDD) — ICD-10: F32/F33. A mood disorder characterised by persistent low mood, anhedonia, cognitive impairment, and neurovegetative changes. Includes treatment-resistant depression (TRD) where two or more adequate antidepressant trials have failed.'
+    },
+    {
+        label: 'Anxiety / GAD',
+        tooltip: 'Generalised Anxiety Disorder (GAD) — ICD-10: F41.1. Chronic, excessive, and difficult-to-control worry across multiple domains (health, work, relationships). Accompanied by physical symptoms: muscle tension, fatigue, sleep disruption, and irritability. Also covers panic disorder (F41.0) and social anxiety disorder (F40.10).'
+    },
+    {
+        label: 'Addiction / SUD',
+        tooltip: 'Substance Use Disorder (SUD) — ICD-10: F10–F19. A pattern of compulsive substance use creating clinically significant impairment, including alcohol use disorder (AUD), opioid use disorder (OUD), stimulant use disorder, and tobacco dependence. Psilocybin-assisted therapy has active trial evidence for AUD and tobacco cessation.'
+    },
+    {
+        label: 'End-of-Life Distress',
+        tooltip: 'Existential and Psychological Distress (EOL) — ICD-10: F43.8 / Z51.5. Anxiety, depression, and demoralisation arising in the context of a terminal or life-limiting diagnosis. Commonly includes death anxiety, loss of meaning, and anticipatory grief. FDA has granted Breakthrough Therapy designation for psilocybin-assisted therapy in this indication.'
+    },
+    {
+        label: 'Spiritual / Ceremonial',
+        tooltip: 'Non-clinical / Ceremonial Use. Intentional, facilitated entheogenic experience for spiritual growth, meaning-making, or personal development. Not associated with a DSM-5 or ICD-10 diagnosis. Documented traditional use spans indigenous cultures globally. Oregon Measure 109 explicitly includes this category within licensed facilitation services.'
+    },
+    {
+        label: 'Chronic Pain',
+        tooltip: 'Chronic Pain Condition — ICD-10: G89.2x / F45.41. Persistent pain lasting ≥3 months that significantly impacts function and quality of life. Includes fibromyalgia, complex regional pain syndrome (CRPS), and central sensitisation syndromes. Emerging evidence suggests psychedelic-assisted therapy may modulate pain-related affect and catastrophising.'
+    },
+    {
+        label: 'Other',
+        tooltip: 'Other or undifferentiated presenting concern not covered by the listed categories. Log free-text clinical context in the Session Notes field after session start.'
+    },
 ];
 
 const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
@@ -238,17 +262,25 @@ export const ProtocolConfiguratorModal: React.FC<ProtocolConfiguratorModalProps>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {CONDITIONS.map(c => (
-                                    <button
-                                        key={c}
-                                        type="button"
-                                        onClick={() => setCondition(c)}
-                                        className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${condition === c
-                                            ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
-                                            : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
-                                            }`}
+                                    <AdvancedTooltip
+                                        key={c.label}
+                                        content={c.tooltip}
+                                        tier="standard"
+                                        type="info"
+                                        side="bottom"
+                                        width="w-[320px]"
                                     >
-                                        {c}
-                                    </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCondition(c.label)}
+                                            className={`min-h-[44px] sm:min-h-0 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-all duration-300 ease-in-out active:scale-95 ${condition === c.label
+                                                ? 'bg-indigo-600 text-white border-indigo-500 shadow shadow-indigo-600/30'
+                                                : 'bg-slate-800/60 text-slate-400 border-slate-700/50 hover:border-slate-500 hover:text-slate-200'
+                                                }`}
+                                        >
+                                            {c.label}
+                                        </button>
+                                    </AdvancedTooltip>
                                 ))}
                             </div>
                         </div>

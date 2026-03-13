@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Info, AlertTriangle, ShieldAlert, Activity, Microscope, CheckCircle, HelpCircle, X, ExternalLink, BookOpen } from 'lucide-react';
+import { Info, AlertTriangle, ShieldAlert, Activity, Microscope, CheckCircle, X, ExternalLink, BookOpen } from 'lucide-react';
 
 // --- TYPES ---
 
@@ -68,6 +69,81 @@ const TYPE_CONFIG = {
     }
 };
 
+// --- PORTAL TOOLTIP POPUP ---
+// Renders into document.body via a portal so it escapes any overflow:hidden /
+// overflow-y:auto scroll container (e.g. SlideOutPanel) and any stacking context.
+// Uses position:fixed with coordinates derived from getBoundingClientRect().
+
+interface TooltipPortalProps {
+    triggerRect: DOMRect;
+    side: TooltipSide;
+    width?: string;
+    children: React.ReactNode;
+    zIndex?: number;
+}
+
+const TOOLTIP_GAP = 8; // px gap between trigger and popup
+
+const TooltipPortal: React.FC<TooltipPortalProps> = ({ triggerRect, side, width, children, zIndex = 9999 }) => {
+    const popupRef = useRef<HTMLDivElement>(null);
+    const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+
+    useEffect(() => {
+        if (!popupRef.current) return;
+        const popup = popupRef.current;
+        const popupRect = popup.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        let top = 0;
+        let left = 0;
+
+        switch (side) {
+            case 'top':
+                top = triggerRect.top - popupRect.height - TOOLTIP_GAP;
+                left = triggerRect.left + triggerRect.width / 2 - popupRect.width / 2;
+                break;
+            case 'bottom':
+            case 'bottom-left':
+                top = triggerRect.bottom + TOOLTIP_GAP;
+                left = side === 'bottom-left'
+                    ? triggerRect.right - popupRect.width
+                    : triggerRect.left + triggerRect.width / 2 - popupRect.width / 2;
+                break;
+            case 'right':
+                top = triggerRect.top + triggerRect.height / 2 - popupRect.height / 2;
+                left = triggerRect.right + TOOLTIP_GAP;
+                break;
+            case 'left':
+                top = triggerRect.top + triggerRect.height / 2 - popupRect.height / 2;
+                left = triggerRect.left - popupRect.width - TOOLTIP_GAP;
+                break;
+        }
+
+        // Clamp to viewport with 8px edge padding
+        left = Math.max(8, Math.min(left, vw - popupRect.width - 8));
+        top  = Math.max(8, Math.min(top,  vh - popupRect.height - 8));
+
+        setCoords({ top, left });
+    }, [triggerRect, side]);
+
+    return ReactDOM.createPortal(
+        <div
+            ref={popupRef}
+            className={`fixed ${width ?? 'w-80'} max-w-[calc(100vw-1rem)] pointer-events-none`}
+            style={{
+                zIndex,
+                top: coords ? coords.top : -9999,
+                left: coords ? coords.left : -9999,
+                visibility: coords ? 'visible' : 'hidden',
+            }}
+        >
+            {children}
+        </div>,
+        document.body
+    );
+};
+
 // --- COMPONENT ---
 
 export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
@@ -93,10 +169,13 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
             window.open(url, '_blank', 'noreferrer');
         }
     };
+
     const [isVisible, setIsVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false); // For Tier 3 click
+    const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
     const config = TYPE_CONFIG[type];
     const Icon = config.icon;
@@ -110,9 +189,16 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
 
     const isTouchDevice = () => navigator.maxTouchPoints > 0;
 
+    const captureRect = useCallback(() => {
+        if (wrapperRef.current) {
+            setTriggerRect(wrapperRef.current.getBoundingClientRect());
+        }
+    }, []);
+
     const handleMouseEnter = () => {
-        if (isTouchDevice()) return; // Suppress on tablets/phones, touch tap fires mouseenter
+        if (isTouchDevice()) return;
         if (tier === 'guide') return;
+        captureRect();
         timeoutRef.current = setTimeout(() => setIsVisible(true), tier === 'micro' ? 200 : delay);
     };
 
@@ -124,7 +210,10 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
 
     const handleFocus = () => {
         setIsFocused(true);
-        if (tier !== 'guide') setIsVisible(true);
+        if (tier !== 'guide') {
+            captureRect();
+            setIsVisible(true);
+        }
     };
 
     const handleBlur = () => {
@@ -135,6 +224,7 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
     const handleClick = (e: React.MouseEvent) => {
         if (tier === 'guide') {
             e.stopPropagation();
+            captureRect();
             setIsDetailsOpen(!isDetailsOpen);
         }
     };
@@ -151,238 +241,161 @@ export const AdvancedTooltip: React.FC<AdvancedTooltipProps> = ({
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // --- RENDERING TIERS ---
+    // --- SHARED POPUP CONTENT ---
 
-    // TIER 1: MICRO (Simple label)
-    if (tier === 'micro') {
-        return (
-            <div
-                className="relative inline-flex items-center"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-            >
-                {children}
-                {isVisible && (
-                    <div className={`
-            absolute z-[100] px-3 py-1.5 rounded-lg
-            ${side === 'top' ? 'bottom-full left-0 mb-2' : ''}
-            ${side === 'bottom' ? 'top-full left-0 mt-2' : ''}
-            ${side === 'bottom-left' ? 'top-full right-0 mt-2' : ''}
-            ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
-            ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
-            bg-slate-900 border border-slate-700 text-slate-300 
+    const microContent = (
+        <div className={`
+            rounded-lg px-3 py-1.5
+            bg-slate-900 border border-slate-700 text-slate-300
             text-sm font-bold uppercase tracking-wider
-            max-w-[calc(100vw-2rem)] whitespace-nowrap shadow-xl animate-in fade-in zoom-in-95 duration-200
+            whitespace-nowrap shadow-xl animate-in fade-in zoom-in-95 duration-200
             ${config.glow}
-          `}>
-                        {content}
-                        {/* Micro: learn more icon-only */}
-                        {learnMoreUrl && (
-                            <button
-                                onClick={(e) => handleLearnMore(e, learnMoreUrl)}
-                                aria-label={`Learn more about ${title || 'this topic'}`}
-                                className="ml-1.5 inline-flex items-center text-slate-400 hover:text-blue-400 transition-colors"
-                            >
-                                {isInternal(learnMoreUrl)
-                                    ? <BookOpen size={11} />
-                                    : <ExternalLink size={11} />}
-                            </button>
-                        )}
-                        {/* Micro-arrow */}
-                        <div className={`
-               absolute w-2 h-2 bg-slate-900 border-slate-700 rotate-45
-               ${side === 'top' ? 'bottom-[-5px] left-1/2 -translate-x-1/2 border-b border-r' : ''}
-               ${side === 'bottom' ? 'top-[-5px] left-1/2 -translate-x-1/2 border-t border-l' : ''}
-               ${side === 'right' ? 'left-[-5px] top-1/2 -translate-y-1/2 border-b border-l' : ''}
-               ${side === 'left' ? 'right-[-5px] top-1/2 -translate-y-1/2 border-t border-r' : ''}
-             `}></div>
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    // TIER 3: GUIDE (Click to open, rich content)
-    if (tier === 'guide') {
-        return (
-            <div className="relative inline-flex items-center">
-                <div
-                    onClick={handleClick}
-                    className="cursor-help transition-all hover:scale-110 active:scale-95"
-                    role="button"
-                    tabIndex={0}
-                    aria-expanded={isDetailsOpen}
-                    aria-label={`Learn more about ${title}`}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleClick(e as any); }}
-                >
-                    {children}
-                </div>
-
-                {isDetailsOpen && (
-                    <div
-                        className={`
-              absolute z-50 p-0
-              ${side === 'top' ? 'bottom-full left-0 mb-3' : ''}
-              ${side === 'bottom' ? 'top-full left-0 mt-3' : ''}
-              ${side === 'bottom-left' ? 'top-full right-0 mt-3' : ''}
-              ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-3' : ''}
-              ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-3' : ''}
-              ${width || 'w-80 sm:w-96'} max-w-[calc(100vw-2rem)]
-            `}
-                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
-                    >
-                        {/* Backdrop click to close handled by parent or transparent overlay if needed, 
-                 but typically click-outside logic is better for modals. 
-                 For this tooltip, we'll just use the close button. */}
-
-                        <div className={`
-              relative overflow-hidden rounded-2xl 
-              bg-[#0f172a]/95 backdrop-blur-xl
-              border ${config.border}
-              shadow-2xl ${config.glow}
-              animate-in fade-in zoom-in-95 duration-300
-              flex flex-col
-            `}>
-                            {/* Header */}
-                            <div className={`px-5 py-4 border-b ${config.border} ${config.bg} flex justify-between items-start`}>
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-1.5 rounded-lg bg-black/20 ${config.color}`}>
-                                        <Icon size={16} />
-                                    </div>
-                                    <h4 className={`text-sm font-black uppercase tracking-widest ${config.color}`}>
-                                        {title || 'Help Guide'}
-                                    </h4>
-                                </div>
-                                <button
-                                    onClick={() => setIsDetailsOpen(false)}
-                                    className="text-slate-500 hover:text-slate-300 transition-colors"
-                                >
-                                    <X size={16} />
-                                </button>
-                            </div>
-
-                            {/* Body */}
-                            <div className="p-5 text-sm text-slate-300 font-medium leading-relaxed">
-                                {content}
-                            </div>
-
-                            {/* Footer / Meta */}
-                            {(glossaryTerm || learnMoreUrl || type === 'critical') && (
-                                <div className="px-5 py-3 border-t border-slate-800/50 bg-black/20 flex justify-between items-center text-xs">
-                                    <div className="flex items-center gap-3">
-                                        {glossaryTerm && (
-                                            <button className="flex items-center gap-1.5 text-slate-300 hover:text-primary transition-colors font-bold uppercase tracking-wider">
-                                                <BookOpen size={12} />
-                                                {glossaryTerm}
-                                            </button>
-                                        )}
-                                        {learnMoreUrl && (
-                                            <button
-                                                onClick={(e) => handleLearnMore(e, learnMoreUrl)}
-                                                aria-label={`Learn more about ${title || 'this topic'}`}
-                                                className="flex items-center gap-1.5 text-slate-400 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider"
-                                            >
-                                                {isInternal(learnMoreUrl)
-                                                    ? <BookOpen size={12} />
-                                                    : <ExternalLink size={12} />}
-                                                Learn more
-                                            </button>
-                                        )}
-                                    </div>
-                                    {type === 'critical' && (
-                                        <span className="flex items-center gap-1.5 text-red-400 font-bold uppercase tracking-wider">
-                                            <ShieldAlert size={12} />
-                                            Safety Protocol
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Arrow */}
-                        <div className={`
-               absolute w-3 h-3 bg-[#0f172a] border-t border-l ${config.border} rotate-45
-               ${side === 'top' ? 'bottom-[-6px] left-1/2 -translate-x-1/2 border-b border-r border-t-0 border-l-0' : ''}
-               ${side === 'bottom' ? 'top-[-6px] left-1/2 -translate-x-1/2' : ''}
-               ${side === 'right' ? 'left-[-6px] top-1/2 -translate-y-1/2 border-b border-l border-t-0 border-r-0' : ''}
-               ${side === 'left' ? 'right-[-6px] top-1/2 -translate-y-1/2 border-t border-r border-b-0 border-l-0' : ''}
-             `}></div>
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    // TIER 2: STANDARD (Hover/Focus, rich enough)
-    return (
-        <div
-            className="relative inline-flex items-center group"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-        >
-            {children}
-            {/* Keyboard Hint */}
-            {isFocused && !isVisible && (
-                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-blue-500 text-slate-300 text-xs px-1 rounded">?</div>
-            )}
-
-            {isVisible && (
-                <div className={`
-          absolute z-[100]
-          ${side === 'top' ? 'bottom-full left-0 mb-2' : ''}
-          ${side === 'bottom' ? 'top-full left-0 mt-2' : ''}
-          ${side === 'bottom-left' ? 'top-full right-0 mt-2' : ''}
-          ${side === 'right' ? 'left-full top-1/2 -translate-y-1/2 ml-2' : ''}
-          ${side === 'left' ? 'right-full top-1/2 -translate-y-1/2 mr-2' : ''}
-          ${width || 'w-80'} max-w-[calc(100vw-2rem)]
         `}>
-                    <div className={`
+            {content}
+            {learnMoreUrl && (
+                <button
+                    onClick={(e) => handleLearnMore(e, learnMoreUrl)}
+                    aria-label={`Learn more about ${title || 'this topic'}`}
+                    className="ml-1.5 inline-flex items-center text-slate-400 hover:text-blue-400 transition-colors"
+                    style={{ pointerEvents: 'auto' }}
+                >
+                    {isInternal(learnMoreUrl) ? <BookOpen size={11} /> : <ExternalLink size={11} />}
+                </button>
+            )}
+        </div>
+    );
+
+    const standardContent = (
+        <div className={`
             relative rounded-xl p-3.5
             bg-[#0f172a]/95 backdrop-blur-md
             border border-slate-700
             shadow-2xl ${config.glow}
             animate-in fade-in slide-in-from-bottom-2 duration-200
-          `}>
-                        {/* Title Row */}
-                        {title && (
-                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
-                                <Icon size={12} className={config.color} />
-                                <span className={`text-sm font-black uppercase tracking-widest ${config.color}`}>{title}</span>
-                            </div>
-                        )}
+        `}>
+            {title && (
+                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-700/50">
+                    <Icon size={12} className={config.color} />
+                    <span className={`text-sm font-black uppercase tracking-widest ${config.color}`}>{title}</span>
+                </div>
+            )}
+            <div className="text-sm text-slate-300 font-medium leading-relaxed max-h-48 overflow-y-auto" style={{ pointerEvents: 'auto' }}>
+                {content}
+            </div>
+            {learnMoreUrl && (
+                <button
+                    onClick={(e) => handleLearnMore(e, learnMoreUrl)}
+                    aria-label={`Learn more about ${title || 'this topic'}`}
+                    className="mt-2 flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider"
+                    style={{ pointerEvents: 'auto' }}
+                >
+                    {isInternal(learnMoreUrl) ? <BookOpen size={11} /> : <ExternalLink size={11} />}
+                    Learn more
+                </button>
+            )}
+        </div>
+    );
 
-                        {/* WO-600-D: max-h + overflow-y-auto prevents long assessment tooltips (PHQ-9/GAD-7) from overflowing */}
-                        <div className="text-sm text-slate-300 font-medium leading-relaxed max-h-48 overflow-y-auto">
-                            {content}
-                        </div>
-                        {/* Standard tier: learn more link below content */}
+    const guideContent = (
+        <div className={`
+            relative overflow-hidden rounded-2xl
+            bg-[#0f172a]/95 backdrop-blur-xl
+            border ${config.border}
+            shadow-2xl ${config.glow}
+            animate-in fade-in zoom-in-95 duration-300
+            flex flex-col
+        `} style={{ pointerEvents: 'auto' }}>
+            {/* Header */}
+            <div className={`px-5 py-4 border-b ${config.border} ${config.bg} flex justify-between items-start`}>
+                <div className="flex items-center gap-3">
+                    <div className={`p-1.5 rounded-lg bg-black/20 ${config.color}`}>
+                        <Icon size={16} />
+                    </div>
+                    <h4 className={`text-sm font-black uppercase tracking-widest ${config.color}`}>
+                        {title || 'Help Guide'}
+                    </h4>
+                </div>
+                <button
+                    onClick={() => setIsDetailsOpen(false)}
+                    className="text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                    <X size={16} />
+                </button>
+            </div>
+            {/* Body */}
+            <div className="p-5 text-sm text-slate-300 font-medium leading-relaxed">
+                {content}
+            </div>
+            {/* Footer */}
+            {(glossaryTerm || learnMoreUrl || type === 'critical') && (
+                <div className="px-5 py-3 border-t border-slate-800/50 bg-black/20 flex justify-between items-center text-xs">
+                    <div className="flex items-center gap-3">
+                        {glossaryTerm && (
+                            <button className="flex items-center gap-1.5 text-slate-300 hover:text-primary transition-colors font-bold uppercase tracking-wider">
+                                <BookOpen size={12} />
+                                {glossaryTerm}
+                            </button>
+                        )}
                         {learnMoreUrl && (
                             <button
                                 onClick={(e) => handleLearnMore(e, learnMoreUrl)}
                                 aria-label={`Learn more about ${title || 'this topic'}`}
-                                className="mt-2 flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider"
+                                className="flex items-center gap-1.5 text-slate-400 hover:text-blue-400 transition-colors font-bold uppercase tracking-wider"
                             >
-                                {isInternal(learnMoreUrl)
-                                    ? <BookOpen size={11} />
-                                    : <ExternalLink size={11} />}
+                                {isInternal(learnMoreUrl) ? <BookOpen size={12} /> : <ExternalLink size={12} />}
                                 Learn more
                             </button>
                         )}
-
-                        {/* Micro-arrow */}
-                        <div className={`
-               absolute w-2 h-2 bg-[#0f172a] border-slate-700 rotate-45
-               ${side === 'top' ? 'bottom-[-5px] left-1/2 -translate-x-1/2 border-b border-r' : ''}
-               ${side === 'bottom' ? 'top-[-5px] left-1/2 -translate-x-1/2 border-t border-l' : ''}
-               ${side === 'right' ? 'left-[-5px] top-1/2 -translate-y-1/2 border-b border-l' : ''}
-               ${side === 'left' ? 'right-[-5px] top-1/2 -translate-y-1/2 border-t border-r' : ''}
-             `}></div>
                     </div>
+                    {type === 'critical' && (
+                        <span className="flex items-center gap-1.5 text-red-400 font-bold uppercase tracking-wider">
+                            <ShieldAlert size={12} />
+                            Safety Protocol
+                        </span>
+                    )}
                 </div>
+            )}
+        </div>
+    );
+
+    // --- RENDER ---
+
+    return (
+        <div
+            ref={wrapperRef}
+            className="relative inline-flex items-center"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onClick={tier === 'guide' ? handleClick : undefined}
+        >
+            {children}
+
+            {/* Keyboard hint for focused but not yet visible */}
+            {isFocused && !isVisible && tier !== 'guide' && (
+                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-blue-500 text-slate-300 text-xs px-1 rounded">?</div>
+            )}
+
+            {/* TIER 1: MICRO — portal popup */}
+            {tier === 'micro' && isVisible && triggerRect && (
+                <TooltipPortal triggerRect={triggerRect} side={side} width="max-w-xs">
+                    {microContent}
+                </TooltipPortal>
+            )}
+
+            {/* TIER 2: STANDARD — portal popup */}
+            {tier === 'standard' && isVisible && triggerRect && (
+                <TooltipPortal triggerRect={triggerRect} side={side} width={width ?? 'w-80'}>
+                    {standardContent}
+                </TooltipPortal>
+            )}
+
+            {/* TIER 3: GUIDE — portal popup (click-to-open) */}
+            {tier === 'guide' && isDetailsOpen && triggerRect && (
+                <TooltipPortal triggerRect={triggerRect} side={side} width={width ?? 'w-80 sm:w-96'} zIndex={10000}>
+                    {guideContent}
+                </TooltipPortal>
             )}
         </div>
     );

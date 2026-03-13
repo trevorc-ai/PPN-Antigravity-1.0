@@ -91,6 +91,7 @@
 
 ### `log_clinical_records`
 > **Key table.** Active session = `is_submitted = false AND session_ended_at IS NULL AND dose_administered_at IS NOT NULL`. Timer start = `dose_administered_at`.
+> **WO-592 applied 2026-03-10:** `session_status` column live in production — filters `.neq('session_status', 'draft')` are active in all analytics hooks.
 
 | column | type | nullable | default |
 |---|---|---|---|
@@ -141,6 +142,7 @@
 | patient_age_years | integer | YES | null |
 | created_by | uuid | YES | null |
 | patient_link_code_hash | text | YES | null |
+| session_status | text | NO | 'draft' | ✅ WO-592 — valid: 'draft', 'active', 'completed'. Analytics queries must filter `!= 'draft'`. |
 
 ### `log_consent`
 | column | type | nullable | default |

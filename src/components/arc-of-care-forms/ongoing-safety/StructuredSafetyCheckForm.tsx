@@ -355,10 +355,13 @@ const StructuredSafetyCheckForm: React.FC<StructuredSafetyCheckFormProps> = ({
                                 >
                                     <div className="flex items-center justify-between gap-2">
                                         <span>{med.name}</span>
-                                        {med.flag === 'absolute' && (
+                                        {/* Only show interaction badges AFTER the practitioner selects the medication.
+                                            Showing them unconditionally implied contraindications before any substance
+                                            has been chosen, which caused clinical confusion. */}
+                                        {selected && med.flag === 'absolute' && (
                                             <span className="text-xs font-bold text-red-400 uppercase tracking-wide flex-shrink-0">Contraindicated</span>
                                         )}
-                                        {med.flag === 'caution' && (
+                                        {selected && med.flag === 'caution' && (
                                             <span className="text-xs font-bold text-amber-400 uppercase tracking-wide flex-shrink-0">Caution</span>
                                         )}
                                     </div>

@@ -1318,18 +1318,14 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                 ))}
                             </div>
                         </div>
-                        <div className="flex-shrink-0">
-                            {!contraindicationResults ? (
-                                <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                                    <ShieldAlert className="w-4 h-4" /> No substance selected
-                                </span>
-                            ) : (
+                        {contraindicationResults && (
+                            <div className="flex-shrink-0">
                                 <span className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-950/40 border border-emerald-600/40 text-emerald-300 text-sm font-black uppercase tracking-wider">
                                     <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                                     ALL CLEAR, No Contraindications
                                 </span>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 )}
 
