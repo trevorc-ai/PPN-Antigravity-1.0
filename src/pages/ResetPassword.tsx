@@ -135,31 +135,55 @@ const ResetPassword: React.FC = () => {
             if (isInvited) {
                 // ── VIP Invite path ─────────────────────────────────────────
                 // User already has a Supabase account (created by the Edge Fn).
-                // Provision their profile + solo workspace here, then go straight
-                // to the dashboard — no signup wizard, no second email/password.
-                const firstName = (meta.invited_first_name as string) || '';
-                const lastName  = (meta.invited_last_name  as string) || '';
+                // Provision profile + solo workspace, then go straight to dashboard.
+                const metaFirst = (meta.invited_first_name as string) || '';
+                const metaLast  = (meta.invited_last_name  as string) || '';
 
-                await supabase.from('log_user_profiles').upsert({
-                    user_id:         user!.id,
-                    user_first_name: firstName,
-                    user_last_name:  lastName,
-                    display_name:    firstName,   // ensures header never falls back to email prefix
-                });
+                // Fetch existing profile first — never overwrite good data with blanks.
+                const { data: existing } = await supabase
+                    .from('log_user_profiles')
+                    .select('user_first_name, user_last_name, display_name')
+                    .eq('user_id', user!.id)
+                    .maybeSingle();
 
-                const { data: site } = await supabase
-                    .from('log_sites')
-                    .insert([{ site_name: `${firstName}'s Workspace`, is_active: true }])
+                // Prefer invite metadata; fall back to whatever is already in the DB.
+                const firstName = metaFirst || existing?.user_first_name || '';
+                const lastName  = metaLast  || existing?.user_last_name  || '';
+
+                // Build upsert payload — never write empty strings.
+                const profilePayload: Record<string, string> = { user_id: user!.id };
+                if (firstName) profilePayload.user_first_name = firstName;
+                if (lastName)  profilePayload.user_last_name  = lastName;
+                if (firstName && !existing?.display_name) profilePayload.display_name = firstName;
+
+                if (Object.keys(profilePayload).length > 1) {
+                    await supabase.from('log_user_profiles').upsert(profilePayload);
+                }
+
+                // Only create a workspace if the user doesn't already have one.
+                const { data: existingSite } = await supabase
+                    .from('log_user_sites')
                     .select('site_id')
-                    .single();
+                    .eq('user_id', user!.id)
+                    .eq('is_active', true)
+                    .maybeSingle();
 
-                if (site) {
-                    await supabase.from('log_user_sites').insert({
-                        user_id:   user!.id,
-                        site_id:   site.site_id,
-                        role:      'clinician',
-                        is_active: true,
-                    });
+                if (!existingSite) {
+                    const label = firstName ? `${firstName}'s Workspace` : 'My Workspace';
+                    const { data: site } = await supabase
+                        .from('log_sites')
+                        .insert([{ site_name: label, is_active: true }])
+                        .select('site_id')
+                        .single();
+
+                    if (site) {
+                        await supabase.from('log_user_sites').insert({
+                            user_id:   user!.id,
+                            site_id:   site.site_id,
+                            role:      'clinician',
+                            is_active: true,
+                        });
+                    }
                 }
 
                 setTimeout(() => navigate('/dashboard'), 2000);
