@@ -543,7 +543,7 @@ const SessionExportCenter: React.FC = () => {
                                 </div>
 
                                 {/* Single-session export */}
-                                <AdvancedTooltip content="Export audit report for this session only" tier="micro">
+                                <AdvancedTooltip content="Export audit report for this session only" tier="micro" learnMoreUrl="/help/reports">
                                     <button
                                         onClick={() => handleExport(EXPORT_PACKAGES[0])}
                                         className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-400 hover:text-[#A8B5D1] text-xs font-bold rounded-xl transition-all uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0"
