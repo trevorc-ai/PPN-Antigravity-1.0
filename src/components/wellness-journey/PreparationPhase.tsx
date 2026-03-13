@@ -208,7 +208,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ journey, gates, contraindicationR
                             {phq9Info ? (
                                 <AdvancedTooltip
                                     content={`${phq9Info.label} (PHQ-9: ${phq9})`}
-                                    position="top"
+                                    side="top"
                                 >
                                     <HUDChip
                                         icon={<Brain className="w-3.5 h-3.5" />}
@@ -233,7 +233,7 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ journey, gates, contraindicationR
                             {gad7Info ? (
                                 <AdvancedTooltip
                                     content={`${gad7Info.label} (GAD-7: ${gad7})`}
-                                    position="top"
+                                    side="top"
                                 >
                                     <HUDChip
                                         icon={<HeartPulse className="w-3.5 h-3.5" />}

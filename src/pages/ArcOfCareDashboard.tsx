@@ -54,15 +54,13 @@ const ArcOfCareDashboard: React.FC = () => {
         heartRate: 72,
         hrv: 45,
         bloodPressure: '120/80',
-        respiratoryRate: 16,
-        oxygenSaturation: 98
+        timestamp: new Date(),
     });
     const [events] = useState([
         {
             id: 1,
-            timestamp: '10:00 AM',
-            type: 'Session Start',
-            severity: 'info',
+            timestamp: new Date(),
+            eventType: 'milestone' as const,
             description: 'Baseline vitals recorded'
         }
     ]);
@@ -318,18 +316,13 @@ const ArcOfCareDashboard: React.FC = () => {
 
                         <SessionMonitoringDashboard
                             sessionId={1}
-                            elapsedMinutes={elapsedMinutes}
-                            currentPhase="peak"
+                            patientId="DEMO-PATIENT"
+                            doseAdministeredAt={new Date()}
                         />
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <RealTimeVitalsPanel
-                                heartRate={vitals.heartRate}
-                                hrv={vitals.hrv}
-                                bloodPressure={vitals.bloodPressure}
-                                respiratoryRate={vitals.respiratoryRate}
-                                oxygenSaturation={vitals.oxygenSaturation}
-                                lastUpdated={new Date().toLocaleTimeString()}
+                                vitals={vitals}
                             />
                             <SessionTimeline events={events} />
                         </div>
@@ -339,7 +332,7 @@ const ArcOfCareDashboard: React.FC = () => {
                                 <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" />
                                 <h3 className="text-red-300 text-lg sm:text-xl font-bold">Rescue Protocol</h3>
                             </div>
-                            <RescueProtocolChecklist onInterventionUsed={() => { }} />
+                            <RescueProtocolChecklist sessionId={1} onInterventionUsed={() => { }} />
                         </div>
 
                         <button

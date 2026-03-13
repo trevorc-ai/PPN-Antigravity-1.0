@@ -206,8 +206,8 @@ export const PatientOutcomePanel: FC<PatientOutcomePanelProps> = ({
                                 <Line type="monotone" dataKey="realWorldAvg" stroke="#64748b" strokeWidth={1.5} strokeDasharray="6 4" dot={false} animationBegin={500} animationDuration={600} />
 
                                 {/* L3: Reference Lines */}
-                                <ReferenceLine y={responseThreshold} stroke="#f59e0b" strokeWidth={1} strokeDasharray="3 3" label={{ value: 'Response Threshold', position: 'insideTopLeft', fill: '#f59e0b', fontSize: 10, opacity: 0.8 }} animationBegin={600} />
-                                <ReferenceLine y={remissionLine} stroke="#10b981" strokeWidth={1} strokeDasharray="3 3" label={{ value: 'Remission Line', position: 'insideBottomLeft', fill: '#10b981', fontSize: 10, opacity: 0.8 }} animationBegin={700} />
+                                <ReferenceLine y={responseThreshold} stroke="#f59e0b" strokeWidth={1} strokeDasharray="3 3" label={{ value: 'Response Threshold', position: 'insideTopLeft', fill: '#f59e0b', fontSize: 10, opacity: 0.8 }} />
+                                <ReferenceLine y={remissionLine} stroke="#10b981" strokeWidth={1} strokeDasharray="3 3" label={{ value: 'Remission Line', position: 'insideBottomLeft', fill: '#10b981', fontSize: 10, opacity: 0.8 }} />
 
                                 {/* L4: Patient Score Line */}
                                 <Line type="monotone" dataKey="patientScore" stroke="#a78bfa" strokeWidth={3} dot={{ fill: '#8b5cf6', r: 5, strokeWidth: 2, stroke: '#1e1b4b' }} activeDot={{ r: 7, fill: '#c4b5fd' }} animationBegin={900} animationDuration={800} />
