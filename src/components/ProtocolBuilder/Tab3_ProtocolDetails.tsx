@@ -95,7 +95,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                         Substance <span className="text-[#ef4444]">*</span>
                     </label>
                     <AdvancedTooltip
-                        content="Mechanism of action, receptor affinity profile, and pharmacokinetics. Choose the psychedelic substance being administered."
+                        content="Select the substance being used in this session. The platform will load the matching safety profile, timing curve, and dosing reference automatically."
                         tier="standard"
                         learnMoreUrl="/help/overview"
                     >
@@ -132,7 +132,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                         Dosage <span className="text-[#ef4444]">*</span>
                     </label>
                     <AdvancedTooltip
-                        content="Therapeutic range: 20-30mg. High dose: 31-50mg. Dangerous: 51+mg. Adjust based on patient weight, prior experience, and clinical indication. Contraindications: cardiovascular disease, severe hypertension."
+                        content="Enter the total dose for this session in milligrams. Dosing ranges for the selected substance will appear in the reference guide below. Always adjust for patient weight, prior experience, and clinical history before logging."
                         tier="standard"
                         learnMoreUrl="/help/overview"
                     >
@@ -157,7 +157,7 @@ export const Tab3_ProtocolDetails: React.FC<Tab3ProtocolDetailsProps> = ({
                         Administration Route <span className="text-[#ef4444]">*</span>
                     </label>
                     <AdvancedTooltip
-                        content="Onset time: 30-60min (oral). Peak: 2-3hrs. Duration: 4-6hrs. Bioavailability: 50-60% (oral). Choose route based on clinical protocol and patient preference."
+                        content="Select how the substance was given: by mouth, under the tongue, by injection, or another method. The route affects how quickly the substance takes effect. Timing reference values for the selected substance appear in the Flight Plan chart."
                         tier="standard"
                         learnMoreUrl="/help/overview"
                     >

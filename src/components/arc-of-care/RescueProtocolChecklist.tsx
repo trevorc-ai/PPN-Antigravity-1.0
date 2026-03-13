@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, MessageCircle, Wind, Hand, Pill, CheckCircle } from 'lucide-react';
+import { Shield, MessageCircle, Wind, Hand, Pill, CheckCircle, Info } from 'lucide-react';
 import { AdvancedTooltip } from '../ui/AdvancedTooltip';
 
 interface RescueProtocolChecklistProps {
@@ -117,7 +117,19 @@ const RescueProtocolChecklist: React.FC<RescueProtocolChecklistProps> = ({
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-4">
                 <Shield className="w-5 h-5 text-amber-400" />
-                <h3 className="text-slate-300 font-semibold">Rescue Protocol</h3>
+                <h3 className="text-slate-300 font-semibold flex items-center gap-1.5">
+                    Rescue Protocol
+                    <AdvancedTooltip
+                        content="A rescue intervention gives a medication — usually a benzodiazepine — to reduce the intensity of the session quickly. Tap a protocol below to log the type and time. This creates a permanent entry on the session timeline."
+                        type="warning"
+                        tier="standard"
+                        title="Rescue Protocol"
+                        learnMoreUrl="/help/interaction-checker"
+                        side="right"
+                    >
+                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-amber-400 transition-colors print:hidden" />
+                    </AdvancedTooltip>
+                </h3>
             </div>
 
             <div className="space-y-2">

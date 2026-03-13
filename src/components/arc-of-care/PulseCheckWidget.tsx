@@ -182,20 +182,28 @@ const PulseCheckWidget: React.FC<PulseCheckWidgetProps> = ({
             </div>
 
             {/* Submit Button */}
-            <button
-                onClick={handleSubmit}
-                disabled={!isComplete}
-                className={`
+            <AdvancedTooltip
+                content="Your patient's daily mood rating for today. Tap to confirm and log it. It will appear on the Emotional Waveform chart."
+                type="info"
+                tier="micro"
+                learnMoreUrl="/help/wellness-journey"
+                side="top"
+            >
+                <button
+                    onClick={handleSubmit}
+                    disabled={!isComplete}
+                    className={`
           w-full py-4 rounded-2xl font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-200
           ${isComplete
-                        ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-300 shadow-lg shadow-emerald-500/20 hover:scale-105'
-                        : 'bg-slate-700/30 text-slate-500 cursor-not-allowed'
-                    }
+                            ? 'bg-emerald-500 hover:bg-emerald-600 text-slate-300 shadow-lg shadow-emerald-500/20 hover:scale-105'
+                            : 'bg-slate-700/30 text-slate-500 cursor-not-allowed'
+                        }
         `}
-            >
-                <Send className="w-5 h-5" />
-                Submit Pulse Check
-            </button>
+                >
+                    <Send className="w-5 h-5" />
+                    Submit Pulse Check
+                </button>
+            </AdvancedTooltip>
 
             {/* Info */}
             <div className="mt-6 p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">

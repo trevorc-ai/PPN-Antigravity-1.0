@@ -347,7 +347,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <Heart className="w-4 h-4 text-red-400" />
                                     Heart Rate
                                     <AdvancedTooltip content="Normal range: 60-100 bpm" tier="micro" learnMoreUrl="/help/wellness-journey">
-                                        <span className="text-slate-400 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help print:hidden">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <div className="relative">
@@ -378,7 +378,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <Activity className="w-4 h-4 text-blue-400" />
                                     HRV
                                     <AdvancedTooltip content="Heart Rate Variability in milliseconds" tier="micro" learnMoreUrl="/help/wellness-journey">
-                                        <span className="text-slate-400 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help print:hidden">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <div className="relative">
@@ -402,7 +402,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                     <Droplet className="w-4 h-4 text-cyan-400" />
                                     SpO₂
                                     <AdvancedTooltip content="Blood oxygen saturation. Normal: ≥95%" tier="micro" learnMoreUrl="/help/wellness-journey">
-                                        <span className="text-slate-400 cursor-help">ⓘ</span>
+                                        <span className="text-slate-400 cursor-help print:hidden">ⓘ</span>
                                     </AdvancedTooltip>
                                 </label>
                                 <div className="relative">
@@ -499,7 +499,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <Wind className="w-4 h-4 text-cyan-400" />
                                         Resp. Rate
                                         <AdvancedTooltip content="Normal: 12-20 breaths/min. Monitor for respiratory depression (ketamine/esketamine risk per REMS)." tier="micro" learnMoreUrl="/help/wellness-journey">
-                                            <span className="text-slate-400 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help print:hidden">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <div className="relative">
@@ -528,7 +528,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <Thermometer className="w-4 h-4 text-orange-400" />
                                         Temperature
                                         <AdvancedTooltip content="Normal: 97.0–99.5°F. Monitor for hyperthermia (MDMA risk) and thermoregulation fluctuations." tier="micro" learnMoreUrl="/help/wellness-journey">
-                                            <span className="text-slate-400 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help print:hidden">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <div className="relative">
@@ -558,7 +558,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <Droplet className="w-4 h-4 text-blue-300" />
                                         Diaphoresis
                                         <AdvancedTooltip content="Sweating scale: 0=None, 1=Mild, 2=Moderate, 3=Severe. Severe may signal hyperthermia or serotonin syndrome." tier="micro" learnMoreUrl="/help/wellness-journey">
-                                            <span className="text-slate-400 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help print:hidden">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <select
@@ -586,7 +586,7 @@ const SessionVitalsForm: React.FC<SessionVitalsFormProps> = ({
                                         <AlertTriangle className="w-4 h-4 text-yellow-400" />
                                         Consciousness
                                         <AdvancedTooltip content="Select the patient's current level of consciousness. Non-Responsive should trigger immediate rescue protocol review." tier="micro" learnMoreUrl="/help/wellness-journey">
-                                            <span className="text-slate-400 cursor-help">ⓘ</span>
+                                            <span className="text-slate-400 cursor-help print:hidden">ⓘ</span>
                                         </AdvancedTooltip>
                                     </label>
                                     <select

@@ -86,9 +86,9 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
             <div className="space-y-4">
                 {/* Heart Rate */}
                 <AdvancedTooltip
-                    content="Normal range: 60-100 bpm. Elevated heart rate is common during peak intensity. Alert triggers at >120 bpm sustained for >5 minutes."
+                    content="Normal range: 60 to 100 beats per minute. A higher-than-normal heart rate is common during the peak of the session. An alert triggers if the rate stays above 120 bpm for more than 5 minutes."
                     type="info"
-                    tier="detailed"
+                    tier="guide"
                     title="Heart Rate Monitoring"
                     side="right"
                 >
@@ -111,9 +111,9 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
 
                 {/* HRV */}
                 <AdvancedTooltip
-                    content="Higher HRV indicates relaxation. Lower HRV indicates stress/anxiety. Useful for detecting distress without verbal interruption."
+                    content="Heart rate variability measures how much your patient's heartbeat varies from moment to moment. A higher number generally means they are calm. A lower number may indicate stress or discomfort. You can monitor this without interrupting the session."
                     type="info"
-                    tier="detailed"
+                    tier="guide"
                     title="Heart Rate Variability"
                     side="right"
                 >
@@ -136,9 +136,9 @@ const RealTimeVitalsPanel: React.FC<RealTimeVitalsPanelProps> = ({ vitals }) => 
 
                 {/* Blood Pressure */}
                 <AdvancedTooltip
-                    content="Monitor every 30 minutes. Alert triggers at >140/90 (hypertension). May indicate anxiety or adverse reaction."
+                    content="Check blood pressure every 30 minutes during the session. An alert triggers if systolic pressure goes above 140 mmHg (hypertension range). This may indicate anxiety or an adverse reaction. Document and review with your clinical team."
                     type="info"
-                    tier="detailed"
+                    tier="guide"
                     title="Blood Pressure"
                     side="right"
                 >

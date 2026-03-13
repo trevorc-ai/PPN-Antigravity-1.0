@@ -173,7 +173,7 @@ const SetAndSettingForm: React.FC<SetAndSettingFormProps> = ({
                 <h3 className="flex items-center gap-1.5 text-base font-bold text-slate-500">
                     Clinical Observations
                     <AdvancedTooltip content="Clinician-rated impressions of the patient at this session. These observations supplement standardised scale scores and inform session readiness decisions. Motivation, support system strength, and prior experience with psychedelics are key predictors of treatment outcomes." tier="standard" learnMoreUrl="/help/wellness-journey">
-                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors" aria-label="About clinical observations" />
+                        <Info className="w-3.5 h-3.5 text-slate-500 cursor-help hover:text-slate-400 transition-colors print:hidden" aria-label="About clinical observations" />
                     </AdvancedTooltip>
                     <span className="text-slate-600 font-normal text-sm ml-0.5">optional</span>
                 </h3>

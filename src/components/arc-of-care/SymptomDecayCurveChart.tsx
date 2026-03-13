@@ -226,9 +226,9 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
             <div className="space-y-2">
                 {isAfterglowPeriod && (
                     <AdvancedTooltip
-                        content="The first 1-2 weeks post-session often show rapid improvement due to acute neuroplastic effects. True efficacy is measured at 6+ weeks when the 'afterglow' fades."
+                    content="The first one to two weeks after a session often show rapid improvement as the brain forms new connections. This early improvement will stabilize over time. True treatment outcomes are measured at 6 weeks or later, once this initial boost levels off."
                         type="info"
-                        tier="detailed"
+                        tier="guide"
                         title="Afterglow Period"
                         side="top"
                     >
