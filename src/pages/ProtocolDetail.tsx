@@ -550,12 +550,7 @@ const ProtocolDetail: React.FC = () => {
                     <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Date</span>
                     <span className="text-base font-mono font-bold text-slate-300">{displayDate}</span>
                   </div>
-                  {session.dosage && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Dosage</span>
-                      <span className="text-base font-bold text-slate-300">{session.dosage} mg</span>
-                    </div>
-                  )}
+
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">Total Sessions</span>
                     <span className="text-base font-bold text-indigo-400">{patientSessions.length}</span>

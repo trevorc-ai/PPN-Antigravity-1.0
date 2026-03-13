@@ -221,7 +221,7 @@ const SearchPortal: React.FC = () => {
         config: { tools: [{ googleSearch: {} }] }
       });
       setAiAnalysis(response.text || 'Synthesis complete.');
-      setGroundingChunks(response.candidates?.[0]?.groundingMetadata?.groundingChunks || []);
+      setGroundingChunks((response.candidates?.[0]?.groundingMetadata?.groundingChunks as unknown as GroundingChunk[]) || []);
     } catch (err) {
       console.error('[SearchPortal] AI synthesis error:', err);
       setAiAnalysis('Synthesis unavailable, check your network connection or API key.');
