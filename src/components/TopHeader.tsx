@@ -380,14 +380,24 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
                   <div className="relative">
                     <div className="size-10 rounded-full bg-gradient-to-br from-primary to-blue-600 border-2 border-primary/40 group-hover:border-primary transition-all shadow-[0_0_15px_rgba(43,116,243,0.2)] flex items-center justify-center">
                       <span className="text-slate-300 font-bold text-sm">
-                        {loading ? '...' : (userProfile?.display_name?.[0] || userProfile?.email?.[0] || 'U')}
+                        {loading ? '…' : (
+                          userProfile?.display_name?.[0] ||
+                          userProfile?.user_first_name?.[0] ||
+                          userProfile?.email?.[0] ||
+                          'U'
+                        )}
                       </span>
                     </div>
                     <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-clinical-green border-2 border-[#0a0c12] rounded-full"></div>
                   </div>
                   <div className="hidden lg:flex flex-col">
                     <p className="text-[12px] font-black text-slate-300 leading-none mb-1 group-hover:text-primary transition-colors">
-                      {loading ? 'Loading...' : (userProfile?.display_name || userProfile?.email?.split('@')[0] || 'User')}
+                      {loading ? 'Loading...' : (
+                        userProfile?.display_name ||
+                        userProfile?.user_first_name ||
+                        userProfile?.email?.split('@')[0] ||
+                        'User'
+                      )}
                     </p>
                     <div className="flex items-center gap-1">
                       <span className="text-[12px] text-slate-300 font-bold tracking-widest leading-none">Practitioner</span>

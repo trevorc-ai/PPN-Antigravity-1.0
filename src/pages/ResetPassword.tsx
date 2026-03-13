@@ -144,6 +144,7 @@ const ResetPassword: React.FC = () => {
                     user_id:         user!.id,
                     user_first_name: firstName,
                     user_last_name:  lastName,
+                    display_name:    firstName,   // ensures header never falls back to email prefix
                 });
 
                 const { data: site } = await supabase
