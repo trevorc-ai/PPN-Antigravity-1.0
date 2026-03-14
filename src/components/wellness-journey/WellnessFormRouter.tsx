@@ -264,22 +264,23 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     // SAVS P1-B fix: persist PHQ-9 / GAD-7 / ACE / PCL-5 scores to DB on Mental Health Screening complete.
     const handleMentalHealthSave = useCallback(async (data: { phq9?: number | null; gad7?: number | null; ace?: number | null; pcl5?: number | null }) => {
+        // UUID FIX: patientUuidProp is the canonical patient_uuid; patientId is the PT-XXXX link code.
+        // createBaselineAssessment requires a canonical UUID — using patientId here silently failed.
         const resolvedPatientId = patientUuidProp ?? patientId;
         if (!resolvedPatientId || !siteId) {
             onSaved('Mental Health Screening'); // Advance UI even without DB write
             return;
         }
-        // WO-603 Fix 5: always pass null (not undefined) so the column is always included in the payload
         const result = await createBaselineAssessment({
-            patient_id: resolvedPatientId,
+            patient_id: resolvedPatientId,  // FIXED: was patientId (link code)
             site_id: siteId,
             phq9_score: data.phq9 ?? null,
             gad7_score: data.gad7 ?? null,
             ace_score: data.ace ?? null,
-            pcl5_score: data.pcl5 ?? null,  // WO-597: CHECK 0–80
+            pcl5_score: data.pcl5 ?? null,
         });
         result.success ? onSaved('Mental Health Screening') : onError('Mental Health Screening', result.error);
-    }, [patientId, siteId]);
+    }, [patientId, patientUuidProp, siteId]);  // FIXED: added patientUuidProp to deps
 
     // ── Phase 2 handlers ─────────────────────────────────────────────────────
 
@@ -487,32 +488,31 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
     // ── Phase 3 handlers ─────────────────────────────────────────────────────
 
     const handlePulseCheckSave = useCallback(async (data: DailyPulseCheckData) => {
-        if (!patientId) return; // silent
+        // UUID FIX: log_pulse_checks.patient_uuid requires a canonical UUID, not the PT-XXXX link code.
+        const resolvedPatientId = patientUuidProp ?? patientId;
+        if (!resolvedPatientId) return;
         const result = await createPulseCheck({
-            patient_id: patientId,
+            patient_id: resolvedPatientId,  // FIXED: was patientId (link code)
             session_id: sessionId,
-            check_date: data.check_in_date,  // form sends check_in_date → schema is check_date
+            check_date: data.check_in_date,
             connection_level: data.connection_level ?? 3,
             sleep_quality: data.sleep_quality ?? 3,
             mood_level: data.mood_level,
             anxiety_level: data.anxiety_level,
         });
         result.success ? onSaved('Daily Pulse Check') : onError('Daily Pulse Check', result.error);
-    }, [patientId, sessionId]);
+    }, [patientId, patientUuidProp, sessionId]);  // FIXED: added patientUuidProp to deps
 
     const handleMEQ30Save = useCallback(async (data: MEQ30Data) => {
-        // Compute total score by summing all response values.
         const meq30Total = Object.values(data.responses).reduce((sum, v) => sum + v, 0);
-
-        // Write to log_phase3_meq30 (authoritative) + denormalized log_clinical_records.meq30_score
-        if (patientId && sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
+        // UUID FIX: log_phase3_meq30.patient_uuid requires canonical UUID, not link code.
+        const resolvedPatientId = patientUuidProp ?? patientId;
+        if (resolvedPatientId && sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
             createMEQ30Score({
-                patient_uuid: patientId,
+                patient_uuid: resolvedPatientId,  // FIXED: was patientId (link code)
                 session_id: sessionId,
-                meq30_score: meq30Total,  // CHECK 0–150 in log_phase3_meq30
+                meq30_score: meq30Total,
             }).catch(err => console.warn('[WellnessFormRouter] MEQ-30 DB write failed:', err));
-
-            // Also stamp timeline
             createTimelineEvent({
                 session_id: sessionId,
                 event_timestamp: new Date().toISOString(),
@@ -524,17 +524,19 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             }).catch(err => console.warn('[WellnessFormRouter] MEQ-30 timeline stamp failed:', err));
         }
         onSaved('MEQ-30 Questionnaire');
-    }, [patientId, sessionId]);
+    }, [patientId, patientUuidProp, sessionId]);  // FIXED: added patientUuidProp to deps
 
     const handleIntegrationSessionSave = useCallback(async (data: StructuredIntegrationSessionData) => {
-        if (!patientId) { onError('Integration Session', 'No patient ID'); return; }
+        // UUID FIX: log_integration_sessions.patient_uuid requires canonical UUID, not link code.
+        const resolvedPatientId = patientUuidProp ?? patientId;
+        if (!resolvedPatientId) { onError('Integration Session', 'No patient UUID resolved'); return; }
         const result = await createIntegrationSession({
-            patient_id: patientId,
+            patient_id: resolvedPatientId,  // FIXED: was patientId (link code)
             dosing_session_id: sessionId,
             integration_session_number: data.session_number,
             session_date: data.session_date,
             session_duration_minutes: data.session_duration_minutes,
-            attendance_status_code: data.attendance_status,  // ✅ wired — resolved → FK via live ref lookup
+            attendance_status_code: data.attendance_status,
             insight_integration_rating: data.insight_integration_rating,
             emotional_processing_rating: data.emotional_processing_rating,
             behavioral_application_rating: data.behavioral_application_rating,
@@ -544,12 +546,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             therapist_observation_ids: data.therapist_observation_ids,
         });
         result.success ? onSaved('Integration Session') : onError('Integration Session', result.error);
-    }, [patientId, sessionId]);
+    }, [patientId, patientUuidProp, sessionId]);  // FIXED: added patientUuidProp to deps
 
     const handleBehavioralChangeSave = useCallback(async (data: BehavioralChangeData) => {
-        if (!patientId) { onError('Behavioral Change', 'No patient ID'); return; }
+        // UUID FIX: log_behavioral_changes.patient_uuid requires canonical UUID, not link code.
+        const resolvedPatientId = patientUuidProp ?? patientId;
+        if (!resolvedPatientId) { onError('Behavioral Change', 'No patient UUID resolved'); return; }
         const result = await createBehavioralChange({
-            patient_id: patientId,
+            patient_id: resolvedPatientId,  // FIXED: was patientId (link code)
             session_id: sessionId,
             change_date: data.change_date,
             change_type_ids: data.change_type_ids,
@@ -557,22 +561,23 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             is_positive: data.impact_on_wellbeing === 'highly_positive' || data.impact_on_wellbeing === 'moderately_positive',
         });
         result.success ? onSaved('Behavioral Change') : onError('Behavioral Change', result.error);
-    }, [patientId, sessionId]);
+    }, [patientId, patientUuidProp, sessionId]);  // FIXED: added patientUuidProp to deps
 
     const handleLongitudinalAssessmentSave = useCallback(async (data: LongitudinalAssessmentData) => {
-        if (!patientId) { onError('Longitudinal Assessment', 'No patient ID'); return; }
+        // UUID FIX: log_longitudinal_assessments.patient_uuid requires canonical UUID, not link code.
+        const resolvedPatientId = patientUuidProp ?? patientId;
+        if (!resolvedPatientId) { onError('Longitudinal Assessment', 'No patient UUID resolved'); return; }
         const result = await createLongitudinalAssessment({
-            patient_id: patientId,
+            patient_id: resolvedPatientId,  // FIXED: was patientId (link code)
             session_id: sessionId,
             assessment_date: data.assessment_date ?? new Date().toISOString().split('T')[0],
             days_post_session: data.days_post_session,
             phq9_score: data.phq9_score,
             gad7_score: data.gad7_score,
-            // whoqol_score and psqi_score removed — columns dropped in schema rebuild (A4)
             cssrs_score: data.cssrs_score,
         });
         result.success ? onSaved('Longitudinal Assessment') : onError('Longitudinal Assessment', result.error);
-    }, [patientId, sessionId]);
+    }, [patientId, patientUuidProp, sessionId]);  // FIXED: added patientUuidProp to deps
 
     // ── Router ───────────────────────────────────────────────────────────────
 
