@@ -641,6 +641,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
                 // Write med names to localStorage so DosingProtocolForm's engine sees real data.
                 try { localStorage.setItem('ppn_patient_medications_names', JSON.stringify(medNames)); } catch (_) { }
+                // SAME-TAB FIX (Bug 1.4): window.storage only fires cross-tab. Dispatch a custom
+                // event so DosingSessionPhase's useEffect can re-evaluate the medication list
+                // immediately when Phase 1 safety screen saves from the same browser session.
+                window.dispatchEvent(new CustomEvent('ppn:safety-updated'));
 
                 // Run engine at save time (unknown substance — use generic check for all-substance flags).
                 // verdict_id: 1 = CLEAR, 2 = PROCEED_WITH_CAUTION, 3 = DO_NOT_PROCEED

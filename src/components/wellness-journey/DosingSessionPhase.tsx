@@ -298,13 +298,27 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     useEffect(() => {
         const bump = () => setContraindicationKey(k => k + 1);
         const handleStorage = (e: StorageEvent) => {
-            if (e.key === 'ppn_dosing_protocol' || e.key === 'mock_patient_medications_names') bump();
+            // BUG FIX (Bug 1.4): 'ppn_patient_medications_names' is the authoritative key
+            // written by Phase 1 StructuredSafetyCheckForm (WO-638). It was absent from
+            // this watch list, so Phase 2's medication header never refreshed after Phase 1
+            // safety screen was saved. Adding it here triggers a contraindication re-eval
+            // and a patientMeds useMemo recompute whenever Phase 1 meds change.
+            if (e.key === 'ppn_dosing_protocol'
+                || e.key === 'mock_patient_medications_names'
+                || e.key === 'ppn_patient_medications_names'  // FIXED: was missing
+            ) bump();
         };
 
         // ppn:dosing-updated → fires on every field change in updateField().
         // Purpose: re-evaluate contraindication warnings only. Never stamp an event pin
         // here — the pin fires from ppn:dosing-saved (commit event) below.
         const handleDosingUpdated = () => bump();
+
+        // ppn:safety-updated → fires from WellnessFormRouter when Phase 1
+        // StructuredSafetyCheckForm saves. window.storage doesn't fire same-tab,
+        // so we use a custom event to trigger immediate medication header refresh.
+        // This is the fix for Bug 1.4 (medications not appearing in Phase 2 header).
+        const handleSafetyUpdated = () => bump();
 
         // ppn:dosing-saved → fires ONCE when the practitioner clicks Save & Continue / Save & Exit.
         // This is the correct moment to stamp the chart pin and timeline entry.
@@ -370,10 +384,12 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
         window.addEventListener('storage', handleStorage);
         window.addEventListener('ppn:dosing-updated', handleDosingUpdated);
+        window.addEventListener('ppn:safety-updated', handleSafetyUpdated); // Bug 1.4 fix
         window.addEventListener('ppn:dosing-saved', handleDosingSaved);
         return () => {
             window.removeEventListener('storage', handleStorage);
             window.removeEventListener('ppn:dosing-updated', handleDosingUpdated);
+            window.removeEventListener('ppn:safety-updated', handleSafetyUpdated); // Bug 1.4 fix
             window.removeEventListener('ppn:dosing-saved', handleDosingSaved);
         };
         // getElapsedSec is stable (useCallback), safe to include
