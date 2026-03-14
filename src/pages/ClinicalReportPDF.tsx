@@ -197,7 +197,9 @@ const PDF_PHASE_COLORS: Record<string, string> = {
 };
 const PDF_PHASE_LABELS: Record<string, string> = { onset:'ONSET', peak:'PEAK', integration:'INTEGRATION', afterglow:'AFTERGLOW' };
 
-const PKChart: React.FC<{ substance: string; accent: string }> = ({ substance, accent }) => {
+interface PKChartEvent { minutesFromStart: number; label: string; eventType: string; }
+
+const PKChart: React.FC<{ substance: string; accent: string; events?: PKChartEvent[]; }> = ({ substance, accent, events }) => {
     const W = 540; const H = 160;
     const pad = { t: 22, r: 16, b: 36, l: 36 };
     const cW = W - pad.l - pad.r; const cH = H - pad.t - pad.b;
@@ -209,8 +211,39 @@ const PKChart: React.FC<{ substance: string; accent: string }> = ({ substance, a
     const linePath = curve.map(([m,i]: [number,number], idx: number) => `${idx===0?'M':'L'}${toX(m).toFixed(1)},${toY(i).toFixed(1)}`).join(' ');
     const areaPath = linePath + ` L${toX(totalMin).toFixed(1)},${cH} L0,${cH} Z`;
     const gradId = `pk-grad-${substance}`;
+
+    // Interpolate PK intensity at a given minute to get Y coordinate for event dots
+    const interpY = (min: number): number => {
+        const clamped = Math.min(min, totalMin);
+        for (let i = 0; i < curve.length - 1; i++) {
+            if (clamped >= curve[i][0] && clamped <= curve[i + 1][0]) {
+                const t = (clamped - curve[i][0]) / (curve[i + 1][0] - curve[i][0]);
+                const intensity = curve[i][1] + t * (curve[i + 1][1] - curve[i][1]);
+                return toY(intensity);
+            }
+        }
+        return cH / 2;
+    };
+
+    // Event dot color by type (matches FlightPlanChart pattern)
+    const dotColor = (type: string): string => {
+        const t = type.toLowerCase();
+        if (t.includes('safety') || t.includes('adverse')) return '#ef4444';
+        if (t.includes('emotion') || t.includes('feeling')) return '#fb7185';
+        if (t.includes('insight') || t.includes('mystical')) return '#f59e0b';
+        if (t.includes('difficult') || t.includes('fear')) return '#a78bfa';
+        return accent;
+    };
+
+    const dots = (events ?? []).map(e => ({
+        x: toX(Math.min(e.minutesFromStart, totalMin)),
+        y: interpY(e.minutesFromStart),
+        color: dotColor(e.eventType),
+        label: e.label,
+    }));
+
     return (
-        <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow:'visible' }}>
+        <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow:'visible' }} aria-label="Pharmacokinetic flight plan chart" role="img">
             <defs>
                 <linearGradient id={gradId} x1="0" x2="0" y1="0" y2="1">
                     <stop offset="0%" stopColor={accent} stopOpacity="0.30" />
@@ -243,6 +276,16 @@ const PKChart: React.FC<{ substance: string; accent: string }> = ({ substance, a
                 ))}
                 <line x1={0} y1={cH} x2={cW} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
                 <line x1={0} y1={0} x2={0} y2={cH} stroke="#cbd5e1" strokeWidth={1.5} />
+                {/* WO-602: Patient session event dots plotted on the PK curve */}
+                {dots.map((d, i) => (
+                    <g key={i}>
+                        <circle cx={d.x} cy={d.y} r={5}
+                            fill={d.color}
+                            stroke="#ffffff" strokeWidth={1.5}
+                            opacity={0.9}
+                        />
+                    </g>
+                ))}
             </g>
         </svg>
     );
@@ -613,7 +656,20 @@ const ClinicalReportPDF: React.FC = () => {
                     </div>
 
                     <div style={{ backgroundColor: '#fafafa', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', marginBottom: '14px' }}>
-                        <PKChart substance={data.substanceCategory} accent={data.accentColor} />
+                        <PKChart
+                            substance={data.substanceCategory}
+                            accent={data.accentColor}
+                            events={data.sessionDate && data.timelineEvents
+                                ? data.timelineEvents.map(e => ({
+                                    minutesFromStart: Math.round(
+                                        (new Date(e.occurredAt).getTime() - new Date(data.sessionDate!).getTime()) / 60_000
+                                    ),
+                                    label: e.label,
+                                    eventType: e.eventType,
+                                }))
+                                : []
+                            }
+                        />
                     </div>
 
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px', marginBottom: '14px' }}>
