@@ -119,7 +119,7 @@ export const Waitlist: FC = () => {
                 </div>
                 <button
                     onClick={() => navigate('/')}
-                    className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-2"
+                    className="text-sm font-bold uppercase tracking-widest text-slate-500 hover:text-slate-300 transition-colors flex items-center gap-2"
                 >
                     <span className="material-symbols-outlined text-base">close</span>
                     Close
@@ -168,7 +168,7 @@ export const Waitlist: FC = () => {
                     <div className="flex items-center gap-3 mt-10">
                         <div className="flex -space-x-2">
                             {['JA', 'TC', 'JB'].map((initials) => (
-                                <div key={initials} className="w-8 h-8 rounded-full bg-indigo-700/50 border border-indigo-500/40 flex items-center justify-center text-[10px] font-black text-indigo-300">
+                                <div key={initials} className="w-8 h-8 rounded-full bg-indigo-700/50 border border-indigo-500/40 flex items-center justify-center text-sm font-black text-indigo-300">
                                     {initials}
                                 </div>
                             ))}

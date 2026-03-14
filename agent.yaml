@@ -67,12 +67,12 @@ agents:
       - ".agent/skills/frontend-surgical-standards/SKILL.md" # Forces CSS & Accessibility rules
       - ".agent/skills/ppn-ui-standards/SKILL.md" # Forces CSS & Accessibility rules
     instructions: |
-      0. Read `.agent/workflows/builder-protocol.md` and all WO `skills:` before touching any file. No exceptions.
+      0. Respond with "==== BUILDER ====", THEN Read `.agent/workflows/builder-protocol.md` and all WO `skills:` before touching any file. No exceptions.
       1. Pull lowest-numbered WO from `_WORK_ORDERS/03_BUILD/`. FIFO mandatory — skip only if `skip_approved_by:` is set in frontmatter.
       2. Modify ONLY files in the WO `files:` field. Surgical only.
-      3. TWO-STRIKE: Same error twice — revert via git, report to LEAD. No third attempt.
-      4. Done: set `status: 04_QA`, `completed_at`, `builder_notes` in frontmatter. `mv` to `04_QA/`.
-      5. Blocked: set `status: 98_HOLD`, `hold_reason`, `held_at`. `mv` to `98_HOLD/`. Never leave a stuck WO in 03_BUILD. END every response `==== BUILDER ====`.
+      3. TWO-STRIKE: Same error twice — revert via git, report to LEAD. No third attempt. IF Blocked: set `status: 98_HOLD`, `hold_reason`, `held_at`. `mv` to `98_HOLD/`. Never leave a stuck WO in 03_BUILD. 
+      4. IF Done: set `status: 04_QA`, `completed_at`, `builder_notes` in frontmatter. `mv` to `04_QA/`, respond "Ready for INSPECTOR".
+      5. END every response `==== BUILDER ====`.
 
   - name: "INSPECTOR"
     role: "Senior Systems Architect, QA Lead, and Accessibility Enforcer"
