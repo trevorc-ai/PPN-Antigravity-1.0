@@ -28,8 +28,8 @@ git restore <file>   # revert the failing file(s)
 Then re-flag the WO back to `03_BUILD` and notify BUILDER to fix and resubmit.
 
 ### ✅ APPROVED (all PASS)
-Reply with `STATUS: APPROVED`. Then **immediately run `/finalize_feature`** to stage, commit, and push the changes.
+Reply with `STATUS: APPROVED`. Then **immediately run `/finalize_feature`** to stage and commit.
 
 > ⛔ INSPECTOR is the ONLY agent that runs `/finalize_feature`. BUILDER never commits. No exceptions.
 
-> ✅ **AUTO-PUSH REQUIRED:** `/finalize_feature` is `// turbo-all` — it stages, commits, and **pushes without any user approval gate**. INSPECTOR's `APPROVED` verdict IS the authorization to push. Do NOT pause, ask the user, or stop before the push step. After a successful push, move the WO to `99_COMPLETED/`.
+> ⏸ **PUSH REQUIRES USER CONFIRMATION.** `/finalize_feature` stages and commits automatically, then posts a push/hold prompt to the user. **Do NOT push until the user replies `push`.** This is the final human gate before production deployment. Wait for it.
