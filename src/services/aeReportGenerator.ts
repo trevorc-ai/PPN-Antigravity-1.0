@@ -180,6 +180,8 @@ async function persistReportReference(
     // In a future sprint this can be replaced with a real Supabase Storage upload.
     const syntheticUrl = `client-generated://ae-report-${safetyEventId}-${reportTimestamp}`;
 
+    // SCHEMA FIX: log_safety_events PK is 'ae_id' (text), NOT 'id'.
+    // Previously used .eq('id', ...) which matched zero rows — silent no-op.
     const { error } = await supabase
         .from('log_safety_events')
         .update({
@@ -187,7 +189,7 @@ async function persistReportReference(
             report_generated_at: reportTimestamp,
             ctcae_grade: ctcaeGrade,
         })
-        .eq('id', safetyEventId);
+        .eq('ae_id', safetyEventId);
 
     if (error) {
         console.error('[aeReportGenerator] Failed to persist report reference:', error.message);

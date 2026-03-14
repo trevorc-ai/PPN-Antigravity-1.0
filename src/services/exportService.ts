@@ -10,17 +10,18 @@ import { exportMultipleTablesToCSV, type ExportData } from '../utils/csvExporter
 /**
  * List of all log tables to export
  */
-// Live table names — verified against Supabase DB 2026-02-17
+// Live table names — verified against REBUILT_Schema_3-14-26.md
 // Rule: always use log_* prefix for patient/clinical data tables
+// SCHEMA FIX: log_user_profiles does not exist in rebuilt schema — replaced with log_patient_profiles
 const LOG_TABLES = [
-    'log_user_profiles',        // was: 'patients'
-    'log_baseline_assessments', // was: 'baseline_assessments'
-    'log_clinical_records',     // was: 'dosing_sessions'
-    'log_safety_events',        // was: 'safety_events'
+    'log_patient_profiles',     // FIXED: was 'log_user_profiles' (phantom table)
+    'log_baseline_assessments',
+    'log_clinical_records',
+    'log_safety_events',
     'log_session_vitals',
     'log_longitudinal_assessments',
     'log_pulse_checks',
-    'log_system_events',        // was: 'audit_logs'
+    'log_system_events',
 ];
 
 /**
@@ -78,45 +79,50 @@ export const exportPatientData = async (patientId: string): Promise<void> => {
     try {
         const exports: ExportData[] = [];
 
-        // Patient info (log_user_profiles is the live table)
+        // Patient demographics profile — SCHEMA FIX: table is log_patient_profiles (not log_user_profiles)
+        // FK column is patient_uuid (not patient_id) — all rebuilt log_* tables use patient_uuid
         const { data: patient } = await supabase
-            .from('log_user_profiles')
+            .from('log_patient_profiles')
             .select('*')
-            .eq('patient_id', patientId)
-            .single();
+            .eq('patient_uuid', patientId)   // FIXED: was .eq('patient_id',...)
+            .maybeSingle();
 
         if (patient) {
-            exports.push({ tableName: 'patient_info', data: [patient] });
+            exports.push({ tableName: 'log_patient_profiles', data: [patient] });
         }
 
-        // Baseline assessments
+        // Baseline assessments — FK column is patient_uuid, not patient_id
         const { data: baselines } = await supabase
             .from('log_baseline_assessments')
             .select('*')
-            .eq('patient_id', patientId);
+            .eq('patient_uuid', patientId);  // FIXED: was .eq('patient_id',...)
 
         if (baselines && baselines.length > 0) {
             exports.push({ tableName: 'log_baseline_assessments', data: baselines });
         }
 
-        // Dosing sessions (log_clinical_records is the live table)
+        // Clinical session records — FK column is patient_uuid, not patient_id
         const { data: sessions } = await supabase
             .from('log_clinical_records')
             .select('*')
-            .eq('patient_id', patientId);
+            .eq('patient_uuid', patientId);  // FIXED: was .eq('patient_id',...)
 
         if (sessions && sessions.length > 0) {
             exports.push({ tableName: 'log_clinical_records', data: sessions });
         }
 
-        // Safety events
-        const { data: safety } = await supabase
-            .from('log_safety_events')
-            .select('*')
-            .eq('patient_id', patientId);
+        // Safety events — no patient_id column exists; filter via session_id join or omit patient filter
+        // For export purposes, fetch all safety events for sessions belonging to this patient
+        const sessionIds = (sessions ?? []).map((s: { id: string }) => s.id);
+        if (sessionIds.length > 0) {
+            const { data: safety } = await supabase
+                .from('log_safety_events')
+                .select('*')
+                .in('session_id', sessionIds); // FIXED: log_safety_events has no patient_id/patient_uuid column
 
-        if (safety && safety.length > 0) {
-            exports.push({ tableName: 'log_safety_events', data: safety });
+            if (safety && safety.length > 0) {
+                exports.push({ tableName: 'log_safety_events', data: safety });
+            }
         }
 
         const filename = `patient_${patientId}_export_${new Date().toISOString().split('T')[0]}.csv`;

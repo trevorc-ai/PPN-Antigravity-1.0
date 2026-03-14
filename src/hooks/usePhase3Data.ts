@@ -205,13 +205,14 @@ export function usePhase3Data(
                     : MOCK_DECAY_POINTS;
 
                 // ── 2. Baseline PHQ-9 (log_baseline_assessments) ───────────────────────
+                // SCHEMA FIX: column is 'patient_uuid', not 'patient_id' — phantom column was returning zero rows
                 const { data: baselineRow, error: baselineErr } = await supabase
                     .from('log_baseline_assessments')
                     .select('phq9_score')
-                    .eq('patient_id', patientId)
+                    .eq('patient_uuid', patientId)   // FIXED: was .eq('patient_id', ...)
                     .order('created_at', { ascending: false })
                     .limit(1)
-                    .single();
+                    .maybeSingle();
 
                 // WO-558: null instead of 22 — empty state shown when no baseline recorded
                 const baselinePhq9: number | null = (!baselineErr && baselineRow?.phq9_score != null)
@@ -239,8 +240,9 @@ export function usePhase3Data(
                         1,
                         Math.floor((Date.now() - sessionStartMs) / 86_400_000)
                     );
+                    // SCHEMA FIX: table is 'log_pulse_checks', not 'log_daily_pulse' (phantom table)
                     const { count: pulseCount, error: pulseErr } = await supabase
-                        .from('log_daily_pulse')
+                        .from('log_pulse_checks')   // FIXED: was 'log_daily_pulse'
                         .select('*', { count: 'exact', head: true })
                         .eq('session_id', sessionId);
 
@@ -267,30 +269,35 @@ export function usePhase3Data(
                 }
 
                 // ── 4. Integration sessions ────────────────────────────────────────────
+                // SCHEMA FIX: log_integration_sessions has no 'status' column.
+                // Attendance is tracked via attendance_status_id (FK → ref_attendance_statuses).
+                // Count all rows with a non-null attendance_status_id as "attended".
                 const { count: attendedCount, error: intErr } = await supabase
                     .from('log_integration_sessions')
                     .select('*', { count: 'exact', head: true })
-                    .eq('session_id', sessionId)
-                    .eq('status', 'completed');
+                    .eq('dosing_session_id', sessionId)  // FIXED: was .eq('session_id', ...) and then .eq('status','completed')
+                    .not('attendance_status_id', 'is', null);
 
                 const hasRealIntegrationData = !intErr && attendedCount != null;
                 const integrationSessionsAttended = hasRealIntegrationData ? (attendedCount ?? 0) : 0;
 
-                // Scheduled = attended + pending (get all rows for this session)
+                // Scheduled = all rows for this dosing session (attended + pending)
                 const { count: totalIntCount } = await supabase
                     .from('log_integration_sessions')
                     .select('*', { count: 'exact', head: true })
-                    .eq('session_id', sessionId);
+                    .eq('dosing_session_id', sessionId);  // FIXED: was .eq('session_id', ...)
                 const integrationSessionsScheduled = totalIntCount ?? integrationSessionsAttended;
 
                 // ── 5. 7-day pulse trend ───────────────────────────────────────────────
+                // SCHEMA FIX: table is 'log_pulse_checks', not 'log_daily_pulse' (phantom table)
+                // SCHEMA FIX: timestamp column is 'created_at' on log_pulse_checks, not 'submitted_at'
                 const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
                 const { data: pulseRows, error: pulseTrendErr } = await supabase
-                    .from('log_daily_pulse')
-                    .select('connection_level, sleep_quality, submitted_at')
+                    .from('log_pulse_checks')   // FIXED: was 'log_daily_pulse'
+                    .select('connection_level, sleep_quality, created_at') // FIXED: was 'submitted_at'
                     .eq('session_id', sessionId)
-                    .gte('submitted_at', sevenDaysAgo)
-                    .order('submitted_at', { ascending: true });
+                    .gte('created_at', sevenDaysAgo)   // FIXED: was 'submitted_at'
+                    .order('created_at', { ascending: true });  // FIXED: was 'submitted_at'
 
                 let pulseTrend: Phase3PulseTrendPoint[] = MOCK_PULSE_TREND;
                 let hasRealPulseData = false;
@@ -298,7 +305,7 @@ export function usePhase3Data(
                 if (!pulseTrendErr && pulseRows && pulseRows.length > 0) {
                     hasRealPulseData = true;
                     pulseTrend = pulseRows.map(r => {
-                        const d = new Date(r.submitted_at);
+                        const d = new Date(r.created_at);  // FIXED: was r.submitted_at
                         return {
                             day: DAY_LABELS[d.getDay()],
                             connection: r.connection_level ?? 0,
@@ -309,9 +316,10 @@ export function usePhase3Data(
                 }
 
                 // ── 6. WO-553: Session vitals for PDF inline SVG chart ─────────────────
+                // SCHEMA FIX: columns are 'bp_systolic'/'bp_diastolic', not 'systolic_bp'/'diastolic_bp'
                 const { data: vitalsRows, error: vitalsErr } = await supabase
                     .from('log_session_vitals')
-                    .select('recorded_at, heart_rate, systolic_bp, diastolic_bp')
+                    .select('recorded_at, heart_rate, bp_systolic, bp_diastolic') // FIXED: phantom column names
                     .eq('session_id', sessionId)
                     .order('recorded_at', { ascending: true });
 
@@ -328,37 +336,53 @@ export function usePhase3Data(
                             (new Date(r.recorded_at).getTime() - sessionStartMs) / 60_000
                         ),
                         hr: r.heart_rate ?? null,
-                        bp_s: r.systolic_bp ?? null,
-                        bp_d: r.diastolic_bp ?? null,
+                        bp_s: r.bp_systolic ?? null,   // FIXED: was r.systolic_bp
+                        bp_d: r.bp_diastolic ?? null,  // FIXED: was r.diastolic_bp
                         recordedAt: r.recorded_at,
                     }));
                 }
 
                 // ── 7. WO-553: Timeline events for PDF event log table ─────────────────
+                // SCHEMA FIX: 'occurred_at', 'event_type', 'label' are all phantom columns.
+                // Correct: timestamp = 'event_timestamp', type resolved via join on ref_flow_event_types.
+                // This matches the pattern in clinicalLog.ts getTimelineEvents() (L745-758).
                 const { data: tlRows, error: tlErr } = await supabase
                     .from('log_session_timeline_events')
-                    .select('occurred_at, event_type, label')
+                    .select('event_timestamp, ref_flow_event_types(event_type_code, display_label)')  // FIXED: phantom cols removed
                     .eq('session_id', sessionId)
-                    .order('occurred_at', { ascending: true });
+                    .order('event_timestamp', { ascending: true });  // FIXED: was 'occurred_at'
 
                 let timelineEvents: Phase3TimelineEvent[] | null = null;
                 let hasRealTimelineData = false;
 
                 if (!tlErr && tlRows && tlRows.length > 0) {
                     hasRealTimelineData = true;
-                    timelineEvents = tlRows.map(r => ({
-                        occurredAt: r.occurred_at,
-                        eventType: r.event_type ?? 'unknown',
-                        label: r.label ?? r.event_type ?? 'Event',
-                    }));
+                    // Supabase returns foreign key joins as arrays in its TS type.
+                    // Use Array.isArray guard + [0] to safely pick the first match row.
+                    timelineEvents = (tlRows as Array<{
+                        event_timestamp: string;
+                        ref_flow_event_types: Array<{ event_type_code: string; display_label?: string }> | null;
+                    }>).map(r => {
+                        const ref = Array.isArray(r.ref_flow_event_types)
+                            ? r.ref_flow_event_types[0]
+                            : r.ref_flow_event_types;
+                        return {
+                            occurredAt: r.event_timestamp,
+                            eventType: (ref as { event_type_code?: string } | null)?.event_type_code ?? 'unknown',
+                            label: (ref as { display_label?: string; event_type_code?: string } | null)?.display_label
+                                ?? (ref as { event_type_code?: string } | null)?.event_type_code
+                                ?? 'Event',
+                        };
+                    });
                 }
 
                 // ── 8. WO-602: Session metadata for PK Flight Plan PDF page ───────────
+                // SCHEMA FIX: log_dose_events has no 'occurred_at' column — correct column is 'administered_at'
                 const { data: doseRows } = await supabase
                     .from('log_dose_events')
                     .select('substance_id, dose_mg, dose_mg_per_kg')
                     .eq('session_id', sessionId)
-                    .order('occurred_at', { ascending: true })
+                    .order('administered_at', { ascending: true })  // FIXED: was 'occurred_at'
                     .limit(1);
 
                 const dose = doseRows?.[0] ?? null;
