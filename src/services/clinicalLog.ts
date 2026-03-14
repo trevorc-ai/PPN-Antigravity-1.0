@@ -693,8 +693,12 @@ export async function createTimelineEvent(data: TimelineEventData) {
             return { success: false, error: new Error(msg) };
         }
 
-        // WO-603 Fix 6: auto-fill performed_by from auth user so it's never NULL
-        let performedBy = data.performed_by ?? null;
+        // WO-603 Fix 6: auto-fill performed_by from auth user so it's never NULL.
+        // UUID guard: performed_by is a uuid FK — discard any non-UUID value
+        // (e.g. display strings like 'Current Clinician' from LiveSessionTimeline)
+        // so Supabase does not reject the insert with a type error.
+        const UUID_RE_PB = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        let performedBy = (data.performed_by && UUID_RE_PB.test(data.performed_by)) ? data.performed_by : null;
         if (!performedBy) {
             const { data: { user: authUser } } = await supabase.auth.getUser();
             performedBy = authUser?.id ?? null;
@@ -935,15 +939,33 @@ export async function createLongitudinalAssessment(data: LongitudinalAssessmentD
  */
 export async function createMEQ30Score(data: MEQ30ScoreData) {
     try {
-        // Insert into authoritative log_phase3_meq30
-        const { error: insertError } = await supabase
+        // Insert into authoritative log_phase3_meq30.
+        // Compatibility path: try DB-managed id first; if table requires caller-supplied id, retry with Date.now().
+        const basePayload = {
+            patient_uuid: data.patient_uuid,
+            session_id: data.session_id,
+            meq30_score: data.meq30_score, // CHECK 0–150
+        };
+        let { error: insertError } = await supabase
             .from('log_phase3_meq30')
-            .insert([{
-                id: Date.now(),                    // bigint NOT NULL — no sequence
-                patient_uuid: data.patient_uuid,
-                session_id: data.session_id,
-                meq30_score: data.meq30_score,    // CHECK 0–150
-            }]);
+            .insert([basePayload]);
+
+        if (insertError) {
+            const errCode = (insertError as { code?: string }).code ?? '';
+            const errMessage = (insertError as { message?: string }).message ?? '';
+            const missingIdDetected =
+                errCode === '23502' || /null value.*\bid\b/i.test(errMessage);
+
+            if (missingIdDetected) {
+                const retry = await supabase
+                    .from('log_phase3_meq30')
+                    .insert([{
+                        id: Date.now(),
+                        ...basePayload,
+                    }]);
+                insertError = retry.error;
+            }
+        }
         if (insertError) throw insertError;
 
         // Update denormalized score on log_clinical_records (CHECK 0–100 — clamp)

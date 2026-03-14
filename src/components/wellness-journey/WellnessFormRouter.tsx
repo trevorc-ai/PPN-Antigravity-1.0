@@ -505,6 +505,10 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
 
     const handleMEQ30Save = useCallback(async (data: MEQ30Data) => {
         const meq30Total = Object.values(data.responses).reduce((sum, v) => sum + v, 0);
+        const meq30StorageKey = sessionId
+            ? `ppn_meq30_responses_${sessionId}`
+            : (patientId ? `ppn_meq30_responses_${patientId}` : 'ppn_meq30_responses');
+        try { localStorage.setItem(meq30StorageKey, JSON.stringify(data)); } catch (_) { }
         // UUID FIX: log_phase3_meq30.patient_uuid requires canonical UUID, not link code.
         const resolvedPatientId = patientUuidProp ?? patientId;
         if (resolvedPatientId && sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
@@ -777,7 +781,27 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
             return <DailyPulseCheckForm onSave={handlePulseCheckSave} onComplete={onComplete} onBack={onClose ?? onComplete} onExit={onExit ?? onClose ?? onComplete} />;
 
         case 'meq30':
-            return <MEQ30QuestionnaireForm onSave={handleMEQ30Save} onComplete={onComplete} onBack={onClose} onExit={onExit ?? onClose ?? onComplete} />;
+            {
+                const meq30StorageKey = sessionId
+                    ? `ppn_meq30_responses_${sessionId}`
+                    : (patientId ? `ppn_meq30_responses_${patientId}` : 'ppn_meq30_responses');
+                const meq30InitialData = (() => {
+                    try {
+                        const raw = localStorage.getItem(meq30StorageKey);
+                        if (raw) return JSON.parse(raw) as MEQ30Data;
+                    } catch (_) { }
+                    return undefined;
+                })();
+                return <MEQ30QuestionnaireForm
+                    onSave={handleMEQ30Save}
+                    initialData={meq30InitialData}
+                    patientId={patientId}
+                    sessionId={sessionId}
+                    onComplete={onComplete}
+                    onBack={onClose}
+                    onExit={onExit ?? onClose ?? onComplete}
+                />;
+            }
 
         // ── Phase 3: Integration, Integration Work ──────────────────────────
         case 'structured-integration':
