@@ -508,22 +508,28 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
         // UUID FIX: log_phase3_meq30.patient_uuid requires canonical UUID, not link code.
         const resolvedPatientId = patientUuidProp ?? patientId;
         if (resolvedPatientId && sessionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)) {
-            createMEQ30Score({
+            const result = await createMEQ30Score({
                 patient_uuid: resolvedPatientId,  // FIXED: was patientId (link code)
                 session_id: sessionId,
                 meq30_score: meq30Total,
-            }).catch(err => console.warn('[WellnessFormRouter] MEQ-30 DB write failed:', err));
-            createTimelineEvent({
-                session_id: sessionId,
-                event_timestamp: new Date().toISOString(),
-                event_type_code: 'followup_assessment_completed',
-                metadata: {
-                    event_description: `MEQ-30 assessment completed. Total score: ${meq30Total}.`,
-                    meq30_score: meq30Total,
-                },
-            }).catch(err => console.warn('[WellnessFormRouter] MEQ-30 timeline stamp failed:', err));
+            });
+            if (result.success) {
+                createTimelineEvent({
+                    session_id: sessionId,
+                    event_timestamp: new Date().toISOString(),
+                    event_type_code: 'followup_assessment_completed',
+                    metadata: {
+                        event_description: `MEQ-30 assessment completed. Total score: ${meq30Total}.`,
+                        meq30_score: meq30Total,
+                    },
+                }).catch(err => console.warn('[WellnessFormRouter] MEQ-30 timeline stamp failed:', err));
+                onSaved('MEQ-30 Questionnaire');
+                return;
+            }
+            onError('MEQ-30 Questionnaire', result.error);
+            return;
         }
-        onSaved('MEQ-30 Questionnaire');
+        onError('MEQ-30 Questionnaire', 'Missing patient UUID or valid session ID');
     }, [patientId, patientUuidProp, sessionId]);  // FIXED: added patientUuidProp to deps
 
     const handleIntegrationSessionSave = useCallback(async (data: StructuredIntegrationSessionData) => {
