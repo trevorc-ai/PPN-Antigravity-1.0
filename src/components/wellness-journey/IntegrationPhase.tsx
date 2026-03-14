@@ -136,17 +136,18 @@ const IntegrationCard: React.FC<{
     const isArchived = status === 'archived';
     const isCompleted = status === 'completed';
     const isInProgress = status === 'in_progress';
+    const isPending = status === 'pending';
 
     return (
         <div className="flex flex-col">
             <div className={`relative rounded-2xl border overflow-hidden transition-all duration-300
-                ${isArchived ? 'border-slate-700/30 bg-slate-900/20 opacity-50' : isInProgress ? 'border-amber-500/30 bg-amber-950/10 hover:border-amber-400/50' : 'border-teal-500/20 bg-teal-950/10 hover:border-teal-500/40'}
+                ${isArchived ? 'border-slate-700/30 bg-slate-900/20 opacity-50' : isInProgress ? 'border-amber-500/30 bg-amber-950/10 hover:border-amber-400/50' : isPending ? 'border-slate-500/35 bg-slate-900/35 hover:border-slate-400/55' : 'border-teal-500/20 bg-teal-950/10 hover:border-teal-500/40'}
             `}>
                 {/* Top accent stripe */}
-                <div className={`h-1 w-full ${isArchived ? 'bg-slate-700' : isCompleted ? 'bg-teal-500' : isInProgress ? 'bg-amber-500' : 'bg-teal-900/60'}`} />
+                <div className={`h-1 w-full ${isArchived ? 'bg-slate-700' : isCompleted ? 'bg-teal-500' : isInProgress ? 'bg-amber-500' : isPending ? 'bg-slate-500/70' : 'bg-teal-900/60'}`} />
                 <div className="p-5 flex items-start gap-4">
                     <div className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center border
-                        ${isArchived ? 'border-slate-700 bg-slate-800/30 text-slate-600' : isCompleted ? 'border-teal-500/50 bg-teal-900/30 text-teal-400' : isInProgress ? 'border-amber-500/50 bg-amber-900/20 text-amber-300' : 'border-teal-700/40 bg-teal-950/40 text-teal-500'}
+                        ${isArchived ? 'border-slate-700 bg-slate-800/30 text-slate-600' : isCompleted ? 'border-teal-500/50 bg-teal-900/30 text-teal-400' : isInProgress ? 'border-amber-500/50 bg-amber-900/20 text-amber-300' : isPending ? 'border-slate-600/50 bg-slate-800/40 text-slate-300' : 'border-teal-700/40 bg-teal-950/40 text-teal-500'}
                     `}>
                         {isCompleted ? <CheckCircle className="w-4 h-4" /> : icon}
                     </div>
