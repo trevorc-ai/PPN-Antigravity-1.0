@@ -1,22 +1,14 @@
 /**
  * jspdf.d.ts - Module declaration shim for jsPDF
  *
- * The node_modules/jspdf/dist folder has a permissions issue preventing TypeScript
- * from reading the bundled types. This shim provides the minimal API surface used
- * by dischargeSummary.ts and reportGenerator.ts until `npm install` can be re-run
- * with correct permissions (sudo chown -R $(whoami) ~/.npm).
- *
- * Mirrors the jsPDF v4 public API used in this project.
+ * Provides the minimal API surface used by dischargeSummary.ts and
+ * reportGenerator.ts. The GStateInstance branded type prevents TS2345 errors
+ * when passing doc.GState({ opacity }) to doc.setGState().
  */
 
 declare module 'jspdf' {
-    interface GStateOptions {
-        opacity?: number;
-    }
-
-    interface GState {
-        new(options: GStateOptions): GState;
-    }
+    /** Opaque handle returned by doc.GState() and accepted by doc.setGState() */
+    type GStateInstance = { readonly __brand: 'GStateInstance' };
 
     interface jsPDFInternal {
         pages: unknown[];
@@ -25,8 +17,9 @@ declare module 'jspdf' {
     class jsPDF {
         internal: jsPDFInternal;
         constructor(options?: { orientation?: 'portrait' | 'landscape'; unit?: string; format?: string });
-        GState(options: GStateOptions): GState;
-        setGState(state: GState): void;
+        // GState factory — returns an opaque handle
+        GState(options: { opacity?: number }): GStateInstance;
+        setGState(state: GStateInstance): void;
         setFillColor(r: number, g: number, b: number): void;
         setDrawColor(r: number, g: number, b: number): void;
         setTextColor(r: number, g: number, b: number): void;
