@@ -1,7 +1,9 @@
 ---
-owner: DESIGNER
-status: 01_DESIGN
+owner: BUILDER
+status: APPROVED
 authored_by: PRODDY
+designed_by: DESIGNER
+inspected_by: INSPECTOR
 ---
 
 ==== PRODDY ====
@@ -87,3 +89,93 @@ The Practitioner needs to see exactly how their patient's current protocol miles
 - [x] Response wrapped in `==== PRODDY ====`
 
 ==== PRODDY ====
+
+---
+
+==== DESIGNER ====
+
+## DESIGNER Output
+
+**Date:** 2026-03-13  
+**Status:** Design complete → Ready for BUILDER  
+
+### Audit Finding
+Both analytics components (`PractitionerProtocolBenchmark`, `PatientJourneyValidation`) are **already built**. The design work is three targeted corrections:
+
+1. **Gap 1 (P1):** `PatientJourneyValidation` is embedded in the marketing `ForPatients.tsx` page — patients can't reach it post-login. Must be added to `Dashboard.tsx` with a role-gate (`patient` / `member` only) and a show/hide toggle.
+
+2. **Gap 2:** Session Notes section in `PractitionerProtocolBenchmark` is an empty placeholder. Replace with a "Recent Sessions" list using the `patientSessions` data already loaded in `ProtocolDetail` — no new DB query.
+
+3. **Gap 3 (Enhancement):** Add an optional `gad7BaselineScore` prop to `PractitionerProtocolBenchmark` to surface a GAD-7 severity badge in the component header. Data is already fetched in `ProtocolDetail`.
+
+### Files to Modify
+
+| File | Change |
+|---|---|
+| `src/pages/Dashboard.tsx` | Add `PatientJourneyValidation` section, patient-role gated |
+| `src/features/practitioner-analytics/PractitionerProtocolBenchmark.tsx` | Add `recentSessions` + `gad7BaselineScore` props; redesign Session Notes block |
+| `src/pages/ProtocolDetail.tsx` | Pass new props to `PractitionerProtocolBenchmark` |
+
+### Full Spec
+See: `brain/d6ff309a-9497-4c64-b6e2-433178b06551/WO-EPIC-606_design_spec.md`
+
+### DESIGNER Sign-Off Checklist
+- [x] All three gaps traced to root cause (wrong page, placeholder, missing prop)
+- [x] No new database tables required
+- [x] No WO-630 (patient_uuid) dependency introduced
+- [x] All design decisions comply with `frontend-best-practices` skill
+- [x] BUILDER file map provided with exact prop signatures
+- [x] INSPECTOR verification steps defined
+- [x] Frontmatter updated: `owner: BUILDER`, `status: 03_BUILD`
+
+==== DESIGNER ====
+
+---
+
+==== INSPECTOR (SQL Pre-Flight) ====
+
+## INSPECTOR SQL Pre-Flight Audit
+
+**Date:** 2026-03-13  
+**Scope:** Verify whether WO-EPIC-606 requires any database schema changes before BUILDER begins.
+
+### Phase 1 — Database Freeze Check
+
+All tables referenced by the DESIGNER spec were verified against the live app's actual queries using:
+```bash
+grep -rn ".from('" src/ | sed "s/.*\.from('//;s/')*//" | sort -u
+```
+
+| Table | Referenced in spec? | Live in app queries? | Verdict |
+|---|---|---|---|
+| `ref_benchmark_cohorts` | ✅ (existing `getPrimaryBenchmark()`) | ✅ | PASS |
+| `log_clinical_records` | ✅ (existing `patientSessions` fetch) | ✅ | PASS |
+| `log_session_vitals` | ✅ (existing vitals fetch) | ✅ | PASS |
+| `log_safety_events` | ✅ (existing safety fetch) | ✅ | PASS |
+| `ref_substances` | ✅ (existing substance lookup) | ✅ | PASS |
+| `log_baseline_assessments` | ✅ (existing `baseline` fetch) | ✅ | PASS |
+| `log_longitudinal_assessments` | ✅ (existing `longitudinal` fetch) | ✅ | PASS |
+
+**No new tables, columns, migrations, or RPC functions are required.**  
+All three DESIGNER changes are pure React prop additions and component-level rewrites.
+
+### Phase 2 — Migration File Check
+
+**No migration file was written or proposed.** Checks 2 through 6 of the `database-schema-validator` skill are not applicable.
+
+### INSPECTOR SQL Pre-Flight Verdict
+
+```
+✅ DATABASE FREEZE CHECK:   PASS — No CREATE/DROP/ALTER in scope
+✅ SCOPE CHECK:             PASS — 3 files per DESIGNER spec, no extras
+✅ MIGRATION REQUIRED:      NO — Zero SQL changes needed
+✅ SCHEMA INTEGRITY:        PASS — All referenced tables confirmed live
+✅ RLS REQUIRED:            NO — No new tables
+```
+
+**STATUS: SQL PRE-FLIGHT CLEARED ✅**  
+No blocking database concerns. Ticket is safe to route to BUILDER.
+
+> ⚠️ INSPECTOR NOTE: The design spec references `log_integration_notes` as a future table for session notes (already flagged in the component's own code comment). This is explicitly **out of scope** for this WO and requires its own schema ticket before BUILDER should implement any write functionality for it. The DESIGNER's replacement (using `patientSessions` instead) correctly avoids this dependency.
+
+==== INSPECTOR (SQL Pre-Flight) ====
