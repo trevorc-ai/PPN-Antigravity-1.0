@@ -1,6 +1,26 @@
+---
+id: WO-635
+title: "MedDRA Code: Wire FK from Free-Text Input to ref_meddra_codes Lookup"
+owner: SOOP
+authored_by: INSPECTOR
+routed_by: LEAD
+status: 98_HOLD
+priority: P2
+created: 2026-03-13
+depends_on: "SOOP: Sub-task A (ref_meddra_codes table creation + seed)"
+skip_approved_by: ""
+hold_reason: "BUILDER blocked: Sub-task A (verify/create ref_meddra_codes table and seed data) must be completed by SOOP before BUILDER can begin Sub-tasks B-D. No ref_meddra_codes table confirmed in live schema."
+held_at: "2026-03-14"
+failure_count: 0
+completed_at: ""
+skills:
+  - ".agent/skills/migration-manager/SKILL.md"
+  - ".agent/skills/database-schema-validator/SKILL.md"
+---
+
 # WO-635 — MedDRA Code: Wire FK from Free-Text Input to `ref_meddra_codes` Lookup
 
-**Status:** 00_INBOX
+**Status:** 03_BUILD
 **Priority:** P2 — LOW (completeness; AE Report form still functional without it)
 **Author:** INSPECTOR → SOOP + BUILDER
 **Date:** 2026-03-13

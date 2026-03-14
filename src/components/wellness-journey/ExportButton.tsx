@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Download, FileText, Shield, FlaskConical, Loader2, CheckCircle } from 'lucide-react';
-import { downloadReport, generateReport, PatientReportData, ReportType } from '../../services/reportGenerator';
+import { FileText, Shield, FlaskConical, Loader2, CheckCircle } from 'lucide-react';
+import { downloadReport, PatientReportData, ReportType } from '../../services/reportGenerator';
+import { createTimelineEvent } from '../../services/clinicalLog';
+
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * ExportButton, One-Click Audit Report Export
@@ -14,6 +17,8 @@ interface ExportButtonProps {
     patientId: string;
     reportData?: PatientReportData;
     reportType: ReportType;
+    /** Optional: valid UUID session_id. When present, fires createTimelineEvent on export. */
+    sessionId?: string;
     label?: string;
     disabled?: boolean;
     className?: string;
@@ -41,6 +46,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
     patientId,
     reportData,
     reportType,
+    sessionId,
     label,
     disabled = false,
     className = '',
@@ -55,11 +61,20 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
 
         try {
             const data: PatientReportData = reportData ?? { patientId };
-            // Simulate brief async (future: fetch live data from Supabase here)
             await new Promise(resolve => setTimeout(resolve, 300));
             downloadReport(data, reportType);
             setStatus('done');
             setTimeout(() => setStatus('idle'), 3000);
+
+            // SAVS: Stamp DB record for compliance audit trail
+            if (sessionId && UUID_REGEX.test(sessionId)) {
+                createTimelineEvent({
+                    session_id: sessionId,
+                    event_timestamp: new Date().toISOString(),
+                    event_type_code: 'integration_visit_completed',
+                    metadata: { event_description: `${reportType} report exported by practitioner.` },
+                }).catch(() => {}); // non-blocking
+            }
         } catch (err) {
             console.error('Export failed:', err);
             setStatus('error');
@@ -111,19 +126,22 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
 interface ExportButtonGroupProps {
     patientId: string;
     reportData?: PatientReportData;
+    /** Optional: valid UUID session_id for timeline event logging per report export */
+    sessionId?: string;
     className?: string;
 }
 
 export const ExportButtonGroup: React.FC<ExportButtonGroupProps> = ({
     patientId,
     reportData,
+    sessionId,
     className = '',
 }) => {
     return (
         <div className={`flex flex-wrap gap-2 ${className}`} role="group" aria-label="Export patient reports">
-            <ExportButton patientId={patientId} reportData={reportData} reportType="audit" />
-            <ExportButton patientId={patientId} reportData={reportData} reportType="insurance" />
-            <ExportButton patientId={patientId} reportData={reportData} reportType="research" />
+            <ExportButton patientId={patientId} reportData={reportData} sessionId={sessionId} reportType="audit" />
+            <ExportButton patientId={patientId} reportData={reportData} sessionId={sessionId} reportType="insurance" />
+            <ExportButton patientId={patientId} reportData={reportData} sessionId={sessionId} reportType="research" />
         </div>
     );
 };

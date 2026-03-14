@@ -1,12 +1,14 @@
 ---
 id: WO-EXPORT-REPORTS
 title: "Export Reports Upgrade: TXT → PDF + Live Data Wiring (Audit, Insurance, Research)"
-status: READY_FOR_BUILD
+status: 04_QA
 owner: BUILDER
 priority: P1
 phase: Phase 3 / Cross-cutting
 skill: frontend-best-practices
 related: WO-DISCHARGE-PDF
+completed_at: "2026-03-14"
+builder_notes: "Fix 1: reportGenerator.ts upgraded — buildPDFDoc() shared builder with per-type color themes (Audit=Indigo, Insurance=Teal, Research=Violet), distinct type-specific sections (ICD-10 block, HIPAA Safe Harbor statement, compliance signature), TXT fallback on error. Fix 2: ExportButton.tsx adds optional sessionId prop and non-blocking createTimelineEvent call after each export. Fix 3: IntegrationPhase.tsx adds ExportButtonGroup with live buildPatientReportData() IIFE wired from phase3 + journey context, placed above the final action row."
 ---
 
 ## Summary

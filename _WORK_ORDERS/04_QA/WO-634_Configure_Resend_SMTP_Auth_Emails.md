@@ -1,6 +1,25 @@
+---
+id: WO-634
+title: "Configure Custom SMTP via Resend for Production Auth Emails"
+owner: BUILDER
+authored_by: PRODDY
+routed_by: LEAD
+status: 04_QA
+priority: P1
+created: 2026-03-12
+depends_on: "none"
+skip_approved_by: ""
+hold_reason: ""
+heldaat: ""
+failure_count: 0
+completed_at: "2026-03-14"
+builder_notes: "Supabase SMTP configured manually by user via Resend Dashboard. No code changes required."
+skills: []
+---
+
 # WO-634: Configure Custom SMTP via Resend for Production Auth Emails
 
-**Queue:** 00_INBOX → 03_BUILD  
+**Queue:** 03_BUILD  
 **Priority:** P1 - High (production blocker for scale)  
 **Type:** Infrastructure  
 **Agent:** BUILDER  

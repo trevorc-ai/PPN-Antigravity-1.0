@@ -1,9 +1,12 @@
 ---
+id: WO-EPIC-606
 owner: BUILDER
-status: APPROVED
+status: 04_QA
 authored_by: PRODDY
 designed_by: DESIGNER
 inspected_by: INSPECTOR
+completed_at: "2026-03-14"
+builder_notes: "All 3 DESIGNER gaps confirmed already implemented: PatientJourneyValidation in Dashboard.tsx (patient-gated), recentSessions + gad7BaselineScore props in PractitionerProtocolBenchmark.tsx, and props passed from ProtocolDetail.tsx. Zero code changes required."
 ---
 
 ==== PRODDY ====

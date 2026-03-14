@@ -24,6 +24,8 @@ import type { RiskFlag } from '../../utils/riskCalculator';
 // SAVS P3-D fix: createTimelineEvent for discharge summary DB timestamp
 import { createPulseCheck, createTimelineEvent } from '../../services/clinicalLog';
 import { supabase } from '../../supabaseClient';
+import { ExportButtonGroup } from './ExportButton';
+import type { PatientReportData } from '../../services/reportGenerator';
 
 interface IntegrationPhaseProps {
     journey: any;
@@ -839,7 +841,53 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 </div>
             </section>
 
-            {/* 12 ── Action row ─────────────────────────────────────────────── */}
+            {/* 12 ── Clinical Report Exports ────────────────────────────── */}
+            {(() => {
+                const sessionId = journey.session?.sessionId ?? journey.sessionId;
+                const reportData: PatientReportData = {
+                    patientId: journey.patientId ?? 'PT-DEMO',
+                    treatmentPeriod: journey.sessionDate
+                        ? { start: new Date(journey.sessionDate).toISOString().split('T')[0], end: new Date().toISOString().split('T')[0] }
+                        : undefined,
+                    baseline: {
+                        phq9: baselinePhq9 ?? undefined,
+                        gad7: journey.risk?.baseline?.gad7 ?? undefined,
+                        ace: journey.risk?.baseline?.ace ?? undefined,
+                        pcl5: journey.risk?.baseline?.pcl5 ?? undefined,
+                        assessmentDate: journey.sessionDate ?? undefined,
+                    },
+                    dosingSession: {
+                        date: journey.sessionDate ?? undefined,
+                        substance: journey.session?.substance ?? undefined,
+                        doseMg: journey.session?.dose ? parseFloat(journey.session.dose) : undefined,
+                        vitalsCount: journey.session?.vitalsCount ?? undefined,
+                        meq30Score: journey.session?.meq30Score ?? undefined,
+                        adverseEvents: safetyEvents.length,
+                    },
+                    integration: {
+                        sessionsAttended: intAttended,
+                        sessionsScheduled: intScheduled,
+                        pulseCheckDays: phase3.pulseTrend?.length ?? undefined,
+                        phq9Followup: phase3.currentPhq9 ?? undefined,
+                    },
+                    benchmarkReadiness: journey.benchmarkReadiness ?? undefined,
+                };
+                return (
+                    <section aria-label="Clinical report exports" className="bg-slate-900/40 border border-slate-700/50 rounded-2xl p-5">
+                        <div className="flex items-center gap-3 mb-4">
+                            <h3 className="ppn-card-title">Clinical Report Exports</h3>
+                            <span className="ppn-meta text-slate-500">Audit · Insurance · Research (PDF)</span>
+                        </div>
+                        <ExportButtonGroup
+                            patientId={journey.patientId ?? 'PT-DEMO'}
+                            reportData={reportData}
+                            sessionId={sessionId}
+                        />
+                    </section>
+                );
+            })()}
+
+            {/* 13 ── Action row ─────────────────────────────────────────────── */}
             <div className="pt-8 border-t border-slate-700/50 flex flex-col sm:flex-row items-center gap-4 justify-center">
                 <button
                     onClick={() => setShowProgressSummary(true)}

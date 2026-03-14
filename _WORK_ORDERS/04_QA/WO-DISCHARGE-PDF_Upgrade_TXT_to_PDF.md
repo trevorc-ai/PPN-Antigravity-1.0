@@ -1,11 +1,13 @@
 ---
 id: WO-DISCHARGE-PDF
 title: "Discharge Summary: Upgrade TXT Export to Formatted PDF"
-status: READY_FOR_BUILD
+status: 04_QA
 owner: BUILDER
 priority: P1
 phase: Phase 3
 skill: frontend-best-practices
+completed_at: "2026-03-14"
+builder_notes: "Added generateDischargeSummaryPDF() using jsPDF: A4 portrait, 5 clinical sections (Patient/Treatment, Outcomes, Safety, Care Plan, Sign-Off), colored badges (teal=pass, amber=partial), footer on every page. downloadDischargeSummary() updated to call PDF generator with graceful TXT fallback. generateDischargeSummaryText() preserved. Created src/types/jspdf.d.ts shim (node_modules/jspdf/dist has EPERM issue requiring user to run: sudo chown -R $(whoami) ~/.npm && npm install)."
 ---
 
 ## Summary
