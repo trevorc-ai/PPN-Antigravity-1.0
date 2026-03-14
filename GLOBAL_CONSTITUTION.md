@@ -57,8 +57,9 @@ This document supersedes all other instructions. All agents MUST abide by these 
 **Recovery Commits Are Forbidden.** Any commit containing "restore", "recovery", "FULL EXTRACTION", or similar language that reverts intentional deletions is a critical violation. If something appears broken after a merge, use `git revert` on the specific commit — never restore from an older state.
 
 **Branch Hygiene Enforcement (LEAD):**
-- On every `/lead-pipeline-scan`, run `git branch` and flag any branch other than `main`.
-- Any stale branch must be deleted immediately: `git branch -D <branch-name>`
+- On every `/lead-pipeline-scan`, run `git branch` and list any branch other than `main`.
+- For each unauthorized branch found, report it to the USER and **request explicit approval before deleting**: "Found stale branch `<name>`. Approve deletion? (yes/no)"
+- Only after USER approves: `git branch -D <branch-name>`
 - Any agent found creating an unauthorized branch: set WO to `98_HOLD`, alert USER.
 
 *Rationale: 16 stale branches and 7 stale stashes were identified as the root cause of dozens of intentional deletions being undone. This policy prevents recurrence.*
