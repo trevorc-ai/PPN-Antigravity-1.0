@@ -64,6 +64,15 @@ export interface PractitionerProtocolBenchmarkProps {
   /** Already computed in ProtocolDetail — passed directly, no re-fetch */
   phqChartData: Array<{ date: string; score: number | null }>;
   patientLinkCodeHash: string | null;
+  /** Optional: GAD-7 baseline score to show severity badge in header */
+  gad7BaselineScore?: number | null;
+  /** Optional: up to 2 most recent sessions for this patient (replaces placeholder) */
+  recentSessions?: Array<{
+    id: string;
+    session_date: string | null;
+    session_type_id: number | null;
+    substance_name?: string;
+  }>;
 }
 
 // ─── Custom Tooltip ────────────────────────────────────────────────────────────
@@ -94,6 +103,8 @@ const PractitionerProtocolBenchmark: React.FC<PractitionerProtocolBenchmarkProps
   substanceName,
   phqChartData,
   patientLinkCodeHash: _patientLinkCodeHash,
+  gad7BaselineScore,
+  recentSessions,
 }) => {
   const [benchmark, setBenchmark] = useState<BenchmarkCohort | null>(null);
   const [loadingBenchmark, setLoadingBenchmark] = useState(true);
@@ -196,6 +207,22 @@ const PractitionerProtocolBenchmark: React.FC<PractitionerProtocolBenchmarkProps
             {!loadingBenchmark && benchmark && ` · n=${benchmark.n_participants.toLocaleString()} matched participants`}
             {!loadingBenchmark && !benchmark && ' · (no matched benchmark found)'}
           </p>
+          {/* GAD-7 baseline badge — shown when score is passed from ProtocolDetail */}
+          {gad7BaselineScore != null && (() => {
+            const score = gad7BaselineScore;
+            const sev = score >= 15 ? { label: 'Severe', color: 'text-red-400' }
+              : score >= 10 ? { label: 'Moderate', color: 'text-amber-400' }
+              : score >= 5  ? { label: 'Mild', color: 'text-yellow-400' }
+              : { label: 'None', color: 'text-teal-400' };
+            return (
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-800/50 border border-slate-700/40 rounded-lg mt-2">
+                <span className="ppn-meta text-slate-500 uppercase tracking-widest">GAD-7 Baseline</span>
+                <span className={`ppn-meta font-black ${sev.color}`}>
+                  {score}/21 - {sev.label}
+                </span>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
@@ -331,25 +358,63 @@ const PractitionerProtocolBenchmark: React.FC<PractitionerProtocolBenchmarkProps
         </div>
       </div>
 
-      {/* Session Notes — placeholder (log_integration_notes table not yet created) */}
+      {/* Recent Sessions — replaces placeholder; uses patientSessions passed from ProtocolDetail */}
       <div className="mt-8 pt-6 border-t border-slate-800/50 relative z-10">
         <div className="flex items-center gap-3 mb-4">
-          <div className="size-8 rounded-lg bg-slate-800/60 border border-slate-700/50 flex items-center justify-center text-slate-500">
+          <div className="size-8 rounded-lg bg-amber-900/30 border border-amber-800/40 flex items-center justify-center text-amber-500">
             <ClipboardList className="w-4 h-4" aria-hidden="true" />
           </div>
-          <h3 className="ppn-card-title">Session Notes</h3>
+          <h3 className="ppn-card-title">Recent Sessions</h3>
         </div>
         <div
-          className="bg-slate-900/30 border border-slate-800/50 rounded-xl p-6"
-          role="note"
-          aria-label="Session notes — coming soon"
+          className="bg-amber-950/15 border border-amber-900/25 rounded-2xl p-4 space-y-2"
+          role="list"
+          aria-label="Recent sessions for this patient"
         >
-          <div className="flex items-start gap-3">
-            <CalendarDays className="w-4 h-4 text-slate-600 mt-0.5 shrink-0" aria-hidden="true" />
-            <p className="ppn-body text-slate-600">
-              Session notes will appear here once the integration note-taking feature is live.
-            </p>
-          </div>
+          {recentSessions && recentSessions.length > 0 ? (
+            <>
+              {recentSessions.map((s) => {
+                const typeLabel =
+                  s.session_type_id === 1 ? 'Preparation'
+                  : s.session_type_id === 2 ? 'Dosing'
+                  : s.session_type_id === 3 ? 'Integration'
+                  : 'Session';
+                return (
+                  <div
+                    key={s.id}
+                    role="listitem"
+                    className="flex items-center gap-3 py-2 border-b border-amber-900/20 last:border-0"
+                  >
+                    <CalendarDays className="w-3.5 h-3.5 text-amber-600 shrink-0" aria-hidden="true" />
+                    <span className="ppn-body text-slate-400 flex-1">
+                      {s.session_date ?? 'Date TBD'}
+                    </span>
+                    <span className="ppn-meta text-amber-400/80 uppercase tracking-widest">
+                      {typeLabel}
+                    </span>
+                    {s.substance_name && (
+                      <span className="ppn-meta text-slate-600 uppercase tracking-widest">
+                        {s.substance_name}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+              <a
+                href="#patient-session-history"
+                className="block mt-2 text-right ppn-meta text-indigo-400 hover:text-indigo-300 uppercase tracking-widest transition-colors"
+              >
+                View all sessions
+              </a>
+            </>
+          ) : (
+            <div className="flex items-start gap-3">
+              <CalendarDays className="w-4 h-4 text-slate-600 mt-0.5 shrink-0" aria-hidden="true" />
+              <p className="ppn-body text-slate-600">
+                No prior sessions found for this patient.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>

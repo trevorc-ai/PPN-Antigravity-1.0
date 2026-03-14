@@ -590,6 +590,8 @@ const ProtocolDetail: React.FC = () => {
               substanceName={substanceName}
               phqChartData={phqChartData}
               patientLinkCodeHash={session.patient_link_code_hash}
+              gad7BaselineScore={baseline?.gad7_score ?? null}
+              recentSessions={patientSessions.slice(0, 2)}
             />
 
           </div>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Activity, AlertTriangle, TrendingUp, Users,
   Map, ArrowRight, Plus, Clock,
-  BarChart3, Target, Share2
+  BarChart3, Target, Share2, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 import { PageContainer } from '../components/layouts/PageContainer';
@@ -12,6 +12,8 @@ import SafetyRiskMatrix from '../components/analytics/SafetyRiskMatrix';
 import { usePractitionerProtocols } from '../hooks/usePractitionerProtocols';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
+import { PatientJourneyValidation } from '../features/patient-portal';
+import { getPrimaryBenchmark, type BenchmarkCohort } from '../lib/benchmarks';
 
 // --- COMPONENT: CLINIC PERFORMANCE CARD (PRIMARY) ---
 interface ClinicPerformanceCardProps {
@@ -157,10 +159,22 @@ function formatCurrentDate(): string {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const { protocols, loading: protocolsLoading, refetch, lastFetchedAt } = usePractitionerProtocols();
 
   const hasProtocols = protocols.length > 0;
+
+  // ── Patient Journey section ─────────────────────────────────────────────────
+  const isPatientUser = userRole === 'user';
+  const [isJourneyOpen, setIsJourneyOpen] = useState(true);
+  const [patientBenchmark, setPatientBenchmark] = useState<BenchmarkCohort | null>(null);
+
+  useEffect(() => {
+    if (!isPatientUser) return;
+    getPrimaryBenchmark('psilocybin', 'MDD', 'PHQ-9')
+      .then(result => setPatientBenchmark(result))
+      .catch(() => setPatientBenchmark(null));
+  }, [isPatientUser]);
 
   // Restore scroll position when returning to Dashboard
   useEffect(() => {
@@ -390,6 +404,41 @@ export default function Dashboard() {
 
           </div>
         </Section>
+
+        {/* YOUR HEALING JOURNEY — patient ('user') role only */}
+        {isPatientUser && (
+          <Section spacing="tight">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="ppn-section-title">Your Healing Journey</h2>
+              <button
+                id="patient-journey-toggle"
+                aria-expanded={isJourneyOpen}
+                aria-controls="patient-journey-panel"
+                onClick={() => setIsJourneyOpen(v => !v)}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/60 border border-slate-700/50 text-slate-400 text-xs font-black uppercase tracking-widest hover:bg-slate-700/60 transition-all"
+              >
+                {isJourneyOpen
+                  ? <><ChevronUp className="w-3.5 h-3.5" aria-hidden="true" /> Collapse</>
+                  : <><ChevronDown className="w-3.5 h-3.5" aria-hidden="true" /> View My Journey</>}
+              </button>
+            </div>
+            {isJourneyOpen && (
+              <div id="patient-journey-panel">
+                <PatientJourneyValidation
+                  patientPhqData={[]}
+                  primaryBenchmark={patientBenchmark}
+                  completedSessions={protocols.reduce((sum, p) => sum + p.session_count, 0)}
+                  totalPlannedSessions={Math.max(protocols.length, 1)}
+                  substanceName={
+                    protocols.length > 0 && protocols[0].substance_name
+                      ? protocols[0].substance_name
+                      : 'Your Protocol'
+                  }
+                />
+              </div>
+            )}
+          </Section>
+        )}
 
         {/* STICKY BOTTOM CTA — Thumb-zone primary action, hidden on desktop where sidebar handles nav */}
         <div className="md:hidden fixed bottom-[72px] left-0 right-0 z-40 flex justify-center px-6 pb-2 pointer-events-none">
