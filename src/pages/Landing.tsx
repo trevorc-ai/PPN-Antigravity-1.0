@@ -176,18 +176,7 @@ const Landing: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* CRITICAL: Visual Boundary Statement */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-              className="max-w-2xl p-6 bg-slate-900/90 border border-slate-700/80 rounded-2xl shadow-lg backdrop-blur-md w-full"
-            >
-              <p className="text-lg font-medium text-slate-300 leading-relaxed text-left">
-                <span className="text-blue-400 font-bold mr-1 block mb-2 uppercase tracking-widest text-sm">Notice:</span>
-                PPN Portal is a measurement and benchmarking tool. It does not provide medical advice, treatment recommendations, or dosing guidance.
-              </p>
-            </motion.div>
+
 
             {/* Call-to-Action Buttons */}
             <motion.div
@@ -225,21 +214,7 @@ const Landing: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Early Access Badge */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1 }}
-              className="flex flex-col gap-3 w-full max-w-md lg:mx-0 mx-auto pt-8 border-t border-slate-800/50"
-            >
-              <div className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
-                <span className="material-symbols-outlined text-emerald-400 text-lg">verified</span>
-                <div>
-                  <p className="text-sm font-black text-slate-300">Purpose-Built Infrastructure</p>
-                  <p className="text-xs text-slate-500 mt-0.5">Clinical-grade data architecture. Structured, encrypted, and site-isolated.</p>
-                </div>
-              </div>
-            </motion.div>
+
           </div>
 
           {/* Right Column (Visual) */}

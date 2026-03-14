@@ -47,3 +47,18 @@ This document supersedes all other instructions. All agents MUST abide by these 
 *   **Silent Handoffs:** Do not tag other agents in the chat. When your task is complete, update the `owner` and `status` in the ticket's YAML frontmatter.
 *   **Execute the Handoff Script:** Run `./handoff.sh [filepath] [next_folder] [next_agent]` in the terminal to move the file and log your status. Silently terminate your turn immediately after.
 *   **The Two-Strike Debugging Rule:** If you attempt to fix a bug and fail twice, you must STOP. Revert to the last working state via `git restore .` and request a new Tree-of-Thoughts strategy from LEAD.
+
+## 4. 🌿 BRANCH DISCIPLINE POLICY (ALL AGENTS)
+
+**Main-Only Development.** All code changes are committed directly to `main`. No feature branches may be created without explicit LEAD approval documented in a Work Order.
+
+**No Stashing.** Agents must never use `git stash`. Stashed changes are orphaned, accumulate pre-deletion state, and cause content reversion when popped.
+
+**Recovery Commits Are Forbidden.** Any commit containing "restore", "recovery", "FULL EXTRACTION", or similar language that reverts intentional deletions is a critical violation. If something appears broken after a merge, use `git revert` on the specific commit — never restore from an older state.
+
+**Branch Hygiene Enforcement (LEAD):**
+- On every `/lead-pipeline-scan`, run `git branch` and flag any branch other than `main`.
+- Any stale branch must be deleted immediately: `git branch -D <branch-name>`
+- Any agent found creating an unauthorized branch: set WO to `98_HOLD`, alert USER.
+
+*Rationale: 16 stale branches and 7 stale stashes were identified as the root cause of dozens of intentional deletions being undone. This policy prevents recurrence.*
