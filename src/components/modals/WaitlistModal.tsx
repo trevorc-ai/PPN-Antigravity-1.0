@@ -45,11 +45,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
         setStatus('loading');
         try {
             const { error: sbError } = await supabase.from('log_waitlist').insert({
-                first_name: form.firstName.trim(),
-                last_name: form.lastName.trim(),
                 email: form.email.trim().toLowerCase(),
-                practitioner_type: form.practitionerType,
-                source: 'ppn_portal_main',
             });
             if (sbError) {
                 console.error("Supabase Waitlist Error:", sbError);

@@ -60,11 +60,7 @@ export const Waitlist: FC = () => {
         setStatus('loading');
         try {
             const { error } = await supabase.from('log_waitlist').insert({
-                first_name: form.firstName.trim(),
-                last_name: form.lastName.trim(),
                 email: form.email.trim().toLowerCase(),
-                practitioner_type: form.practitionerType,
-                source: 'ppn_portal_main',
             });
             if (error) {
                 if (error.code === '23505') { setStatus('duplicate'); }
