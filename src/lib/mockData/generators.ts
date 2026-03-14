@@ -59,7 +59,14 @@ const SCENARIOS = {
     }
 };
 
-// ========== WO-060: Generate Baseline Assessment ==========
+// ── Date anchor: use today so demo data always reads "recent" ────────────
+// Previously hardcoded to 2025-10-15, causing all Phase 3 charts and reports
+// to show an October 2025 session date regardless of the actual current date.
+const TODAY_SESSION_DATE = (() => {
+    const d = new Date();
+    d.setHours(9, 0, 0, 0);
+    return d.toISOString().replace(/T.*/, 'T09:00:00Z');
+})();
 
 export function generateBaselineAssessment(
     patientId: string,
@@ -95,7 +102,7 @@ export function generateSessionTimeline(
     sessionId: string,
     scenario: keyof typeof SCENARIOS = 'success'
 ): SessionTimeline {
-    const sessionDate = new Date('2025-10-15T09:00:00Z');
+    const sessionDate = new Date(TODAY_SESSION_DATE);
     const doseTime = sessionDate;
     const onsetTime = addDays(doseTime, 0);
     onsetTime.setMinutes(onsetTime.getMinutes() + 45); // T+00:45
@@ -136,7 +143,7 @@ export function generateSessionVitals(
     sessionId: string,
     scenario: keyof typeof SCENARIOS = 'success'
 ): VitalSignReading[] {
-    const sessionDate = new Date('2025-10-15T09:00:00Z');
+    const sessionDate = new Date(TODAY_SESSION_DATE);
     const vitals: VitalSignReading[] = [];
 
     const phases: Array<{ phase: VitalSignReading['session_phase'], offset: number }> = [
@@ -203,7 +210,7 @@ export function generateLongitudinalAssessments(
     scenario: keyof typeof SCENARIOS = 'success'
 ): LongitudinalAssessment[] {
     const config = SCENARIOS[scenario];
-    const sessionDate = new Date('2025-10-15T09:00:00Z');
+    const sessionDate = new Date(TODAY_SESSION_DATE);
     const assessments: LongitudinalAssessment[] = [];
 
     const timepoints: Array<{
@@ -264,7 +271,7 @@ export function generatePulseChecks(
     scenario: keyof typeof SCENARIOS = 'success'
 ): PulseCheck[] {
     const config = SCENARIOS[scenario];
-    const sessionDate = new Date('2025-10-15T09:00:00Z');
+    const sessionDate = new Date(TODAY_SESSION_DATE);
     const pulseChecks: PulseCheck[] = [];
 
     // Generate 30 days of pulse checks with adherence rate

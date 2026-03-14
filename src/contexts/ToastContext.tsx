@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { Toast } from '../types';
 
 interface ToastContextType {
@@ -29,6 +29,24 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const removeToast = useCallback((id: string) => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
     }, []);
+
+    // Bridge: allow components outside the React tree (or deep descendant components
+    // that don't import useToast) to surface toasts by dispatching a global CustomEvent.
+    // Usage: window.dispatchEvent(new CustomEvent('ppn:toast', { detail: { title, message, type } }))
+    useEffect(() => {
+        const handleGlobalToast = (e: Event) => {
+            const detail = (e as CustomEvent).detail;
+            if (detail?.title || detail?.message) {
+                addToast({
+                    title: detail.title ?? '',
+                    message: detail.message ?? '',
+                    type: detail.type ?? 'info',
+                });
+            }
+        };
+        window.addEventListener('ppn:toast', handleGlobalToast);
+        return () => window.removeEventListener('ppn:toast', handleGlobalToast);
+    }, [addToast]);
 
     return (
         <ToastContext.Provider value={{ toasts, addToast, removeToast }}>

@@ -282,6 +282,18 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // handleDosingUpdated reads this to emit additional_dose instead of dose_admin.
     const isLiveRedoseRef = useRef(false);
 
+    // WO-641: Ref for the Session Update panel — used to scroll into view when a chip is tapped
+    const sessionUpdatePanelRef = useRef<HTMLDivElement>(null);
+
+    // WO-641: Helper — expand Panel C and scroll it into view smoothly
+    const openAndScrollToUpdatePanel = useCallback(() => {
+        setActivePanel('update');
+        // One tick delay so the panel expands before we scroll to it
+        setTimeout(() => {
+            sessionUpdatePanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+    }, []);
+
     // Re-evaluate contraindications when any dosing field changes
     useEffect(() => {
         const bump = () => setContraindicationKey(k => k + 1);
@@ -397,10 +409,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         try {
             localStorage.setItem(SESSION_KEY, nextMode);
             if (nextMode === 'live') {
-                // Only write start time once, don't overwrite if already set
-                if (!localStorage.getItem(SESSION_START_KEY)) {
-                    localStorage.setItem(SESSION_START_KEY, String(Date.now()));
-                }
+                // SAFETY FIX: Always stamp a fresh start time when going live.
+                // The previous "only write if not already set" guard caused timer
+                // carry-over from prior sessions that used the same localStorage key
+                // (particularly sessions that resolved to the 'demo' fallback).
+                // A practitioner starting a new dosing session must always see 00:00:00.
+                localStorage.removeItem(SESSION_START_KEY);   // clear any stale value first
+                localStorage.setItem(SESSION_START_KEY, String(Date.now()));
             } else if (nextMode === 'pre') {
                 localStorage.removeItem(SESSION_START_KEY);
             }
@@ -740,9 +755,18 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDosingProtocolComplete, contraindicationKey, journey]);
 
-    // Current meds list for display, MUST stay above early returns (Rules of Hooks)
+    // Current meds list for display — reads ppn_patient_medications_names first (saved from
+    // StructuredSafetyCheckForm per WO-638), then falls back to mock_patient_medications_names
+    // (Supabase-hydrated on patient select in WellnessJourney.handlePatientSelect).
     const patientMeds = useMemo(() => {
         try {
+            // Prefer the key written by StructuredSafetyCheckForm (WO-638)
+            const fromSafety = localStorage.getItem('ppn_patient_medications_names');
+            if (fromSafety) {
+                const parsed = JSON.parse(fromSafety);
+                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
+            }
+            // Fallback: DB-hydrated on patient select
             const cached = localStorage.getItem('mock_patient_medications_names');
             if (cached) {
                 const parsed = JSON.parse(cached);
@@ -1496,7 +1520,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                         </div>
 
                         {/* ── Panel C: Session Update ── */}
-                        <div className="rounded-2xl overflow-hidden border border-emerald-900/40 bg-slate-900/60">
+                        <div ref={sessionUpdatePanelRef} className="rounded-2xl overflow-hidden border border-emerald-900/40 bg-slate-900/60">
                             <button
                                 onClick={() => setActivePanel(p => p === 'update' ? 'graph' : 'update')}
                                 className="w-full flex items-center justify-between px-4 py-3 hover:bg-emerald-950/20 transition-colors"
@@ -1566,9 +1590,27 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session note, optional</label>
-                                        <textarea rows={2} placeholder="Brief observation (no PHI)…" value={updateNote} onChange={e => setUpdateNote(e.target.value)}
-                                            className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm placeholder-slate-600 focus:outline-none transition-all resize-none" />
+                                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wide mb-1.5">Session Note, optional</label>
+                                        {/* ZERO-PHI POLICY: Free-text input is not permitted in clinical timeline records.
+                                            Use structured pre-approved notes only. Any entry here is persisted to
+                                            log_session_timeline_events.metadata.event_description. */}
+                                        <select
+                                            value={updateNote}
+                                            onChange={e => setUpdateNote(e.target.value)}
+                                            className="w-full px-3 py-2 bg-slate-800/60 border border-slate-700/50 rounded-xl text-slate-200 text-sm focus:outline-none transition-all appearance-none"
+                                        >
+                                            <option value="">Select a note (optional)…</option>
+                                            <option value="Patient appears calm and stable">Patient appears calm and stable</option>
+                                            <option value="Patient requested brief pause">Patient requested brief pause in session</option>
+                                            <option value="Monitoring closely, no intervention required">Monitoring closely, no intervention required</option>
+                                            <option value="Verbal grounding administered">Verbal grounding administered</option>
+                                            <option value="Music adjusted per patient preference">Music adjusted per patient preference</option>
+                                            <option value="Position change offered">Position change offered</option>
+                                            <option value="Environmental factors adjusted">Environmental factors adjusted</option>
+                                            <option value="Consulting with presiding physician">Consulting with presiding physician</option>
+                                            <option value="Symptoms escalating, increased monitoring">Symptoms escalating, increased monitoring</option>
+                                            <option value="Post-dose observation, no concerns">Post-dose observation, no concerns</option>
+                                        </select>
                                         <p className="text-xs text-slate-600 mt-1 italic">Affect, responsiveness, and vitals are persisted to the clinical record.</p>
                                     </div>
                                     <button onClick={handleSaveUpdate}
@@ -1596,6 +1638,8 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                                                     metadata: { event_description: action.desc },
                                                 }).catch(err => console.warn('[chips] write failed:', err));
                                             }
+                                            // WO-641: open and scroll to Session Update panel after logging the chip action
+                                            openAndScrollToUpdatePanel();
                                         }}
                                         aria-label={`Log: ${action.label}`}
                                         className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold min-h-[36px] transition-colors active:scale-95 ${action.color}`}
@@ -1646,7 +1690,10 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
 
                 {/* ── Action Buttons ────────────────────────────────────────────── */}
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={isLive ? () => setActivePanel(p => p === 'update' ? 'graph' : 'update') : undefined} disabled={!isLive}
+                    <button onClick={isLive ? () => {
+                        // WO-641: scroll to and expand Session Update panel
+                        openAndScrollToUpdatePanel();
+                    } : undefined} disabled={!isLive}
                         className={`flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 border ${isLive ? (activePanel === 'update' ? 'bg-emerald-600/30 border-emerald-400/60 text-emerald-100' : 'bg-gradient-to-br from-emerald-900/60 to-teal-900/40 hover:from-emerald-800/70 border-emerald-500/40 hover:border-emerald-400/60 text-emerald-100') : 'bg-slate-800/20 border-slate-700/30 text-slate-600 cursor-not-allowed'} shadow-lg`}
                         aria-label="Log session update">
                         <ClipboardList className={`w-5 h-5 ${isLive ? 'text-emerald-300' : 'text-slate-600'}`} />

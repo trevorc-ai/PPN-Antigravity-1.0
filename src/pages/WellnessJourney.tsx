@@ -211,6 +211,7 @@ const WellnessJourneyInternal: React.FC = () => {
         const SESSION_CACHE_KEYS = [
             'ppn_dosing_protocol',
             'mock_patient_medications_names',
+            'ppn_patient_medications_names', // WO-638: cleared on patient switch to prevent stale safety-check meds
             'ppn_latest_vitals',
         ];
         SESSION_CACHE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch (_) { } });
@@ -245,43 +246,81 @@ const WellnessJourneyInternal: React.FC = () => {
             console.log('[WellnessJourney] 🧪 TEST session started, no DB writes will occur. Patient ID:', patientId);
         }
 
-        // ── STEP 1: Load medications for existing patients from Supabase ─────────
-        // Query their most recent StructuredSafetyCheck / intake record for
-        // the medication name list and write it to localStorage so that:
-        //   a) DosingProtocolForm contraindication engine has real meds
-        //   b) DosingSessionPhase medication pills + engine both show real data
-        if (!isNew) {
-            try {
-                const { data: intakeData } = await supabase
-                    .from('log_patient_intake')
-                    .select('medications_text, medication_ids')
-                    // SCHEMA FIX: patient_link_code → patient_link_code_hash (per schema convention)
-                    .eq('patient_link_code_hash', patientId)
-                    .order('created_at', { ascending: false })
-                    .limit(1)
-                    .maybeSingle();
+        // ── STEP 1: Load medications + demographics for existing patients from Supabase ──
+        // Run both queries concurrently. Medications are needed by the contraindication
+        // engine; demographics are needed by every phase header bar (age/gender/weight).
+        let loadedDemographics: PatientJourney['demographics'] | undefined;
 
-                if (intakeData?.medications_text && Array.isArray(intakeData.medications_text) && intakeData.medications_text.length > 0) {
-                    // medications_text column: array of free-text medication names entered by practitioner
-                    localStorage.setItem('mock_patient_medications_names', JSON.stringify(intakeData.medications_text));
-                    console.log('[WellnessJourney] Patient medications loaded from intake record:', intakeData.medications_text);
-                } else if (intakeData?.medication_ids && Array.isArray(intakeData.medication_ids) && intakeData.medication_ids.length > 0) {
-                    // Resolve medication IDs → names via ref_medications
-                    const { data: medRows } = await supabase
-                        .from('ref_medications')
-                        .select('medication_name')
-                        .in('medication_id', intakeData.medication_ids);
-                    if (medRows && medRows.length > 0) {
-                        const names = medRows.map((m: any) => m.medication_name);
-                        localStorage.setItem('mock_patient_medications_names', JSON.stringify(names));
-                        console.log('[WellnessJourney] Patient medications resolved from IDs:', names);
+        if (!isNew) {
+            await Promise.all([
+                // ── 1a. Medications ──────────────────────────────────────────────────
+                (async () => {
+                    try {
+                        const { data: intakeData } = await supabase
+                            .from('log_patient_intake')
+                            .select('medications_text, medication_ids')
+                            .eq('patient_link_code_hash', patientId)
+                            .order('created_at', { ascending: false })
+                            .limit(1)
+                            .maybeSingle();
+
+                        if (intakeData?.medications_text && Array.isArray(intakeData.medications_text) && intakeData.medications_text.length > 0) {
+                            localStorage.setItem('mock_patient_medications_names', JSON.stringify(intakeData.medications_text));
+                        } else if (intakeData?.medication_ids && Array.isArray(intakeData.medication_ids) && intakeData.medication_ids.length > 0) {
+                            const { data: medRows } = await supabase
+                                .from('ref_medications')
+                                .select('medication_name')
+                                .in('medication_id', intakeData.medication_ids);
+                            if (medRows && medRows.length > 0) {
+                                localStorage.setItem('mock_patient_medications_names', JSON.stringify(medRows.map((m: any) => m.medication_name)));
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('[WellnessJourney] Could not load patient medications (non-fatal):', err);
                     }
-                } else {
-                    console.log('[WellnessJourney] No medication data found for patient, medication list will be empty.');
-                }
-            } catch (err) {
-                console.warn('[WellnessJourney] Could not load patient medications, engine will use empty list.', err);
-            }
+                })(),
+
+                // ── 1b. Demographics (age / sex / weight) ────────────────────────────
+                // BUG FIX: existing patients had no demographics in the header bar because
+                // prev.demographics was always undefined — no intake form runs for returning
+                // patients. Load from log_patient_profiles using the patient_link_code_hash.
+                (async () => {
+                    try {
+                        const { data: profile } = await supabase
+                            .from('log_patient_profiles')
+                            .select('age_at_intake, sex_label, weight_kg')
+                            .eq('patient_link_code_hash', patientId)
+                            .order('created_at', { ascending: false })
+                            .limit(1)
+                            .maybeSingle();
+
+                        if (profile) {
+                            loadedDemographics = {
+                                age: profile.age_at_intake ?? undefined,
+                                gender: profile.sex_label ?? undefined,
+                                weightKg: profile.weight_kg ?? undefined,
+                            };
+                            console.log('[WellnessJourney] Demographics loaded from log_patient_profiles:', loadedDemographics);
+                        } else {
+                            // Fall back to ppn_patient_intake localStorage (covers the case where
+                            // the profile row hasn't been committed yet but the form was completed)
+                            try {
+                                const raw = localStorage.getItem('ppn_patient_intake');
+                                if (raw) {
+                                    const intake = JSON.parse(raw);
+                                    loadedDemographics = {
+                                        age: intake.age ? parseInt(intake.age, 10) : undefined,
+                                        gender: intake.gender || undefined,
+                                        weightKg: intake.weight ? parseFloat(intake.weight) : undefined,
+                                    };
+                                }
+                            } catch { /* ignore */ }
+                        }
+                    } catch (err) {
+                        console.warn('[WellnessJourney] Could not load demographics from log_patient_profiles (non-fatal):', err);
+                    }
+                })(),
+            ]);
         }
 
         setJourney(prev => ({
@@ -289,7 +328,9 @@ const WellnessJourneyInternal: React.FC = () => {
             patientId,
             patientUuid,
             sessionId,
-            demographics: isNew ? undefined : prev.demographics,
+            // FIXED: use demographics loaded from DB for existing patients; undefined for new
+            // patients (demographics will be populated after ProtocolConfiguratorModal completes).
+            demographics: isNew ? undefined : (loadedDemographics ?? prev.demographics),
         }));
         setShowPatientModal(false);
         setPatientModalView(isNew ? 'choose' : 'existing');
@@ -598,7 +639,7 @@ const WellnessJourneyInternal: React.FC = () => {
 
         return {
             patientId: 'PT-RISK9W2P',
-            sessionDate: '2025-10-15',
+            sessionDate: new Date().toISOString().slice(0, 10),  // FIX: was hardcoded '2025-10-15'
             daysPostSession: 0,
             condition: savedCondition,
             // Demographics start empty, populated after patient selection or intake form.

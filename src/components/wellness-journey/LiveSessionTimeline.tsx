@@ -248,15 +248,33 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
 
 
     const handleExportLog = () => {
+        if (events.length === 0) {
+            // Nothing to export yet — inform the clinician
+            console.warn('[LiveSessionTimeline] Export Log: no events recorded yet. Start the session and log events before exporting.');
+            window.dispatchEvent(new CustomEvent('ppn:toast', {
+                detail: { title: 'Session Log Empty', message: 'No events have been recorded yet. Log vitals, observations, or actions first.', type: 'warning' }
+            }));
+            return;
+        }
+
+        const exportDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
         const lines = [
-            'SESSION TIMELINE                                [Export Log]',
-            '──────────────────────────────────────────────────────────'
+            '══════════════════════════════════════════════════════════',
+            'SESSION TIMELINE LOG',
+            'PPN Research Portal — Confidential Clinical Document',
+            '══════════════════════════════════════════════════════════',
+            `Session ID:  ${sessionId}`,
+            `Export Date: ${exportDate}`,
+            `Events:      ${events.length}`,
+            '──────────────────────────────────────────────────────────',
+            '',
         ];
 
         events.forEach(e => {
             const time = formatTimeAMPM(e.timestamp);
-            const conf = EVENT_CONFIG[e.type];
-            lines.push(`${time}  ${conf.symbol}  ${conf.label} ${e.description}`);
+            // NULL-SAFETY: unknown event types fall back to general_note config
+            const conf = EVENT_CONFIG[e.type] ?? EVENT_CONFIG['general_note'];
+            lines.push(`${time}  ${conf.symbol}  ${conf.label}  ${e.description}`);
             if (e.notes) {
                 lines.push(`              Notes: ${e.notes}`);
             }
@@ -264,13 +282,17 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
         });
 
         lines.push('──────────────────────────────────────────────────────────');
+        lines.push(`Provider Signature: ______________________________   Date: _______________`);
+        lines.push('══════════════════════════════════════════════════════════');
 
         const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `session_timeline_${sessionId}_${new Date().toISOString().slice(0, 10)}.txt`;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
     };
 
@@ -313,11 +335,17 @@ export const LiveSessionTimeline: FC<LiveSessionTimelineProps> = ({
                         )}
                         <button
                             onClick={handleExportLog}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors"
+                            disabled={events.length === 0}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-bold text-slate-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                             aria-label="Export session timeline log as text"
                         >
                             <Download className="w-3.5 h-3.5" />
                             Export Log
+                            {events.length > 0 && (
+                                <span className="ml-1 px-1.5 py-0.5 rounded bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-[10px] font-black">
+                                    {events.length}
+                                </span>
+                            )}
                         </button>
                     </div>
                 </div>

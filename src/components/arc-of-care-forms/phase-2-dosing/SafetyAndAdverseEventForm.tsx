@@ -239,13 +239,28 @@ const SafetyAndAdverseEventForm: React.FC<SafetyAndAdverseEventFormProps> = ({
         setIsGenerating(true);
 
         try {
-            // Mock data for the report generation since we don't have all the context here
+            // SAFETY FIX: read the real substance and dosage from the dosing protocol
+            // that was saved by DosingProtocolForm. Previously hard-coded to 'Psilocybin'
+            // with no dose — every report was identical and medically inaccurate.
+            let substanceName = 'Not Recorded';
+            let doseMg: number | undefined = undefined;
+            try {
+                const cached = localStorage.getItem('ppn_dosing_protocol');
+                if (cached) {
+                    const protocol = JSON.parse(cached);
+                    if (protocol.substance_name) substanceName = protocol.substance_name;
+                    else if (protocol.substance) substanceName = protocol.substance;
+                    if (protocol.dosage_amount) doseMg = parseFloat(protocol.dosage_amount);
+                }
+            } catch { /* localStorage unavailable, keep defaults */ }
+
             const reportData: AEReportData = {
                 patientLinkCode: 'PT-RISK9W2P',
                 siteId: 'SITE-001',
                 safetyEventId: Math.random().toString(36).slice(2, 9),
                 sessionDate: new Date().toISOString(),
-                substance: 'Psilocybin',
+                substance: substanceName,
+                doseMg,
                 reportAuthorId: 'Provider-1',
                 eventType: data.event_type,
                 eventDescription: data.follow_up_plan ?? 'No description provided.',
