@@ -127,7 +127,7 @@ const IntegrationCard: React.FC<{
     icon: React.ReactNode;
     title: string;
     description: string;
-    status: 'pending' | 'completed' | 'archived';
+    status: 'pending' | 'in_progress' | 'completed' | 'archived';
     onOpen?: () => void;
     /** WO-550 AC: Read-only summary strip shown beneath completed cards.
      *  text-sm minimum (≥14px). Clicking re-opens the form for amendment. */
@@ -135,17 +135,18 @@ const IntegrationCard: React.FC<{
 }> = ({ stepNum, icon, title, description, status, onOpen, summary }) => {
     const isArchived = status === 'archived';
     const isCompleted = status === 'completed';
+    const isInProgress = status === 'in_progress';
 
     return (
         <div className="flex flex-col">
             <div className={`relative rounded-2xl border overflow-hidden transition-all duration-300
-                ${isArchived ? 'border-slate-700/30 bg-slate-900/20 opacity-50' : 'border-teal-500/20 bg-teal-950/10 hover:border-teal-500/40'}
+                ${isArchived ? 'border-slate-700/30 bg-slate-900/20 opacity-50' : isInProgress ? 'border-amber-500/30 bg-amber-950/10 hover:border-amber-400/50' : 'border-teal-500/20 bg-teal-950/10 hover:border-teal-500/40'}
             `}>
                 {/* Top accent stripe */}
-                <div className={`h-1 w-full ${isArchived ? 'bg-slate-700' : isCompleted ? 'bg-teal-500' : 'bg-teal-900/60'}`} />
+                <div className={`h-1 w-full ${isArchived ? 'bg-slate-700' : isCompleted ? 'bg-teal-500' : isInProgress ? 'bg-amber-500' : 'bg-teal-900/60'}`} />
                 <div className="p-5 flex items-start gap-4">
                     <div className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center border
-                        ${isArchived ? 'border-slate-700 bg-slate-800/30 text-slate-600' : isCompleted ? 'border-teal-500/50 bg-teal-900/30 text-teal-400' : 'border-teal-700/40 bg-teal-950/40 text-teal-500'}
+                        ${isArchived ? 'border-slate-700 bg-slate-800/30 text-slate-600' : isCompleted ? 'border-teal-500/50 bg-teal-900/30 text-teal-400' : isInProgress ? 'border-amber-500/50 bg-amber-900/20 text-amber-300' : 'border-teal-700/40 bg-teal-950/40 text-teal-500'}
                     `}>
                         {isCompleted ? <CheckCircle className="w-4 h-4" /> : icon}
                     </div>
@@ -153,6 +154,10 @@ const IntegrationCard: React.FC<{
                         <div className="flex items-center gap-2 mb-1">
                             <span className="ppn-meta text-slate-600 font-bold">Step {stepNum}</span>
                             {isCompleted && <span className="ppn-meta text-teal-500 font-black uppercase tracking-widest">Completed</span>}
+                            {isInProgress && <span className="ppn-meta text-amber-400 font-black uppercase tracking-widest">In Progress</span>}
+                            {!isCompleted && !isInProgress && !isArchived && (
+                                <span className="ppn-meta text-slate-500 font-black uppercase tracking-widest">Pending</span>
+                            )}
                         </div>
                         <h4 className="ppn-label text-slate-300 mb-1">{title}</h4>
                         <p className="ppn-meta text-slate-500">{description}</p>
@@ -163,6 +168,8 @@ const IntegrationCard: React.FC<{
                             className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all
                                 ${isCompleted
                                     ? 'border-teal-700/40 bg-teal-950/20 text-teal-500 hover:border-teal-500/60'
+                                    : isInProgress
+                                        ? 'border-amber-600/50 bg-amber-900/30 text-amber-300 hover:bg-amber-900/50'
                                     : 'border-teal-600/50 bg-teal-900/30 text-teal-300 hover:bg-teal-900/50'
                                 }`}
                             aria-label={isCompleted ? `Amend ${title}` : `Open ${title}`}
@@ -304,6 +311,30 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
             return meq != null ? `MEQ-30 score: ${meq} · Click to amend` : 'MEQ-30 recorded · Click to amend';
         })()
         : undefined;
+
+    const meq30StorageKey = journey.sessionId
+        ? `ppn_meq30_responses_${journey.sessionId}`
+        : (journey.patientId ? `ppn_meq30_responses_${journey.patientId}` : 'ppn_meq30_responses');
+    const meq30AnsweredCount = useMemo(() => {
+        try {
+            const raw = localStorage.getItem(meq30StorageKey);
+            if (!raw) return 0;
+            const parsed = JSON.parse(raw) as { responses?: Record<number, number> };
+            const responses = parsed?.responses ?? {};
+            return Object.keys(responses).length;
+        } catch (_) {
+            return 0;
+        }
+    }, [meq30StorageKey, completedForms]);
+    const meq30CardStatus: 'pending' | 'in_progress' | 'completed' =
+        completedForms.has('meq30') || meq30AnsweredCount >= 30
+            ? 'completed'
+            : meq30AnsweredCount > 0
+                ? 'in_progress'
+                : 'pending';
+    const meq30ProgressSummary = meq30CardStatus === 'in_progress'
+        ? `${meq30AnsweredCount}/30 answered · Continue assessment`
+        : meq30Summary;
 
     // ── Pulse chart averages ────────────────────────────────────────────────────
     const avgConnection = activePulseTrend.length > 0
@@ -532,9 +563,9 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                                 icon={<Zap className="w-4 h-4" />}
                                 title="MEQ-30 Assessment"
                                 description="Document the depth and quality of the session experience (24–48 hrs post-session ideal)."
-                                status={completedForms.has('meq30') ? 'completed' : 'pending'}
+                                status={meq30CardStatus}
                                 onOpen={onOpenForm ? () => onOpenForm('meq30') : undefined}
-                                summary={meq30Summary}
+                                summary={meq30ProgressSummary}
                             />
                         )}
                     </div>

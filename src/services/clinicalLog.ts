@@ -939,34 +939,54 @@ export async function createLongitudinalAssessment(data: LongitudinalAssessmentD
  */
 export async function createMEQ30Score(data: MEQ30ScoreData) {
     try {
-        // Insert into authoritative log_phase3_meq30.
-        // Compatibility path: try DB-managed id first; if table requires caller-supplied id, retry with Date.now().
         const basePayload = {
             patient_uuid: data.patient_uuid,
             session_id: data.session_id,
             meq30_score: data.meq30_score, // CHECK 0–150
         };
-        let { error: insertError } = await supabase
+
+        // Prevent duplicate MEQ-30 rows for repeated saves in the same session:
+        // update latest existing record for (patient_uuid, session_id), else insert.
+        const { data: existingRow, error: existingErr } = await supabase
             .from('log_phase3_meq30')
-            .insert([basePayload]);
+            .select('id')
+            .eq('patient_uuid', data.patient_uuid)
+            .eq('session_id', data.session_id)
+            .order('recorded_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        if (existingErr) throw existingErr;
 
-        if (insertError) {
-            const errCode = (insertError as { code?: string }).code ?? '';
-            const errMessage = (insertError as { message?: string }).message ?? '';
-            const missingIdDetected =
-                errCode === '23502' || /null value.*\bid\b/i.test(errMessage);
+        if (existingRow?.id != null) {
+            const { error: updateExistingError } = await supabase
+                .from('log_phase3_meq30')
+                .update({ meq30_score: data.meq30_score })
+                .eq('id', existingRow.id);
+            if (updateExistingError) throw updateExistingError;
+        } else {
+            // Compatibility path: try DB-managed id first; if table requires caller-supplied id, retry with Date.now().
+            let { error: insertError } = await supabase
+                .from('log_phase3_meq30')
+                .insert([basePayload]);
 
-            if (missingIdDetected) {
-                const retry = await supabase
-                    .from('log_phase3_meq30')
-                    .insert([{
-                        id: Date.now(),
-                        ...basePayload,
-                    }]);
-                insertError = retry.error;
+            if (insertError) {
+                const errCode = (insertError as { code?: string }).code ?? '';
+                const errMessage = (insertError as { message?: string }).message ?? '';
+                const missingIdDetected =
+                    errCode === '23502' || /null value.*\bid\b/i.test(errMessage);
+
+                if (missingIdDetected) {
+                    const retry = await supabase
+                        .from('log_phase3_meq30')
+                        .insert([{
+                            id: Date.now(),
+                            ...basePayload,
+                        }]);
+                    insertError = retry.error;
+                }
             }
+            if (insertError) throw insertError;
         }
-        if (insertError) throw insertError;
 
         // Update denormalized score on log_clinical_records (CHECK 0–100 — clamp)
         const denormalizedScore = Math.min(data.meq30_score, 100);
