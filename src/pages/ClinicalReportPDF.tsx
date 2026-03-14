@@ -347,15 +347,18 @@ const ClinicalReportPDF: React.FC = () => {
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get('sessionId') ?? undefined;
 
-    // usePhase3Data needs both sessionId and patientId; patientId is derived from session context.
-    // For the PDF page, pass sessionId for both, the hook uses patientId only for baseline PHQ-9.
-    // The session row already supplies all other fields via sessionId.
-    const data = usePhase3Data(sessionId, sessionId);
+    // BUG-08 FIX: read patientId as a separate param — the hook uses it to fetch
+    // baseline PHQ-9 from log_baseline_assessments. Previously sessionId was passed
+    // for both args, so baseline always came back null (wrong table key).
+    // Fall back to a demo patient so the page renders populated when opened directly.
+    const patientId = searchParams.get('patientId') ?? 'SUB-2024-0842';
+
+    const data = usePhase3Data(sessionId, patientId);
 
     const exportDate = new Date().toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
     const reportId = sessionId
         ? `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${sessionId.slice(0, 8).toUpperCase()}`
-        : 'RPT-PREVIEW';
+        : `RPT-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${patientId.replace('SUB-', '').slice(0, 8)}`;
 
     const TOTAL = 8;
 
@@ -424,6 +427,19 @@ const ClinicalReportPDF: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginTop: '12px' }}>
+                                {[
+                                    { l: 'Clinician', v: data.clinicianName ?? 'Not provided' },
+                                    { l: 'Site Reference', v: data.sessionSiteId ? data.sessionSiteId.slice(0, 8).toUpperCase() : 'Not provided' },
+                                    { l: 'Report Version', v: 'PPN v2.2' },
+                                ].map((item, i) => (
+                                    <div key={i}>
+                                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{item.l}</div>
+                                        <div style={{ fontSize: '11px', fontWeight: 700, color: 'white', marginTop: '2px', fontFamily: 'monospace' }}>{item.v}</div>
+                                    </div>
+                                ))}
+                            </div>
+
                         </div>
                     </div>
 
@@ -626,13 +642,45 @@ const ClinicalReportPDF: React.FC = () => {
                             Awaiting data, no session events have been logged for this session yet.
                         </div>
                     )}
-                    {/* WO-602 Change D: QTc / EKG explanation callout */}
-                    <div style={{ marginTop: '16px', padding: '10px 14px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '8px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: '14px', flexShrink: 0 }}>⚡</span>
-                        <p style={{ fontSize: '9px', color: '#92400e', margin: 0, lineHeight: 1.6 }}>
-                            <strong>EKG / QTc Monitoring:</strong> QTc is auto-calculated during dosing sessions using the Bazett formula.
-                            When EKG data is submitted, a QTc log table (Rhythm · PR · QRS · QT · QTc flag) will populate this section.
-                            Reference thresholds: &lt;440ms Normal · 440–470ms Borderline · &gt;470ms Prolonged · &gt;500ms Red Flag (Torsades risk — ibogaine protocol critical).
+                    {/* WO-600: QT Interval Log Table */}
+                    <SectionTitle accent="#f59e0b">QT Interval / EKG Log</SectionTitle>
+                    <p style={{ fontSize: '9px', color: '#64748b', margin: '-10px 0 10px' }}>
+                        QTc auto-calculated from EKG strip data using the Bazett formula (QTc = QT / √RR).
+                        Readings are logged per session event timestamp.
+                    </p>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '10px', marginBottom: '10px' }}>
+                        <thead>
+                            <tr style={{ backgroundColor: '#1e3a5f', color: 'white' }}>
+                                {['Time', 'Rhythm', 'PR (ms)', 'QRS (ms)', 'QT (ms)', 'QTc (ms)', 'Flag'].map(h => (
+                                    <th key={h} style={{ padding: '7px 10px', textAlign: 'center', fontSize: '9px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style={{ backgroundColor: '#f8fafc' }}>
+                                <td colSpan={7} style={{ padding: '24px 16px', textAlign: 'center', color: '#94a3b8', fontSize: '10px', fontStyle: 'italic' }}>
+                                    Awaiting EKG data — submit an EKG reading during a dosing session to populate this table.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '6px', marginBottom: '8px' }}>
+                        {[
+                            { label: 'Normal', range: '<440 ms', color: '#16a34a', bg: '#dcfce7' },
+                            { label: 'Borderline', range: '440–470 ms', color: '#d97706', bg: '#fef3c7' },
+                            { label: 'Prolonged', range: '>470 ms', color: '#c2410c', bg: '#ffedd5' },
+                            { label: 'Red Flag', range: '>500 ms', color: '#991b1b', bg: '#fee2e2' },
+                        ].map((tier, i) => (
+                            <div key={i} style={{ padding: '6px 8px', backgroundColor: tier.bg, borderRadius: '6px', textAlign: 'center' }}>
+                                <div style={{ fontSize: '9px', fontWeight: 700, color: tier.color }}>{tier.label}</div>
+                                <div style={{ fontSize: '8px', color: tier.color, marginTop: '2px', fontFamily: 'monospace' }}>{tier.range}</div>
+                            </div>
+                        ))}
+                    </div>
+                    <div style={{ padding: '6px 10px', backgroundColor: '#fffbeb', border: '1px solid #fde68a', borderRadius: '6px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: '12px', flexShrink: 0 }}>⚡</span>
+                        <p style={{ fontSize: '8px', color: '#92400e', margin: 0, lineHeight: 1.5 }}>
+                            <strong>Ibogaine Protocol:</strong> QTc &gt;500 ms is an absolute contraindication. EKG must be performed before dosing and at peak. Review with supervising cardiologist if QTc &gt;470 ms at any reading.
                         </p>
                     </div>
                 </PageShell>
@@ -778,6 +826,56 @@ const ClinicalReportPDF: React.FC = () => {
                         <MetricCell label="Attendance Rate" value={integPct != null ? `${integPct}%` : '—'} accent="#3b82f6" />
                         <MetricCell label="Pulse Check Rate" value={pulsePct != null ? `${pulsePct}%` : '—'} sub="Daily check-in compliance" accent="#f59e0b" />
                         <MetricCell label="PHQ-9 Compliance" value={data.phq9Compliance != null ? `${data.phq9Compliance}%` : '—'} sub="Weekly assessment rate" accent="#8b5cf6" />
+                    </div>
+
+                    {/* WO-600: Integration Compass Summary Card */}
+                    <SectionTitle accent="#14b8a6">Integration Compass Summary</SectionTitle>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                        {/* Neuroplasticity Window */}
+                        <div style={{ backgroundColor: '#f0fdfa', border: '1px solid #99f6e4', borderRadius: '8px', padding: '12px 14px' }}>
+                            <div style={{ fontSize: '9px', fontWeight: 700, color: '#0f766e', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Neuroplasticity Window</div>
+                            {data.sessionDate ? (() => {
+                                const daysSince = Math.max(0, Math.floor((Date.now() - new Date(data.sessionDate).getTime()) / 86_400_000));
+                                const inWindow = daysSince <= 28;
+                                return (
+                                    <div>
+                                        <div style={{ fontSize: '18px', fontWeight: 900, color: inWindow ? '#0d9488' : '#64748b' }}>
+                                            {inWindow ? `Day ${daysSince}` : 'Window Closed'}
+                                        </div>
+                                        <div style={{ fontSize: '9px', color: inWindow ? '#0f766e' : '#94a3b8', marginTop: '3px' }}>
+                                            {inWindow ? `${28 - daysSince} days remaining (optimal ~2–4 wks post-dosing)` : 'Standard integration support recommended'}
+                                        </div>
+                                    </div>
+                                );
+                            })() : (
+                                <div style={{ fontSize: '11px', color: '#94a3b8', fontStyle: 'italic' }}>Session date not recorded</div>
+                            )}
+                        </div>
+                        {/* Session Quality */}
+                        <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px 14px' }}>
+                            <div style={{ fontSize: '9px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>Integration Quality Index</div>
+                            {integPct != null ? (
+                                <div>
+                                    <div style={{ fontSize: '18px', fontWeight: 900, color: integPct >= 80 ? '#0d9488' : integPct >= 60 ? '#f59e0b' : '#ef4444' }}>
+                                        {integPct}%
+                                    </div>
+                                    <div style={{ fontSize: '9px', color: '#64748b', marginTop: '3px' }}>
+                                        {integPct >= 80 ? 'Strong attendance — high integration potential' : integPct >= 60 ? 'Moderate — consider scheduling additional sessions' : 'Low attendance — follow-up recommended'}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{ fontSize: '11px', color: '#94a3b8', fontStyle: 'italic' }}>Integration sessions not yet scheduled</div>
+                            )}
+                        </div>
+                    </div>
+                    {/* Practitioner note block */}
+                    <div style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '8px', padding: '12px 16px', marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: '14px', flexShrink: 0 }}>🧭</span>
+                        <p style={{ fontSize: '9px', color: '#1e40af', margin: 0, lineHeight: 1.6 }}>
+                            <strong>Integration Compass:</strong> The weeks following a session are when psychedelic therapy produces its deepest effects.
+                            Schedule integration sessions within the 2–4 week window, encourage daily journaling, and use the Pulse Check to track mood and sleep.
+                            PHQ-9 follow-up at 4 weeks is the primary efficacy marker for this report.
+                        </p>
                     </div>
 
                     {(data.integrationSessionsAttended == null || data.integrationSessionsAttended === 0) && (

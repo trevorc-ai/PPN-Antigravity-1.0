@@ -88,6 +88,10 @@ export interface Phase3Data {
     doseMgPerKg: number | null;
     sessionDate: string | null;
 
+    // Clinical PDF header: clinician identity + site reference
+    clinicianName: string | null;  // auth user display name or email
+    sessionSiteId: string | null;  // site_id UUID from log_clinical_sessions
+
     // Loading / error
     isLoading: boolean;
     error: string | null;
@@ -146,6 +150,8 @@ export function usePhase3Data(
         doseMg: null,
         doseMgPerKg: null,
         sessionDate: null,
+        clinicianName: null,
+        sessionSiteId: null,
         isLoading: true,
         error: null,
     });
@@ -180,6 +186,8 @@ export function usePhase3Data(
                 doseMg: null,
                 doseMgPerKg: null,
                 sessionDate: null,
+                clinicianName: null,
+                sessionSiteId: null,
                 isLoading: false,
                 error: null,
             }));
@@ -227,7 +235,7 @@ export function usePhase3Data(
                 // Get the session start date to compute days elapsed
                 const { data: sessionRow } = await supabase
                     .from('log_clinical_records')
-                    .select('created_at')
+                    .select('created_at, site_id')
                     .eq('id', sessionId)
                     .single();
 
@@ -397,6 +405,22 @@ export function usePhase3Data(
                 }
                 const substanceCategory = getSubstanceCategory(substanceName);
                 const sessionDate = sessionRow?.created_at ?? null;
+                const sessionSiteId = sessionRow?.site_id ?? null;
+
+                // ── 9. Clinician identity from auth session ────────────────────────────
+                // Use getSession() (local cache, no network) — returns user.user_metadata.full_name
+                // or falls back to email. Both are practitioner-account data, not PHI.
+                let clinicianName: string | null = null;
+                try {
+                    const { data: { session: authSession } } = await supabase.auth.getSession();
+                    if (authSession?.user) {
+                        clinicianName =
+                            (authSession.user.user_metadata?.full_name as string | undefined) ??
+                            (authSession.user.user_metadata?.name as string | undefined) ??
+                            authSession.user.email ??
+                            null;
+                    }
+                } catch { /* auth unavailable — fallback to null */ }
 
                 if (!cancelled) {
                     setState({
@@ -422,6 +446,8 @@ export function usePhase3Data(
                         doseMg: dose?.dose_mg ?? null,
                         doseMgPerKg: dose?.dose_mg_per_kg ?? null,
                         sessionDate,
+                        clinicianName,
+                        sessionSiteId,
                         isLoading: false,
                         error: null,
                     });
@@ -453,6 +479,8 @@ export function usePhase3Data(
                         doseMg: null,
                         doseMgPerKg: null,
                         sessionDate: null,
+                        clinicianName: null,
+                        sessionSiteId: null,
                         isLoading: false,
                         error: 'Live data unavailable.',
                     });
