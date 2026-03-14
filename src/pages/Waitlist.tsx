@@ -70,6 +70,16 @@ export const Waitlist: FC = () => {
                 if (error.code === '23505') { setStatus('duplicate'); }
                 else { throw error; }
             } else {
+                // WO-636: fire-and-forget welcome email — failure does not block success state
+                supabase.functions
+                    .invoke('send-waitlist-welcome', {
+                        body: {
+                            email: form.email.trim().toLowerCase(),
+                            firstName: form.firstName.trim(),
+                            lastName: form.lastName.trim(),
+                        },
+                    })
+                    .catch((fnErr) => console.warn('[send-waitlist-welcome] invoke failed:', fnErr));
                 setStatus('success');
             }
         } catch {
@@ -129,7 +139,7 @@ export const Waitlist: FC = () => {
                     {/* Eyebrow */}
                     <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 mb-8 self-start">
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-                        <span className="text-xs font-black uppercase tracking-widest text-indigo-400">Limited Beta — Founding Cohort</span>
+                        <span className="text-sm font-black uppercase tracking-widest text-indigo-400">Limited Beta — Founding Cohort</span>
                     </div>
 
                     <h1 className="text-4xl xl:text-5xl 2xl:text-6xl font-black tracking-tight text-slate-100 mb-6 leading-[1.1]">
@@ -186,7 +196,7 @@ export const Waitlist: FC = () => {
                                 <p className="text-slate-400 font-medium mb-10">We'll be in touch when the pilot opens.</p>
 
                                 <div className="text-left bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 mb-8">
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4">What happens next</p>
+                                    <p className="text-sm font-black uppercase tracking-widest text-slate-500 mb-4">What happens next</p>
                                     <ul className="space-y-3">
                                         {[
                                             "You'll receive an email confirmation shortly.",
@@ -242,7 +252,7 @@ export const Waitlist: FC = () => {
                                 <form onSubmit={handleSubmit} className="space-y-5">
                                     {/* First Name */}
                                     <div>
-                                        <label htmlFor="first-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="first-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             First Name
                                         </label>
                                         <input
@@ -251,14 +261,17 @@ export const Waitlist: FC = () => {
                                             required
                                             placeholder="Your first name"
                                             value={form.firstName}
-                                            onChange={(e) => setForm(f => ({ ...f, firstName: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, firstName: e.target.value }));
+                                            }}
                                             className="w-full px-5 py-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium text-base"
                                         />
                                     </div>
 
                                     {/* Last Name */}
                                     <div>
-                                        <label htmlFor="last-name" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="last-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             Last Name
                                         </label>
                                         <input
@@ -267,14 +280,17 @@ export const Waitlist: FC = () => {
                                             required
                                             placeholder="Your last name"
                                             value={form.lastName}
-                                            onChange={(e) => setForm(f => ({ ...f, lastName: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, lastName: e.target.value }));
+                                            }}
                                             className="w-full px-5 py-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium text-base"
                                         />
                                     </div>
 
                                     {/* Email */}
                                     <div>
-                                        <label htmlFor="email" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="email" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             Email Address
                                         </label>
                                         <input
@@ -283,21 +299,27 @@ export const Waitlist: FC = () => {
                                             required
                                             placeholder="you@yourpractice.com"
                                             value={form.email}
-                                            onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, email: e.target.value }));
+                                            }}
                                             className="w-full px-5 py-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium text-base"
                                         />
                                     </div>
 
                                     {/* Practitioner Type */}
                                     <div>
-                                        <label htmlFor="practitioner-type" className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <label htmlFor="practitioner-type" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">
                                             Practitioner Type
                                         </label>
                                         <select
                                             id="practitioner-type"
                                             required
                                             value={form.practitionerType}
-                                            onChange={(e) => setForm(f => ({ ...f, practitionerType: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, practitionerType: e.target.value }));
+                                            }}
                                             className="w-full px-5 py-3.5 bg-white/[0.04] border border-white/10 rounded-xl text-slate-200 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium text-base appearance-none"
                                             style={{
                                                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
@@ -322,6 +344,8 @@ export const Waitlist: FC = () => {
                                     >
                                         {status === 'loading' ? (
                                             <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
+                                        ) : status === 'error' ? (
+                                            <>Try Again <ArrowRight className="w-4 h-4" /></>
                                         ) : (
                                             <>Join the Waitlist <ArrowRight className="w-4 h-4" /></>
                                         )}
@@ -330,7 +354,7 @@ export const Waitlist: FC = () => {
                                     {/* Reassurance */}
                                     <div className="flex items-center justify-center gap-2 pt-1">
                                         <ShieldCheck className="w-3.5 h-3.5 text-slate-600" />
-                                        <p className="text-xs font-bold text-slate-600 tracking-wide">
+                                        <p className="text-sm font-bold text-slate-600 tracking-wide">
                                             No spam. No payments. Just early access.
                                         </p>
                                     </div>

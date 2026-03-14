@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { Activity, Rocket, Diamond, Settings2, CheckCircle2, Loader2, AlertCircle, X } from 'lucide-react';
+import { Activity, Rocket, Diamond, Settings2, CheckCircle2, Loader2, AlertCircle, ArrowRight, X } from 'lucide-react';
 
 const PRACTITIONER_TYPES = [
     { value: '', label: 'Select your practitioner type...' },
@@ -56,6 +56,16 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                 if (sbError.code === '23505') { setStatus('duplicate'); }
                 else { throw sbError; }
             } else {
+                // WO-636: fire-and-forget welcome email — failure does not block success state
+                supabase.functions
+                    .invoke('send-waitlist-welcome', {
+                        body: {
+                            email: form.email.trim().toLowerCase(),
+                            firstName: form.firstName.trim(),
+                            lastName: form.lastName.trim(),
+                        },
+                    })
+                    .catch((fnErr) => console.warn('[send-waitlist-welcome] invoke failed:', fnErr));
                 setStatus('success');
             }
         } catch (err) {
@@ -107,7 +117,7 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                 <h2 className="text-2xl font-black text-emerald-400 mb-2">You're on the list.</h2>
 
                                 <div className="text-left bg-[#0c0f14]/80 border border-slate-700/50 rounded-2xl p-5 mb-8 mt-6">
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">What happens next:</p>
+                                    <p className="text-sm font-black uppercase tracking-widest text-slate-400 mb-3">What happens next:</p>
                                     <ul className="space-y-3 text-sm font-medium text-slate-300">
                                         <li className="flex gap-2 items-start"><span className="text-indigo-400">•</span> You'll receive an email confirmation shortly.</li>
                                         <li className="flex gap-2 items-start"><span className="text-indigo-400">•</span> We'll notify you when the pilot opens.</li>
@@ -175,51 +185,63 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     )}
 
                                     <div>
-                                        <label htmlFor="modal-first-name" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
+                                        <label htmlFor="modal-first-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">First Name</label>
                                         <input
                                             id="modal-first-name"
                                             type="text"
                                             required
                                             placeholder="Your first name"
                                             value={form.firstName}
-                                            onChange={(e) => setForm(f => ({ ...f, firstName: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, firstName: e.target.value }));
+                                            }}
                                             className="w-full px-4 py-3 bg-[#080c14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
                                         />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-last-name" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
+                                        <label htmlFor="modal-last-name" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
                                         <input
                                             id="modal-last-name"
                                             type="text"
                                             required
                                             placeholder="Your last name"
                                             value={form.lastName}
-                                            onChange={(e) => setForm(f => ({ ...f, lastName: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, lastName: e.target.value }));
+                                            }}
                                             className="w-full px-4 py-3 bg-[#080c14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
                                         />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-email" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
+                                        <label htmlFor="modal-email" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
                                         <input
                                             id="modal-email"
                                             type="email"
                                             required
                                             placeholder="you@yourpractice.com"
                                             value={form.email}
-                                            onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, email: e.target.value }));
+                                            }}
                                             className="w-full px-4 py-3 bg-[#080c14] border border-slate-700/50 rounded-xl text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium"
                                         />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="modal-practitioner-type" className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">Practitioner Type</label>
+                                        <label htmlFor="modal-practitioner-type" className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-2">Practitioner Type</label>
                                         <select
                                             id="modal-practitioner-type"
                                             required
                                             value={form.practitionerType}
-                                            onChange={(e) => setForm(f => ({ ...f, practitionerType: e.target.value }))}
+                                            onChange={(e) => {
+                                                if (status === 'error') setStatus('idle');
+                                                setForm(f => ({ ...f, practitionerType: e.target.value }));
+                                            }}
                                             className="w-full px-4 py-3 bg-[#080c14] border border-slate-700/50 rounded-xl text-slate-300 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all font-medium appearance-none"
                                             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}
                                         >
@@ -240,8 +262,10 @@ export const WaitlistModal: FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                     >
                                         {status === 'loading' ? (
                                             <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
+                                        ) : status === 'error' ? (
+                                            <>Try Again <ArrowRight className="w-4 h-4" /></>
                                         ) : (
-                                            'Join the Waitlist'
+                                            <>Join the Waitlist <ArrowRight className="w-4 h-4" /></>
                                         )}
                                     </button>
                                 </form>
