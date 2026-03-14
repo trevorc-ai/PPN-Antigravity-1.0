@@ -1,5 +1,5 @@
 ---
-description: BUILDER mandatory protocol — build work orders from 03_BUILD only
+description: BUILDER mandatory protocol — build work orders from 03_BUILD only, then hand off to INSPECTOR for QA
 ---
 
 # BUILDER Protocol
@@ -67,7 +67,9 @@ Run the inspector QA script after every build:
 - Read `.agent/skills/inspector-qa/SKILL.md` and follow the checklist
 - Take a browser screenshot to confirm the UI renders correctly
 
-## Step 6: Finalize and auto-continue
+## Step 6: Hand off to INSPECTOR — do NOT commit yet
+
+⛔ **BUILDER does NOT commit or push after a build. That is INSPECTOR's job after QA passes.**
 
 Before moving the WO, update ALL of the following frontmatter fields:
 
@@ -83,7 +85,14 @@ Then move the completed WO to `04_QA`:
 mv _WORK_ORDERS/03_BUILD/WO-XXX.md _WORK_ORDERS/04_QA/
 ```
 
-Then run `/finalize_feature` to commit and push.
+Then **immediately call INSPECTOR for QA** by posting:
 
-> **Auto-continue rule:** A ticket in `03_BUILD` is pre-approved. No user confirmation is needed between tickets. After closing one WO, immediately `ls 03_BUILD/`, pick the next highest-priority file, and start building it. Only stop when `03_BUILD` is empty, then report: "03_BUILD is empty. All tickets complete."
+> 🔔 **@INSPECTOR** — `WO-XXX` is ready for QA in `04_QA/`. Please run `/inspector-qa-script` and report results.
+
+Do NOT run `/finalize_feature`. Do NOT `git commit`. INSPECTOR owns the commit gate.
+
+**What happens after INSPECTOR approves:** INSPECTOR runs `/finalize_feature`, which is `// turbo-all` — it stages, commits, and pushes automatically with no user approval gate. The WO then moves to `99_COMPLETED/`. The entire chain from BUILDER handoff to live deployment is fully automated.
+
+> **Auto-continue rule:** A ticket in `03_BUILD` is pre-approved. No user confirmation is needed between tickets. After handing off one WO, immediately `ls 03_BUILD/`, pick the next highest-priority file, and start building it. Only stop when `03_BUILD` is empty, then report: "03_BUILD is empty. All tickets complete. Awaiting INSPECTOR QA."
+
 

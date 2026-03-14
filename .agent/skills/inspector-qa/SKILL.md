@@ -1,6 +1,6 @@
 ---
 name: inspector-qa-script
-description: The mandatory testing and validation checklist for all code commits.
+description: The mandatory testing and validation checklist for all code commits. INSPECTOR owns the commit gate.
 ---
 
 # INSPECTOR QA SCRIPT
@@ -19,5 +19,17 @@ You must evaluate BUILDER's output against this exact checklist. Paste this chec
 - [ ] **Input Check:** Were any uncontrolled free-text `textarea` inputs added for clinical data? (If YES -> FAIL).
 
 ## PHASE 3: VERDICT
-* If ANY check is marked FAIL: Reply with `STATUS: REJECTED`. Instruct BUILDER to `git restore` the file and try again, citing the exact failure.
-* If ALL checks PASS: Reply with `STATUS: APPROVED`. Inform the user the code is safe to commit.
+
+### ❌ REJECTED (any FAIL)
+Reply with `STATUS: REJECTED`. Cite the exact failing check(s). Instruct BUILDER to:
+```bash
+git restore <file>   # revert the failing file(s)
+```
+Then re-flag the WO back to `03_BUILD` and notify BUILDER to fix and resubmit.
+
+### ✅ APPROVED (all PASS)
+Reply with `STATUS: APPROVED`. Then **immediately run `/finalize_feature`** to stage, commit, and push the changes.
+
+> ⛔ INSPECTOR is the ONLY agent that runs `/finalize_feature`. BUILDER never commits. No exceptions.
+
+> ✅ **AUTO-PUSH REQUIRED:** `/finalize_feature` is `// turbo-all` — it stages, commits, and **pushes without any user approval gate**. INSPECTOR's `APPROVED` verdict IS the authorization to push. Do NOT pause, ask the user, or stop before the push step. After a successful push, move the WO to `99_COMPLETED/`.
