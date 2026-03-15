@@ -210,7 +210,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
     const { addToast } = useToast();
 
     // ── Phase 3 real data hook ──────────────────────────────────────────────────
-    const phase3 = usePhase3Data(journey.sessionId, journey.patientId);
+    const phase3 = usePhase3Data(journey.sessionId, journey.patientUuid ?? journey.patientId);
 
     // Session date for badge
     const sessionDateForBadge = journey.sessionDate
@@ -268,17 +268,15 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
             try {
                 const { data: rows } = await supabase
                     .from('log_safety_events')
-                    .select('id, event_type, ctcae_grade, causality_code, resolved_at, created_at, actions_taken, cssrs_score')
+                    .select('ae_id, ctcae_grade, causality_code, resolved_at, created_at')
                     .eq('session_id', sid)
                     .order('created_at', { ascending: true });
                 if (rows && rows.length > 0) {
                     setSafetyEvents(rows.map(r => ({
-                        id: r.id,
-                        date: r.created_at,
-                        cssrsScore: (r.cssrs_score ?? 0) as any,
-                        actionsTaken: Array.isArray(r.actions_taken)
-                            ? r.actions_taken
-                            : r.actions_taken ? [r.actions_taken] : [],
+                        id: r.ae_id,
+                        date: r.created_at ?? r.resolved_at ?? new Date().toISOString(),
+                        cssrsScore: ((r.ctcae_grade ?? 0) as any),
+                        actionsTaken: r.causality_code ? [`Causality: ${r.causality_code}`] : [],
                     })));
                 }
             } catch (_) { /* best-effort: show in-memory events as fallback */ }

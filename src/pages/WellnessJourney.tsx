@@ -23,7 +23,7 @@ import { Phase1Tour, Phase2Tour, Phase3Tour, CompassTourButton } from '../compon
 import { ExportReportButton } from '../components/export/ExportReportButton';
 import { downloadReport, type PatientReportData } from '../services/reportGenerator';
 import { PatientSelectModal } from '../components/wellness-journey/PatientSelectModal';
-import { getCurrentSiteId } from '../services/identity'; // WO-206: canonical import
+import { getCurrentSiteId, getOrCreateCanonicalPatientUuid } from '../services/identity'; // WO-206: canonical import
 import { supabase } from '../supabaseClient'; // WO-430: medication hydration on patient select
 import { createClinicalSession, createPatientProfile, createPatientIndication, closeOutSession } from '../services/clinicalLog';
 import { ProtocolProvider, useProtocol } from '../contexts/ProtocolContext';
@@ -213,6 +213,11 @@ const WellnessJourneyInternal: React.FC = () => {
             'mock_patient_medications_names',
             'ppn_patient_medications_names', // WO-638: cleared on patient switch to prevent stale safety-check meds
             'ppn_latest_vitals',
+            // Timer contamination fix: clear the 'demo' session keys that DosingSessionPhase
+            // uses when journey.sessionId is undefined (page load before patient select).
+            // Without this, a stale 'live' mode or start time bleeds into the next session.
+            'ppn_session_mode_demo',
+            'ppn_session_start_demo',
         ];
         SESSION_CACHE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch (_) { } });
 
@@ -236,6 +241,14 @@ const WellnessJourneyInternal: React.FC = () => {
             } else {
                 console.error('[WellnessJourney] ❌ createClinicalSession FAILED, patient will NOT persist to DB.', result.error);
                 sessionId = crypto.randomUUID();
+                // UUID fallback: createClinicalSession resolved patient_uuid internally but
+                // lost it when log_clinical_records insert failed. Re-resolve here so that
+                // Phase 1 form saves (log_baseline_assessments has no session_id FK) can
+                // still write to the DB with the correct canonical identity.
+                patientUuid = await getOrCreateCanonicalPatientUuid(patientId, resolvedSiteId) ?? undefined;
+                if (!patientUuid) {
+                    console.warn('[WellnessJourney] ⚠️ patient_uuid resolution also failed. Phase 1 DB saves will be blocked by the UUID guard in createBaselineAssessment.');
+                }
             }
         } else if (!isTestSession) {
             console.error('[WellnessJourney] ❌ No siteId resolved, session will NOT persist to DB. Check log_user_sites.');
@@ -254,23 +267,30 @@ const WellnessJourneyInternal: React.FC = () => {
         if (!isNew) {
             await Promise.all([
                 // ── 1a. Medications ──────────────────────────────────────────────────
+                // P0 FIX: log_patient_intake is a phantom table — it does not exist in the
+                // live schema. Real source: log_phase1_safety_screen.concomitant_med_ids
+                // (integer[] FK → ref_medications). Filter by patient_uuid (live column),
+                // NOT patient_link_code_hash (phantom column).
                 (async () => {
                     try {
-                        const { data: intakeData } = await supabase
-                            .from('log_patient_intake')
-                            .select('medications_text, medication_ids')
-                            .eq('patient_link_code_hash', patientId)
-                            .order('created_at', { ascending: false })
+                        if (!patientUuid) return; // UUID not resolved — skip
+                        const { data: safetyScreen } = await supabase
+                            .from('log_phase1_safety_screen')
+                            .select('concomitant_med_ids')
+                            .eq('patient_uuid', patientUuid)
+                            .order('screened_at', { ascending: false })
                             .limit(1)
                             .maybeSingle();
 
-                        if (intakeData?.medications_text && Array.isArray(intakeData.medications_text) && intakeData.medications_text.length > 0) {
-                            localStorage.setItem('mock_patient_medications_names', JSON.stringify(intakeData.medications_text));
-                        } else if (intakeData?.medication_ids && Array.isArray(intakeData.medication_ids) && intakeData.medication_ids.length > 0) {
+                        const medIds: number[] = Array.isArray(safetyScreen?.concomitant_med_ids)
+                            ? safetyScreen.concomitant_med_ids
+                            : [];
+
+                        if (medIds.length > 0) {
                             const { data: medRows } = await supabase
                                 .from('ref_medications')
                                 .select('medication_name')
-                                .in('medication_id', intakeData.medication_ids);
+                                .in('medication_id', medIds);
                             if (medRows && medRows.length > 0) {
                                 localStorage.setItem('mock_patient_medications_names', JSON.stringify(medRows.map((m: any) => m.medication_name)));
                             }
@@ -281,24 +301,33 @@ const WellnessJourneyInternal: React.FC = () => {
                 })(),
 
                 // ── 1b. Demographics (age / sex / weight) ────────────────────────────
-                // BUG FIX: existing patients had no demographics in the header bar because
-                // prev.demographics was always undefined — no intake form runs for returning
-                // patients. Load from log_patient_profiles using the patient_link_code_hash.
+                // P0-B FIX: log_patient_profiles has no patient_link_code_hash, sex_label,
+                // or weight_kg columns. Correct identity column is patient_uuid. Sex label
+                // lives in ref_sex (FK via sex_id). Weight is ref_weight_ranges (FK via
+                // weight_range_id); kg midpoint is used as a representative value.
                 (async () => {
                     try {
+                        if (!patientUuid) {
+                            console.warn('[WellnessJourney] Skipping demographics load — patientUuid not yet resolved.');
+                            return;
+                        }
                         const { data: profile } = await supabase
                             .from('log_patient_profiles')
-                            .select('age_at_intake, sex_label, weight_kg')
-                            .eq('patient_link_code_hash', patientId)
+                            .select('age_at_intake, ref_sex ( sex_label ), ref_weight_ranges ( kg_low, kg_high )')
+                            .eq('patient_uuid', patientUuid)
                             .order('created_at', { ascending: false })
                             .limit(1)
                             .maybeSingle();
 
                         if (profile) {
+                            const sexData = (profile as any).ref_sex;
+                            const weightData = (profile as any).ref_weight_ranges;
+                            const kgLow = weightData?.kg_low != null ? parseFloat(String(weightData.kg_low)) : undefined;
+                            const kgHigh = weightData?.kg_high != null ? parseFloat(String(weightData.kg_high)) : undefined;
                             loadedDemographics = {
                                 age: profile.age_at_intake ?? undefined,
-                                gender: profile.sex_label ?? undefined,
-                                weightKg: profile.weight_kg ?? undefined,
+                                gender: sexData?.sex_label ?? undefined,
+                                weightKg: (kgLow != null && kgHigh != null) ? (kgLow + kgHigh) / 2 : undefined,
                             };
                             console.log('[WellnessJourney] Demographics loaded from log_patient_profiles:', loadedDemographics);
                         } else {
@@ -533,8 +562,8 @@ const WellnessJourneyInternal: React.FC = () => {
             });
         }
 
-        // ── Phase 2: track form completions so step cards illuminate correctly ──
-        if (formId && activePhase === 2) {
+        // ── Phase 2/3: track form completions so integration/treatment step cards illuminate correctly ──
+        if (formId && (activePhase === 2 || activePhase === 3)) {
             setCompletedForms(prev => new Set([...prev, formId]));
         }
 

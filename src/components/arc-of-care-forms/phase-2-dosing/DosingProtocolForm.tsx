@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pill, Save, CheckCircle, Plus, AlertTriangle, AlertCircle } from 'lucide-react';
 import { FormField } from '../shared/FormField';
 import { BatchRegistrationModal, BatchData } from '../shared/BatchRegistrationModal';
@@ -109,7 +109,10 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
             // updateField preserves the name on field changes, but we do a final write here
             // as the single source of truth so the contraindication checker always has it.
             if (data.substance_id) {
-                const substance = substances.find(s => s.substance_id === data.substance_id);
+                // String() coercion: ref_substances.substance_id is integer in DB;
+                // DosingProtocolData.substance_id is string (HTML select value).
+                // Without coercion, strict === always returns false, substance_name is never written.
+                const substance = substances.find(s => String(s.substance_id) === String(data.substance_id));
                 if (substance?.substance_name) {
                     try {
                         localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
@@ -141,7 +144,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
             onSave(data);
             // WO-559 / P0 safety fix: write authoritative substance_name at save time.
             if (data.substance_id) {
-                const substance = substances.find(s => s.substance_id === data.substance_id);
+                // String() coercion: same fix as handleSaveAndExit above.
+                const substance = substances.find(s => String(s.substance_id) === String(data.substance_id));
                 if (substance?.substance_name) {
                     try {
                         localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
@@ -164,43 +168,42 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
     };
 
     const updateField = (field: keyof DosingProtocolData, value: any) => {
-        setData(prev => {
-            const next = { ...prev, [field]: value };
-            // --- Substance name resolution (CRITICAL SAFETY) ---
-            // Only look up substance_name when the substance_id field itself changes.
-            // For other field changes (dosage, route...) we MUST preserve the existing
-            // substance_name — otherwise changing dosage while substance_id is not yet
-            // set in this form instance (e.g. Additional Dose reopening form fresh)
-            // would overwrite the correctly-stored name with ''.
-            let substanceNameToWrite = '';
-            if (field === 'substance_id') {
-                const substance = substances.find(s => s.substance_id === value);
-                substanceNameToWrite = substance?.substance_name ?? '';
-            } else {
-                // Preserve whatever name is already in localStorage
-                try {
-                    const cached = JSON.parse(localStorage.getItem('ppn_dosing_protocol') || '{}');
-                    substanceNameToWrite = cached.substance_name || '';
-                } catch { substanceNameToWrite = ''; }
-                // Also check current form state in case substance was selected this session
-                if (!substanceNameToWrite && next.substance_id) {
-                    const substance = substances.find(s => s.substance_id === next.substance_id);
-                    substanceNameToWrite = substance?.substance_name ?? '';
-                }
-            }
-            try {
-                localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
-                    substance_id: next.substance_id,
-                    substance_name: substanceNameToWrite,
-                    dosage_amount: next.dosage_amount,
-                    route_of_administration: next.route_of_administration,
-                }));
-                // Notify same-tab listeners (storage event is cross-tab only)
-                window.dispatchEvent(new CustomEvent('ppn:dosing-updated'));
-            } catch (_) { /* quota */ }
-            return next;
-        });
+        // Keep updater pure. Side-effects are emitted from a useEffect after commit.
+        setData(prev => ({ ...prev, [field]: value }));
     };
+
+    const hasMountedRef = useRef(false);
+    useEffect(() => {
+        // Skip first render to avoid synthetic "updated" events on mount.
+        if (!hasMountedRef.current) {
+            hasMountedRef.current = true;
+            return;
+        }
+
+        // --- Substance name resolution (CRITICAL SAFETY) ---
+        let substanceNameToWrite = '';
+        if (data.substance_id) {
+            const substance = substances.find(s => String(s.substance_id) === String(data.substance_id));
+            substanceNameToWrite = substance?.substance_name ?? '';
+        } else {
+            // Preserve existing name so non-substance edits don't blank this field.
+            try {
+                const cached = JSON.parse(localStorage.getItem('ppn_dosing_protocol') || '{}');
+                substanceNameToWrite = cached.substance_name || '';
+            } catch { substanceNameToWrite = ''; }
+        }
+
+        try {
+            localStorage.setItem('ppn_dosing_protocol', JSON.stringify({
+                substance_id: data.substance_id,
+                substance_name: substanceNameToWrite,
+                dosage_amount: data.dosage_amount,
+                route_of_administration: data.route_of_administration,
+            }));
+            // Notify same-tab listeners (storage event is cross-tab only)
+            window.dispatchEvent(new CustomEvent('ppn:dosing-updated'));
+        } catch (_) { /* quota */ }
+    }, [data, substances]);
 
     const handleBatchSave = async (batchData: BatchData) => {
         // In production, save to database and get ID
@@ -214,7 +217,8 @@ const DosingProtocolForm: React.FC<DosingProtocolFormProps> = ({
         setData(prev => ({ ...prev, batch_id: newBatch.id }));
     };
 
-    const selectedSubstance = substances.find(s => s.substance_id === data.substance_id);
+    // String() coercion: ref_substances.substance_id is integer; data.substance_id is string.
+    const selectedSubstance = substances.find(s => String(s.substance_id) === String(data.substance_id));
     const substanceName = selectedSubstance?.substance_name ?? '';
 
     const contraindicationResult = substanceName

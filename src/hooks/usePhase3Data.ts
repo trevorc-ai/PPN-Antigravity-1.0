@@ -356,7 +356,7 @@ export function usePhase3Data(
                 // This matches the pattern in clinicalLog.ts getTimelineEvents() (L745-758).
                 const { data: tlRows, error: tlErr } = await supabase
                     .from('log_session_timeline_events')
-                    .select('event_timestamp, ref_flow_event_types(event_type_code, display_label)')  // FIXED: phantom cols removed
+                    .select('event_timestamp, ref_flow_event_types(event_type_code, event_type_label)')
                     .eq('session_id', sessionId)
                     .order('event_timestamp', { ascending: true });  // FIXED: was 'occurred_at'
 
@@ -369,7 +369,7 @@ export function usePhase3Data(
                     // Use Array.isArray guard + [0] to safely pick the first match row.
                     timelineEvents = (tlRows as Array<{
                         event_timestamp: string;
-                        ref_flow_event_types: Array<{ event_type_code: string; display_label?: string }> | null;
+                        ref_flow_event_types: Array<{ event_type_code: string; event_type_label?: string }> | null;
                     }>).map(r => {
                         const ref = Array.isArray(r.ref_flow_event_types)
                             ? r.ref_flow_event_types[0]
@@ -377,7 +377,7 @@ export function usePhase3Data(
                         return {
                             occurredAt: r.event_timestamp,
                             eventType: (ref as { event_type_code?: string } | null)?.event_type_code ?? 'unknown',
-                            label: (ref as { display_label?: string; event_type_code?: string } | null)?.display_label
+                            label: (ref as { event_type_label?: string; event_type_code?: string } | null)?.event_type_label
                                 ?? (ref as { event_type_code?: string } | null)?.event_type_code
                                 ?? 'Event',
                         };

@@ -939,6 +939,14 @@ export async function createLongitudinalAssessment(data: LongitudinalAssessmentD
  */
 export async function createMEQ30Score(data: MEQ30ScoreData) {
     try {
+        if (!isCanonicalUUID(data.patient_uuid)) {
+            const err = new Error(
+                `createMEQ30Score blocked: patient_uuid must be a canonical UUID for log_phase3_meq30 filters/inserts. Received: ${data.patient_uuid}`
+            );
+            console.error('[clinicalLog] createMEQ30Score:', err.message);
+            return { success: false, error: err };
+        }
+
         const basePayload = {
             patient_uuid: data.patient_uuid,
             session_id: data.session_id,
