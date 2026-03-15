@@ -128,6 +128,13 @@ const Phase1HUD: React.FC<Phase1HUDProps> = ({ completedFormIds, completedCount,
     // Same key used by Phase 2 so medications are consistent across all phases.
     const patientMeds = useMemo(() => {
         try {
+            // Prefer the authoritative key written by Phase 1 Safety Check save
+            const fromSafety = localStorage.getItem('ppn_patient_medications_names');
+            if (fromSafety) {
+                const parsed = JSON.parse(fromSafety);
+                if (Array.isArray(parsed) && parsed.length) return parsed as string[];
+            }
+            // Fallback: DB-hydrated on patient select
             const cached = localStorage.getItem('mock_patient_medications_names');
             if (cached) {
                 const parsed = JSON.parse(cached);

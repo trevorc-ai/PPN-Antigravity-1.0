@@ -230,16 +230,15 @@ export const BaselineAssessmentWizard: React.FC<BaselineAssessmentWizardProps> =
             });
     }, []);
 
-    // WO-527: Persist medication IDs + names to localStorage so DosingProtocolForm
-    // and the contraindication engine can read them without a DB round-trip.
+    // WO-527: Persist medication IDs to localStorage for downstream reference.
+    // Medication names are no longer written to mock_patient_medications_names here.
+    // The authoritative medication name list for contraindication checking is
+    // ppn_patient_medications_names, written by Phase 1 Safety Check on save.
+    // Writing names here competed with that authoritative key via the fallback chain.
     useEffect(() => {
         const ids = data.medications.current_medication_ids;
         try { localStorage.setItem('mock_patient_medications', JSON.stringify(ids)); } catch (_) { }
-        if (medicationOptions.length > 0) {
-            const names = ids.map(id => medicationOptions.find(m => m.id === id)?.label ?? '').filter(Boolean);
-            try { localStorage.setItem('mock_patient_medications_names', JSON.stringify(names)); } catch (_) { }
-        }
-    }, [data.medications.current_medication_ids, medicationOptions]);
+    }, [data.medications.current_medication_ids]);
 
     // Auto-save every 30s
     useEffect(() => {

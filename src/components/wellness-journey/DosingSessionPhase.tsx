@@ -728,8 +728,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
     // Without this, stale localStorage from a previous session would trigger warnings
     // before the user has entered anything in the current session.
     const contraindicationResults = useMemo(() => {
-        // Do not evaluate until the step is complete
-        if (!isDosingProtocolComplete) return null;
         try {
             let substanceName = '';
             try {
@@ -742,13 +740,13 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             if (!substanceName && journey.session?.substance) {
                 substanceName = journey.session.substance;
             }
-            // Medications: use same source + same fallback as patientMeds display below.
-            // The isDosingProtocolComplete guard (line 315) already prevents phantom
-            // warnings from stale localStorage, the fallback is safe here.
+            // Guard: no substance selected yet — nothing to evaluate against.
+            // This is sufficient to prevent phantom warnings from stale localStorage.
+            if (!substanceName) return null;
             let medications: string[] = [];
             try {
-                // ppn_patient_medications_names: authoritative key (written by StructuredSafetyCheckForm)
-                // mock_patient_medications_names: legacy/demo fallback
+                // ppn_patient_medications_names: authoritative key (written by Phase 1 Safety Check)
+                // mock_patient_medications_names: legacy fallback (DB-hydrated on patient select)
                 const medsRaw =
                     localStorage.getItem('ppn_patient_medications_names') ||
                     localStorage.getItem('mock_patient_medications_names');
@@ -757,8 +755,6 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
                     if (Array.isArray(parsed) && parsed.length) medications = parsed;
                 }
             } catch (_) { }
-
-            if (!substanceName) return null;
             const engineInput: import('../../services/contraindicationEngine').IntakeScreeningData = {
                 patientId: 'demo',
                 sessionSubstance: substanceName.toLowerCase(),
@@ -769,7 +765,7 @@ export const TreatmentPhase: React.FC<TreatmentPhaseProps> = ({ journey, complet
             return runContraindicationEngine(engineInput);
         } catch (_) { return null; }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDosingProtocolComplete, contraindicationKey, journey]);
+    }, [contraindicationKey, journey]);
 
     // Current meds list for display — reads ppn_patient_medications_names first (saved from
     // StructuredSafetyCheckForm per WO-638), then falls back to mock_patient_medications_names
