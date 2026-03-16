@@ -42,6 +42,18 @@ interface Protocol {
     weight_label: string;       // Weight
 }
 
+type EmptyStateReason =
+    | 'none'
+    | 'no_user'
+    | 'no_site'
+    | 'no_protocols'
+    | 'no_matches';
+
+interface MyProtocolsPayload {
+    protocols: Protocol[];
+    emptyState: EmptyStateReason;
+}
+
 type SortField =
     | 'patient_ref'
     | 'substance_name'
@@ -75,12 +87,12 @@ export const MyProtocols = () => {
     const [sortField, setSortField] = useState<SortField>('session_date');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
-    const { data: cachedProtocols, loading, refetch, lastFetchedAt } = useDataCache(
+    const { data: cachedPayload, loading, refetch, lastFetchedAt } = useDataCache<MyProtocolsPayload>(
         'my-protocols',
         async () => {
             try {
                 const { data: { user } } = await supabase.auth.getUser();
-                if (!user) return { data: [], error: null };
+                if (!user) return { data: { protocols: [], emptyState: 'no_user' }, error: null };
 
                 // WO-592: Resolve site_id first — query scoped to practitioner's clinic
                 const { data: userSite } = await supabase
@@ -89,7 +101,7 @@ export const MyProtocols = () => {
                     .eq('user_id', user.id)
                     .maybeSingle();
 
-                if (!userSite) return { data: [], error: null };
+                if (!userSite) return { data: { protocols: [], emptyState: 'no_site' }, error: null };
                 const siteId = userSite.site_id;
 
                 // Step 1: Parallel fetch — sessions (scoped to this site) + ref tables
@@ -126,6 +138,9 @@ export const MyProtocols = () => {
                 ]);
 
                 if (sessionResult.error) throw sessionResult.error;
+                if (!sessionResult.data || sessionResult.data.length === 0) {
+                    return { data: { protocols: [], emptyState: 'no_protocols' }, error: null };
+                }
 
                 // Step 2: Fetch indications + patient profiles for all patients in this result set
                 // indication_id lives in log_patient_indications, demographics in log_patient_profiles
@@ -220,7 +235,7 @@ export const MyProtocols = () => {
                     };
                 });
 
-                return { data: formattedData, error: null };
+                return { data: { protocols: formattedData, emptyState: 'none' }, error: null };
             } catch (error) {
                 console.error('Error fetching protocols:', error);
                 return { data: null, error };
@@ -228,7 +243,7 @@ export const MyProtocols = () => {
         }
     );
 
-    const protocols = cachedProtocols || [];
+    const protocols = cachedPayload?.protocols || [];
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
@@ -258,6 +273,20 @@ export const MyProtocols = () => {
             return 0;
         });
     }, [protocols, searchQuery, sortField, sortDirection]);
+
+    const emptyStateReason: EmptyStateReason = useMemo(() => {
+        if (loading) return 'none';
+        if (protocols.length === 0) return cachedPayload?.emptyState ?? 'no_protocols';
+        if (filteredProtocols.length === 0) return 'no_matches';
+        return 'none';
+    }, [loading, protocols.length, filteredProtocols.length, cachedPayload?.emptyState]);
+
+    const emptyStateMessage = useMemo(() => {
+        if (emptyStateReason === 'no_user') return 'Sign in to view your protocols';
+        if (emptyStateReason === 'no_site') return 'No clinic site assigned to this account';
+        if (emptyStateReason === 'no_protocols') return 'No protocols have been recorded for your site yet';
+        return 'Zero Protocol Matches Found';
+    }, [emptyStateReason]);
 
     // ─── Sortable column header ────────────────────────────────────────────────
 
@@ -357,7 +386,7 @@ export const MyProtocols = () => {
                             {filteredProtocols.length === 0 ? (
                                 <div className="py-20 text-center space-y-4">
                                     <ClipboardList className="mx-auto text-slate-800" size={48} />
-                                    <p className="text-slate-600 font-black uppercase tracking-widest text-sm">Zero Protocol Matches Found</p>
+                                    <p className="text-slate-600 font-black uppercase tracking-widest text-sm">{emptyStateMessage}</p>
                                 </div>
                             ) : filteredProtocols.map((p) => (
                                 <button
@@ -512,7 +541,7 @@ export const MyProtocols = () => {
                         <div className="py-20 text-center space-y-4">
                             <ClipboardList className="mx-auto text-slate-800" size={48} />
                             <p className="text-slate-600 font-black uppercase tracking-widest text-sm">
-                                Zero Protocol Matches Found
+                                {emptyStateMessage}
                             </p>
                         </div>
                     )}

@@ -16,6 +16,7 @@ import PractitionerProtocolBenchmark from '../features/practitioner-analytics/Pr
 
 interface SessionRecord {
   id: string;
+  patient_uuid: string | null;
   patient_link_code_hash: string | null;
   session_date: string | null;
   session_type_id: number | null;
@@ -60,6 +61,33 @@ interface PatientSession {
   session_date: string | null;
   session_type_id: number | null;
   substance_name?: string;
+}
+
+interface PriorProtocolSummaryRow {
+  current_session_id: string;
+  prior_session_id: string | null;
+  prior_session_date: string | null;
+  prior_substance_name: string | null;
+}
+
+interface TreatmentResultRow {
+  patient_uuid: string | null;
+  session_id: string | null;
+  concept_code: string | null;
+  concept_name: string | null;
+  time_point_label: string | null;
+  value_as_number: number | null;
+  observation_timestamp: string | null;
+}
+
+interface SafetyFlagRow {
+  session_id: string | null;
+  flag_type: string | null;
+  flag_code: string | null;
+  flag_label: string | null;
+  flag_timestamp: string | null;
+  resolution_status: string | null;
+  ctcae_grade: number | null;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -117,6 +145,13 @@ function buildRadarData(substanceName: string) {
   ];
 }
 
+function scoreConceptMatch(conceptCode: string | null, conceptName: string | null, needle: 'phq9' | 'gad7'): boolean {
+  const code = (conceptCode ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const name = (conceptName ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (needle === 'phq9') return code.includes('phq9') || name.includes('phq9');
+  return code.includes('gad7') || name.includes('gad7');
+}
+
 // ─── Loading / Error shells ───────────────────────────────────────────────────
 
 const LoadingState = () => (
@@ -158,7 +193,6 @@ const ProtocolDetail: React.FC = () => {
   const [baseline, setBaseline] = useState<BaselineAssessment | null>(null);
   const [longitudinal, setLongitudinal] = useState<LongitudinalPoint[]>([]);
   const [patientSessions, setPatientSessions] = useState<PatientSession[]>([]);
-  const [substanceMap, setSubstanceMap] = useState<Record<number, string>>({});
 
   useEffect(() => {
     if (!id) return;
@@ -172,7 +206,7 @@ const ProtocolDetail: React.FC = () => {
         // 1. Fetch the primary session (migration 079: patient_link_code dropped → patient_link_code_hash)
         const { data: sessionData, error: sessionErr } = await supabase
           .from('log_clinical_records')
-          .select('id, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids, dosage_mg')
+          .select('id, patient_uuid, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids, dosage_mg')
           .eq('id', id)
           .single();
 
@@ -183,7 +217,7 @@ const ProtocolDetail: React.FC = () => {
         if (cancelled) return;
         setSession(sessionData as SessionRecord);
 
-        const patientLinkCodeHash = sessionData.patient_link_code_hash;
+        const patientUuid = sessionData.patient_uuid;
 
         // 2. Parallel fetches: substances ref + vitals + safety events + patient sessions
         // Migration 079: baseline/longitudinal use patient_uuid (not on log_clinical_records); skip those fetches when no patient_uuid
@@ -191,9 +225,8 @@ const ProtocolDetail: React.FC = () => {
           substanceResult,
           vitalsResult,
           safetyResult,
-          patientSessionsResult,
-          baselineResult,
-          longitudinalResult,
+          priorSummaryResult,
+          treatmentResult,
         ] = await Promise.all([
           // All substance names
           supabase.from('ref_substances').select('substance_id, substance_name'),
@@ -206,30 +239,30 @@ const ProtocolDetail: React.FC = () => {
             .order('recorded_at', { ascending: true })
             .limit(50),
 
-          // Safety events for this session
+          // Outstanding safety flags for this session (view-backed)
           supabase
-            .from('log_safety_events')
-            .select('ae_id, safety_event_type_id, severity_grade_id, is_resolved')
+            .from('vw_protocol_detail_outstanding_safety_flags')
+            .select('session_id, flag_type, flag_code, flag_label, flag_timestamp, resolution_status, ctcae_grade')
             .eq('session_id', id)
             .limit(20),
 
-          // All sessions for the same patient (by patient_link_code_hash; patient_link_code dropped in 079)
-          patientLinkCodeHash
+          // Prior protocol summary (view-backed)
+          supabase
+            .from('vw_protocol_detail_prior_protocol_summary')
+            .select('current_session_id, prior_session_id, prior_session_date, prior_substance_name')
+            .eq('current_session_id', id)
+            .limit(1)
+            .maybeSingle(),
+
+          // Treatment results over time (view-backed)
+          patientUuid
             ? supabase
-              .from('log_clinical_records')
-              .select('id, session_date, session_type_id, substance_id')
-              .eq('patient_link_code_hash', patientLinkCodeHash)
-              .order('session_date', { ascending: false })
-              .limit(20)
+              .from('vw_protocol_detail_treatment_results_over_time')
+              .select('patient_uuid, session_id, concept_code, concept_name, time_point_label, value_as_number, observation_timestamp')
+              .eq('patient_uuid', patientUuid)
+              .order('observation_timestamp', { ascending: true })
+              .limit(500)
             : Promise.resolve({ data: [], error: null }),
-
-          // TODO WO-630: patient_uuid not available on log_clinical_records — trajectory blocked
-          // Baseline: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
-          Promise.resolve({ data: null, error: null }),
-
-          // TODO WO-630: patient_uuid not available on log_clinical_records — trajectory blocked
-          // Longitudinal: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
-          Promise.resolve({ data: [], error: null }),
         ]);
 
         if (cancelled) return;
@@ -239,28 +272,73 @@ const ProtocolDetail: React.FC = () => {
         for (const s of (substanceResult.data ?? [])) {
           sMap[s.substance_id] = s.substance_name;
         }
-        setSubstanceMap(sMap);
-
         const resolvedName = sessionData.substance_id
           ? (sMap[sessionData.substance_id] ?? `Substance #${sessionData.substance_id}`)
           : 'Unknown';
         setSubstanceName(resolvedName);
 
         setVitals((vitalsResult.data ?? []) as Vital[]);
-        setSafetyEvents((safetyResult.data ?? []) as SafetyEvent[]);
-        setBaseline((baselineResult.data as BaselineAssessment | null) ?? null);
-        setLongitudinal((longitudinalResult.data ?? []) as LongitudinalPoint[]);
 
-        // Enrich patient sessions with substance names
-        const enriched = ((patientSessionsResult.data ?? []) as Array<{
-          id: string; session_date: string | null; session_type_id: number | null; substance_id: number | null;
-        }>).map(s => ({
-          id: s.id,
-          session_date: s.session_date,
-          session_type_id: s.session_type_id,
-          substance_name: s.substance_id ? (sMap[s.substance_id] ?? `Substance #${s.substance_id}`) : undefined,
+        const mappedSafety = ((safetyResult.data ?? []) as SafetyFlagRow[]).map((row, index) => ({
+          ae_id: `${row.session_id ?? id}-${index}`,
+          safety_event_type_id: null,
+          severity_grade_id: row.ctcae_grade != null ? String(row.ctcae_grade) : null,
+          is_resolved: row.resolution_status ? row.resolution_status.toLowerCase().includes('resolved') : false,
+          event_name: row.flag_label ?? row.flag_code ?? row.flag_type ?? 'Safety Flag',
         }));
-        setPatientSessions(enriched);
+        setSafetyEvents(mappedSafety);
+
+        const priorSummary = priorSummaryResult.data as PriorProtocolSummaryRow | null;
+        const priorSessions: PatientSession[] = priorSummary?.prior_session_id
+          ? [{
+            id: priorSummary.prior_session_id,
+            session_date: priorSummary.prior_session_date,
+            session_type_id: null,
+            substance_name: priorSummary.prior_substance_name ?? undefined,
+          }]
+          : [];
+        const currentSession: PatientSession = {
+          id: sessionData.id,
+          session_date: sessionData.session_date,
+          session_type_id: sessionData.session_type_id,
+          substance_name: resolvedName,
+        };
+        setPatientSessions([currentSession, ...priorSessions]);
+
+        const treatmentRows = (treatmentResult.data ?? []) as TreatmentResultRow[];
+        const byDate = new Map<string, { date: string; ts: number; phq9_score: number | null; gad7_score: number | null }>();
+        for (const row of treatmentRows) {
+          if (row.value_as_number == null) continue;
+          const isPhq9 = scoreConceptMatch(row.concept_code, row.concept_name, 'phq9');
+          const isGad7 = scoreConceptMatch(row.concept_code, row.concept_name, 'gad7');
+          if (!isPhq9 && !isGad7) continue;
+
+          const ts = row.observation_timestamp ? Date.parse(row.observation_timestamp) : Number.NaN;
+          const dateKey = row.time_point_label
+            ?? (row.observation_timestamp ? row.observation_timestamp.slice(0, 10) : 'Unknown');
+          const existing = byDate.get(dateKey) ?? {
+            date: dateKey,
+            ts: Number.isNaN(ts) ? Number.MAX_SAFE_INTEGER : ts,
+            phq9_score: null,
+            gad7_score: null,
+          };
+
+          if (!Number.isNaN(ts)) existing.ts = Math.min(existing.ts, ts);
+          if (isPhq9) existing.phq9_score = row.value_as_number;
+          if (isGad7) existing.gad7_score = row.value_as_number;
+          byDate.set(dateKey, existing);
+        }
+
+        const ordered = [...byDate.values()]
+          .sort((a, b) => a.ts - b.ts)
+          .map(({ date, phq9_score, gad7_score }) => ({ assessment_date: date, phq9_score, gad7_score }));
+
+        setBaseline(ordered.length > 0 ? {
+          assessment_date: ordered[0].assessment_date,
+          phq9_score: ordered[0].phq9_score,
+          gad7_score: ordered[0].gad7_score,
+        } : null);
+        setLongitudinal(ordered.slice(1));
 
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
