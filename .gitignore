@@ -29,7 +29,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-public/internal/*
 
 # macOS custom folder icon files (contain carriage return in filename)
 Icon?
@@ -51,3 +50,8 @@ promote_*.sql
 MINIMAL_RLS.sql
 DATABASE_STATE_REVIEW_*.txt
 
+# Database schema snapshots & internal docs — never commit to GitHub
+public/internal/admin_uploads/database/
+public/internal/admin_uploads/*.sql
+public/internal/admin_uploads/*.md
+public/internal/admin_uploads/PPN-Audit-Report-Blueprint.md

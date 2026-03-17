@@ -13,7 +13,7 @@
  * Pattern: print-CSS + window.print() (same as PatientReportPDF.tsx)
  * No external PDF library required.
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 // ─── Print CSS ────────────────────────────────────────────────────────────────
@@ -246,11 +246,12 @@ const BoolBadge: React.FC<{ value: boolean; label: string }> = ({ value, label }
   </div>
 );
 
-// ─── Clinical Event Timeline (Inline SVG) ─────────────────────────────────────
+
+// ─── Clinical Event Timeline (Inline SVG + HTML key table) ────────────────────
 const ClinicalTimelineChart: React.FC<{ data: typeof MOCK_PAYLOAD['section2'] }> = ({ data }) => {
-  const W = 680;
-  const H = 220;
-  const pad = { l: 58, r: 48, t: 30, b: 40 };
+  const W = 520;
+  const H = 210;
+  const pad = { l: 52, r: 32, t: 26, b: 38 };
   const chartW = W - pad.l - pad.r;
   const chartH = H - pad.t - pad.b;
 
@@ -261,122 +262,126 @@ const ClinicalTimelineChart: React.FC<{ data: typeof MOCK_PAYLOAD['section2'] }>
   const hrY = (v: number) => pad.t + chartH - ((v - hrMin) / (hrMax - hrMin)) * chartH;
   const bpY = (v: number) => pad.t + chartH - ((v - bpMin) / (bpMax - bpMin)) * chartH;
 
-  // HR line path
   const hrPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i).toFixed(1)},${hrY(d.hr).toFixed(1)}`).join(' ');
-
-  // BP shaded area (sys top, dia bottom)
   const bpAreaTop = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i).toFixed(1)},${bpY(d.bpSys).toFixed(1)}`).join(' ');
   const bpAreaBot = [...data].reverse().map((d, i) => `L ${xScale(data.length - 1 - i).toFixed(1)},${bpY(d.bpDia).toFixed(1)}`).join(' ');
   const bpArea = bpAreaTop + ' ' + bpAreaBot + ' Z';
+  const hemoTicks = [80, 100, 120, 140, 160];
 
-  // Y-axis ticks
-  const hemoTicks = [60, 80, 100, 120, 140, 160, 180];
+  // Build ordered event list with callout numbers
+  type EventEntry = { num: number; x: number; time: string; color: string; dashArray: string; label: string; };
+  const allEvents: EventEntry[] = [];
+  let calloutNum = 1;
+  data.forEach((d, i) => {
+    d.events.forEach((ev) => {
+      let color = '#64748b'; let dashArray = '0'; let label = '';
+      if (ev === 'PRIMARY_DOSE')         { color = '#15803d'; label = 'Primary Dose'; }
+      else if (ev === 'AE_RESOLUTION')   { color = '#15803d'; label = 'AE Resolved'; }
+      else if (ev === 'DISCHARGE_MET')   { color = '#15803d'; label = 'Discharge Criteria Met'; }
+      else if (ev.startsWith('AE_'))     { color = '#dc2626'; dashArray = '4 3'; label = `AE: ${ev.replace('AE_', '')} `; }
+      else if (ev.startsWith('RESCUE_')) { color = '#2563eb'; label = `Rescue: ${ev.replace('RESCUE_', '')}`; }
+      if (label) { allEvents.push({ num: calloutNum++, x: xScale(i), time: d.t, color, dashArray, label }); }
+    });
+  });
+
+  const baseY = pad.t + chartH;
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block', overflow: 'visible' }}>
-      <defs>
-        <linearGradient id="bp-grad" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.22" />
-          <stop offset="100%" stopColor="#6366f1" stopOpacity="0.06" />
-        </linearGradient>
-        <linearGradient id="hr-grad" x1="0" x2="1" y1="0" y2="0">
-          <stop offset="0%" stopColor="#ef4444" />
-          <stop offset="100%" stopColor="#dc2626" />
-        </linearGradient>
-      </defs>
+    <div>
+      {/* Chart SVG — 70% width, left-aligned */}
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', width: '70%', overflow: 'visible' }}>
+        <defs>
+          <linearGradient id="hr-grad2" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="#ef4444" />
+            <stop offset="100%" stopColor="#dc2626" />
+          </linearGradient>
+        </defs>
 
-      {/* Grid lines */}
-      {hemoTicks.map(tick => (
-        <line key={tick}
-          x1={pad.l} x2={pad.l + chartW}
-          y1={hrY(tick)} y2={hrY(tick)}
-          stroke="#e2e8f0" strokeWidth={0.8} strokeDasharray="3 3"
-        />
-      ))}
+        {/* Grid */}
+        {hemoTicks.map(tick => (
+          <line key={tick} x1={pad.l} x2={pad.l + chartW}
+            y1={hrY(tick)} y2={hrY(tick)}
+            stroke="#e2e8f0" strokeWidth={0.8} strokeDasharray="3 3" />
+        ))}
 
-      {/* Y-axis labels (left — HR/BP shared scale) */}
-      {hemoTicks.filter(t => t % 40 === 0).map(tick => (
-        <text key={tick} x={pad.l - 6} y={hrY(tick) + 3.5}
-          textAnchor="end" fontSize={7.5} fill="#64748b">{tick}</text>
-      ))}
-      <text x={14} y={H / 2} textAnchor="middle" fontSize={7.5} fill="#64748b"
-        transform={`rotate(-90,14,${H / 2})`}>HR (bpm) / BP (mmHg)</text>
+        {/* Y-axis labels */}
+        {hemoTicks.map(tick => (
+          <text key={tick} x={pad.l - 5} y={hrY(tick) + 3.5}
+            textAnchor="end" fontSize={7} fill="#64748b">{tick}</text>
+        ))}
+        <text x={12} y={H / 2} textAnchor="middle" fontSize={7} fill="#64748b"
+          transform={`rotate(-90,12,${H / 2})`}>bpm / mmHg</text>
 
-      {/* BP shaded area */}
-      <path d={bpArea} fill="url(#bp-grad)" stroke="#6366f1" strokeWidth={1} />
+        {/* BP systolic dashed line */}
+        <path d={bpAreaTop} fill="none" stroke="#6366f1" strokeWidth={1} strokeDasharray="5 3" opacity={0.7} />
+        {/* BP diastolic dashed line */}
+        {(() => {
+          const diaPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i).toFixed(1)},${bpY(d.bpDia).toFixed(1)}`).join(' ');
+          return <path d={diaPath} fill="none" stroke="#6366f1" strokeWidth={1} strokeDasharray="2 4" opacity={0.5} />;
+        })()}
+        <path d={hrPath} fill="none" stroke="url(#hr-grad2)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        {data.map((d, i) => (
+          <circle key={i} cx={xScale(i)} cy={hrY(d.hr)} r={2.5} fill="#ef4444" stroke="#fff" strokeWidth={0.8} />
+        ))}
 
-      {/* HR solid line */}
-      <path d={hrPath} fill="none" stroke="url(#hr-grad)" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        {/* Event lines + numbered callout circles */}
+        {allEvents.map((ev) => (
+          <g key={ev.num}>
+            <line x1={ev.x} x2={ev.x} y1={pad.t} y2={baseY}
+              stroke={ev.color} strokeWidth={1.5} strokeDasharray={ev.dashArray} opacity={0.8} />
+            {/* Callout circle at top of line */}
+            <circle cx={ev.x} cy={pad.t - 8} r={7} fill={ev.color} />
+            <text x={ev.x} y={pad.t - 4.5} textAnchor="middle"
+              fontSize={7} fill="#fff" fontWeight={900} style={{ fontFamily: C.sans }}>
+              {ev.num}
+            </text>
+          </g>
+        ))}
 
-      {/* HR dots */}
-      {data.map((d, i) => (
-        <circle key={i} cx={xScale(i)} cy={hrY(d.hr)} r={3} fill="#ef4444" stroke="#fff" strokeWidth={1} />
-      ))}
-
-      {/* Event reference lines */}
-      {data.map((d, i) => {
-        const x = xScale(i);
-        return d.events.map((ev, ei) => {
-          let color = '#64748b';
-          let dashArray = '0';
-          let label = '';
-          if (ev === 'PRIMARY_DOSE') { color = '#15803d'; label = '⬤ PRIMARY DOSE'; }
-          else if (ev.startsWith('AE_') && ev !== 'AE_RESOLUTION') { color = '#dc2626'; dashArray = '4 3'; label = `▲ AE: ${ev.replace('AE_', '')}`; }
-          else if (ev.startsWith('RESCUE_')) { color = '#2563eb'; label = `■ ${ev.replace('RESCUE_', '')}`; }
-          else if (ev === 'AE_RESOLUTION') { color = '#15803d'; label = '✓ AE RESOLVED'; }
-          else if (ev === 'DISCHARGE_MET') { color = '#15803d'; label = '✓ DISCHARGE MET'; }
-          if (!label) return null;
-          const yLabelOffset = (ei * 11) + pad.t - 4;
+        {/* X-axis */}
+        {data.map((d, i) => {
+          const x = xScale(i);
           return (
-            <g key={`${i}-${ei}`}>
-              <line
-                x1={x} x2={x}
-                y1={pad.t} y2={pad.t + chartH}
-                stroke={color} strokeWidth={1.5} strokeDasharray={dashArray}
-                opacity={0.85}
-              />
-              <text x={x + 3} y={yLabelOffset > pad.t ? yLabelOffset : pad.t + 2}
-                fontSize={6.5} fill={color} fontWeight={700}
-                style={{ fontFamily: C.sans }}>
-                {label}
-              </text>
+            <g key={i}>
+              <line x1={x} x2={x} y1={baseY} y2={baseY + 4} stroke="#94a3b8" strokeWidth={1} />
+              <text x={x} y={baseY + 12} textAnchor="middle" fontSize={6.5} fill="#475569" fontWeight={600}>{d.t}</text>
             </g>
           );
-        });
-      })}
+        })}
+        <line x1={pad.l} x2={pad.l} y1={pad.t} y2={baseY} stroke={C.ink} strokeWidth={1} />
+        <line x1={pad.l} x2={pad.l + chartW} y1={baseY} y2={baseY} stroke={C.ink} strokeWidth={1} />
 
-      {/* X-axis ticks & labels */}
-      {data.map((d, i) => {
-        const x = xScale(i);
-        return (
-          <g key={i}>
-            <line x1={x} x2={x} y1={pad.t + chartH} y2={pad.t + chartH + 4} stroke="#94a3b8" strokeWidth={1} />
-            <text x={x} y={pad.t + chartH + 13}
-              textAnchor="middle" fontSize={7} fill="#475569"
-              fontWeight={600}>{d.t}</text>
+        {/* Series legend at bottom */}
+        {[
+          { color: '#ef4444', label: '── HR (bpm)', dash: '' },
+          { color: '#6366f1', label: '▨ BP mmHg', dash: '' },
+        ].map((item, i) => (
+          <g key={i} transform={`translate(${pad.l + i * 100}, ${H - 5})`}>
+            <line x1={0} x2={14} y1={0} y2={0} stroke={item.color} strokeWidth={2} />
+            <text x={17} y={3.5} fontSize={6.5} fill="#64748b">{item.label}</text>
           </g>
-        );
-      })}
+        ))}
+      </svg>
 
-      {/* Axes */}
-      <line x1={pad.l} x2={pad.l} y1={pad.t} y2={pad.t + chartH} stroke={C.ink} strokeWidth={1} />
-      <line x1={pad.l} x2={pad.l + chartW} y1={pad.t + chartH} y2={pad.t + chartH} stroke={C.ink} strokeWidth={1} />
-
-      {/* Legend */}
-      {[
-        { color: '#ef4444', label: '── Heart Rate (bpm)', dash: '' },
-        { color: '#6366f1', label: '▨ BP Range (Dia→Sys, mmHg)', dash: '' },
-        { color: '#15803d', label: '│ Primary Dose', dash: '' },
-        { color: '#dc2626', label: '┆ Adverse Event', dash: '4 3' },
-        { color: '#2563eb', label: '│ Rescue Intervention', dash: '' },
-      ].map((item, i) => (
-        <g key={i} transform={`translate(${pad.l + i * 126}, ${H - 10})`}>
-          <line x1={0} x2={16} y1={0} y2={0}
-            stroke={item.color} strokeWidth={2} strokeDasharray={item.dash} />
-          <text x={20} y={3.5} fontSize={7} fill="#64748b">{item.label}</text>
-        </g>
-      ))}
-    </svg>
+      {/* Event key table — HTML, no length constraint */}
+      <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap', gap: '4px 20px' }}>
+        {allEvents.map((ev) => (
+          <div key={ev.num} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '8px' }}>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: '15px', height: '15px', borderRadius: '50%',
+              backgroundColor: ev.color, color: '#fff',
+              fontWeight: 900, fontSize: '7px', flexShrink: 0,
+              fontFamily: C.sans,
+            }}>{ev.num}</span>
+            <span style={{ color: ev.color, fontWeight: 700, fontFamily: C.sans }}>
+              {ev.time}
+            </span>
+            <span style={{ color: C.ink, fontFamily: C.sans }}>{ev.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -472,6 +477,14 @@ const AuditReportPDF: React.FC = () => {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('sessionId') ?? 'PREVIEW';
   const p = MOCK_PAYLOAD;
+
+  // Set a unique document title so the PDF saves with a descriptive filename
+  useEffect(() => {
+    const prev = document.title;
+    const shortId = sessionId.slice(0, 8).toUpperCase();
+    document.title = `PPN-Audit-Compliance-Report-${shortId}`;
+    return () => { document.title = prev; };
+  }, [sessionId]);
   const totalPages = 2;
   const generatedDate = new Date(p.documentMetadata.generatedAt).toLocaleString([], {
     year: 'numeric', month: 'long', day: 'numeric',
