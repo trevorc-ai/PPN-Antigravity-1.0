@@ -56,6 +56,9 @@ export interface Phase3Data {
     decayPoints: Phase3DecayPoint[] | null;
     baselinePhq9: number | null;
     currentPhq9: number | null;
+    // GAD-7 trajectory summary (no chart yet, used for outcome badges)
+    baselineGad7: number | null;
+    currentGad7: number | null;
 
     // Compliance (0–100)
     pulseCheckCompliance: number | null;
@@ -131,6 +134,8 @@ export function usePhase3Data(
         decayPoints: null,
         baselinePhq9: null,
         currentPhq9: null,
+        baselineGad7: null,
+        currentGad7: null,
         pulseCheckCompliance: null,
         phq9Compliance: null,
         integrationSessionsAttended: null,
@@ -167,6 +172,8 @@ export function usePhase3Data(
                 decayPoints: null,
                 baselinePhq9: null,
                 currentPhq9: null,
+                baselineGad7: null,
+                currentGad7: null,
                 pulseCheckCompliance: 0,
                 phq9Compliance: 0,
                 integrationSessionsAttended: 0,
@@ -203,7 +210,7 @@ export function usePhase3Data(
                 // ── 1. PHQ-9 trajectory (log_longitudinal_assessments) ─────────────────
                 const { data: longitudinal, error: longErr } = await supabase
                     .from('log_longitudinal_assessments')
-                    .select('days_post_session, phq9_score')
+                    .select('days_post_session, phq9_score, gad7_score')
                     .eq('session_id', sessionId)
                     .order('days_post_session', { ascending: true });
 
@@ -212,20 +219,32 @@ export function usePhase3Data(
                     ? longitudinal!.map(r => ({ day: r.days_post_session, phq9: r.phq9_score }))
                     : MOCK_DECAY_POINTS;
 
+                // GAD-7 current value derived from latest longitudinal row when present.
+                const currentGad7: number | null =
+                    hasRealDecayData && longitudinal && longitudinal.length > 0
+                        ? (longitudinal[longitudinal.length - 1].gad7_score ?? null)
+                        : null;
+
                 // ── 2. Baseline PHQ-9 (log_baseline_assessments) ───────────────────────
                 // SCHEMA FIX: column is 'patient_uuid', not 'patient_id' — phantom column was returning zero rows
                 const { data: baselineRow, error: baselineErr } = await supabase
                     .from('log_baseline_assessments')
-                    .select('phq9_score')
+                    .select('phq9_score, gad7_score')
                     .eq('patient_uuid', patientId)   // FIXED: was .eq('patient_id', ...)
                     .order('created_at', { ascending: false })
                     .limit(1)
                     .maybeSingle();
 
                 // WO-558: null instead of 22 — empty state shown when no baseline recorded
-                const baselinePhq9: number | null = (!baselineErr && baselineRow?.phq9_score != null)
-                    ? baselineRow.phq9_score
-                    : null;
+                const baselinePhq9: number | null =
+                    (!baselineErr && baselineRow?.phq9_score != null)
+                        ? baselineRow.phq9_score
+                        : null;
+
+                const baselineGad7: number | null =
+                    (!baselineErr && (baselineRow as any)?.gad7_score != null)
+                        ? (baselineRow as any).gad7_score
+                        : null;
 
                 const currentPhq9 = hasRealDecayData && decayPoints.length > 0
                     ? decayPoints[decayPoints.length - 1].phq9
@@ -427,6 +446,8 @@ export function usePhase3Data(
                         decayPoints,
                         baselinePhq9,
                         currentPhq9,
+                        baselineGad7,
+                        currentGad7,
                         pulseCheckCompliance,
                         phq9Compliance,
                         integrationSessionsAttended,
@@ -460,6 +481,8 @@ export function usePhase3Data(
                         decayPoints: null,
                         baselinePhq9: null,
                         currentPhq9: null,
+                        baselineGad7: null,
+                        currentGad7: null,
                         pulseCheckCompliance: 0,
                         phq9Compliance: 0,
                         integrationSessionsAttended: 0,

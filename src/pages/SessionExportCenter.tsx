@@ -3,9 +3,10 @@ import {
     Download, FileText, Shield, FlaskConical, ClipboardList,
     ChevronRight, CheckCircle, Loader2, AlertCircle, Calendar,
     Activity, Heart, Brain, TrendingDown, Package,
-    Lock, Zap, BarChart3, Clock, User, BarChart2
+    Lock, Zap, BarChart3, Clock, User, BarChart2, Smile, BookOpen
 } from 'lucide-react';
 import { downloadReport, PatientReportData, ReportType } from '../services/reportGenerator';
+import { exportResearchCSV, ResearchRecord } from '../utils/csvExporter';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
 
 // ─── Mock patient / session context ──────────────────────────────────────────
@@ -52,7 +53,7 @@ const MOCK_SESSIONS = [
 
 interface ExportPackage {
     id: string;
-    type: ReportType | 'full-bundle' | 'raw-csv' | 'clinical-pdf';
+    type: ReportType | 'full-bundle' | 'raw-csv' | 'clinical-pdf' | 'patient-report' | 'data-policy';
     title: string;
     subtitle: string;
     description: string;
@@ -119,23 +120,23 @@ const EXPORT_PACKAGES: ExportPackage[] = [
         type: 'research',
         title: 'Research Export',
         subtitle: 'HIPAA Safe Harbor De-identified',
-        description: 'All clinical data with PHI stripped to Safe Harbor standard. Contributes to the anonymized network benchmark dataset. Suitable for IRB submission.',
+        description: 'All clinical data with PHI stripped to Safe Harbor standard. MedDRA-coded adverse events. Contributes to the anonymized network benchmark dataset. Suitable for IRB submission.',
         icon: FlaskConical,
         accentColor: 'text-indigo-400',
         bgColor: 'bg-indigo-500/10',
         borderColor: 'border-indigo-500/30',
         textColor: 'text-indigo-400',
-        badge: 'DE-IDENTIFIED',
+        badge: 'MedDRA + CSV',
         includes: [
             'Age group (not DOB)',
             'Substance, dose, route, duration',
             'MEQ-30 mystical experience score',
-            'Outcome trajectory (PHQ-9, GAD-7)',
-            'Behavioral change categories',
+            'Outcome trajectory (PHQ-9, GAD-7, PCL-5)',
+            'Adverse events — MedDRA SOC / PT / LLT coded',
             'Benchmark percentile position',
         ],
-        format: 'txt',
-        formatLabel: 'TXT',
+        format: 'csv',
+        formatLabel: 'CSV',
     },
     {
         id: 'full-bundle',
@@ -184,7 +185,76 @@ const EXPORT_PACKAGES: ExportPackage[] = [
         format: 'pdf',
         formatLabel: 'PDF',
     },
+    {
+        id: 'patient-report',
+        type: 'patient-report',
+        title: 'Patient Wellness Report',
+        subtitle: 'Jargon-Free · QR-Accessible',
+        description: 'A 3-page plain-language summary of the patient\'s wellness journey, designed to be shared directly with the patient. Includes a QR code for mobile access.',
+        icon: Smile,
+        accentColor: 'text-emerald-400',
+        bgColor: 'bg-emerald-500/10',
+        borderColor: 'border-emerald-500/30',
+        textColor: 'text-emerald-400',
+        badge: 'PATIENT-FACING',
+        includes: [
+            'Emotional arc waveform (plain language)',
+            'Before/after comparison table',
+            'Wellness radar chart',
+            'MEQ-30 experience depth score',
+            'What comes next — integration guidance',
+            'QR code for mobile access',
+        ],
+        format: 'pdf',
+        formatLabel: 'PDF',
+    },
+    {
+        id: 'data-policy',
+        type: 'data-policy',
+        title: 'Data Policy PDF',
+        subtitle: 'Zero-PHI Architecture · IRB Ready',
+        description: 'A 2-page technical document explaining what data is collected, what is stripped, how de-identification works, and MedDRA coding guidance. Always accompanies research exports.',
+        icon: BookOpen,
+        accentColor: 'text-violet-400',
+        bgColor: 'bg-violet-500/10',
+        borderColor: 'border-violet-500/30',
+        textColor: 'text-violet-400',
+        badge: 'IRB COMPANION',
+        includes: [
+            'Zero-PHI architecture overview',
+            'Complete list of exported fields',
+            'List of 18 identifiers never included',
+            'MedDRA adverse event coding guide',
+            'Audit trail & access controls',
+            'Citation block for publications',
+        ],
+        format: 'pdf',
+        formatLabel: 'PDF',
+    },
 ];
+
+// ─── Mock research record (used by exportResearchCSV) ────────────────────────
+const MOCK_RESEARCH_RECORD: ResearchRecord = {
+    subject_id: 'b7f3c2a1-4d9e-4b8f-a2c1-3f7e9d5b1a6c',
+    age_group: '35-44',
+    substance: 'MDMA',
+    dose_mg: 125,
+    route: 'Oral',
+    session_date: '2025-08-03',
+    meq30_total: 72,
+    phq9_baseline: 21,
+    phq9_followup: 8,
+    gad7_baseline: 18,
+    gad7_followup: 7,
+    pcl5_baseline: 52,
+    pcl5_followup: 19,
+    pulse_check_adherence_pct: 91,
+    integration_sessions_attended: 8,
+    adverse_events: [
+        { type: 'nausea', severity: 'Grade 1', relatedness: 'Probable', outcome: 'Resolved' },
+        { type: 'anxiety', severity: 'Grade 2', relatedness: 'Probable', outcome: 'Resolved' },
+    ],
+};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -197,7 +267,7 @@ const SessionExportCenter: React.FC = () => {
     const handleExport = async (pkg: ExportPackage) => {
         if (downloading) return;
 
-        // WO-553: Clinical PDF opens the print-preview page in a new tab
+        // Clinical PDF — opens print-preview page in a new tab
         if (pkg.type === 'clinical-pdf') {
             const sessionParam = selectedSession !== 'all' ? selectedSession : '';
             const url = sessionParam
@@ -207,18 +277,34 @@ const SessionExportCenter: React.FC = () => {
             return;
         }
 
+        // Patient Report PDF — opens jargon-free patient wellness report in a new tab
+        if (pkg.type === 'patient-report') {
+            const sessionParam = selectedSession !== 'all' ? selectedSession : 'PREVIEW';
+            window.open(`#/patient-report-pdf?sessionId=${sessionParam}`, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        // Data Policy PDF — opens Zero-PHI architecture companion doc in a new tab
+        if (pkg.type === 'data-policy') {
+            window.open('#/data-policy-pdf', '_blank', 'noopener,noreferrer');
+            return;
+        }
+
         setDownloading(pkg.id);
         await new Promise(r => setTimeout(r, 1200));
 
-        if (pkg.type === 'audit' || pkg.type === 'insurance' || pkg.type === 'research') {
+        if (pkg.type === 'audit' || pkg.type === 'insurance') {
             downloadReport(MOCK_PATIENT, pkg.type as ReportType);
+        } else if (pkg.type === 'research') {
+            // Upgraded: MedDRA-coded CSV output
+            exportResearchCSV([MOCK_RESEARCH_RECORD]);
         } else {
             // Full bundle: download all three
             downloadReport(MOCK_PATIENT, 'audit');
             await new Promise(r => setTimeout(r, 200));
             downloadReport(MOCK_PATIENT, 'insurance');
             await new Promise(r => setTimeout(r, 200));
-            downloadReport(MOCK_PATIENT, 'research');
+            exportResearchCSV([MOCK_RESEARCH_RECORD]);
         }
 
         setDownloading(null);

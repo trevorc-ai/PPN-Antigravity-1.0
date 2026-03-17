@@ -1,7 +1,7 @@
 
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import InstantConnectModal from './modals/InstantConnectModal';
 import FeedbackCard from './FeedbackCard';
 import { MessageSquarePlus } from 'lucide-react';
@@ -9,6 +9,9 @@ import { CLINICIANS } from '../constants';
 import { supabase } from '../supabaseClient';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from '../contexts/AuthContext';
+import { ThemeToggle } from './ui/ThemeToggle';
+import { CockpitModeTour, useCockpitModeTour } from './help/CockpitModeTour';
+import { useTheme } from '../contexts/ThemeContext';
 
 
 interface TopHeaderProps {
@@ -71,6 +74,7 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const location = useLocation();
   const { addToast } = useToast();
   const { signOut, userRole } = useAuth();
+  const { theme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -78,6 +82,16 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
   const [isInstantConnectOpen, setIsInstantConnectOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const feedbackTriggerRef = useRef<HTMLButtonElement>(null);
+  const { showTour, triggerIfNew, closeTour } = useCockpitModeTour();
+  const prevThemeRef = useRef(theme);
+
+  // Fire tour the first time user switches to cockpit mode
+  useEffect(() => {
+    if (prevThemeRef.current !== 'cockpit' && theme === 'cockpit') {
+      triggerIfNew();
+    }
+    prevThemeRef.current = theme;
+  }, [theme, triggerIfNew]);
 
   // WO-524: Active session timer chips
   // Migration 079: patient_link_code dropped — use patient_link_code_hash or id for display
@@ -324,6 +338,10 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
 
               <div className="flex items-center gap-3">
 
+                {/* Cockpit Mode Toggle — desktop only */}
+                <div className="hidden lg:block">
+                  <ThemeToggle />
+                </div>
 
                 {/* Feedback — Hidden on mobile, visible via dropdown */}
                 <div className="hidden lg:block relative group/tooltip flex flex-col items-center gap-1">
@@ -481,6 +499,9 @@ const TopHeader: React.FC<TopHeaderProps> = ({ onMenuClick, onLogout, onStartTou
         isOpen={isInstantConnectOpen}
         onClose={() => setIsInstantConnectOpen(false)}
       />
+
+      {/* Cockpit Mode guided tour — fires once on first activation */}
+      {showTour && <CockpitModeTour onClose={closeTour} />}
     </header>
   );
 };

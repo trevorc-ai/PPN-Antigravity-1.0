@@ -63,6 +63,8 @@ const SessionExportCenter = lazy(() => import('./pages/SessionExportCenter'));
 const DownloadCenter = lazy(() => import('./pages/DownloadCenter'));
 const ClinicalReportPDF = lazy(() => import('./pages/ClinicalReportPDF'));
 const DemoClinicalReportPDF = lazy(() => import('./pages/DemoClinicalReportPDF'));
+const PatientReportPDF = lazy(() => import('./pages/PatientReportPDF'));   // Phase 3 patient wellness report
+const DataPolicyPDF = lazy(() => import('./pages/DataPolicyPDF'));         // Research export data policy
 const ProfileEdit = lazy(() => import('./pages/ProfileEdit'));
 const WellnessJourney = lazy(() => import('./pages/WellnessJourney'));
 const PatientCompanionPage = lazy(() => import('./pages/PatientCompanionPage'));
@@ -409,6 +411,10 @@ const AppContent: React.FC = () => {
               <Route path="/journey/auth" element={<PatientReport />} />
               {/* WO-570: Integration Compass — patient post-session integration tool */}
               <Route path="/integration-compass" element={<IntegrationCompass />} />
+              {/* Patient Wellness Report — QR-accessible, no auth */}
+              <Route path="/patient-report-pdf" element={<PatientReportPDF />} />
+              {/* Research Data Policy PDF — accompanies CSV exports */}
+              <Route path="/data-policy-pdf" element={<DataPolicyPDF />} />
 
               {/* Deep Dives (Public Marketing Pages) */}
               <Route path="/deep-dives/patient-flow" element={<PatientFlowPage />} />

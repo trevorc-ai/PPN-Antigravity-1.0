@@ -16,6 +16,7 @@ import PractitionerProtocolBenchmark from '../features/practitioner-analytics/Pr
 
 interface SessionRecord {
   id: string;
+  patient_uuid: string | null;
   patient_link_code_hash: string | null;
   session_date: string | null;
   session_type_id: number | null;
@@ -60,6 +61,33 @@ interface PatientSession {
   session_date: string | null;
   session_type_id: number | null;
   substance_name?: string;
+}
+
+interface PriorProtocolSummaryRow {
+  current_session_id: string;
+  prior_session_id: string | null;
+  prior_session_date: string | null;
+  prior_substance_name: string | null;
+}
+
+interface TreatmentResultRow {
+  patient_uuid: string | null;
+  session_id: string | null;
+  concept_code: string | null;
+  concept_name: string | null;
+  time_point_label: string | null;
+  value_as_number: number | null;
+  observation_timestamp: string | null;
+}
+
+interface SafetyFlagRow {
+  session_id: string | null;
+  flag_type: string | null;
+  flag_code: string | null;
+  flag_label: string | null;
+  flag_timestamp: string | null;
+  resolution_status: string | null;
+  ctcae_grade: number | null;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -117,6 +145,13 @@ function buildRadarData(substanceName: string) {
   ];
 }
 
+function scoreConceptMatch(conceptCode: string | null, conceptName: string | null, needle: 'phq9' | 'gad7'): boolean {
+  const code = (conceptCode ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const name = (conceptName ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (needle === 'phq9') return code.includes('phq9') || name.includes('phq9');
+  return code.includes('gad7') || name.includes('gad7');
+}
+
 // ─── Loading / Error shells ───────────────────────────────────────────────────
 
 const LoadingState = () => (
@@ -158,7 +193,6 @@ const ProtocolDetail: React.FC = () => {
   const [baseline, setBaseline] = useState<BaselineAssessment | null>(null);
   const [longitudinal, setLongitudinal] = useState<LongitudinalPoint[]>([]);
   const [patientSessions, setPatientSessions] = useState<PatientSession[]>([]);
-  const [substanceMap, setSubstanceMap] = useState<Record<number, string>>({});
 
   useEffect(() => {
     if (!id) return;
@@ -172,7 +206,7 @@ const ProtocolDetail: React.FC = () => {
         // 1. Fetch the primary session (migration 079: patient_link_code dropped → patient_link_code_hash)
         const { data: sessionData, error: sessionErr } = await supabase
           .from('log_clinical_records')
-          .select('id, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids, dosage_mg')
+          .select('id, patient_uuid, patient_link_code_hash, session_date, session_type_id, substance_id, site_id, practitioner_id, route_id, concomitant_med_ids, dosage_mg')
           .eq('id', id)
           .single();
 
@@ -183,7 +217,7 @@ const ProtocolDetail: React.FC = () => {
         if (cancelled) return;
         setSession(sessionData as SessionRecord);
 
-        const patientLinkCodeHash = sessionData.patient_link_code_hash;
+        const patientUuid = sessionData.patient_uuid;
 
         // 2. Parallel fetches: substances ref + vitals + safety events + patient sessions
         // Migration 079: baseline/longitudinal use patient_uuid (not on log_clinical_records); skip those fetches when no patient_uuid
@@ -191,9 +225,9 @@ const ProtocolDetail: React.FC = () => {
           substanceResult,
           vitalsResult,
           safetyResult,
+          priorSummaryResult,
+          treatmentResult,
           patientSessionsResult,
-          baselineResult,
-          longitudinalResult,
         ] = await Promise.all([
           // All substance names
           supabase.from('ref_substances').select('substance_id, substance_name'),
@@ -206,30 +240,40 @@ const ProtocolDetail: React.FC = () => {
             .order('recorded_at', { ascending: true })
             .limit(50),
 
-          // Safety events for this session
+          // Outstanding safety flags for this session (view-backed)
           supabase
-            .from('log_safety_events')
-            .select('ae_id, safety_event_type_id, severity_grade_id, is_resolved')
+            .from('vw_protocol_detail_outstanding_safety_flags')
+            .select('session_id, flag_type, flag_code, flag_label, flag_timestamp, resolution_status, ctcae_grade')
             .eq('session_id', id)
             .limit(20),
 
-          // All sessions for the same patient (by patient_link_code_hash; patient_link_code dropped in 079)
-          patientLinkCodeHash
+          // Prior protocol summary (view-backed)
+          supabase
+            .from('vw_protocol_detail_prior_protocol_summary')
+            .select('current_session_id, prior_session_id, prior_session_date, prior_substance_name')
+            .eq('current_session_id', id)
+            .limit(1)
+            .maybeSingle(),
+
+          // Treatment results over time (view-backed)
+          patientUuid
             ? supabase
-              .from('log_clinical_records')
-              .select('id, session_date, session_type_id, substance_id')
-              .eq('patient_link_code_hash', patientLinkCodeHash)
-              .order('session_date', { ascending: false })
-              .limit(20)
+              .from('vw_protocol_detail_treatment_results_over_time')
+              .select('patient_uuid, session_id, concept_code, concept_name, time_point_label, value_as_number, observation_timestamp')
+              .eq('patient_uuid', patientUuid)
+              .order('observation_timestamp', { ascending: true })
+              .limit(500)
             : Promise.resolve({ data: [], error: null }),
 
-          // TODO WO-630: patient_uuid not available on log_clinical_records — trajectory blocked
-          // Baseline: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
-          Promise.resolve({ data: null, error: null }),
-
-          // TODO WO-630: patient_uuid not available on log_clinical_records — trajectory blocked
-          // Longitudinal: migration 079 dropped patient_id; table uses patient_uuid (not on session) — skip
-          Promise.resolve({ data: [], error: null }),
+          // Full session list for this patient (enables true Session History + deep links)
+          patientUuid
+            ? supabase
+              .from('log_clinical_records')
+              .select('id, session_date, session_type_id, ref_substances(substance_name)')
+              .eq('patient_uuid', patientUuid)
+              .order('created_at', { ascending: false })
+              .limit(25)
+            : Promise.resolve({ data: [], error: null }),
         ]);
 
         if (cancelled) return;
@@ -239,28 +283,79 @@ const ProtocolDetail: React.FC = () => {
         for (const s of (substanceResult.data ?? [])) {
           sMap[s.substance_id] = s.substance_name;
         }
-        setSubstanceMap(sMap);
-
         const resolvedName = sessionData.substance_id
           ? (sMap[sessionData.substance_id] ?? `Substance #${sessionData.substance_id}`)
           : 'Unknown';
         setSubstanceName(resolvedName);
 
         setVitals((vitalsResult.data ?? []) as Vital[]);
-        setSafetyEvents((safetyResult.data ?? []) as SafetyEvent[]);
-        setBaseline((baselineResult.data as BaselineAssessment | null) ?? null);
-        setLongitudinal((longitudinalResult.data ?? []) as LongitudinalPoint[]);
 
-        // Enrich patient sessions with substance names
-        const enriched = ((patientSessionsResult.data ?? []) as Array<{
-          id: string; session_date: string | null; session_type_id: number | null; substance_id: number | null;
-        }>).map(s => ({
-          id: s.id,
-          session_date: s.session_date,
-          session_type_id: s.session_type_id,
-          substance_name: s.substance_id ? (sMap[s.substance_id] ?? `Substance #${s.substance_id}`) : undefined,
+        const mappedSafety = ((safetyResult.data ?? []) as SafetyFlagRow[]).map((row, index) => ({
+          ae_id: `${row.session_id ?? id}-${index}`,
+          safety_event_type_id: null,
+          severity_grade_id: row.ctcae_grade != null ? String(row.ctcae_grade) : null,
+          is_resolved: row.resolution_status ? row.resolution_status.toLowerCase().includes('resolved') : false,
+          event_name: row.flag_label ?? row.flag_code ?? row.flag_type ?? 'Safety Flag',
         }));
-        setPatientSessions(enriched);
+        setSafetyEvents(mappedSafety);
+
+        // Build patient session list from real log_clinical_records rows (not view-limited).
+        const sessionsRows = (patientSessionsResult.data ?? []) as any[];
+        const normalizedSessions: PatientSession[] = sessionsRows.map((r) => {
+          const substanceData = r?.ref_substances;
+          const substanceName2 = Array.isArray(substanceData) ? substanceData[0]?.substance_name : substanceData?.substance_name;
+          return {
+            id: r.id,
+            session_date: r.session_date ?? null,
+            session_type_id: r.session_type_id ?? null,
+            substance_name: substanceName2 ?? undefined,
+          };
+        });
+        // Safety net: ensure current session appears even if patientUuid is null or query returned empty.
+        if (normalizedSessions.length === 0) {
+          normalizedSessions.push({
+            id: sessionData.id,
+            session_date: sessionData.session_date,
+            session_type_id: sessionData.session_type_id,
+            substance_name: resolvedName,
+          });
+        }
+        setPatientSessions(normalizedSessions);
+
+        const treatmentRows = (treatmentResult.data ?? []) as TreatmentResultRow[];
+        const byDate = new Map<string, { date: string; ts: number; phq9_score: number | null; gad7_score: number | null }>();
+        for (const row of treatmentRows) {
+          if (row.value_as_number == null) continue;
+          const isPhq9 = scoreConceptMatch(row.concept_code, row.concept_name, 'phq9');
+          const isGad7 = scoreConceptMatch(row.concept_code, row.concept_name, 'gad7');
+          if (!isPhq9 && !isGad7) continue;
+
+          const ts = row.observation_timestamp ? Date.parse(row.observation_timestamp) : Number.NaN;
+          const dateKey = row.time_point_label
+            ?? (row.observation_timestamp ? row.observation_timestamp.slice(0, 10) : 'Unknown');
+          const existing = byDate.get(dateKey) ?? {
+            date: dateKey,
+            ts: Number.isNaN(ts) ? Number.MAX_SAFE_INTEGER : ts,
+            phq9_score: null,
+            gad7_score: null,
+          };
+
+          if (!Number.isNaN(ts)) existing.ts = Math.min(existing.ts, ts);
+          if (isPhq9) existing.phq9_score = row.value_as_number;
+          if (isGad7) existing.gad7_score = row.value_as_number;
+          byDate.set(dateKey, existing);
+        }
+
+        const ordered = [...byDate.values()]
+          .sort((a, b) => a.ts - b.ts)
+          .map(({ date, phq9_score, gad7_score }) => ({ assessment_date: date, phq9_score, gad7_score }));
+
+        setBaseline(ordered.length > 0 ? {
+          assessment_date: ordered[0].assessment_date,
+          phq9_score: ordered[0].phq9_score,
+          gad7_score: ordered[0].gad7_score,
+        } : null);
+        setLongitudinal(ordered.slice(1));
 
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
@@ -685,6 +780,63 @@ const ProtocolDetail: React.FC = () => {
               </div>
             </section>
 
+            {/* Sessions in this Protocol — compact, above-the-fold navigator */}
+            {patientSessions.length > 0 && (
+              <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-6 shadow-2xl">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <ClipboardList className="text-indigo-400 w-5 h-5" />
+                    <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">
+                      Sessions in this Protocol
+                    </h3>
+                  </div>
+                  <span className="text-[11px] font-mono text-slate-500 uppercase tracking-widest">
+                    {patientSessions.length} total
+                  </span>
+                </div>
+                <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
+                  {sortedSessions.map(s => {
+                    const isCurrent = s.id === session.id;
+                    const label = SESSION_TYPE_LABELS[s.session_type_id ?? 0] ?? 'Session';
+                    return (
+                      <div
+                        key={s.id}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-xl border text-xs ${
+                          isCurrent
+                            ? 'border-emerald-500/50 bg-emerald-500/10'
+                            : 'border-slate-700/60 bg-slate-900/60'
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="font-mono font-bold text-slate-200 truncate">
+                            {s.session_date ?? '—'}
+                          </p>
+                          <p className="text-[11px] text-slate-500 flex items-center gap-1">
+                            <span className="px-1.5 py-0.5 rounded border border-slate-600/60">
+                              {label}
+                            </span>
+                            {s.substance_name && (
+                              <span className="text-indigo-300 font-semibold truncate">
+                                · {s.substance_name}
+                              </span>
+                            )}
+                            {isCurrent && <span className="text-emerald-400 font-bold">· Current</span>}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/wellness-journey?sessionId=${s.id}`)}
+                          className="shrink-0 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[10px] font-black uppercase tracking-widest text-slate-200"
+                        >
+                          Open
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
             {/* AC #5 — Pre-Session Clearance Checklist Strip (read-only, display-only, no DB writes) */}
             <section className="bg-[#0b0e14] border border-slate-800 rounded-[2.5rem] p-6 shadow-2xl">
               <div className="flex items-center gap-3 mb-5">
@@ -789,7 +941,7 @@ const ProtocolDetail: React.FC = () => {
         </div>
 
         {/* ── Patient Session History ──────────────────────────────── */}
-        {otherSessions.length > 0 && (
+        {patientSessions.length > 1 && (
           <section className="bg-[#05070a]/50 border border-slate-800/50 rounded-[2.5rem] p-8 sm:p-12 mb-20 animate-in slide-in-from-bottom-10 duration-1000">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
               <div className="space-y-2">
@@ -814,7 +966,6 @@ const ProtocolDetail: React.FC = () => {
                 return (
                   <div
                     key={s.id}
-                    onClick={() => navigate(`/protocol/${s.id}`)}
                     className="group p-6 bg-slate-900/30 border border-slate-800 hover:border-indigo-500/50 hover:bg-indigo-500/5 rounded-[2rem] transition-all cursor-pointer relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -842,6 +993,23 @@ const ProtocolDetail: React.FC = () => {
                           </div>
                         )}
                       </div>
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-1 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/wellness-journey?sessionId=${s.id}`)}
+                        className="min-h-[44px] w-full px-4 py-2.5 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 hover:border-emerald-400/60 text-emerald-300 text-xs font-black uppercase tracking-widest transition-all"
+                      >
+                        Open in Wellness Journey
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/protocol/${s.id}`)}
+                        className="min-h-[44px] w-full px-4 py-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 text-slate-300 text-xs font-black uppercase tracking-widest transition-all"
+                      >
+                        View Protocol Detail
+                      </button>
                     </div>
                   </div>
                 );

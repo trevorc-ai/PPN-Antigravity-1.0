@@ -3,7 +3,11 @@ import { useArcOfCareApi } from '../hooks/useArcOfCareApi';
 import PulseCheckWidget from '../components/arc-of-care/PulseCheckWidget';
 import SymptomDecayCurveChart from '../components/arc-of-care/SymptomDecayCurveChart';
 import RedAlertPanel from '../components/arc-of-care/RedAlertPanel';
-import { Calendar, TrendingDown, AlertTriangle, CheckCircle } from 'lucide-react';
+import EmotionalWaveformChart from '../components/arc-of-care/EmotionalWaveformChart';
+import PulseCheckTrendChart from '../components/arc-of-care/PulseCheckTrendChart';
+import ReceptorSpiderGraph from '../components/arc-of-care/ReceptorSpiderGraph';
+import SymptomMoodHeatmap from '../components/arc-of-care/SymptomMoodHeatmap';
+import { Calendar, TrendingDown, AlertTriangle, CheckCircle, Activity, BarChart2, Grid3X3 } from 'lucide-react';
 
 /**
  * Wellness Journey Demo - Phase 3: Integration Tracker
@@ -251,9 +255,60 @@ const ArcOfCarePhase3Demo: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* ── Emotional Waveform ───────────────────────────────────── */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <Activity className="w-6 h-6 text-violet-400" />
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-300">Emotional Waveform</h2>
+                            <p className="text-slate-400 text-sm">Five dimensions of daily wellbeing — how you've been feeling</p>
+                        </div>
+                    </div>
+                    <EmotionalWaveformChart />
+                </div>
+
+                {/* ── Pulse Check Trends ───────────────────────────────────── */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <Calendar className="w-6 h-6 text-emerald-400" />
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-300">Pulse Check Trends</h2>
+                            <p className="text-slate-400 text-sm">90-day daily check-in history</p>
+                        </div>
+                    </div>
+                    <PulseCheckTrendChart />
+                </div>
+
+                {/* ── Receptor / Outcome Spider Graph ─────────────────────── */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <BarChart2 className="w-6 h-6 text-blue-400" />
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-300">Outcome Profile</h2>
+                            <p className="text-slate-400 text-sm">Toggle between clinical metrics and plain-English receptor labels</p>
+                        </div>
+                    </div>
+                    <ReceptorSpiderGraph defaultMode="B" showToggle={true} />
+                </div>
+
+                {/* ── Symptom & Mood Severity Heatmap ─────────────────────── */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <Grid3X3 className="w-6 h-6 text-indigo-400" />
+                        <div>
+                            <h2 className="text-2xl font-bold text-slate-300">Symptom & Mood Heatmap</h2>
+                            <p className="text-slate-400 text-sm">Day-by-day severity grid — hover any cell for detail</p>
+                        </div>
+                    </div>
+                    <SymptomMoodHeatmap />
+                </div>
+
             </div>
         </div>
     );
 };
 
 export default ArcOfCarePhase3Demo;
+
+

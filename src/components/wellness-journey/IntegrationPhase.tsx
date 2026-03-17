@@ -235,6 +235,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
         { day: 180, phq9: journey.integration?.currentPhq9 ?? 4 },
     ];
     const baselinePhq9 = phase3.baselinePhq9 ?? journey.baseline?.phq9 ?? 22;
+    const baselineGad7 = phase3.baselineGad7 ?? journey.risk?.baseline?.gad7 ?? null;
 
     // Pulse trend
     const activePulseTrend = phase3.pulseTrend ?? [];
@@ -421,6 +422,100 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
         }
     };
 
+    const phq9Delta = baselinePhq9 != null && phase3.currentPhq9 != null
+        ? baselinePhq9 - phase3.currentPhq9
+        : null;
+
+    const gad7Delta = baselineGad7 != null && phase3.currentGad7 != null
+        ? baselineGad7 - phase3.currentGad7
+        : null;
+
+    const classifyPhq9Severity = (score: number | null): string => {
+        if (score == null) return 'Unknown';
+        if (score <= 4) return 'None-minimal';
+        if (score <= 9) return 'Mild';
+        if (score <= 14) return 'Moderate';
+        if (score <= 19) return 'Moderately severe';
+        return 'Severe';
+    };
+
+    const classifyGad7Severity = (score: number | null): string => {
+        if (score == null) return 'Unknown';
+        if (score <= 4) return 'Minimal';
+        if (score <= 9) return 'Mild';
+        if (score <= 14) return 'Moderate';
+        return 'Severe';
+    };
+
+    const OutcomeBadge: React.FC<{
+        label: string;
+        baseline: number | null;
+        current: number | null;
+        delta: number | null;
+        describe: (score: number | null) => string;
+    }> = ({ label, baseline, current, delta, describe }) => {
+        const hasCurrent = current != null;
+        const direction = delta != null && hasCurrent
+            ? (delta > 2 ? 'improved' : delta < -2 ? 'worsened' : 'stable')
+            : null;
+        const deltaLabel = (() => {
+            if (delta == null || !hasCurrent) return 'No follow-up yet';
+            const abs = Math.abs(delta);
+            if (abs < 1) return 'No meaningful change';
+            return `${delta > 0 ? '▼' : '▲'} ${abs} pts`;
+        })();
+        const deltaColor =
+            !hasCurrent || delta == null
+                ? 'text-slate-400'
+                : delta > 0
+                    ? 'text-emerald-400'
+                    : delta < 0
+                        ? 'text-rose-400'
+                        : 'text-slate-400';
+
+        return (
+            <div className="rounded-2xl bg-slate-900/70 border border-slate-700/60 px-4 py-3 flex flex-col gap-1 min-w-[0]">
+                <div className="flex items-center justify-between gap-2">
+                    <span className="ppn-meta text-slate-400 font-bold uppercase tracking-widest">{label}</span>
+                    {hasCurrent && (
+                        <span className="ppn-caption text-slate-500">
+                            {describe(current)} today
+                        </span>
+                    )}
+                </div>
+                <div className="flex items-baseline gap-4 flex-wrap">
+                    <div>
+                        <p className="ppn-caption text-slate-500 uppercase tracking-widest">Baseline</p>
+                        <p className="text-sm font-semibold text-slate-200">
+                            {baseline != null ? baseline : '—'}{' '}
+                            <span className="ppn-caption text-slate-500 ml-1">{describe(baseline)}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p className="ppn-caption text-slate-500 uppercase tracking-widest">Current</p>
+                        <p className="text-sm font-semibold text-slate-200">
+                            {hasCurrent ? current : '—'}{' '}
+                            <span className="ppn-caption text-slate-500 ml-1">
+                                {hasCurrent ? describe(current) : 'No follow-up yet'}
+                            </span>
+                        </p>
+                    </div>
+                    <div className="ml-auto text-right">
+                        <p className="ppn-caption text-slate-500 uppercase tracking-widest">Change</p>
+                        <p className={`text-sm font-semibold ${deltaColor}`}>
+                            {deltaLabel}
+                            {direction && hasCurrent && (
+                                <span className="ppn-caption text-slate-500 ml-1 capitalize">
+                                    ({direction})
+                                </span>
+                            )}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     const progressSummaryData: ProgressSummaryData = {
         subjectId: journey.patientId ?? 'PT-DEMO',
         clinicianName: 'Attending Practitioner',
@@ -479,6 +574,26 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                 hasRealSession={!!(journey.sessionId && /^[0-9a-f-]{36}$/i.test(journey.sessionId))}
             />
 
+            {/* Global “no data yet” banner when Phase 3 has no real data (after load completes) */}
+            {!phase3.isLoading &&
+                !phase3.hasRealDecayData &&
+                !phase3.hasRealPulseData &&
+                !phase3.hasRealComplianceData &&
+                !phase3.hasRealIntegrationData && (
+                    <div className="bg-amber-500/10 border border-amber-500/40 rounded-2xl px-4 py-3 flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+                        <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" aria-hidden="true" />
+                        <div>
+                            <p className="ppn-meta text-amber-300 font-bold">
+                                Integration data not yet recorded for this session.
+                            </p>
+                            <p className="ppn-caption text-amber-200/90 mt-1">
+                                Complete a Longitudinal Assessment, log at least one Daily Pulse check, and record a Structured
+                                Integration Session to unlock outcome and compliance analytics.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
             {/* 3 ── Integration Action Cards ────────────────────────────────── */}
             <section aria-label="Phase 3 integration steps" className="bg-slate-900/40 border border-teal-500/15 rounded-3xl p-6">
                 {/* Section header */}
@@ -516,6 +631,7 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                             description="Log the patient's first mood and sleep reading post-session."
                             status={daysPostSession > 3 ? 'archived' : completedForms.has('daily-pulse') ? 'completed' : 'pending'}
                             onOpen={onOpenForm && daysPostSession <= 3 ? () => onOpenForm('daily-pulse') : undefined}
+                            summary={undefined}
                         />
                     </div>
                 </div>
@@ -570,6 +686,24 @@ export const IntegrationPhase: React.FC<IntegrationPhaseProps> = ({ journey, onO
                     </div>
                 </div>
             </section>
+
+            {/* Outcome delta badges (PHQ-9 / GAD-7) ─────────────────────────── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <OutcomeBadge
+                    label="PHQ-9"
+                    baseline={baselinePhq9 ?? null}
+                    current={phase3.currentPhq9 ?? journey.integration?.currentPhq9 ?? null}
+                    delta={phq9Delta}
+                    describe={classifyPhq9Severity}
+                />
+                <OutcomeBadge
+                    label="GAD-7"
+                    baseline={baselineGad7}
+                    current={phase3.currentGad7}
+                    delta={gad7Delta}
+                    describe={classifyGad7Severity}
+                />
+            </div>
 
             {/* 4 ── Forecasted Integration Plan ────────────────────────────── */}
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6">

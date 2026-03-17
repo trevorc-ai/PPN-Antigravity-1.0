@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { Target, Shield, TrendingUp, ArrowRight, Lock, CheckCircle, Brain, Info, Heart, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { AdvancedTooltip } from '../components/ui/AdvancedTooltip';
@@ -152,6 +152,7 @@ function readStoredSession(): { patientId: string; sessionId: string; patientUui
 
 const WellnessJourneyInternal: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { addToast } = useToast();
 
     // Phase navigation state
@@ -203,6 +204,66 @@ const WellnessJourneyInternal: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // run once on mount only
 
+    // Deep link: allow opening a specific session directly from elsewhere (e.g., Protocol Detail).
+    // Example: /wellness-journey?sessionId=<uuid>
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const sessionIdFromUrl = params.get('sessionId');
+        if (!sessionIdFromUrl) return;
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionIdFromUrl)) {
+            return;
+        }
+
+        let cancelled = false;
+        (async () => {
+            try {
+                const { data: sessionRow, error: sErr } = await supabase
+                    .from('log_clinical_records')
+                    .select('id, patient_uuid, session_type_id, session_ended_at, is_submitted')
+                    .eq('id', sessionIdFromUrl)
+                    .maybeSingle();
+                if (sErr || !sessionRow?.id || cancelled) return;
+
+                const patientUuid = sessionRow.patient_uuid ?? undefined;
+                let patientId = `SID-${sessionRow.id.substring(0, 8).toUpperCase()}`;
+
+                if (patientUuid) {
+                    const { data: linkRow } = await supabase
+                        .from('log_patient_site_links')
+                        .select('patient_link_code')
+                        .eq('patient_uuid', patientUuid)
+                        .limit(1)
+                        .maybeSingle();
+                    if (linkRow?.patient_link_code) patientId = linkRow.patient_link_code;
+                }
+
+                // Derive phase for deep-linked sessions:
+                // - Completed / ended sessions open in Integration (Phase 3) for review.
+                // - Active dosing sessions (type 2) open in Phase 2.
+                // - Everything else falls back to Phase 1.
+                const sessionTypeId = sessionRow.session_type_id ?? 1;
+                const hasEnded = !!sessionRow.session_ended_at || !!sessionRow.is_submitted;
+                const derivedPhase: 1 | 2 | 3 = hasEnded
+                    ? 3
+                    : (sessionTypeId === 2 ? 2 : 1);
+
+                setJourney(prev => ({
+                    ...prev,
+                    patientId,
+                    patientUuid,
+                    sessionId: sessionRow.id,
+                }));
+                setActivePhase(derivedPhase);
+                setShowPatientModal(false);
+                setPatientModalView('existing');
+            } catch (err) {
+                console.warn('[WellnessJourney] Deep link session load failed (non-fatal):', err);
+            }
+        })();
+
+        return () => { cancelled = true; };
+    }, [location.search]);
+
     const handlePatientSelect = useCallback(async (patientId: string, isNew: boolean, phase: string) => {
         // ── STEP 0: Clear previous patient's session data from localStorage ──────
         // Without this, stale substance/medication/dosage data from the previous
@@ -221,11 +282,10 @@ const WellnessJourneyInternal: React.FC = () => {
         ];
         SESSION_CACHE_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch (_) { } });
 
-        // Create a REAL log_clinical_records row in the DB so that all Phase 2 form
-        // writes (vitals, observations, timeline) satisfy the FK constraint:
-        //   log_session_vitals.session_id → log_clinical_records.id
-        // We do this for BOTH new and existing patients because every Wellness Journey
-        // visit starts a new session record.
+        // Create or resume a session:
+        // - New patient → always create a new log_clinical_records session row (unless TEST).
+        // - Existing patient → DEFAULT to resuming the most recent session so clinicians can
+        //   review/amend work. Starting a brand-new session should be an explicit UI action.
         const resolvedSiteId = await getCurrentSiteId();
         let sessionId: string | undefined;
 
@@ -234,27 +294,47 @@ const WellnessJourneyInternal: React.FC = () => {
 
         let patientUuid: string | undefined;
         if (!isTestSession && resolvedSiteId) {
-            const result = await createClinicalSession(patientId, resolvedSiteId);
-            if (result.success && result.sessionId) {
-                sessionId = result.sessionId;
-                patientUuid = result.patientUuid;
+            if (isNew) {
+                const result = await createClinicalSession(patientId, resolvedSiteId);
+                if (result.success && result.sessionId) {
+                    sessionId = result.sessionId;
+                    patientUuid = result.patientUuid;
+                } else {
+                    console.error('[WellnessJourney] ❌ createClinicalSession FAILED, patient will NOT persist to DB.', result.error);
+                    sessionId = crypto.randomUUID();
+                    patientUuid = await getOrCreateCanonicalPatientUuid(patientId, resolvedSiteId) ?? undefined;
+                    if (!patientUuid) {
+                        console.warn('[WellnessJourney] ⚠️ patient_uuid resolution also failed. Phase 1 DB saves will be blocked by the UUID guard in createBaselineAssessment.');
+                    }
+                }
             } else {
-                console.error('[WellnessJourney] ❌ createClinicalSession FAILED, patient will NOT persist to DB.', result.error);
-                sessionId = crypto.randomUUID();
-                // UUID fallback: createClinicalSession resolved patient_uuid internally but
-                // lost it when log_clinical_records insert failed. Re-resolve here so that
-                // Phase 1 form saves (log_baseline_assessments has no session_id FK) can
-                // still write to the DB with the correct canonical identity.
+                // Existing patient: resolve canonical UUID and resume latest session for this patient.
                 patientUuid = await getOrCreateCanonicalPatientUuid(patientId, resolvedSiteId) ?? undefined;
-                if (!patientUuid) {
-                    console.warn('[WellnessJourney] ⚠️ patient_uuid resolution also failed. Phase 1 DB saves will be blocked by the UUID guard in createBaselineAssessment.');
+                if (patientUuid) {
+                    const { data: latestSession } = await supabase
+                        .from('log_clinical_records')
+                        .select('id, session_type_id')
+                        .eq('patient_uuid', patientUuid)
+                        .order('created_at', { ascending: false })
+                        .limit(1)
+                        .maybeSingle();
+                    sessionId = latestSession?.id ?? undefined;
+                }
+                // Fallback: if no session found (should be rare), start a new one.
+                if (!sessionId) {
+                    const result = await createClinicalSession(patientId, resolvedSiteId);
+                    if (result.success && result.sessionId) {
+                        sessionId = result.sessionId;
+                        patientUuid = result.patientUuid;
+                    } else {
+                        sessionId = crypto.randomUUID();
+                    }
                 }
             }
         } else if (!isTestSession) {
             console.error('[WellnessJourney] ❌ No siteId resolved, session will NOT persist to DB. Check log_user_sites.');
             sessionId = crypto.randomUUID();
         } else {
-            // TEST session, ephemeral local ID only; no canonical patient_uuid
             sessionId = crypto.randomUUID();
             console.log('[WellnessJourney] 🧪 TEST session started, no DB writes will occur. Patient ID:', patientId);
         }
@@ -530,8 +610,10 @@ const WellnessJourneyInternal: React.FC = () => {
 
     const handleFormComplete = useCallback((formId: WellnessFormId | null, exit: boolean = false) => {
         let nextId: WellnessFormId | null = null;
-        let isLastPhase1Form = false;
 
+        // Phase 1: advance through the guided step sequence but do NOT
+        // implicitly mark the phase complete. Phase completion is now
+        // an explicit clearance action in Phase1StepGuide.
         if (formId && activePhase === 1) {
             if (!exit) {
                 const currentIndex = PHASE1_STEPS.findIndex(s => s.id === formId);
@@ -539,23 +621,6 @@ const WellnessJourneyInternal: React.FC = () => {
                 nextId = next ? next.id : null;
             }
 
-            if (!nextId && !exit) {
-                isLastPhase1Form = true;
-            } else if (!nextId && exit) {
-                const allDone = PHASE1_STEPS.every(s => (completedForms.has(s.id) || s.id === formId));
-                if (allDone) isLastPhase1Form = true;
-            }
-
-            if (isLastPhase1Form) {
-                setCompletedPhases(prevPhases => {
-                    const newPhases = [...new Set([...prevPhases, 1 as number])];
-                    localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(newPhases));
-                    return newPhases;
-                });
-            }
-
-            // Use functional form to ensure the state update doesn't drop anything
-            // while preserving our synchronously computed next steps above
             setCompletedForms(prev => {
                 const updated = new Set([...prev, formId]);
                 return updated;
@@ -574,16 +639,6 @@ const WellnessJourneyInternal: React.FC = () => {
         } else {
             setIsFormOpen(false);
             setTimeout(() => setActiveFormId(null), 320);
-
-            if (isLastPhase1Form) {
-                setTimeout(() => {
-                    addToast({
-                        title: '✅ Phase 1 Complete',
-                        message: 'All preparation steps done. Review your Phase 1 report, then advance to Dosing Session when ready.',
-                        type: 'success',
-                    });
-                }, 400);
-            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePhase, addToast]);
@@ -630,11 +685,18 @@ const WellnessJourneyInternal: React.FC = () => {
         const updated = [...new Set([...completedPhases, activePhase])];
         setCompletedPhases(updated);
         localStorage.setItem(PHASE_STORAGE_KEY, JSON.stringify(updated));
+        if (activePhase === 1) {
+            addToast({
+                title: '✅ Phase 1 Clearance Recorded',
+                message: 'Preparation, safety screening, and baseline assessments are marked complete. Phase 2 is now unlocked.',
+                type: 'success',
+            });
+        }
         if (activePhase < 3) {
             setActivePhase((activePhase + 1) as 1 | 2 | 3);
             setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
         }
-    }, [completedPhases, activePhase]);
+    }, [completedPhases, activePhase, addToast]);
 
     // Keyboard shortcuts
     useEffect(() => {

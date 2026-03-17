@@ -178,13 +178,13 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
 
                 {/* Data points */}
                 {safeData.length > 0 && (
-                    <svg className="absolute left-16 right-4 top-4 bottom-8" style={{ width: 'calc(100% - 5rem)', height: 'calc(100% - 3rem)' }}>
+                    <svg className="absolute left-16 right-4 top-4 bottom-8" style={{ width: 'calc(100% - 5rem)', height: 'calc(100% - 3rem)' }} viewBox="0 0 100 100" preserveAspectRatio="none">
                         {/* Line */}
                         <polyline
                             points={safeData.map((point, i) => {
                                 const x = (i / (safeData.length - 1 || 1)) * 100;
                                 const y = 100 - ((point.phq9Score / 27) * 100);
-                                return `${x}%,${y}%`;
+                                return `${x.toFixed(2)},${y.toFixed(2)}`;
                             }).join(' ')}
                             fill="none"
                             stroke="rgb(139, 92, 246)"
@@ -199,9 +199,9 @@ const SymptomDecayCurveChart: React.FC<SymptomDecayCurveChartProps> = ({
                             return (
                                 <circle
                                     key={i}
-                                    cx={`${x}%`}
-                                    cy={`${y}%`}
-                                    r="4"
+                                    cx={x.toFixed(2)}
+                                    cy={y.toFixed(2)}
+                                    r="2"
                                     fill="rgb(139, 92, 246)"
                                     className="drop-shadow-lg"
                                 />
