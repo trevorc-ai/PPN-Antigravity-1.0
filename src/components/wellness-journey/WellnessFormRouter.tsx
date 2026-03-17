@@ -635,19 +635,14 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                 const resolvedSiteId = siteId ?? await import('../../services/identity').then(m => m.getCurrentSiteId());
 
                 // WO-596: Resolve contraindication_verdict_id by running the engine.
-                // Map the selected med IDs → medication name strings for the engine's keyword matching.
-                // The CONCOMITANT_MEDICATIONS list in StructuredSafetyCheckForm uses lowercase-compatible names.
-                const MED_ID_TO_NAME: Record<number, string> = {
-                    1: 'lithium', 2: 'phenelzine', 3: 'tranylcypromine', 4: 'selegiline',
-                    5: 'sertraline', 6: 'fluoxetine', 7: 'escitalopram', 8: 'citalopram',
-                    9: 'paroxetine', 10: 'bupropion', 11: 'vortioxetine',
-                    12: 'amphetamine', 13: 'methylphenidate', 14: 'lisdexamfetamine',
-                    15: 'lisinopril', 16: 'metformin', 17: 'atorvastatin',
-                    18: 'levothyroxine', 19: 'amlodipine', 20: 'omeprazole',
-                };
-                const medNames = (data.concomitant_med_ids ?? [])
-                    .map(id => MED_ID_TO_NAME[id])
-                    .filter(Boolean) as string[];
+                // Medication names are now persisted by BaselineAssessmentWizard / DosingSessionPhase
+                // to localStorage under 'ppn_patient_medications_names'. Read from there.
+                // (concomitant_med_ids was removed from StructuredSafetyCheckData in the StructuredSafetyCheckForm refactor.)
+                let medNames: string[] = [];
+                try {
+                    const storedMeds = localStorage.getItem('ppn_patient_medications_names');
+                    if (storedMeds) medNames = JSON.parse(storedMeds) as string[];
+                } catch { /* localStorage unavailable — proceed with empty list */ }
 
                 // Write med names to localStorage so DosingProtocolForm's engine sees real data.
                 try { localStorage.setItem('ppn_patient_medications_names', JSON.stringify(medNames)); } catch (_) { }
@@ -678,8 +673,8 @@ export const WellnessFormRouter: React.FC<WellnessFormRouterProps> = ({
                         patient_uuid: resolvedPatientId,
                         session_id: sessionId ?? undefined,
                         site_id: resolvedSiteId,
-                        contraindication_verdict_id,                    // WO-596: was always null
-                        concomitant_med_ids: data.concomitant_med_ids ?? [], // WO-596: was always []
+                        contraindication_verdict_id,  // WO-596: resolved by engine above
+                        concomitant_med_ids: [],       // field removed from form; DB DEFAULT '{}' applies
                     }).catch(err => console.warn('[SAVS-P1A] log_phase1_safety_screen write failed (non-fatal):', err));
                 }
 
